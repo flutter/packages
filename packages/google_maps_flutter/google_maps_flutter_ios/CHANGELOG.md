@@ -1,3 +1,7 @@
+## 2.17.4
+
+* Adds UIScene compatibility.
+
 ## 2.17.3
 
 * Adds a README section about Swift Package Manager and the new
