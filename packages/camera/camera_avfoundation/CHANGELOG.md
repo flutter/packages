@@ -1,3 +1,9 @@
+## 0.10.0
+
+* Adds video stabilization.
+  - Adds getSupportedVideoStabilizationModes method.
+  - Adds setVideoStabilizationMode method.
+
 ## 0.9.23+2
 
 * Code refactor related to Swift pigeon's generated struct MediaSettings being immutable.
