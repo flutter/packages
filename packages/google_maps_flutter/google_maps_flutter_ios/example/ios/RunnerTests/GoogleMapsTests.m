@@ -260,6 +260,7 @@
   controller.dartCallbackHandler = mockHandler;
 
   NSString *placeId = @"test_place_id";
+  NSString *name = @"Test POI Name";
   CLLocationCoordinate2D location = CLLocationCoordinate2DMake(10.0, 20.0);
 
   [controller mapView:mapView didTapPOIWithPlaceID:placeId location:location];

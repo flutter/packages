@@ -324,7 +324,7 @@ public class GoogleMapControllerTest {
   @Test
   public void onPoiClick() {
     GoogleMapController controller = getGoogleMapControllerWithMockedDependencies();
-    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId");
+    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
 
     controller.onPoiClick(poi);
 
