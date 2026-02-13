@@ -73,18 +73,29 @@ Below is an example of setting additional iOS/macOS and Android parameters on a 
 
 <?code-excerpt "readme_excerpts.dart (platform_features)"?>
 ```dart
-var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
+late final XFile file;
 
 if (CrossFilePlatform.instance is CrossFileWeb) {
-  params = WebXFileCreationParams.fromObjectUrl(
+  final params = WebXFileCreationParams.fromObjectUrl(
     objectUrl: 'blob:https://some/url:for/file',
   );
+  file = XFile.fromCreationParams(params);
+} else if (CrossFilePlatform.instance is CrossFileDarwin) {
+  final params = PlatformScopedStorageXFileCreationParams(
+    uri: Uri.file('/my/file.txt').toString(),
+  );
+  file = ScopedStorageXFile.fromCreationParams(params);
+
+  await file
+      .getExtension<DarwinScopedStorageXFileExtension>()
+      .startAccessingSecurityScopedResource();
+} else {
+  file = XFile.fromUri(Uri.file('/my/file.txt'));
 }
 
-final file = XFile.fromCreationParams(params);
-
+debugPrint(await file.readAsString());
 await file
-    .maybeGetExtension<DarwinXFileExtension>()
+    .maybeGetExtension<DarwinScopedStorageXFileExtension>()
     ?.stopAccessingSecurityScopedResource();
 ```
 

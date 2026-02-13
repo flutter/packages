@@ -32,18 +32,29 @@ Future<XFile> instantiateXFile() async {
 /// Demonstrate accessing platform features.
 Future<XFile> accessPlatformFeatures() async {
   // #docregion platform_features
-  var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
+  late final XFile file;
 
   if (CrossFilePlatform.instance is CrossFileWeb) {
-    params = WebXFileCreationParams.fromObjectUrl(
+    final params = WebXFileCreationParams.fromObjectUrl(
       objectUrl: 'blob:https://some/url:for/file',
     );
+    file = XFile.fromCreationParams(params);
+  } else if (CrossFilePlatform.instance is CrossFileDarwin) {
+    final params = PlatformScopedStorageXFileCreationParams(
+      uri: Uri.file('/my/file.txt').toString(),
+    );
+    file = ScopedStorageXFile.fromCreationParams(params);
+
+    await file
+        .getExtension<DarwinScopedStorageXFileExtension>()
+        .startAccessingSecurityScopedResource();
+  } else {
+    file = XFile.fromUri(Uri.file('/my/file.txt'));
   }
 
-  final file = XFile.fromCreationParams(params);
-
+  debugPrint(await file.readAsString());
   await file
-      .maybeGetExtension<DarwinXFileExtension>()
+      .maybeGetExtension<DarwinScopedStorageXFileExtension>()
       ?.stopAccessingSecurityScopedResource();
   // #enddocregion platform_features
 

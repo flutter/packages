@@ -22,7 +22,9 @@ void main() {
       mockApi.startAccessingSecurityScopedResource(uri),
     ).thenAnswer((_) async => result);
 
-    final file = DarwinScopedStorageXFile(DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
+    );
 
     expect(await file.startAccessingSecurityScopedResource(), result);
   });
@@ -31,7 +33,9 @@ void main() {
     final mockApi = MockCrossFileDarwinApi();
     const uri = 'uri';
 
-    final file = DarwinScopedStorageXFile(DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
+    );
 
     await file.stopAccessingSecurityScopedResource();
     verify(mockApi.stopAccessingSecurityScopedResource(uri));
@@ -45,7 +49,9 @@ void main() {
       mockApi.tryCreateBookmarkedUrl(uri),
     ).thenAnswer((_) async => bookmarkedUri);
 
-    final file = DarwinScopedStorageXFile(DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
+    );
 
     expect(await file.toBookmarkedUri(), bookmarkedUri);
   });
