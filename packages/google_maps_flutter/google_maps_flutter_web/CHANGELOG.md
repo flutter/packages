@@ -1,4 +1,4 @@
-## 0.7.0
+## 0.5.15
 
 * Added support for Tap detection on Point of Interest.
 
