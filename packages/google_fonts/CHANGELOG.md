@@ -270,8 +270,8 @@
 ## 6.3.1
 
 - Transfers the package source from
-  <https://github.com/material-foundation/flutter-packages> to
-  <https://github.com/flutter/packages>.
+  https://github.com/material-foundation/flutter-packages to
+  https://github.com/flutter/packages.
 - Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 - Updates code to meet repository analyzer settings.
 
@@ -683,9 +683,7 @@
   - `Yuji Hentaigana Akebono`
 
 ## 3.0.1
-
 ### Changed
-
 - Improve asset manifest loading errors
 - Improve testing guidance
 
