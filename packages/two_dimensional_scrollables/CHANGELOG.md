@@ -1,3 +1,7 @@
+## 0.3.9
+
+* Fix hit testing issue when horizontally scrolled.
+
 ## 0.3.8
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
