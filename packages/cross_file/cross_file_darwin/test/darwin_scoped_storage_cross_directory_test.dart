@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_darwin/src/cross_file_darwin_apis.g.dart';
-import 'package:cross_file_darwin/src/darwin_cross_file.dart';
+import 'package:cross_file_darwin/src/darwin_scoped_storage_cross_directory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'darwin_cross_file_test.mocks.dart';
+import 'darwin_scoped_storage_cross_directory_test.mocks.dart';
 
 @GenerateMocks(<Type>[CrossFileDarwinApi])
 void main() {
@@ -16,22 +16,26 @@ void main() {
 
   test('startAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    const uri = 'uri/';
     const result = true;
     when(
       mockApi.startAccessingSecurityScopedResource(uri),
     ).thenAnswer((_) async => result);
 
-    final file = DarwinXFile(DarwinXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXDirectory(
+      DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
+    );
 
     expect(await file.startAccessingSecurityScopedResource(), result);
   });
 
   test('stopAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    const uri = 'uri/';
 
-    final file = DarwinXFile(DarwinXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXDirectory(
+      DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
+    );
 
     await file.stopAccessingSecurityScopedResource();
     verify(mockApi.stopAccessingSecurityScopedResource(uri));
@@ -39,13 +43,15 @@ void main() {
 
   test('tryCreateBookmarkedUrl', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
-    const bookmarkedUri = 'newUri';
+    const uri = 'uri/';
+    const bookmarkedUri = 'newUri/';
     when(
       mockApi.tryCreateBookmarkedUrl(uri),
     ).thenAnswer((_) async => bookmarkedUri);
 
-    final file = DarwinXFile(DarwinXFileCreationParams(uri: uri, api: mockApi));
+    final file = DarwinScopedStorageXDirectory(
+      DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
+    );
 
     expect(await file.toBookmarkedUri(), bookmarkedUri);
   });
