@@ -566,7 +566,7 @@
                 location:(CLLocationCoordinate2D)location {
   FGMPlatformPointOfInterest *poi =
       [FGMPlatformPointOfInterest makeWithPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                           placeId:placeID
+                                           placeId:placeID];
   [self.dartCallbackHandler didTapPointOfInterest:poi
                                        completion:^(FlutterError *_Nullable _){
                                        }];

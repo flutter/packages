@@ -35,8 +35,6 @@ flutter:
     - assets/
 
 dependency_overrides:
-  google_maps_flutter:
-    path: ../
   google_maps_flutter_android:
     path: ../../google_maps_flutter_android
   google_maps_flutter_ios:
