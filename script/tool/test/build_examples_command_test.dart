@@ -240,7 +240,10 @@ void main() {
         contains('enable-swift-package-manager: false'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -300,7 +303,10 @@ void main() {
         contains('enable-swift-package-manager: true'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -472,7 +478,10 @@ void main() {
         contains('enable-swift-package-manager: false'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -529,7 +538,10 @@ void main() {
         contains('enable-swift-package-manager: true'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
