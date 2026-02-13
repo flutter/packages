@@ -79,24 +79,30 @@
 
 @end
 
-// Convience to avoid having two copies of the StubViewProvider code.
-#if TARGET_OS_OSX
-#define PROVIDED_VIEW_TYPE NSView
-#else
-#define PROVIDED_VIEW_TYPE UIView
-#endif
-
 @interface StubViewProvider : NSObject <FVPViewProvider>
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view;
-@property(nonatomic, nullable) PROVIDED_VIEW_TYPE *view;
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@property(nonatomic, nullable) UIViewController *viewController;
+#else
+- (instancetype)initWithView:(NSView *)view;
+@property(nonatomic, nullable) NSView *view;
+#endif
 @end
 
 @implementation StubViewProvider
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view {
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+  self = [super init];
+  _viewController = viewController;
+  return self;
+}
+#else
+- (instancetype)initWithView:(NSView *)view {
   self = [super init];
   _view = view;
   return self;
 }
+#endif
 @end
 
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
@@ -227,14 +233,19 @@
 #if TARGET_OS_OSX
   NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
   view.wantsLayer = true;
+  id<FVPViewProvider> viewProvider = [[StubViewProvider alloc] initWithView:view];
 #else
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+  UIViewController *viewController = [[UIViewController alloc] init];
+  viewController.view = view;
+  id<FVPViewProvider> viewProvider =
+      [[StubViewProvider alloc] initWithViewController:viewController];
 #endif
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
       displayLinkFactory:nil
-            viewProvider:[[StubViewProvider alloc] initWithView:view]
+            viewProvider:viewProvider
                registrar:registrar];
 
   FlutterError *error;
@@ -267,7 +278,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -294,7 +305,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -351,7 +362,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -397,7 +408,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -452,7 +463,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -605,7 +616,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -628,7 +639,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -654,7 +665,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:testURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -850,7 +861,7 @@
   FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
       initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+            viewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
@@ -875,7 +886,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *error;
@@ -1078,10 +1089,15 @@
         });
 
     StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
-    FVPVideoPlayer *player =
-        [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
-                                         avFactory:stubAVFactory
-                                      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+    StubViewProvider *stubViewProvider =
+#if TARGET_OS_OSX
+        [[StubViewProvider alloc] initWithView:nil];
+#else
+        [[StubViewProvider alloc] initWithViewController:nil];
+#endif
+    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
+                                                              avFactory:stubAVFactory
+                                                           viewProvider:stubViewProvider];
     (void)player;  // Keep reference
 
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
