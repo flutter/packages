@@ -2564,11 +2564,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetGoogleMapsFlutterPigeonMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)],
-          @"FGMMapsApi api (%@) doesn't respond to "
-          @"@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(isShowingInfoWindowForMarkerWithIdentifier:
+                                                                                       error:)],
+                @"FGMMapsApi api (%@) doesn't respond to "
+                @"@selector(isShowingInfoWindowForMarkerWithIdentifier:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_markerId = GetNullableObjectAtIndex(args, 0);
