@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlemaps;
 
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static io.flutter.plugins.googlemaps.Convert.getPinConfigFromPlatformPinConfig;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PinConfig;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.geometry.Point;
 import com.google.maps.android.heatmaps.Gradient;
@@ -28,6 +30,7 @@ import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.projection.SphericalMercatorProjection;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.Collections;
 import java.util.List;
 import org.junit.After;
@@ -41,6 +44,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ConvertTest {
+
   @Mock private AssetManager assetManager;
 
   @Mock private BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
@@ -87,11 +91,11 @@ public class ConvertTest {
 
     StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
-    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
+    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER);
     marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
-    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
+    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER);
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
@@ -315,6 +319,66 @@ public class ConvertTest {
     }
 
     fail("Expected an IllegalArgumentException to be thrown");
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_GlyphColor() {
+    Messages.PlatformBitmapPinConfig platformBitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setBackgroundColor(
+                new Messages.PlatformColor.Builder().setArgbValue(0x00FFFFL).build())
+            .setBorderColor(new Messages.PlatformColor.Builder().setArgbValue(0xFF00FFL).build())
+            .setGlyphColor(new Messages.PlatformColor.Builder().setArgbValue(0x112233L).build())
+            .build();
+
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor());
+    Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_Glyph() {
+    Messages.PlatformBitmapPinConfig platformBitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setGlyphText("Hi")
+            .setGlyphTextColor(new Messages.PlatformColor.Builder().setArgbValue(0xFFFFFFL).build())
+            .build();
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals("Hi", pinConfig.getGlyph().getText());
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
+    byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
+    Messages.PlatformBitmapBytesMap bytesBitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
+    Messages.PlatformBitmap icon =
+        new Messages.PlatformBitmap.Builder().setBitmap(bytesBitmap).build();
+    Messages.PlatformBitmapPinConfig platformBitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setBackgroundColor(
+                new Messages.PlatformColor.Builder().setArgbValue(0xFFFFFFL).build())
+            .setBorderColor(new Messages.PlatformColor.Builder().setArgbValue(0x000000L).build())
+            .setGlyphBitmap(icon)
+            .build();
+    when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0x000000L, pinConfig.getBorderColor());
+    Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor());
   }
 
   @Test
