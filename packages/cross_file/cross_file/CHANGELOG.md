@@ -1,3 +1,7 @@
+## 0.4.0
+
+* Updates `cross_file` to a package separated federated plugin.
+
 ## 0.3.5+2
 
 * Separates "Save As" implementation details from XFile web class.
