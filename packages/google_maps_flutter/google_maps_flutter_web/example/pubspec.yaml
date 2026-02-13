@@ -2,8 +2,8 @@ name: google_maps_flutter_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.35.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
@@ -21,21 +21,4 @@ dev_dependencies:
   google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ^1.2.2
   integration_test:
-    sdk: flutter
-  mockito: ^5.4.4
-
-flutter:
-  assets:
-    - assets/
-
-dependency_overrides:
-  google_maps_flutter:
-    path: ../../google_maps_flutter
-  google_maps_flutter_android:
-    path: ../../google_maps_flutter_android
-  google_maps_flutter_ios:
-    path: ../../google_maps_flutter_ios
-  google_maps_flutter_platform_interface:
-    path: ../../google_maps_flutter_platform_interface
-  google_maps_flutter_web:
-    path: ../../google_maps_flutter_web
+  
