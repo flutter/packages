@@ -1,6 +1,6 @@
 ## 8.0.2
 
-- Fixes a bug where exceptions thrown during a return statement in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).
+- Fixes a bug where exceptions thrown during return within try blocks in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).
 
 ## 8.0.1
 
