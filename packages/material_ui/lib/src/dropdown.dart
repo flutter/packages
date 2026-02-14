@@ -1139,12 +1139,16 @@ class DropdownButton<T> extends StatefulWidget {
   /// {@template material_ui.dropdownButton.onChanged}
   /// Called when the user selects an item.
   ///
-  /// If the [onChanged] callback is null or the list of [DropdownButton.items]
-  /// is null then the dropdown button will be disabled, i.e. its arrow will be
-  /// displayed in grey and it will not respond to input. A disabled button
-  /// will display the [DropdownButton.disabledHint] widget if it is non-null.
-  /// If [DropdownButton.disabledHint] is also null but [DropdownButton.hint] is
-  /// non-null, [DropdownButton.hint] will instead be displayed.
+  /// The dropdown button is enabled when [enabled] is true.
+  ///
+  /// If [enabled] is false or the list of [DropdownButton.items] is null,
+  /// then the dropdown button will be disabled. When disabled, the arrow is
+  /// displayed in grey and the button does not respond to input.
+  ///
+  /// A disabled button will display the [DropdownButton.disabledHint] widget if
+  /// it is non-null. If [DropdownButton.disabledHint] is also null but
+  /// [DropdownButton.hint] is non-null, [DropdownButton.hint] will instead be
+  /// displayed.
   /// {@endtemplate}
   final ValueChanged<T?>? onChanged;
 
