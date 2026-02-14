@@ -32,10 +32,6 @@ void clearCache() => _loadedFonts.clear();
 /// the [FontLoader], that future is removed from this set.
 final Set<Future<void>> pendingFontFutures = <Future<void>>{};
 
-/// The client used to fetch fonts.
-@visibleForTesting
-http.Client httpClient = http.Client();
-
 /// The asset manifest to use for loading pre-bundled fonts.
 @visibleForTesting
 AssetManifest? assetManifest;
@@ -261,7 +257,7 @@ Future<ByteData> _httpFetchFontAndSaveToDevice(
 
   http.Response response;
   try {
-    response = await httpClient.get(uri);
+    response = await GoogleFonts.config.httpClient.get(uri);
   } catch (e) {
     throw Exception('Failed to load font with url ${file.url}: $e');
   }
