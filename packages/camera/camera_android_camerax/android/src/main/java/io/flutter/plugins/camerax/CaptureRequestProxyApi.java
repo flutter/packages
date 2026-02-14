@@ -22,4 +22,10 @@ class CaptureRequestProxyApi extends PigeonApiCaptureRequest {
   public CaptureRequest.Key<?> controlAELock() {
     return CaptureRequest.CONTROL_AE_LOCK;
   }
+
+  @NonNull
+  @Override
+  public CaptureRequest.Key<?> controlVideoStabilizationMode() {
+    return CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE;
+  }
 }

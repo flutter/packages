@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.30
 
 * Bump camerax_version from 1.5.2 to 1.5.3.
@@ -52,7 +56,8 @@
 
 ## 0.6.24+1
 
-* Fixes crash in `DeviceOrientationManager` caused by `UnsupportedOperationException` when `getDisplay()` is called on a null or destroyed Activity during rotation.
+* Fixes crash in `DeviceOrientationManager` caused by `UnsupportedOperationException` when
+  `getDisplay()` is called on a null or destroyed Activity during rotation.
 
 ## 0.6.24
 
@@ -72,7 +77,8 @@
 
 ## 0.6.23+2
 
-* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart
+  3.9.
 
 ## 0.6.23+1
 
@@ -81,7 +87,8 @@
 ## 0.6.23
 
 * Converts NV21-compatible streamed images to NV21 when requested. In doing so,
-this plugin should now be compatible with [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/tree/master).
+  this plugin should now be compatible
+  with [google_ml_kit_flutter](https://github.com/flutter-ml/google_ml_kit_flutter/tree/master).
 
 ## 0.6.22
 
@@ -258,8 +265,10 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.6.6
 
-* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
-  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a
+  `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct
+  rotation.
 * Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
 * Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
@@ -290,7 +299,8 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.6.5+1
 
-* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin
+  implementation
   is the endorsed Android implementation for `camera: ^0.11.0`.
 
 ## 0.6.5
@@ -299,22 +309,28 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
   recorded video finishes saving to a file.
 * Modifies `startVideoCapturing` to ensure that the method only returns when CameraX reports that
   video recording has started.
-* Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this feature.
+* Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this
+  feature.
 
 ## 0.6.4+1
 
-* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
+* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on
+  Android.
 
 ## 0.6.4
 
-* Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera device.
+* Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera
+  device.
 
 ## 0.6.3
 
-* Shortens default interval that internal Java `InstanceManager` uses to release garbage collected weak references to
+* Shortens default interval that internal Java `InstanceManager` uses to release garbage collected
+  weak references to
   native objects.
-* Dynamically shortens interval that internal Java `InstanceManager` uses to release garbage collected weak references to
-  native objects when an `ImageAnalysis.Analyzer` is set/removed to account for increased memory usage of analyzing
+* Dynamically shortens interval that internal Java `InstanceManager` uses to release garbage
+  collected weak references to
+  native objects when an `ImageAnalysis.Analyzer` is set/removed to account for increased memory
+  usage of analyzing
   images that may cause a crash.
 
 ## 0.6.2
@@ -327,7 +343,8 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.6.1
 
-* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
+* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios
+  supported by CameraX.
 * Adds `ResolutionFilter` to resolution selection logic to prioritize resolutions that match
   the defined `ResolutionPreset`s.
 
@@ -346,7 +363,8 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+35
 
-* Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the initial focus
+* Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the
+  initial focus
   and exposure modes are auto and that developers may set focus and exposure points.
 
 ## 0.5.0+34
@@ -365,15 +383,18 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+31
 
-* Wraps CameraX classes needed to set capture request options, which is needed to implement setting the exposure mode.
+* Wraps CameraX classes needed to set capture request options, which is needed to implement setting
+  the exposure mode.
 
 ## 0.5.0+30
 
-* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for
+  CameraX.
 
 ## 0.5.0+29
 
-* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
+* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the
+  assumption
   that `createCamera` should have been called before building the preview. Fixes
   https://github.com/flutter/flutter/issues/140567.
 
@@ -410,7 +431,8 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+21
 
-* Changes fallback resolution strategies for camera use cases to look for a higher resolution if neither the desired
+* Changes fallback resolution strategies for camera use cases to look for a higher resolution if
+  neither the desired
   resolution nor any lower resolutions are available.
 
 ## 0.5.0+20
@@ -436,7 +458,8 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+15
 
-* Explicitly removes `READ_EXTERNAL_STORAGE` permission that may otherwise be implied from `WRITE_EXTERNAL_STORAGE`.
+* Explicitly removes `READ_EXTERNAL_STORAGE` permission that may otherwise be implied from
+  `WRITE_EXTERNAL_STORAGE`.
 
 ## 0.5.0+14
 
@@ -448,13 +471,15 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 ## 0.5.0+12
 
-* Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
+* Wraps classes needed to implement resolution configuration for image capture, image analysis, and
+  preview.
 * Removes usages of deprecated APIs for resolution configuration.
 * Bumps CameraX version to 1.3.0-beta01.
 
 ## 0.5.0+11
 
-* Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
+* Fixes issue with image data not being emitted after relistening to stream returned by
+  `onStreamedFrameAvailable`.
 
 ## 0.5.0+10
 
