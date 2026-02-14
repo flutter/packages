@@ -1631,7 +1631,7 @@ void main() {
         );
 
     // [disabledHint] should display when [items] is null
-    await tester.pumpWidget(build(onChanged: onChanged, enabled: false));
+    await tester.pumpWidget(build(onChanged: onChanged, enabled: true));
     expect(find.text('enabled'), findsNothing);
     expect(find.text('disabled'), findsOneWidget);
 
@@ -1640,7 +1640,7 @@ void main() {
     expect(find.text('enabled'), findsNothing);
     expect(find.text('disabled'), findsOneWidget);
 
-    // [disabledHint] should display when [onChanged] is null
+    // [disabledHint] should display when [enabled] is false.
     await tester.pumpWidget(build(items: menuItems, enabled: false));
     expect(find.text('enabled'), findsNothing);
     expect(find.text('disabled'), findsOneWidget);
@@ -4082,6 +4082,7 @@ void main() {
           child: DropdownButton<String>(
             key: key,
             onChanged: null,
+            enabled: false,
             items: <String>['One', 'Two', 'Three', 'Four'].map<DropdownMenuItem<String>>((
               String value,
             ) {
