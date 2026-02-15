@@ -47,7 +47,11 @@ class Config {
   bool allowRuntimeFetching = true;
 
   /// The HTTP client used to fetch fonts.
-  http.Client httpClient = http.Client();
+  ///
+  /// If this is null, a shared default [http.Client] will be used.
+  ///
+  /// If you supply a client, you are responsible for closing it.
+  http.Client? httpClient;
 }
 
 /// Provides configuration, and static methods to obtain [TextStyle]s and [TextTheme]s.
