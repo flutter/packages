@@ -451,6 +451,9 @@ class TextField extends StatefulWidget {
   ///
   /// Specify null to remove the decoration entirely (including the
   /// extra padding introduced by the decoration to save space for the labels).
+  ///
+  /// If [decoration]'s [InputDecoration.textDirection] is null, it will
+  /// default to the [textDirection] value of this text field.
   final InputDecoration? decoration;
 
   /// {@macro flutter.widgets.editableText.keyboardType}
@@ -1223,6 +1226,7 @@ class _TextFieldState extends State<TextField>
         .applyDefaults(decorationTheme)
         .copyWith(
           enabled: _isEnabled,
+          textDirection: widget.decoration?.textDirection ?? widget.textDirection,
           hintMaxLines:
               widget.decoration?.hintMaxLines ?? decorationTheme.hintMaxLines ?? widget.maxLines,
         );
@@ -1714,7 +1718,7 @@ class _TextFieldState extends State<TextField>
           style: style,
           strutStyle: widget.strutStyle,
           textAlign: widget.textAlign,
-          textDirection: widget.textDirection,
+          textDirection: widget.decoration?.textDirection ?? widget.textDirection,
           autofocus: widget.autofocus,
           obscuringCharacter: widget.obscuringCharacter,
           obscureText: widget.obscureText,
