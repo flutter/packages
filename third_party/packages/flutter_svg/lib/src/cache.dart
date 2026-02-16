@@ -78,11 +78,16 @@ class Cache {
     } else {
       pendingResult = loader();
       _pending[key] = pendingResult;
-      pendingResult.then((ByteData data) {
-        _pending.remove(key);
-        _add(key, data);
-        result = data; // in case it was a synchronous future.
-      });
+      pendingResult.then(
+        (ByteData data) {
+          _pending.remove(key);
+          _add(key, data);
+          result = data; // in case it was a synchronous future.
+        },
+        onError: (_) {
+          _pending.remove(key);
+        },
+      );
     }
     if (result != null) {
       _add(key, result!);
