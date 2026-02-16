@@ -2305,6 +2305,11 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
         ? _InputDecoratorDefaultsM3(context)
         : _InputDecoratorDefaultsM2(context);
     final IconButtonThemeData iconButtonTheme = IconButtonTheme.of(context);
+    final TextDirection effectiveHintTextDirection =
+        decoration.hintTextDirection ?? decoration.textDirection ?? Directionality.of(context);
+
+    final TextDirection effectiveLabelTextDirection =
+        decoration.textDirection ?? Directionality.of(context);
 
     final TextStyle labelStyle = _getInlineLabelStyle(themeData, defaults);
     final TextBaseline textBaseline = labelStyle.textBaseline!;
@@ -2319,7 +2324,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
           Text(
             hintText!,
             style: hintStyle,
-            textDirection: decoration.hintTextDirection,
+            textDirection: effectiveHintTextDirection,
             overflow:
                 hintStyle.overflow ??
                 (decoration.hintMaxLines == null ? null : TextOverflow.ellipsis),
@@ -2385,7 +2390,12 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
             style: labelShouldWithdraw ? _getFloatingLabelStyle(themeData, defaults) : labelStyle,
             child:
                 decoration.label ??
-                Text(decoration.labelText!, overflow: TextOverflow.ellipsis, textAlign: textAlign),
+                Text(
+                  decoration.labelText!,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: textAlign,
+                  textDirection: effectiveLabelTextDirection,
+                ),
           ),
         ),
       );
@@ -2656,7 +2666,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
         counter: counter,
         container: container,
       ),
-      textDirection: textDirection,
+      textDirection: decoration.textDirection ?? textDirection,
       textBaseline: textBaseline,
       textAlignVertical: widget.textAlignVertical,
       isFocused: isFocused,
@@ -2819,6 +2829,11 @@ class InputDecoration {
     this.hintText,
     this.hint,
     this.hintStyle,
+    @Deprecated(
+      'Use textDirection instead. '
+      'This will maintain consistency between label and hint directions. '
+      'This feature was deprecated after v3.42.0-1.0.pre.',
+    )
     this.hintTextDirection,
     this.hintMaxLines,
     this.hintFadeDuration,
@@ -2869,6 +2884,7 @@ class InputDecoration {
     this.alignLabelWithHint,
     this.constraints,
     this.visualDensity,
+    this.textDirection,
   }) : assert(
          !(label != null && labelText != null),
          'Declaring both label and labelText is not supported.',
@@ -2917,6 +2933,11 @@ class InputDecoration {
     FloatingLabelAlignment? floatingLabelAlignment,
     this.hintStyle,
     this.hint,
+    @Deprecated(
+      'Use textDirection instead. '
+      'This will maintain consistency between label and hint directions. '
+      'This feature was deprecated after v3.42.0-1.0.pre.',
+    )
     this.hintTextDirection,
     this.hintMaxLines,
     this.hintFadeDuration,
@@ -2935,6 +2956,7 @@ class InputDecoration {
     this.border = InputBorder.none,
     this.enabled = true,
     this.constraints,
+    this.textDirection,
   }) : icon = null,
        iconColor = null,
        label = null,
@@ -3210,7 +3232,22 @@ class InputDecoration {
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.
+  @Deprecated(
+    'Use textDirection instead. '
+    'This will maintain consistency between label and hint directions. '
+    'This feature was deprecated after v3.42.0-1.0.pre.',
+  )
   final TextDirection? hintTextDirection;
+
+  /// The direction to use for both the [labelText] and the [hintText].
+  ///
+  /// This parameter ensures visual consistency across all text elements
+  /// within the input field. If provided, it overrides individual direction
+  /// settings.
+  ///
+  /// If null, defaults to a value derived from [Directionality] for the
+  /// input field and the current context.
+  final TextDirection? textDirection;
 
   /// The maximum number of lines the [hintText] can occupy.
   ///
@@ -4035,6 +4072,7 @@ class InputDecoration {
     BoxConstraints? constraints,
     VisualDensity? visualDensity,
     SemanticsService? semanticsService,
+    TextDirection? textDirection,
   }) {
     return InputDecoration(
       icon: icon ?? this.icon,
@@ -4095,6 +4133,7 @@ class InputDecoration {
       alignLabelWithHint: alignLabelWithHint ?? this.alignLabelWithHint,
       constraints: constraints ?? this.constraints,
       visualDensity: visualDensity ?? this.visualDensity,
+      textDirection: textDirection ?? this.textDirection,
     );
   }
 
@@ -4219,7 +4258,8 @@ class InputDecoration {
         other.semanticCounterText == semanticCounterText &&
         other.alignLabelWithHint == alignLabelWithHint &&
         other.constraints == constraints &&
-        other.visualDensity == visualDensity;
+        other.visualDensity == visualDensity &&
+        other.textDirection == textDirection;
   }
 
   @override
@@ -4283,6 +4323,7 @@ class InputDecoration {
       alignLabelWithHint,
       constraints,
       visualDensity,
+      textDirection,
     ];
     return Object.hashAll(values);
   }
