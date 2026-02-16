@@ -140,12 +140,7 @@ final class FLTCamSetFocusModeTests: XCTestCase {
 
     camera.setFocusPoint(PlatformPoint(x: 1, y: 1)) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
     }
 
     XCTAssertTrue(setFocusPointOfInterestCalled)

@@ -182,13 +182,7 @@ final class CameraSettingsTests: XCTestCase {
       withName: "acamera",
       settings: mediaSettings
     ) { result in
-      switch result {
-      case .success(let result):
-        resultValue = result
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
-
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
 

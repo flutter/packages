@@ -209,4 +209,16 @@ extension XCTestCase {
 
     wait(for: [expectation], timeout: 1)
   }
+
+  func assertSuccess<T>(
+    _ result: Result<T, any Error>, file: StaticString = #file, line: UInt = #line
+  ) -> T? {
+    switch result {
+    case .success(let value):
+      return value
+    case .failure(let error):
+      XCTFail("Expected success, but got failure: \(error)", file: file, line: line)
+      return nil
+    }
+  }
 }

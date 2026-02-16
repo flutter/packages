@@ -41,12 +41,7 @@ final class FLTCamZoomTests: XCTestCase {
 
     camera.setZoomLevel(targetZoom) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

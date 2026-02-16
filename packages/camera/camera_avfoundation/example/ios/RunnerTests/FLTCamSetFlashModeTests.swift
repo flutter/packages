@@ -41,12 +41,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     camera.setFlashMode(.torch) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

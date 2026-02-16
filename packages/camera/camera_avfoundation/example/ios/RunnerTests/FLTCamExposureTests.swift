@@ -82,12 +82,7 @@ final class FLTCamExposureTests: XCTestCase {
     let expectation = expectation(description: "Completion called")
     camera.setExposurePoint(PlatformPoint(x: 1, y: 1)) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

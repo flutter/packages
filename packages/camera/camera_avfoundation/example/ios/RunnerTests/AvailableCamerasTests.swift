@@ -64,12 +64,7 @@ final class AvailableCamerasTest: XCTestCase {
 
     var resultValue: [PlatformCameraDescription]?
     cameraPlugin.getAvailableCameras { result in
-      switch result {
-      case .success(let result):
-        resultValue = result
-      case .failure(_):
-        XCTFail("Unexpected failure")
-      }
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -106,12 +101,7 @@ final class AvailableCamerasTest: XCTestCase {
 
     var resultValue: [PlatformCameraDescription]?
     cameraPlugin.getAvailableCameras { result in
-      switch result {
-      case .success(let result):
-        resultValue = result
-      case .failure(_):
-        XCTFail("Unexpected failure")
-      }
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -143,12 +133,7 @@ final class AvailableCamerasTest: XCTestCase {
 
     var resultValue: [PlatformCameraDescription]?
     cameraPlugin.getAvailableCameras { result in
-      switch result {
-      case .success(let result):
-        resultValue = result
-      case .failure(_):
-        XCTFail("Unexpected failure")
-      }
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)

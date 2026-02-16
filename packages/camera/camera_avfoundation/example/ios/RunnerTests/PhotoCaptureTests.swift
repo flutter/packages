@@ -120,11 +120,8 @@ final class PhotoCaptureTests: XCTestCase {
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
-        switch result {
-        case .success(let filePath):
+        if let filePath = self.assertSuccess(result) {
           XCTAssertEqual((filePath as NSString).pathExtension, "heif")
-        case .failure(_):
-          XCTFail("Undexpected failure")
         }
         expectation.fulfill()
       }
@@ -159,11 +156,8 @@ final class PhotoCaptureTests: XCTestCase {
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.captureToFile { result in
-        switch result {
-        case .success(let filePath):
+        if let filePath = self.assertSuccess(result) {
           XCTAssertEqual((filePath as NSString).pathExtension, "jpg")
-        case .failure(_):
-          XCTFail("Undexpected failure")
         }
         expectation.fulfill()
       }
@@ -213,11 +207,8 @@ final class PhotoCaptureTests: XCTestCase {
     captureSessionQueue.async {
       cam.setFlashMode(.torch) { _ in }
       cam.captureToFile { result in
-        switch result {
-        case .success(let result):
+        if let result = self.assertSuccess(result) {
           XCTAssertEqual(result, filePath)
-        case .failure(_):
-          XCTFail("Unexpected failure")
         }
         pathExpectation.fulfill()
       }
@@ -248,15 +239,12 @@ final class PhotoCaptureTests: XCTestCase {
 
     captureSessionQueue.async {
       cam.captureToFile { result in
-        switch result {
-        case .success(let filePath):
+        if let filePath = self.assertSuccess(result) {
           XCTAssertTrue(
             filePath.contains(expectedPath)
           )
-          expectation.fulfill()
-        case .failure:
-          XCTFail("Unexpected failure")
         }
+        expectation.fulfill()
       }
     }
 

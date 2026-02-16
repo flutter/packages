@@ -46,12 +46,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
 
     cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -71,12 +66,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
 
     cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -90,12 +80,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
 
     cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
     }
 
     waitForQueueRoundTrip(with: captureSessionQueue)
@@ -114,12 +99,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
 
     cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
       result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected failure")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

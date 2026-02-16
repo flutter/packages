@@ -45,12 +45,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.lockCaptureOrientation(orientation: targetOrientation) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -69,12 +64,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.pausePreview { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -93,12 +83,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.pauseVideoRecording { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -117,12 +102,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.prepareForVideoRecording { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -141,12 +121,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.receivedImageStreamData { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -165,12 +140,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.resumeVideoRecording { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -189,12 +159,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.resumePreview { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -216,12 +181,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setExposureMode(mode: targetExposureMode) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -243,12 +203,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setExposureOffset(offset: targetExposureOffset) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -270,12 +225,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setFocusMode(mode: targetFocusMode) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -297,12 +247,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setImageFileFormat(format: targetFileFormat) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -322,12 +267,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.startImageStream { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -346,12 +286,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.stopImageStream { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -372,12 +307,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.startVideoRecording(enableStream: true) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -398,12 +328,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.startVideoRecording(enableStream: false) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -449,12 +374,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.unlockCaptureOrientation { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -477,12 +397,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setExposurePoint(point: targetExposurePoint) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -505,12 +420,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setFlashMode(mode: targetFlashMode) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -533,12 +443,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setFocusPoint(point: targetFocusPoint) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -561,12 +466,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.setZoomLevel(zoom: targetZoomLevel) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -616,12 +516,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     }
 
     cameraPlugin.updateDescriptionWhileRecording(cameraName: targetCameraName) { result in
-      switch result {
-      case .success:
-        break
-      case .failure:
-        XCTFail("Unexpected error")
-      }
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

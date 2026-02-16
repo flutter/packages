@@ -37,19 +37,14 @@ final class CameraMethodChannelTests: XCTestCase {
     camera.createCameraOnSessionQueue(
       withName: "acamera",
       settings: PlatformMediaSettings(
-        resolutionPreset: PlatformResolutionPreset.medium,
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
     ) { result in
-      switch result {
-      case .success(let result):
-        resultValue = result
-      case .failure(_):
-        XCTFail("Unexpected failure")
-      }
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
 
