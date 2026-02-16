@@ -44,6 +44,9 @@ final class MockCamera: NSObject, Camera {
   var setDescriptionWhileRecordingStub: ((String, ((FlutterError?) -> Void)?) -> Void)?
   var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
+  var setVideoStabilizationModeStub:
+    ((FCPPlatformVideoStabilizationMode, (FlutterError?) -> Void) -> Void)?
+  var getIsVideoStabilizationModeSupportedStub: ((FCPPlatformVideoStabilizationMode) -> Bool)?
 
   var dartAPI: FCPCameraEventApi? {
     get {
@@ -186,6 +189,16 @@ final class MockCamera: NSObject, Camera {
 
   func resumePreview() {
     resumePreviewStub?()
+  }
+
+  func setVideoStabilizationMode(
+    _ mode: FCPPlatformVideoStabilizationMode, withCompletion: @escaping (FlutterError?) -> Void
+  ) {
+    setVideoStabilizationModeStub?(mode, withCompletion)
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool {
+    return getIsVideoStabilizationModeSupportedStub?(mode) ?? false
   }
 
   func setDescriptionWhileRecording(
