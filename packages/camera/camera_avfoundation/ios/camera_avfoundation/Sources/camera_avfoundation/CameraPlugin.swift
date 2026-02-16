@@ -508,6 +508,28 @@ extension CameraPlugin: CameraApi {
     }
   }
 
+  func setVideoStabilizationMode(
+    mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.camera?.setVideoStabilizationMode(mode, withCompletion: completion)
+    }
+  }
+
+  func isVideoStabilizationModeSupported(
+    mode: PlatformVideoStabilizationMode,
+    completion: @escaping (Result<Bool, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      if let camera = self?.camera {
+        let isSupported = camera.isVideoStabilizationModeSupported(mode)
+        completion(.success(isSupported))
+      } else {
+        completion(.success(false))
+      }
+    }
+  }
+
   func pausePreview(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.pausePreview()

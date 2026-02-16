@@ -81,3 +81,27 @@ func getPixelFormat(for imageFormat: PlatformImageFormatGroup) -> OSType {
     return kCVPixelFormatType_32BGRA
   }
 }
+
+/// Gets video stabilization mode from its Pigeon representation.
+/// videoStabilizationMode - the Pigeon video stabilization mode.
+func getAvCaptureVideoStabilizationMode(
+  _ videoStabilizationMode: PlatformVideoStabilizationMode
+) -> AVCaptureVideoStabilizationMode {
+
+  switch videoStabilizationMode {
+  case .off:
+    return .off
+  case .standard:
+    return .standard
+  case .cinematic:
+    return .cinematic
+  case .cinematicExtended:
+    if #available(iOS 13.0, *) {
+      return .cinematicExtended
+    } else {
+      return .cinematic
+    }
+  @unknown default:
+    return .off
+  }
+}

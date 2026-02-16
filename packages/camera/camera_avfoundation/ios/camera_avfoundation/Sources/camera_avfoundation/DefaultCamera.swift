@@ -998,6 +998,36 @@ final class DefaultCamera: NSObject, Camera {
     completion(.success(()))
   }
 
+  func setVideoStabilizationMode(
+    _ mode: PlatformVideoStabilizationMode,
+    withCompletion completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+
+    guard captureDevice.isVideoStabilizationModeSupported(stabilizationMode) else {
+      completion(
+        .failure(
+          PigeonError(
+            code: "VIDEO_STABILIZATION_ERROR",
+            message: "Unavailable video stabilization mode.",
+            details: [
+              "requested_mode": stabilizationMode.rawValue
+            ]
+          ))
+      )
+      return
+    }
+    if let connection = captureVideoOutput.connection(with: .video) {
+      connection.preferredVideoStabilizationMode = stabilizationMode
+    }
+    completion(.success(()))
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: PlatformVideoStabilizationMode) -> Bool {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+    return captureDevice.isVideoStabilizationModeSupported(stabilizationMode)
+  }
+
   func setFlashMode(
     _ mode: PlatformFlashMode,
     withCompletion completion: @escaping (Result<Void, any Error>) -> Void

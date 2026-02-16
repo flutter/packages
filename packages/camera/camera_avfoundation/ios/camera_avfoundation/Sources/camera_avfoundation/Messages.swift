@@ -199,6 +199,13 @@ enum PlatformResolutionPreset: Int {
   case max = 5
 }
 
+enum PlatformVideoStabilizationMode: Int {
+  case off = 0
+  case standard = 1
+  case cinematic = 2
+  case cinematicExtended = 3
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct PlatformCameraDescription: Hashable {
   /// The name of the camera device.
@@ -438,14 +445,20 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 138:
-      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return PlatformVideoStabilizationMode(rawValue: enumResultAsInt)
+      }
+      return nil
     case 139:
-      return PlatformCameraState.fromList(self.readValue() as! [Any?])
+      return PlatformCameraDescription.fromList(self.readValue() as! [Any?])
     case 140:
-      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
+      return PlatformCameraState.fromList(self.readValue() as! [Any?])
     case 141:
-      return PlatformPoint.fromList(self.readValue() as! [Any?])
+      return PlatformMediaSettings.fromList(self.readValue() as! [Any?])
     case 142:
+      return PlatformPoint.fromList(self.readValue() as! [Any?])
+    case 143:
       return PlatformSize.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -482,20 +495,23 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PlatformResolutionPreset {
       super.writeByte(137)
       super.writeValue(value.rawValue)
-    } else if let value = value as? PlatformCameraDescription {
+    } else if let value = value as? PlatformVideoStabilizationMode {
       super.writeByte(138)
-      super.writeValue(value.toList())
-    } else if let value = value as? PlatformCameraState {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? PlatformCameraDescription {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformMediaSettings {
+    } else if let value = value as? PlatformCameraState {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformPoint {
+    } else if let value = value as? PlatformMediaSettings {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? PlatformSize {
+    } else if let value = value as? PlatformPoint {
       super.writeByte(142)
+      super.writeValue(value.toList())
+    } else if let value = value as? PlatformSize {
+      super.writeByte(143)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -589,6 +605,12 @@ protocol CameraApi {
   func getMaxZoomLevel(completion: @escaping (Result<Double, Error>) -> Void)
   /// Sets the zoom factor.
   func setZoomLevel(zoom: Double, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Sets the video stabilization mode.
+  func setVideoStabilizationMode(
+    mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Gets if the given video stabilization mode is supported.
+  func isVideoStabilizationModeSupported(
+    mode: PlatformVideoStabilizationMode, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Pauses streaming of preview frames.
   func pausePreview(completion: @escaping (Result<Void, Error>) -> Void)
   /// Resumes a previously paused preview stream.
@@ -1119,6 +1141,48 @@ class CameraApiSetup {
       }
     } else {
       setZoomLevelChannel.setMessageHandler(nil)
+    }
+    /// Sets the video stabilization mode.
+    let setVideoStabilizationModeChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.setVideoStabilizationMode\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setVideoStabilizationModeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let modeArg = args[0] as! PlatformVideoStabilizationMode
+        api.setVideoStabilizationMode(mode: modeArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setVideoStabilizationModeChannel.setMessageHandler(nil)
+    }
+    /// Gets if the given video stabilization mode is supported.
+    let isVideoStabilizationModeSupportedChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.isVideoStabilizationModeSupported\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isVideoStabilizationModeSupportedChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let modeArg = args[0] as! PlatformVideoStabilizationMode
+        api.isVideoStabilizationModeSupported(mode: modeArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isVideoStabilizationModeSupportedChannel.setMessageHandler(nil)
     }
     /// Pauses streaming of preview frames.
     let pausePreviewChannel = FlutterBasicMessageChannel(
