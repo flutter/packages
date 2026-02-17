@@ -48,4 +48,12 @@ struct CrossFileDarwinApiTests {
 
     #expect(bookmarkedURLString == testFileURL.absoluteString)
   }
+
+  @Test func isReadableFile() throws {
+    let testFileURL = try createTempTestFile()
+
+    let api = CrossFileDarwinApiImpl()
+
+    #expect(try api.isReadableFile(url: testFileURL.absoluteString))
+  }
 }

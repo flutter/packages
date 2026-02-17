@@ -85,7 +85,9 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
       _file.readAsString(encoding: encoding);
 
   @override
-  Future<bool> canRead() => exists();
+  Future<bool> canRead() {
+    return params.api.isReadableFile(params.uri);
+  }
 
   @override
   Future<bool> exists() async => _file.existsSync();

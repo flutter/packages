@@ -28,49 +28,65 @@ void main() {
   });
 
   test('lastModified', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.lastModified(), testFile.lastModifiedSync());
   });
 
   test('length', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.length(), await testFile.length());
   });
 
   test('openRead', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.openRead().toList(), await testFile.openRead().toList());
   });
 
   test('readAsBytes', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.readAsBytes(), await testFile.readAsBytes());
   });
 
   test('readAsString', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.readAsString(), await testFile.readAsString());
   });
 
   test('canRead', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.canRead(), testFile.existsSync());
   });
 
   test('exists', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.exists(), testFile.existsSync());
   });
 
   test('name', () async {
-    final file = PlatformXFile(PlatformXFileCreationParams(uri: testFile.path));
+    final file = PlatformScopedStorageXFile(
+      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    );
 
     expect(await file.name(), 'test_file.txt');
   });

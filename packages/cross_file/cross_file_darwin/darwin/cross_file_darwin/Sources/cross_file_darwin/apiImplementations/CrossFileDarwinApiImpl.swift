@@ -39,4 +39,8 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
   func stopAccessingSecurityScopedResource(url: String) throws {
     URL(string: url)!.stopAccessingSecurityScopedResource()
   }
+
+  func isReadableFile(url: String) throws -> Bool {
+    return FileManager.default.isReadableFile(atPath: URL(string: url)!.path)
+  }
 }

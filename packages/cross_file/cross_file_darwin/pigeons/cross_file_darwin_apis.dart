@@ -28,4 +28,7 @@ abstract class CrossFileDarwinApi {
   /// In an app that adopts App Sandbox, revokes access to the resource pointed
   /// to by a security-scoped URL.
   void stopAccessingSecurityScopedResource(String url);
+
+  /// Whether the native FileManager is able to read a specified file.
+  bool isReadableFile(String url);
 }
