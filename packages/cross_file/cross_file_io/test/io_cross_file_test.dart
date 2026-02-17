@@ -62,14 +62,6 @@ void main() {
       expect(await file.readAsString(), await testFile.readAsString());
     });
 
-    test('canRead', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.canRead(), testFile.existsSync());
-    });
-
     test('exists', () async {
       final file = PlatformXFile(
         PlatformXFileCreationParams(uri: testFile.path),

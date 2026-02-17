@@ -77,9 +77,6 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
       file.readAsString(encoding: encoding);
 
   @override
-  Future<bool> canRead() => exists();
-
-  @override
   Future<bool> exists() async => file.existsSync();
 
   @override
