@@ -126,4 +126,27 @@ void main() {
     await null;
     expect(cache.count, 2);
   });
+
+  test('Future failing then retrying', () async {
+    final cache = Cache();
+    cache.maximumSize = 2;
+    final completerA = Completer<ByteData>();
+    final completerB = Completer<ByteData>();
+
+    expect(cache.count, 0);
+
+    unawaited(cache.putIfAbsent(1, () => completerA.future));
+    completerA.completeError(Exception('network error'));
+
+    expect(cache.count, 0);
+    await null;
+    expect(cache.count, 0);
+
+    unawaited(cache.putIfAbsent(1, () => completerB.future));
+    completerB.complete(ByteData(1));
+    expect(cache.count, 0);
+
+    await null;
+    expect(cache.count, 1);
+  });
 }

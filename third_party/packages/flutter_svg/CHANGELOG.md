@@ -1,3 +1,7 @@
+## 2.2.4
+
+* Remove entry from svg.Cache the _pending collection when future throws an error.
+
 ## 2.2.3
 
 * Replaces use of deprecated Color.value.
