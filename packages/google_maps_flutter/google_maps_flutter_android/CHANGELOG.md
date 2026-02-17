@@ -1,3 +1,7 @@
+## 2.18.13
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
 ## 2.18.12
 
 * Bumps com.google.maps.android:android-maps-utils from 3.20.1 to 4.0.0.
@@ -23,6 +27,7 @@
 * Replaces internal use of deprecated methods.
 
 ## 2.18.6
+
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
 
 ## 2.18.5
@@ -48,7 +53,7 @@
 
 ## 2.18.0
 
-* Adds support for warming up the Google Maps SDK 
+* Adds support for warming up the Google Maps SDK
   via `GoogleMapsFlutterAndroid.warmup()`.
 
 ## 2.17.0

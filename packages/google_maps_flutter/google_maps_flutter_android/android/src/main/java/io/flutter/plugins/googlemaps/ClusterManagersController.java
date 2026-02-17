@@ -130,12 +130,30 @@ class ClusterManagersController
     }
   }
 
+  /** Adds multiple items to the ClusterManager with the given ID. */
+  public void addItems(String clusterManagerId, List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.addItems(items);
+      clusterManager.cluster();
+    }
+  }
+
   /** Removes item from the ClusterManager it belongs to. */
   public void removeItem(MarkerBuilder item) {
     ClusterManager<MarkerBuilder> clusterManager =
         clusterManagerIdToManager.get(item.clusterManagerId());
     if (clusterManager != null) {
       clusterManager.removeItem(item);
+      clusterManager.cluster();
+    }
+  }
+
+  /** Removes multiple items from the ClusterManager with the given ID. */
+  public void removeItems(String clusterManagerId, List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.removeItems(items);
       clusterManager.cluster();
     }
   }
