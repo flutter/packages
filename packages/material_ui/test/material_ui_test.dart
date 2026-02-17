@@ -8,6 +8,6 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('Material library is exported', (WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp());
+    await tester.pumpWidget(const MaterialApp(home: SizedBox.shrink()));
   });
 }
