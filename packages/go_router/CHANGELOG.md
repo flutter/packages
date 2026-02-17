@@ -1,7 +1,6 @@
-## NEXT
+## 17.1.0
 
-- Adds route-level `onEnter` support to `GoRoute` for implementing navigation guards at individual route level.
-- Adds `onEnter` method to `GoRouteData` base class for use with type-safe routing.
+- Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.
 
 ## 17.0.1
 
