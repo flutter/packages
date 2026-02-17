@@ -9,6 +9,7 @@ import dev.flutter.plugins.integration_test.FlutterTestRunner
 import io.flutter.plugins.DartIntegrationTest
 import org.junit.Rule
 import org.junit.runner.RunWith
+
 @DartIntegrationTest
 @RunWith(FlutterTestRunner::class)
 class MainActivityTest {
