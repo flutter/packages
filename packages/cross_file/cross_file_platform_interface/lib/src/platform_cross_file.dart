@@ -105,9 +105,6 @@ abstract base class PlatformXFile extends PlatformXFileEntity {
   /// Returns null if file doesn't exist or information is not available.
   Future<int?> length();
 
-  /// Whether the resource represented by this reference can be read.
-  Future<bool> canRead();
-
   /// Creates a new independent Stream for the contents of this resource.
   ///
   /// If start is present, the file will be read from byte-offset start.

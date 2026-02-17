@@ -21,7 +21,9 @@ abstract base class CrossFilePlatform {
   static CrossFilePlatform? instance;
 
   /// Creates a new [PlatformXFile].
-  PlatformXFile createPlatformXFile(PlatformXFileCreationParams params);
+  PlatformXFile createPlatformXFile(PlatformXFileCreationParams params) {
+    return _DefaultXFile(params);
+  }
 
   /// Creates a new [PlatformXDirectory].
   PlatformXDirectory createPlatformXDirectory(
@@ -42,6 +44,39 @@ abstract base class CrossFilePlatform {
     PlatformScopedStorageXDirectoryCreationParams params,
   ) {
     return _DefaultScopedStorageXDirectory(params);
+  }
+}
+
+/// Implementation of [PlatformXFile} that represents a resource that does not
+/// exist.
+final class _DefaultXFile extends PlatformXFile {
+  _DefaultXFile(super.params) : super.implementation();
+
+  @override
+  Future<bool> exists() async => false;
+
+  @override
+  Future<DateTime?> lastModified() async => null;
+
+  @override
+  Future<int?> length() async => null;
+
+  @override
+  Future<String?> name() async => null;
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    throw UnsupportedError('This instance does not represent any resource.');
   }
 }
 

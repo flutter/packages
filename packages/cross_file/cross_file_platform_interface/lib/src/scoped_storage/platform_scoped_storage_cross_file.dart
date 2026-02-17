@@ -97,4 +97,7 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   @override
   PlatformScopedStorageXFileCreationParams get params =>
       super.params as PlatformScopedStorageXFileCreationParams;
+
+  /// Whether the resource represented by this reference can be read.
+  Future<bool> canRead();
 }
