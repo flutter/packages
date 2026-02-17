@@ -2,17 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cross_file_android_example/main.dart' as app;
-import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-
-/// Entry point for integration tests that require espresso.
-@pragma('vm:entry-point')
-void integrationTestMain() {
-  enableFlutterDriverExtension();
-  app.main();
-}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

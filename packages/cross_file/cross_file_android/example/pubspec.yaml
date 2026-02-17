@@ -14,10 +14,7 @@ dependencies:
       path: packages/file_selector/file_selector
   flutter:
     sdk: flutter
-  flutter_driver:
-    sdk: flutter
   mime: ^2.0.0
-  video_player: ^2.8.6
 
 dev_dependencies:
   espresso: ^0.4.0
