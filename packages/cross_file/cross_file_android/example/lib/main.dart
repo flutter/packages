@@ -4,15 +4,7 @@
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_driver/driver_extension.dart';
 import 'package:mime/mime.dart' as mime;
-
-/// Entry point for integration tests that require espresso.
-@pragma('vm:entry-point')
-void integrationTestMain() {
-  enableFlutterDriverExtension();
-  main();
-}
 
 void main() {
   runApp(const MaterialApp(home: FileOpenScreen()));
