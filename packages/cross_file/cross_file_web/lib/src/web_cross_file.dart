@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:js_interop';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -123,8 +124,8 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   @override
   Future<DateTime?> lastModified() async {
     final Blob blob = await getBlob();
-    if (blob is File) {
-      return DateTime.fromMillisecondsSinceEpoch(blob.lastModified);
+    if (blob.isA<File>()) {
+      return DateTime.fromMillisecondsSinceEpoch((blob as File).lastModified);
     }
 
     return null;
@@ -159,8 +160,8 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
     String? name;
     if (suggestedName != null) {
       name = suggestedName;
-    } else if (blob is File) {
-      name = blob.name;
+    } else if (blob.isA<File>()) {
+      name = (blob as File).name;
     }
 
     downloadObjectUrl(params.uri, name, testOverrides: params.testOverrides);
@@ -169,7 +170,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   @override
   Future<String?> name() async {
     final Blob blob = await getBlob();
-    return blob is File ? blob.name : null;
+    return blob.isA<File>() ? (blob as File).name : null;
   }
 }
 
