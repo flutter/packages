@@ -5,6 +5,7 @@
 import 'dart:js_interop';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -149,5 +150,16 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
           mapId,
         )?.getClusters(clusterManagerId) ??
         <Cluster>[];
+  }
+
+  /// Returns the stream of clustering events for a given [ClusterManager].
+  @visibleForTesting
+  Stream<ClusteringEvent>? getClusteringEvents({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) {
+    return _clusterManagersControllerProvider(
+      mapId,
+    )?.getClustererEvents(clusterManagerId);
   }
 }

@@ -1,3 +1,8 @@
+## 2.17.3
+
+* Adds a README section about Swift Package Manager and the new
+  `google_maps_flutter_ios_sdk*` packages.
+
 ## 2.17.2
 
 * Fixes a regression in custom marker icon handling.
