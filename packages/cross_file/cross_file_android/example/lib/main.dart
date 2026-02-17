@@ -42,7 +42,9 @@ class FileOpenScreen extends StatelessWidget {
         case _:
           debugPrint('File Uri: ${file.uri}');
           debugPrint('Filename: $filename');
-          debugPrint('Can Read File: ${await file.canRead()}');
+          if (file is ScopedStorageXFile) {
+            debugPrint('Can Read File: ${await file.canRead()}');
+          }
           debugPrint('File Length: ${await file.length()}');
           debugPrint('File Last Modified: ${await file.lastModified()}');
           return;
