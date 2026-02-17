@@ -96,9 +96,6 @@ class XFile extends XFileEntity {
   /// Returns null if the information is not available.
   Future<int?> length() => platform.length();
 
-  /// Whether the resource represented by this reference can be read.
-  Future<bool> canRead() => platform.canRead();
-
   /// Creates a new independent Stream for the contents of this resource.
   ///
   /// If start is present, the file will be read from byte-offset start.

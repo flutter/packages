@@ -79,4 +79,7 @@ class ScopedStorageXFile extends XFile {
   @override
   PlatformScopedStorageXFile get platform =>
       super.platform as PlatformScopedStorageXFile;
+
+  /// Whether the resource represented by this reference can be read.
+  Future<bool> canRead() => platform.canRead();
 }

@@ -20,7 +20,7 @@ Future<XFile> instantiateXFile() async {
   debugPrint('- URI: ${file.uri}');
   debugPrint('- Name: ${await file.name()}');
 
-  if (await file.canRead()) {
+  if (await file.exists()) {
     final String fileContent = await file.readAsString();
     debugPrint('Content of the file: $fileContent');
   }
@@ -35,7 +35,7 @@ Future<XFile> accessPlatformFeatures() async {
   late final XFile file;
 
   if (CrossFilePlatform.instance is CrossFileWeb) {
-    final params = WebXFileCreationParams.fromObjectUrl(
+    final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
       objectUrl: 'blob:https://some/url:for/file',
     );
     file = XFile.fromCreationParams(params);

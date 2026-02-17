@@ -78,18 +78,6 @@ void main() {
       expect(await file.readAsString(), message);
     });
 
-    test('canRead', () async {
-      const canRead = false;
-      CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
-            TestXFile(params, onCanRead: () async => canRead),
-      );
-
-      final file = XFile(uri: 'uri');
-
-      expect(await file.canRead(), canRead);
-    });
-
     test('exists', () async {
       const exists = true;
       CrossFilePlatform.instance = TestCrossFilePlatform(
