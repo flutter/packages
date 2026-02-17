@@ -28,7 +28,7 @@ debugPrint('File information:');
 debugPrint('- URI: ${file.uri}');
 debugPrint('- Name: ${await file.name()}');
 
-if (await file.canRead()) {
+if (await file.exists()) {
   final String fileContent = await file.readAsString();
   debugPrint('Content of the file: $fileContent');
 }
@@ -76,7 +76,7 @@ Below is an example of using additional iOS/macOS and Web features for a `XFile`
 late final XFile file;
 
 if (CrossFilePlatform.instance is CrossFileWeb) {
-  final params = WebXFileCreationParams.fromObjectUrl(
+  final params = WebScopedStorageXFileCreationParams.fromObjectUrl(
     objectUrl: 'blob:https://some/url:for/file',
   );
   file = XFile.fromCreationParams(params);
