@@ -1,8 +1,8 @@
 name: material_ui
-description: The Flutter Material Design Library
+description: The official Flutter Material UI Library, implementing Google's Material Design design system.
 version: 0.0.1
 repository: https://github.com/flutter/packages/tree/main/packages/material_ui
-issue_tracker: https://github.com/flutter/flutter/issues?q=state%3Aopen%20label%3A%22f%3A%20material%20design%22
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aopen%20label%3A%22f%3A%20material%20design%22
 
 environment:
   sdk: ^3.9.0

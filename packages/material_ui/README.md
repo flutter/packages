@@ -6,7 +6,7 @@
 
 **Note:** This package will contain the material library previously part of the Flutter framework itself (`package:flutter/material.dart`). It is being decoupled to allow for faster iteration and a more modular ecosystem.
 
-## 📦 What's (going to be) Inside?
+## What's (going to be) Inside?
 
 This package will provide the Material widgets you know and love, including but not limited to:
 
@@ -17,7 +17,7 @@ This package will provide the Material widgets you know and love, including but 
 
 Once landed and published, look forward to updates from [Material 3 Expressive](https://github.com/flutter/flutter/issues/168813)\! 🚀
 
-## 📢 Feedback & Roadmap
+## Feedback & Roadmap
 
 We are currently migrating the Material library out of the core framework.
 
