@@ -1,39 +1,24 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# cupertino\_ui
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+**Coming soon \- the official Cupertino widget library for Flutter as its own standalone package\!**
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+`cupertino_ui` will contain the standard collection of high-fidelity visual components that implement the latest iOS design language (buttons, navigation bars, pickers, etc.).
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+**Note:** This package will contain the cupertino library previously part of the Flutter framework itself (`package:flutter/cupertino.dart`). It is being decoupled to allow for faster iteration and a more modular ecosystem.
 
-## Features
+## 📦 What's (going to be) Inside?
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+This package will provide the Cupertino widgets you know and love, including but not limited to:
 
-## Getting started
+* **Structure:** `CupertinoPageScaffold`, `CupertinoNavigationBar`  
+* **Inputs:** `CupertinoButton`, `CupertinoTextField`, `CupertinoSwitch`  
+* **Dialogs:** `CupertinoAlertDialog`, `CupertinoActionSheet`
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Once landed and published, look forward to updates from [iOS26](https://github.com/flutter/flutter/issues/170310)\! 🚀
 
-## Usage
+## 📢 Feedback & Roadmap
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+We are currently migrating the Cupertino library out of the core framework.
 
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+* **Follow the progress:** [Decoupling Github Project](https://github.com/orgs/flutter/projects/220)  
+* **Report bugs:** [Cupertino issues in Flutter](https://github.com/flutter/flutter/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22f%3A%20cupertino%22)
