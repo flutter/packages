@@ -21,7 +21,7 @@ void main() {
 
     test('lastModified', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.lastModified(), testFile.lastModifiedSync());
@@ -29,7 +29,7 @@ void main() {
 
     test('length', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.length(), await testFile.length());
@@ -37,7 +37,7 @@ void main() {
 
     test('openRead', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(
@@ -48,7 +48,7 @@ void main() {
 
     test('readAsBytes', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.readAsBytes(), await testFile.readAsBytes());
@@ -56,7 +56,7 @@ void main() {
 
     test('readAsString', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.readAsString(), await testFile.readAsString());
@@ -64,7 +64,7 @@ void main() {
 
     test('exists', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.exists(), testFile.existsSync());
@@ -72,7 +72,7 @@ void main() {
 
     test('name', () async {
       final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+        PlatformXFileCreationParams(uri: testFile.uri.toString()),
       );
 
       expect(await file.name(), 'test_file.txt');

@@ -28,8 +28,10 @@ void main() {
   });
 
   test('exists', () async {
-    final directory = PlatformXDirectory(
-      PlatformXDirectoryCreationParams(uri: testDirectory.path),
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(
+        uri: testDirectory.uri.toString(),
+      ),
     );
 
     expect(await directory.exists(), testDirectory.existsSync());
@@ -37,7 +39,9 @@ void main() {
 
   test('list', () async {
     final directory = PlatformScopedStorageXDirectory(
-      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.path),
+      PlatformScopedStorageXDirectoryCreationParams(
+        uri: testDirectory.uri.toString(),
+      ),
     );
 
     expect(
@@ -52,7 +56,7 @@ void main() {
 
   test('startAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri/';
+    final uri = testDirectory.uri.toString();
     const result = true;
     when(
       mockApi.startAccessingSecurityScopedResource(uri),
@@ -67,7 +71,7 @@ void main() {
 
   test('stopAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri/';
+    final uri = testDirectory.uri.toString();
 
     final file = DarwinScopedStorageXDirectory(
       DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
@@ -79,8 +83,10 @@ void main() {
 
   test('tryCreateBookmarkedUrl', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri/';
-    const bookmarkedUri = 'newUri/';
+    final uri = testDirectory.uri.toString();
+    final bookmarkedUri = Directory(
+      path.join(Directory.current.path, 'someDirectory'),
+    ).uri.toString();
     when(
       mockApi.tryCreateBookmarkedUrl(uri),
     ).thenAnswer((_) async => bookmarkedUri);

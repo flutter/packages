@@ -29,7 +29,7 @@ void main() {
 
   test('lastModified', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.lastModified(), testFile.lastModifiedSync());
@@ -37,7 +37,7 @@ void main() {
 
   test('length', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.length(), await testFile.length());
@@ -45,7 +45,7 @@ void main() {
 
   test('openRead', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.openRead().toList(), await testFile.openRead().toList());
@@ -53,7 +53,7 @@ void main() {
 
   test('readAsBytes', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.readAsBytes(), await testFile.readAsBytes());
@@ -61,7 +61,7 @@ void main() {
 
   test('readAsString', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.readAsString(), await testFile.readAsString());
@@ -82,7 +82,7 @@ void main() {
 
   test('exists', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.exists(), testFile.existsSync());
@@ -90,7 +90,7 @@ void main() {
 
   test('name', () async {
     final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+      PlatformScopedStorageXFileCreationParams(uri: testFile.uri.toString()),
     );
 
     expect(await file.name(), 'test_file.txt');
@@ -98,7 +98,7 @@ void main() {
 
   test('startAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    final uri = testFile.uri.toString();
     const result = true;
     when(
       mockApi.startAccessingSecurityScopedResource(uri),
@@ -113,7 +113,7 @@ void main() {
 
   test('stopAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    final uri = testFile.uri.toString();
 
     final file = DarwinScopedStorageXFile(
       DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
@@ -125,8 +125,10 @@ void main() {
 
   test('tryCreateBookmarkedUrl', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
-    const bookmarkedUri = 'newUri';
+    final uri = testFile.uri.toString();
+    final bookmarkedUri = File(
+      path.join(Directory.current.path, 'some', 'file.txt'),
+    ).uri.toString();
     when(
       mockApi.tryCreateBookmarkedUrl(uri),
     ).thenAnswer((_) async => bookmarkedUri);

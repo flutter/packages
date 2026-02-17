@@ -21,7 +21,7 @@ void main() {
 
     test('exists', () async {
       final directory = PlatformXDirectory(
-        PlatformXDirectoryCreationParams(uri: testDirectory.path),
+        PlatformXDirectoryCreationParams(uri: testDirectory.uri.toString()),
       );
 
       expect(await directory.exists(), testDirectory.existsSync());
@@ -29,7 +29,7 @@ void main() {
 
     test('list', () async {
       final directory = PlatformXDirectory(
-        PlatformXDirectoryCreationParams(uri: testDirectory.path),
+        PlatformXDirectoryCreationParams(uri: testDirectory.uri.toString()),
       );
 
       expect(
