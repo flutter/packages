@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 2.14.2
 
 * Updates README with discussion of the new `google_maps_flutter_ios_sdk*` packages.
