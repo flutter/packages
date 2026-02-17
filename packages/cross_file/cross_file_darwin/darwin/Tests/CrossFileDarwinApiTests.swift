@@ -46,6 +46,6 @@ struct CrossFileDarwinApiTests {
     let api = CrossFileDarwinApiImpl()
     let bookmarkedURLString = try! api.tryCreateBookmarkedUrl(url: testFileURL.absoluteString)!
 
-    #expect(URL(fileURLWithPath: bookmarkedURLString) == testFileURL)
+    #expect(bookmarkedURLString == testFileURL.absoluteString)
   }
 }
