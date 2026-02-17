@@ -36,8 +36,8 @@ void main() {
   });
 
   test('list', () async {
-    final directory = PlatformXDirectory(
-      PlatformXDirectoryCreationParams(uri: testDirectory.path),
+    final directory = PlatformScopedStorageXDirectory(
+      PlatformScopedStorageXDirectoryCreationParams(uri: testDirectory.path),
     );
 
     expect(

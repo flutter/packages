@@ -68,4 +68,12 @@ class MockCrossFileDarwinApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  _i4.Future<bool> isReadableFile(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#isReadableFile, [url]),
+            returnValue: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
 }

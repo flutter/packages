@@ -68,11 +68,16 @@ void main() {
   });
 
   test('canRead', () async {
-    final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: testFile.path),
+    final mockApi = MockCrossFileDarwinApi();
+    const uri = 'uri';
+    const result = true;
+    when(mockApi.isReadableFile(uri)).thenAnswer((_) async => result);
+
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
     );
 
-    expect(await file.canRead(), testFile.existsSync());
+    expect(await file.canRead(), result);
   });
 
   test('exists', () async {
