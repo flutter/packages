@@ -1,3 +1,8 @@
+## 0.3.5+3
+
+* Fixes camera initialization failure on Safari by fixing a null check operator error using
+  a nullable getter and null safe practices.
+
 ## 0.3.5+2
 
 * Fixes camera initialization failure on Firefox Android by using `{video: true}` instead

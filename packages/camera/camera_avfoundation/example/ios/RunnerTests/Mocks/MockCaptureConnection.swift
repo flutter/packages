@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
@@ -26,4 +28,5 @@ final class MockCaptureConnection: NSObject, CaptureConnection {
   var inputPorts: [AVCaptureInput.Port] = []
   var isVideoMirroringSupported = false
   var isVideoOrientationSupported = false
+  var preferredVideoStabilizationMode = AVCaptureVideoStabilizationMode.off
 }

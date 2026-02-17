@@ -19,19 +19,13 @@ final class CameraPropertiesTests: XCTestCase {
   func testGetAVCaptureFlashModeForPigeonFlashMode() {
     XCTAssertEqual(
       AVCaptureDevice.FlashMode.off,
-      FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.off))
+      getAVCaptureFlashMode(for: .off))
     XCTAssertEqual(
       AVCaptureDevice.FlashMode.auto,
-      FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.auto))
+      getAVCaptureFlashMode(for: .auto))
     XCTAssertEqual(
       AVCaptureDevice.FlashMode.on,
-      FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.always))
-
-    // TODO(FirentisTFW): Migrate implementation to throw Swift error in this case.
-    let exception = ExceptionCatcher.catchException {
-      _ = FCPGetAVCaptureFlashModeForPigeonFlashMode(.torch)
-    }
-    XCTAssertNotNil(exception)
+      getAVCaptureFlashMode(for: .always))
   }
 
   // MARK: - Video Format Tests
@@ -39,10 +33,10 @@ final class CameraPropertiesTests: XCTestCase {
   func testGetPixelFormatForPigeonFormat() {
     XCTAssertEqual(
       kCVPixelFormatType_32BGRA,
-      FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup.bgra8888))
+      getPixelFormat(for: .bgra8888))
     XCTAssertEqual(
       kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-      FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup.yuv420))
+      getPixelFormat(for: .yuv420))
   }
 
   // MARK: - Device Orientation Tests
@@ -50,37 +44,35 @@ final class CameraPropertiesTests: XCTestCase {
   func testGetUIDeviceOrientationForPigeonDeviceOrientation() {
     XCTAssertEqual(
       UIDeviceOrientation.portraitUpsideDown,
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(FCPPlatformDeviceOrientation.portraitDown)
+      getUIDeviceOrientation(for: .portraitDown)
     )
     XCTAssertEqual(
       UIDeviceOrientation.landscapeLeft,
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
-        FCPPlatformDeviceOrientation.landscapeLeft))
+      getUIDeviceOrientation(for: .landscapeLeft))
     XCTAssertEqual(
       UIDeviceOrientation.landscapeRight,
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
-        FCPPlatformDeviceOrientation.landscapeRight))
+      getUIDeviceOrientation(for: .landscapeRight))
     XCTAssertEqual(
       UIDeviceOrientation.portrait,
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(FCPPlatformDeviceOrientation.portraitUp))
+      getUIDeviceOrientation(for: .portraitUp))
   }
 
   func testGetPigeonDeviceOrientationForUIDeviceOrientation() {
     XCTAssertEqual(
       FCPPlatformDeviceOrientation.portraitDown,
-      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientation.portraitUpsideDown))
+      getPigeonDeviceOrientation(for: .portraitUpsideDown))
     XCTAssertEqual(
       FCPPlatformDeviceOrientation.landscapeLeft,
-      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientation.landscapeLeft))
+      getPigeonDeviceOrientation(for: .landscapeLeft))
     XCTAssertEqual(
       FCPPlatformDeviceOrientation.landscapeRight,
-      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientation.landscapeRight))
+      getPigeonDeviceOrientation(for: .landscapeRight))
     XCTAssertEqual(
       FCPPlatformDeviceOrientation.portraitUp,
-      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientation.portrait))
+      getPigeonDeviceOrientation(for: .portrait))
     // Test default case.
     XCTAssertEqual(
       FCPPlatformDeviceOrientation.portraitUp,
-      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientation.unknown))
+      getPigeonDeviceOrientation(for: .unknown))
   }
 }

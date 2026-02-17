@@ -1,5 +1,6 @@
-## NEXT
+## 0.11.3+1
 
+* Fixes delivering errors from onCameraError.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to

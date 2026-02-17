@@ -36,22 +36,21 @@ enum FormatUtils {
 
   /// Finds format with same resolution as current activeFormat in captureDevice for which
   /// bestFrameRate returned frame rate closest to mediaSettings.framesPerSecond.
-  /// Preferred are formats with the same subtype as current activeFormat. Sets this format
-  /// as activeFormat and also updates mediaSettings.framesPerSecond to value which
-  /// bestFrameRate returned for that format.
-  static func selectBestFormat(
+  /// Preferred are formats with the same subtype as current activeFormat. Returns this format
+  /// and frame rate which bestFrameRate returned for that format.
+  static func findBestFormat(
     for captureDevice: CaptureDevice,
     mediaSettings: FCPPlatformMediaSettings,
     videoDimensionsConverter: VideoDimensionsConverter
-  ) {
+  ) -> (format: CaptureDeviceFormat, frameRate: Double) {
     let targetResolution = videoDimensionsConverter(captureDevice.flutterActiveFormat)
     let targetFrameRate = mediaSettings.framesPerSecond?.doubleValue ?? 0
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
 
     var bestFormat = captureDevice.flutterActiveFormat
-    var resolvedBastFrameRate = bestFrameRate(for: bestFormat, targetFrameRate: targetFrameRate)
-    var minDistance = abs(resolvedBastFrameRate - targetFrameRate)
+    var resolvedBestFrameRate = bestFrameRate(for: bestFormat, targetFrameRate: targetFrameRate)
+    var minDistance = abs(resolvedBestFrameRate - targetFrameRate)
     var isBestSubTypePreferred = true
 
     for format in captureDevice.flutterFormats {
@@ -70,13 +69,12 @@ enum FormatUtils {
         || (distance == minDistance && isSubTypePreferred && !isBestSubTypePreferred)
       {
         bestFormat = format
-        resolvedBastFrameRate = frameRate
+        resolvedBestFrameRate = frameRate
         minDistance = distance
         isBestSubTypePreferred = isSubTypePreferred
       }
     }
 
-    captureDevice.flutterActiveFormat = bestFormat
-    mediaSettings.framesPerSecond = NSNumber(value: resolvedBastFrameRate)
+    return (bestFormat, resolvedBestFrameRate)
   }
 }

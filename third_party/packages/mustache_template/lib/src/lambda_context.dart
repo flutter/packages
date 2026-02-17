@@ -38,9 +38,7 @@ class LambdaContext implements m.LambdaContext {
   String renderString({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
-      // TODO(stuartmorgan): Fix the lack of `throw` here, which looks like a
-      //  bug in the original code.
-      _error(
+      throw _error(
         'LambdaContext.renderString() can only be called on section tags.',
       );
     }
@@ -62,9 +60,9 @@ class LambdaContext implements m.LambdaContext {
   void render({Object? value}) {
     _checkClosed();
     if (_node is! SectionNode) {
-      // TODO(stuartmorgan): Fix the lack of `throw` here, which looks like a
-      //  bug in the original code.
-      _error('LambdaContext.render() can only be called on section tags.');
+      throw _error(
+        'LambdaContext.render() can only be called on section tags.',
+      );
     }
     _renderSubtree(_renderer.sink, value);
   }

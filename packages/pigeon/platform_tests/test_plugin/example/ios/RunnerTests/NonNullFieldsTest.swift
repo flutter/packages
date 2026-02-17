@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Testing
 
 @testable import test_plugin
 
-class NonNullFieldsTests: XCTestCase {
-  func testMake() {
+struct NonNullFieldsTests {
+  @Test
+  func make() {
     let request = NonNullFieldSearchRequest(query: "hello")
-    XCTAssertEqual("hello", request.query)
+    #expect(request.query == "hello")
   }
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
@@ -115,6 +117,12 @@ class MockCaptureDevice: NSObject, CaptureDevice {
   var exposureDuration: CMTime { CMTime(value: 1, timescale: 1) }
 
   var iso: Float { 0 }
+
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+  {
+    return false
+  }
 
   func lockForConfiguration() throws {
     try lockForConfigurationStub?()
