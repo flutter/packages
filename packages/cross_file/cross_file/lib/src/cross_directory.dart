@@ -47,6 +47,9 @@ class XDirectory extends XFileEntity {
   /// platform.
   XDirectory.fromUri(Uri uri) : this(uri: uri.toString());
 
+  /// Constructs a [XDirectory] from a path.
+  XDirectory.fromPath(String path) : this.fromUri(Uri.directory(path));
+
   /// Constructs a [XDirectory] from creation params for a specific platform.
   ///
   /// {@template cross_file.XDirectory.fromCreationParams}

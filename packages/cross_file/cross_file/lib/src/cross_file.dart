@@ -38,11 +38,11 @@ class XFile extends XFileEntity {
   XFile({required String uri})
     : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
 
-  /// Constructs a [XFile].
-  ///
-  /// See [XFile.fromCreationParams] for setting parameters for a specific
-  /// platform.
+  /// Constructs a [XFile] from a [Uri].
   XFile.fromUri(Uri uri) : this(uri: uri.toString());
+
+  /// Constructs a [XFile] from a file path.
+  XFile.fromPath(String path) : this.fromUri(Uri.file(path));
 
   /// Constructs a [XFile] from creation params for a specific platform.
   ///
