@@ -64,7 +64,6 @@ final class TestCrossFilePlatform extends CrossFilePlatform {
 final class TestXFile extends PlatformXFile {
   TestXFile(
     super.params, {
-    this.onCanRead,
     this.onExists,
     this.onLastModified,
     this.onLength,
@@ -74,7 +73,6 @@ final class TestXFile extends PlatformXFile {
     this.onReadAsString,
   }) : super.implementation();
 
-  Future<bool> Function()? onCanRead;
   Future<bool> Function()? onExists;
   Future<DateTime?> Function()? onLastModified;
   Future<int?> Function()? onLength;
@@ -82,11 +80,6 @@ final class TestXFile extends PlatformXFile {
   Stream<Uint8List> Function()? onOpenRead;
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
-
-  @override
-  Future<bool> canRead() async {
-    return await onCanRead?.call() ?? false;
-  }
 
   @override
   Future<bool> exists() async {
