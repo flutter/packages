@@ -1,39 +1,25 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# material\_ui
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
+**Coming soon \- the official Material Design widget library for Flutter as its own standalone package\!**
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
+`material_ui` will contain the standard collection of visual components (Buttons, Cards, AppBars, etc.) that implement Google's latest Material Design specification.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+**Note:** This package will contain the material library previously part of the Flutter framework itself (`package:flutter/material.dart`). It is being decoupled to allow for faster iteration and a more modular ecosystem.
 
-## Features
+## 📦 What's (going to be) Inside?
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+This package will provide the Material widgets you know and love, including but not limited to:
 
-## Getting started
+* **Structure:** `Scaffold`, `AppBar`, `Drawer`  
+* **Inputs:** `FloatingActionButton`, `TextField`, `Slider`  
+* **Display:** `Card`, `Chip`, `ListTile`  
+* **Theming:** `ThemeData`, `ColorScheme`
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Once landed and published, look forward to updates from [Material 3 Expressive](https://github.com/flutter/flutter/issues/168813)\! 🚀
 
-## Usage
+## 📢 Feedback & Roadmap
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+We are currently migrating the Material library out of the core framework.
 
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+* **Follow the progress:** [Decoupling Github Project](https://github.com/orgs/flutter/projects/220)  
+* **Report bugs:** [Material issues in Flutter](https://github.com/flutter/flutter/issues?q=is%3Aopen%20is%3Aissue%20label%3A%22f%3A%20material%20design%22)
