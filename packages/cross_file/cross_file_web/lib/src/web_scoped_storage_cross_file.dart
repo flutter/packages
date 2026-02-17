@@ -11,33 +11,37 @@ import 'package:web/web.dart';
 
 import 'web_helpers.dart';
 
-/// Base implementation of [PlatformXFileCreationParams] for web.
+/// Base implementation of [PlatformScopedStorageXFileCreationParams] for web.
 @immutable
-sealed class WebXFileCreationParams extends PlatformXFileCreationParams {
-  /// Constructs a [WebXFileCreationParams].
-  const WebXFileCreationParams({required super.uri, this.testOverrides});
+sealed class WebScopedStorageXFileCreationParams
+    extends PlatformScopedStorageXFileCreationParams {
+  /// Constructs a [WebScopedStorageXFileCreationParams].
+  const WebScopedStorageXFileCreationParams({
+    required super.uri,
+    this.testOverrides,
+  });
 
-  /// Constructs a [WebXFileCreationParams] with an object url.
-  factory WebXFileCreationParams.fromObjectUrl({
+  /// Constructs a [WebScopedStorageXFileCreationParams] with an object url.
+  factory WebScopedStorageXFileCreationParams.fromObjectUrl({
     required String objectUrl,
     @visibleForTesting XFileTestOverrides? testOverrides,
-  }) => UrlWebXFileCreationParams(
+  }) => UrlWebScopedStorageXFileCreationParams(
     objectUrl: objectUrl,
     testOverrides: testOverrides,
   );
 
-  /// Constructs a [WebXFileCreationParams] with a [Blob].
+  /// Constructs a [WebScopedStorageXFileCreationParams] with a [Blob].
   ///
   /// Creates an Object URL using the provided blob. See [URL.createObjectURL]
   ///
   /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
   /// [blob] should be revoked when this instance is garbage collected. See
   /// [URL.revokeObjectURL].
-  factory WebXFileCreationParams.fromBlob(
+  factory WebScopedStorageXFileCreationParams.fromBlob(
     Blob blob, {
     bool autoRevokeObjectUrl = true,
     @visibleForTesting XFileTestOverrides? testOverrides,
-  }) => BlobWebXFileCreationParams(
+  }) => BlobWebScopedStorageXFileCreationParams(
     blob,
     autoRevokeObjectUrl: autoRevokeObjectUrl,
     testOverrides: testOverrides,
@@ -48,21 +52,23 @@ sealed class WebXFileCreationParams extends PlatformXFileCreationParams {
   final XFileTestOverrides? testOverrides;
 }
 
-/// Implementation of [WebXFileCreationParams] with an object url.
+/// Implementation of [WebScopedStorageXFileCreationParams] with an object url.
 @immutable
-base class UrlWebXFileCreationParams extends WebXFileCreationParams {
-  /// Constructs a [UrlWebXFileCreationParams].
-  const UrlWebXFileCreationParams({
+base class UrlWebScopedStorageXFileCreationParams
+    extends WebScopedStorageXFileCreationParams {
+  /// Constructs a [UrlWebScopedStorageXFileCreationParams].
+  const UrlWebScopedStorageXFileCreationParams({
     required String objectUrl,
     @visibleForTesting super.testOverrides,
   }) : super(uri: objectUrl);
 }
 
-/// Implementation of [WebXFileCreationParams] with a [Blob].
+/// Implementation of [WebScopedStorageXFileCreationParams] with a [Blob].
 @immutable
-base class BlobWebXFileCreationParams extends WebXFileCreationParams {
-  /// Constructs a [BlobWebXFileCreationParams].
-  BlobWebXFileCreationParams(
+base class BlobWebScopedStorageXFileCreationParams
+    extends WebScopedStorageXFileCreationParams {
+  /// Constructs a [BlobWebScopedStorageXFileCreationParams].
+  BlobWebScopedStorageXFileCreationParams(
     this.blob, {
     this.autoRevokeObjectUrl = true,
     @visibleForTesting super.testOverrides,
@@ -76,7 +82,7 @@ base class BlobWebXFileCreationParams extends WebXFileCreationParams {
     URL.revokeObjectURL(objectUrl);
   });
 
-  /// The raw data represented by a [WebXFile].
+  /// The raw data represented by a [WebScopedStorageXFile].
   final Blob blob;
 
   /// Whether the object url obtained from [blob] should be revoked when this
@@ -84,27 +90,28 @@ base class BlobWebXFileCreationParams extends WebXFileCreationParams {
   final bool autoRevokeObjectUrl;
 }
 
-/// Implementation of [PlatformXFile] for web.
-base class WebXFile extends PlatformXFile with WebXFileExtension {
-  /// Constructs a [WebXFile].
-  WebXFile(super.params) : super.implementation();
+/// Implementation of [PlatformScopedStorageXFile] for web.
+base class WebScopedStorageXFile extends PlatformScopedStorageXFile
+    with WebScopedStorageXFileExtension {
+  /// Constructs a [WebScopedStorageXFile].
+  WebScopedStorageXFile(super.params) : super.implementation();
 
   Blob? _cachedBlob;
 
   @override
-  PlatformXFileExtension? get extension => this;
+  PlatformScopedStorageXFileExtension? get extension => this;
 
   @override
-  late final WebXFileCreationParams params =
-      super.params is WebXFileCreationParams
-      ? super.params as WebXFileCreationParams
-      : UrlWebXFileCreationParams(objectUrl: super.params.uri);
+  late final WebScopedStorageXFileCreationParams params =
+      super.params is WebScopedStorageXFileCreationParams
+      ? super.params as WebScopedStorageXFileCreationParams
+      : UrlWebScopedStorageXFileCreationParams(objectUrl: super.params.uri);
 
   @override
   Future<Blob> getBlob() async {
     return _cachedBlob ??= switch (params) {
-      UrlWebXFileCreationParams() => await fetchBlob(params.uri),
-      final BlobWebXFileCreationParams params => params.blob,
+      UrlWebScopedStorageXFileCreationParams() => await fetchBlob(params.uri),
+      final BlobWebScopedStorageXFileCreationParams params => params.blob,
     };
   }
 
@@ -174,9 +181,10 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   }
 }
 
-/// Provides platform specific features for [WebXFile].
-mixin WebXFileExtension implements PlatformXFileExtension {
-  /// The raw data represented by a [WebXFile].
+/// Provides platform specific features for [WebScopedStorageXFile].
+mixin WebScopedStorageXFileExtension
+    implements PlatformScopedStorageXFileExtension {
+  /// The raw data represented by a [WebScopedStorageXFile].
   Future<Blob> getBlob();
 
   /// Attempts to download a [Blob], with [suggestedName] as the filename.

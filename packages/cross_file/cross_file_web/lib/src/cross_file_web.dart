@@ -5,7 +5,7 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-import 'web_cross_file.dart';
+import 'web_scoped_storage_cross_file.dart';
 
 /// Implementation of [CrossFilePlatform] for web.
 base class CrossFileWeb extends CrossFilePlatform {
@@ -15,7 +15,9 @@ base class CrossFileWeb extends CrossFilePlatform {
   }
 
   @override
-  WebXFile createPlatformXFile(PlatformXFileCreationParams params) {
-    return WebXFile(params);
+  WebScopedStorageXFile createPlatformScopedStorageXFile(
+    PlatformScopedStorageXFileCreationParams params,
+  ) {
+    return WebScopedStorageXFile(params);
   }
 }
