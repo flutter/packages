@@ -5,7 +5,7 @@
 @import google_maps_flutter_ios_sdk10;
 @import XCTest;
 
-#import "TestAssetProvider.h"
+#import "TestUtils/TestAssetProvider.h"
 
 @interface ExtractIconFromDataTests : XCTestCase
 - (UIImage *)createOnePixelImage;

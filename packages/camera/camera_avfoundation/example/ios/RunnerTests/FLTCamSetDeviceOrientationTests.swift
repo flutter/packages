@@ -73,7 +73,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
       videoSetVideoOrientationCalled = true
     }
 
-    camera.lockCaptureOrientation(FCPPlatformDeviceOrientation.portraitDown)
+    camera.lockCaptureOrientation(PlatformDeviceOrientation.portraitDown)
 
     camera.deviceOrientation = .landscapeLeft
 
