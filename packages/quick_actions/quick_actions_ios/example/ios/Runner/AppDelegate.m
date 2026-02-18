@@ -9,9 +9,11 @@
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [GeneratedPluginRegistrant registerWithRegistry:self];
-  // Override point for customization after application launch.
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   return NO;
+}
+
+- (void)didInitializeImplicitFlutterEngine:(NSObject<FlutterImplicitEngineBridge> *)engineBridge {
+  [GeneratedPluginRegistrant registerWithRegistry:engineBridge.pluginRegistry];
 }
 @end

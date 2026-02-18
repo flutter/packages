@@ -219,4 +219,72 @@ class QuickActionsPluginTests: XCTestCase {
 
     XCTAssertEqual(invokeMethodCount, 1, "shortcut should only be handled once per launch.")
   }
+
+  // MARK: - Scene lifecycle tests
+
+  func testWindowScenePerformActionForShortcutItem() {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let item = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: nil,
+      icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
+      userInfo: nil)
+
+    let invokeMethodExpectation = expectation(description: "invokeMethod must be called.")
+    flutterApi.launchActionCallback = { aString in
+      XCTAssertEqual(aString, item.type)
+      invokeMethodExpectation.fulfill()
+    }
+
+    let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+    let actionResult = plugin.windowScene(
+      windowScene,
+      performActionFor: item
+    ) { success in
+    }
+
+    XCTAssert(actionResult, "windowScene performActionFor must return true.")
+    waitForExpectations(timeout: 1)
+  }
+
+  func testSceneWillConnectToWithoutShortcut() {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let connectResult = plugin.scene(
+      UIApplication.shared.connectedScenes.first!,
+      willConnectTo: UIApplication.shared.connectedScenes.first!.session,
+      options: nil)
+    XCTAssert(
+      connectResult,
+      "scene willConnectTo must return true if not launched from shortcut.")
+  }
+
+  func testSceneDidBecomeActive_launchWithoutShortcut() {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let connectResult = plugin.scene(
+      UIApplication.shared.connectedScenes.first!,
+      willConnectTo: UIApplication.shared.connectedScenes.first!.session,
+      options: nil)
+    XCTAssert(connectResult)
+
+    plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
+  }
 }

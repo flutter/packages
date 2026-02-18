@@ -3,8 +3,11 @@
 // found in the LICENSE file.
 
 import Flutter
+import UIKit
 
-public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi {
+public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi,
+  FlutterSceneLifeCycleDelegate
+{
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
@@ -12,6 +15,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     let instance = QuickActionsPlugin(flutterApi: flutterApi)
     IOSQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
+    registrar.addSceneDelegate(instance)
   }
 
   private let shortcutItemProvider: ShortcutItemProviding
@@ -71,6 +75,52 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
       launchingShortcutType = nil
     }
   }
+
+  // MARK: - FlutterSceneLifeCycleDelegate
+
+  public func scene(
+    _ scene: UIScene,
+    willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions?
+  ) -> Bool {
+    // Handle the case where app is launched via a shortcut item in scene-based lifecycle.
+    // This is called during a COLD START when the app is launched from a terminated state.
+    if let shortcutItem = connectionOptions?.shortcutItem {
+      NSLog("[QuickActionsPlugin] scene:willConnectTo: COLD START with shortcut: \(shortcutItem.type)")
+      // Keep hold of the shortcut type and handle it in the
+      // `sceneDidBecomeActive:` method once the Dart MethodChannel
+      // is initialized.
+      launchingShortcutType = shortcutItem.type
+      // Return false to indicate we handled the quick action to ensure
+      // the `windowScene:performActionFor:` method is not called.
+      return false
+    }
+    NSLog("[QuickActionsPlugin] scene:willConnectTo: COLD START without shortcut")
+    return true
+  }
+
+  public func sceneDidBecomeActive(_ scene: UIScene) {
+    if let shortcutType = launchingShortcutType {
+      NSLog("[QuickActionsPlugin] sceneDidBecomeActive: handling deferred shortcut from cold start: \(shortcutType)")
+      handleShortcut(shortcutType)
+      launchingShortcutType = nil
+    } else {
+      NSLog("[QuickActionsPlugin] sceneDidBecomeActive: no pending shortcut")
+    }
+  }
+
+  public func windowScene(
+    _ windowScene: UIWindowScene,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void
+  ) -> Bool {
+    // This is called during a WARM START when the app is already running (suspended/background).
+    NSLog("[QuickActionsPlugin] windowScene:performActionFor: WARM START with shortcut: \(shortcutItem.type)")
+    handleShortcut(shortcutItem.type)
+    return true
+  }
+
+  // MARK: - Shortcut handling
 
   func handleShortcut(_ shortcut: String) {
     flutterApi.launchAction(action: shortcut) { _ in
