@@ -1696,9 +1696,38 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
       offstage: !isActive,
       child: TickerMode(
         enabled: isActive,
-        child: isActive ? child : SelectionContainer.disabled(child: child),
+        child: _SelectionGuard(disabled: !isActive, child: child),
       ),
     );
+  }
+}
+
+/// Conditionally wraps [child] in [SelectionContainer.disabled] based on
+/// [disabled], using a [GlobalKey] on a [KeyedSubtree] to preserve descendant
+/// [State] when the tree structure changes.
+///
+/// This is the [StatefulShellRoute] counterpart to [_OffstageSelectionDisabler]
+/// (which uses [ModalRoute.isCurrentOf] instead of an explicit flag).
+class _SelectionGuard extends StatefulWidget {
+  const _SelectionGuard({required this.disabled, required this.child});
+
+  final bool disabled;
+  final Widget child;
+
+  @override
+  State<_SelectionGuard> createState() => _SelectionGuardState();
+}
+
+class _SelectionGuardState extends State<_SelectionGuard> {
+  final GlobalKey _childKey = GlobalKey(debugLabel: '_SelectionGuard');
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget keyedChild = KeyedSubtree(key: _childKey, child: widget.child);
+    if (!widget.disabled) {
+      return keyedChild;
+    }
+    return SelectionContainer.disabled(child: keyedChild);
   }
 }
 

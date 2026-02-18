@@ -456,47 +456,76 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   /// as selectable, which would create "dead zones" where drag-to-select
   /// fails when a [SelectionArea] wraps the [Navigator].
   ///
-  /// Handles [NoTransitionPage] and [CustomTransitionPage]. Other page types
-  /// (e.g., [MaterialPage], [CupertinoPage], or custom [Page] subclasses)
-  /// pass through unchanged — use [GoRoute.builder] instead (which wraps
+  /// Handles [NoTransitionPage] and [CustomTransitionPage] with type
+  /// parameters `<dynamic>` (the default for user `pageBuilder` callbacks)
+  /// and `<void>` (go_router's internal default). Other explicit type
+  /// parameters (e.g., `NoTransitionPage<int>`) are not auto-detected and
+  /// require manual wrapping — use [GoRoute.builder] instead (which wraps
   /// automatically), or manually wrap the page child with
   /// [SelectionContainer.disabled].
+  ///
+  /// Other page types (e.g., [MaterialPage], [CupertinoPage], or custom
+  /// [Page] subclasses) pass through unchanged for the same reason.
   static Page<Object?> _addSelectionGuardToPage(Page<Object?> page) {
     // Check NoTransitionPage before CustomTransitionPage since it extends it.
     if (page is NoTransitionPage) {
-      final recreated = NoTransitionPage<void>(
-        key: page.key,
-        name: page.name,
-        arguments: page.arguments,
-        restorationId: page.restorationId,
-        child: _OffstageSelectionDisabler(child: page.child),
-      );
-      // Use Page.canUpdate to verify the runtimeType matches exactly.
-      // Subclasses have a different runtimeType, so canUpdate returns false
-      // and we preserve the original page to avoid stripping subclass behavior.
-      return page.canUpdate(recreated) ? recreated : page;
+      // Try <dynamic> first (common for user pageBuilder), then <void>
+      // (go_router's internal default).
+      return _tryWrapNoTransitionPage<dynamic>(page) ??
+          _tryWrapNoTransitionPage<void>(page) ??
+          page;
     }
     if (page is CustomTransitionPage) {
-      final recreated = CustomTransitionPage<void>(
-        key: page.key,
-        name: page.name,
-        arguments: page.arguments,
-        restorationId: page.restorationId,
-        maintainState: page.maintainState,
-        fullscreenDialog: page.fullscreenDialog,
-        opaque: page.opaque,
-        barrierDismissible: page.barrierDismissible,
-        barrierColor: page.barrierColor,
-        barrierLabel: page.barrierLabel,
-        transitionsBuilder: page.transitionsBuilder,
-        transitionDuration: page.transitionDuration,
-        reverseTransitionDuration: page.reverseTransitionDuration,
-        child: _OffstageSelectionDisabler(child: page.child),
-      );
-      // Use Page.canUpdate to verify the runtimeType matches exactly.
-      return page.canUpdate(recreated) ? recreated : page;
+      return _tryWrapCustomTransitionPage<dynamic>(page) ??
+          _tryWrapCustomTransitionPage<void>(page) ??
+          page;
     }
     return page;
+  }
+
+  /// Attempts to recreate [page] as a [NoTransitionPage<T>] with the child
+  /// wrapped in [_OffstageSelectionDisabler].
+  ///
+  /// Returns `null` if [Page.canUpdate] fails (i.e. the type parameter `T`
+  /// does not match the original page's reified generic type, or it is a
+  /// subclass with a different `runtimeType`).
+  static NoTransitionPage<T>? _tryWrapNoTransitionPage<T>(
+    NoTransitionPage<Object?> page,
+  ) {
+    final recreated = NoTransitionPage<T>(
+      key: page.key,
+      name: page.name,
+      arguments: page.arguments,
+      restorationId: page.restorationId,
+      child: _OffstageSelectionDisabler(child: page.child),
+    );
+    return page.canUpdate(recreated) ? recreated : null;
+  }
+
+  /// Attempts to recreate [page] as a [CustomTransitionPage<T>] with the
+  /// child wrapped in [_OffstageSelectionDisabler].
+  ///
+  /// Returns `null` if [Page.canUpdate] fails.
+  static CustomTransitionPage<T>? _tryWrapCustomTransitionPage<T>(
+    CustomTransitionPage<Object?> page,
+  ) {
+    final recreated = CustomTransitionPage<T>(
+      key: page.key,
+      name: page.name,
+      arguments: page.arguments,
+      restorationId: page.restorationId,
+      maintainState: page.maintainState,
+      fullscreenDialog: page.fullscreenDialog,
+      opaque: page.opaque,
+      barrierDismissible: page.barrierDismissible,
+      barrierColor: page.barrierColor,
+      barrierLabel: page.barrierLabel,
+      transitionsBuilder: page.transitionsBuilder,
+      transitionDuration: page.transitionDuration,
+      reverseTransitionDuration: page.reverseTransitionDuration,
+      child: _OffstageSelectionDisabler(child: page.child),
+    );
+    return page.canUpdate(recreated) ? recreated : null;
   }
 
   @override
@@ -538,9 +567,15 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 /// route becomes offstage, and wraps the child in [SelectionContainer.disabled]
 /// to prevent text from registering with the [SelectableRegion].
 ///
+/// A [GlobalKey] on a [KeyedSubtree] wrapping the child ensures that when
+/// the tree structure changes (adding or removing [SelectionContainer.disabled]),
+/// Flutter reparents the existing element instead of recreating it. This
+/// preserves all descendant [State] (scroll positions, form input, animation
+/// controllers, etc.) across transitions.
+///
 /// Note: [StatefulShellRoute] branches are handled separately by
-/// [_IndexedStackedRouteBranchContainer], which wraps inactive branches
-/// with [SelectionContainer.disabled] at the container level. Custom
+/// [_IndexedStackedRouteBranchContainer], which uses [_SelectionGuard]
+/// at the container level. Custom
 /// [StatefulShellRoute.navigatorContainerBuilder] implementations should
 /// apply similar wrapping for inactive branches.
 ///
@@ -553,23 +588,35 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 /// automatically). If [GoRoute.pageBuilder] is required, wrap the page
 /// child with [SelectionContainer.disabled] conditionally based on
 /// [ModalRoute.isCurrentOf] to avoid disabling selection unconditionally.
-class _OffstageSelectionDisabler extends StatelessWidget {
+class _OffstageSelectionDisabler extends StatefulWidget {
   const _OffstageSelectionDisabler({required this.child});
 
   final Widget child;
 
   @override
+  State<_OffstageSelectionDisabler> createState() =>
+      _OffstageSelectionDisablerState();
+}
+
+class _OffstageSelectionDisablerState
+    extends State<_OffstageSelectionDisabler> {
+  final GlobalKey _childKey = GlobalKey(
+    debugLabel: '_OffstageSelectionDisabler',
+  );
+
+  @override
   Widget build(BuildContext context) {
     final bool? isCurrent = ModalRoute.isCurrentOf(context);
+    final Widget keyedChild = KeyedSubtree(key: _childKey, child: widget.child);
     // If there's no ModalRoute (shouldn't happen for go_router pages),
     // or if the route IS the current (topmost) route, allow selection
     // to work normally.
     if (isCurrent == null || isCurrent) {
-      return child;
+      return keyedChild;
     }
     // The route is offstage (covered by another route above it).
     // Disable selection registration to prevent stale selectables
     // from interfering with text selection on the active page.
-    return SelectionContainer.disabled(child: child);
+    return SelectionContainer.disabled(child: keyedChild);
   }
 }

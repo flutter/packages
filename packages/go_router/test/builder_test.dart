@@ -994,7 +994,7 @@ void main() {
       SelectionRegistrar? branchARegistrar;
       SelectionRegistrar? branchBRegistrar;
 
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/a',
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
@@ -1097,7 +1097,7 @@ void main() {
     testWidgets(
       'StatefulShellRoute preserves navigator state with selection guard',
       (WidgetTester tester) async {
-        final GoRouter router = GoRouter(
+        final router = GoRouter(
           initialLocation: '/a',
           routes: <RouteBase>[
             StatefulShellRoute.indexedStack(
@@ -1171,7 +1171,7 @@ void main() {
       SelectionRegistrar? branchARootRegistrar;
       SelectionRegistrar? branchADetailRegistrar;
 
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/a',
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
@@ -1269,6 +1269,295 @@ void main() {
             'Route-level offstage disabling should still work after branch switch',
       );
     });
+
+    testWidgets(
+      'ShellRoute preserves widget State when navigating to child and back',
+      (WidgetTester tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+
+        final router = GoRouter(
+          initialLocation: '/list',
+          routes: <RouteBase>[
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return SelectionArea(child: child);
+                  },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/list',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return Material(child: TextField(controller: controller));
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'detail',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Text('Detail Page');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Enter text into the TextField.
+        await tester.enterText(find.byType(TextField), 'hello world');
+        expect(controller.text, 'hello world');
+
+        // Navigate to detail (list goes offstage).
+        router.go('/list/detail');
+        await tester.pumpAndSettle();
+
+        // Navigate back to list.
+        router.go('/list');
+        await tester.pumpAndSettle();
+
+        // TextField state should be preserved (not recreated).
+        expect(
+          controller.text,
+          'hello world',
+          reason: 'Widget State should survive offstage/onstage transitions',
+        );
+      },
+    );
+
+    testWidgets(
+      'StatefulShellRoute preserves widget State in branch during tab switching',
+      (WidgetTester tester) async {
+        final controller = TextEditingController();
+        addTearDown(controller.dispose);
+
+        final router = GoRouter(
+          initialLocation: '/a',
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              builder:
+                  (
+                    BuildContext context,
+                    GoRouterState state,
+                    StatefulNavigationShell navigationShell,
+                  ) {
+                    return SelectionArea(child: navigationShell);
+                  },
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/a',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return Material(
+                          child: TextField(controller: controller),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/b',
+                      builder: (BuildContext context, GoRouterState state) {
+                        return const Text('Branch B');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        // Enter text into the TextField on branch A.
+        await tester.enterText(find.byType(TextField), 'preserved text');
+        expect(controller.text, 'preserved text');
+
+        // Switch to branch B.
+        router.go('/b');
+        await tester.pumpAndSettle();
+
+        // Switch back to branch A.
+        router.go('/a');
+        await tester.pumpAndSettle();
+
+        // TextField state should be preserved.
+        expect(
+          controller.text,
+          'preserved text',
+          reason:
+              'Widget State should survive branch switching with selection guard',
+        );
+      },
+    );
+
+    testWidgets(
+      'Offstage selection disabled with NoTransitionPage without explicit type parameter',
+      (WidgetTester tester) async {
+        // NoTransitionPage(child: ...) without an explicit type parameter
+        // infers <dynamic> from the GoRouterPageBuilder typedef, NOT <void>.
+        SelectionRegistrar? listPageRegistrar;
+        SelectionRegistrar? detailPageRegistrar;
+
+        final router = GoRouter(
+          initialLocation: '/list',
+          routes: <RouteBase>[
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return SelectionArea(child: child);
+                  },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/list',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    // Intentionally omit the type parameter to get <dynamic>.
+                    return NoTransitionPage(
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          listPageRegistrar = SelectionContainer.maybeOf(
+                            context,
+                          );
+                          return const Text('List Page');
+                        },
+                      ),
+                    );
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: ':id',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        return NoTransitionPage(
+                          child: Builder(
+                            builder: (BuildContext context) {
+                              detailPageRegistrar = SelectionContainer.maybeOf(
+                                context,
+                              );
+                              return const Text('Detail Page');
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(listPageRegistrar, isNotNull);
+
+        router.go('/list/1');
+        await tester.pumpAndSettle();
+
+        expect(
+          detailPageRegistrar,
+          isNotNull,
+          reason: 'Current page should have selection enabled',
+        );
+        expect(
+          listPageRegistrar,
+          isNull,
+          reason:
+              'Offstage page (NoTransitionPage<dynamic>) should have selection disabled',
+        );
+      },
+    );
+
+    testWidgets(
+      'Offstage selection disabled with CustomTransitionPage without explicit type parameter',
+      (WidgetTester tester) async {
+        SelectionRegistrar? listPageRegistrar;
+        SelectionRegistrar? detailPageRegistrar;
+
+        final router = GoRouter(
+          initialLocation: '/list',
+          routes: <RouteBase>[
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                    return SelectionArea(child: child);
+                  },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/list',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    // Intentionally omit the type parameter to get <dynamic>.
+                    return CustomTransitionPage(
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          listPageRegistrar = SelectionContainer.maybeOf(
+                            context,
+                          );
+                          return const Text('List Page');
+                        },
+                      ),
+                    );
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: ':id',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        return CustomTransitionPage(
+                          transitionsBuilder: (_, animation, __, child) =>
+                              FadeTransition(opacity: animation, child: child),
+                          child: Builder(
+                            builder: (BuildContext context) {
+                              detailPageRegistrar = SelectionContainer.maybeOf(
+                                context,
+                              );
+                              return const Text('Detail Page');
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(listPageRegistrar, isNotNull);
+
+        router.go('/list/1');
+        await tester.pumpAndSettle();
+
+        expect(
+          detailPageRegistrar,
+          isNotNull,
+          reason: 'Current page should have selection enabled',
+        );
+        expect(
+          listPageRegistrar,
+          isNull,
+          reason:
+              'Offstage page (CustomTransitionPage<dynamic>) should have selection disabled',
+        );
+      },
+    );
   });
 }
 
