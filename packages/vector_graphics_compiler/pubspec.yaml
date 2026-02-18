@@ -8,10 +8,15 @@ executables:
   vector_graphics_compiler:
 
 environment:
-  sdk: ^3.9.0
+  sdk: ^3.10.0
+
+workspace:
+  - example
 
 dependencies:
   args: ^2.3.0
+  data_assets: ^0.19.1
+  hooks: ^1.0.0
   meta: ^1.7.0
   path: ^1.8.0
   path_parsing: ^1.0.1
@@ -34,6 +39,18 @@ dev_dependencies:
   vector_graphics: ^1.1.13
   vector_math: ^2.1.2
 
+dependency_overrides: 
+  vector_graphics:
+    path: ../vector_graphics
+
+flutter:
+  config:
+    enable-dart-data-assets: true
+
+topics:
+  - svg
+  - vector-graphics
+
 platforms:
   android:
   ios:
@@ -41,7 +58,3 @@ platforms:
   macos:
   web:
   windows:
-
-topics:
-  - svg
-  - vector-graphics

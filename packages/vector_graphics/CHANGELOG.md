@@ -1,6 +1,7 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Make workspace for example.
 
 ## 1.1.19
 

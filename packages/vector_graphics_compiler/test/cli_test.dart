@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:vector_graphics_compiler/src/util/isolate_processor.dart';
 
-import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
 
 void main() {
@@ -44,7 +44,7 @@ void main() {
     try {
       final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <IOPair>[IOPair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -65,7 +65,7 @@ void main() {
     try {
       final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <IOPair>[IOPair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,

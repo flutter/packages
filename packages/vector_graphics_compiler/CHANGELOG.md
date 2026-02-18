@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Add build hook helper to allow for transforming assets through hooks.
+
 ## 1.1.20
 
 * Fixes color parsing for modern rgb and rgba CSS syntax.
