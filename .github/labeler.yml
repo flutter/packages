@@ -114,6 +114,11 @@
     - any-glob-to-any-file:
       - packages/local_auth/**/*
 
+'p: material_ui':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/material_ui/**/*
+
 'p: metrics_center':
   - changed-files:
     - any-glob-to-any-file:
@@ -276,5 +281,6 @@
       - packages/go_router/**/*
       - packages/go_router_builder/**/*
       - packages/google_fonts/**/*
+      - packages/material_ui/**/*
       - packages/two_dimensional_scrollables/**/*
       - third_party/packages/cupertino_icons/**/*
