@@ -1,3 +1,7 @@
+## 0.10.0+1
+
+* Migrates to Swift-based pigeon interface.
+
 ## 0.10.0
 
 * Adds video stabilization.
