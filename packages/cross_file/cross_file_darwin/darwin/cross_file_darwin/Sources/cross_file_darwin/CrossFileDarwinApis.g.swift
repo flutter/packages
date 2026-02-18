@@ -92,9 +92,6 @@ class CrossFileDarwinApisPigeonCodec: FlutterStandardMessageCodec, @unchecked Se
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol CrossFileDarwinApi {
-  /// Attempt to create a bookmarked URL that serves as a persistent reference
-  /// to a file.
-  func tryCreateBookmarkedUrl(url: String) throws -> String?
   /// In an app that has adopted App Sandbox, makes the resource pointed to by a
   /// security-scoped URL available to the app.
   func startAccessingSecurityScopedResource(url: String) throws -> Bool
@@ -114,26 +111,6 @@ class CrossFileDarwinApiSetup {
     messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    /// Attempt to create a bookmarked URL that serves as a persistent reference
-    /// to a file.
-    let tryCreateBookmarkedUrlChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      tryCreateBookmarkedUrlChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let urlArg = args[0] as! String
-        do {
-          let result = try api.tryCreateBookmarkedUrl(url: urlArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      tryCreateBookmarkedUrlChannel.setMessageHandler(nil)
-    }
     /// In an app that has adopted App Sandbox, makes the resource pointed to by a
     /// security-scoped URL available to the app.
     let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(

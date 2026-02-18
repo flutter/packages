@@ -17,10 +17,6 @@ import 'package:pigeon/pigeon.dart';
 /// Api for getting access to file information.
 @HostApi()
 abstract class CrossFileDarwinApi {
-  /// Attempt to create a bookmarked URL that serves as a persistent reference
-  /// to a file.
-  String? tryCreateBookmarkedUrl(String url);
-
   /// In an app that has adopted App Sandbox, makes the resource pointed to by a
   /// security-scoped URL available to the app.
   bool startAccessingSecurityScopedResource(String url);

@@ -40,15 +40,6 @@ struct CrossFileDarwinApiTests {
     #expect(try String(contentsOf: testFileURL, encoding: .utf8) == "Hello, World!")
   }
 
-  @Test func tryCreateBookmarkedUrl() throws {
-    let testFileURL = try createTempTestFile()
-
-    let api = CrossFileDarwinApiImpl()
-    let bookmarkedURLString = try! api.tryCreateBookmarkedUrl(url: testFileURL.absoluteString)!
-
-    #expect(bookmarkedURLString == testFileURL.absoluteString)
-  }
-
   @Test func isReadableFile() throws {
     let testFileURL = try createTempTestFile()
 

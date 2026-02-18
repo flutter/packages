@@ -122,21 +122,4 @@ void main() {
     await file.stopAccessingSecurityScopedResource();
     verify(mockApi.stopAccessingSecurityScopedResource(uri));
   });
-
-  test('tryCreateBookmarkedUrl', () async {
-    final mockApi = MockCrossFileDarwinApi();
-    final uri = testFile.uri.toString();
-    final bookmarkedUri = File(
-      path.join(Directory.current.path, 'some', 'file.txt'),
-    ).uri.toString();
-    when(
-      mockApi.tryCreateBookmarkedUrl(uri),
-    ).thenAnswer((_) async => bookmarkedUri);
-
-    final file = DarwinScopedStorageXFile(
-      DarwinScopedStorageXFileCreationParams(uri: uri, api: mockApi),
-    );
-
-    expect(await file.toBookmarkedUri(), bookmarkedUri);
-  });
 }

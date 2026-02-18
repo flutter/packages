@@ -57,33 +57,6 @@ class CrossFileDarwinApi {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Attempt to create a bookmarked URL that serves as a persistent reference
-  /// to a file.
-  Future<String?> tryCreateBookmarkedUrl(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
-  }
-
   /// In an app that has adopted App Sandbox, makes the resource pointed to by a
   /// security-scoped URL available to the app.
   Future<bool> startAccessingSecurityScopedResource(String url) async {

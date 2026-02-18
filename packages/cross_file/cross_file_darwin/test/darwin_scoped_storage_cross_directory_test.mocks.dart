@@ -45,14 +45,6 @@ class MockCrossFileDarwinApi extends _i1.Mock
           as String);
 
   @override
-  _i4.Future<String?> tryCreateBookmarkedUrl(String? url) =>
-      (super.noSuchMethod(
-            Invocation.method(#tryCreateBookmarkedUrl, [url]),
-            returnValue: _i4.Future<String?>.value(),
-          )
-          as _i4.Future<String?>);
-
-  @override
   _i4.Future<bool> startAccessingSecurityScopedResource(String? url) =>
       (super.noSuchMethod(
             Invocation.method(#startAccessingSecurityScopedResource, [url]),

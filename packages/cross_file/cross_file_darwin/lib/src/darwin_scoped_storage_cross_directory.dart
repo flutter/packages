@@ -89,11 +89,6 @@ base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
   Future<void> stopAccessingSecurityScopedResource() {
     return params.api.stopAccessingSecurityScopedResource(params.uri);
   }
-
-  @override
-  Future<String?> toBookmarkedUri() async {
-    return params.api.tryCreateBookmarkedUrl(params.uri);
-  }
 }
 
 /// Provides platform specific features for [DarwinScopedStorageXDirectory].
