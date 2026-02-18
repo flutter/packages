@@ -50,15 +50,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: false)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -85,15 +85,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -117,15 +117,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     }
     mockCaptureSession.canSetSessionPresetStub = { _ in true }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
