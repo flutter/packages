@@ -8,6 +8,7 @@ packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
 packages/cross_file/**                                   @bparrishMines
 packages/cross_file/cross_file_io/**                     @bparrishMines
+packages/cupertino_ui/**                                 @dkwingsmt
 packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
@@ -23,6 +24,7 @@ packages/image_picker/**                                 @tarrinneal
 packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan-g
+packages/material_ui/**                                  @qunccccccc
 packages/metrics_center/**                               @bkonyi
 packages/multicast_dns/**                                @vashworth
 packages/path_provider/**                                @stuartmorgan-g
