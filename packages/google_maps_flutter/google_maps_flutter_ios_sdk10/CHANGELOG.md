@@ -1,6 +1,10 @@
+## 2.17.5
+
+* Adds UIScene compatibility.
+
 ## 2.17.4
 
-* Adds UIScene support.
+* Standardizes Objective-C class names.
 
 ## 2.17.3
 
