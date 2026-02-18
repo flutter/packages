@@ -1,3 +1,7 @@
+## 17.1.1
+
+- Fixes `SelectionArea` dead zones after `ShellRoute` or `StatefulShellRoute` navigation caused by offstage pages intercepting drag events.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.

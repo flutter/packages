@@ -248,7 +248,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);
       if (page is! NoOpPage) {
-        return page;
+        return _addSelectionGuardToPage(page);
       }
     }
 
@@ -321,6 +321,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       state,
       shellRouteContext,
     );
+    // Shell route pages contain a Navigator (not direct text content), so
+    // they don't need _OffstageSelectionDisabler wrapping. The selection
+    // guard is applied to the individual child pages within the Navigator.
     if (page != null && page is! NoOpPage) {
       return page;
     }
@@ -400,7 +403,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         ...state.uri.queryParameters,
       },
       restorationId: state.pageKey.value,
-      child: child,
+      child: _OffstageSelectionDisabler(child: child),
     );
   }
 
@@ -446,6 +449,56 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     return widget.onPopPageWithRouteMatch(route, result, match);
   }
 
+  /// Wraps a user-provided [Page]'s child with [_OffstageSelectionDisabler]
+  /// for known go_router page types.
+  ///
+  /// This prevents text in offstage (non-current) routes from registering
+  /// as selectable, which would create "dead zones" where drag-to-select
+  /// fails when a [SelectionArea] wraps the [Navigator].
+  ///
+  /// Handles [NoTransitionPage] and [CustomTransitionPage]. Other page types
+  /// (e.g., [MaterialPage], [CupertinoPage], or custom [Page] subclasses)
+  /// pass through unchanged — use [GoRoute.builder] instead (which wraps
+  /// automatically), or manually wrap the page child with
+  /// [SelectionContainer.disabled].
+  static Page<Object?> _addSelectionGuardToPage(Page<Object?> page) {
+    // Check NoTransitionPage before CustomTransitionPage since it extends it.
+    if (page is NoTransitionPage) {
+      final recreated = NoTransitionPage<void>(
+        key: page.key,
+        name: page.name,
+        arguments: page.arguments,
+        restorationId: page.restorationId,
+        child: _OffstageSelectionDisabler(child: page.child),
+      );
+      // Use Page.canUpdate to verify the runtimeType matches exactly.
+      // Subclasses have a different runtimeType, so canUpdate returns false
+      // and we preserve the original page to avoid stripping subclass behavior.
+      return page.canUpdate(recreated) ? recreated : page;
+    }
+    if (page is CustomTransitionPage) {
+      final recreated = CustomTransitionPage<void>(
+        key: page.key,
+        name: page.name,
+        arguments: page.arguments,
+        restorationId: page.restorationId,
+        maintainState: page.maintainState,
+        fullscreenDialog: page.fullscreenDialog,
+        opaque: page.opaque,
+        barrierDismissible: page.barrierDismissible,
+        barrierColor: page.barrierColor,
+        barrierLabel: page.barrierLabel,
+        transitionsBuilder: page.transitionsBuilder,
+        transitionDuration: page.transitionDuration,
+        reverseTransitionDuration: page.reverseTransitionDuration,
+        child: _OffstageSelectionDisabler(child: page.child),
+      );
+      // Use Page.canUpdate to verify the runtimeType matches exactly.
+      return page.canUpdate(recreated) ? recreated : page;
+    }
+    return page;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_pages == null) {
@@ -466,5 +519,57 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         ),
       ),
     );
+  }
+}
+
+/// Prevents text content in offstage (non-current) routes from registering
+/// as selectable, which would interfere with text selection on the current
+/// page when a [SelectionArea] wraps the [Navigator].
+///
+/// When go_router navigates between routes within a [ShellRoute], the
+/// shell's [Navigator] may keep multiple pages mounted (e.g., a parent
+/// route stays offstage while its child route is displayed). Without this
+/// widget, text in offstage pages would register with the ancestor
+/// [SelectableRegion], creating "dead zones" where drag-to-select fails
+/// because stale selectable bounding boxes from the offstage page overlap
+/// with content on the current page.
+///
+/// This widget uses [ModalRoute.isCurrentOf] to reactively detect when its
+/// route becomes offstage, and wraps the child in [SelectionContainer.disabled]
+/// to prevent text from registering with the [SelectableRegion].
+///
+/// Note: [StatefulShellRoute] branches are handled separately by
+/// [_IndexedStackedRouteBranchContainer], which wraps inactive branches
+/// with [SelectionContainer.disabled] at the container level. Custom
+/// [StatefulShellRoute.navigatorContainerBuilder] implementations should
+/// apply similar wrapping for inactive branches.
+///
+/// **Known limitation**: When using [GoRoute.pageBuilder] with page types
+/// other than [NoTransitionPage] or [CustomTransitionPage] (e.g.,
+/// [MaterialPage], [CupertinoPage], or custom [Page] subclasses), the
+/// selection guard cannot be applied automatically because the page would
+/// need to be recreated, which would strip subclass behavior. For those
+/// cases, prefer using [GoRoute.builder] instead (which wraps
+/// automatically). If [GoRoute.pageBuilder] is required, wrap the page
+/// child with [SelectionContainer.disabled] conditionally based on
+/// [ModalRoute.isCurrentOf] to avoid disabling selection unconditionally.
+class _OffstageSelectionDisabler extends StatelessWidget {
+  const _OffstageSelectionDisabler({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool? isCurrent = ModalRoute.isCurrentOf(context);
+    // If there's no ModalRoute (shouldn't happen for go_router pages),
+    // or if the route IS the current (topmost) route, allow selection
+    // to work normally.
+    if (isCurrent == null || isCurrent) {
+      return child;
+    }
+    // The route is offstage (covered by another route above it).
+    // Disable selection registration to prevent stale selectables
+    // from interfering with text selection on the active page.
+    return SelectionContainer.disabled(child: child);
   }
 }

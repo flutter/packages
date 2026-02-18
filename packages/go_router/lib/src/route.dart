@@ -1694,7 +1694,10 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
   ) {
     return Offstage(
       offstage: !isActive,
-      child: TickerMode(enabled: isActive, child: child),
+      child: TickerMode(
+        enabled: isActive,
+        child: isActive ? child : SelectionContainer.disabled(child: child),
+      ),
     );
   }
 }
