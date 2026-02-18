@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.30
 
 * Bump camerax_version from 1.5.2 to 1.5.3.
