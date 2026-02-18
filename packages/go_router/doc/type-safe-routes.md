@@ -54,7 +54,7 @@ To build the generated files (ending in .g.dart), use the build_runner command:
 
 ```
 flutter pub global activate build_runner
-flutter pub run build_runner build
+dart run build_runner build
 ```
 
 To navigate, construct a GoRouteData object with the required parameters and
