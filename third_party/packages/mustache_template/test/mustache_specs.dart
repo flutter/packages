@@ -26,16 +26,20 @@ String render(
   return t.renderString(values);
 }
 
-void main() {
-  defineTests();
+void main(List<String> args) {
+  final List<String> unsupportedSpecs = args
+    .where((arg) => arg.startsWith('-u='))
+    .map((arg) => arg.substring(3))
+    .toList();
+  defineTests(unsupportedSpecs);
 }
 
-void defineTests() {
+void defineTests(List<String> unsupportedSpecs) {
   final specsDir = Directory('test/spec/specs');
   specsDir.listSync().forEach((FileSystemEntity f) {
     if (f is File) {
       final String filename = f.path;
-      if (shouldRun(filename)) {
+      if (shouldRun(filename, unsupportedSpecs)) {
         final String text = f.readAsStringSync();
         _defineGroupFromFile(filename, text);
       }
@@ -91,12 +95,13 @@ void _defineGroupFromFile(String filename, String text) {
   });
 }
 
-bool shouldRun(String filename) {
+bool shouldRun(String filename, List<String> unsupportedSpecs) {
   // filter out only .json files
   if (!filename.endsWith('.json')) {
     return false;
   }
-  return true;
+  final String specName = filename.substring(filename.lastIndexOf('/') + 1).replaceFirst('.json', '');
+  return !unsupportedSpecs.contains(specName);
 }
 
 String Function(Object?) _dummyCallableWithState() {
