@@ -90,7 +90,8 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
             if ([videoTrack statusOfValueForKey:@"preferredTransform"
                                           error:nil] == AVKeyValueStatusLoaded) {
               // Rotate the video by using a videoComposition and the preferredTransform
-              self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+              self->_preferredTransform = FVPGetStandardizedTrackTransform(
+                  videoTrack.preferredTransform, videoTrack.naturalSize);
               // Do not use video composition when it is not needed.
               if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
                 return;
