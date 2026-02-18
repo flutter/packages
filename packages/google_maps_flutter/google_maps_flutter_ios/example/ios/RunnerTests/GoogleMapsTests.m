@@ -1,0 +1,246 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+@import google_maps_flutter_ios;
+@import GoogleMaps;
+@import XCTest;
+
+#import "TestUtils/PartiallyMockedMapView.h"
+#import "TestUtils/TestAssetProvider.h"
+
+@interface MockCATransaction : NSObject <FGMCATransactionProtocol>
+@property(nonatomic, assign) BOOL beginCalled;
+@property(nonatomic, assign) BOOL commitCalled;
+@property(nonatomic, assign) CFTimeInterval animationDuration;
+@end
+
+@implementation MockCATransaction
+
+- (void)begin {
+  self.beginCalled = YES;
+}
+
+- (void)commit {
+  self.commitCalled = YES;
+}
+
+@end
+
+// No-op implementation of FlutterBinaryMessenger.
+@interface StubBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@implementation StubBinaryMessenger
+- (void)sendOnChannel:(NSString *)channel message:(NSData *)message {
+}
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *)message
+          binaryReply:(FlutterBinaryReply)reply {
+}
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+
+@end
+
+#pragma mark -
+
+@interface FGMGoogleMapFactory (Test)
+@property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
+@end
+
+@interface GoogleMapsTests : XCTestCase
+@end
+
+@interface FGMTileProviderController (Testing)
+- (UIImage *)handleResultTile:(nullable UIImage *)tileImage;
+@end
+
+@implementation GoogleMapsTests
+
+- (void)testPlugin {
+  FGMGoogleMapsPlugin *plugin = [[FGMGoogleMapsPlugin alloc] init];
+  XCTAssertNotNil(plugin);
+}
+
+- (void)testFrameObserver {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = frame;
+  options.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:options];
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+
+  for (NSInteger i = 0; i < 10; ++i) {
+    [controller view];
+  }
+  XCTAssertEqual(mapView.frameObserverCount, 1);
+
+  mapView.frame = frame;
+  XCTAssertEqual(mapView.frameObserverCount, 0);
+}
+
+- (void)testMapsServiceSync {
+  // The API requires a registrar, but this test doesn't actually use it, so just pass in a
+  // dummy object rather than set up a full mock.
+  id registrar = [[NSObject alloc] init];
+  FGMGoogleMapFactory *factory1 = [[FGMGoogleMapFactory alloc] initWithRegistrar:registrar];
+  XCTAssertNotNil(factory1.sharedMapServices);
+  FGMGoogleMapFactory *factory2 = [[FGMGoogleMapFactory alloc] initWithRegistrar:registrar];
+  // Test pointer equality, should be same retained singleton +[GMSServices sharedServices] object.
+  // Retaining the opaque object should be enough to avoid multiple internal initializations,
+  // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
+  // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
+  XCTAssertEqual(factory1.sharedMapServices, factory2.sharedMapServices);
+}
+
+- (void)testHandleResultTileDownsamplesWideGamutImages {
+  FGMTileProviderController *controller = [[FGMTileProviderController alloc] init];
+
+  NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut"
+                                                                         ofType:@"png"
+                                                                    inDirectory:@"assets"];
+  UIImage *wideGamutImage = [UIImage imageWithContentsOfFile:imagePath];
+
+  XCTAssertNotNil(wideGamutImage, @"The image should be loaded.");
+
+  UIImage *downsampledImage = [controller handleResultTile:wideGamutImage];
+
+  CGImageRef imageRef = downsampledImage.CGImage;
+  size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
+
+  // non wide gamut images use 8 bit format
+  XCTAssertEqual(bitsPerComponent, 8);
+  XCTAssertEqual(CGImageGetAlphaInfo(imageRef), kCGImageAlphaPremultipliedLast);
+}
+
+- (void)testAnimateCameraWithUpdate {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with zero zoom.
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+
+  MockCATransaction *mockTransactionWrapper = [[MockCATransaction alloc] init];
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
+  FlutterError *error = nil;
+
+  [controller.callHandler animateCameraWithUpdate:cameraUpdate duration:nil error:&error];
+  XCTAssertTrue(mapView.didAnimateCamera);
+  XCTAssertFalse(mockTransactionWrapper.beginCalled);
+  XCTAssertFalse(mockTransactionWrapper.commitCalled);
+}
+
+- (void)testAnimateCameraWithUpdateAndDuration {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with zero zoom.
+  mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+
+  MockCATransaction *mockTransactionWrapper = [[MockCATransaction alloc] init];
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
+  FlutterError *error = nil;
+
+  NSNumber *durationMilliseconds = @100;
+  [controller.callHandler animateCameraWithUpdate:cameraUpdate
+                                         duration:durationMilliseconds
+                                            error:&error];
+  XCTAssertTrue(mapView.didAnimateCamera);
+  XCTAssertTrue(mockTransactionWrapper.beginCalled);
+  XCTAssertTrue(mockTransactionWrapper.commitCalled);
+  XCTAssertEqual(mockTransactionWrapper.animationDuration,
+                 [durationMilliseconds doubleValue] / 1000);
+}
+
+- (void)testInspectorAPICameraPosition {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with specific position.
+  GMSCameraPosition *initialCameraPosition = [[GMSCameraPosition alloc] initWithLatitude:37.7749
+                                                                               longitude:-122.4194
+                                                                                    zoom:10];
+  mapViewOptions.camera = initialCameraPosition;
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  NSObject<FlutterBinaryMessenger> *binaryMessenger = [[StubBinaryMessenger alloc] init];
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:binaryMessenger];
+
+  FGMMapInspector *inspector = [[FGMMapInspector alloc] initWithMapController:controller
+                                                                    messenger:binaryMessenger
+                                                                 pigeonSuffix:@"0"];
+
+  FlutterError *error = nil;
+  FGMPlatformCameraPosition *cameraPosition = [inspector cameraPosition:&error];
+
+  XCTAssertEqual(cameraPosition.target.latitude, initialCameraPosition.target.latitude);
+  XCTAssertEqual(cameraPosition.target.longitude, initialCameraPosition.target.longitude);
+  XCTAssertEqual(cameraPosition.zoom, initialCameraPosition.zoom);
+}
+
+/// Creates an empty creation paramaters object for tests where the values don't matter, just that
+/// there's a valid object to pass in.
+- (FGMPlatformMapViewCreationParams *)emptyCreationParameters {
+  return [FGMPlatformMapViewCreationParams
+      makeWithInitialCameraPosition:[FGMPlatformCameraPosition
+                                        makeWithBearing:0.0
+                                                 target:[FGMPlatformLatLng makeWithLatitude:0.0
+                                                                                  longitude:0.0]
+                                                   tilt:0.0
+                                                   zoom:0.0]
+                   mapConfiguration:[[FGMPlatformMapConfiguration alloc] init]
+                     initialCircles:@[]
+                     initialMarkers:@[]
+                    initialPolygons:@[]
+                   initialPolylines:@[]
+                    initialHeatmaps:@[]
+                initialTileOverlays:@[]
+             initialClusterManagers:@[]
+              initialGroundOverlays:@[]];
+}
+
+@end

@@ -120,6 +120,8 @@ void main() {
         final List<PurchaseDetails> result = await completer.future;
         expect(result.length, 1);
         expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.purchased);
+        expect(result.first.pendingCompletePurchase, true);
       },
     );
 

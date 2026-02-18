@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+import Flutter
+
 @testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
@@ -41,6 +44,9 @@ final class MockCamera: NSObject, Camera {
   var setDescriptionWhileRecordingStub: ((String, ((FlutterError?) -> Void)?) -> Void)?
   var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
+  var setVideoStabilizationModeStub:
+    ((FCPPlatformVideoStabilizationMode, (FlutterError?) -> Void) -> Void)?
+  var getIsVideoStabilizationModeSupportedStub: ((FCPPlatformVideoStabilizationMode) -> Bool)?
 
   var dartAPI: FCPCameraEventApi? {
     get {
@@ -183,6 +189,16 @@ final class MockCamera: NSObject, Camera {
 
   func resumePreview() {
     resumePreviewStub?()
+  }
+
+  func setVideoStabilizationMode(
+    _ mode: FCPPlatformVideoStabilizationMode, withCompletion: @escaping (FlutterError?) -> Void
+  ) {
+    setVideoStabilizationModeStub?(mode, withCompletion)
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool {
+    return getIsVideoStabilizationModeSupportedStub?(mode) ?? false
   }
 
   func setDescriptionWhileRecording(
