@@ -21,7 +21,7 @@ jobs:
     steps:
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
         ref: ${{ inputs.branch-name }}
@@ -44,7 +44,7 @@ jobs:
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
-      uses: lewagon/wait-on-check-action@0dceb95e7c4cad8cc7422aee3885998f5cab9c79
+      uses: lewagon/wait-on-check-action@74049309dfeff245fe8009a0137eacf28136cb3c
       with:
         ref: ${{ github.sha }}
         check-name: 'Linux ci_yaml packages roller'
@@ -56,7 +56,7 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@0dceb95e7c4cad8cc7422aee3885998f5cab9c79
+      uses: lewagon/wait-on-check-action@74049309dfeff245fe8009a0137eacf28136cb3c
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
@@ -74,11 +74,11 @@ jobs:
         # Build the flag string based on the input
         BATCH_FLAG=""
         if [ "${{ inputs.is-batch-release }}" = "true" ]; then
-          BATCH_FLAG="--batch-release-branch=${{ inputs.branch-name }}"
+          BATCH_FLAG="--batch-release-branch=${INPUTS_BRANCH_NAME}"
         fi
         dart ./script/tool/lib/src/main.dart publish \
           --all-changed \
           $BATCH_FLAG \
           --base-sha=HEAD~ \
           --skip-confirmation
-      env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
+      env: { PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}", INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}" }
