@@ -1,3 +1,28 @@
+## 2.17.4
+
+* Standardizes Objective-C class names.
+
+## 2.17.3
+
+* Adds a README section about Swift Package Manager and the new
+  `google_maps_flutter_ios_sdk*` packages.
+
+## 2.17.2
+
+* Fixes a regression in custom marker icon handling.
+
+## 2.17.1
+
+* Refactors code for improved testability.
+
+## 2.17.0
+
+* Restructures code to prepare for SwiftPM support.
+
+## 2.16.1
+
+* Updates heatmaps passed between Dart and native to use typed data.
+
 ## 2.16.0
 
 * Adds compatibility with SDK version 10.x for apps targeting iOS 16+.

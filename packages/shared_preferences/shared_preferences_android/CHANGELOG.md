@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.4.20
+
+* Bumps androidx.datastore:datastore from 1.1.7 to 1.2.0.
+
 ## 2.4.19
 
 * Bumps kotlin_version to 2.3.0.
