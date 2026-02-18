@@ -1300,18 +1300,18 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
   AdsManagerLoadedEvent.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.manager,
+    this.manager,
   });
 
   /// The ads manager that will control playback of the loaded ads, or null when
   /// using dynamic ad insertion.
-  final AdsManager manager;
+  final AdsManager? manager;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    AdsManagerLoadedEvent Function(AdsManager manager)? pigeon_newInstance,
+    AdsManagerLoadedEvent Function(AdsManager? manager)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -1339,18 +1339,14 @@ class AdsManagerLoadedEvent extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance was null, expected non-null int.',
           );
           final AdsManager? arg_manager = (args[1] as AdsManager?);
-          assert(
-            arg_manager != null,
-            'Argument for dev.flutter.pigeon.interactive_media_ads.AdsManagerLoadedEvent.pigeon_newInstance was null, expected non-null AdsManager.',
-          );
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-                  pigeon_newInstance?.call(arg_manager!) ??
+                  pigeon_newInstance?.call(arg_manager) ??
                       AdsManagerLoadedEvent.pigeon_detached(
                         pigeon_binaryMessenger: pigeon_binaryMessenger,
                         pigeon_instanceManager: pigeon_instanceManager,
-                        manager: arg_manager!,
+                        manager: arg_manager,
                       ),
                   arg_pigeon_instanceIdentifier!,
                 );
@@ -6820,7 +6816,7 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
   }
 
   /// The SDK will prioritize the media with MIME type on the list.
-  Future<List<String>> getMimeTypes() async {
+  Future<List<String>?> getMimeTypes() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdsRenderingSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6843,13 +6839,8 @@ class AdsRenderingSettings extends PigeonInternalProxyApiBaseClass {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<String>();
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<String>();
     }
   }
 

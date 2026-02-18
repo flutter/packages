@@ -174,7 +174,7 @@ class CameraValue {
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
-      errorDescription: errorDescription,
+      errorDescription: errorDescription ?? this.errorDescription,
       previewSize: previewSize ?? this.previewSize,
       isRecordingVideo: isRecordingVideo ?? this.isRecordingVideo,
       isTakingPicture: isTakingPicture ?? this.isTakingPicture,
@@ -349,6 +349,14 @@ class CameraController extends ValueNotifier<CameraValue> {
           CameraInitializedEvent event,
         ) {
           initializeCompleter.complete(event);
+        }),
+      );
+
+      _unawaited(
+        CameraPlatform.instance.onCameraError(_cameraId).first.then((
+          CameraErrorEvent event,
+        ) {
+          value = value.copyWith(errorDescription: event.description);
         }),
       );
 
@@ -758,7 +766,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getMinExposureOffset() async {
     _throwIfNotInitialized('getMinExposureOffset');
     try {
-      return CameraPlatform.instance.getMinExposureOffset(_cameraId);
+      return await CameraPlatform.instance.getMinExposureOffset(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -768,7 +776,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getMaxExposureOffset() async {
     _throwIfNotInitialized('getMaxExposureOffset');
     try {
-      return CameraPlatform.instance.getMaxExposureOffset(_cameraId);
+      return await CameraPlatform.instance.getMaxExposureOffset(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -780,7 +788,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getExposureOffsetStepSize() async {
     _throwIfNotInitialized('getExposureOffsetStepSize');
     try {
-      return CameraPlatform.instance.getExposureOffsetStepSize(_cameraId);
+      return await CameraPlatform.instance.getExposureOffsetStepSize(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -825,7 +833,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
 
     try {
-      return CameraPlatform.instance.setExposureOffset(_cameraId, offset);
+      return await CameraPlatform.instance.setExposureOffset(_cameraId, offset);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

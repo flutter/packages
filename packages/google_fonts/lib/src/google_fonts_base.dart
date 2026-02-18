@@ -151,7 +151,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
       byteData = rootBundle.load(assetPath);
     }
     if (await byteData != null) {
-      return loadFontByteData(familyWithVariantString, byteData);
+      return await loadFontByteData(familyWithVariantString, byteData);
     }
 
     // Check if this font can be loaded from the device file system.
@@ -161,7 +161,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
     );
 
     if (await byteData != null) {
-      return loadFontByteData(familyWithVariantString, byteData);
+      return await loadFontByteData(familyWithVariantString, byteData);
     }
 
     // Attempt to load this font via http, unless disallowed.
@@ -171,7 +171,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
         descriptor.file,
       );
       if (await byteData != null) {
-        return loadFontByteData(familyWithVariantString, byteData);
+        return await loadFontByteData(familyWithVariantString, byteData);
       }
     } else {
       throw Exception(
@@ -318,14 +318,17 @@ String? findFamilyWithVariantAssetPath(
       ? ['.woff2', '.woff', '.ttf', '.otf']
       : ['.ttf', '.otf'];
 
-  for (final String asset in manifestValues) {
-    for (final String matchingSuffix in fileTypes.where(asset.endsWith)) {
-      final String assetWithoutExtension = asset.substring(
-        0,
-        asset.length - matchingSuffix.length,
-      );
-      if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
-        return asset;
+  // Iterate by file type priority, ensuring preferred formats are selected.
+  for (final fileType in fileTypes) {
+    for (final String asset in manifestValues) {
+      if (asset.endsWith(fileType)) {
+        final String assetWithoutExtension = asset.substring(
+          0,
+          asset.length - fileType.length,
+        );
+        if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
+          return asset;
+        }
       }
     }
   }
