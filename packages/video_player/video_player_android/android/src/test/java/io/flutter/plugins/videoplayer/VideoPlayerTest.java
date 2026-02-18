@@ -992,7 +992,7 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void testSelectVideoTrack_autoQuality() {
+  public void testEnableAutoVideoQuality() {
     DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
     DefaultTrackSelector.Parameters mockParameters = mock(DefaultTrackSelector.Parameters.class);
     DefaultTrackSelector.Parameters.Builder mockBuilder =
@@ -1006,8 +1006,8 @@ public final class VideoPlayerTest {
 
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    // Test selecting auto quality (both indices -1)
-    videoPlayer.selectVideoTrack(-1, -1);
+    // Test enabling auto quality
+    videoPlayer.enableAutoVideoQuality();
 
     // Verify track selector cleared video overrides
     verify(mockTrackSelector).buildUponParameters();

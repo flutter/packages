@@ -1012,11 +1012,13 @@ interface VideoPlayerInstanceApi {
   fun selectAudioTrack(groupIndex: Long, trackIndex: Long)
   /** Gets the available video tracks for the video. */
   fun getVideoTracks(): NativeVideoTrackData
-  /**
-   * Selects which video track is chosen for playback from its [groupIndex] and [trackIndex]. Pass
-   * -1 for both indices to enable auto quality selection.
-   */
+  /** Selects which video track is chosen for playback from its [groupIndex] and [trackIndex]. */
   fun selectVideoTrack(groupIndex: Long, trackIndex: Long)
+  /**
+   * Enables automatic video quality selection, allowing the player to adaptively switch between
+   * available video tracks based on network conditions.
+   */
+  fun enableAutoVideoQuality()
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
@@ -1285,6 +1287,27 @@ interface VideoPlayerInstanceApi {
             val wrapped: List<Any?> =
                 try {
                   api.selectVideoTrack(groupIndexArg, trackIndexArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.enableAutoVideoQuality$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  api.enableAutoVideoQuality()
                   listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)

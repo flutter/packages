@@ -93,6 +93,28 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
         !isMixMode);
   }
 
+  /**
+   * Helper method to extract a long value from a Format field, returning null if the value is
+   * Format.NO_VALUE.
+   *
+   * @param value The format value to check.
+   * @return The value as a Long, or null if it's Format.NO_VALUE.
+   */
+  private static Long getFormatValue(int value) {
+    return value != Format.NO_VALUE ? (long) value : null;
+  }
+
+  /**
+   * Helper method to extract a double value from a Format field, returning null if the value is
+   * Format.NO_VALUE.
+   *
+   * @param value The format value to check.
+   * @return The value as a Double, or null if it's Format.NO_VALUE.
+   */
+  private static Double getFormatValue(double value) {
+    return value != Format.NO_VALUE ? value : null;
+  }
+
   @Override
   public void play() {
     exoPlayer.play();
@@ -170,9 +192,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
                   format.label,
                   format.language,
                   isSelected,
-                  format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null,
-                  format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null,
-                  format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null,
+                  getFormatValue(format.bitrate),
+                  getFormatValue(format.sampleRate),
+                  getFormatValue(format.channelCount),
                   format.codecs != null ? format.codecs : null);
 
           audioTracks.add(audioTrack);
@@ -259,10 +281,10 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
                   (long) trackIndex,
                   format.label,
                   isSelected,
-                  format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null,
-                  format.width != Format.NO_VALUE ? (long) format.width : null,
-                  format.height != Format.NO_VALUE ? (long) format.height : null,
-                  format.frameRate != Format.NO_VALUE ? (double) format.frameRate : null,
+                  getFormatValue(format.bitrate),
+                  getFormatValue(format.width),
+                  getFormatValue(format.height),
+                  getFormatValue(format.frameRate),
                   format.codecs != null ? format.codecs : null);
 
           videoTracks.add(videoTrack);
@@ -275,17 +297,22 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @Override
+  public void enableAutoVideoQuality() {
+    if (trackSelector == null) {
+      throw new IllegalStateException("Cannot enable auto video quality: track selector is null");
+    }
+
+    // Clear video track override to enable adaptive streaming
+    trackSelector.setParameters(
+        trackSelector.buildUponParameters().clearOverridesOfType(C.TRACK_TYPE_VIDEO).build());
+  }
+
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
+  @UnstableApi
+  @Override
   public void selectVideoTrack(long groupIndex, long trackIndex) {
     if (trackSelector == null) {
       throw new IllegalStateException("Cannot select video track: track selector is null");
-    }
-
-    // If both indices are -1, clear the video track override (auto quality)
-    if (groupIndex == -1 && trackIndex == -1) {
-      // Clear video track override to enable adaptive streaming
-      trackSelector.setParameters(
-          trackSelector.buildUponParameters().clearOverridesOfType(C.TRACK_TYPE_VIDEO).build());
-      return;
     }
 
     // Get current tracks
@@ -346,6 +373,15 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // position (e.g., top-left corner) or the old surface remains partially visible.
     // By disabling the video track type, we force ExoPlayer to completely release the
     // current renderer and decoder, ensuring a clean slate for the new resolution.
+    //
+    // References:
+    // - ExoPlayer TrackSelection documentation:
+    //   https://developer.android.com/media/media3/exoplayer/track-selection
+    // - DefaultTrackSelector.setParameters() for track type disabling:
+    //   https://developer.android.com/reference/androidx/media3/exoplayer/trackselection/DefaultTrackSelector.Parameters.Builder#setTrackTypeDisabled(int,boolean)
+    // - This approach is necessary because ExoPlayer doesn't provide a direct API to force
+    //   a renderer reset when dimensions change. Disabling and re-enabling the track type
+    //   is the recommended way to ensure proper resource cleanup and reinitialization.
     if (dimensionsChanged) {
       final boolean wasPlaying = exoPlayer.isPlaying();
       final long currentPosition = exoPlayer.getCurrentPosition();

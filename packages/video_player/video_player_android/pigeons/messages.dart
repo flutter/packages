@@ -240,8 +240,11 @@ abstract class VideoPlayerInstanceApi {
   NativeVideoTrackData getVideoTracks();
 
   /// Selects which video track is chosen for playback from its [groupIndex] and [trackIndex].
-  /// Pass -1 for both indices to enable auto quality selection.
   void selectVideoTrack(int groupIndex, int trackIndex);
+
+  /// Enables automatic video quality selection, allowing the player to adaptively
+  /// switch between available video tracks based on network conditions.
+  void enableAutoVideoQuality();
 }
 
 @EventChannelApi()

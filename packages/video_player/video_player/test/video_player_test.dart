@@ -11,10 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    hide VideoAudioTrack;
+    hide VideoAudioTrack, VideoTrack;
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface
-    show VideoAudioTrack;
+    show VideoAudioTrack, VideoTrack;
 
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
@@ -1786,7 +1786,7 @@ void main() {
       final controller = VideoPlayerController.networkUrl(_localhostUri);
       await controller.initialize();
 
-      const track = VideoTrack(
+      const VideoTrack track = VideoTrack(
         id: '0_1',
         isSelected: false,
         label: '720p',

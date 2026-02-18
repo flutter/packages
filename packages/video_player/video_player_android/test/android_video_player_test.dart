@@ -1075,11 +1075,11 @@ void main() {
         () async {
           final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
               setUpMockPlayer(playerId: 1);
-          when(api.selectVideoTrack(-1, -1)).thenAnswer((_) async {});
+          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
 
           await player.selectVideoTrack(1, null);
 
-          verify(api.selectVideoTrack(-1, -1));
+          verify(api.enableAutoVideoQuality());
         },
       );
 

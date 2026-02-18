@@ -442,10 +442,10 @@ class _PlayerInstance {
     _videoTrackSelectionCompleter = Completer<void>();
 
     if (track == null) {
-      // Auto quality - pass -1, -1 to clear overrides
+      // Auto quality - use dedicated method
       _expectedVideoTrackId = null;
       try {
-        await _api.selectVideoTrack(-1, -1);
+        await _api.enableAutoVideoQuality();
 
         // Wait for the onTracksChanged event from ExoPlayer with a timeout
         await _videoTrackSelectionCompleter!.future.timeout(
