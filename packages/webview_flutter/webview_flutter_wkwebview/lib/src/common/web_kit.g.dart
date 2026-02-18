@@ -4687,6 +4687,40 @@ class WKPreferences extends NSObject {
     }
   }
 
+  /// A Boolean value that indicates whether JavaScript can open windows
+  /// without user interaction.
+  ///
+  /// The default value is `false` on iOS and `true` on macOS.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpreferences/javascriptcanopenwindowsautomatically
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecWKPreferences;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.setJavaScriptCanOpenWindowsAutomatically';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, enabled],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   WKPreferences pigeon_copy() {
     return WKPreferences.pigeon_detached(

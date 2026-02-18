@@ -566,6 +566,17 @@ class MockWKPreferences extends _i1.Mock implements _i2.WKPreferences {
           as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? enabled) =>
+      (super.noSuchMethod(
+            Invocation.method(#setJavaScriptCanOpenWindowsAutomatically, [
+              enabled,
+            ]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i2.WKPreferences pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),

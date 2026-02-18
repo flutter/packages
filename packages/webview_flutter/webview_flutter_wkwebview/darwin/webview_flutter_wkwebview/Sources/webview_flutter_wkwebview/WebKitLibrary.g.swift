@@ -3917,6 +3917,14 @@ protocol PigeonApiDelegateWKPreferences {
   /// A Boolean value that indicates whether JavaScript is enabled.
   func setJavaScriptEnabled(
     pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws
+  /// A Boolean value that indicates whether JavaScript can open windows
+  /// without user interaction.
+  ///
+  /// The default value is `false` on iOS and `true` on macOS.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpreferences/javascriptcanopenwindowsautomatically
+  func setJavaScriptCanOpenWindowsAutomatically(
+    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws
 }
 
 protocol PigeonApiProtocolWKPreferences {
@@ -3963,6 +3971,26 @@ final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences {
       }
     } else {
       setJavaScriptEnabledChannel.setMessageHandler(nil)
+    }
+    let setJavaScriptCanOpenWindowsAutomaticallyChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.setJavaScriptCanOpenWindowsAutomatically",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setJavaScriptCanOpenWindowsAutomaticallyChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! WKPreferences
+        let enabledArg = args[1] as! Bool
+        do {
+          try api.pigeonDelegate.setJavaScriptCanOpenWindowsAutomatically(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, enabled: enabledArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setJavaScriptCanOpenWindowsAutomaticallyChannel.setMessageHandler(nil)
     }
   }
 
