@@ -6,8 +6,8 @@
 @import GoogleMaps;
 @import XCTest;
 
-#import "PartiallyMockedMapView.h"
-#import "TestAssetProvider.h"
+#import "TestUtils/PartiallyMockedMapView.h"
+#import "TestUtils/TestAssetProvider.h"
 
 @interface MockCATransaction : NSObject <FGMCATransactionProtocol>
 @property(nonatomic, assign) BOOL beginCalled;
@@ -50,21 +50,21 @@
 
 #pragma mark -
 
-@interface FLTGoogleMapFactory (Test)
+@interface FGMGoogleMapFactory (Test)
 @property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
 @end
 
 @interface GoogleMapsTests : XCTestCase
 @end
 
-@interface FLTTileProviderController (Testing)
+@interface FGMTileProviderController (Testing)
 - (UIImage *)handleResultTile:(nullable UIImage *)tileImage;
 @end
 
 @implementation GoogleMapsTests
 
 - (void)testPlugin {
-  FLTGoogleMapsPlugin *plugin = [[FLTGoogleMapsPlugin alloc] init];
+  FGMGoogleMapsPlugin *plugin = [[FGMGoogleMapsPlugin alloc] init];
   XCTAssertNotNil(plugin);
 }
 
@@ -74,8 +74,8 @@
   options.frame = frame;
   options.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:options];
-  FLTGoogleMapController *controller =
-      [[FLTGoogleMapController alloc] initWithMapView:mapView
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
                                         assetProvider:[[TestAssetProvider alloc] init]
@@ -94,9 +94,9 @@
   // The API requires a registrar, but this test doesn't actually use it, so just pass in a
   // dummy object rather than set up a full mock.
   id registrar = [[NSObject alloc] init];
-  FLTGoogleMapFactory *factory1 = [[FLTGoogleMapFactory alloc] initWithRegistrar:registrar];
+  FGMGoogleMapFactory *factory1 = [[FGMGoogleMapFactory alloc] initWithRegistrar:registrar];
   XCTAssertNotNil(factory1.sharedMapServices);
-  FLTGoogleMapFactory *factory2 = [[FLTGoogleMapFactory alloc] initWithRegistrar:registrar];
+  FGMGoogleMapFactory *factory2 = [[FGMGoogleMapFactory alloc] initWithRegistrar:registrar];
   // Test pointer equality, should be same retained singleton +[GMSServices sharedServices] object.
   // Retaining the opaque object should be enough to avoid multiple internal initializations,
   // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
@@ -105,7 +105,7 @@
 }
 
 - (void)testHandleResultTileDownsamplesWideGamutImages {
-  FLTTileProviderController *controller = [[FLTTileProviderController alloc] init];
+  FGMTileProviderController *controller = [[FGMTileProviderController alloc] init];
 
   NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"widegamut"
                                                                          ofType:@"png"
@@ -134,8 +134,8 @@
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
-  FLTGoogleMapController *controller =
-      [[FLTGoogleMapController alloc] initWithMapView:mapView
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
                                         assetProvider:[[TestAssetProvider alloc] init]
@@ -164,8 +164,8 @@
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
-  FLTGoogleMapController *controller =
-      [[FLTGoogleMapController alloc] initWithMapView:mapView
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
                                         assetProvider:[[TestAssetProvider alloc] init]
@@ -203,8 +203,8 @@
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
   NSObject<FlutterBinaryMessenger> *binaryMessenger = [[StubBinaryMessenger alloc] init];
-  FLTGoogleMapController *controller =
-      [[FLTGoogleMapController alloc] initWithMapView:mapView
+  FGMGoogleMapController *controller =
+      [[FGMGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
                                         assetProvider:[[TestAssetProvider alloc] init]
