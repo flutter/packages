@@ -18,7 +18,7 @@
     - any-glob-to-any-file:
       - third_party/packages/cupertino_icons/**/*
 
-'p: cupertino_ui'
+'p: cupertino_ui':
   - changed-files:
     - any-glob-to-any-file:
       - third_party/packages/cupertino_ui/**/*
