@@ -894,6 +894,70 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  @override
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+    int cameraId,
+  ) async {
+    return (await _getSupportedVideoStabilizationModeMap(cameraId)).keys;
+  }
+
+  /// Throws a [ArgumentError] when an unsupported [mode] is
+  /// supplied.
+  @override
+  Future<void> setVideoStabilizationMode(
+    int cameraId,
+    VideoStabilizationMode mode,
+  ) async {
+    final Map<VideoStabilizationMode, int> availableModes =
+        await _getSupportedVideoStabilizationModeMap(cameraId);
+
+    final int? controlMode = availableModes[mode];
+    if (controlMode == null) {
+      throw ArgumentError('Unavailable video stabilization mode.', 'mode');
+    }
+
+    final captureRequestOptions = CaptureRequestOptions(
+      options: <CaptureRequestKey, Object?>{
+        CaptureRequest.controlVideoStabilizationMode: controlMode,
+      },
+    );
+
+    final camera2Control = Camera2CameraControl.from(
+      cameraControl: cameraControl,
+    );
+    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+  }
+
+  /// Gets a map of video stabilization control modes that are supported for the
+  /// selected camera, indexed by the respective [VideoStabilizationMode].
+  Future<Map<VideoStabilizationMode, int>>
+  _getSupportedVideoStabilizationModeMap(int cameraId) async {
+    if (cameraInfo == null) {
+      return <VideoStabilizationMode, int>{};
+    }
+
+    final camera2CameraInfo = Camera2CameraInfo.from(cameraInfo: cameraInfo!);
+
+    final List<int> controlModes =
+        await camera2CameraInfo.getCameraCharacteristic(
+              CameraCharacteristics.controlAvailableVideoStabilizationModes,
+            )
+            as List<int>? ??
+        const <int>[];
+
+    final modes = <VideoStabilizationMode, int>{
+      for (final int controlMode in controlModes)
+        // https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_OFF
+        if (controlMode == 0)
+          VideoStabilizationMode.off: 0
+        // https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_ON
+        else if (controlMode == 1)
+          VideoStabilizationMode.level1: 1,
+    };
+
+    return modes;
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -1167,7 +1231,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // and permission was not granted when the camera was created, then recording
     // audio will be disabled to respect the denied permission.
     pendingRecording = await pendingRecording!.withAudioEnabled(
-      /* initialMuted */ !enableRecordingAudio,
+      /* initialMuted */
+      !enableRecordingAudio,
     );
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);

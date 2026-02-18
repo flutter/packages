@@ -13,7 +13,7 @@ import Flutter
 #endif
 
 final class MockCamera: NSObject, Camera {
-  var setDartApiStub: ((FCPCameraEventApi?) -> Void)?
+  var setDartApiStub: ((CameraEventApi?) -> Void)?
   var setOnFrameAvailableStub: (((() -> Void)?) -> Void)?
   var getMinimumExposureOffsetStub: (() -> CGFloat)?
   var getMaximumExposureOffsetStub: (() -> CGFloat)?
@@ -23,29 +23,34 @@ final class MockCamera: NSObject, Camera {
   var receivedImageStreamDataStub: (() -> Void)?
   var startStub: (() -> Void)?
   var startVideoRecordingStub:
-    ((@escaping (FlutterError?) -> Void, FlutterBinaryMessenger?) -> Void)?
+    ((@escaping (Result<Void, any Error>) -> Void, FlutterBinaryMessenger?) -> Void)?
   var pauseVideoRecordingStub: (() -> Void)?
   var resumeVideoRecordingStub: (() -> Void)?
-  var stopVideoRecordingStub: ((((String?, FlutterError?) -> Void)?) -> Void)?
-  var captureToFileStub: ((((String?, FlutterError?) -> Void)?) -> Void)?
+  var stopVideoRecordingStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
+  var captureToFileStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
   var setDeviceOrientationStub: ((UIDeviceOrientation) -> Void)?
-  var lockCaptureOrientationStub: ((FCPPlatformDeviceOrientation) -> Void)?
+  var lockCaptureOrientationStub: ((PlatformDeviceOrientation) -> Void)?
   var unlockCaptureOrientationStub: (() -> Void)?
-  var setImageFileFormatStub: ((FCPPlatformImageFileFormat) -> Void)?
-  var setExposureModeStub: ((FCPPlatformExposureMode) -> Void)?
+  var setImageFileFormatStub: ((PlatformImageFileFormat) -> Void)?
+  var setExposureModeStub: ((PlatformExposureMode) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
-  var setExposurePointStub: ((FCPPlatformPoint?, ((FlutterError?) -> Void)?) -> Void)?
-  var setFocusModeStub: ((FCPPlatformFocusMode) -> Void)?
-  var setFocusPointStub: ((FCPPlatformPoint?, ((FlutterError?) -> Void)?) -> Void)?
-  var setZoomLevelStub: ((CGFloat, ((FlutterError?) -> Void)?) -> Void)?
-  var setFlashModeStub: ((FCPPlatformFlashMode, ((FlutterError?) -> Void)?) -> Void)?
+  var setExposurePointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
+  var setFocusModeStub: ((PlatformFocusMode) -> Void)?
+  var setFocusPointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
+  var setZoomLevelStub: ((CGFloat, @escaping (Result<Void, any Error>) -> Void) -> Void)?
+  var setFlashModeStub: ((PlatformFlashMode, @escaping (Result<Void, any Error>) -> Void) -> Void)?
   var pausePreviewStub: (() -> Void)?
   var resumePreviewStub: (() -> Void)?
-  var setDescriptionWhileRecordingStub: ((String, ((FlutterError?) -> Void)?) -> Void)?
-  var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
+  var setDescriptionWhileRecordingStub:
+    ((String, @escaping (Result<Void, any Error>) -> Void) -> Void)?
+  var startImageStreamStub:
+    ((FlutterBinaryMessenger, @escaping (Result<Void, any Error>) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
+  var setVideoStabilizationModeStub:
+    ((PlatformVideoStabilizationMode, @escaping (Result<Void, any Error>) -> Void) -> Void)?
+  var getIsVideoStabilizationModeSupportedStub: ((PlatformVideoStabilizationMode) -> Bool)?
 
-  var dartAPI: FCPCameraEventApi? {
+  var dartAPI: CameraEventApi? {
     get {
       preconditionFailure("Attempted to access unimplemented property: dartAPI")
     }
@@ -110,7 +115,7 @@ final class MockCamera: NSObject, Camera {
   func stop() {}
 
   func startVideoRecording(
-    completion: @escaping (FlutterError?) -> Void,
+    completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming messenger: FlutterBinaryMessenger?
   ) {
     startVideoRecordingStub?(completion, messenger)
@@ -124,15 +129,15 @@ final class MockCamera: NSObject, Camera {
     resumeVideoRecordingStub?()
   }
 
-  func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
+  func stopVideoRecording(completion: @escaping (Result<String, any Error>) -> Void) {
     stopVideoRecordingStub?(completion)
   }
 
-  func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
+  func captureToFile(completion: @escaping (Result<String, any Error>) -> Void) {
     captureToFileStub?(completion)
   }
 
-  func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {
+  func lockCaptureOrientation(_ orientation: PlatformDeviceOrientation) {
     lockCaptureOrientationStub?(orientation)
   }
 
@@ -140,11 +145,11 @@ final class MockCamera: NSObject, Camera {
     unlockCaptureOrientationStub?()
   }
 
-  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
+  func setImageFileFormat(_ fileFormat: PlatformImageFileFormat) {
     setImageFileFormatStub?(fileFormat)
   }
 
-  func setExposureMode(_ mode: FCPPlatformExposureMode) {
+  func setExposureMode(_ mode: PlatformExposureMode) {
     setExposureModeStub?(mode)
   }
 
@@ -153,29 +158,31 @@ final class MockCamera: NSObject, Camera {
   }
 
   func setExposurePoint(
-    _ point: FCPPlatformPoint?, withCompletion: @escaping (FlutterError?) -> Void
+    _ point: PlatformPoint?, withCompletion: @escaping (Result<Void, any Error>) -> Void
   ) {
     setExposurePointStub?(point, withCompletion)
   }
 
-  func setFocusMode(_ mode: FCPPlatformFocusMode) {
+  func setFocusMode(_ mode: PlatformFocusMode) {
     setFocusModeStub?(mode)
   }
 
-  func setFocusPoint(_ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void) {
+  func setFocusPoint(
+    _ point: PlatformPoint?, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
     setFocusPointStub?(point, completion)
   }
 
   func setZoomLevel(
     _ zoom: CGFloat,
-    withCompletion completion: @escaping (FlutterError?) -> Void
+    withCompletion completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     setZoomLevelStub?(zoom, completion)
   }
 
   func setFlashMode(
-    _ mode: FCPPlatformFlashMode,
-    withCompletion completion: @escaping (FlutterError?) -> Void
+    _ mode: PlatformFlashMode,
+    withCompletion completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     setFlashModeStub?(mode, completion)
   }
@@ -188,16 +195,27 @@ final class MockCamera: NSObject, Camera {
     resumePreviewStub?()
   }
 
+  func setVideoStabilizationMode(
+    _ mode: PlatformVideoStabilizationMode,
+    withCompletion completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    setVideoStabilizationModeStub?(mode, completion)
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: PlatformVideoStabilizationMode) -> Bool {
+    return getIsVideoStabilizationModeSupportedStub?(mode) ?? false
+  }
+
   func setDescriptionWhileRecording(
     _ cameraName: String,
-    withCompletion completion: @escaping (FlutterError?) -> Void
+    withCompletion completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     setDescriptionWhileRecordingStub?(cameraName, completion)
   }
 
   func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    completion: @escaping (FlutterError?) -> Void
+    completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     startImageStreamStub?(messenger, completion)
   }
