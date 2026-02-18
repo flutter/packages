@@ -3970,6 +3970,7 @@ void main() {
         home: Material(
           child: DropdownButton<String>(
             key: menuKey,
+            isVerticallyExpanded: true,
             onChanged: (String? value) {},
             items: const <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(
@@ -4093,6 +4094,7 @@ void main() {
           child: DropdownButton<String>(
             key: menuKey,
             mouseCursor: SystemMouseCursors.cell,
+            isVerticallyExpanded: true,
             dropdownMenuItemMouseCursor: SystemMouseCursors.grab,
             onChanged: (String? newValue) {},
             items: const <DropdownMenuItem<String>>[
@@ -4130,6 +4132,7 @@ void main() {
           child: DropdownButton<String>(
             key: menuKey,
             dropdownMenuItemMouseCursor: SystemMouseCursors.grab,
+            isVerticallyExpanded: true,
             onChanged: (String? newValue) {},
             items: const <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(key: itemKey, value: 'One', child: Text('One')),
