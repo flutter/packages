@@ -26,16 +26,12 @@ String render(
   return t.renderString(values);
 }
 
-void main(List<String> args) {
-  final List<String> unsupportedSpecs = args
-    .where((arg) => arg.startsWith('-u='))
-    .map((arg) => arg.substring(3))
-    .toList();
+void main(List<String> unsupportedSpecs) {
   defineTests(unsupportedSpecs);
 }
 
 void defineTests(List<String> unsupportedSpecs) {
-  final specsDir = Directory('test/spec/specs');
+  final specsDir = Directory('test/specs');
   specsDir.listSync().forEach((FileSystemEntity f) {
     if (f is File) {
       final String filename = f.path;

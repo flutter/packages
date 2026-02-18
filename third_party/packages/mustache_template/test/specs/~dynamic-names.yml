@@ -1,0 +1,377 @@
+overview: |
+  Rationale: this special notation was introduced primarily to allow the dynamic
+  loading of partials. The main advantage that this notation offers is to allow
+  dynamic loading of partials, which is particularly useful in cases where
+  polymorphic data needs to be rendered in different ways. Such cases would
+  otherwise be possible to render only with solutions that are convoluted,
+  inefficient, or both.
+
+  Example.
+  Let's consider the following data:
+
+      items: [
+        { content: 'Hello, World!' },
+        { url: 'http://example.com/foo.jpg' },
+        { content: 'Some text' },
+        { content: 'Some other text' },
+        { url: 'http://example.com/bar.jpg' },
+        { url: 'http://example.com/baz.jpg' },
+        { content: 'Last text here' }
+      ]
+
+  The goal is to render the different types of items in different ways. The
+  items having a key named `content` should be rendered with the template
+  `text.mustache`:
+
+      {{!text.mustache}}
+      {{content}}
+
+  And the items having a key named `url` should be rendered with the template
+  `image.mustache`:
+
+      {{!image.mustache}}
+      <img src="{{url}}"/>
+
+  There are already several ways to achieve this goal, here below are
+  illustrated and discussed the most significant solutions to this problem.
+
+  Using Pre-Processing
+
+  The idea is to use a secondary templating mechanism to dynamically generate
+  the template that will be rendered.
+  The template that our secondary templating mechanism generates might look
+  like this:
+
+      {{!template.mustache}}
+      {{items.1.content}}
+      <img src="{{items.2.url}}"/>
+      {{items.3.content}}
+      {{items.4.content}}
+      <img src="{{items.5.url}}"/>
+      <img src="{{items.6.url}}"/>
+      {{items.7.content}}
+
+  This solutions offers the advantages of having more control over the template
+  and minimizing the template blocks to the essential ones.
+  The drawbacks are the rendering speed and the complexity that the secondary
+  templating mechanism requires.
+
+  Using Lambdas
+
+  The idea is to inject functions into the data that will be later called from
+  the template.
+  This way the data will look like this:
+
+      items: [
+        {
+          content: 'Hello, World!',
+          html: function() { return '{{>text}}'; }
+        },
+        {
+          url: 'http://example.com/foo.jpg',
+          html: function() { return '{{>image}}'; }
+        },
+        {
+          content: 'Some text',
+          html: function() { return '{{>text}}'; }
+        },
+        {
+          content: 'Some other text',
+          html: function() { return '{{>text}}'; }
+        },
+        {
+          url: 'http://example.com/bar.jpg',
+          html: function() { return '{{>image}}'; }
+        },
+        {
+          url: 'http://example.com/baz.jpg',
+          html: function() { return '{{>image}}'; }
+        },
+        {
+          content: 'Last text here',
+          html: function() { return '{{>text}}'; }
+        }
+      ]
+
+  And the template will look like this:
+
+      {{!template.mustache}}
+      {{#items}}
+      {{{html}}}
+      {{/items}}
+
+  The advantage this solution offers is to have a light main template.
+  The drawback is that the data needs to embed logic and template tags in
+  it.
+
+  Using If-Else Blocks
+
+  The idea is to put some logic into the main template so it can select the
+  templates at rendering time:
+
+      {{!template.mustache}}
+      {{#items}}
+      {{#url}}
+      {{>image}}
+      {{/url}}
+      {{#content}}
+      {{>text}}
+      {{/content}}
+      {{/items}}
+
+  The main advantage of this solution is that it works without adding any
+  overhead fields to the data. It also documents which external templates are
+  appropriate for expansion in this position.
+  The drawback is that this solution isn't optimal for heterogeneous data sets
+  as the main template grows linearly with the number of polymorphic variants.
+
+  Using Dynamic Names
+
+  This is the solution proposed by this spec.
+  The idea is to load partials dynamically.
+  This way the data items have to be tagged with the corresponding partial name:
+
+      items: [
+        { content: 'Hello, World!',          dynamic: 'text' },
+        { url: 'http://example.com/foo.jpg', dynamic: 'image' },
+        { content: 'Some text',              dynamic: 'text' },
+        { content: 'Some other text',        dynamic: 'text' },
+        { url: 'http://example.com/bar.jpg', dynamic: 'image' },
+        { url: 'http://example.com/baz.jpg', dynamic: 'image' },
+        { content: 'Last text here',         dynamic: 'text' }
+      ]
+
+  And the template would simple look like this:
+
+      {{!template.mustache}}
+      {{#items}}
+      {{>*dynamic}}
+      {{/items}}
+
+  Summary:
+
+    +----------------+---------------------+-----------------------------------+
+    |    Approach    |        Pros         |               Cons                |
+    +----------------+---------------------+-----------------------------------+
+    | Pre-Processing | Essential template, | Secondary templating system       |
+    |                | more control        | needed, slower rendering          |
+    | Lambdas        | Slim template       | Data tagging, logic in data       |
+    | If Blocks      | No data overhead,   | Template linear growth            |
+    |                | self-documenting    |                                   |
+    | Dynamic Names  | Slim template       | Data tagging                      |
+    +----------------+---------------------+-----------------------------------+
+
+  Dynamic Names are a special notation to dynamically determine a tag's content.
+
+  Dynamic Names MUST be a non-whitespace character sequence NOT containing
+  the current closing delimiter. A Dynamic Name consists of an asterisk,
+  followed by a dotted name. The dotted name follows the same notation as in an
+  Interpolation tag.
+
+  This tag's dotted name, which is the Dynamic Name excluding the
+  leading asterisk, references a key in the context whose value will be used in
+  place of the Dynamic Name itself as content of the tag. The dotted name
+  resolution produces the same value as an Interpolation tag and does not affect
+  the context for further processing.
+
+  Set Delimiter tags MUST NOT affect the resolution of a Dynamic Name. The
+  Dynamic Names MUST be resolved against the context stack local to the tag.
+  Failed resolution of the dynamic name SHOULD result in nothing being rendered.
+
+  Engines that implement Dynamic Names MUST support their use in Partial tags.
+  In engines that also implement the optional inheritance spec, Dynamic Names
+  inside Parent tags SHOULD be supported as well. Dynamic Names cannot be
+  resolved more than once (Dynamic Names cannot be nested).
+
+tests:
+  - name: Basic Behavior - Partial
+    desc: The asterisk operator is used for dynamic partials.
+    data: { dynamic: 'content' }
+    template: '"{{>*dynamic}}"'
+    partials: { content: 'Hello, world!' }
+    expected: '"Hello, world!"'
+
+  - name: Basic Behavior - Name Resolution
+    desc: |
+      The asterisk is not part of the name that will be resolved in the context.
+    data: { dynamic: 'content', '*dynamic': 'wrong' }
+    template: '"{{>*dynamic}}"'
+    partials: { content: 'Hello, world!', wrong: 'Invisible' }
+    expected: '"Hello, world!"'
+
+  - name: Context Misses - Partial
+    desc: Failed context lookups should be considered falsey.
+    data: { }
+    template: '"{{>*missing}}"'
+    partials: { missing: 'Hello, world!' }
+    expected: '""'
+
+  - name: Failed Lookup - Partial
+    desc: The empty string should be used when the named partial is not found.
+    data: { dynamic: 'content' }
+    template: '"{{>*dynamic}}"'
+    partials: { foobar: 'Hello, world!' }
+    expected: '""'
+
+  - name: Context
+    desc: The dynamic partial should operate within the current context.
+    data: { text: 'Hello, world!', example: 'partial'  }
+    template: '"{{>*example}}"'
+    partials: { partial: '*{{text}}*' }
+    expected: '"*Hello, world!*"'
+
+  - name: Dotted Names
+    desc: The dynamic partial should operate within the current context.
+    data: { text: 'Hello, world!', foo: { bar: { baz: 'partial' } } }
+    template: '"{{>*foo.bar.baz}}"'
+    partials: { partial: '*{{text}}*' }
+    expected: '"*Hello, world!*"'
+
+  - name: Dotted Names - Operator Precedence
+    desc: The dotted name should be resolved entirely before being dereferenced.
+    data:
+      text: 'Hello, world!'
+      foo: 'test'
+      test:
+        bar:
+          baz: 'partial'
+    template: '"{{>*foo.bar.baz}}"'
+    partials: { partial: '*{{text}}*' }
+    expected: '""'
+
+  - name: Dotted Names - Failed Lookup
+    desc: The dynamic partial should operate within the current context.
+    data:
+      foo:
+        text: 'Hello, world!'
+        bar:
+          baz: 'partial'
+    template: '"{{>*foo.bar.baz}}"'
+    partials: { partial: '*{{text}}*' }
+    expected: '"**"'
+
+  - name: Dotted names - Context Stacking
+    desc: Dotted names should not push a new frame on the context stack.
+    data:
+      section1: { value: 'section1' }
+      section2: { dynamic: 'partial', value: 'section2' }
+    template: "{{#section1}}{{>*section2.dynamic}}{{/section1}}"
+    partials:
+      partial: '"{{value}}"'
+    expected: '"section1"'
+
+  - name: Dotted names - Context Stacking Under Repetition
+    desc: Dotted names should not push a new frame on the context stack.
+    data:
+      value: 'test'
+      section1: [ 1, 2 ]
+      section2: { dynamic: 'partial', value: 'section2' }
+    template: "{{#section1}}{{>*section2.dynamic}}{{/section1}}"
+    partials:
+      partial: "{{value}}"
+    expected: "testtest"
+
+  - name: Dotted names - Context Stacking Failed Lookup
+    desc: Dotted names should resolve against the proper context stack.
+    data:
+      section1: [ 1, 2 ]
+      section2: { dynamic: 'partial', value: 'section2' }
+    template: "{{#section1}}{{>*section2.dynamic}}{{/section1}}"
+    partials:
+      partial: '"{{value}}"'
+    expected: '""""'
+
+  - name: Recursion
+    desc: Dynamic partials should properly recurse.
+    data:
+      template: 'node'
+      content: 'X'
+      nodes: [ { content: 'Y', nodes: [] } ]
+    template: '{{>*template}}'
+    partials: { node: '{{content}}<{{#nodes}}{{>*template}}{{/nodes}}>' }
+    expected: 'X<Y<>>'
+
+  - name: Dynamic Names - Double Dereferencing
+    desc: Dynamic Names can't be dereferenced more than once.
+    data: { dynamic: 'test', 'test': 'content' }
+    template: '"{{>**dynamic}}"'
+    partials: { content: 'Hello, world!' }
+    expected: '""'
+
+  - name: Dynamic Names - Composed Dereferencing
+    desc: Dotted Names are resolved entirely before dereferencing begins.
+    data: { foo: 'fizz', bar: 'buzz', fizz: { buzz: { content: null } } }
+    template: '"{{>*foo.*bar}}"'
+    partials: { content: 'Hello, world!' }
+    expected: '""'
+
+  # Whitespace Sensitivity
+
+  - name: Surrounding Whitespace
+    desc: |
+      A dynamic partial should not alter surrounding whitespace; any
+      whitespace preceding the tag should be treated as indentation while any
+      whitespace succeding the tag should be left untouched.
+    data: { partial: 'foobar' }
+    template: '| {{>*partial}} |'
+    partials: { foobar: "\t|\t" }
+    expected: "| \t|\t |"
+
+  - name: Inline Indentation
+    desc: |
+      Whitespace should be left untouched: whitespaces preceding the tag
+      should be treated as indentation.
+    data: { dynamic: 'partial', data: '|' }
+    template: "  {{data}}  {{>*dynamic}}\n"
+    partials: { partial: ">\n>" }
+    expected: "  |  >\n>\n"
+
+  - name: Standalone Line Endings
+    desc: '"\r\n" should be considered a newline for standalone tags.'
+    data: { dynamic: 'partial' }
+    template: "|\r\n{{>*dynamic}}\r\n|"
+    partials: { partial: ">" }
+    expected: "|\r\n>|"
+
+  - name: Standalone Without Previous Line
+    desc: Standalone tags should not require a newline to precede them.
+    data: { dynamic: 'partial' }
+    template: "  {{>*dynamic}}\n>"
+    partials: { partial: ">\n>"}
+    expected: "  >\n  >>"
+
+  - name: Standalone Without Newline
+    desc: Standalone tags should not require a newline to follow them.
+    data: { dynamic: 'partial' }
+    template: ">\n  {{>*dynamic}}"
+    partials: { partial: ">\n>" }
+    expected: ">\n  >\n  >"
+
+  - name: Standalone Indentation
+    desc: Each line of the partial should be indented before rendering.
+    data: { dynamic: 'partial', content: "<\n->" }
+    template: |
+      \
+       {{>*dynamic}}
+      /
+    partials:
+      partial: |
+        |
+        {{{content}}}
+        |
+    expected: |
+      \
+       |
+       <
+      ->
+       |
+      /
+
+  # Whitespace Insensitivity
+
+  - name: Padding Whitespace
+    desc: Superfluous in-tag whitespace should be ignored.
+    data: { dynamic: 'partial', boolean: true }
+    template: "|{{> * dynamic }}|"
+    partials: { partial: "[]" }
+    expected: '|[]|'
