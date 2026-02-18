@@ -89,11 +89,10 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
       // `sceneDidBecomeActive:` method once the Dart MethodChannel
       // is initialized.
       launchingShortcutType = shortcutItem.type
-      // Return false to indicate we handled the quick action to ensure
-      // the `windowScene:performActionFor:` method is not called.
-      return false
+      // Return true to indicate we handled the connection.
+      return true
     }
-    return true
+    return false
   }
 
   public func sceneDidBecomeActive(_ scene: UIScene) {
@@ -109,6 +108,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     completionHandler: @escaping (Bool) -> Void
   ) -> Bool {
     handleShortcut(shortcutItem.type)
+    completionHandler(true)
     return true
   }
 
