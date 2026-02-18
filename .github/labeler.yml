@@ -18,6 +18,11 @@
     - any-glob-to-any-file:
       - third_party/packages/cupertino_icons/**/*
 
+'p: cupertino_ui'
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/cupertino_ui/**/*
+
 'p: espresso':
   - changed-files:
     - any-glob-to-any-file:
@@ -266,6 +271,7 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/animations/**/*
+      - packages/cupertino_ui/**/*
       - packages/flutter_lints/**/*
       - packages/go_router/**/*
       - packages/go_router_builder/**/*
