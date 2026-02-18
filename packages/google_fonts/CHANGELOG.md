@@ -1,3 +1,11 @@
+## 8.0.2
+
+- Fixes a bug where exceptions thrown during return within try blocks in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).
+
+## 8.0.1
+
+- Fixes WOFF2/WOFF font selection when loading fonts bundled with the app to prefer compressed formats regardless of asset manifest order.
+
 ## 8.0.0
 
 - Added fonts:
