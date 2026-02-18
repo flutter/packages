@@ -1,3 +1,11 @@
+## 2.9.3
+
+* Updates `androidx.media3` to 1.9.1.
+
+## 2.9.2
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 2.9.1
 
 * Updates to Pigeon 26.1.5.

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
 import XCTest
 
 @testable import camera_avfoundation
@@ -56,18 +57,17 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if camera access was previously denied.")
-    let expectedError = FlutterError(
-      code: "CameraAccessDeniedWithoutPrompt",
-      message:
-        "User has previously denied the camera access request. Go to Settings to enable camera access.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .video)
       return .denied
     }
     permissionManager.requestCameraPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "CameraAccessDeniedWithoutPrompt")
+      XCTAssertEqual(
+        error?.message,
+        "User has previously denied the camera access request. Go to Settings to enable camera access."
+      )
       expectation.fulfill()
     }
 
@@ -78,17 +78,14 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if camera access is restricted.")
-    let expectedError = FlutterError(
-      code: "CameraAccessRestricted",
-      message: "Camera access is restricted.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .video)
       return .restricted
     }
     permissionManager.requestCameraPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "CameraAccessRestricted")
+      XCTAssertEqual(error?.message, "Camera access is restricted.")
       expectation.fulfill()
     }
 
@@ -121,10 +118,6 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if user denied access.")
-    let expectedError = FlutterError(
-      code: "CameraAccessDenied",
-      message: "User denied the camera access request.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .video)
@@ -136,7 +129,8 @@ final class CameraPermissionManagerTests: XCTestCase {
       handler(false)
     }
     permissionManager.requestCameraPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "CameraAccessDenied")
+      XCTAssertEqual(error?.message, "User denied the camera access request.")
       expectation.fulfill()
     }
 
@@ -166,18 +160,17 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if audio access was previously denied.")
-    let expectedError = FlutterError(
-      code: "AudioAccessDeniedWithoutPrompt",
-      message:
-        "User has previously denied the audio access request. Go to Settings to enable audio access.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .audio)
       return .denied
     }
     permissionManager.requestAudioPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "AudioAccessDeniedWithoutPrompt")
+      XCTAssertEqual(
+        error?.message,
+        "User has previously denied the audio access request. Go to Settings to enable audio access."
+      )
       expectation.fulfill()
     }
 
@@ -188,17 +181,14 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if audio access is restricted.")
-    let expectedError = FlutterError(
-      code: "AudioAccessRestricted",
-      message: "Audio access is restricted.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .audio)
       return .restricted
     }
     permissionManager.requestAudioPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "AudioAccessRestricted")
+      XCTAssertEqual(error?.message, "Audio access is restricted.")
       expectation.fulfill()
     }
 
@@ -231,10 +221,6 @@ final class CameraPermissionManagerTests: XCTestCase {
     let (permissionManager, mockPermissionService) = createSutAndMocks()
     let expectation = self.expectation(
       description: "Must complete with error if user denied access")
-    let expectedError = FlutterError(
-      code: "AudioAccessDenied",
-      message: "User denied the audio access request.",
-      details: nil)
 
     mockPermissionService.authorizationStatusStub = { mediaType in
       XCTAssertEqual(mediaType, .audio)
@@ -246,7 +232,8 @@ final class CameraPermissionManagerTests: XCTestCase {
       handler(false)
     }
     permissionManager.requestAudioPermission { error in
-      XCTAssertEqual(error, expectedError)
+      XCTAssertEqual(error?.code, "AudioAccessDenied")
+      XCTAssertEqual(error?.message, "User denied the audio access request.")
       expectation.fulfill()
     }
 

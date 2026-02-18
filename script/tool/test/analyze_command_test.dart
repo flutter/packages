@@ -613,7 +613,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Unable to downgrade dependencies'),
+          contains('Unable to resolve downgraded dependencies'),
         ]),
       );
     });
@@ -1128,7 +1128,10 @@ packages/package_a/lib/foo.dart
         contains('enable-swift-package-manager: false'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
     });
 
     group('iOS', () {

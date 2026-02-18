@@ -1,3 +1,11 @@
+## 26.1.7
+
+* [objc] Updates to use module imports.
+
+## 26.1.6
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 26.1.5
 
 * [kotlin] Fixes a "bridge method" warning when implementing an event stream handler.

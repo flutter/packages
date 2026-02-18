@@ -20,6 +20,7 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.ButtCap;
@@ -34,7 +35,9 @@ import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.PinConfig;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.gms.maps.model.RuntimeRemoteException;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
@@ -47,21 +50,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
-  // These constants must match the corresponding constants in serialization.dart
-  public static final String HEATMAP_ID_KEY = "heatmapId";
-  public static final String HEATMAP_DATA_KEY = "data";
-  public static final String HEATMAP_GRADIENT_KEY = "gradient";
-  public static final String HEATMAP_MAX_INTENSITY_KEY = "maxIntensity";
-  public static final String HEATMAP_OPACITY_KEY = "opacity";
-  public static final String HEATMAP_RADIUS_KEY = "radius";
-  public static final String HEATMAP_GRADIENT_COLORS_KEY = "colors";
-  public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
-  public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
-
   private static BitmapDescriptor toBitmapDescriptor(
       Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
     return toBitmapDescriptor(
@@ -116,6 +108,10 @@ class Convert {
     if (bitmap instanceof Messages.PlatformBitmapBytesMap) {
       Messages.PlatformBitmapBytesMap typedBitmap = (Messages.PlatformBitmapBytesMap) bitmap;
       return getBitmapFromBytes(typedBitmap, density, wrapper);
+    }
+    if (bitmap instanceof Messages.PlatformBitmapPinConfig) {
+      Messages.PlatformBitmapPinConfig pinConfigBitmap = (Messages.PlatformBitmapPinConfig) bitmap;
+      return getBitmapFromPinConfigBuilder(pinConfigBitmap, assetManager, density, wrapper);
     }
     throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
   }
@@ -184,6 +180,76 @@ class Convert {
       return bitmapDescriptorFactory.fromBitmap(bitmap);
     } catch (Exception e) {
       throw new IllegalArgumentException("Unable to interpret bytes as a valid image.", e);
+    }
+  }
+
+  public static BitmapDescriptor getBitmapFromPinConfigBuilder(
+      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    try {
+      final PinConfig pinConfig =
+          getPinConfigFromPlatformPinConfig(
+              pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
+      return bitmapDescriptorFactory.fromPinConfig(pinConfig);
+    } catch (IllegalArgumentException | RuntimeRemoteException e) {
+      throw new IllegalArgumentException("Unable to interpret pin config as a valid image.", e);
+    }
+  }
+
+  @VisibleForTesting
+  public static PinConfig getPinConfigFromPlatformPinConfig(
+      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final Integer backgroundColor = nullableColor(pinConfigBitmap.getBackgroundColor());
+    final Integer borderColor = nullableColor(pinConfigBitmap.getBorderColor());
+    final PinConfig.Glyph glyph =
+        buildPinGlyph(pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
+
+    final PinConfig.Builder pinConfigBuilder = PinConfig.builder();
+    applyIfNotNull(backgroundColor, pinConfigBuilder::setBackgroundColor);
+    applyIfNotNull(borderColor, pinConfigBuilder::setBorderColor);
+    applyIfNotNull(glyph, pinConfigBuilder::setGlyph);
+
+    return pinConfigBuilder.build();
+  }
+
+  private static @Nullable PinConfig.Glyph buildPinGlyph(
+      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final String glyphText = pinConfigBitmap.getGlyphText();
+    if (glyphText != null) {
+      final Integer glyphTextColor = nullableColor(pinConfigBitmap.getGlyphTextColor());
+      return glyphTextColor != null
+          ? new PinConfig.Glyph(glyphText, glyphTextColor)
+          : new PinConfig.Glyph(glyphText);
+    }
+
+    final Messages.PlatformBitmap glyphBitmap = pinConfigBitmap.getGlyphBitmap();
+    if (glyphBitmap != null) {
+      return new PinConfig.Glyph(
+          toBitmapDescriptor(glyphBitmap, assetManager, density, bitmapDescriptorFactory));
+    }
+
+    final Integer glyphColor = nullableColor(pinConfigBitmap.getGlyphColor());
+    if (glyphColor != null) {
+      return new PinConfig.Glyph(glyphColor);
+    }
+    return null;
+  }
+
+  private static @Nullable Integer nullableColor(@Nullable Messages.PlatformColor color) {
+    return color == null ? null : color.getArgbValue().intValue();
+  }
+
+  private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {
+    if (value != null) {
+      setter.accept(value);
     }
   }
 
@@ -328,14 +394,6 @@ class Convert {
         "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
   }
 
-  private static double toDouble(Object o) {
-    return ((Number) o).doubleValue();
-  }
-
-  private static float toFloat(Object o) {
-    return ((Number) o).floatValue();
-  }
-
   private static @Nullable Float nullableDoubleToFloat(@Nullable Double d) {
     return (d == null) ? null : d.floatValue();
   }
@@ -437,20 +495,15 @@ class Convert {
         .build();
   }
 
-  static LatLng toLatLng(Object o) {
-    final List<?> data = toList(o);
-    return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
-  }
-
   /**
-   * Converts a list of serialized weighted lat/lng to a list of WeightedLatLng.
+   * Converts a Pigeon weighted lat/lng to a WeightedLatLng.
    *
-   * @param o The serialized list of weighted lat/lng.
+   * @param weightedLatLng The Pigeon weighted lat/lng.
    * @return The list of WeightedLatLng.
    */
-  static WeightedLatLng toWeightedLatLng(Object o) {
-    final List<?> data = toList(o);
-    return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
+  static WeightedLatLng weightedLatLngFromPigeon(Messages.PlatformWeightedLatLng weightedLatLng) {
+    return new WeightedLatLng(
+        latLngFromPigeon(weightedLatLng.getPoint()), weightedLatLng.getWeight());
   }
 
   static Point pointFromPigeon(Messages.PlatformPoint point) {
@@ -467,14 +520,6 @@ class Convert {
 
   static Messages.PlatformPoint pointToPigeon(Point point) {
     return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
-  }
-
-  private static List<?> toList(Object o) {
-    return (List<?>) o;
-  }
-
-  private static Map<?, ?> toMap(Object o) {
-    return (Map<?, ?>) o;
   }
 
   private static Bitmap toBitmap(byte[] bmpData) {
@@ -606,10 +651,11 @@ class Convert {
     sink.setFlat(marker.getFlat());
     sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
     interpretInfoWindowOptions(sink, marker.getInfoWindow());
-    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setPosition(latLngFromPigeon(marker.getPosition()));
     sink.setRotation(marker.getRotation().floatValue());
     sink.setVisible(marker.getVisible());
     sink.setZIndex(marker.getZIndex().floatValue());
+    sink.setCollisionBehavior(collisionBehaviorFromPigeon(marker.getCollisionBehavior()));
   }
 
   private static void interpretInfoWindowOptions(
@@ -648,6 +694,27 @@ class Convert {
     return JointType.DEFAULT;
   }
 
+  /**
+   * Converts a Pigeon collision behavior enum to the integer constant defined in {@link
+   * AdvancedMarkerOptions.CollisionBehavior}.
+   *
+   * @param collisionBehavior The Pigeon collision behavior enum to convert.
+   * @return The integer constant corresponding to the collision behavior.
+   */
+  static int collisionBehaviorFromPigeon(
+      @NonNull Messages.PlatformMarkerCollisionBehavior collisionBehavior) {
+    switch (collisionBehavior) {
+      case REQUIRED_DISPLAY:
+        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
+      case OPTIONAL_AND_HIDES_LOWER_PRIORITY:
+        return AdvancedMarkerOptions.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
+      case REQUIRED_AND_HIDES_OPTIONAL:
+        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
+      default:
+        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
+    }
+  }
+
   static String interpretPolylineOptions(
       Messages.PlatformPolyline polyline,
       PolylineOptionsSink sink,
@@ -673,7 +740,7 @@ class Convert {
     sink.setStrokeColor(circle.getStrokeColor().getArgbValue().intValue());
     sink.setStrokeWidth(circle.getStrokeWidth());
     sink.setZIndex(circle.getZIndex().floatValue());
-    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setCenter(latLngFromPigeon(circle.getCenter()));
     sink.setRadius(circle.getRadius());
     sink.setVisible(circle.getVisible());
     return circle.getCircleId();
@@ -699,33 +766,19 @@ class Convert {
    * @return the heatmapId.
    * @throws IllegalArgumentException if heatmapId is null.
    */
-  static String interpretHeatmapOptions(Map<String, ?> data, HeatmapOptionsSink sink) {
-    final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
-    if (rawWeightedData != null) {
-      sink.setWeightedData(toWeightedData(rawWeightedData));
-    }
-    final Object gradient = data.get(HEATMAP_GRADIENT_KEY);
+  static String interpretHeatmapOptions(Messages.PlatformHeatmap heatmap, HeatmapOptionsSink sink) {
+    sink.setWeightedData(weightedDataFromPigeon(heatmap.getData()));
+    final Messages.PlatformHeatmapGradient gradient = heatmap.getGradient();
     if (gradient != null) {
-      sink.setGradient(toGradient(gradient));
+      sink.setGradient(gradientFromPigeon(gradient));
     }
-    final Object maxIntensity = data.get(HEATMAP_MAX_INTENSITY_KEY);
+    final Double maxIntensity = heatmap.getMaxIntensity();
     if (maxIntensity != null) {
-      sink.setMaxIntensity(toDouble(maxIntensity));
+      sink.setMaxIntensity(maxIntensity);
     }
-    final Object opacity = data.get(HEATMAP_OPACITY_KEY);
-    if (opacity != null) {
-      sink.setOpacity(toDouble(opacity));
-    }
-    final Object radius = data.get(HEATMAP_RADIUS_KEY);
-    if (radius != null) {
-      sink.setRadius(toInt(radius));
-    }
-    final String heatmapId = (String) data.get(HEATMAP_ID_KEY);
-    if (heatmapId == null) {
-      throw new IllegalArgumentException("heatmapId was null");
-    } else {
-      return heatmapId;
-    }
+    sink.setOpacity(heatmap.getOpacity());
+    sink.setRadius(heatmap.getRadius().intValue());
+    return heatmap.getHeatmapId();
   }
 
   static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
@@ -740,57 +793,40 @@ class Convert {
   /**
    * Converts the given object to a list of WeightedLatLng objects.
    *
-   * @param o the object to convert. The object is expected to be a List of serialized weighted
-   *     lat/lng.
+   * @param data the list of Pigeon weighted lat/lng objects to convert.
    * @return a list of WeightedLatLng objects.
    */
   @VisibleForTesting
-  static List<WeightedLatLng> toWeightedData(Object o) {
-    final List<?> data = toList(o);
+  static List<WeightedLatLng> weightedDataFromPigeon(List<Messages.PlatformWeightedLatLng> data) {
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
 
-    for (Object rawWeightedPoint : data) {
-      weightedData.add(toWeightedLatLng(rawWeightedPoint));
+    for (Messages.PlatformWeightedLatLng rawWeightedPoint : data) {
+      weightedData.add(weightedLatLngFromPigeon(rawWeightedPoint));
     }
     return weightedData;
   }
 
   /**
-   * Converts the given object to a Gradient object.
+   * Converts the given Pigeon gradient to a Gradient object.
    *
-   * @param o the object to convert. The object is expected to be a Map containing the gradient
-   *     options. The gradient map is expected to have the following structure:
-   *     <pre>{@code
-   * {
-   *   "colors": List<Integer>,
-   *   "startPoints": List<Float>,
-   *   "colorMapSize": Integer
-   * }
-   * }</pre>
-   *
+   * @param gradient the Pigeon gradient to convert.
    * @return a Gradient object.
    */
   @VisibleForTesting
-  static Gradient toGradient(Object o) {
-    final Map<?, ?> data = toMap(o);
-
-    final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));
-    assert colorData != null;
+  static Gradient gradientFromPigeon(Messages.PlatformHeatmapGradient gradient) {
+    final List<Messages.PlatformColor> colorData = gradient.getColors();
     final int[] colors = new int[colorData.size()];
     for (int i = 0; i < colorData.size(); i++) {
-      colors[i] = toInt(colorData.get(i));
+      colors[i] = colorData.get(i).getArgbValue().intValue();
     }
 
-    final List<?> startPointData = toList(data.get(HEATMAP_GRADIENT_START_POINTS_KEY));
-    assert startPointData != null;
+    final List<Double> startPointData = gradient.getStartPoints();
     final float[] startPoints = new float[startPointData.size()];
     for (int i = 0; i < startPointData.size(); i++) {
-      startPoints[i] = toFloat(startPointData.get(i));
+      startPoints[i] = startPointData.get(i).floatValue();
     }
 
-    final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
-
-    return new Gradient(colors, startPoints, colorMapSize);
+    return new Gradient(colors, startPoints, gradient.getColorMapSize().intValue());
   }
 
   private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
@@ -1028,6 +1064,11 @@ class Convert {
     @VisibleForTesting
     public BitmapDescriptor fromBitmap(Bitmap bitmap) {
       return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @VisibleForTesting
+    public BitmapDescriptor fromPinConfig(PinConfig pinConfig) {
+      return BitmapDescriptorFactory.fromPinConfig(pinConfig);
     }
   }
 

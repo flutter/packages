@@ -1,82 +1,71 @@
-///
-//  Generated code. Do not modify.
-//  source: generator/fonts.proto
+// This is a generated file - do not edit.
 //
-// @dart = 2.12
-// ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
+// Generated from generator/fonts.proto.
+
+// @dart = 3.3
+
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:core' as $core;
 
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-class FileSpec extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'FileSpec',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..aOS(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'filename')
-    ..aInt64(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'fileSize')
-    ..a<$core.List<$core.int>>(
-        3,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'hash',
-        $pb.PbFieldType.OY)
-    ..hasRequiredFields = false;
+export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
-  FileSpec._() : super();
+/// Details required for a checked download
+/// A Downloadable Font will typically have a hash but no filename.
+/// A System Font will typically have only a filename.
+/// Hash is 20 bytes sha1 up to v12, 32 byte sha256 for v13+,
+class FileSpec extends $pb.GeneratedMessage {
   factory FileSpec({
     $core.String? filename,
     $fixnum.Int64? fileSize,
     $core.List<$core.int>? hash,
   }) {
-    final _result = create();
-    if (filename != null) {
-      _result.filename = filename;
-    }
-    if (fileSize != null) {
-      _result.fileSize = fileSize;
-    }
-    if (hash != null) {
-      _result.hash = hash;
-    }
-    return _result;
+    final result = create();
+    if (filename != null) result.filename = filename;
+    if (fileSize != null) result.fileSize = fileSize;
+    if (hash != null) result.hash = hash;
+    return result;
   }
-  factory FileSpec.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory FileSpec.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  FileSpec clone() => FileSpec()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  FileSpec._();
+
+  factory FileSpec.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory FileSpec.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'FileSpec',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'filename')
+    ..aInt64(2, _omitFieldNames ? '' : 'fileSize')
+    ..a<$core.List<$core.int>>(
+        3, _omitFieldNames ? '' : 'hash', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  FileSpec clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   FileSpec copyWith(void Function(FileSpec) updates) =>
-      super.copyWith((message) => updates(message as FileSpec))
-          as FileSpec; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as FileSpec)) as FileSpec;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static FileSpec create() => FileSpec._();
+  @$core.override
   FileSpec createEmptyInstance() => create();
-  static $pb.PbList<FileSpec> createRepeated() => $pb.PbList<FileSpec>();
   @$core.pragma('dart2js:noInline')
   static FileSpec getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FileSpec>(create);
@@ -85,99 +74,73 @@ class FileSpec extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.String get filename => $_getSZ(0);
   @$pb.TagNumber(1)
-  set filename($core.String v) {
-    $_setString(0, v);
-  }
-
+  set filename($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasFilename() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFilename() => clearField(1);
+  void clearFilename() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get fileSize => $_getI64(1);
   @$pb.TagNumber(2)
-  set fileSize($fixnum.Int64 v) {
-    $_setInt64(1, v);
-  }
-
+  set fileSize($fixnum.Int64 value) => $_setInt64(1, value);
   @$pb.TagNumber(2)
   $core.bool hasFileSize() => $_has(1);
   @$pb.TagNumber(2)
-  void clearFileSize() => clearField(2);
+  void clearFileSize() => $_clearField(2);
 
   @$pb.TagNumber(3)
   $core.List<$core.int> get hash => $_getN(2);
   @$pb.TagNumber(3)
-  set hash($core.List<$core.int> v) {
-    $_setBytes(2, v);
-  }
-
+  set hash($core.List<$core.int> value) => $_setBytes(2, value);
   @$pb.TagNumber(3)
   $core.bool hasHash() => $_has(2);
   @$pb.TagNumber(3)
-  void clearHash() => clearField(3);
+  void clearHash() => $_clearField(3);
 }
 
+/// To allow expression of variation font capability, e.g. weight 300-700
 class IntRange extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'IntRange',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..a<$core.int>(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'start',
-        $pb.PbFieldType.O3)
-    ..a<$core.int>(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'end',
-        $pb.PbFieldType.O3)
-    ..hasRequiredFields = false;
-
-  IntRange._() : super();
   factory IntRange({
     $core.int? start,
     $core.int? end,
   }) {
-    final _result = create();
-    if (start != null) {
-      _result.start = start;
-    }
-    if (end != null) {
-      _result.end = end;
-    }
-    return _result;
+    final result = create();
+    if (start != null) result.start = start;
+    if (end != null) result.end = end;
+    return result;
   }
-  factory IntRange.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory IntRange.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  IntRange clone() => IntRange()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  IntRange._();
+
+  factory IntRange.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory IntRange.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'IntRange',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'start')
+    ..aI(2, _omitFieldNames ? '' : 'end')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  IntRange clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   IntRange copyWith(void Function(IntRange) updates) =>
-      super.copyWith((message) => updates(message as IntRange))
-          as IntRange; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as IntRange)) as IntRange;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static IntRange create() => IntRange._();
+  @$core.override
   IntRange createEmptyInstance() => create();
-  static $pb.PbList<IntRange> createRepeated() => $pb.PbList<IntRange>();
   @$core.pragma('dart2js:noInline')
   static IntRange getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<IntRange>(create);
@@ -186,87 +149,66 @@ class IntRange extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.int get start => $_getIZ(0);
   @$pb.TagNumber(1)
-  set start($core.int v) {
-    $_setSignedInt32(0, v);
-  }
-
+  set start($core.int value) => $_setSignedInt32(0, value);
   @$pb.TagNumber(1)
   $core.bool hasStart() => $_has(0);
   @$pb.TagNumber(1)
-  void clearStart() => clearField(1);
+  void clearStart() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $core.int get end => $_getIZ(1);
   @$pb.TagNumber(2)
-  set end($core.int v) {
-    $_setSignedInt32(1, v);
-  }
-
+  set end($core.int value) => $_setSignedInt32(1, value);
   @$pb.TagNumber(2)
   $core.bool hasEnd() => $_has(1);
   @$pb.TagNumber(2)
-  void clearEnd() => clearField(2);
+  void clearEnd() => $_clearField(2);
 }
 
+/// To allow expression of variation font capability, e.g. weight 300-700
+/// If end is <= start it's a point (e.g. for a non-variational font).
+/// Where possible prefer end = 0 for point to save the field in binary proto.
 class FloatRange extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'FloatRange',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..a<$core.double>(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'start',
-        $pb.PbFieldType.OF)
-    ..a<$core.double>(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'end',
-        $pb.PbFieldType.OF)
-    ..hasRequiredFields = false;
-
-  FloatRange._() : super();
   factory FloatRange({
     $core.double? start,
     $core.double? end,
   }) {
-    final _result = create();
-    if (start != null) {
-      _result.start = start;
-    }
-    if (end != null) {
-      _result.end = end;
-    }
-    return _result;
+    final result = create();
+    if (start != null) result.start = start;
+    if (end != null) result.end = end;
+    return result;
   }
-  factory FloatRange.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory FloatRange.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  FloatRange clone() => FloatRange()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  FloatRange._();
+
+  factory FloatRange.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory FloatRange.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'FloatRange',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..aD(1, _omitFieldNames ? '' : 'start', fieldType: $pb.PbFieldType.OF)
+    ..aD(2, _omitFieldNames ? '' : 'end', fieldType: $pb.PbFieldType.OF)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  FloatRange clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   FloatRange copyWith(void Function(FloatRange) updates) =>
-      super.copyWith((message) => updates(message as FloatRange))
-          as FloatRange; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as FloatRange)) as FloatRange;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static FloatRange create() => FloatRange._();
+  @$core.override
   FloatRange createEmptyInstance() => create();
-  static $pb.PbList<FloatRange> createRepeated() => $pb.PbList<FloatRange>();
   @$core.pragma('dart2js:noInline')
   static FloatRange getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<FloatRange>(create);
@@ -275,117 +217,84 @@ class FloatRange extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.double get start => $_getN(0);
   @$pb.TagNumber(1)
-  set start($core.double v) {
-    $_setFloat(0, v);
-  }
-
+  set start($core.double value) => $_setFloat(0, value);
   @$pb.TagNumber(1)
   $core.bool hasStart() => $_has(0);
   @$pb.TagNumber(1)
-  void clearStart() => clearField(1);
+  void clearStart() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $core.double get end => $_getN(1);
   @$pb.TagNumber(2)
-  set end($core.double v) {
-    $_setFloat(1, v);
-  }
-
+  set end($core.double value) => $_setFloat(1, value);
   @$pb.TagNumber(2)
   $core.bool hasEnd() => $_has(1);
   @$pb.TagNumber(2)
-  void clearEnd() => clearField(2);
+  void clearEnd() => $_clearField(2);
 }
 
+/// Describes a single optentype font file, which may be a variation font or a
+/// single font from a TTC.
 class Font extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'Font',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..aOM<FileSpec>(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'file',
-        subBuilder: FileSpec.create)
-    ..aOM<IntRange>(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'weight',
-        subBuilder: IntRange.create)
-    ..aOM<FloatRange>(
-        3,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'width',
-        subBuilder: FloatRange.create)
-    ..aOM<FloatRange>(
-        4,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'italic',
-        subBuilder: FloatRange.create)
-    ..a<$core.int>(
-        7,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'ttcIndex',
-        $pb.PbFieldType.O3)
-    ..hasRequiredFields = false;
-
-  Font._() : super();
   factory Font({
     FileSpec? file,
     IntRange? weight,
     FloatRange? width,
     FloatRange? italic,
     $core.int? ttcIndex,
+    $core.String? postScriptName,
+    $core.bool? isVf,
   }) {
-    final _result = create();
-    if (file != null) {
-      _result.file = file;
-    }
-    if (weight != null) {
-      _result.weight = weight;
-    }
-    if (width != null) {
-      _result.width = width;
-    }
-    if (italic != null) {
-      _result.italic = italic;
-    }
-    if (ttcIndex != null) {
-      _result.ttcIndex = ttcIndex;
-    }
-    return _result;
+    final result = create();
+    if (file != null) result.file = file;
+    if (weight != null) result.weight = weight;
+    if (width != null) result.width = width;
+    if (italic != null) result.italic = italic;
+    if (ttcIndex != null) result.ttcIndex = ttcIndex;
+    if (postScriptName != null) result.postScriptName = postScriptName;
+    if (isVf != null) result.isVf = isVf;
+    return result;
   }
-  factory Font.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory Font.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  Font clone() => Font()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  Font._();
+
+  factory Font.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory Font.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'Font',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..aOM<FileSpec>(1, _omitFieldNames ? '' : 'file',
+        subBuilder: FileSpec.create)
+    ..aOM<IntRange>(2, _omitFieldNames ? '' : 'weight',
+        subBuilder: IntRange.create)
+    ..aOM<FloatRange>(3, _omitFieldNames ? '' : 'width',
+        subBuilder: FloatRange.create)
+    ..aOM<FloatRange>(4, _omitFieldNames ? '' : 'italic',
+        subBuilder: FloatRange.create)
+    ..aI(7, _omitFieldNames ? '' : 'ttcIndex')
+    ..aOS(8, _omitFieldNames ? '' : 'postScriptName')
+    ..aOB(9, _omitFieldNames ? '' : 'isVf')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  Font clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   Font copyWith(void Function(Font) updates) =>
-      super.copyWith((message) => updates(message as Font))
-          as Font; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as Font)) as Font;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static Font create() => Font._();
+  @$core.override
   Font createEmptyInstance() => create();
-  static $pb.PbList<Font> createRepeated() => $pb.PbList<Font>();
   @$core.pragma('dart2js:noInline')
   static Font getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Font>(create);
@@ -394,141 +303,132 @@ class Font extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   FileSpec get file => $_getN(0);
   @$pb.TagNumber(1)
-  set file(FileSpec v) {
-    setField(1, v);
-  }
-
+  set file(FileSpec value) => $_setField(1, value);
   @$pb.TagNumber(1)
   $core.bool hasFile() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFile() => clearField(1);
+  void clearFile() => $_clearField(1);
   @$pb.TagNumber(1)
   FileSpec ensureFile() => $_ensure(0);
 
+  /// numeric weight per https://drafts.csswg.org/css-fonts/#propdef-font-weight
+  /// if varfont, range of 'wght' per
+  /// https://www.microsoft.com/typography/otspec/fvar.htm#VAT
   @$pb.TagNumber(2)
   IntRange get weight => $_getN(1);
   @$pb.TagNumber(2)
-  set weight(IntRange v) {
-    setField(2, v);
-  }
-
+  set weight(IntRange value) => $_setField(2, value);
   @$pb.TagNumber(2)
   $core.bool hasWeight() => $_has(1);
   @$pb.TagNumber(2)
-  void clearWeight() => clearField(2);
+  void clearWeight() => $_clearField(2);
   @$pb.TagNumber(2)
   IntRange ensureWeight() => $_ensure(1);
 
+  /// names converted to values per
+  /// https://www.microsoft.com/typography/otspec/os2.htm#wdc
+  /// if varfont, range of 'wdth' per
+  /// https://www.microsoft.com/typography/otspec/fvar.htm#VAT
   @$pb.TagNumber(3)
   FloatRange get width => $_getN(2);
   @$pb.TagNumber(3)
-  set width(FloatRange v) {
-    setField(3, v);
-  }
-
+  set width(FloatRange value) => $_setField(3, value);
   @$pb.TagNumber(3)
   $core.bool hasWidth() => $_has(2);
   @$pb.TagNumber(3)
-  void clearWidth() => clearField(3);
+  void clearWidth() => $_clearField(3);
   @$pb.TagNumber(3)
   FloatRange ensureWidth() => $_ensure(2);
 
+  /// 0.0 or 1.0 per https://www.microsoft.com/typography/otspec/os2.htm#fss
+  /// bit 0. if varfont, range of 'ital' per
+  /// https://www.microsoft.com/typography/otspec/fvar.htm#VAT
   @$pb.TagNumber(4)
   FloatRange get italic => $_getN(3);
   @$pb.TagNumber(4)
-  set italic(FloatRange v) {
-    setField(4, v);
-  }
-
+  set italic(FloatRange value) => $_setField(4, value);
   @$pb.TagNumber(4)
   $core.bool hasItalic() => $_has(3);
   @$pb.TagNumber(4)
-  void clearItalic() => clearField(4);
+  void clearItalic() => $_clearField(4);
   @$pb.TagNumber(4)
   FloatRange ensureItalic() => $_ensure(3);
 
+  /// Google Fonts doesn't have any [yet?] but Android does
   @$pb.TagNumber(7)
   $core.int get ttcIndex => $_getIZ(4);
   @$pb.TagNumber(7)
-  set ttcIndex($core.int v) {
-    $_setSignedInt32(4, v);
-  }
-
+  set ttcIndex($core.int value) => $_setSignedInt32(4, value);
   @$pb.TagNumber(7)
   $core.bool hasTtcIndex() => $_has(4);
   @$pb.TagNumber(7)
-  void clearTtcIndex() => clearField(7);
+  void clearTtcIndex() => $_clearField(7);
+
+  /// Used for matching against system fonts.
+  @$pb.TagNumber(8)
+  $core.String get postScriptName => $_getSZ(5);
+  @$pb.TagNumber(8)
+  set postScriptName($core.String value) => $_setString(5, value);
+  @$pb.TagNumber(8)
+  $core.bool hasPostScriptName() => $_has(5);
+  @$pb.TagNumber(8)
+  void clearPostScriptName() => $_clearField(8);
+
+  /// True if the font is a variable font.
+  @$pb.TagNumber(9)
+  $core.bool get isVf => $_getBF(6);
+  @$pb.TagNumber(9)
+  set isVf($core.bool value) => $_setBool(6, value);
+  @$pb.TagNumber(9)
+  $core.bool hasIsVf() => $_has(6);
+  @$pb.TagNumber(9)
+  void clearIsVf() => $_clearField(9);
 }
 
 class FontFamily extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'FontFamily',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..aOS(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'name')
-    ..a<$core.int>(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'version',
-        $pb.PbFieldType.O3)
-    ..pc<Font>(
-        4,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'fonts',
-        $pb.PbFieldType.PM,
-        subBuilder: Font.create)
-    ..hasRequiredFields = false;
-
-  FontFamily._() : super();
   factory FontFamily({
     $core.String? name,
     $core.int? version,
     $core.Iterable<Font>? fonts,
   }) {
-    final _result = create();
-    if (name != null) {
-      _result.name = name;
-    }
-    if (version != null) {
-      _result.version = version;
-    }
-    if (fonts != null) {
-      _result.fonts.addAll(fonts);
-    }
-    return _result;
+    final result = create();
+    if (name != null) result.name = name;
+    if (version != null) result.version = version;
+    if (fonts != null) result.fonts.addAll(fonts);
+    return result;
   }
-  factory FontFamily.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory FontFamily.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  FontFamily clone() => FontFamily()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  FontFamily._();
+
+  factory FontFamily.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory FontFamily.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'FontFamily',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'name')
+    ..aI(2, _omitFieldNames ? '' : 'version')
+    ..pPM<Font>(4, _omitFieldNames ? '' : 'fonts', subBuilder: Font.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  FontFamily clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   FontFamily copyWith(void Function(FontFamily) updates) =>
-      super.copyWith((message) => updates(message as FontFamily))
-          as FontFamily; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as FontFamily)) as FontFamily;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static FontFamily create() => FontFamily._();
+  @$core.override
   FontFamily createEmptyInstance() => create();
-  static $pb.PbList<FontFamily> createRepeated() => $pb.PbList<FontFamily>();
   @$core.pragma('dart2js:noInline')
   static FontFamily getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<FontFamily>(create);
@@ -537,167 +437,104 @@ class FontFamily extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.String get name => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) {
-    $_setString(0, v);
-  }
-
+  set name($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearName() => $_clearField(1);
 
   @$pb.TagNumber(2)
   $core.int get version => $_getIZ(1);
   @$pb.TagNumber(2)
-  set version($core.int v) {
-    $_setSignedInt32(1, v);
-  }
-
+  set version($core.int value) => $_setSignedInt32(1, value);
   @$pb.TagNumber(2)
   $core.bool hasVersion() => $_has(1);
   @$pb.TagNumber(2)
-  void clearVersion() => clearField(2);
+  void clearVersion() => $_clearField(2);
 
+  /// Even for a variation font we may have several entries, for example Roboto
+  /// as a varfont may
+  /// span two files, one for regular and one for italic
   @$pb.TagNumber(4)
-  $core.List<Font> get fonts => $_getList(2);
+  $pb.PbList<Font> get fonts => $_getList(2);
 }
 
+/// A set of potentially available families.
 class Directory extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      const $core.bool.fromEnvironment('protobuf.omit_message_names')
-          ? ''
-          : 'Directory',
-      package: const $pb.PackageName(
-          const $core.bool.fromEnvironment('protobuf.omit_message_names')
-              ? ''
-              : 'fonts'),
-      createEmptyInstance: create)
-    ..pc<FontFamily>(
-        1,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'family',
-        $pb.PbFieldType.PM,
-        subBuilder: FontFamily.create)
-    ..p<$core.int>(
-        2,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'nameLookup',
-        $pb.PbFieldType.P3)
-    ..pPS(
-        3,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'strings')
-    ..p<$core.int>(
-        4,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'prefetch',
-        $pb.PbFieldType.P3)
-    ..a<$core.int>(
-        5,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'version',
-        $pb.PbFieldType.O3)
-    ..aOS(
-        6,
-        const $core.bool.fromEnvironment('protobuf.omit_field_names')
-            ? ''
-            : 'description')
-    ..hasRequiredFields = false;
-
-  Directory._() : super();
   factory Directory({
     $core.Iterable<FontFamily>? family,
-    $core.Iterable<$core.int>? nameLookup,
-    $core.Iterable<$core.String>? strings,
-    $core.Iterable<$core.int>? prefetch,
     $core.int? version,
     $core.String? description,
   }) {
-    final _result = create();
-    if (family != null) {
-      _result.family.addAll(family);
-    }
-    if (nameLookup != null) {
-      _result.nameLookup.addAll(nameLookup);
-    }
-    if (strings != null) {
-      _result.strings.addAll(strings);
-    }
-    if (prefetch != null) {
-      _result.prefetch.addAll(prefetch);
-    }
-    if (version != null) {
-      _result.version = version;
-    }
-    if (description != null) {
-      _result.description = description;
-    }
-    return _result;
+    final result = create();
+    if (family != null) result.family.addAll(family);
+    if (version != null) result.version = version;
+    if (description != null) result.description = description;
+    return result;
   }
-  factory Directory.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory Directory.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  Directory clone() => Directory()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+
+  Directory._();
+
+  factory Directory.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory Directory.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'Directory',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'fonts'),
+      createEmptyInstance: create)
+    ..pPM<FontFamily>(1, _omitFieldNames ? '' : 'family',
+        subBuilder: FontFamily.create)
+    ..aI(5, _omitFieldNames ? '' : 'version')
+    ..aOS(6, _omitFieldNames ? '' : 'description')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  Directory clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   Directory copyWith(void Function(Directory) updates) =>
-      super.copyWith((message) => updates(message as Directory))
-          as Directory; // ignore: deprecated_member_use
+      super.copyWith((message) => updates(message as Directory)) as Directory;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
+
   @$core.pragma('dart2js:noInline')
   static Directory create() => Directory._();
+  @$core.override
   Directory createEmptyInstance() => create();
-  static $pb.PbList<Directory> createRepeated() => $pb.PbList<Directory>();
   @$core.pragma('dart2js:noInline')
   static Directory getDefault() =>
       _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Directory>(create);
   static Directory? _defaultInstance;
 
+  /// sorted by name
   @$pb.TagNumber(1)
-  $core.List<FontFamily> get family => $_getList(0);
-
-  @$pb.TagNumber(2)
-  $core.List<$core.int> get nameLookup => $_getList(1);
-
-  @$pb.TagNumber(3)
-  $core.List<$core.String> get strings => $_getList(2);
-
-  @$pb.TagNumber(4)
-  $core.List<$core.int> get prefetch => $_getList(3);
+  $pb.PbList<FontFamily> get family => $_getList(0);
 
   @$pb.TagNumber(5)
-  $core.int get version => $_getIZ(4);
+  $core.int get version => $_getIZ(1);
   @$pb.TagNumber(5)
-  set version($core.int v) {
-    $_setSignedInt32(4, v);
-  }
-
+  set version($core.int value) => $_setSignedInt32(1, value);
   @$pb.TagNumber(5)
-  $core.bool hasVersion() => $_has(4);
+  $core.bool hasVersion() => $_has(1);
   @$pb.TagNumber(5)
-  void clearVersion() => clearField(5);
+  void clearVersion() => $_clearField(5);
 
+  /// Description of current directory version.
   @$pb.TagNumber(6)
-  $core.String get description => $_getSZ(5);
+  $core.String get description => $_getSZ(2);
   @$pb.TagNumber(6)
-  set description($core.String v) {
-    $_setString(5, v);
-  }
-
+  set description($core.String value) => $_setString(2, value);
   @$pb.TagNumber(6)
-  $core.bool hasDescription() => $_has(5);
+  $core.bool hasDescription() => $_has(2);
   @$pb.TagNumber(6)
-  void clearDescription() => clearField(6);
+  void clearDescription() => $_clearField(6);
 }
+
+const $core.bool _omitFieldNames =
+    $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');
