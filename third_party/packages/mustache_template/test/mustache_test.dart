@@ -1,6 +1,4 @@
-import 'feature_test.dart' as test;
 import 'mustache_specs.dart' as specs;
-import 'parser_test.dart' as parser;
 
 const List<String> UNSUPPORTED_SPECS = [
   '~dynamic-names',
@@ -8,7 +6,5 @@ const List<String> UNSUPPORTED_SPECS = [
 ];
 
 void main() {
-  specs.main(UNSUPPORTED_SPECS);
-  test.main();
-  parser.main();
+  specs.defineTests(UNSUPPORTED_SPECS);
 }

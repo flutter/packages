@@ -26,10 +26,6 @@ String render(
   return t.renderString(values);
 }
 
-void main(List<String> unsupportedSpecs) {
-  defineTests(unsupportedSpecs);
-}
-
 void defineTests(List<String> unsupportedSpecs) {
   final specsDir = Directory('test/specs');
   specsDir.listSync().forEach((FileSystemEntity f) {
