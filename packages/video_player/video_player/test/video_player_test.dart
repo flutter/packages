@@ -1786,7 +1786,7 @@ void main() {
       final controller = VideoPlayerController.networkUrl(_localhostUri);
       await controller.initialize();
 
-      const VideoTrack track = VideoTrack(
+      const track = VideoTrack(
         id: '0_1',
         isSelected: false,
         label: '720p',
