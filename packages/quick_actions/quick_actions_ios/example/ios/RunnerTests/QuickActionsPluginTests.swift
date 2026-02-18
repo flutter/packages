@@ -275,7 +275,7 @@ struct QuickActionsPluginTests {
       "scene willConnectTo must return true if not launched from shortcut.")
   }
 
-  @Test func sceneDidBecomeActive_launchWithoutShortcut() {
+  @Test func sceneDidBecomeActiveLaunchWithoutShortcut() {
     let flutterApi: MockFlutterApi = MockFlutterApi()
     let mockShortcutItemProvider = MockShortcutItemProvider()
 
