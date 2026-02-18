@@ -21,15 +21,15 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
      *
      * This must match the version in pubspec.yaml.
      */
-    const val pluginVersion = "0.3.0+9"
+    const val pluginVersion = "0.3.0+10"
   }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
     // Add a request agent only if the adTagUrl can append a custom parameter.
     if (!adTagUrl.contains("#") && adTagUrl.contains("?")) {
-      pigeon_instance.adTagUrl = "$adTagUrl&request_agent=Flutter-IMA-$pluginVersion"
+      pigeon_instance.setAdTagUrl("$adTagUrl&request_agent=Flutter-IMA-$pluginVersion")
     } else {
-      pigeon_instance.adTagUrl = adTagUrl
+      pigeon_instance.setAdTagUrl(adTagUrl)
     }
   }
 
@@ -37,7 +37,7 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
       pigeon_instance: AdsRequest,
       provider: ContentProgressProvider
   ) {
-    pigeon_instance.contentProgressProvider = provider
+    pigeon_instance.setContentProgressProvider(provider)
   }
 
   override fun setAdWillAutoPlay(pigeon_instance: AdsRequest, willAutoPlay: Boolean) {
@@ -49,7 +49,7 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setAdsResponse(pigeon_instance: AdsRequest, cannedAdResponse: String) {
-    pigeon_instance.adsResponse = cannedAdResponse
+    pigeon_instance.setAdsResponse(cannedAdResponse)
   }
 
   override fun setContentDuration(pigeon_instance: AdsRequest, duration: Double) {

@@ -43,10 +43,11 @@ final class DefaultCamera: NSObject, Camera {
   private let captureSessionQueue: DispatchQueue
 
   private let mediaSettings: FCPPlatformMediaSettings
+  private var framesPerSecond: Double?
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
-  private let videoCaptureSession: CaptureSession
-  private let audioCaptureSession: CaptureSession
+  let videoCaptureSession: CaptureSession
+  let audioCaptureSession: CaptureSession
 
   /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
   private let videoCaptureDeviceFactory: VideoCaptureDeviceFactory
@@ -97,16 +98,20 @@ final class DefaultCamera: NSObject, Camera {
   private var latestPixelBuffer: CVPixelBuffer?
 
   private var videoRecordingPath: String?
-  private var isRecording = false
+  private(set) var isRecording = false
   private var isRecordingPaused = false
   private var isFirstVideoSample = false
-  private var videoIsDisconnected = false
-  private var audioIsDisconnected = false
   private var isAudioSetup = false
-  private var lastVideoSampleTime = CMTime.zero
-  private var lastAudioSampleTime = CMTime.zero
-  private var videoTimeOffset = CMTime.zero
-  private var audioTimeOffset = CMTime.zero
+  /// Time of the end of the last sample.
+  private var lastSampleEndTime = CMTime.invalid
+  /// Whether the recording is disconnected.
+  private var isRecordingDisconnected = false
+  /// Represents sum of all pauses/interruptions during recording.
+  private var recordingTimeOffset = CMTime.invalid
+  /// Output to use for adjusting of recording time offset.
+  private var outputForOffsetAdjusting: AVCaptureOutput?
+  /// Time of the last appended video sample.
+  private var lastAppendedVideoSampleTime = CMTime.invalid
 
   /// True when images from the camera are being streamed.
   private(set) var isStreamingImages = false
@@ -213,14 +218,14 @@ final class DefaultCamera: NSObject, Camera {
 
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
-      FormatUtils.selectBestFormat(
+      (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
         mediaSettings: mediaSettings,
         videoDimensionsConverter: videoDimensionsConverter)
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
-        let fpsNominator = floor(framesPerSecond.doubleValue * 10.0)
+        let fpsNominator = floor(framesPerSecond * 10.0)
         let duration = CMTimeMake(value: 10, timescale: Int32(fpsNominator))
 
         mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
@@ -233,6 +238,33 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     updateOrientation()
+
+    // Handle video and audio interruptions and errors. Interruption can happen for example by
+    // an incoming call during video recording. Error can happen for example when recording starts
+    // during an incoming call.
+    // https://github.com/flutter/flutter/issues/151253
+    for session in [videoCaptureSession, audioCaptureSession] {
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(captureSessionWasInterrupted),
+        name: AVCaptureSession.wasInterruptedNotification,
+        object: session)
+
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(captureSessionRuntimeError),
+        name: AVCaptureSession.runtimeErrorNotification,
+        object: session)
+    }
+  }
+
+  @objc private func captureSessionWasInterrupted(notification: NSNotification) {
+    isRecordingDisconnected = true
+  }
+
+  @objc private func captureSessionRuntimeError(notification: NSNotification) {
+    reportErrorMessage(
+      "\(String(describing: notification.userInfo?[AVCaptureSessionErrorKey] as? Error))")
   }
 
   // Possible values for presets are hard-coded in FLT interface having
@@ -512,14 +544,21 @@ final class DefaultCamera: NSObject, Camera {
     // didOutputSampleBuffer had chance to call startWriting and lag at start of video
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
-    let _ = videoWriter?.startWriting()
+    guard let videoWriter = videoWriter, videoWriter.startWriting() else {
+      completion(
+        FlutterError(
+          code: "IOError",
+          message: "AVAssetWriter failed to start writing",
+          details: videoWriter?.error?.localizedDescription))
+      return
+    }
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
-    videoTimeOffset = CMTime.zero
-    audioTimeOffset = CMTime.zero
-    videoIsDisconnected = false
-    audioIsDisconnected = false
+    isRecordingDisconnected = false
+    recordingTimeOffset = CMTime.zero
+    outputForOffsetAdjusting = captureVideoOutput.avOutput
+    lastAppendedVideoSampleTime = CMTime.negativeInfinity
     completion(nil)
   }
 
@@ -542,14 +581,14 @@ final class DefaultCamera: NSObject, Camera {
       for: captureVideoOutput
     )
 
-    if mediaSettings.videoBitrate != nil || mediaSettings.framesPerSecond != nil {
+    if mediaSettings.videoBitrate != nil || framesPerSecond != nil {
       var compressionProperties: [String: Any] = [:]
 
       if let videoBitrate = mediaSettings.videoBitrate {
         compressionProperties[AVVideoAverageBitRateKey] = videoBitrate
       }
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         compressionProperties[AVVideoExpectedSourceFrameRateKey] = framesPerSecond
       }
 
@@ -608,8 +647,7 @@ final class DefaultCamera: NSObject, Camera {
 
   func pauseVideoRecording() {
     isRecordingPaused = true
-    videoIsDisconnected = true
-    audioIsDisconnected = true
+    isRecordingDisconnected = true
   }
 
   func resumeVideoRecording() {
@@ -716,11 +754,9 @@ final class DefaultCamera: NSObject, Camera {
     subfolder: String,
     prefix: String
   ) throws -> String {
-    let documentDirectory = FileManager.default.urls(
-      for: .documentDirectory,
-      in: .userDomainMask)[0]
+    let temporaryDirectory = FileManager.default.temporaryDirectory
 
-    let fileDirectory = documentDirectory.appendingPathComponent("camera").appendingPathComponent(
+    let fileDirectory = temporaryDirectory.appendingPathComponent("camera").appendingPathComponent(
       subfolder)
     let fileName = prefix + UUID().uuidString
     let file = fileDirectory.appendingPathComponent(fileName).appendingPathExtension(ext).path
@@ -952,6 +988,35 @@ final class DefaultCamera: NSObject, Camera {
     completion(nil)
   }
 
+  func setVideoStabilizationMode(
+    _ mode: FCPPlatformVideoStabilizationMode,
+    withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+
+    guard captureDevice.isVideoStabilizationModeSupported(stabilizationMode) else {
+      completion(
+        FlutterError(
+          code: "VIDEO_STABILIZATION_ERROR",
+          message: "Unavailable video stabilization mode.",
+          details: [
+            "requested_mode": stabilizationMode.rawValue
+          ]
+        )
+      )
+      return
+    }
+    if let connection = captureVideoOutput.connection(with: .video) {
+      connection.preferredVideoStabilizationMode = stabilizationMode
+    }
+    completion(nil)
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+    return captureDevice.isVideoStabilizationModeSupported(stabilizationMode)
+  }
+
   func setFlashMode(
     _ mode: FCPPlatformFlashMode,
     withCompletion completion: @escaping (FlutterError?) -> Void
@@ -1178,75 +1243,74 @@ final class DefaultCamera: NSObject, Camera {
 
     handleSampleBufferStreaming(sampleBuffer)
 
-    if isRecording && !isRecordingPaused {
+    if isRecording && !isRecordingPaused && videoCaptureSession.isRunning
+      && audioCaptureSession.isRunning
+    {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
         return
       }
 
-      // ignore audio samples until the first video sample arrives to avoid black frames
-      // https://github.com/flutter/flutter/issues/57831
-      if isFirstVideoSample && output != captureVideoOutput.avOutput {
-        return
+      // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
+      // https://github.com/flutter/flutter/issues/132073
+      if output == captureVideoOutput.avOutput {
+        if !(videoWriterInput?.isReadyForMoreMediaData ?? false) {
+          return
+        }
+      } else {
+        // ignore audio samples until the first video sample arrives to avoid black frames
+        // https://github.com/flutter/flutter/issues/57831
+        if isFirstVideoSample || !(audioWriterInput?.isReadyForMoreMediaData ?? false) {
+          return
+        }
+        outputForOffsetAdjusting = output
       }
 
-      var currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+      let sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
 
       if isFirstVideoSample {
-        videoWriter?.startSession(atSourceTime: currentSampleTime)
+        videoWriter?.startSession(atSourceTime: sampleTime)
         // fix sample times not being numeric when pause/resume happens before first sample buffer
         // arrives
         // https://github.com/flutter/flutter/issues/132014
-        lastVideoSampleTime = currentSampleTime
-        lastAudioSampleTime = currentSampleTime
+        isRecordingDisconnected = false
         isFirstVideoSample = false
       }
 
-      if output == captureVideoOutput.avOutput {
-        if videoIsDisconnected {
-          videoIsDisconnected = false
+      var currentSampleEndTime = sampleTime
+      let duration = CMSampleBufferGetDuration(sampleBuffer)
+      if CMTIME_IS_NUMERIC(duration) {
+        currentSampleEndTime = CMTimeAdd(currentSampleEndTime, duration)
+      }
 
-          videoTimeOffset =
-            videoTimeOffset.value == 0
-            ? CMTimeSubtract(currentSampleTime, lastVideoSampleTime)
-            : CMTimeAdd(videoTimeOffset, CMTimeSubtract(currentSampleTime, lastVideoSampleTime))
-
-          return
+      // Use a single time offset for both video and audio to avoid desync.
+      // https://github.com/flutter/flutter/issues/149978
+      if isRecordingDisconnected {
+        if output == outputForOffsetAdjusting {
+          let offset = CMTimeSubtract(currentSampleEndTime, lastSampleEndTime)
+          recordingTimeOffset = CMTimeAdd(recordingTimeOffset, offset)
+          lastSampleEndTime = currentSampleEndTime
+          isRecordingDisconnected = false
         }
+        return
+      }
 
-        lastVideoSampleTime = currentSampleTime
+      if output == outputForOffsetAdjusting {
+        lastSampleEndTime = currentSampleEndTime
+      }
 
+      if output == captureVideoOutput.avOutput {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-        let nextSampleTime = CMTimeSubtract(lastVideoSampleTime, videoTimeOffset)
-        // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
-        // https://github.com/flutter/flutter/issues/132073
-        if videoWriterInput?.isReadyForMoreMediaData ?? false {
+        let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
+        if nextSampleTime > lastAppendedVideoSampleTime {
           let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          lastAppendedVideoSampleTime = nextSampleTime
         }
       } else {
-        let dur = CMSampleBufferGetDuration(sampleBuffer)
-
-        if dur.value > 0 {
-          currentSampleTime = CMTimeAdd(currentSampleTime, dur)
-        }
-
-        if audioIsDisconnected {
-          audioIsDisconnected = false
-
-          audioTimeOffset =
-            audioTimeOffset.value == 0
-            ? CMTimeSubtract(currentSampleTime, lastAudioSampleTime)
-            : CMTimeAdd(audioTimeOffset, CMTimeSubtract(currentSampleTime, lastAudioSampleTime))
-
-          return
-        }
-
-        lastAudioSampleTime = currentSampleTime
-
-        if audioTimeOffset.value != 0 {
+        if recordingTimeOffset.value != 0 {
           if let adjustedSampleBuffer = copySampleBufferWithAdjustedTime(
             sampleBuffer,
-            by: audioTimeOffset)
+            by: recordingTimeOffset)
           {
             newAudioSample(adjustedSampleBuffer)
           }
@@ -1370,10 +1434,8 @@ final class DefaultCamera: NSObject, Camera {
       }
       return
     }
-    if audioWriterInput?.isReadyForMoreMediaData ?? false {
-      if !(audioWriterInput?.append(sampleBuffer) ?? false) {
-        reportErrorMessage("Unable to write to audio input")
-      }
+    if !(audioWriterInput?.append(sampleBuffer) ?? false) {
+      reportErrorMessage("Unable to write to audio input")
     }
   }
 

@@ -2,6 +2,10 @@
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.
 
+## 2.9.3
+
+* Updates `androidx.media3` to 1.9.1.
+
 ## 2.9.2
 
 * Bumps kotlin_version to 2.3.0.
