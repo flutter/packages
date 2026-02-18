@@ -5,12 +5,14 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <application
-    android:usesCleartextTraffic="true"
+    android:networkSecurityConfig="@xml/network_security_config"
     android:icon="@mipmap/ic_launcher"
     android:label="webview_flutter_example">
     <meta-data
         android:name="flutterEmbedding"
         android:value="2" />
+    <meta-data android:name="io.flutter.network-policy"
+        android:resource="@xml/network_security_config"/>
     <activity
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
         android:exported="true"
