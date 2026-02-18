@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.4.0+21
+
 * Updates README to reflect currently supported OS version.
+* Bumps `com.squareup.okhttp3:okhttp` from 5.3.1 to 5.3.2.
 
 ## 0.4.0+20
 

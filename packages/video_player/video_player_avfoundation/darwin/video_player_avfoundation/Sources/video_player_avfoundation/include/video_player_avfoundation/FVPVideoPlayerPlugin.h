@@ -3,11 +3,15 @@
 // found in the LICENSE file.
 
 #if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
+@import FlutterMacOS;
 #else
-#import <Flutter/Flutter.h>
+@import Flutter;
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface FVPVideoPlayerPlugin : NSObject <FlutterPlugin>
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
+
+NS_ASSUME_NONNULL_END

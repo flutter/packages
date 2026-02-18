@@ -18,6 +18,11 @@
     - any-glob-to-any-file:
       - third_party/packages/cupertino_icons/**/*
 
+'p: cupertino_ui'
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/cupertino_ui/**/*
+
 'p: espresso':
   - changed-files:
     - any-glob-to-any-file:
@@ -108,6 +113,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/local_auth/**/*
+
+'p: material_ui':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/material_ui/**/*
 
 'p: metrics_center':
   - changed-files:
@@ -266,9 +276,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/animations/**/*
+      - packages/cupertino_ui/**/*
       - packages/flutter_lints/**/*
       - packages/go_router/**/*
       - packages/go_router_builder/**/*
       - packages/google_fonts/**/*
+      - packages/material_ui/**/*
       - packages/two_dimensional_scrollables/**/*
       - third_party/packages/cupertino_icons/**/*

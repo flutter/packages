@@ -1,3 +1,20 @@
+## 2.9.3
+
+* Fixes a regression where HTTP headers were ignored.
+
+## 2.9.2
+
+* Refactors for improved testability.
+
+## 2.9.1
+
+* Refactors native code for improved testability.
+
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.8.10
 
 * Improves compatibility with `UIScene`.
