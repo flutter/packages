@@ -283,9 +283,9 @@
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = frame;
   options.camera = camera;
-  NSString *cloudMapId = creationParameters.mapConfiguration.mapId;
-  if (cloudMapId) {
-    options.mapID = [GMSMapID mapIDWithIdentifier:cloudMapId];
+  NSString *mapId = creationParameters.mapConfiguration.mapId;
+  if (mapId && mapId.length > 0) {
+    options.mapID = [GMSMapID mapIDWithIdentifier:mapId];
   }
 
   GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
@@ -314,6 +314,7 @@
                                                           messageChannelSuffix:pigeonSuffix];
     _mapEventHandler =
         [[FGMDefaultMapEventHandler alloc] initWithCallbackHandler:_dartCallbackHandler];
+    FGMPlatformMarkerTypeBox *markerType = creationParameters.mapConfiguration.markerType;
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _clusterManagersController =
@@ -322,7 +323,8 @@
     _markersController = [[FGMMarkersController alloc] initWithMapView:_mapView
                                                          eventDelegate:_mapEventHandler
                                              clusterManagersController:_clusterManagersController
-                                                         assetProvider:assetProvider];
+                                                         assetProvider:assetProvider
+                                                            markerType:markerType.value];
     _polygonsController = [[FGMPolygonsController alloc] initWithMapView:_mapView
                                                            eventDelegate:_mapEventHandler];
     _polylinesController = [[FGMPolylinesController alloc] initWithMapView:_mapView
@@ -880,6 +882,13 @@
   }];
   NSData *imageData = UIImagePNGRepresentation(image);
   return imageData ? [FlutterStandardTypedData typedDataWithBytes:imageData] : nil;
+}
+
+- (nullable NSNumber *)isAdvancedMarkersAvailable:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSUInteger advancedMarkerFlag =
+      self.controller.mapView.mapCapabilities & GMSMapCapabilityFlagsAdvancedMarkers;
+  return [NSNumber numberWithBool:(advancedMarkerFlag != 0)];
 }
 
 @end
