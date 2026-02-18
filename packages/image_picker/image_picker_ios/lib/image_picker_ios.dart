@@ -42,6 +42,25 @@ SourceCamera _convertCamera(CameraDevice camera) {
   throw UnimplementedError('Unknown camera: $camera');
 }
 
+// Converts a [VideoQuality] to the corresponding Pigeon API enum value.
+ApiVideoQuality _convertVideoQuality(VideoQuality quality) {
+  switch (quality) {
+    case VideoQuality.low:
+      return ApiVideoQuality.low;
+    case VideoQuality.medium:
+      return ApiVideoQuality.medium;
+    case VideoQuality.high:
+      return ApiVideoQuality.high;
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so a fallback case is necessary. Since there is no reasonable
+  // default behavior, throw to alert the client that they need an updated
+  // version. This is deliberately outside the switch rather than a `default`
+  // so that the linter will flag the switch as needing an update.
+  // ignore: dead_code
+  throw UnimplementedError('Unknown video quality: $quality');
+}
+
 /// An implementation of [ImagePickerPlatform] for iOS.
 class ImagePickerIOS extends ImagePickerPlatform {
   /// Creates a new plugin implementation instance.
@@ -258,11 +277,13 @@ class ImagePickerIOS extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final String? path = await _pickVideoAsPath(
       source: source,
       maxDuration: maxDuration,
       preferredCameraDevice: preferredCameraDevice,
+      quality: quality,
     );
     return path != null ? PickedFile(path) : null;
   }
@@ -271,6 +292,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) {
     return _hostApi.pickVideo(
       SourceSpecification(
@@ -278,6 +300,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
         camera: _convertCamera(preferredCameraDevice),
       ),
       maxDuration?.inSeconds,
+      _convertVideoQuality(quality),
     );
   }
 
@@ -330,11 +353,13 @@ class ImagePickerIOS extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final String? path = await _pickVideoAsPath(
       source: source,
       maxDuration: maxDuration,
       preferredCameraDevice: preferredCameraDevice,
+      quality: quality,
     );
     return path != null ? XFile(path) : null;
   }

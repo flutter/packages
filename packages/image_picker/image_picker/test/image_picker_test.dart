@@ -358,6 +358,7 @@ void main() {
               source: anyNamed('source'),
               preferredCameraDevice: anyNamed('preferredCameraDevice'),
               maxDuration: anyNamed('maxDuration'),
+              quality: anyNamed('quality'),
             ),
           ).thenAnswer((Invocation _) async => null);
         });
@@ -390,6 +391,49 @@ void main() {
           ]);
         });
 
+        test('video quality defaults to high', () async {
+          final picker = ImagePicker();
+          await picker.pickVideo(source: ImageSource.camera);
+
+          verify(
+            mockPlatform.getVideo(
+              source: ImageSource.camera,
+              quality: VideoQuality.high,
+            ),
+          );
+        });
+
+        test('passes the video quality argument correctly', () async {
+          final picker = ImagePicker();
+          await picker.pickVideo(
+            source: ImageSource.camera,
+            quality: VideoQuality.low,
+          );
+          await picker.pickVideo(
+            source: ImageSource.camera,
+            quality: VideoQuality.medium,
+          );
+          await picker.pickVideo(
+            source: ImageSource.camera,
+            quality: VideoQuality.high,
+          );
+
+          verifyInOrder(<Object>[
+            mockPlatform.getVideo(
+              source: ImageSource.camera,
+              quality: VideoQuality.low,
+            ),
+            mockPlatform.getVideo(
+              source: ImageSource.camera,
+              quality: VideoQuality.medium,
+            ),
+            mockPlatform.getVideo(
+              source: ImageSource.camera,
+              quality: VideoQuality.high,
+            ),
+          ]);
+        });
+
         test('handles a null video file response gracefully', () async {
           final picker = ImagePicker();
 
@@ -401,7 +445,12 @@ void main() {
           final picker = ImagePicker();
           await picker.pickVideo(source: ImageSource.camera);
 
-          verify(mockPlatform.getVideo(source: ImageSource.camera));
+          verify(
+            mockPlatform.getVideo(
+              source: ImageSource.camera,
+              quality: VideoQuality.high,
+            ),
+          );
         });
 
         test('camera position can set to front', () async {
