@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Needed for Espresso testing. -->
+    <!-- Cleartext is needed for Espresso testing. -->
     <base-config cleartextTrafficPermitted="true">
     </base-config>
 </network-security-config>
