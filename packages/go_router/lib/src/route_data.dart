@@ -622,9 +622,14 @@ class NoOpPage extends Page<void> {
 
 /// Annotation to override the URI name for a route parameter.
 @Target({TargetKind.parameter})
-class TypedQueryParameter {
+class TypedQueryParameter<T> {
   /// Annotation to override the URI name for a route parameter.
-  const TypedQueryParameter({this.name});
+  const TypedQueryParameter({
+    this.name,
+    this.encoder,
+    this.decoder,
+    this.compare,
+  });
 
   /// The name of the parameter in the URI.
   ///
@@ -647,4 +652,21 @@ class TypedQueryParameter {
   /// It is escaped to be URL-safe. For example `'field with space'` will
   /// generate a query parameter named `'field+with+space'`.
   final String? name;
+
+  /// A function that converts a parameter value to a string for use in the URI.
+  ///
+  /// The returned string is escaped to be URL-safe. For example, a parameter
+  /// value of `'field with space'` will generate a query parameter value of
+  /// `'field+with+space'`.
+  final String? Function(T?)? encoder;
+
+  /// A function that converts a string from the URI to a parameter value.
+  final T? Function(String?)? decoder;
+
+  /// A function that compares two parameter values for equality.
+  ///
+  /// Returns `true` if the values are different and `false` if they are the
+  /// same. This is used to determine whether a parameter should be included in
+  /// the URI when it has a default value.
+  final bool Function(T, T)? compare;
 }
