@@ -1,0 +1,192 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:convert';
+import 'dart:js_interop';
+
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart';
+import 'package:web/web.dart';
+
+import 'web_helpers.dart';
+
+/// Base implementation of [PlatformScopedStorageXFileCreationParams] for web.
+@immutable
+sealed class WebScopedStorageXFileCreationParams
+    extends PlatformScopedStorageXFileCreationParams {
+  /// Constructs a [WebScopedStorageXFileCreationParams].
+  const WebScopedStorageXFileCreationParams({
+    required super.uri,
+    this.testOverrides,
+  });
+
+  /// Constructs a [WebScopedStorageXFileCreationParams] with an object url.
+  factory WebScopedStorageXFileCreationParams.fromObjectUrl({
+    required String objectUrl,
+    @visibleForTesting XFileTestOverrides? testOverrides,
+  }) => UrlWebScopedStorageXFileCreationParams(
+    objectUrl: objectUrl,
+    testOverrides: testOverrides,
+  );
+
+  /// Constructs a [WebScopedStorageXFileCreationParams] with a [Blob].
+  ///
+  /// Creates an Object URL using the provided blob. See [URL.createObjectURL]
+  ///
+  /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
+  /// [blob] should be revoked when this instance is garbage collected. See
+  /// [URL.revokeObjectURL].
+  factory WebScopedStorageXFileCreationParams.fromBlob(
+    Blob blob, {
+    bool autoRevokeObjectUrl = true,
+    @visibleForTesting XFileTestOverrides? testOverrides,
+  }) => BlobWebScopedStorageXFileCreationParams(
+    blob,
+    autoRevokeObjectUrl: autoRevokeObjectUrl,
+    testOverrides: testOverrides,
+  );
+
+  /// Overrides some functions to allow testing.
+  @visibleForTesting
+  final XFileTestOverrides? testOverrides;
+}
+
+/// Implementation of [WebScopedStorageXFileCreationParams] with an object url.
+@immutable
+base class UrlWebScopedStorageXFileCreationParams
+    extends WebScopedStorageXFileCreationParams {
+  /// Constructs a [UrlWebScopedStorageXFileCreationParams].
+  const UrlWebScopedStorageXFileCreationParams({
+    required String objectUrl,
+    @visibleForTesting super.testOverrides,
+  }) : super(uri: objectUrl);
+}
+
+/// Implementation of [WebScopedStorageXFileCreationParams] with a [Blob].
+@immutable
+base class BlobWebScopedStorageXFileCreationParams
+    extends WebScopedStorageXFileCreationParams {
+  /// Constructs a [BlobWebScopedStorageXFileCreationParams].
+  BlobWebScopedStorageXFileCreationParams(
+    this.blob, {
+    this.autoRevokeObjectUrl = true,
+    @visibleForTesting super.testOverrides,
+  }) : super(uri: URL.createObjectURL(blob)) {
+    if (autoRevokeObjectUrl) {
+      _finalizer.attach(this, uri);
+    }
+  }
+
+  static final Finalizer<String> _finalizer = Finalizer((String objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+  });
+
+  /// The raw data represented by a [WebScopedStorageXFile].
+  final Blob blob;
+
+  /// Whether the object url obtained from [blob] should be revoked when this
+  /// instance is garbage collected.
+  final bool autoRevokeObjectUrl;
+}
+
+/// Implementation of [PlatformScopedStorageXFile] for web.
+base class WebScopedStorageXFile extends PlatformScopedStorageXFile
+    with WebScopedStorageXFileExtension {
+  /// Constructs a [WebScopedStorageXFile].
+  WebScopedStorageXFile(super.params) : super.implementation();
+
+  Blob? _cachedBlob;
+
+  @override
+  PlatformScopedStorageXFileExtension? get extension => this;
+
+  @override
+  late final WebScopedStorageXFileCreationParams params =
+      super.params is WebScopedStorageXFileCreationParams
+      ? super.params as WebScopedStorageXFileCreationParams
+      : UrlWebScopedStorageXFileCreationParams(objectUrl: super.params.uri);
+
+  @override
+  Future<Blob> getBlob() async {
+    return _cachedBlob ??= switch (params) {
+      UrlWebScopedStorageXFileCreationParams() => await fetchBlob(params.uri),
+      final BlobWebScopedStorageXFileCreationParams params => params.blob,
+    };
+  }
+
+  @override
+  Future<bool> canRead() => exists();
+
+  @override
+  Future<bool> exists() async {
+    try {
+      await getBlob();
+      return true;
+    } catch (exception) {
+      return false;
+    }
+  }
+
+  @override
+  Future<DateTime?> lastModified() async {
+    final Blob blob = await getBlob();
+    if (blob.isA<File>()) {
+      return DateTime.fromMillisecondsSinceEpoch((blob as File).lastModified);
+    }
+
+    return null;
+  }
+
+  @override
+  Future<int?> length() async {
+    return (await getBlob()).size;
+  }
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) async* {
+    final Blob blob = await getBlob();
+    final Blob slice = blob.slice(start ?? 0, end ?? blob.size, blob.type);
+    yield await blobToBytes(slice);
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() async {
+    return blobToBytes(await getBlob());
+  }
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) async {
+    return encoding.decodeStream(openRead());
+  }
+
+  @override
+  Future<void> download([String? suggestedName]) async {
+    final Blob blob = await getBlob();
+
+    String? name;
+    if (suggestedName != null) {
+      name = suggestedName;
+    } else if (blob.isA<File>()) {
+      name = (blob as File).name;
+    }
+
+    downloadObjectUrl(params.uri, name, testOverrides: params.testOverrides);
+  }
+
+  @override
+  Future<String?> name() async {
+    final Blob blob = await getBlob();
+    return blob.isA<File>() ? (blob as File).name : null;
+  }
+}
+
+/// Provides platform specific features for [WebScopedStorageXFile].
+mixin WebScopedStorageXFileExtension
+    implements PlatformScopedStorageXFileExtension {
+  /// The raw data represented by a [WebScopedStorageXFile].
+  Future<Blob> getBlob();
+
+  /// Attempts to download a [Blob], with [suggestedName] as the filename.
+  Future<void> download([String? suggestedName]);
+}

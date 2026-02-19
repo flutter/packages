@@ -6,7 +6,8 @@
 
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
-packages/cross_file/**                                   @stuartmorgan-g
+packages/cross_file/**                                   @bparrishMines
+packages/cross_file/cross_file_io/**                     @bparrishMines
 packages/cupertino_ui/**                                 @dkwingsmt
 packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
@@ -56,6 +57,7 @@ third_party/packages/path_parsing/**                     @domesticmouse
 
 # - Web
 packages/camera/camera_web/**                                 @mdebbar
+packages/cross_file/cross_file_web/**                         @bparrishMines
 packages/file_selector/file_selector_web/**                   @mdebbar
 packages/google_maps_flutter/google_maps_flutter_web/**       @mdebbar
 packages/google_sign_in/google_sign_in_web/**                 @mdebbar
@@ -69,6 +71,7 @@ packages/webview_flutter/webview_flutter_web/**               @mdebbar
 # - Android
 packages/camera/camera_android/**                             @camsim99
 packages/camera/camera_android_camerax/**                     @camsim99
+packages/cross_file/cross_file_android/**                     @bparrishMines
 packages/espresso/**                                          @jesswrd
 packages/file_selector/file_selector_android/**               @mboetger
 packages/flutter_plugin_android_lifecycle/**                  @reidbaker
@@ -87,6 +90,7 @@ packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
 # - Darwin
 packages/camera/camera_avfoundation/**                        @hellohuanlin @louisehsu
+packages/cross_file/cross_file_darwin/**                      @bparrishMines
 packages/file_selector/file_selector_ios/**                   @okorohelijah @vashworth
 packages/file_selector/file_selector_macos/**                 @okorohelijah @vashworth
 packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth @LongCatIsLooong

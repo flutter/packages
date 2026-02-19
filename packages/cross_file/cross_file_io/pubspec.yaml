@@ -1,0 +1,37 @@
+name: cross_file_io
+description: Implementation of cross_file_platform_interface for dart:io.
+repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file_io
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    implements: cross_file
+    platforms:
+      linux:
+        dartPluginClass: CrossFileIO
+      windows:
+        dartPluginClass: CrossFileIO
+
+dependencies:
+  cross_file_platform_interface:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_platform_interface
+  flutter:
+    sdk: flutter
+  path: ^1.9.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - files
+  - cross-file

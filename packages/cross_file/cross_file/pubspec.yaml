@@ -1,0 +1,63 @@
+name: cross_file
+description: An abstraction to allow working with files across multiple platforms.
+repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
+version: 0.3.5+1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: cross_file_android
+      ios:
+        default_package: cross_file_darwin
+      linux:
+        default_package: cross_file_io
+      macos:
+        default_package: cross_file_darwin
+      web:
+        default_package: cross_file_web
+      windows:
+        default_package: cross_file_io
+
+dependencies:
+  cross_file_android:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_android
+  cross_file_darwin:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_darwin
+  cross_file_io:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_io
+  cross_file_platform_interface:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_platform_interface
+  cross_file_web:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_web
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - files
+  - cross-file
