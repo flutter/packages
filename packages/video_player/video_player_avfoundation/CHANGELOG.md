@@ -1,3 +1,11 @@
+## 2.10.1
+
+* Fixes CarPlay Now Playing play/pause button not updating when playback is controlled from the Flutter app.
+
+## 2.10.0
+
+* Adds background playback with system media notification support.
+
 ## 2.9.3
 
 * Fixes a regression where HTTP headers were ignored.

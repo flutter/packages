@@ -1904,4 +1904,18 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
+
+  @override
+  bool isBackgroundPlaybackSupportAvailable() {
+    return true;
+  }
+
+  @override
+  Future<void> setBackgroundPlayback(
+    int playerId, {
+    required bool enableBackground,
+    NotificationMetadata? notificationMetadata,
+  }) async {
+    calls.add('setBackgroundPlayback');
+  }
 }

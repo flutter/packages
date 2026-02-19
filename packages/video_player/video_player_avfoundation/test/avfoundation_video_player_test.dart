@@ -20,6 +20,14 @@ import 'avfoundation_video_player_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Provide dummy values for background playback types
+  provideDummy<BackgroundPlaybackMessage>(
+    BackgroundPlaybackMessage(enableBackground: false),
+  );
+  provideDummy<NotificationMetadataMessage>(
+    NotificationMetadataMessage(id: 'dummy'),
+  );
+
   (
     AVFoundationVideoPlayer,
     MockAVFoundationVideoPlayerApi,

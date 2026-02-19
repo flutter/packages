@@ -7,6 +7,12 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -20,6 +26,7 @@ import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.session.MediaSession;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +37,49 @@ import java.util.List;
  * <p>It provides methods to control playback, adjust volume, and handle seeking.
  */
 public abstract class VideoPlayer implements VideoPlayerInstanceApi {
+  private static final String TAG = "VideoPlayer";
+
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
+
+  // Background playback support
+  @Nullable protected Context applicationContext;
+  @Nullable protected VideoMedia3SessionService mediaSessionService;
+  @Nullable protected MediaSession mediaSession;
+  protected boolean backgroundPlaybackEnabled = false;
+  protected int textureId = -1;
+  private boolean serviceBound = false;
+
+  private final ServiceConnection serviceConnection =
+      new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+          VideoMedia3SessionService.LocalBinder binder =
+              (VideoMedia3SessionService.LocalBinder) service;
+          mediaSessionService = binder.getService();
+          serviceBound = true;
+          Log.d(TAG, "MediaSessionService connected");
+
+          // If background playback was requested before service was connected, set it up now
+          if (backgroundPlaybackEnabled && pendingNotificationMetadata != null) {
+            createMediaSessionInternal(pendingNotificationMetadata);
+            pendingNotificationMetadata = null;
+          }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+          mediaSessionService = null;
+          serviceBound = false;
+          Log.d(TAG, "MediaSessionService disconnected");
+        }
+      };
+
+  @Nullable private NotificationMetadataMessage pendingNotificationMetadata;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -233,10 +277,105 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
         trackSelector.buildUponParameters().setOverrideForType(override).build());
   }
 
+  /**
+   * Sets the application context and texture ID for background playback support. This should be
+   * called by the plugin when creating a player.
+   */
+  public void setBackgroundPlaybackContext(@NonNull Context context, int textureId) {
+    this.applicationContext = context.getApplicationContext();
+    this.textureId = textureId;
+  }
+
+  /**
+   * Configures background playback and media notification. Called during player creation if
+   * background playback is requested.
+   */
+  public void configureBackgroundPlayback(@NonNull BackgroundPlaybackMessage msg) {
+    backgroundPlaybackEnabled = msg.getEnableBackground();
+
+    if (!backgroundPlaybackEnabled) {
+      // Disable background playback - remove media session
+      removeMediaSession();
+      return;
+    }
+
+    NotificationMetadataMessage metadata = msg.getNotificationMetadata();
+    if (metadata == null) {
+      // Background playback without notification - just keep the flag
+      Log.d(TAG, "Background playback enabled without notification metadata");
+      return;
+    }
+
+    // Check if service is already connected
+    if (mediaSessionService != null && serviceBound) {
+      createMediaSessionInternal(metadata);
+    } else {
+      // Store metadata and bind to service
+      pendingNotificationMetadata = metadata;
+      bindMediaSessionService();
+    }
+  }
+
+  private void bindMediaSessionService() {
+    if (applicationContext == null) {
+      Log.e(TAG, "Cannot bind to MediaSessionService: no application context");
+      return;
+    }
+
+    if (serviceBound) {
+      return;
+    }
+
+    Intent intent = new Intent(applicationContext, VideoMedia3SessionService.class);
+    try {
+      applicationContext.startService(intent);
+      applicationContext.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+      Log.d(TAG, "Binding to MediaSessionService");
+    } catch (Exception e) {
+      Log.e(TAG, "Failed to bind to MediaSessionService", e);
+    }
+  }
+
+  private void createMediaSessionInternal(@NonNull NotificationMetadataMessage metadata) {
+    if (mediaSessionService == null || textureId < 0) {
+      Log.w(TAG, "Cannot create media session: service not available or invalid texture ID");
+      return;
+    }
+
+    mediaSession = mediaSessionService.createMediaSession(textureId, exoPlayer, metadata);
+    if (mediaSession != null) {
+      Log.d(TAG, "Media session created for texture: " + textureId);
+    }
+  }
+
+  private void removeMediaSession() {
+    if (mediaSessionService != null && textureId >= 0) {
+      mediaSessionService.removeMediaSession(textureId);
+      mediaSession = null;
+    }
+  }
+
+  private void unbindMediaSessionService() {
+    if (applicationContext != null && serviceBound) {
+      try {
+        applicationContext.unbindService(serviceConnection);
+        serviceBound = false;
+        Log.d(TAG, "Unbound from MediaSessionService");
+      } catch (Exception e) {
+        Log.e(TAG, "Error unbinding from MediaSessionService", e);
+      }
+    }
+  }
+
   public void dispose() {
     if (disposeHandler != null) {
       disposeHandler.onDispose();
     }
+
+    // Clean up background playback resources
+    removeMediaSession();
+    unbindMediaSessionService();
+
     exoPlayer.release();
   }
 }

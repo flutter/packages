@@ -1,5 +1,6 @@
 ## 2.11.0
 
+* Adds background playback with system media notification support.
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest

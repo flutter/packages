@@ -50,6 +50,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FVPNotificationMetadataMessage ()
++ (FVPNotificationMetadataMessage *)fromList:(NSArray<id> *)list;
++ (nullable FVPNotificationMetadataMessage *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FVPBackgroundPlaybackMessage ()
++ (FVPBackgroundPlaybackMessage *)fromList:(NSArray<id> *)list;
++ (nullable FVPBackgroundPlaybackMessage *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @implementation FVPPlatformVideoViewCreationParams
 + (instancetype)makeWithPlayerId:(NSInteger)playerId {
   FVPPlatformVideoViewCreationParams *pigeonResult =
@@ -75,16 +87,19 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FVPCreationOptions
 + (instancetype)makeWithUri:(NSString *)uri
-                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders {
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+         backgroundPlayback:(nullable FVPBackgroundPlaybackMessage *)backgroundPlayback {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = uri;
   pigeonResult.httpHeaders = httpHeaders;
+  pigeonResult.backgroundPlayback = backgroundPlayback;
   return pigeonResult;
 }
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = GetNullableObjectAtIndex(list, 0);
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.backgroundPlayback = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list {
@@ -94,6 +109,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.uri ?: [NSNull null],
     self.httpHeaders ?: [NSNull null],
+    self.backgroundPlayback ?: [NSNull null],
   ];
 }
 @end
@@ -159,6 +175,73 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FVPNotificationMetadataMessage
++ (instancetype)makeWithId:(NSString *)id
+                     title:(nullable NSString *)title
+                     album:(nullable NSString *)album
+                    artist:(nullable NSString *)artist
+                durationMs:(nullable NSNumber *)durationMs
+                    artUri:(nullable NSString *)artUri {
+  FVPNotificationMetadataMessage *pigeonResult = [[FVPNotificationMetadataMessage alloc] init];
+  pigeonResult.id = id;
+  pigeonResult.title = title;
+  pigeonResult.album = album;
+  pigeonResult.artist = artist;
+  pigeonResult.durationMs = durationMs;
+  pigeonResult.artUri = artUri;
+  return pigeonResult;
+}
++ (FVPNotificationMetadataMessage *)fromList:(NSArray<id> *)list {
+  FVPNotificationMetadataMessage *pigeonResult = [[FVPNotificationMetadataMessage alloc] init];
+  pigeonResult.id = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.title = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.album = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.artist = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.durationMs = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.artUri = GetNullableObjectAtIndex(list, 5);
+  return pigeonResult;
+}
++ (nullable FVPNotificationMetadataMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPNotificationMetadataMessage fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.id ?: [NSNull null],
+    self.title ?: [NSNull null],
+    self.album ?: [NSNull null],
+    self.artist ?: [NSNull null],
+    self.durationMs ?: [NSNull null],
+    self.artUri ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FVPBackgroundPlaybackMessage
++ (instancetype)makeWithEnableBackground:(BOOL)enableBackground
+                    notificationMetadata:
+                        (nullable FVPNotificationMetadataMessage *)notificationMetadata {
+  FVPBackgroundPlaybackMessage *pigeonResult = [[FVPBackgroundPlaybackMessage alloc] init];
+  pigeonResult.enableBackground = enableBackground;
+  pigeonResult.notificationMetadata = notificationMetadata;
+  return pigeonResult;
+}
++ (FVPBackgroundPlaybackMessage *)fromList:(NSArray<id> *)list {
+  FVPBackgroundPlaybackMessage *pigeonResult = [[FVPBackgroundPlaybackMessage alloc] init];
+  pigeonResult.enableBackground = [GetNullableObjectAtIndex(list, 0) boolValue];
+  pigeonResult.notificationMetadata = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable FVPBackgroundPlaybackMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPBackgroundPlaybackMessage fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.enableBackground),
+    self.notificationMetadata ?: [NSNull null],
+  ];
+}
+@end
+
 @interface FVPMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FVPMessagesPigeonCodecReader
@@ -172,6 +255,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
       return [FVPTexturePlayerIds fromList:[self readValue]];
     case 132:
       return [FVPMediaSelectionAudioTrackData fromList:[self readValue]];
+    case 133:
+      return [FVPNotificationMetadataMessage fromList:[self readValue]];
+    case 134:
+      return [FVPBackgroundPlaybackMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -193,6 +280,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FVPMediaSelectionAudioTrackData class]]) {
     [self writeByte:132];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPNotificationMetadataMessage class]]) {
+    [self writeByte:133];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPBackgroundPlaybackMessage class]]) {
+    [self writeByte:134];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class FVPCreationOptions;
 @class FVPTexturePlayerIds;
 @class FVPMediaSelectionAudioTrackData;
+@class FVPNotificationMetadataMessage;
+@class FVPBackgroundPlaybackMessage;
 
 /// Information passed to the platform view creation.
 @interface FVPPlatformVideoViewCreationParams : NSObject
@@ -30,9 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUri:(NSString *)uri
-                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+         backgroundPlayback:(nullable FVPBackgroundPlaybackMessage *)backgroundPlayback;
 @property(nonatomic, copy) NSString *uri;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
+/// Background playback configuration (optional).
+@property(nonatomic, strong, nullable) FVPBackgroundPlaybackMessage *backgroundPlayback;
 @end
 
 @interface FVPTexturePlayerIds : NSObject
@@ -57,6 +62,35 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSString *languageCode;
 @property(nonatomic, assign) BOOL isSelected;
 @property(nonatomic, copy, nullable) NSString *commonMetadataTitle;
+@end
+
+/// Metadata for the system media notification when playing in background.
+@interface FVPNotificationMetadataMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithId:(NSString *)id
+                     title:(nullable NSString *)title
+                     album:(nullable NSString *)album
+                    artist:(nullable NSString *)artist
+                durationMs:(nullable NSNumber *)durationMs
+                    artUri:(nullable NSString *)artUri;
+@property(nonatomic, copy) NSString *id;
+@property(nonatomic, copy, nullable) NSString *title;
+@property(nonatomic, copy, nullable) NSString *album;
+@property(nonatomic, copy, nullable) NSString *artist;
+@property(nonatomic, strong, nullable) NSNumber *durationMs;
+@property(nonatomic, copy, nullable) NSString *artUri;
+@end
+
+/// Message for configuring background playback with media notification.
+@interface FVPBackgroundPlaybackMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithEnableBackground:(BOOL)enableBackground
+                    notificationMetadata:
+                        (nullable FVPNotificationMetadataMessage *)notificationMetadata;
+@property(nonatomic, assign) BOOL enableBackground;
+@property(nonatomic, strong, nullable) FVPNotificationMetadataMessage *notificationMetadata;
 @end
 
 /// The codec used by all APIs.

@@ -136,9 +136,15 @@
 }
 
 - (int64_t)configurePlayer:(FVPVideoPlayer *)player
-    withExtraDisposeHandler:(nullable void (^)(void))extraDisposeHandler {
+    withExtraDisposeHandler:(nullable void (^)(void))extraDisposeHandler
+         backgroundPlayback:(nullable FVPBackgroundPlaybackMessage *)backgroundPlayback {
   int64_t playerIdentifier = self.nextPlayerIdentifier++;
   self.playersByIdentifier[@(playerIdentifier)] = player;
+
+  // Configure background playback if requested
+  if (backgroundPlayback != nil) {
+    [player configureBackgroundPlayback:backgroundPlayback];
+  }
 
   NSObject<FlutterBinaryMessenger> *messenger = self.binaryMessenger;
   NSString *channelSuffix = [NSString stringWithFormat:@"%lld", playerIdentifier];
@@ -224,7 +230,9 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
                                                               avFactory:self.avFactory
                                                            viewProvider:self.viewProvider];
 
-    return @([self configurePlayer:player withExtraDisposeHandler:nil]);
+    return @([self configurePlayer:player
+           withExtraDisposeHandler:nil
+                backgroundPlayback:options.backgroundPlayback]);
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
     return nil;
@@ -256,7 +264,8 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
     int64_t playerIdentifier = [self configurePlayer:player
                              withExtraDisposeHandler:^() {
                                [weakSelf.textureRegistry unregisterTexture:textureIdentifier];
-                             }];
+                             }
+                                  backgroundPlayback:options.backgroundPlayback];
     return [FVPTexturePlayerIds makeWithPlayerId:playerIdentifier textureId:textureIdentifier];
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];

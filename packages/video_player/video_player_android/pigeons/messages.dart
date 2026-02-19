@@ -73,6 +73,9 @@ class CreationOptions {
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+
+  /// Background playback configuration (optional).
+  BackgroundPlaybackMessage? backgroundPlayback;
 }
 
 class TexturePlayerIds {
@@ -146,6 +149,36 @@ class NativeAudioTrackData {
 
   /// ExoPlayer-based tracks
   List<ExoPlayerAudioTrackData>? exoPlayerTracks;
+}
+
+/// Metadata for the system media notification when playing in background.
+class NotificationMetadataMessage {
+  NotificationMetadataMessage({
+    required this.id,
+    this.title,
+    this.album,
+    this.artist,
+    this.durationMs,
+    this.artUri,
+  });
+
+  String id;
+  String? title;
+  String? album;
+  String? artist;
+  int? durationMs;
+  String? artUri;
+}
+
+/// Message for configuring background playback with media notification.
+class BackgroundPlaybackMessage {
+  BackgroundPlaybackMessage({
+    required this.enableBackground,
+    this.notificationMetadata,
+  });
+
+  bool enableBackground;
+  NotificationMetadataMessage? notificationMetadata;
 }
 
 @HostApi()
