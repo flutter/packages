@@ -486,7 +486,7 @@ class PlatformMapConfiguration {
   final bool? indoorViewEnabled;
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
-  final PlatformMarkerType? markerType;
+  final PlatformMarkerType markerType;
   final String? mapId;
   final String? style;
 }

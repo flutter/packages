@@ -553,6 +553,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 
 /// Pigeon equivalent of MapConfiguration.
 @interface FGMPlatformMapConfiguration : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithCompassEnabled:(nullable NSNumber *)compassEnabled
                     cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
                                mapType:(nullable FGMPlatformMapTypeBox *)mapType
@@ -568,7 +570,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                      indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
                         trafficEnabled:(nullable NSNumber *)trafficEnabled
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
-                            markerType:(nullable FGMPlatformMarkerTypeBox *)markerType
+                            markerType:(FGMPlatformMarkerType)markerType
                                  mapId:(nullable NSString *)mapId
                                  style:(nullable NSString *)style;
 @property(nonatomic, strong, nullable) NSNumber *compassEnabled;
@@ -586,7 +588,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, strong, nullable) NSNumber *indoorViewEnabled;
 @property(nonatomic, strong, nullable) NSNumber *trafficEnabled;
 @property(nonatomic, strong, nullable) NSNumber *buildingsEnabled;
-@property(nonatomic, strong, nullable) FGMPlatformMarkerTypeBox *markerType;
+@property(nonatomic, assign) FGMPlatformMarkerType markerType;
 @property(nonatomic, copy, nullable) NSString *mapId;
 @property(nonatomic, copy, nullable) NSString *style;
 @end

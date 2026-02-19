@@ -1330,17 +1330,18 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
-    markerType: _platformMarkerTypeFromMarkerType(config.markerType),
+    markerType: _platformMarkerTypeFromMarkerType(
+      config.markerType ?? MarkerType.marker,
+    ),
     mapId: config.mapId,
     style: config.style,
   );
 }
 
-PlatformMarkerType? _platformMarkerTypeFromMarkerType(MarkerType? markerType) {
+PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
   return switch (markerType) {
     MarkerType.marker => PlatformMarkerType.marker,
     MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
-    null => null,
   };
 }
 

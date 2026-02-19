@@ -314,7 +314,7 @@
                                                           messageChannelSuffix:pigeonSuffix];
     _mapEventHandler =
         [[FGMDefaultMapEventHandler alloc] initWithCallbackHandler:_dartCallbackHandler];
-    FGMPlatformMarkerTypeBox *markerType = creationParameters.mapConfiguration.markerType;
+    FGMPlatformMarkerType markerType = creationParameters.mapConfiguration.markerType;
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _clusterManagersController =
@@ -324,7 +324,7 @@
                                                          eventDelegate:_mapEventHandler
                                              clusterManagersController:_clusterManagersController
                                                          assetProvider:assetProvider
-                                                            markerType:markerType.value];
+                                                            markerType:markerType];
     _polygonsController = [[FGMPolygonsController alloc] initWithMapView:_mapView
                                                            eventDelegate:_mapEventHandler];
     _polylinesController = [[FGMPolylinesController alloc] initWithMapView:_mapView

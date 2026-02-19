@@ -1674,7 +1674,7 @@ class PlatformMapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
-    this.markerType,
+    required this.markerType,
     this.mapId,
     this.style,
   });
@@ -1709,7 +1709,7 @@ class PlatformMapConfiguration {
 
   bool? buildingsEnabled;
 
-  PlatformMarkerType? markerType;
+  PlatformMarkerType markerType;
 
   String? mapId;
 
@@ -1760,7 +1760,7 @@ class PlatformMapConfiguration {
       indoorViewEnabled: result[12] as bool?,
       trafficEnabled: result[13] as bool?,
       buildingsEnabled: result[14] as bool?,
-      markerType: result[15] as PlatformMarkerType?,
+      markerType: result[15]! as PlatformMarkerType,
       mapId: result[16] as String?,
       style: result[17] as String?,
     );

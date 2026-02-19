@@ -1353,7 +1353,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                      indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
                         trafficEnabled:(nullable NSNumber *)trafficEnabled
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
-                            markerType:(nullable FGMPlatformMarkerTypeBox *)markerType
+                            markerType:(FGMPlatformMarkerType)markerType
                                  mapId:(nullable NSString *)mapId
                                  style:(nullable NSString *)style {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
@@ -1394,7 +1394,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.indoorViewEnabled = GetNullableObjectAtIndex(list, 12);
   pigeonResult.trafficEnabled = GetNullableObjectAtIndex(list, 13);
   pigeonResult.buildingsEnabled = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.markerType = GetNullableObjectAtIndex(list, 15);
+  FGMPlatformMarkerTypeBox *boxedFGMPlatformMarkerType = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.markerType = boxedFGMPlatformMarkerType.value;
   pigeonResult.mapId = GetNullableObjectAtIndex(list, 16);
   pigeonResult.style = GetNullableObjectAtIndex(list, 17);
   return pigeonResult;
@@ -1419,7 +1420,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.indoorViewEnabled ?: [NSNull null],
     self.trafficEnabled ?: [NSNull null],
     self.buildingsEnabled ?: [NSNull null],
-    self.markerType ?: [NSNull null],
+    [[FGMPlatformMarkerTypeBox alloc] initWithValue:self.markerType],
     self.mapId ?: [NSNull null],
     self.style ?: [NSNull null],
   ];
