@@ -1812,7 +1812,7 @@ class PlatformMapConfiguration {
     this.trafficEnabled,
     this.buildingsEnabled,
     this.liteModeEnabled,
-    this.markerType,
+    required this.markerType,
     this.mapId,
     this.style,
   });
@@ -1853,7 +1853,7 @@ class PlatformMapConfiguration {
 
   bool? liteModeEnabled;
 
-  PlatformMarkerType? markerType;
+  PlatformMarkerType markerType;
 
   String? mapId;
 
@@ -1910,7 +1910,7 @@ class PlatformMapConfiguration {
       trafficEnabled: result[15] as bool?,
       buildingsEnabled: result[16] as bool?,
       liteModeEnabled: result[17] as bool?,
-      markerType: result[18] as PlatformMarkerType?,
+      markerType: result[18]! as PlatformMarkerType,
       mapId: result[19] as String?,
       style: result[20] as String?,
     );

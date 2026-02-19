@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).
+
 ## 1.1.20
 
 * Fixes color parsing for modern rgb and rgba CSS syntax.

@@ -1,3 +1,7 @@
+## 2.9.4
+
+* Updates `androidx.media3` to 1.9.2.
+
 ## 2.9.3
 
 * Updates `androidx.media3` to 1.9.1.

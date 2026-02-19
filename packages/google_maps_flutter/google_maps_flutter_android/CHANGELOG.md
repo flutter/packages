@@ -1,3 +1,7 @@
+## 2.19.1
+
+* Fixes a regression in 2.19.0 that caused crashes when adding markers.
+
 ## 2.19.0
 
 * Adds support for advanced markers.
