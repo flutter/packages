@@ -146,7 +146,7 @@
     [player configureBackgroundPlayback:backgroundPlayback];
   }
 
-  NSObject<FlutterBinaryMessenger> *messenger = self.registrar.messenger;
+  NSObject<FlutterBinaryMessenger> *messenger = self.binaryMessenger;
   NSString *channelSuffix = [NSString stringWithFormat:@"%lld", playerIdentifier];
   // Set up the player-specific API handler, and its onDispose unregistration.
   SetUpFVPVideoPlayerInstanceApiWithSuffix(messenger, player, channelSuffix);
@@ -263,7 +263,7 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
     __weak typeof(self) weakSelf = self;
     int64_t playerIdentifier = [self configurePlayer:player
                              withExtraDisposeHandler:^() {
-                               [weakSelf.registrar.textures unregisterTexture:textureIdentifier];
+                               [weakSelf.textureRegistry unregisterTexture:textureIdentifier];
                              }
                                   backgroundPlayback:options.backgroundPlayback];
     return [FVPTexturePlayerIds makeWithPlayerId:playerIdentifier textureId:textureIdentifier];
