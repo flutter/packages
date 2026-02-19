@@ -989,6 +989,74 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
+
+  /// Gets the available video tracks (quality variants) for the video.
+  ///
+  /// Returns a list of [VideoTrack] objects representing the available
+  /// video quality variants. For HLS/DASH adaptive streams, this returns the
+  /// different quality levels (resolution/bitrate variants) available.
+  /// For non-adaptive videos (MP4, MOV, etc.), this returns an empty list
+  /// as they have a single fixed quality that cannot be switched.
+  ///
+  /// Note: On iOS 13-14, this returns an empty list as the AVAssetVariant API
+  /// requires iOS 15+. On web, this throws an [UnimplementedError].
+  ///
+  /// Check [isVideoTrackSupportAvailable] before calling this method to ensure
+  /// the platform supports video track selection.
+  Future<List<VideoTrack>> getVideoTracks() async {
+    if (_isDisposedOrNotInitialized) {
+      return <VideoTrack>[];
+    }
+    final List<platform_interface.VideoTrack> platformTracks =
+        await _videoPlayerPlatform.getVideoTracks(_playerId);
+    return platformTracks
+        .map(
+          (platform_interface.VideoTrack track) =>
+              VideoTrack._fromPlatform(track),
+        )
+        .toList();
+  }
+
+  /// Selects which video track (quality variant) is chosen for playback.
+  ///
+  /// Pass a [VideoTrack] to select a specific quality.
+  /// Pass `null` to enable automatic quality selection (adaptive streaming).
+  ///
+  /// On iOS, this sets `preferredPeakBitRate` on the AVPlayerItem.
+  /// On Android, this uses ExoPlayer's track selection override.
+  /// On web, this throws an [UnimplementedError].
+  ///
+  /// Check [isVideoTrackSupportAvailable] before calling this method to ensure
+  /// the platform supports video track selection.
+  Future<void> selectVideoTrack(VideoTrack? track) async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    // Convert app-facing VideoTrack to platform interface VideoTrack
+    final platform_interface.VideoTrack? platformTrack = track != null
+        ? platform_interface.VideoTrack(
+            id: track.id,
+            isSelected: track.isSelected,
+            label: track.label.isEmpty ? null : track.label,
+            bitrate: track.bitrate,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          )
+        : null;
+    await _videoPlayerPlatform.selectVideoTrack(_playerId, platformTrack);
+  }
+
+  /// Returns whether video track selection is supported on this platform.
+  ///
+  /// Returns `true` on Android and iOS, `false` on web.
+  ///
+  /// Use this to check before calling [getVideoTracks] or [selectVideoTrack]
+  /// to avoid [UnimplementedError] exceptions on unsupported platforms.
+  bool isVideoTrackSupportAvailable() {
+    return _videoPlayerPlatform.isVideoTrackSupportAvailable();
+  }
 }
 
 class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
@@ -1393,4 +1461,117 @@ class ClosedCaption extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Represents a video track (quality variant) in a video with its metadata.
+///
+/// For HLS/DASH adaptive streams, each [VideoTrack] represents a different
+/// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos (MP4,
+/// MOV, etc.), no tracks are returned as they have a single fixed quality.
+@immutable
+class VideoTrack {
+  /// Constructs an instance of [VideoTrack].
+  const VideoTrack({
+    required this.id,
+    required this.isSelected,
+    this.label = '',
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+  });
+
+  /// Creates a [VideoTrack] from a platform interface [VideoTrack].
+  factory VideoTrack._fromPlatform(platform_interface.VideoTrack track) {
+    return VideoTrack(
+      id: track.id,
+      isSelected: track.isSelected,
+      label: track.label ?? '',
+      bitrate: track.bitrate,
+      width: track.width,
+      height: track.height,
+      frameRate: track.frameRate,
+      codec: track.codec,
+    );
+  }
+
+  /// Unique identifier for the video track.
+  ///
+  /// The format is platform-specific:
+  /// - Android: `"{groupIndex}_{trackIndex}"` (e.g., `"0_2"`)
+  /// - iOS: `"variant_{bitrate}"` for HLS adaptive streams
+  final String id;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Human-readable label for the track (e.g., "1080p", "720p").
+  ///
+  /// Defaults to an empty string if not available from the platform.
+  final String label;
+
+  /// Bitrate of the video track in bits per second.
+  ///
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Video width in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? width;
+
+  /// Video height in pixels.
+  ///
+  /// May be null if not available from the platform.
+  final int? height;
+
+  /// Frame rate in frames per second.
+  ///
+  /// May be null if not available from the platform.
+  final double? frameRate;
+
+  /// Video codec used (e.g., "avc1", "hevc", "vp9").
+  ///
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            isSelected == other.isSelected &&
+            label == other.label &&
+            bitrate == other.bitrate &&
+            width == other.width &&
+            height == other.height &&
+            frameRate == other.frameRate &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    isSelected,
+    label,
+    bitrate,
+    width,
+    height,
+    frameRate,
+    codec,
+  );
+
+  @override
+  String toString() =>
+      'VideoTrack('
+      'id: $id, '
+      'isSelected: $isSelected, '
+      'label: $label, '
+      'bitrate: $bitrate, '
+      'width: $width, '
+      'height: $height, '
+      'frameRate: $frameRate, '
+      'codec: $codec)';
 }

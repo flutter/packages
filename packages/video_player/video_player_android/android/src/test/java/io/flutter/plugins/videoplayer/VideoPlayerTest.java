@@ -620,4 +620,401 @@ public final class VideoPlayerTest {
 
     videoPlayer.dispose();
   }
+
+  // ==================== Video Track Tests ====================
+
+  @Test
+  public void testGetVideoTracks_withMultipleVideoTracks() {
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup1 = mock(Tracks.Group.class);
+    Tracks.Group mockVideoGroup2 = mock(Tracks.Group.class);
+    Tracks.Group mockAudioGroup = mock(Tracks.Group.class);
+
+    // Create mock formats for video tracks
+    Format videoFormat1 =
+        new Format.Builder()
+            .setId("video_track_1")
+            .setLabel("1080p")
+            .setAverageBitrate(5000000)
+            .setWidth(1920)
+            .setHeight(1080)
+            .setFrameRate(30.0f)
+            .setCodecs("avc1.64001f")
+            .build();
+
+    Format videoFormat2 =
+        new Format.Builder()
+            .setId("video_track_2")
+            .setLabel("720p")
+            .setAverageBitrate(2500000)
+            .setWidth(1280)
+            .setHeight(720)
+            .setFrameRate(24.0f)
+            .setCodecs("avc1.4d401f")
+            .build();
+
+    // Mock video groups and set length field
+    setGroupLength(mockVideoGroup1, 1);
+    setGroupLength(mockVideoGroup2, 1);
+
+    when(mockVideoGroup1.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup1.getTrackFormat(0)).thenReturn(videoFormat1);
+    when(mockVideoGroup1.isTrackSelected(0)).thenReturn(true);
+
+    when(mockVideoGroup2.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup2.getTrackFormat(0)).thenReturn(videoFormat2);
+    when(mockVideoGroup2.isTrackSelected(0)).thenReturn(false);
+
+    when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
+
+    // Mock tracks
+    ImmutableList<Tracks.Group> groups =
+        ImmutableList.of(mockVideoGroup1, mockVideoGroup2, mockAudioGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test the method
+    NativeVideoTrackData nativeData = videoPlayer.getVideoTracks();
+    List<ExoPlayerVideoTrackData> result = nativeData.getExoPlayerTracks();
+
+    // Verify results
+    assertNotNull(result);
+    assertEquals(2, result.size());
+
+    // Verify first track
+    ExoPlayerVideoTrackData track1 = result.get(0);
+    assertEquals(0L, track1.getGroupIndex());
+    assertEquals(0L, track1.getTrackIndex());
+    assertEquals("1080p", track1.getLabel());
+    assertTrue(track1.isSelected());
+    assertEquals(Long.valueOf(5000000), track1.getBitrate());
+    assertEquals(Long.valueOf(1920), track1.getWidth());
+    assertEquals(Long.valueOf(1080), track1.getHeight());
+    assertEquals(Double.valueOf(30.0), track1.getFrameRate());
+    assertEquals("avc1.64001f", track1.getCodec());
+
+    // Verify second track
+    ExoPlayerVideoTrackData track2 = result.get(1);
+    assertEquals(1L, track2.getGroupIndex());
+    assertEquals(0L, track2.getTrackIndex());
+    assertEquals("720p", track2.getLabel());
+    assertFalse(track2.isSelected());
+    assertEquals(Long.valueOf(2500000), track2.getBitrate());
+    assertEquals(Long.valueOf(1280), track2.getWidth());
+    assertEquals(Long.valueOf(720), track2.getHeight());
+    assertEquals(Double.valueOf(24.0), track2.getFrameRate());
+    assertEquals("avc1.4d401f", track2.getCodec());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testGetVideoTracks_withNoVideoTracks() {
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockAudioGroup = mock(Tracks.Group.class);
+
+    // Mock audio group only (no video tracks)
+    when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test the method
+    NativeVideoTrackData nativeData = videoPlayer.getVideoTracks();
+    List<ExoPlayerVideoTrackData> result = nativeData.getExoPlayerTracks();
+
+    // Verify results
+    assertNotNull(result);
+    assertEquals(0, result.size());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testGetVideoTracks_withNullValues() {
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    // Create format with null/missing values
+    Format videoFormat =
+        new Format.Builder()
+            .setId("video_track_null")
+            .setLabel(null) // Null label
+            .setAverageBitrate(Format.NO_VALUE) // No bitrate
+            .setWidth(Format.NO_VALUE) // No width
+            .setHeight(Format.NO_VALUE) // No height
+            .setFrameRate(Format.NO_VALUE) // No frame rate
+            .setCodecs(null) // Null codec
+            .build();
+
+    // Mock video group and set length field
+    setGroupLength(mockVideoGroup, 1);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup.getTrackFormat(0)).thenReturn(videoFormat);
+    when(mockVideoGroup.isTrackSelected(0)).thenReturn(false);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test the method
+    NativeVideoTrackData nativeData = videoPlayer.getVideoTracks();
+    List<ExoPlayerVideoTrackData> result = nativeData.getExoPlayerTracks();
+
+    // Verify results
+    assertNotNull(result);
+    assertEquals(1, result.size());
+
+    ExoPlayerVideoTrackData track = result.get(0);
+    assertEquals(0L, track.getGroupIndex());
+    assertEquals(0L, track.getTrackIndex());
+    assertNull(track.getLabel()); // Null values should be preserved
+    assertFalse(track.isSelected());
+    assertNull(track.getBitrate());
+    assertNull(track.getWidth());
+    assertNull(track.getHeight());
+    assertNull(track.getFrameRate());
+    assertNull(track.getCodec());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testGetVideoTracks_withMultipleTracksInSameGroup() {
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    // Create formats for group with multiple tracks (adaptive streaming scenario)
+    Format videoFormat1 =
+        new Format.Builder()
+            .setId("video_track_1")
+            .setLabel("1080p")
+            .setWidth(1920)
+            .setHeight(1080)
+            .setAverageBitrate(5000000)
+            .build();
+
+    Format videoFormat2 =
+        new Format.Builder()
+            .setId("video_track_2")
+            .setLabel("720p")
+            .setWidth(1280)
+            .setHeight(720)
+            .setAverageBitrate(2500000)
+            .build();
+
+    // Mock video group with multiple tracks
+    setGroupLength(mockVideoGroup, 2);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup.getTrackFormat(0)).thenReturn(videoFormat1);
+    when(mockVideoGroup.getTrackFormat(1)).thenReturn(videoFormat2);
+    when(mockVideoGroup.isTrackSelected(0)).thenReturn(true);
+    when(mockVideoGroup.isTrackSelected(1)).thenReturn(false);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test the method
+    NativeVideoTrackData nativeData = videoPlayer.getVideoTracks();
+    List<ExoPlayerVideoTrackData> result = nativeData.getExoPlayerTracks();
+
+    // Verify results
+    assertNotNull(result);
+    assertEquals(2, result.size());
+
+    // Verify track indices are correct
+    ExoPlayerVideoTrackData track1 = result.get(0);
+    ExoPlayerVideoTrackData track2 = result.get(1);
+    assertEquals(0L, track1.getGroupIndex());
+    assertEquals(0L, track1.getTrackIndex());
+    assertEquals(0L, track2.getGroupIndex());
+    assertEquals(1L, track2.getTrackIndex());
+    // Tracks have same group but different track indices
+    assertEquals(track1.getGroupIndex(), track2.getGroupIndex());
+    assertNotEquals(track1.getTrackIndex(), track2.getTrackIndex());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_validIndices() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    DefaultTrackSelector.Parameters mockParameters = mock(DefaultTrackSelector.Parameters.class);
+    DefaultTrackSelector.Parameters.Builder mockBuilder =
+        mock(DefaultTrackSelector.Parameters.Builder.class);
+
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    Format videoFormat =
+        new Format.Builder()
+            .setId("video_track_1")
+            .setLabel("1080p")
+            .setWidth(1920)
+            .setHeight(1080)
+            .build();
+
+    // Create a real TrackGroup with the format
+    TrackGroup trackGroup = new TrackGroup(videoFormat);
+
+    // Mock video group with 2 tracks
+    setGroupLength(mockVideoGroup, 2);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+    when(mockVideoGroup.getMediaTrackGroup()).thenReturn(trackGroup);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+
+    // Set up track selector BEFORE creating VideoPlayer
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
+    when(mockTrackSelector.buildUponParameters()).thenReturn(mockBuilder);
+    when(mockBuilder.setOverrideForType(any(TrackSelectionOverride.class))).thenReturn(mockBuilder);
+    when(mockBuilder.setTrackTypeDisabled(anyInt(), anyBoolean())).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockParameters);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test selecting a valid video track
+    videoPlayer.selectVideoTrack(0, 0);
+
+    // Verify track selector was called
+    verify(mockTrackSelector, atLeastOnce()).buildUponParameters();
+    verify(mockBuilder, atLeastOnce()).build();
+    verify(mockTrackSelector, atLeastOnce()).setParameters(mockParameters);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_nullTrackSelector() {
+    // Track selector is null by default in mock
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    assertThrows(IllegalStateException.class, () -> videoPlayer.selectVideoTrack(0, 0));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_invalidGroupIndex() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test with invalid group index (only 1 group exists at index 0)
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectVideoTrack(5, 0));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_invalidTrackIndex() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    // Mock video group with only 1 track
+    setGroupLength(mockVideoGroup, 1);
+    when(mockVideoGroup.getType()).thenReturn(C.TRACK_TYPE_VIDEO);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test with invalid track index (only 1 track exists at index 0)
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectVideoTrack(0, 5));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_nonVideoGroup() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockAudioGroup = mock(Tracks.Group.class);
+
+    // Mock audio group (not video)
+    setGroupLength(mockAudioGroup, 1);
+    when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test selecting from a non-video group
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectVideoTrack(0, 0));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testSelectVideoTrack_negativeIndices() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    Tracks mockTracks = mock(Tracks.class);
+    Tracks.Group mockVideoGroup = mock(Tracks.Group.class);
+
+    ImmutableList<Tracks.Group> groups = ImmutableList.of(mockVideoGroup);
+    when(mockTracks.getGroups()).thenReturn(groups);
+    when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test with negative group index only (not both -1)
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectVideoTrack(-1, 0));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void testEnableAutoVideoQuality() {
+    DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
+    DefaultTrackSelector.Parameters mockParameters = mock(DefaultTrackSelector.Parameters.class);
+    DefaultTrackSelector.Parameters.Builder mockBuilder =
+        mock(DefaultTrackSelector.Parameters.Builder.class);
+
+    // Set up track selector
+    when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
+    when(mockTrackSelector.buildUponParameters()).thenReturn(mockBuilder);
+    when(mockBuilder.clearOverridesOfType(C.TRACK_TYPE_VIDEO)).thenReturn(mockBuilder);
+    when(mockBuilder.build()).thenReturn(mockParameters);
+
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Test enabling auto quality
+    videoPlayer.enableAutoVideoQuality();
+
+    // Verify track selector cleared video overrides
+    verify(mockTrackSelector).buildUponParameters();
+    verify(mockBuilder).clearOverridesOfType(C.TRACK_TYPE_VIDEO);
+    verify(mockBuilder).build();
+    verify(mockTrackSelector).setParameters(mockParameters);
+
+    videoPlayer.dispose();
+  }
 }

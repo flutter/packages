@@ -1,3 +1,7 @@
+## NEXT
+
+* Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.
+
 ## 2.9.3
 
 * Updates `androidx.media3` to 1.9.1.

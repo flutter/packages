@@ -29,6 +29,12 @@ class _FakeTexturePlayerIds_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeNativeVideoTrackData_1 extends _i1.SmartFake
+    implements _i2.NativeVideoTrackData {
+  _FakeNativeVideoTrackData_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -194,6 +200,35 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
   _i4.Future<void> dispose() =>
       (super.noSuchMethod(
             Invocation.method(#dispose, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i2.NativeVideoTrackData> getVideoTracks() =>
+      (super.noSuchMethod(
+            Invocation.method(#getVideoTracks, []),
+            returnValue: _i4.Future<_i2.NativeVideoTrackData>.value(
+              _FakeNativeVideoTrackData_1(
+                this,
+                Invocation.method(#getVideoTracks, []),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i4.Future<_i2.NativeVideoTrackData>.value(
+                  _FakeNativeVideoTrackData_1(
+                    this,
+                    Invocation.method(#getVideoTracks, []),
+                  ),
+                ),
+          )
+          as _i4.Future<_i2.NativeVideoTrackData>);
+
+  @override
+  _i4.Future<void> selectVideoTrack(int? bitrate) =>
+      (super.noSuchMethod(
+            Invocation.method(#selectVideoTrack, [bitrate]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

@@ -5,6 +5,7 @@
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
 
+#import <CoreMedia/CoreMedia.h>
 #import <GLKit/GLKit.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
@@ -13,6 +14,10 @@ static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
+
+/// The key name for loading AVURLAsset variants property asynchronously.
+/// Note: Apple does not provide a constant for this key; it is documented in the AVURLAsset API.
+static NSString *const kFVPAssetVariantsKey = @"variants";
 
 /// Registers KVO observers on 'object' for each entry in 'observations', which must be a
 /// dictionary mapping KVO keys to NSValue-wrapped context pointers.
@@ -442,6 +447,144 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
   _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
+}
+
+- (void)getVideoTracks:(void (^)(FVPNativeVideoTrackData *_Nullable,
+                                 FlutterError *_Nullable))completion {
+  NSMutableArray<FVPMediaSelectionVideoTrackData *> *mediaSelectionTracks = [NSMutableArray array];
+
+  AVPlayerItem *currentItem = _player.currentItem;
+  if (!currentItem) {
+    completion(nil, nil);
+    return;
+  }
+
+  AVURLAsset *urlAsset = (AVURLAsset *)currentItem.asset;
+  if (![urlAsset isKindOfClass:[AVURLAsset class]]) {
+    completion(nil, nil);
+    return;
+  }
+
+  // Use AVAssetVariant API for iOS 15+ to get HLS variants
+  if (@available(iOS 15.0, macOS 12.0, *)) {
+    [urlAsset
+        loadValuesAsynchronouslyForKeys:@[ kFVPAssetVariantsKey ]
+                      completionHandler:^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                          NSError *error = nil;
+                          AVKeyValueStatus status =
+                              [urlAsset statusOfValueForKey:kFVPAssetVariantsKey error:&error];
+
+                          if (status == AVKeyValueStatusLoaded) {
+                            NSArray<AVAssetVariant *> *variants = urlAsset.variants;
+                            double currentBitrate = MAX(currentItem.preferredPeakBitRate, 0);
+
+                            NSInteger variantIndex = 0;
+                            for (AVAssetVariant *variant in variants) {
+                              double peakBitRate = variant.peakBitRate;
+                              CGSize videoSize = CGSizeZero;
+                              double frameRate = 0;
+                              NSString *codec = nil;
+
+                              // Get video attributes if available
+                              AVAssetVariantVideoAttributes *videoAttrs = variant.videoAttributes;
+                              if (videoAttrs) {
+                                videoSize = videoAttrs.presentationSize;
+                                frameRate = videoAttrs.nominalFrameRate;
+                                // Get codec from media sub types
+                                NSArray *codecTypes = videoAttrs.codecTypes;
+                                if (codecTypes.count > 0) {
+                                  FourCharCode codecType = [codecTypes[0] unsignedIntValue];
+                                  codec = [self codecStringFromFourCharCode:codecType];
+                                }
+                              }
+
+                              // Determine if this variant is currently selected by comparing
+                              // bitrates. Since AVPlayer doesn't expose the exact selected variant,
+                              // we use a 10% tolerance to account for minor bitrate variations in
+                              // adaptive streaming.
+                              BOOL isSelected =
+                                  (currentBitrate > 0 &&
+                                   fabs(peakBitRate - currentBitrate) < peakBitRate * 0.1);
+
+                              // Generate a human-readable resolution label (e.g., "1080p")
+                              NSString *resolutionLabel = nil;
+                              if (videoSize.height > 0) {
+                                resolutionLabel =
+                                    [NSString stringWithFormat:@"%.0fp", videoSize.height];
+                              }
+
+                              FVPMediaSelectionVideoTrackData *trackData =
+                                  [self createVideoTrackDataWithIndex:variantIndex
+                                                                label:resolutionLabel
+                                                          peakBitRate:peakBitRate
+                                                            videoSize:videoSize
+                                                            frameRate:frameRate
+                                                                codec:codec
+                                                           isSelected:isSelected];
+                              [mediaSelectionTracks addObject:trackData];
+                              variantIndex++;
+                            }
+                          }
+
+                          FVPNativeVideoTrackData *result =
+                              [FVPNativeVideoTrackData makeWithAssetTracks:nil
+                                                      mediaSelectionTracks:mediaSelectionTracks];
+                          completion(result, nil);
+                        });
+                      }];
+  } else {
+    // For iOS < 15, AVAssetVariant API is not available. Return nil (not an error)
+    // since the absence of variant data is expected on older OS versions.
+    completion(nil, nil);
+  }
+}
+
+/// Creates a video track data object with the given parameters, converting values to NSNumber
+/// where appropriate and returning nil for invalid/zero values.
+- (FVPMediaSelectionVideoTrackData *)createVideoTrackDataWithIndex:(NSInteger)index
+                                                             label:(NSString *)label
+                                                       peakBitRate:(double)peakBitRate
+                                                         videoSize:(CGSize)videoSize
+                                                         frameRate:(double)frameRate
+                                                             codec:(NSString *)codec
+                                                        isSelected:(BOOL)isSelected {
+  return [FVPMediaSelectionVideoTrackData
+      makeWithVariantIndex:index
+                     label:label
+                   bitrate:peakBitRate > 0 ? @((NSInteger)peakBitRate) : nil
+                     width:videoSize.width > 0 ? @((NSInteger)videoSize.width) : nil
+                    height:videoSize.height > 0 ? @((NSInteger)videoSize.height) : nil
+                 frameRate:frameRate > 0 ? @(frameRate) : nil
+                     codec:codec
+                isSelected:isSelected];
+}
+
+/// Converts a FourCharCode codec type to a human-readable string for display in the UI.
+/// These codec names help users understand the video encoding format of each quality variant.
+- (NSString *)codecStringFromFourCharCode:(FourCharCode)code {
+  switch (code) {
+    case kCMVideoCodecType_H264:
+      return @"avc1";
+    case kCMVideoCodecType_HEVC:
+      return @"hevc";
+    case kCMVideoCodecType_VP9:
+      return @"vp9";
+    default:
+      return nil;
+  }
+}
+
+- (void)selectVideoTrackWithBitrate:(NSInteger)bitrate
+                              error:(FlutterError *_Nullable *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  if (!currentItem) {
+    return;
+  }
+
+  // Set preferredPeakBitRate to select the quality
+  // 0 means auto quality (adaptive streaming)
+  currentItem.preferredPeakBitRate = (double)bitrate;
 }
 
 - (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:

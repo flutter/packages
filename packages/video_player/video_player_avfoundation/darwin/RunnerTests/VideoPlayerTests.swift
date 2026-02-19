@@ -779,6 +779,217 @@ private let hlsAudioTestURI =
     }
   }
 
+  // MARK: - Video Track Tests
+
+  // Integration test for getVideoTracks with a non-HLS MP4 video over a live network request.
+  // Non-HLS MP4 files don't have adaptive bitrate variants, so we expect empty media selection
+  // tracks.
+  @Test func getVideoTracksWithRealMP4Video() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let testURL = try #require(URL(string: mp4TestURI))
+
+    let player = FVPVideoPlayer(
+      playerItem: playerItem(with: testURL, factory: realObjectFactory),
+      avFactory: realObjectFactory,
+      viewProvider: StubViewProvider())
+
+    await withCheckedContinuation { continuation in
+      let listener = StubEventListener(onInitialized: { continuation.resume() })
+      player.eventListener = listener
+    }
+
+    // Now test getVideoTracks
+    await withCheckedContinuation { continuation in
+      player.getVideoTracks { result, error in
+        #expect(error == nil)
+        #expect(result != nil)
+        // For regular MP4 files, media selection tracks should be nil (no HLS variants)
+        // The method returns empty data for non-HLS content
+        continuation.resume()
+      }
+    }
+
+    var disposeError: FlutterError?
+    player.disposeWithError(&disposeError)
+  }
+
+  // Integration test for getVideoTracks with an HLS stream over a live network request.
+  // HLS streams use AVAssetVariant API (iOS 15+) to enumerate available quality variants.
+  @Test func getVideoTracksWithRealHLSStream() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let hlsURL = try #require(URL(string: hlsTestURI))
+
+    let player = FVPVideoPlayer(
+      playerItem: playerItem(with: hlsURL, factory: realObjectFactory),
+      avFactory: realObjectFactory,
+      viewProvider: StubViewProvider())
+
+    await withCheckedContinuation { continuation in
+      let listener = StubEventListener(onInitialized: { continuation.resume() })
+      player.eventListener = listener
+    }
+
+    // Now test getVideoTracks
+    await withCheckedContinuation { continuation in
+      player.getVideoTracks { result, error in
+        #expect(error == nil)
+        #expect(result != nil)
+
+        // For HLS streams on iOS 15+, we may have media selection tracks (variants)
+        if #available(iOS 15.0, macOS 12.0, *) {
+          // The bee.m3u8 stream may or may not have multiple video variants.
+          // We verify the method returns valid data without crashing.
+          if let mediaSelectionTracks = result?.mediaSelectionTracks {
+            // If media selection tracks exist, they should have valid structure
+            for track in mediaSelectionTracks {
+              #expect(track.variantIndex >= 0)
+              // Bitrate should be positive if present
+              if let bitrate = track.bitrate {
+                #expect(bitrate.intValue > 0)
+              }
+            }
+          }
+        }
+        continuation.resume()
+      }
+    }
+
+    var disposeError: FlutterError?
+    player.disposeWithError(&disposeError)
+  }
+
+  // Tests selectVideoTrack sets preferredPeakBitRate correctly.
+  @Test func selectVideoTrackSetsBitrate() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let testURL = try #require(URL(string: mp4TestURI))
+
+    let player = FVPVideoPlayer(
+      playerItem: playerItem(with: testURL, factory: realObjectFactory),
+      avFactory: realObjectFactory,
+      viewProvider: StubViewProvider())
+
+    await withCheckedContinuation { continuation in
+      let listener = StubEventListener(onInitialized: { continuation.resume() })
+      player.eventListener = listener
+    }
+
+    var error: FlutterError?
+    // Set a specific bitrate
+    player.selectVideoTrack(withBitrate: 5_000_000, error: &error)
+    #expect(error == nil)
+    #expect(player.player.currentItem?.preferredPeakBitRate == 5_000_000)
+
+    player.disposeWithError(&error)
+  }
+
+  // Tests selectVideoTrack with 0 bitrate enables auto quality selection.
+  @Test func selectVideoTrackAutoQuality() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let testURL = try #require(URL(string: mp4TestURI))
+
+    let player = FVPVideoPlayer(
+      playerItem: playerItem(with: testURL, factory: realObjectFactory),
+      avFactory: realObjectFactory,
+      viewProvider: StubViewProvider())
+
+    await withCheckedContinuation { continuation in
+      let listener = StubEventListener(onInitialized: { continuation.resume() })
+      player.eventListener = listener
+    }
+
+    var error: FlutterError?
+    // First set a specific bitrate
+    player.selectVideoTrack(withBitrate: 5_000_000, error: &error)
+    #expect(error == nil)
+    #expect(player.player.currentItem?.preferredPeakBitRate == 5_000_000)
+
+    // Then set to auto quality (0)
+    player.selectVideoTrack(withBitrate: 0, error: &error)
+    #expect(error == nil)
+    #expect(player.player.currentItem?.preferredPeakBitRate == 0)
+
+    player.disposeWithError(&error)
+  }
+
+  // Tests that getVideoTracks works correctly through the plugin API with a real video.
+  @Test func getVideoTracksViaPluginWithRealVideo() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let testURL = try #require(URL(string: mp4TestURI))
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
+
+    let create = FVPCreationOptions.make(
+      withUri: mp4TestURI,
+      httpHeaders: [:])
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(with: create, error: &error))
+    #expect(error == nil)
+
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
+    #expect(player != nil)
+
+    // Wait for player item to become ready
+    let item = try #require(player.player.currentItem)
+    await waitForPlayerItemStatus(item, state: .readyToPlay)
+
+    // Now test getVideoTracks
+    await withCheckedContinuation { continuation in
+      player.getVideoTracks { result, error in
+        #expect(error == nil)
+        #expect(result != nil)
+        continuation.resume()
+      }
+    }
+
+    player.disposeWithError(&error)
+  }
+
+  // Tests selectVideoTrack via plugin API with HLS stream.
+  @Test func selectVideoTrackViaPluginWithHLSStream() async throws {
+    // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+    // can use a fake item/asset instead of loading an actual remote asset.
+    let realObjectFactory = FVPDefaultAVFactory()
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
+
+    var error: FlutterError?
+    // Use HLS stream which supports adaptive bitrate
+    let create = FVPCreationOptions.make(
+      withUri: hlsTestURI,
+      httpHeaders: [:])
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(with: create, error: &error))
+    #expect(error == nil)
+
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
+    #expect(player != nil)
+
+    // Wait for player item to become ready
+    let item = try #require(player.player.currentItem)
+    await waitForPlayerItemStatus(item, state: .readyToPlay)
+
+    // Test setting a specific bitrate
+    player.selectVideoTrack(withBitrate: 1_000_000, error: &error)
+    #expect(error == nil)
+    #expect(player.player.currentItem?.preferredPeakBitRate == 1_000_000)
+
+    // Test setting auto quality
+    player.selectVideoTrack(withBitrate: 0, error: &error)
+    #expect(error == nil)
+    #expect(player.player.currentItem?.preferredPeakBitRate == 0)
+
+    player.disposeWithError(&error)
+  }
+
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,

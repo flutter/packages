@@ -690,5 +690,179 @@ void main() {
         ]),
       );
     });
+
+    group('video tracks', () {
+      test('isVideoTrackSupportAvailable returns true', () {
+        final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(
+          playerId: 1,
+          textureId: 101,
+        );
+
+        expect(player.isVideoTrackSupportAvailable(), true);
+      });
+
+      test('getVideoTracks returns empty list when no tracks', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+        ) = setUpMockPlayer(
+          playerId: 1,
+          textureId: 101,
+        );
+        when(
+          api.getVideoTracks(),
+        ).thenAnswer((_) async => NativeVideoTrackData());
+
+        final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+        expect(tracks, isEmpty);
+      });
+
+      test(
+        'getVideoTracks converts HLS variant tracks to VideoTrack',
+        () async {
+          final (
+            AVFoundationVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi api,
+          ) = setUpMockPlayer(
+            playerId: 1,
+            textureId: 101,
+          );
+          when(api.getVideoTracks()).thenAnswer(
+            (_) async => NativeVideoTrackData(
+              mediaSelectionTracks: <MediaSelectionVideoTrackData>[
+                MediaSelectionVideoTrackData(
+                  variantIndex: 0,
+                  label: '1080p',
+                  isSelected: true,
+                  bitrate: 5000000,
+                  width: 1920,
+                  height: 1080,
+                  frameRate: 30.0,
+                  codec: 'avc1',
+                ),
+                MediaSelectionVideoTrackData(
+                  variantIndex: 1,
+                  label: '720p',
+                  isSelected: false,
+                  bitrate: 2500000,
+                  width: 1280,
+                  height: 720,
+                  frameRate: 30.0,
+                  codec: 'avc1',
+                ),
+              ],
+            ),
+          );
+
+          final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+          expect(tracks.length, 2);
+
+          expect(tracks[0].id, 'variant_5000000');
+          expect(tracks[0].label, '1080p');
+          expect(tracks[0].isSelected, true);
+          expect(tracks[0].bitrate, 5000000);
+          expect(tracks[0].width, 1920);
+          expect(tracks[0].height, 1080);
+          expect(tracks[0].frameRate, 30.0);
+          expect(tracks[0].codec, 'avc1');
+
+          expect(tracks[1].id, 'variant_2500000');
+          expect(tracks[1].label, '720p');
+          expect(tracks[1].isSelected, false);
+        },
+      );
+
+      test(
+        'getVideoTracks generates label from resolution if not provided',
+        () async {
+          final (
+            AVFoundationVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi api,
+          ) = setUpMockPlayer(
+            playerId: 1,
+            textureId: 101,
+          );
+          when(api.getVideoTracks()).thenAnswer(
+            (_) async => NativeVideoTrackData(
+              mediaSelectionTracks: <MediaSelectionVideoTrackData>[
+                MediaSelectionVideoTrackData(
+                  variantIndex: 0,
+                  isSelected: true,
+                  bitrate: 5000000,
+                  width: 1920,
+                  height: 1080,
+                ),
+              ],
+            ),
+          );
+
+          final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+          expect(tracks.length, 1);
+          expect(tracks[0].label, '1080p');
+        },
+      );
+
+      test(
+        'selectVideoTrack with null sets auto quality (bitrate 0)',
+        () async {
+          final (
+            AVFoundationVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi api,
+          ) = setUpMockPlayer(
+            playerId: 1,
+            textureId: 101,
+          );
+          when(api.selectVideoTrack(0)).thenAnswer((_) async {});
+
+          await player.selectVideoTrack(1, null);
+
+          verify(api.selectVideoTrack(0));
+        },
+      );
+
+      test('selectVideoTrack with track uses bitrate', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+        ) = setUpMockPlayer(
+          playerId: 1,
+          textureId: 101,
+        );
+        when(api.selectVideoTrack(5000000)).thenAnswer((_) async {});
+
+        const track = VideoTrack(
+          id: 'variant_5000000',
+          isSelected: false,
+          bitrate: 5000000,
+        );
+        await player.selectVideoTrack(1, track);
+
+        verify(api.selectVideoTrack(5000000));
+      });
+
+      test('selectVideoTrack ignores track without bitrate', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+        ) = setUpMockPlayer(
+          playerId: 1,
+          textureId: 101,
+        );
+
+        const track = VideoTrack(id: 'asset_123', isSelected: false);
+        await player.selectVideoTrack(1, track);
+
+        verifyNever(api.selectVideoTrack(any));
+      });
+    });
   });
 }
