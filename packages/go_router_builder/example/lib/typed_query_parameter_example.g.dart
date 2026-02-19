@@ -32,6 +32,14 @@ mixin $IntRoute on GoRouteData {
       state.uri.queryParameters,
       int.tryParse,
     ),
+    customField: CustomParameter.decode(
+      state.uri.queryParameters['custom-field'],
+    ),
+    customFieldWithDefaultValue:
+        CustomParameter.decode(
+          state.uri.queryParameters['custom-field-with-default-value'],
+        ) ??
+        const CustomParameter(valueString: 'default', valueInt: 0),
   );
 
   IntRoute get _self => this as IntRoute;
@@ -46,6 +54,15 @@ mixin $IntRoute on GoRouteData {
             .toString(),
       if (_self.intFieldWithSpace != null)
         'int field': _self.intFieldWithSpace!.toString(),
+      if (_self.customField != null)
+        'custom-field': CustomParameter.encode(_self.customField),
+      if (CustomParameter.compare(
+        _self.customFieldWithDefaultValue,
+        const CustomParameter(valueString: 'default', valueInt: 0),
+      ))
+        'custom-field-with-default-value': CustomParameter.encode(
+          _self.customFieldWithDefaultValue,
+        ),
     },
   );
 
