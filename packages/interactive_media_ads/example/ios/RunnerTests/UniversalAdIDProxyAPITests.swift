@@ -4,29 +4,31 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-class UniversalAdIDProxyAPITests: XCTestCase {
-  func testAdIDValue() {
+struct UniversalAdIDProxyAPITests {
+  @Test
+  func adIDValue() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
-    let value = try? api.pigeonDelegate.adIDValue(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adIDValue(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adIDValue)
+    #expect(value == instance.adIDValue)
   }
 
-  func testAdIDRegistry() {
+  @Test
+  func adIDRegistry() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
-    let value = try? api.pigeonDelegate.adIDRegistry(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adIDRegistry(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adIDRegistry)
+    #expect(value == instance.adIDRegistry)
   }
 }
 
@@ -34,8 +36,9 @@ class TestUniversalAdID: IMAUniversalAdID {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestUniversalAdID {
     let instance =
-      TestUniversalAdID.perform(NSSelectorFromString("new")).takeRetainedValue()
-      as! TestUniversalAdID
+      try! #require(
+        TestUniversalAdID.perform(NSSelectorFromString("new")).takeRetainedValue()
+          as? TestUniversalAdID)
     return instance
   }
 
