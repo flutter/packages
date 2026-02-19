@@ -11,6 +11,35 @@ part 'typed_query_parameter_example.g.dart';
 
 void main() => runApp(App());
 
+class CustomParameter {
+  const CustomParameter({required this.valueString, required this.valueInt});
+
+  final String valueString;
+  final int valueInt;
+
+  static String? encode(CustomParameter? parameter) {
+    if (parameter == null) {
+      return null;
+    }
+    return '${parameter.valueString},${parameter.valueInt}';
+  }
+
+  static CustomParameter? decode(String? value) {
+    if (value == null) {
+      return null;
+    }
+    final List<String> parts = value.split(',');
+    return CustomParameter(
+      valueString: parts[0],
+      valueInt: int.parse(parts[1]),
+    );
+  }
+
+  static bool compare(CustomParameter a, CustomParameter b) {
+    return a.valueString != b.valueString || a.valueInt != b.valueInt;
+  }
+}
+
 class App extends StatelessWidget {
   App({super.key});
 
@@ -27,34 +56,56 @@ class App extends StatelessWidget {
 @TypedGoRoute<IntRoute>(path: '/int-route')
 class IntRoute extends GoRouteData with $IntRoute {
   IntRoute({
-    @TypedQueryParameter(name: 'intField') this.intField,
-    @TypedQueryParameter(name: 'int_field_with_default_value')
+    @TypedQueryParameter<int>(name: 'intField') this.intField,
+    @TypedQueryParameter<int>(name: 'int_field_with_default_value')
     this.intFieldWithDefaultValue = 1,
-    @TypedQueryParameter(name: 'int field') this.intFieldWithSpace,
+    @TypedQueryParameter<int>(name: 'int field') this.intFieldWithSpace,
+    @TypedQueryParameter<CustomParameter>(
+      encoder: CustomParameter.encode,
+      decoder: CustomParameter.decode,
+    )
+    this.customField,
+    @TypedQueryParameter<CustomParameter>(
+      encoder: CustomParameter.encode,
+      decoder: CustomParameter.decode,
+      compare: CustomParameter.compare,
+    )
+    this.customFieldWithDefaultValue = const CustomParameter(
+      valueString: 'default',
+      valueInt: 0,
+    ),
   });
 
   final int? intField;
   final int intFieldWithDefaultValue;
   final int? intFieldWithSpace;
+  final CustomParameter? customField;
+  final CustomParameter customFieldWithDefaultValue;
   @override
   Widget build(BuildContext context, GoRouterState state) => Screen(
     intField: intField,
     intFieldWithDefaultValue: intFieldWithDefaultValue,
     intFieldWithSpace: intFieldWithSpace,
+    customField: customField,
+    customFieldWithDefaultValue: customFieldWithDefaultValue,
   );
 }
 
 class Screen extends StatelessWidget {
   const Screen({
+    super.key,
     required this.intField,
     required this.intFieldWithDefaultValue,
     this.intFieldWithSpace,
-    super.key,
+    this.customField,
+    required this.customFieldWithDefaultValue,
   });
 
   final int? intField;
   final int intFieldWithDefaultValue;
   final int? intFieldWithSpace;
+  final CustomParameter? customField;
+  final CustomParameter customFieldWithDefaultValue;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -75,6 +126,8 @@ class Screen extends StatelessWidget {
                 intField: newValue,
                 intFieldWithDefaultValue: intFieldWithDefaultValue,
                 intFieldWithSpace: intFieldWithSpace,
+                customField: customField,
+                customFieldWithDefaultValue: customFieldWithDefaultValue,
               ).go(context);
             },
           ),
@@ -88,6 +141,8 @@ class Screen extends StatelessWidget {
                 intField: intField,
                 intFieldWithDefaultValue: newValue,
                 intFieldWithSpace: intFieldWithSpace,
+                customField: customField,
+                customFieldWithDefaultValue: customFieldWithDefaultValue,
               ).go(context);
             },
           ),
@@ -101,6 +156,46 @@ class Screen extends StatelessWidget {
                 intField: intField,
                 intFieldWithDefaultValue: intFieldWithDefaultValue,
                 intFieldWithSpace: newValue,
+                customField: customField,
+                customFieldWithDefaultValue: customFieldWithDefaultValue,
+              ).go(context);
+            },
+          ),
+          ListTile(
+            title: const Text('customField:'),
+            subtitle: Text(CustomParameter.encode(customField) ?? ''),
+            trailing: const Icon(Icons.add),
+            onTap: () {
+              final newValue = CustomParameter(
+                valueString: '${customField?.valueString ?? ''}-',
+                valueInt: (customField?.valueInt ?? 0) + 1,
+              );
+              IntRoute(
+                intField: intField,
+                intFieldWithDefaultValue: intFieldWithDefaultValue,
+                intFieldWithSpace: intFieldWithSpace,
+                customField: newValue,
+                customFieldWithDefaultValue: customFieldWithDefaultValue,
+              ).go(context);
+            },
+          ),
+          ListTile(
+            title: const Text('customFieldWithDefaultValue:'),
+            subtitle: Text(
+              CustomParameter.encode(customFieldWithDefaultValue)!,
+            ),
+            trailing: const Icon(Icons.add),
+            onTap: () {
+              final newValue = CustomParameter(
+                valueString: '${customFieldWithDefaultValue.valueString}-',
+                valueInt: customFieldWithDefaultValue.valueInt + 1,
+              );
+              IntRoute(
+                intField: intField,
+                intFieldWithDefaultValue: intFieldWithDefaultValue,
+                intFieldWithSpace: intFieldWithSpace,
+                customField: customField,
+                customFieldWithDefaultValue: newValue,
               ).go(context);
             },
           ),
