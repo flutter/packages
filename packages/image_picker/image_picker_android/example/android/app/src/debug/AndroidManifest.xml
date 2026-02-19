@@ -4,7 +4,10 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:usesCleartextTraffic="true">
+    <!-- The network security config is needed for Espresso testing since it
+         uses http cleartext traffic. 
+    -->
+    <application android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".ImagePickerTestActivity"
             android:launchMode="singleTop"
@@ -25,5 +28,7 @@
             android:authorities="dummy"
             android:name=".DummyContentProvider"
             android:exported="true"/>
+        <meta-data android:name="io.flutter.network-policy"
+            android:resource="@xml/network_security_config"/>
     </application>
 </manifest>
