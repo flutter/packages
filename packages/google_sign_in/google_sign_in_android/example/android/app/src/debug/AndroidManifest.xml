@@ -4,7 +4,7 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:networkSecurityConfig="@xml/network_security_config">
+    <application> 
         <activity
             android:name=".GoogleSignInTestActivity"
             android:launchMode="singleTop"
@@ -13,7 +13,5 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <meta-data android:name="io.flutter.network-policy"
-            android:resource="@xml/network_security_config"/>
     </application>
 </manifest>
