@@ -2,7 +2,7 @@ group = 'io.flutter.plugins.videoplayer'
 version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.2.21'
+    ext.kotlin_version = '2.3.0'
     repositories {
         google()
         mavenCentral()
@@ -32,10 +32,11 @@ android {
         minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        baseline = file("lint-baseline.xml")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -50,7 +51,7 @@ android {
     }
 
     dependencies {
-        def exoplayer_version = "1.8.0"
+        def exoplayer_version = "1.9.1"
         implementation("androidx.media3:media3-exoplayer:${exoplayer_version}")
         implementation("androidx.media3:media3-exoplayer-hls:${exoplayer_version}")
         implementation("androidx.media3:media3-exoplayer-dash:${exoplayer_version}")
@@ -58,7 +59,7 @@ android {
         implementation("androidx.media3:media3-exoplayer-smoothstreaming:${exoplayer_version}")
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.test:core:1.7.0")
-        testImplementation("org.mockito:mockito-core:5.20.0")
+        testImplementation("org.mockito:mockito-core:5.21.0")
         testImplementation("org.robolectric:robolectric:4.16")
         testImplementation("androidx.media3:media3-test-utils:${exoplayer_version}")
     }

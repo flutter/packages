@@ -171,9 +171,7 @@ void main() {
                 WKNavigationAction,
               );
 
-      final request = URLRequest.pigeon_detached(
-        pigeon_instanceManager: TestInstanceManager(),
-      );
+      final request = URLRequest.pigeon_detached();
       onCreateWebView(
         MockWKUIDelegate(),
         mocks.webView,
@@ -183,10 +181,8 @@ void main() {
           targetFrame: WKFrameInfo.pigeon_detached(
             isMainFrame: false,
             request: request,
-            pigeon_instanceManager: TestInstanceManager(),
           ),
           navigationType: NavigationType.linkActivated,
-          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -1278,7 +1274,6 @@ void main() {
             userInfo: const <String, Object?>{
               NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -1335,7 +1330,6 @@ void main() {
             userInfo: const <String, Object?>{
               NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -1463,10 +1457,8 @@ void main() {
               targetFrame: WKFrameInfo.pigeon_detached(
                 isMainFrame: false,
                 request: mockRequest,
-                pigeon_instanceManager: TestInstanceManager(),
               ),
               navigationType: NavigationType.linkActivated,
-              pigeon_instanceManager: TestInstanceManager(),
             ),
           ),
           NavigationActionPolicy.allow,
@@ -1556,11 +1548,7 @@ void main() {
         didReceiveScriptMessage(
           MockWKScriptMessageHandler(),
           mocks.userContentController,
-          WKScriptMessage.pigeon_detached(
-            name: 'hello',
-            body: 'A message.',
-            pigeon_instanceManager: TestInstanceManager(),
-          ),
+          WKScriptMessage.pigeon_detached(name: 'hello', body: 'A message.'),
         );
         verify(
           mocks.javascriptChannelRegistry.onJavascriptChannelMessage(
@@ -1602,9 +1590,4 @@ class _WebViewMocks {
   final MockWebViewPlatformCallbacksHandler callbacksHandler;
   final MockJavascriptChannelRegistry javascriptChannelRegistry;
   final MockWKWebpagePreferences webpagePreferences;
-}
-
-// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
-class TestInstanceManager extends PigeonInstanceManager {
-  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

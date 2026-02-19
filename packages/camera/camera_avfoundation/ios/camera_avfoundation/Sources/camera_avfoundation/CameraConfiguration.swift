@@ -19,16 +19,16 @@ typealias AudioCaptureDeviceFactory = () -> CaptureDevice
 
 typealias CaptureSessionFactory = () -> CaptureSession
 
-typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> FLTAssetWriter
+typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> AssetWriter
 
 typealias InputPixelBufferAdaptorFactory = (
-  _ input: FLTAssetWriterInput, _ settings: [String: Any]?
+  _ input: AssetWriterInput, _ settings: [String: Any]?
 ) ->
-  FLTAssetWriterInputPixelBufferAdaptor
+  AssetWriterInputPixelBufferAdaptor
 
 /// A configuration object that centralizes dependencies for `DefaultCamera`.
 class CameraConfiguration {
-  var mediaSettings: FCPPlatformMediaSettings
+  var mediaSettings: PlatformMediaSettings
   var mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper
   var captureSessionQueue: DispatchQueue
   var videoCaptureSession: CaptureSession
@@ -44,7 +44,7 @@ class CameraConfiguration {
   var orientation: UIDeviceOrientation
 
   init(
-    mediaSettings: FCPPlatformMediaSettings,
+    mediaSettings: PlatformMediaSettings,
     mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper,
     captureDeviceFactory: @escaping VideoCaptureDeviceFactory,
     audioCaptureDeviceFactory: @escaping AudioCaptureDeviceFactory,
@@ -70,22 +70,14 @@ class CameraConfiguration {
     }
 
     self.assetWriterFactory = { url, fileType in
-      var error: NSError?
-      let writer = FLTDefaultAssetWriter(url: url, fileType: fileType, error: &error)
-
-      if let error = error {
-        throw error
-      }
-
-      return writer
+      return try AVAssetWriter(outputURL: url, fileType: fileType)
     }
 
     self.inputPixelBufferAdaptorFactory = { assetWriterInput, sourcePixelBufferAttributes in
-      let adaptor = AVAssetWriterInputPixelBufferAdaptor(
-        assetWriterInput: assetWriterInput.input,
+      return AVAssetWriterInputPixelBufferAdaptor(
+        assetWriterInput: assetWriterInput.avInput,
         sourcePixelBufferAttributes: sourcePixelBufferAttributes
       )
-      return FLTDefaultAssetWriterInputPixelBufferAdaptor(adaptor: adaptor)
     }
   }
 }

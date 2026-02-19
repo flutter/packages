@@ -1,0 +1,23 @@
+name: cupertino_ui
+description: The official Flutter Cupertino Design Library, implementing the iOS design system.
+version: 0.0.1
+repository: https://github.com/flutter/packages/tree/main/packages/cupertino_ui
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20cupertino%22
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - ui
+  - widgets
+  - cupertino
+  - ios

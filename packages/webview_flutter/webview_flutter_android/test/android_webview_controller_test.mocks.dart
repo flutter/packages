@@ -4,15 +4,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
-import 'dart:typed_data' as _i13;
+import 'dart:typed_data' as _i12;
 import 'dart:ui' as _i4;
 
-import 'package:flutter/foundation.dart' as _i10;
-import 'package:flutter/gestures.dart' as _i11;
+import 'package:flutter/foundation.dart' as _i9;
+import 'package:flutter/gestures.dart' as _i10;
 import 'package:flutter/services.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i12;
-import 'package:webview_flutter_android/src/android_proxy.dart' as _i9;
+import 'package:mockito/src/dummies.dart' as _i11;
 import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 import 'package:webview_flutter_android/src/android_webview_controller.dart'
     as _i7;
@@ -34,6 +33,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeWebChromeClient_0 extends _i1.SmartFake
     implements _i2.WebChromeClient {
@@ -78,93 +78,88 @@ class _FakeOffset_6 extends _i1.SmartFake implements _i4.Offset {
     : super(parent, parentInvocation);
 }
 
-class _FakeWebView_7 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_7(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeJavaScriptChannel_8 extends _i1.SmartFake
-    implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_8(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeCookieManager_9 extends _i1.SmartFake implements _i2.CookieManager {
-  _FakeCookieManager_9(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeFlutterAssetManager_10 extends _i1.SmartFake
-    implements _i2.FlutterAssetManager {
-  _FakeFlutterAssetManager_10(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeWebStorage_11 extends _i1.SmartFake implements _i2.WebStorage {
-  _FakeWebStorage_11(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakePigeonInstanceManager_12 extends _i1.SmartFake
+class _FakePigeonInstanceManager_7 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
-  _FakePigeonInstanceManager_12(Object parent, Invocation parentInvocation)
+  _FakePigeonInstanceManager_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformViewsServiceProxy_13 extends _i1.SmartFake
+class _FakePlatformViewsServiceProxy_8 extends _i1.SmartFake
     implements _i5.PlatformViewsServiceProxy {
-  _FakePlatformViewsServiceProxy_13(Object parent, Invocation parentInvocation)
+  _FakePlatformViewsServiceProxy_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePlatformWebViewController_14 extends _i1.SmartFake
+class _FakePlatformWebViewController_9 extends _i1.SmartFake
     implements _i3.PlatformWebViewController {
-  _FakePlatformWebViewController_14(Object parent, Invocation parentInvocation)
+  _FakePlatformWebViewController_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSize_15 extends _i1.SmartFake implements _i4.Size {
-  _FakeSize_15(Object parent, Invocation parentInvocation)
+class _FakeSize_10 extends _i1.SmartFake implements _i4.Size {
+  _FakeSize_10(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeGeolocationPermissionsCallback_16 extends _i1.SmartFake
+class _FakeFlutterAssetManager_11 extends _i1.SmartFake
+    implements _i2.FlutterAssetManager {
+  _FakeFlutterAssetManager_11(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeGeolocationPermissionsCallback_12 extends _i1.SmartFake
     implements _i2.GeolocationPermissionsCallback {
-  _FakeGeolocationPermissionsCallback_16(
+  _FakeGeolocationPermissionsCallback_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
 }
 
-class _FakePermissionRequest_17 extends _i1.SmartFake
+class _FakeJavaScriptChannel_13 extends _i1.SmartFake
+    implements _i2.JavaScriptChannel {
+  _FakeJavaScriptChannel_13(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakePermissionRequest_14 extends _i1.SmartFake
     implements _i2.PermissionRequest {
-  _FakePermissionRequest_17(Object parent, Invocation parentInvocation)
+  _FakePermissionRequest_14(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeExpensiveAndroidViewController_18 extends _i1.SmartFake
+class _FakeExpensiveAndroidViewController_15 extends _i1.SmartFake
     implements _i6.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_18(
+  _FakeExpensiveAndroidViewController_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
 }
 
-class _FakeSurfaceAndroidViewController_19 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_16 extends _i1.SmartFake
     implements _i6.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_19(
+  _FakeSurfaceAndroidViewController_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
 }
 
-class _FakeWebSettings_20 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_20(Object parent, Invocation parentInvocation)
+class _FakeWebSettings_17 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_17(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeWebViewPoint_21 extends _i1.SmartFake implements _i2.WebViewPoint {
-  _FakeWebViewPoint_21(Object parent, Invocation parentInvocation)
+class _FakeWebView_18 extends _i1.SmartFake implements _i2.WebView {
+  _FakeWebView_18(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeWebViewPoint_19 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_19(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeWebStorage_20 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_20(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -867,716 +862,6 @@ class MockAndroidWebViewController extends _i1.Mock
           as _i8.Future<void>);
 }
 
-/// A class which mocks [AndroidWebViewProxy].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockAndroidWebViewProxy extends _i1.Mock
-    implements _i9.AndroidWebViewProxy {
-  @override
-  _i2.WebView Function({
-    void Function(_i2.WebView, int, int, int, int)? onScrollChanged,
-  })
-  get newWebView =>
-      (super.noSuchMethod(
-            Invocation.getter(#newWebView),
-            returnValue:
-                ({
-                  void Function(_i2.WebView, int, int, int, int)?
-                  onScrollChanged,
-                }) => _FakeWebView_7(this, Invocation.getter(#newWebView)),
-            returnValueForMissingStub:
-                ({
-                  void Function(_i2.WebView, int, int, int, int)?
-                  onScrollChanged,
-                }) => _FakeWebView_7(this, Invocation.getter(#newWebView)),
-          )
-          as _i2.WebView Function({
-            void Function(_i2.WebView, int, int, int, int)? onScrollChanged,
-          }));
-
-  @override
-  _i2.JavaScriptChannel Function({
-    required String channelName,
-    required void Function(_i2.JavaScriptChannel, String) postMessage,
-  })
-  get newJavaScriptChannel =>
-      (super.noSuchMethod(
-            Invocation.getter(#newJavaScriptChannel),
-            returnValue:
-                ({
-                  required String channelName,
-                  required void Function(_i2.JavaScriptChannel, String)
-                  postMessage,
-                }) => _FakeJavaScriptChannel_8(
-                  this,
-                  Invocation.getter(#newJavaScriptChannel),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required String channelName,
-                  required void Function(_i2.JavaScriptChannel, String)
-                  postMessage,
-                }) => _FakeJavaScriptChannel_8(
-                  this,
-                  Invocation.getter(#newJavaScriptChannel),
-                ),
-          )
-          as _i2.JavaScriptChannel Function({
-            required String channelName,
-            required void Function(_i2.JavaScriptChannel, String) postMessage,
-          }));
-
-  @override
-  _i2.WebViewClient Function({
-    void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
-    doUpdateVisitedHistory,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.AndroidMessage,
-      _i2.AndroidMessage,
-    )?
-    onFormResubmission,
-    void Function(_i2.WebViewClient, _i2.WebView, String)? onLoadResource,
-    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageCommitVisible,
-    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
-    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
-    void Function(_i2.WebViewClient, _i2.WebView, _i2.ClientCertRequest)?
-    onReceivedClientCertRequest,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.HttpAuthHandler,
-      String,
-      String,
-    )?
-    onReceivedHttpAuthRequest,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.WebResourceRequest,
-      _i2.WebResourceResponse,
-    )?
-    onReceivedHttpError,
-    void Function(_i2.WebViewClient, _i2.WebView, String, String?, String)?
-    onReceivedLoginRequest,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.WebResourceRequest,
-      _i2.WebResourceError,
-    )?
-    onReceivedRequestError,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.WebResourceRequest,
-      _i2.WebResourceErrorCompat,
-    )?
-    onReceivedRequestErrorCompat,
-    void Function(
-      _i2.WebViewClient,
-      _i2.WebView,
-      _i2.SslErrorHandler,
-      _i2.SslError,
-    )?
-    onReceivedSslError,
-    void Function(_i2.WebViewClient, _i2.WebView, double, double)?
-    onScaleChanged,
-    void Function(_i2.WebViewClient, _i2.WebView, _i2.WebResourceRequest)?
-    requestLoading,
-    void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
-  })
-  get newWebViewClient =>
-      (super.noSuchMethod(
-            Invocation.getter(#newWebViewClient),
-            returnValue:
-                ({
-                  void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
-                  doUpdateVisitedHistory,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.AndroidMessage,
-                    _i2.AndroidMessage,
-                  )?
-                  onFormResubmission,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onLoadResource,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageCommitVisible,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageFinished,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageStarted,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.ClientCertRequest,
-                  )?
-                  onReceivedClientCertRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.HttpAuthHandler,
-                    String,
-                    String,
-                  )?
-                  onReceivedHttpAuthRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceResponse,
-                  )?
-                  onReceivedHttpError,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    String,
-                    String?,
-                    String,
-                  )?
-                  onReceivedLoginRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceError,
-                  )?
-                  onReceivedRequestError,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceErrorCompat,
-                  )?
-                  onReceivedRequestErrorCompat,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.SslErrorHandler,
-                    _i2.SslError,
-                  )?
-                  onReceivedSslError,
-                  void Function(_i2.WebViewClient, _i2.WebView, double, double)?
-                  onScaleChanged,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                  )?
-                  requestLoading,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  urlLoading,
-                }) => _FakeWebViewClient_1(
-                  this,
-                  Invocation.getter(#newWebViewClient),
-                ),
-            returnValueForMissingStub:
-                ({
-                  void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
-                  doUpdateVisitedHistory,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.AndroidMessage,
-                    _i2.AndroidMessage,
-                  )?
-                  onFormResubmission,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onLoadResource,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageCommitVisible,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageFinished,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  onPageStarted,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.ClientCertRequest,
-                  )?
-                  onReceivedClientCertRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.HttpAuthHandler,
-                    String,
-                    String,
-                  )?
-                  onReceivedHttpAuthRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceResponse,
-                  )?
-                  onReceivedHttpError,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    String,
-                    String?,
-                    String,
-                  )?
-                  onReceivedLoginRequest,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceError,
-                  )?
-                  onReceivedRequestError,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                    _i2.WebResourceErrorCompat,
-                  )?
-                  onReceivedRequestErrorCompat,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.SslErrorHandler,
-                    _i2.SslError,
-                  )?
-                  onReceivedSslError,
-                  void Function(_i2.WebViewClient, _i2.WebView, double, double)?
-                  onScaleChanged,
-                  void Function(
-                    _i2.WebViewClient,
-                    _i2.WebView,
-                    _i2.WebResourceRequest,
-                  )?
-                  requestLoading,
-                  void Function(_i2.WebViewClient, _i2.WebView, String)?
-                  urlLoading,
-                }) => _FakeWebViewClient_1(
-                  this,
-                  Invocation.getter(#newWebViewClient),
-                ),
-          )
-          as _i2.WebViewClient Function({
-            void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
-            doUpdateVisitedHistory,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.AndroidMessage,
-              _i2.AndroidMessage,
-            )?
-            onFormResubmission,
-            void Function(_i2.WebViewClient, _i2.WebView, String)?
-            onLoadResource,
-            void Function(_i2.WebViewClient, _i2.WebView, String)?
-            onPageCommitVisible,
-            void Function(_i2.WebViewClient, _i2.WebView, String)?
-            onPageFinished,
-            void Function(_i2.WebViewClient, _i2.WebView, String)?
-            onPageStarted,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.ClientCertRequest,
-            )?
-            onReceivedClientCertRequest,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.HttpAuthHandler,
-              String,
-              String,
-            )?
-            onReceivedHttpAuthRequest,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.WebResourceRequest,
-              _i2.WebResourceResponse,
-            )?
-            onReceivedHttpError,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              String,
-              String?,
-              String,
-            )?
-            onReceivedLoginRequest,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.WebResourceRequest,
-              _i2.WebResourceError,
-            )?
-            onReceivedRequestError,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.WebResourceRequest,
-              _i2.WebResourceErrorCompat,
-            )?
-            onReceivedRequestErrorCompat,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.SslErrorHandler,
-              _i2.SslError,
-            )?
-            onReceivedSslError,
-            void Function(_i2.WebViewClient, _i2.WebView, double, double)?
-            onScaleChanged,
-            void Function(
-              _i2.WebViewClient,
-              _i2.WebView,
-              _i2.WebResourceRequest,
-            )?
-            requestLoading,
-            void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
-          }));
-
-  @override
-  _i2.DownloadListener Function({
-    required void Function(
-      _i2.DownloadListener,
-      String,
-      String,
-      String,
-      String,
-      int,
-    )
-    onDownloadStart,
-  })
-  get newDownloadListener =>
-      (super.noSuchMethod(
-            Invocation.getter(#newDownloadListener),
-            returnValue:
-                ({
-                  required void Function(
-                    _i2.DownloadListener,
-                    String,
-                    String,
-                    String,
-                    String,
-                    int,
-                  )
-                  onDownloadStart,
-                }) => _FakeDownloadListener_2(
-                  this,
-                  Invocation.getter(#newDownloadListener),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required void Function(
-                    _i2.DownloadListener,
-                    String,
-                    String,
-                    String,
-                    String,
-                    int,
-                  )
-                  onDownloadStart,
-                }) => _FakeDownloadListener_2(
-                  this,
-                  Invocation.getter(#newDownloadListener),
-                ),
-          )
-          as _i2.DownloadListener Function({
-            required void Function(
-              _i2.DownloadListener,
-              String,
-              String,
-              String,
-              String,
-              int,
-            )
-            onDownloadStart,
-          }));
-
-  @override
-  _i2.WebChromeClient Function({
-    required _i8.Future<bool> Function(
-      _i2.WebChromeClient,
-      _i2.WebView,
-      String,
-      String,
-    )
-    onJsConfirm,
-    required _i8.Future<List<String>> Function(
-      _i2.WebChromeClient,
-      _i2.WebView,
-      _i2.FileChooserParams,
-    )
-    onShowFileChooser,
-    void Function(_i2.WebChromeClient, _i2.ConsoleMessage)? onConsoleMessage,
-    void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
-    void Function(
-      _i2.WebChromeClient,
-      String,
-      _i2.GeolocationPermissionsCallback,
-    )?
-    onGeolocationPermissionsShowPrompt,
-    void Function(_i2.WebChromeClient)? onHideCustomView,
-    _i8.Future<void> Function(_i2.WebChromeClient, _i2.WebView, String, String)?
-    onJsAlert,
-    _i8.Future<String?> Function(
-      _i2.WebChromeClient,
-      _i2.WebView,
-      String,
-      String,
-      String,
-    )?
-    onJsPrompt,
-    void Function(_i2.WebChromeClient, _i2.PermissionRequest)?
-    onPermissionRequest,
-    void Function(_i2.WebChromeClient, _i2.WebView, int)? onProgressChanged,
-    void Function(_i2.WebChromeClient, _i2.View, _i2.CustomViewCallback)?
-    onShowCustomView,
-  })
-  get newWebChromeClient =>
-      (super.noSuchMethod(
-            Invocation.getter(#newWebChromeClient),
-            returnValue:
-                ({
-                  void Function(_i2.WebChromeClient, _i2.ConsoleMessage)?
-                  onConsoleMessage,
-                  void Function(_i2.WebChromeClient)?
-                  onGeolocationPermissionsHidePrompt,
-                  void Function(
-                    _i2.WebChromeClient,
-                    String,
-                    _i2.GeolocationPermissionsCallback,
-                  )?
-                  onGeolocationPermissionsShowPrompt,
-                  void Function(_i2.WebChromeClient)? onHideCustomView,
-                  _i8.Future<void> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                  )?
-                  onJsAlert,
-                  required _i8.Future<bool> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                  )
-                  onJsConfirm,
-                  _i8.Future<String?> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                    String,
-                  )?
-                  onJsPrompt,
-                  void Function(_i2.WebChromeClient, _i2.PermissionRequest)?
-                  onPermissionRequest,
-                  void Function(_i2.WebChromeClient, _i2.WebView, int)?
-                  onProgressChanged,
-                  void Function(
-                    _i2.WebChromeClient,
-                    _i2.View,
-                    _i2.CustomViewCallback,
-                  )?
-                  onShowCustomView,
-                  required _i8.Future<List<String>> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    _i2.FileChooserParams,
-                  )
-                  onShowFileChooser,
-                }) => _FakeWebChromeClient_0(
-                  this,
-                  Invocation.getter(#newWebChromeClient),
-                ),
-            returnValueForMissingStub:
-                ({
-                  void Function(_i2.WebChromeClient, _i2.ConsoleMessage)?
-                  onConsoleMessage,
-                  void Function(_i2.WebChromeClient)?
-                  onGeolocationPermissionsHidePrompt,
-                  void Function(
-                    _i2.WebChromeClient,
-                    String,
-                    _i2.GeolocationPermissionsCallback,
-                  )?
-                  onGeolocationPermissionsShowPrompt,
-                  void Function(_i2.WebChromeClient)? onHideCustomView,
-                  _i8.Future<void> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                  )?
-                  onJsAlert,
-                  required _i8.Future<bool> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                  )
-                  onJsConfirm,
-                  _i8.Future<String?> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    String,
-                    String,
-                    String,
-                  )?
-                  onJsPrompt,
-                  void Function(_i2.WebChromeClient, _i2.PermissionRequest)?
-                  onPermissionRequest,
-                  void Function(_i2.WebChromeClient, _i2.WebView, int)?
-                  onProgressChanged,
-                  void Function(
-                    _i2.WebChromeClient,
-                    _i2.View,
-                    _i2.CustomViewCallback,
-                  )?
-                  onShowCustomView,
-                  required _i8.Future<List<String>> Function(
-                    _i2.WebChromeClient,
-                    _i2.WebView,
-                    _i2.FileChooserParams,
-                  )
-                  onShowFileChooser,
-                }) => _FakeWebChromeClient_0(
-                  this,
-                  Invocation.getter(#newWebChromeClient),
-                ),
-          )
-          as _i2.WebChromeClient Function({
-            required _i8.Future<bool> Function(
-              _i2.WebChromeClient,
-              _i2.WebView,
-              String,
-              String,
-            )
-            onJsConfirm,
-            required _i8.Future<List<String>> Function(
-              _i2.WebChromeClient,
-              _i2.WebView,
-              _i2.FileChooserParams,
-            )
-            onShowFileChooser,
-            void Function(_i2.WebChromeClient, _i2.ConsoleMessage)?
-            onConsoleMessage,
-            void Function(_i2.WebChromeClient)?
-            onGeolocationPermissionsHidePrompt,
-            void Function(
-              _i2.WebChromeClient,
-              String,
-              _i2.GeolocationPermissionsCallback,
-            )?
-            onGeolocationPermissionsShowPrompt,
-            void Function(_i2.WebChromeClient)? onHideCustomView,
-            _i8.Future<void> Function(
-              _i2.WebChromeClient,
-              _i2.WebView,
-              String,
-              String,
-            )?
-            onJsAlert,
-            _i8.Future<String?> Function(
-              _i2.WebChromeClient,
-              _i2.WebView,
-              String,
-              String,
-              String,
-            )?
-            onJsPrompt,
-            void Function(_i2.WebChromeClient, _i2.PermissionRequest)?
-            onPermissionRequest,
-            void Function(_i2.WebChromeClient, _i2.WebView, int)?
-            onProgressChanged,
-            void Function(
-              _i2.WebChromeClient,
-              _i2.View,
-              _i2.CustomViewCallback,
-            )?
-            onShowCustomView,
-          }));
-
-  @override
-  _i8.Future<void> Function(bool) get setWebContentsDebuggingEnabledWebView =>
-      (super.noSuchMethod(
-            Invocation.getter(#setWebContentsDebuggingEnabledWebView),
-            returnValue: (bool __p0) => _i8.Future<void>.value(),
-            returnValueForMissingStub: (bool __p0) => _i8.Future<void>.value(),
-          )
-          as _i8.Future<void> Function(bool));
-
-  @override
-  _i2.CookieManager Function() get instanceCookieManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#instanceCookieManager),
-            returnValue: () => _FakeCookieManager_9(
-              this,
-              Invocation.getter(#instanceCookieManager),
-            ),
-            returnValueForMissingStub: () => _FakeCookieManager_9(
-              this,
-              Invocation.getter(#instanceCookieManager),
-            ),
-          )
-          as _i2.CookieManager Function());
-
-  @override
-  _i2.FlutterAssetManager Function() get instanceFlutterAssetManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#instanceFlutterAssetManager),
-            returnValue: () => _FakeFlutterAssetManager_10(
-              this,
-              Invocation.getter(#instanceFlutterAssetManager),
-            ),
-            returnValueForMissingStub: () => _FakeFlutterAssetManager_10(
-              this,
-              Invocation.getter(#instanceFlutterAssetManager),
-            ),
-          )
-          as _i2.FlutterAssetManager Function());
-
-  @override
-  _i2.WebStorage Function() get instanceWebStorage =>
-      (super.noSuchMethod(
-            Invocation.getter(#instanceWebStorage),
-            returnValue: () => _FakeWebStorage_11(
-              this,
-              Invocation.getter(#instanceWebStorage),
-            ),
-            returnValueForMissingStub: () => _FakeWebStorage_11(
-              this,
-              Invocation.getter(#instanceWebStorage),
-            ),
-          )
-          as _i2.WebStorage Function());
-
-  @override
-  _i8.Future<bool> Function(String) get isWebViewFeatureSupported =>
-      (super.noSuchMethod(
-            Invocation.getter(#isWebViewFeatureSupported),
-            returnValue: (String __p0) => _i8.Future<bool>.value(false),
-            returnValueForMissingStub: (String __p0) =>
-                _i8.Future<bool>.value(false),
-          )
-          as _i8.Future<bool> Function(String));
-
-  @override
-  _i8.Future<void> Function(_i2.WebSettings, bool)
-  get setPaymentRequestEnabled =>
-      (super.noSuchMethod(
-            Invocation.getter(#setPaymentRequestEnabled),
-            returnValue: (_i2.WebSettings __p0, bool __p1) =>
-                _i8.Future<void>.value(),
-            returnValueForMissingStub: (_i2.WebSettings __p0, bool __p1) =>
-                _i8.Future<void>.value(),
-          )
-          as _i8.Future<void> Function(_i2.WebSettings, bool));
-}
-
 /// A class which mocks [AndroidWebViewWidgetCreationParams].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -1587,11 +872,11 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   _i2.PigeonInstanceManager get instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#instanceManager),
             ),
@@ -1602,11 +887,11 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   _i5.PlatformViewsServiceProxy get platformViewsServiceProxy =>
       (super.noSuchMethod(
             Invocation.getter(#platformViewsServiceProxy),
-            returnValue: _FakePlatformViewsServiceProxy_13(
+            returnValue: _FakePlatformViewsServiceProxy_8(
               this,
               Invocation.getter(#platformViewsServiceProxy),
             ),
-            returnValueForMissingStub: _FakePlatformViewsServiceProxy_13(
+            returnValueForMissingStub: _FakePlatformViewsServiceProxy_8(
               this,
               Invocation.getter(#platformViewsServiceProxy),
             ),
@@ -1626,11 +911,11 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
   _i3.PlatformWebViewController get controller =>
       (super.noSuchMethod(
             Invocation.getter(#controller),
-            returnValue: _FakePlatformWebViewController_14(
+            returnValue: _FakePlatformWebViewController_9(
               this,
               Invocation.getter(#controller),
             ),
-            returnValueForMissingStub: _FakePlatformWebViewController_14(
+            returnValueForMissingStub: _FakePlatformWebViewController_9(
               this,
               Invocation.getter(#controller),
             ),
@@ -1647,14 +932,14 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
           as _i4.TextDirection);
 
   @override
-  Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>> get gestureRecognizers =>
+  Set<_i9.Factory<_i10.OneSequenceGestureRecognizer>> get gestureRecognizers =>
       (super.noSuchMethod(
             Invocation.getter(#gestureRecognizers),
-            returnValue: <_i10.Factory<_i11.OneSequenceGestureRecognizer>>{},
+            returnValue: <_i9.Factory<_i10.OneSequenceGestureRecognizer>>{},
             returnValueForMissingStub:
-                <_i10.Factory<_i11.OneSequenceGestureRecognizer>>{},
+                <_i9.Factory<_i10.OneSequenceGestureRecognizer>>{},
           )
-          as Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>>);
+          as Set<_i9.Factory<_i10.OneSequenceGestureRecognizer>>);
 }
 
 /// A class which mocks [ExpensiveAndroidViewController].
@@ -1747,10 +1032,10 @@ class MockExpensiveAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#setSize, [size]),
             returnValue: _i8.Future<_i4.Size>.value(
-              _FakeSize_15(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
             returnValueForMissingStub: _i8.Future<_i4.Size>.value(
-              _FakeSize_15(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
           )
           as _i8.Future<_i4.Size>);
@@ -1790,7 +1075,7 @@ class MockExpensiveAndroidViewController extends _i1.Mock
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> dispatchPointerEvent(_i11.PointerEvent? event) =>
+  _i8.Future<void> dispatchPointerEvent(_i10.PointerEvent? event) =>
       (super.noSuchMethod(
             Invocation.method(#dispatchPointerEvent, [event]),
             returnValue: _i8.Future<void>.value(),
@@ -1826,11 +1111,11 @@ class MockFlutterAssetManager extends _i1.Mock
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1853,13 +1138,13 @@ class MockFlutterAssetManager extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getAssetFilePathByName, [name]),
             returnValue: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getAssetFilePathByName, [name]),
               ),
             ),
             returnValueForMissingStub: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getAssetFilePathByName, [name]),
               ),
@@ -1871,11 +1156,11 @@ class MockFlutterAssetManager extends _i1.Mock
   _i2.FlutterAssetManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFlutterAssetManager_10(
+            returnValue: _FakeFlutterAssetManager_11(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeFlutterAssetManager_10(
+            returnValueForMissingStub: _FakeFlutterAssetManager_11(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1892,11 +1177,11 @@ class MockGeolocationPermissionsCallback extends _i1.Mock
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1916,11 +1201,11 @@ class MockGeolocationPermissionsCallback extends _i1.Mock
   _i2.GeolocationPermissionsCallback pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeGeolocationPermissionsCallback_16(
+            returnValue: _FakeGeolocationPermissionsCallback_12(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeGeolocationPermissionsCallback_16(
+            returnValueForMissingStub: _FakeGeolocationPermissionsCallback_12(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1936,11 +1221,11 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   String get channelName =>
       (super.noSuchMethod(
             Invocation.getter(#channelName),
-            returnValue: _i12.dummyValue<String>(
+            returnValue: _i11.dummyValue<String>(
               this,
               Invocation.getter(#channelName),
             ),
-            returnValueForMissingStub: _i12.dummyValue<String>(
+            returnValueForMissingStub: _i11.dummyValue<String>(
               this,
               Invocation.getter(#channelName),
             ),
@@ -1962,11 +1247,11 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -1977,11 +1262,11 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   _i2.JavaScriptChannel pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeJavaScriptChannel_8(
+            returnValue: _FakeJavaScriptChannel_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeJavaScriptChannel_8(
+            returnValueForMissingStub: _FakeJavaScriptChannel_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2006,11 +1291,11 @@ class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2039,11 +1324,11 @@ class MockPermissionRequest extends _i1.Mock implements _i2.PermissionRequest {
   _i2.PermissionRequest pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakePermissionRequest_17(
+            returnValue: _FakePermissionRequest_14(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakePermissionRequest_17(
+            returnValueForMissingStub: _FakePermissionRequest_14(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2075,7 +1360,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeExpensiveAndroidViewController_18(
+            returnValue: _FakeExpensiveAndroidViewController_15(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -2086,7 +1371,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeExpensiveAndroidViewController_18(
+            returnValueForMissingStub: _FakeExpensiveAndroidViewController_15(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -2118,7 +1403,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeSurfaceAndroidViewController_19(
+            returnValue: _FakeSurfaceAndroidViewController_16(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,
@@ -2129,7 +1414,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeSurfaceAndroidViewController_19(
+            returnValueForMissingStub: _FakeSurfaceAndroidViewController_16(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,
@@ -2234,10 +1519,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#setSize, [size]),
             returnValue: _i8.Future<_i4.Size>.value(
-              _FakeSize_15(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
             returnValueForMissingStub: _i8.Future<_i4.Size>.value(
-              _FakeSize_15(this, Invocation.method(#setSize, [size])),
+              _FakeSize_10(this, Invocation.method(#setSize, [size])),
             ),
           )
           as _i8.Future<_i4.Size>);
@@ -2277,7 +1562,7 @@ class MockSurfaceAndroidViewController extends _i1.Mock
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> dispatchPointerEvent(_i11.PointerEvent? event) =>
+  _i8.Future<void> dispatchPointerEvent(_i10.PointerEvent? event) =>
       (super.noSuchMethod(
             Invocation.method(#dispatchPointerEvent, [event]),
             returnValue: _i8.Future<void>.value(),
@@ -2367,11 +1652,11 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2453,11 +1738,11 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2606,13 +1891,13 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
       (super.noSuchMethod(
             Invocation.method(#getUserAgentString, []),
             returnValue: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getUserAgentString, []),
               ),
             ),
             returnValueForMissingStub: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getUserAgentString, []),
               ),
@@ -2633,11 +1918,11 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i2.WebSettings pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebSettings_20(
+            returnValue: _FakeWebSettings_17(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeWebSettings_20(
+            returnValueForMissingStub: _FakeWebSettings_17(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2653,11 +1938,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebSettings get settings =>
       (super.noSuchMethod(
             Invocation.getter(#settings),
-            returnValue: _FakeWebSettings_20(
+            returnValue: _FakeWebSettings_17(
               this,
               Invocation.getter(#settings),
             ),
-            returnValueForMissingStub: _FakeWebSettings_20(
+            returnValueForMissingStub: _FakeWebSettings_17(
               this,
               Invocation.getter(#settings),
             ),
@@ -2668,11 +1953,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -2683,11 +1968,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebSettings pigeonVar_settings() =>
       (super.noSuchMethod(
             Invocation.method(#pigeonVar_settings, []),
-            returnValue: _FakeWebSettings_20(
+            returnValue: _FakeWebSettings_17(
               this,
               Invocation.method(#pigeonVar_settings, []),
             ),
-            returnValueForMissingStub: _FakeWebSettings_20(
+            returnValueForMissingStub: _FakeWebSettings_17(
               this,
               Invocation.method(#pigeonVar_settings, []),
             ),
@@ -2734,7 +2019,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> postUrl(String? url, _i13.Uint8List? data) =>
+  _i8.Future<void> postUrl(String? url, _i12.Uint8List? data) =>
       (super.noSuchMethod(
             Invocation.method(#postUrl, [url, data]),
             returnValue: _i8.Future<void>.value(),
@@ -2890,11 +2175,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i2.WebView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebView_7(
+            returnValue: _FakeWebView_18(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeWebView_7(
+            returnValueForMissingStub: _FakeWebView_18(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2924,13 +2209,13 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       (super.noSuchMethod(
             Invocation.method(#getScrollPosition, []),
             returnValue: _i8.Future<_i2.WebViewPoint>.value(
-              _FakeWebViewPoint_21(
+              _FakeWebViewPoint_19(
                 this,
                 Invocation.method(#getScrollPosition, []),
               ),
             ),
             returnValueForMissingStub: _i8.Future<_i2.WebViewPoint>.value(
-              _FakeWebViewPoint_21(
+              _FakeWebViewPoint_19(
                 this,
                 Invocation.method(#getScrollPosition, []),
               ),
@@ -2974,11 +2259,11 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -3023,11 +2308,11 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_12(
+            returnValue: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
-            returnValueForMissingStub: _FakePigeonInstanceManager_12(
+            returnValueForMissingStub: _FakePigeonInstanceManager_7(
               this,
               Invocation.getter(#pigeon_instanceManager),
             ),
@@ -3047,11 +2332,11 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   _i2.WebStorage pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWebStorage_11(
+            returnValue: _FakeWebStorage_20(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeWebStorage_11(
+            returnValueForMissingStub: _FakeWebStorage_20(
               this,
               Invocation.method(#pigeon_copy, []),
             ),

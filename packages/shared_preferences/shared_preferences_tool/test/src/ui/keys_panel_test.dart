@@ -32,7 +32,6 @@ void main() {
     Future<void> pumpKeysPanel(WidgetTester tester) {
       return tester.pumpWidget(
         DevToolsExtension(
-          requiresRunningApplication: false,
           child: InnerSharedPreferencesStateProvider(
             notifier: notifierMock,
             child: const KeysPanel(),

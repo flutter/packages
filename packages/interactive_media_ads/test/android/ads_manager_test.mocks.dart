@@ -23,6 +23,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -590,15 +591,13 @@ class MockAdsRenderingSettings extends _i1.Mock
           as _i4.Future<bool>);
 
   @override
-  _i4.Future<List<String>> getMimeTypes() =>
+  _i4.Future<List<String>?> getMimeTypes() =>
       (super.noSuchMethod(
             Invocation.method(#getMimeTypes, []),
-            returnValue: _i4.Future<List<String>>.value(<String>[]),
-            returnValueForMissingStub: _i4.Future<List<String>>.value(
-              <String>[],
-            ),
+            returnValue: _i4.Future<List<String>?>.value(),
+            returnValueForMissingStub: _i4.Future<List<String>?>.value(),
           )
-          as _i4.Future<List<String>>);
+          as _i4.Future<List<String>?>);
 
   @override
   _i4.Future<void> setBitrateKbps(int? bitrate) =>

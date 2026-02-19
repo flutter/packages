@@ -5,8 +5,11 @@
 package io.flutter.plugins.videoplayer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.media3.common.C;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
@@ -87,5 +90,35 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   @Override
   public void onIsPlayingChanged(boolean isPlaying) {
     events.onIsPlayingStateUpdate(isPlaying);
+  }
+
+  @Override
+  public void onTracksChanged(@NonNull Tracks tracks) {
+    // Find the currently selected audio track and notify
+    String selectedTrackId = findSelectedAudioTrackId(tracks);
+    events.onAudioTrackChanged(selectedTrackId);
+  }
+
+  /**
+   * Finds the ID of the currently selected audio track.
+   *
+   * @param tracks The current tracks
+   * @return The track ID in format "groupIndex_trackIndex", or null if no audio track is selected
+   */
+  @Nullable
+  private String findSelectedAudioTrackId(@NonNull Tracks tracks) {
+    int groupIndex = 0;
+    for (Tracks.Group group : tracks.getGroups()) {
+      if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
+        // Find the selected track within this group
+        for (int i = 0; i < group.length; i++) {
+          if (group.isTrackSelected(i)) {
+            return groupIndex + "_" + i;
+          }
+        }
+      }
+      groupIndex++;
+    }
+    return null;
   }
 }

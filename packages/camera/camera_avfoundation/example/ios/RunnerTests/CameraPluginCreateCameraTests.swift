@@ -13,9 +13,9 @@ import XCTest
 
 final class CameraPluginCreateCameraTests: XCTestCase {
   private func createCameraPlugin() -> (
-    CameraPlugin, MockFLTCameraPermissionManager, MockCaptureSession
+    CameraPlugin, MockCameraPermissionManager, MockCaptureSession
   ) {
-    let mockPermissionManager = MockFLTCameraPermissionManager()
+    let mockPermissionManager = MockCameraPermissionManager()
     let mockCaptureSession = MockCaptureSession()
 
     let cameraPlugin = CameraPlugin(
@@ -41,24 +41,24 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     mockPermissionManager.requestCameraPermissionStub = { completion in
       requestCameraPermissionCalled = true
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
     var requestAudioPermissionCalled = false
     mockPermissionManager.requestAudioPermissionStub = { completion in
       requestAudioPermissionCalled = true
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: false)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -76,24 +76,24 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     mockPermissionManager.requestCameraPermissionStub = { completion in
       requestCameraPermissionCalled = true
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
     var requestAudioPermissionCalled = false
     mockPermissionManager.requestAudioPermissionStub = { completion in
       requestAudioPermissionCalled = true
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -109,23 +109,23 @@ final class CameraPluginCreateCameraTests: XCTestCase {
 
     mockPermissionManager.requestCameraPermissionStub = { completion in
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
     mockPermissionManager.requestAudioPermissionStub = { completion in
       // Permission is granted
-      completion?(nil)
+      completion(nil)
     }
     mockCaptureSession.canSetSessionPresetStub = { _ in true }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 

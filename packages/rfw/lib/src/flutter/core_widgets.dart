@@ -34,6 +34,7 @@ import 'runtime.dart';
 ///  * [DefaultTextStyle]
 ///  * [Directionality]
 ///  * [Expanded]
+///  * [Flexible]
 ///  * [FittedBox]
 ///  * [FractionallySizedBox]
 ///  * [GestureDetector]
@@ -345,6 +346,14 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
   'Expanded': (BuildContext context, DataSource source) {
     return Expanded(
       flex: source.v<int>(['flex']) ?? 1,
+      child: source.child(['child']),
+    );
+  },
+
+  'Flexible': (BuildContext context, DataSource source) {
+    return Flexible(
+      flex: source.v<int>(['flex']) ?? 1,
+      fit: ArgumentDecoders.enumValue<FlexFit>(FlexFit.values, source, ['fit']) ?? FlexFit.loose,
       child: source.child(['child']),
     );
   },

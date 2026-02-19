@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
@@ -22,14 +24,14 @@ final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
     ((_ settings: AVCapturePhotoSettings, _ delegate: AVCapturePhotoCaptureDelegate) -> Void)?
 
   // Stub that is called when the corresponding public method is called.
-  var connectionWithMediaTypeStub: ((_ mediaType: AVMediaType) -> FLTCaptureConnection?)?
+  var connectionWithMediaTypeStub: ((_ mediaType: AVMediaType) -> CaptureConnection?)?
 
   func capturePhoto(with settings: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate)
   {
     capturePhotoWithSettingsStub?(settings, delegate)
   }
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
     return connectionWithMediaTypeStub?(mediaType)
   }
 }

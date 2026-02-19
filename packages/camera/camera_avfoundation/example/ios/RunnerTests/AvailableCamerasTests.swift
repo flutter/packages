@@ -20,7 +20,7 @@ final class AvailableCamerasTest: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: deviceDiscoverer,
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -62,10 +62,9 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -100,10 +99,9 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -133,10 +131,9 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)

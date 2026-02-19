@@ -1,3 +1,15 @@
+## 0.3.0+10
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.38.0 to 3.39.0.
+
+## 0.3.0+9
+
+* Bumps kotlin_version to 2.3.0.
+
+## 0.3.0+8
+
+* Removes internal native library Dart proxy.
+
 ## 0.3.0+7
 
 * Bumps kotlin_version to 2.2.21.

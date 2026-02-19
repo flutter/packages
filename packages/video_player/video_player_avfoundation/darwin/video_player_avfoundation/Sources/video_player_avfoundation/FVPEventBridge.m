@@ -4,12 +4,12 @@
 
 #import "./include/video_player_avfoundation/FVPEventBridge.h"
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 #if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
+@import FlutterMacOS;
 #else
-#import <Flutter/Flutter.h>
+@import Flutter;
 #endif
 
 @interface FVPEventBridge () <FlutterStreamHandler>

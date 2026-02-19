@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import Foundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -14,7 +13,7 @@ import Foundation
 /// `AVCaptureOutput` in tests.
 protocol CaptureOutput {
   /// Returns a connection with the specified media type, or nil if no such connection exists.
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection?
+  func connection(with mediaType: AVMediaType) -> CaptureConnection?
 }
 
 /// A protocol which is a direct passthrough to `AVCaptureVideoDataOutput`. It exists to allow
@@ -41,9 +40,9 @@ extension AVCaptureVideoDataOutput: CaptureVideoDataOutput {
     return self
   }
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
-    guard let connection: AVCaptureConnection = connection(with: mediaType) else { return nil }
-    return FLTDefaultCaptureConnection(connection: connection)
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
+    let connection: AVCaptureConnection? = connection(with: mediaType)
+    return connection
   }
 }
 
@@ -72,8 +71,9 @@ extension AVCapturePhotoOutput: CapturePhotoOutput {
     return self
   }
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
-    guard let connection: AVCaptureConnection = connection(with: mediaType) else { return nil }
-    return FLTDefaultCaptureConnection(connection: connection)
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
+    // Explicit type is required to access the underlying AVCapturePhotoOutput.connection method
+    let connection: AVCaptureConnection? = connection(with: mediaType)
+    return connection
   }
 }

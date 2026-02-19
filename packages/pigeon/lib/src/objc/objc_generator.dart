@@ -203,7 +203,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.writeln('#import <Foundation/Foundation.h>');
+    indent.writeln('@import Foundation;');
     indent.newln();
 
     indent.writeln('@protocol FlutterBinaryMessenger;');
@@ -513,14 +513,9 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     indent.writeln('#import "${generatorOptions.headerIncludePath}"');
     indent.newln();
     indent.writeln('#if TARGET_OS_OSX');
-    indent.writeln('#import <FlutterMacOS/FlutterMacOS.h>');
+    indent.writeln('@import FlutterMacOS;');
     indent.writeln('#else');
-    indent.writeln('#import <Flutter/Flutter.h>');
-    indent.writeln('#endif');
-    indent.newln();
-
-    indent.writeln('#if !__has_feature(objc_arc)');
-    indent.writeln('#error File requires ARC to be enabled.');
+    indent.writeln('@import Flutter;');
     indent.writeln('#endif');
     indent.newln();
   }

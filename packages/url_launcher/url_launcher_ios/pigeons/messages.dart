@@ -34,6 +34,9 @@ enum InAppLoadResult {
   /// The URL could not be launched because it is invalid.
   invalidUrl,
 
+  /// The URL could not be launched because no UI is available.
+  noUI,
+
   /// The controller was closed before loading.
   dismissed,
 }

@@ -12,10 +12,10 @@ import XCTest
   import camera_avfoundation_objc
 #endif
 
-private let testResolutionPreset = FCPPlatformResolutionPreset.medium
-private let testFramesPerSecond = 15
-private let testVideoBitrate = 200000
-private let testAudioBitrate = 32000
+private let testResolutionPreset = PlatformResolutionPreset.medium
+private let testFramesPerSecond: Int64 = 15
+private let testVideoBitrate: Int64 = 200000
+private let testAudioBitrate: Int64 = 32000
 
 private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   let lockExpectation: XCTestExpectation
@@ -72,22 +72,23 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
-    if let bitrate = outputSettings?[AVEncoderBitRateKey] as? Int, bitrate == testAudioBitrate {
+    if let bitrate = outputSettings?[AVEncoderBitRateKey] as? Int, bitrate == Int(testAudioBitrate)
+    {
       audioSettingsExpectation.fulfill()
     }
     return MockAssetWriterInput()
   }
 
   override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     if let compressionProperties = outputSettings?[AVVideoCompressionPropertiesKey]
       as? [String: Any],
       let bitrate = compressionProperties[AVVideoAverageBitRateKey] as? Int,
-      let frameRate = compressionProperties[AVVideoExpectedSourceFrameRateKey] as? Int,
-      bitrate == testVideoBitrate, frameRate == testFramesPerSecond
+      let frameRate = compressionProperties[AVVideoExpectedSourceFrameRateKey] as? Double,
+      bitrate == testVideoBitrate, frameRate == Double(testFramesPerSecond)
     {
       videoSettingsExpectation.fulfill()
     }
@@ -101,7 +102,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     return MockAssetWriterInput()
   }
 
-  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
+  override func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
     // No-op.
   }
 
@@ -115,11 +116,11 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
 final class CameraSettingsTests: XCTestCase {
   func testSettings_shouldPassConfigurationToCameraDeviceAndWriter() {
     let enableAudio: Bool = true
-    let settings = FCPPlatformMediaSettings.make(
-      with: testResolutionPreset,
-      framesPerSecond: NSNumber(value: testFramesPerSecond),
-      videoBitrate: NSNumber(value: testVideoBitrate),
-      audioBitrate: NSNumber(value: testAudioBitrate),
+    let settings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: testFramesPerSecond,
+      videoBitrate: testVideoBitrate,
+      audioBitrate: testAudioBitrate,
       enableAudio: enableAudio
     )
     let injectedWrapper = TestMediaSettingsAVWrapper(test: self, expectAudio: enableAudio)
@@ -161,7 +162,7 @@ final class CameraSettingsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -169,20 +170,19 @@ final class CameraSettingsTests: XCTestCase {
     )
 
     let expectation = self.expectation(description: "Result finished")
-    let mediaSettings = FCPPlatformMediaSettings.make(
-      with: testResolutionPreset,
-      framesPerSecond: NSNumber(value: testFramesPerSecond),
-      videoBitrate: NSNumber(value: testVideoBitrate),
-      audioBitrate: NSNumber(value: testAudioBitrate),
+    let mediaSettings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: testFramesPerSecond,
+      videoBitrate: testVideoBitrate,
+      audioBitrate: testAudioBitrate,
       enableAudio: false
     )
-    var resultValue: NSNumber?
+    var resultValue: Int64?
     camera.createCameraOnSessionQueue(
       withName: "acamera",
       settings: mediaSettings
-    ) { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    ) { result in
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -191,11 +191,11 @@ final class CameraSettingsTests: XCTestCase {
   }
 
   func testSettings_ShouldSelectFormatWhichSupports60FPS() {
-    let settings = FCPPlatformMediaSettings.make(
-      with: testResolutionPreset,
-      framesPerSecond: NSNumber(value: 60),
-      videoBitrate: NSNumber(value: testVideoBitrate),
-      audioBitrate: NSNumber(value: testAudioBitrate),
+    let settings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: 60,
+      videoBitrate: testVideoBitrate,
+      audioBitrate: testAudioBitrate,
       enableAudio: false
     )
 
@@ -203,16 +203,17 @@ final class CameraSettingsTests: XCTestCase {
     configuration.mediaSettings = settings
     let camera = CameraTestUtils.createTestCamera(configuration)
 
-    let range = camera.captureDevice.flutterActiveFormat.videoSupportedFrameRateRanges[0]
+    let range = camera.captureDevice.flutterActiveFormat.flutterVideoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
     XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60)
   }
+
   func test_setUpCaptureSessionForAudioIfNeeded_skipsAudioSession_whenAudioDisabled() {
-    let settings = FCPPlatformMediaSettings.make(
-      with: testResolutionPreset,
-      framesPerSecond: NSNumber(value: testFramesPerSecond),
-      videoBitrate: NSNumber(value: testVideoBitrate),
-      audioBitrate: NSNumber(value: testAudioBitrate),
+    let settings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: testFramesPerSecond,
+      videoBitrate: testVideoBitrate,
+      audioBitrate: testAudioBitrate,
       enableAudio: false
     )
 
@@ -255,11 +256,11 @@ final class CameraSettingsTests: XCTestCase {
   }
 
   func test_setUpCaptureSessionForAudioIfNeeded_addsAudioSession_whenAudioEnabled() {
-    let settings = FCPPlatformMediaSettings.make(
-      with: testResolutionPreset,
-      framesPerSecond: NSNumber(value: testFramesPerSecond),
-      videoBitrate: NSNumber(value: testVideoBitrate),
-      audioBitrate: NSNumber(value: testAudioBitrate),
+    let settings = PlatformMediaSettings(
+      resolutionPreset: testResolutionPreset,
+      framesPerSecond: testFramesPerSecond,
+      videoBitrate: testVideoBitrate,
+      audioBitrate: testAudioBitrate,
       enableAudio: true
     )
 

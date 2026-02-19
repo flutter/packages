@@ -27,8 +27,8 @@ protocol CaptureDevice: NSObjectProtocol {
   var deviceType: AVCaptureDevice.DeviceType { get }
 
   // Format/Configuration
-  var flutterActiveFormat: FLTCaptureDeviceFormat { get set }
-  var flutterFormats: [FLTCaptureDeviceFormat] { get }
+  var flutterActiveFormat: CaptureDeviceFormat { get set }
+  var flutterFormats: [CaptureDeviceFormat] { get }
 
   // Flash/Torch
   var hasFlash: Bool { get }
@@ -57,6 +57,10 @@ protocol CaptureDevice: NSObjectProtocol {
   var maxAvailableVideoZoomFactor: CGFloat { get }
   var minAvailableVideoZoomFactor: CGFloat { get }
   var videoZoomFactor: CGFloat { get set }
+
+  // Video Stabilization
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
 
   // Camera Properties
   var lensAperture: Float { get }
@@ -91,14 +95,19 @@ protocol CaptureDeviceInputFactory: NSObjectProtocol {
 extension AVCaptureDevice: CaptureDevice {
   var avDevice: AVCaptureDevice { self }
 
-  var flutterActiveFormat: FLTCaptureDeviceFormat {
-    get { FLTDefaultCaptureDeviceFormat.init(format: activeFormat) }
-    set { activeFormat = newValue.format }
+  var flutterActiveFormat: CaptureDeviceFormat {
+    get { activeFormat }
+    set { activeFormat = newValue.avFormat }
   }
 
-  var flutterFormats: [FLTCaptureDeviceFormat] {
-    return self.formats.map { FLTDefaultCaptureDeviceFormat.init(format: $0) }
+  var flutterFormats: [CaptureDeviceFormat] { formats }
+
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+  {
+    return self.activeFormat.isVideoStabilizationModeSupported(videoStabilizationMode)
   }
+
 }
 
 extension AVCaptureInput: CaptureInput {

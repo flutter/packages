@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.3.5+2
+
+* Separates "Save As" implementation details from XFile web class.
+
 ## 0.3.5+1
 
 * Replaces README mentions of `dart:html` with `package:web`.

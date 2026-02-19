@@ -24,7 +24,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: mockGlobalEventApi,
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -44,9 +44,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       onFrameAvailableSet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -64,9 +64,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       dartAPISet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -78,9 +78,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   func testInitializeCamera_sendsDeviceOrientation() {
     let (cameraPlugin, _, mockGlobalEventApi, captureSessionQueue) = createCameraPlugin()
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
     }
 
     waitForQueueRoundTrip(with: captureSessionQueue)
@@ -97,9 +97,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       startCalled = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

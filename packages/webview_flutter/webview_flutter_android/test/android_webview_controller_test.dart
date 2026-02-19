@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
 import 'package:webview_flutter_android/src/android_webkit_constants.dart';
@@ -21,7 +20,6 @@ import 'android_webview_controller_test.mocks.dart';
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<AndroidNavigationDelegate>(),
   MockSpec<AndroidWebViewController>(),
-  MockSpec<AndroidWebViewProxy>(),
   MockSpec<AndroidWebViewWidgetCreationParams>(),
   MockSpec<ExpensiveAndroidViewController>(),
   MockSpec<android_webview.FlutterAssetManager>(),
@@ -115,213 +113,213 @@ void main() {
     final android_webview.WebView nonNullMockWebView =
         mockWebView ?? MockWebView();
 
+    android_webview.PigeonOverrides.webChromeClient_new =
+        createWebChromeClient ??
+        ({
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.WebView,
+            int,
+          )?
+          onProgressChanged,
+          Future<List<String>> Function(
+            android_webview.WebChromeClient,
+            android_webview.WebView,
+            android_webview.FileChooserParams,
+          )?
+          onShowFileChooser,
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.PermissionRequest,
+          )?
+          onPermissionRequest,
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.View,
+            android_webview.CustomViewCallback,
+          )?
+          onShowCustomView,
+          void Function(android_webview.WebChromeClient)? onHideCustomView,
+          void Function(
+            android_webview.WebChromeClient,
+            String,
+            android_webview.GeolocationPermissionsCallback,
+          )?
+          onGeolocationPermissionsShowPrompt,
+          void Function(android_webview.WebChromeClient)?
+          onGeolocationPermissionsHidePrompt,
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.ConsoleMessage,
+          )?
+          onConsoleMessage,
+          Future<void> Function(
+            android_webview.WebChromeClient,
+            android_webview.WebView,
+            String,
+            String,
+          )?
+          onJsAlert,
+          Future<bool> Function(
+            android_webview.WebChromeClient,
+            android_webview.WebView,
+            String,
+            String,
+          )?
+          onJsConfirm,
+          Future<String?> Function(
+            android_webview.WebChromeClient,
+            android_webview.WebView,
+            String,
+            String,
+            String,
+          )?
+          onJsPrompt,
+        }) => MockWebChromeClient();
+    android_webview.PigeonOverrides.webView_new =
+        ({
+          dynamic Function(
+            android_webview.WebView,
+            int left,
+            int top,
+            int oldLeft,
+            int oldTop,
+          )?
+          onScrollChanged,
+        }) => nonNullMockWebView;
+    android_webview.PigeonOverrides.webViewClient_new =
+        ({
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+          )?
+          onPageStarted,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+          )?
+          onPageFinished,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.WebResourceRequest,
+            android_webview.WebResourceResponse,
+          )?
+          onReceivedHttpError,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.WebResourceRequest,
+            android_webview.WebResourceError,
+          )?
+          onReceivedRequestError,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.WebResourceRequest,
+            android_webview.WebResourceErrorCompat,
+          )?
+          onReceivedRequestErrorCompat,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            int,
+            String,
+            String,
+          )?
+          onReceivedError,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.WebResourceRequest,
+          )?
+          requestLoading,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+          )?
+          urlLoading,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+            bool,
+          )?
+          doUpdateVisitedHistory,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.HttpAuthHandler,
+            String,
+            String,
+          )?
+          onReceivedHttpAuthRequest,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.AndroidMessage,
+            android_webview.AndroidMessage,
+          )?
+          onFormResubmission,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+          )?
+          onLoadResource,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+          )?
+          onPageCommitVisible,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.ClientCertRequest,
+          )?
+          onReceivedClientCertRequest,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            String,
+            String,
+            String,
+          )?
+          onReceivedLoginRequest,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            android_webview.SslErrorHandler,
+            android_webview.SslError,
+          )?
+          onReceivedSslError,
+          void Function(
+            android_webview.WebViewClient,
+            android_webview.WebView,
+            double,
+            double,
+          )?
+          onScaleChanged,
+        }) => mockWebViewClient ?? MockWebViewClient();
+    android_webview.PigeonOverrides.flutterAssetManager_instance =
+        mockFlutterAssetManager ?? MockFlutterAssetManager();
+    android_webview.PigeonOverrides.javaScriptChannel_new =
+        ({
+          required String channelName,
+          required void Function(android_webview.JavaScriptChannel, String)
+          postMessage,
+        }) => mockJavaScriptChannel ?? MockJavaScriptChannel();
+    android_webview.PigeonOverrides.webViewFeature_isFeatureSupported =
+        isWebViewFeatureSupported ?? (_) async => false;
+    android_webview.PigeonOverrides.webSettingsCompat_setPaymentRequestEnabled =
+        setPaymentRequestEnabled ?? (_, __) async {};
+
     final creationParams = AndroidWebViewControllerCreationParams(
       androidWebStorage: mockWebStorage ?? MockWebStorage(),
-      androidWebViewProxy: AndroidWebViewProxy(
-        newWebChromeClient:
-            createWebChromeClient ??
-            ({
-              void Function(
-                android_webview.WebChromeClient,
-                android_webview.WebView,
-                int,
-              )?
-              onProgressChanged,
-              Future<List<String>> Function(
-                android_webview.WebChromeClient,
-                android_webview.WebView,
-                android_webview.FileChooserParams,
-              )?
-              onShowFileChooser,
-              void Function(
-                android_webview.WebChromeClient,
-                android_webview.PermissionRequest,
-              )?
-              onPermissionRequest,
-              void Function(
-                android_webview.WebChromeClient,
-                android_webview.View,
-                android_webview.CustomViewCallback,
-              )?
-              onShowCustomView,
-              void Function(android_webview.WebChromeClient)? onHideCustomView,
-              void Function(
-                android_webview.WebChromeClient,
-                String,
-                android_webview.GeolocationPermissionsCallback,
-              )?
-              onGeolocationPermissionsShowPrompt,
-              void Function(android_webview.WebChromeClient)?
-              onGeolocationPermissionsHidePrompt,
-              void Function(
-                android_webview.WebChromeClient,
-                android_webview.ConsoleMessage,
-              )?
-              onConsoleMessage,
-              Future<void> Function(
-                android_webview.WebChromeClient,
-                android_webview.WebView,
-                String,
-                String,
-              )?
-              onJsAlert,
-              Future<bool> Function(
-                android_webview.WebChromeClient,
-                android_webview.WebView,
-                String,
-                String,
-              )?
-              onJsConfirm,
-              Future<String?> Function(
-                android_webview.WebChromeClient,
-                android_webview.WebView,
-                String,
-                String,
-                String,
-              )?
-              onJsPrompt,
-            }) => MockWebChromeClient(),
-        newWebView:
-            ({
-              dynamic Function(
-                android_webview.WebView,
-                int left,
-                int top,
-                int oldLeft,
-                int oldTop,
-              )?
-              onScrollChanged,
-            }) => nonNullMockWebView,
-        newWebViewClient:
-            ({
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-              )?
-              onPageStarted,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-              )?
-              onPageFinished,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.WebResourceRequest,
-                android_webview.WebResourceResponse,
-              )?
-              onReceivedHttpError,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.WebResourceRequest,
-                android_webview.WebResourceError,
-              )?
-              onReceivedRequestError,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.WebResourceRequest,
-                android_webview.WebResourceErrorCompat,
-              )?
-              onReceivedRequestErrorCompat,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                int,
-                String,
-                String,
-              )?
-              onReceivedError,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.WebResourceRequest,
-              )?
-              requestLoading,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-              )?
-              urlLoading,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-                bool,
-              )?
-              doUpdateVisitedHistory,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.HttpAuthHandler,
-                String,
-                String,
-              )?
-              onReceivedHttpAuthRequest,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.AndroidMessage,
-                android_webview.AndroidMessage,
-              )?
-              onFormResubmission,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-              )?
-              onLoadResource,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-              )?
-              onPageCommitVisible,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.ClientCertRequest,
-              )?
-              onReceivedClientCertRequest,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                String,
-                String,
-                String,
-              )?
-              onReceivedLoginRequest,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                android_webview.SslErrorHandler,
-                android_webview.SslError,
-              )?
-              onReceivedSslError,
-              void Function(
-                android_webview.WebViewClient,
-                android_webview.WebView,
-                double,
-                double,
-              )?
-              onScaleChanged,
-            }) => mockWebViewClient ?? MockWebViewClient(),
-        instanceFlutterAssetManager: () =>
-            mockFlutterAssetManager ?? MockFlutterAssetManager(),
-        newJavaScriptChannel:
-            ({
-              required String channelName,
-              required void Function(android_webview.JavaScriptChannel, String)
-              postMessage,
-            }) => mockJavaScriptChannel ?? MockJavaScriptChannel(),
-        isWebViewFeatureSupported:
-            isWebViewFeatureSupported ?? (_) async => false,
-        setPaymentRequestEnabled: setPaymentRequestEnabled ?? (_, __) async {},
-      ),
     );
 
     when(
@@ -331,26 +329,25 @@ void main() {
     return AndroidWebViewController(creationParams);
   }
 
+  setUp(() {
+    android_webview.PigeonOverrides.pigeon_reset();
+  });
+
   group('AndroidWebViewController', () {
     AndroidJavaScriptChannelParams
     createAndroidJavaScriptChannelParamsWithMocks({
       String? name,
       MockJavaScriptChannel? mockJavaScriptChannel,
     }) {
+      android_webview.PigeonOverrides.javaScriptChannel_new =
+          ({
+            required String channelName,
+            required void Function(android_webview.JavaScriptChannel, String)
+            postMessage,
+          }) => mockJavaScriptChannel ?? MockJavaScriptChannel();
       return AndroidJavaScriptChannelParams(
         name: name ?? 'test',
         onMessageReceived: (JavaScriptMessage message) {},
-        webViewProxy: AndroidWebViewProxy(
-          newJavaScriptChannel:
-              ({
-                required String channelName,
-                required void Function(
-                  android_webview.JavaScriptChannel,
-                  String,
-                )
-                postMessage,
-              }) => mockJavaScriptChannel ?? MockJavaScriptChannel(),
-        ),
       );
     }
 
@@ -910,14 +907,15 @@ void main() {
     });
 
     test('onProgress', () {
+      android_webview.PigeonOverrides.webViewClient_new = TestWebViewClient.new;
+      android_webview.PigeonOverrides.webChromeClient_new =
+          TestWebChromeClient.new;
+      android_webview.PigeonOverrides.downloadListener_new =
+          TestDownloadListener.new;
+
       final androidNavigationDelegate = AndroidNavigationDelegate(
         AndroidNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
           const PlatformNavigationDelegateCreationParams(),
-          androidWebViewProxy: const AndroidWebViewProxy(
-            newWebViewClient: TestWebViewClient.new,
-            newWebChromeClient: TestWebChromeClient.new,
-            newDownloadListener: TestDownloadListener.new,
-          ),
         ),
       );
 
@@ -1011,7 +1009,6 @@ void main() {
           acceptTypes: const <String>['png'],
           filenameHint: 'filenameHint',
           mode: android_webview.FileChooserMode.open,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
 
@@ -1138,9 +1135,7 @@ void main() {
             },
       );
 
-      final testView = android_webview.View.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final testView = android_webview.View.pigeon_detached();
       var showCustomViewCalled = false;
       var hideCustomViewCalled = false;
 
@@ -1157,9 +1152,7 @@ void main() {
       onShowCustomViewHandle(
         mockWebChromeClient,
         testView,
-        android_webview.CustomViewCallback.pigeon_detached(
-          pigeon_instanceManager: testInstanceManager,
-        ),
+        android_webview.CustomViewCallback.pigeon_detached(),
       );
 
       expect(showCustomViewCalled, true);
@@ -1217,7 +1210,6 @@ void main() {
         android_webview.WebChromeClient.pigeon_detached(
           onJsConfirm: (_, __, ___, ____) async => false,
           onShowFileChooser: (_, __, ___) async => <String>[],
-          pigeon_instanceManager: testInstanceManager,
         ),
         mockPermissionRequest,
       );
@@ -1278,7 +1270,6 @@ void main() {
           android_webview.WebChromeClient.pigeon_detached(
             onJsConfirm: (_, __, ___, ____) async => false,
             onShowFileChooser: (_, __, ___) async => <String>[],
-            pigeon_instanceManager: testInstanceManager,
           ),
           mockPermissionRequest,
         );
@@ -1513,7 +1504,6 @@ void main() {
           message: 'Debug message',
           level: android_webview.ConsoleMessageLevel.debug,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1523,7 +1513,6 @@ void main() {
           message: 'Error message',
           level: android_webview.ConsoleMessageLevel.error,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1533,7 +1522,6 @@ void main() {
           message: 'Log message',
           level: android_webview.ConsoleMessageLevel.log,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1543,7 +1531,6 @@ void main() {
           message: 'Tip message',
           level: android_webview.ConsoleMessageLevel.tip,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1553,7 +1540,6 @@ void main() {
           message: 'Warning message',
           level: android_webview.ConsoleMessageLevel.warning,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1563,7 +1549,6 @@ void main() {
           message: 'Unknown message',
           level: android_webview.ConsoleMessageLevel.unknown,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
 
@@ -1817,11 +1802,7 @@ void main() {
       );
       when(mockWebView.getScrollPosition()).thenAnswer(
         (_) => Future<android_webview.WebViewPoint>.value(
-          android_webview.WebViewPoint.pigeon_detached(
-            x: 4,
-            y: 2,
-            pigeon_instanceManager: testInstanceManager,
-          ),
+          android_webview.WebViewPoint.pigeon_detached(x: 4, y: 2),
         ),
       );
 
@@ -2033,18 +2014,14 @@ void main() {
   test('webViewIdentifier', () {
     final mockWebView = MockWebView();
 
-    final instanceManager = android_webview.PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
-    instanceManager.addHostCreatedInstance(mockWebView, 0);
-
-    when(mockWebView.pigeon_instanceManager).thenReturn(instanceManager);
+    final int identifier = android_webview.PigeonInstanceManager.instance
+        .addDartCreatedInstance(mockWebView);
 
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
     );
 
-    expect(controller.webViewIdentifier, 0);
+    expect(controller.webViewIdentifier, identifier);
   });
 
   test('isWebViewFeatureSupported', () async {
@@ -2098,16 +2075,14 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final webViewWidget = AndroidWebViewWidget(
         AndroidWebViewWidgetCreationParams(
           key: const Key('test_web_view'),
           controller: controller,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2129,10 +2104,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2152,7 +2126,6 @@ void main() {
           key: const Key('test_web_view'),
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2183,10 +2156,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2207,7 +2179,6 @@ void main() {
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
           displayWithHybridComposition: true,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2243,10 +2214,9 @@ void main() {
       onShowCustomViewCallback;
 
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         createWebChromeClient:
@@ -2292,7 +2262,6 @@ void main() {
           key: const Key('test_web_view'),
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2305,15 +2274,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // ignore: invalid_use_of_protected_member
-      when(mockWebView.pigeon_instanceManager).thenReturn(instanceManager);
-
       onShowCustomViewCallback!(
         MockWebChromeClient(),
         mockWebView,
-        android_webview.CustomViewCallback.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-        ),
+        android_webview.CustomViewCallback.pigeon_detached(),
       );
       await tester.pumpAndSettle();
 
@@ -2324,10 +2288,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2349,7 +2312,6 @@ void main() {
               AndroidWebViewWidgetCreationParams(
                 controller: createControllerWithMocks(mockWebView: mockWebView),
                 platformViewsServiceProxy: mockPlatformViewsService,
-                instanceManager: instanceManager,
               ),
             ).build(context);
           },
@@ -2375,7 +2337,6 @@ void main() {
               AndroidWebViewWidgetCreationParams(
                 controller: createControllerWithMocks(mockWebView: mockWebView),
                 platformViewsServiceProxy: mockPlatformViewsService,
-                instanceManager: instanceManager,
               ),
             ).build(context);
           },
@@ -2399,10 +2360,9 @@ void main() {
       'PlatformView does not rebuild when creation params stay the same',
       (WidgetTester tester) async {
         final android_webview.WebView mockWebView = MockWebView();
-        final instanceManager = android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
+        android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+          mockWebView,
         );
-        instanceManager.addDartCreatedInstance(mockWebView);
 
         final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2428,7 +2388,6 @@ void main() {
                 AndroidWebViewWidgetCreationParams(
                   controller: controller,
                   platformViewsServiceProxy: mockPlatformViewsService,
-                  instanceManager: instanceManager,
                 ),
               ).build(context);
             },
@@ -2454,7 +2413,6 @@ void main() {
                 AndroidWebViewWidgetCreationParams(
                   controller: controller,
                   platformViewsServiceProxy: mockPlatformViewsService,
-                  instanceManager: instanceManager,
                 ),
               ).build(context);
             },
@@ -2481,10 +2439,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
@@ -2494,7 +2451,6 @@ void main() {
         key: const Key('test_custom_view'),
         customView: mockWebView,
         controller: controller,
-        instanceManager: instanceManager,
       );
 
       await tester.pumpWidget(
@@ -2511,10 +2467,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
       );
-      instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
@@ -2537,7 +2492,6 @@ void main() {
         controller: controller,
         customView: mockWebView,
         platformViewsServiceProxy: mockPlatformViewsService,
-        instanceManager: instanceManager,
       );
 
       await tester.pumpWidget(
@@ -2561,12 +2515,6 @@ void main() {
   });
 }
 
-/// Creates a PigeonInstanceManager that doesn't make a call to Java when an
-/// object is garbage collected. Also, `PigeonInstanceManager.instance` makes
-/// a call to Java, so this InstanceManager is used to prevent that.
-final android_webview.PigeonInstanceManager testInstanceManager =
-    android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-
 class TestWebViewClient extends android_webview.WebViewClient {
   TestWebViewClient({
     super.onPageStarted,
@@ -2585,11 +2533,7 @@ class TestWebViewClient extends android_webview.WebViewClient {
     super.onReceivedLoginRequest,
     super.onReceivedSslError,
     super.onScaleChanged,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       );
+  }) : super.pigeon_detached();
 }
 
 class TestWebChromeClient extends android_webview.WebChromeClient {
@@ -2605,18 +2549,10 @@ class TestWebChromeClient extends android_webview.WebChromeClient {
     super.onJsAlert,
     required super.onJsConfirm,
     super.onJsPrompt,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       );
+  }) : super.pigeon_detached();
 }
 
 class TestDownloadListener extends android_webview.DownloadListener {
   TestDownloadListener({required super.onDownloadStart})
-    : super.pigeon_detached(
-        pigeon_instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
+    : super.pigeon_detached();
 }

@@ -8,22 +8,20 @@ import UIKit
 public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let plugin = URLLauncherPlugin()
+    let plugin = URLLauncherPlugin(
+      viewPresenterProvider: DefaultViewPresenterProvider(registrar: registrar))
     UrlLauncherApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
     registrar.publish(plugin)
   }
 
   private var currentSession: URLLaunchSession?
   private let launcher: Launcher
+  /// The view presenter provider, for showing a Safari view controller.
+  private let viewPresenterProvider: ViewPresenterProvider
 
-  private var topViewController: UIViewController? {
-    // TODO(stuartmorgan) Provide a non-deprecated codepath. See
-    // https://github.com/flutter/flutter/issues/104117
-    UIApplication.shared.keyWindow?.rootViewController?.topViewController
-  }
-
-  init(launcher: Launcher = DefaultLauncher()) {
+  init(launcher: Launcher = DefaultLauncher(), viewPresenterProvider: ViewPresenterProvider) {
     self.launcher = launcher
+    self.viewPresenterProvider = viewPresenterProvider
   }
 
   func canLaunchUrl(url: String) -> LaunchResult {
@@ -58,43 +56,21 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
       return
     }
 
+    guard let presenter = viewPresenterProvider.viewPresenter else {
+      completion(.success(.noUI))
+      return
+    }
+
     let session = URLLaunchSession(url: url, completion: completion)
     currentSession = session
 
     session.didFinish = { [weak self] in
       self?.currentSession = nil
     }
-    topViewController?.present(session.safariViewController, animated: true, completion: nil)
+    presenter.present(session.safariViewController, animated: true, completion: nil)
   }
 
   func closeSafariViewController() {
     currentSession?.close()
-  }
-}
-
-/// This method recursively iterates through the view hierarchy
-/// to return the top-most view controller.
-///
-/// It supports the following scenarios:
-///
-/// - The view controller is presenting another view.
-/// - The view controller is a UINavigationController.
-/// - The view controller is a UITabBarController.
-///
-/// @return The top most view controller.
-extension UIViewController {
-  var topViewController: UIViewController {
-    if let navigationController = self as? UINavigationController {
-      return navigationController.viewControllers.last?.topViewController
-        ?? navigationController
-        .visibleViewController ?? navigationController
-    }
-    if let tabBarController = self as? UITabBarController {
-      return tabBarController.selectedViewController?.topViewController ?? tabBarController
-    }
-    if let presented = presentedViewController {
-      return presented.topViewController
-    }
-    return self
   }
 }

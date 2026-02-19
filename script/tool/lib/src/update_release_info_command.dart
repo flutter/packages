@@ -112,7 +112,15 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    String nextVersionString;
+    final Version? version = package.parsePubspec().version;
+    final bool isBatchRelease =
+        package.parseCIConfig()?.isBatchRelease ?? false;
+    if (isBatchRelease && (version?.isPreRelease ?? false)) {
+      return PackageResult.fail(<String>[
+        'This command does not support batch releases packages with pre-release versions.',
+        'Pre-release version: $version',
+      ]);
+    }
 
     _VersionIncrementType? versionChange = _versionChange;
 
@@ -144,36 +152,14 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       }
     }
 
-    if (versionChange != null) {
-      final Version? updatedVersion = _updatePubspecVersion(
+    if (isBatchRelease) {
+      return _createPendingBatchChangelog(
         package,
-        versionChange,
+        versionChange: versionChange,
       );
-      if (updatedVersion == null) {
-        return PackageResult.fail(<String>[
-          'Could not determine current version.',
-        ]);
-      }
-      nextVersionString = updatedVersion.toString();
-      print('${indentation}Incremented version to $nextVersionString.');
-    } else {
-      nextVersionString = 'NEXT';
     }
 
-    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(
-      package,
-      nextVersionString,
-    );
-    switch (updateOutcome) {
-      case _ChangelogUpdateOutcome.addedSection:
-        print('${indentation}Added a $nextVersionString section.');
-      case _ChangelogUpdateOutcome.updatedSection:
-        print('${indentation}Updated NEXT section.');
-      case _ChangelogUpdateOutcome.failed:
-        return PackageResult.fail(<String>['Could not update CHANGELOG.md.']);
-    }
-
-    return PackageResult.success();
+    return _updatePubspecAndChangelog(package, versionChange: versionChange);
   }
 
   _ChangelogUpdateOutcome _updateChangelog(
@@ -313,5 +299,94 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
           build: '${buildNumber + 1}',
         );
     }
+  }
+
+  /// Updates the `pubspec.yaml` and `CHANGELOG.md` files directly.
+  ///
+  /// This is used for continuous releases, where changes will be released
+  /// immediately.
+  Future<PackageResult> _updatePubspecAndChangelog(
+    RepositoryPackage package, {
+    _VersionIncrementType? versionChange,
+  }) async {
+    String nextVersionString;
+    if (versionChange != null) {
+      final Version? updatedVersion = _updatePubspecVersion(
+        package,
+        versionChange,
+      );
+      if (updatedVersion == null) {
+        return PackageResult.fail(<String>[
+          'Could not determine current version.',
+        ]);
+      }
+      nextVersionString = updatedVersion.toString();
+      print('${indentation}Incremented version to $nextVersionString.');
+    } else {
+      nextVersionString = 'NEXT';
+    }
+
+    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(
+      package,
+      nextVersionString,
+    );
+    switch (updateOutcome) {
+      case _ChangelogUpdateOutcome.addedSection:
+        print('${indentation}Added a $nextVersionString section.');
+      case _ChangelogUpdateOutcome.updatedSection:
+        print('${indentation}Updated NEXT section.');
+      case _ChangelogUpdateOutcome.failed:
+        return PackageResult.fail(<String>['Could not update CHANGELOG.md.']);
+    }
+
+    return PackageResult.success();
+  }
+
+  /// Creates a pending changelog entry in the package's `pending_changelogs`
+  /// directory.
+  ///
+  /// This is used for batch releases, where changes are accumulated in
+  /// individual files before being merged into the main CHANGELOG.md and
+  /// pubspec.yaml during the release process.
+  Future<PackageResult> _createPendingBatchChangelog(
+    RepositoryPackage package, {
+    _VersionIncrementType? versionChange,
+  }) async {
+    final Directory pendingDirectory = package.pendingChangelogsDirectory;
+    if (!pendingDirectory.existsSync()) {
+      return PackageResult.fail(<String>[
+        'Could not create pending changelog entry. Pending changelog directory does not exist.',
+      ]);
+    }
+
+    final VersionChange type;
+    switch (versionChange) {
+      case _VersionIncrementType.minor:
+        type = VersionChange.minor;
+      case _VersionIncrementType.bugfix:
+        type = VersionChange.patch;
+      case _VersionIncrementType.build:
+        throw UnimplementedError(
+          'Build version changes should not happen in batch mode. Please file an issue if you see this.',
+        );
+      case null:
+        type = VersionChange.skip;
+    }
+
+    final String changelogEntry = getStringArg(_changelogFlag);
+    final content =
+        '''
+changelog: |
+${changelogEntry.split('\n').map((line) => '  - $line').join('\n')}
+version: ${type.name}
+''';
+    final now = DateTime.now();
+    final date =
+        '${now.year}_${now.month.toString().padLeft(2, '0')}_${now.day.toString().padLeft(2, '0')}';
+    final filename = 'change_${date}_${now.millisecondsSinceEpoch}.yaml';
+    final File file = pendingDirectory.childFile(filename);
+    file.writeAsStringSync(content);
+    print('${indentation}Created pending changelog entry: $filename');
+    return PackageResult.success();
   }
 }

@@ -20,7 +20,7 @@ final class CameraInitRaceConditionsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -37,20 +37,20 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
     // Mimic a dispose call followed by a create call, which can be triggered by slightly dragging the
     // home bar, causing the app to be inactive, and immediately regain active.
-    cameraPlugin.disposeCamera(0) { error in
+    cameraPlugin.dispose(cameraId: 0) { error in
       disposeExpectation.fulfill()
     }
 
     cameraPlugin.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
+    ) { result in
       createExpectation.fulfill()
     }
 
@@ -69,14 +69,14 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
     cameraPlugin.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
+    ) { result in
       createExpectation.fulfill()
     }
 

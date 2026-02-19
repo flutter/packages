@@ -126,14 +126,46 @@ class PlatformCircle {
 
 /// Pigeon equivalent of the Heatmap class.
 class PlatformHeatmap {
-  PlatformHeatmap(this.json);
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    this.maxIntensity,
+  });
 
-  /// The heatmap data, as JSON. This should only be set from
-  /// Heatmap.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String, Object?> json;
+  final String heatmapId;
+  final List<PlatformWeightedLatLng> data;
+  final PlatformHeatmapGradient? gradient;
+  final double opacity;
+  final int radius;
+  final double? maxIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The Java Gradient structure is slightly different from HeatmapGradient, so
+/// this matches the Android API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
 }
 
 /// Pigeon equivalent of the ClusterManager class.
@@ -185,6 +217,7 @@ class PlatformMarker {
     this.visible = true,
     this.zIndex = 0.0,
     this.clusterManagerId,
+    this.collisionBehavior = PlatformMarkerCollisionBehavior.requiredDisplay,
   });
 
   final double alpha;
@@ -201,6 +234,14 @@ class PlatformMarker {
   final double zIndex;
   final String markerId;
   final String? clusterManagerId;
+
+  final PlatformMarkerCollisionBehavior collisionBehavior;
+}
+
+enum PlatformMarkerCollisionBehavior {
+  requiredDisplay,
+  optionalAndHidesLowerPriority,
+  requiredAndHidesOptional,
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -441,6 +482,8 @@ class PlatformMapViewCreationParams {
   final List<PlatformGroundOverlay> initialGroundOverlays;
 }
 
+enum PlatformMarkerType { marker, advancedMarker }
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({
@@ -462,6 +505,7 @@ class PlatformMapConfiguration {
     required this.trafficEnabled,
     required this.buildingsEnabled,
     required this.liteModeEnabled,
+    required this.markerType,
     required this.mapId,
     required this.style,
   });
@@ -484,6 +528,7 @@ class PlatformMapConfiguration {
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
   final bool? liteModeEnabled;
+  final PlatformMarkerType? markerType;
   final String? mapId;
   final String? style;
 }
@@ -611,6 +656,26 @@ class PlatformBitmapBytesMap {
   final double? height;
 }
 
+/// Pigeon equivalent of [PinConfig].
+class PlatformBitmapPinConfig {
+  PlatformBitmapPinConfig({
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.glyphColor,
+    required this.glyphBitmap,
+    required this.glyphText,
+    required this.glyphTextColor,
+  });
+
+  final PlatformColor? backgroundColor;
+  final PlatformColor? borderColor;
+  final PlatformColor? glyphColor;
+  final PlatformBitmap? glyphBitmap;
+
+  final String? glyphText;
+  final PlatformColor? glyphTextColor;
+}
+
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].
@@ -727,6 +792,12 @@ abstract class MapsApi {
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   bool didLastStyleSucceed();
+
+  /// Returns true if this map supports advanced markers.
+  ///
+  /// This allows checking if the map supports advanced markers before
+  /// attempting to use them.
+  bool isAdvancedMarkersAvailable();
 
   /// Clears the cache of tiles previously requseted from the tile provider.
   void clearTileCache(String tileOverlayId);

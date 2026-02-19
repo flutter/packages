@@ -451,6 +451,20 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   }
 
   @override
+  Future<List<SK2TransactionMessage>> unfinishedTransactions() {
+    return Future<List<SK2TransactionMessage>>.value(<SK2TransactionMessage>[
+      SK2TransactionMessage(
+        id: 123,
+        originalId: 123,
+        productId: 'product_id',
+        purchaseDate: '12-12',
+        receiptData: 'fake_jws_representation',
+        appAccountToken: 'fake_app_account_token',
+      ),
+    ]);
+  }
+
+  @override
   Future<void> startListeningToTransactions() async {
     isListenerRegistered = true;
   }

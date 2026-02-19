@@ -2,27 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
 import '../common/web_kit.g.dart';
-import '../webkit_proxy.dart';
 
 /// Handles all cookie operations for the WebView platform.
 class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
   /// Constructs a [WKWebViewCookieManager].
-  WKWebViewCookieManager({
-    WKWebsiteDataStore? websiteDataStore,
-    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
-  }) : _webKitProxy = webKitProxy,
-       websiteDataStore =
-           websiteDataStore ?? webKitProxy.defaultDataStoreWKWebsiteDataStore();
+  WKWebViewCookieManager({WKWebsiteDataStore? websiteDataStore})
+    : websiteDataStore =
+          websiteDataStore ?? WKWebsiteDataStore.defaultDataStore;
 
   /// Manages stored data for [WKWebView]s.
   final WKWebsiteDataStore websiteDataStore;
-
-  final WebKitProxy _webKitProxy;
 
   @override
   Future<bool> clearCookies() async {
@@ -40,7 +33,7 @@ class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
     }
 
     return websiteDataStore.httpCookieStore.setCookie(
-      _webKitProxy.newHTTPCookie(
+      HTTPCookie(
         properties: <HttpCookiePropertyKey, Object>{
           HttpCookiePropertyKey.name: cookie.name,
           HttpCookiePropertyKey.value: cookie.value,
