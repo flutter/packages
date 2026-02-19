@@ -1,3 +1,7 @@
+## 7.2.10
+
+* Bumps com.google.android.gms:play-services-auth from 21.4.0 to 21.5.0.
+
 ## 7.2.9
 
 * Simplifies internal code for Kotlin/Java interoperability.
