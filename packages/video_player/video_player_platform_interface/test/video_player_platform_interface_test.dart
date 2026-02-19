@@ -153,7 +153,8 @@ void main() {
       expect(str, contains('bitrate: 5000000'));
       expect(str, contains('width: 1920'));
       expect(str, contains('height: 1080'));
-      expect(str, contains('frameRate: 30.0'));
+      // Accept both '30' and '30.0' (web JS omits trailing .0 for whole-number doubles)
+      expect(str, contains('frameRate: 30'));
       expect(str, contains('codec: avc1'));
     });
   });
