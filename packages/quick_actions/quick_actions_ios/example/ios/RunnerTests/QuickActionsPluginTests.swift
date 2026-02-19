@@ -223,4 +223,110 @@ struct QuickActionsPluginTests {
       plugin.applicationDidBecomeActive(UIApplication.shared)
     }
   }
+
+  // MARK: - Scene lifecycle tests
+
+  @Test func windowScenePerformActionForShortcutItem() async {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let item = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: nil,
+      icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
+      userInfo: nil)
+
+    await confirmation("shortcut should be handled via windowScene") { confirmed in
+      flutterApi.launchActionCallback = { aString in
+        #expect(aString == item.type)
+        confirmed()
+      }
+
+      let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+      let actionResult = plugin.windowScene(
+        windowScene,
+        performActionFor: item
+      ) { success in
+      }
+
+      #expect(actionResult, "windowScene performActionFor must return true.")
+    }
+  }
+
+  @Test func sceneWillConnectToWithoutShortcut() {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let connectResult = plugin.scene(
+      UIApplication.shared.connectedScenes.first!,
+      willConnectTo: UIApplication.shared.connectedScenes.first!.session,
+      options: nil)
+    #expect(
+      !connectResult,
+      "scene willConnectTo must return false if not launched from shortcut.")
+  }
+
+  @Test func sceneDidBecomeActiveLaunchWithoutShortcut() async {
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    let connectResult = plugin.scene(
+      UIApplication.shared.connectedScenes.first!,
+      willConnectTo: UIApplication.shared.connectedScenes.first!.session,
+      options: nil)
+    #expect(!connectResult)
+
+    await confirmation("launchAction should not be called", expectedCount: 0) { confirmed in
+      flutterApi.launchActionCallback = { _ in
+        confirmed()
+      }
+      plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
+    }
+  }
+
+  @Test func sceneDidBecomeActiveLaunchWithShortcut() async {
+    let item = UIApplicationShortcutItem(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      localizedSubtitle: nil,
+      icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
+      userInfo: nil)
+
+    let flutterApi: MockFlutterApi = MockFlutterApi()
+    let mockShortcutItemProvider = MockShortcutItemProvider()
+
+    let plugin = QuickActionsPlugin(
+      flutterApi: flutterApi,
+      shortcutItemProvider: mockShortcutItemProvider)
+
+    await confirmation("shortcut should be handled when scene becomes active") { confirmed in
+      flutterApi.launchActionCallback = { aString in
+        #expect(aString == item.type)
+        confirmed()
+      }
+
+      // Simulate cold start: scene connects with a shortcut item via connectionOptions.
+      // We can't construct UIScene.ConnectionOptions directly, so we simulate the effect
+      // by calling the AppDelegate-style method that sets launchingShortcutType.
+      let launchResult = plugin.application(
+        UIApplication.shared,
+        didFinishLaunchingWithOptions: [UIApplication.LaunchOptionsKey.shortcutItem: item])
+      #expect(!launchResult)
+
+      plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
+    }
+  }
 }
