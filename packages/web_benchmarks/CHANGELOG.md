@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 4.1.0
 
 * Fixes the reported metrics in `expectedBenchmarkMetrics` for wasm.

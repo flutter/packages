@@ -1,3 +1,23 @@
+## 0.7.0+1
+
+* Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return within try blocks are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
+
+## 0.7.0
+
+* Adds video stabilization.
+
+## 0.6.30
+
+* Bump camerax_version from 1.5.2 to 1.5.3.
+
+## 0.6.29
+
+* Modifies lens direction logic to request the value from CameraX directly versus manual detection.
+
+## 0.6.28
+
+* Adds more descriptive error to camera error stream when image capture fails.
+
 ## 0.6.27
 
 * Changes `availableCameras` to get the camera name from `Camera2CameraInfo.getCameraId`.
