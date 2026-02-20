@@ -1,3 +1,7 @@
+## 26.1.8
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
+
 ## 26.1.7
 
 * [objc] Updates to use module imports.
