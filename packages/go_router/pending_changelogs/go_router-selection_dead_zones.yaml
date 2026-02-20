@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `SelectionArea` dead zones after `ShellRoute` or `StatefulShellRoute` navigation caused by offstage pages intercepting drag events.
+version: patch
