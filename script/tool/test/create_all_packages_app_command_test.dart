@@ -491,7 +491,7 @@ android {
         everyElement(
           (String line) =>
               !line.contains('IPHONEOS_DEPLOYMENT_TARGET') ||
-              line.contains('14.0'),
+              line.contains('15.0'),
         ),
       );
     });
