@@ -2,7 +2,7 @@
 
 * Reverts "Throws a more actionable error when init is called more than once."
 
-## 1.1.1
+## 1.1.1 (withdrawn)
 
 * Throws a more actionable error when init is called more than once.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
