@@ -1454,6 +1454,107 @@ void main() {
       reason: 'Should pass mapId on PlatformView creation message',
     );
   });
+
+  group('markerType in creationParams', () {
+    Future<PlatformMarkerType> getMarkerTypeFromCreationParams(
+      WidgetTester tester,
+      MarkerType? markerType,
+    ) async {
+      final passedMarkerTypeCompleter = Completer<PlatformMarkerType>();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform_views, (
+            MethodCall methodCall,
+          ) {
+            if (methodCall.method == 'create') {
+              final args = Map<String, dynamic>.from(
+                methodCall.arguments as Map<dynamic, dynamic>,
+              );
+              if (args.containsKey('params')) {
+                final paramsUint8List = args['params'] as Uint8List;
+                final byteData = ByteData.sublistView(paramsUint8List);
+                final creationParams =
+                    MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                        as PlatformMapViewCreationParams?;
+                if (creationParams != null &&
+                    !passedMarkerTypeCompleter.isCompleted) {
+                  passedMarkerTypeCompleter.complete(
+                    creationParams.mapConfiguration.markerType,
+                  );
+                }
+              }
+            }
+            return null;
+          });
+
+      final maps = GoogleMapsFlutterIOS();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: maps.buildViewWithConfiguration(
+            1,
+            (int id) {},
+            widgetConfiguration: const MapWidgetConfiguration(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(0, 0),
+                zoom: 1,
+              ),
+              textDirection: TextDirection.ltr,
+            ),
+            mapConfiguration: MapConfiguration(markerType: markerType),
+          ),
+        ),
+      );
+
+      return passedMarkerTypeCompleter.future;
+    }
+
+    testWidgets('passes advancedMarker when MarkerType.advancedMarker is set', (
+      WidgetTester tester,
+    ) async {
+      final PlatformMarkerType passedMarkerType =
+          await getMarkerTypeFromCreationParams(
+            tester,
+            MarkerType.advancedMarker,
+          );
+
+      expect(
+        passedMarkerType,
+        PlatformMarkerType.advancedMarker,
+        reason:
+            'Should pass advancedMarker on PlatformView creation when MarkerType.advancedMarker is set',
+      );
+    });
+
+    testWidgets('passes marker when MarkerType.marker is set', (
+      WidgetTester tester,
+    ) async {
+      final PlatformMarkerType passedMarkerType =
+          await getMarkerTypeFromCreationParams(tester, MarkerType.marker);
+
+      expect(
+        passedMarkerType,
+        PlatformMarkerType.marker,
+        reason:
+            'Should pass marker on PlatformView creation when MarkerType.marker is set',
+      );
+    });
+
+    testWidgets('passes marker when markerType is null', (
+      WidgetTester tester,
+    ) async {
+      final PlatformMarkerType passedMarkerType =
+          await getMarkerTypeFromCreationParams(tester, null);
+
+      expect(
+        passedMarkerType,
+        PlatformMarkerType.marker,
+        reason:
+            'Should default to marker on PlatformView creation when markerType is null',
+      );
+    });
+  });
 }
 
 void _expectColorsEqual(PlatformColor actual, Color expected) {
