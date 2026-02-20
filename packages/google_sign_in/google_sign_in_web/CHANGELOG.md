@@ -1,3 +1,7 @@
+## 1.1.3
+
+* Fix `renderButton` being stuck on "Getting ready" on web due to incorrect `FutureBuilder` state check.
+
 ## 1.1.2
 
 * Reverts "Throws a more actionable error when init is called more than once."
@@ -253,3 +257,4 @@
 ## 0.8.0
 
 * Flutter for web initial release
+
