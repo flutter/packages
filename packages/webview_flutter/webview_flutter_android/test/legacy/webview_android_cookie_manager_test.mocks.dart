@@ -6,6 +6,7 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i4;
 import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -81,6 +82,19 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+
+  @override
+  _i3.Future<String> getCookies(String? domain) =>
+      (super.noSuchMethod(
+            Invocation.method(#getCookies, [domain]),
+            returnValue: _i3.Future<String>.value(
+              _i4.dummyValue<String>(
+                this,
+                Invocation.method(#getCookies, [domain]),
+              ),
+            ),
+          )
+          as _i3.Future<String>);
 
   @override
   _i2.CookieManager pigeon_copy() =>

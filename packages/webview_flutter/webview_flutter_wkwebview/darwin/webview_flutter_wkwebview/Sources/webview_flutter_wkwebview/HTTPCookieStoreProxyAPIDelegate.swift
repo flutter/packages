@@ -11,11 +11,23 @@ import WebKit
 /// or handle method calls on the associated native class or an instance of that class.
 class HTTPCookieStoreProxyAPIDelegate: PigeonApiDelegateWKHTTPCookieStore {
   func setCookie(
-    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie,
+    pigeonApi: PigeonApiWKHTTPCookieStore,
+    pigeonInstance: WKHTTPCookieStore,
+    cookie: HTTPCookie,
     completion: @escaping (Result<Void, Error>) -> Void
   ) {
     pigeonInstance.setCookie(cookie) {
       completion(.success(Void()))
     }
   }
+
+  func getAllCookies(
+    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore,
+    completion: @escaping (Result<[HTTPCookie], any Error>) -> Void
+  ) {
+    pigeonInstance.getAllCookies { cookies in
+      completion(.success(cookies))
+    }
+  }
+
 }
