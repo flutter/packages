@@ -49,10 +49,9 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
 import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchaseHistoryParams;
+import com.android.billingclient.api.QueryProductDetailsResult;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
@@ -65,7 +64,6 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
@@ -99,7 +97,7 @@ public class MethodCallHandlerTest {
   @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
-  @Spy Messages.Result<PlatformPurchaseHistoryResponse> platformPurchaseHistoryResult;
+
   @Spy Messages.Result<PlatformPurchasesResponse> platformPurchasesResult;
 
   @Mock Activity activity;
@@ -577,13 +575,20 @@ public class MethodCallHandlerTest {
     // Assert that we handed result BillingClient's response
     List<ProductDetails> productDetailsResponse = singletonList(buildProductDetails("foo"));
     BillingResult billingResult = buildBillingResult();
-    listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
+
+    QueryProductDetailsResult mockProductDetailsResult = mock(QueryProductDetailsResult.class);
+    when(mockProductDetailsResult.getProductDetailsList()).thenReturn(productDetailsResponse);
+    when(mockProductDetailsResult.getUnfetchedProductList())
+        .thenReturn(java.util.Collections.emptyList());
+
+    listenerCaptor.getValue().onProductDetailsResponse(billingResult, mockProductDetailsResult);
     ArgumentCaptor<PlatformProductDetailsResponse> resultCaptor =
         ArgumentCaptor.forClass(PlatformProductDetailsResponse.class);
     verify(platformProductDetailsResult).success(resultCaptor.capture());
     PlatformProductDetailsResponse resultData = resultCaptor.getValue();
     assertResultsMatch(resultData.getBillingResult(), billingResult);
     assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
+    assertTrue(resultData.getUnfetchedProductList().isEmpty());
   }
 
   @Test
@@ -977,51 +982,6 @@ public class MethodCallHandlerTest {
   }
 
   @Test
-  @SuppressWarnings(value = "deprecation")
-  public void queryPurchaseHistoryAsync() {
-    // Set up an established billing client and all our mocked responses
-    establishConnectedBillingClient();
-    BillingResult billingResult = buildBillingResult();
-    final String purchaseToken = "foo";
-    List<PurchaseHistoryRecord> purchasesList =
-        singletonList(buildPurchaseHistoryRecord(purchaseToken));
-    ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
-        ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
-
-    methodChannelHandler.queryPurchaseHistoryAsync(
-        PlatformProductType.INAPP, platformPurchaseHistoryResult);
-
-    // Verify we pass the data to result
-    verify(mockBillingClient)
-        .queryPurchaseHistoryAsync(any(QueryPurchaseHistoryParams.class), listenerCaptor.capture());
-    listenerCaptor.getValue().onPurchaseHistoryResponse(billingResult, purchasesList);
-    ArgumentCaptor<PlatformPurchaseHistoryResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformPurchaseHistoryResponse.class);
-    verify(platformPurchaseHistoryResult).success(resultCaptor.capture());
-    PlatformPurchaseHistoryResponse result = resultCaptor.getValue();
-    assertResultsMatch(result.getBillingResult(), billingResult);
-    assertEquals(1, result.getPurchases().size());
-    assertEquals(purchaseToken, result.getPurchases().get(0).getPurchaseToken());
-  }
-
-  @Test
-  @SuppressWarnings(value = "deprecation")
-  public void queryPurchaseHistoryAsync_clientDisconnected() {
-    methodChannelHandler.endConnection();
-
-    methodChannelHandler.queryPurchaseHistoryAsync(
-        PlatformProductType.INAPP, platformPurchaseHistoryResult);
-
-    // Assert that the async call returns an error result.
-    verify(platformPurchaseHistoryResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformPurchaseHistoryResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
-  }
-
-  @Test
   public void onPurchasesUpdatedListener() {
     PluginPurchaseListener listener = new PluginPurchaseListener(mockCallbackApi);
 
@@ -1177,7 +1137,11 @@ public class MethodCallHandlerTest {
         productIdList.stream().map(this::buildProductDetails).collect(toList());
 
     BillingResult billingResult = buildBillingResult();
-    listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
+    QueryProductDetailsResult mockProductDetailsResult = mock(QueryProductDetailsResult.class);
+    when(mockProductDetailsResult.getProductDetailsList()).thenReturn(productDetailsResponse);
+    when(mockProductDetailsResult.getUnfetchedProductList())
+        .thenReturn(java.util.Collections.emptyList());
+    listenerCaptor.getValue().onProductDetailsResponse(billingResult, mockProductDetailsResult);
   }
 
   private List<PlatformQueryProduct> buildProductList(

@@ -37,9 +37,11 @@ class PlatformBillingResult {
   PlatformBillingResult({
     required this.responseCode,
     required this.debugMessage,
+    this.subResponseCode = 0,
   });
   final PlatformBillingResponse responseCode;
   final String debugMessage;
+  final int subResponseCode;
 }
 
 /// Pigeon version of Java BillingClient.BillingResponseCode.
@@ -81,6 +83,7 @@ class PlatformProductDetails {
     required this.productType,
     required this.title,
     required this.oneTimePurchaseOfferDetails,
+    required this.oneTimePurchaseOfferDetailsList,
     required this.subscriptionOfferDetails,
   });
 
@@ -90,6 +93,8 @@ class PlatformProductDetails {
   final PlatformProductType productType;
   final String title;
   final PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
+  final List<PlatformOneTimePurchaseOfferDetails>?
+  oneTimePurchaseOfferDetailsList;
   final List<PlatformSubscriptionOfferDetails>? subscriptionOfferDetails;
 }
 
@@ -99,10 +104,12 @@ class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
     required this.productDetails,
+    required this.unfetchedProductList,
   });
 
   final PlatformBillingResult billingResult;
   final List<PlatformProductDetails> productDetails;
+  final List<PlatformUnfetchedProduct> unfetchedProductList;
 }
 
 /// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
@@ -344,6 +351,13 @@ class PlatformPendingPurchasesParams {
   final bool enablePrepaidPlans;
 }
 
+/// Pigeon version of Java [UnfetchedProduct](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
+class PlatformUnfetchedProduct {
+  PlatformUnfetchedProduct({required this.productId});
+
+  final String productId;
+}
+
 /// Pigeon version of Java BillingClient.ProductType.
 enum PlatformProductType { inapp, subs }
 
@@ -413,12 +427,6 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
   @async
   PlatformPurchasesResponse queryPurchasesAsync(
-    PlatformProductType productType,
-  );
-
-  /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
-  @async
-  PlatformPurchaseHistoryResponse queryPurchaseHistoryAsync(
     PlatformProductType productType,
   );
 

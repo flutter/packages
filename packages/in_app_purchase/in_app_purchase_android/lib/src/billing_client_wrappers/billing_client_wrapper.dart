@@ -249,29 +249,6 @@ class BillingClient {
     );
   }
 
-  /// Fetches purchase history for the given [ProductType].
-  ///
-  /// Unlike [queryPurchases], this makes a network request via Play and returns
-  /// the most recent purchase for each [ProductDetailsWrapper] of the given
-  /// [ProductType] even if the item is no longer owned.
-  ///
-  /// All purchase information should also be verified manually, with your
-  /// server if at all possible. See ["Verify a
-  /// purchase"](https://developer.android.com/google/play/billing/billing_library_overview#Verify).
-  ///
-  /// This wraps
-  /// [`BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchaseHistoryAsync(com.android.billingclient.api.QueryPurchaseHistoryParams,%20com.android.billingclient.api.PurchaseHistoryResponseListener)).
-  @Deprecated('Use queryPurchases')
-  Future<PurchasesHistoryResult> queryPurchaseHistory(
-    ProductType productType,
-  ) async {
-    return purchaseHistoryResultFromPlatform(
-      await _hostApi.queryPurchaseHistoryAsync(
-        platformProductTypeFromWrapper(productType),
-      ),
-    );
-  }
-
   /// Consumes a given in-app product.
   ///
   /// Consuming can only be done on an item that's owned, and as a result of consumption, the user will no longer own it.
