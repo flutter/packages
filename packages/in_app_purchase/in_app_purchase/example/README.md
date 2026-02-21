@@ -58,6 +58,14 @@ below.
 8. Sign in to the test device with the test account from step #7. Then use
    `flutter run` to install the app to the device and test like normal.
 
+**Important:** The dependency snippet shown in the Google Play Billing Overview setup guide:
+```
+implementation "com.android.billingclient:billing:$billing_version"
+```
+should not be manually added when using this plugin.
+
+The plugin already manages the billing client dependency internally, and adding it manually may cause build conflicts or prevent the app from connecting to the Play Store billing service.
+
 ### iOS
 
 When using Xcode 12 and iOS 14 or higher you can run the example in the simulator or on a device without 
