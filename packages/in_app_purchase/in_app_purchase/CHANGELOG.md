@@ -5,6 +5,7 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Clarifies in the example's `README.md` that the Android billing dependency should not be added manually.
 
 ## 3.2.3
 * Updates minimum `in_app_purchase_storekit` version to 0.4.0.
