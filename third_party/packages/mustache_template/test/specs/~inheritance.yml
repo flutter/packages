@@ -1,0 +1,326 @@
+overview: |
+  Like partials, Parent tags are used to expand an external template into the
+  current template. Unlike partials, Parent tags may contain optional
+  arguments delimited by Block tags. For this reason, Parent tags may also be
+  referred to as Parametric Partials.
+
+  The Parent tags' content MUST be a non-whitespace character sequence NOT
+  containing the current closing delimiter; each Parent tag MUST be followed by
+  an End Section tag with the same content within the matching Parent tag.
+
+  This tag's content names the Parent template to inject. Set Delimiter tags
+  Preceding a Parent tag MUST NOT affect the parsing of the injected external
+  template. The Parent MUST be rendered against the context stack local to the
+  tag. If the named Parent cannot be found, the empty string SHOULD be used
+  instead, as in interpolations.
+
+  Parent tags SHOULD be treated as standalone when appropriate. If this tag is
+  used standalone, any whitespace preceding the tag should be treated as
+  indentation, and prepended to each line of the Parent before rendering.
+
+  The Block tags' content MUST be a non-whitespace character sequence NOT
+  containing the current closing delimiter. Each Block tag MUST be followed by
+  an End Section tag with the same content within the matching Block tag. This
+  tag's content determines the parameter or argument name.
+
+  Block tags may appear both inside and outside of Parent tags. In both cases,
+  they specify a position within the template that can be overridden; it is a
+  parameter of the containing template. The template text between the Block tag
+  and its matching End Section tag defines the default content to render when
+  the parameter is not overridden from outside.
+
+  In addition, when used inside of a Parent tag, the template text between a
+  Block tag and its matching End Section tag defines content that replaces the
+  default defined in the Parent template. This content is the argument passed
+  to the Parent template.
+
+  The practice of injecting an external template using a Parent tag is referred
+  to as inheritance. If the Parent tag includes a Block tag that overrides a
+  parameter of the Parent template, this may also be referred to as
+  substitution.
+
+  Parent templates are taken from the same namespace as regular Partial
+  templates and in fact, injecting a regular Partial is exactly equivalent to
+  injecting a Parent without making any substitutions. Parameter and arguments
+  names live in a namespace that is distinct from both Partials and the context.
+tests:
+  - name: Default
+    desc: Default content should be rendered if the block isn't overridden
+    data: { }
+    template: |
+      {{$title}}Default title{{/title}}
+    expected: |
+      Default title
+
+  - name: Variable
+    desc: Default content renders variables
+    data: { bar: 'baz' }
+    template: |
+      {{$foo}}default {{bar}} content{{/foo}}
+    expected: |
+      default baz content
+
+  - name: Triple Mustache
+    desc: Default content renders triple mustache variables
+    data: { bar: '<baz>' }
+    template: |
+      {{$foo}}default {{{bar}}} content{{/foo}}
+    expected: |
+      default <baz> content
+
+  - name: Sections
+    desc: Default content renders sections
+    data: { bar: {baz: 'qux'} }
+    template: |
+      {{$foo}}default {{#bar}}{{baz}}{{/bar}} content{{/foo}}
+    expected: |
+      default qux content
+
+  - name: Negative Sections
+    desc: Default content renders negative sections
+    data: { baz: 'three' }
+    template: |
+      {{$foo}}default {{^bar}}{{baz}}{{/bar}} content{{/foo}}
+    expected: |
+      default three content
+
+  - name: Mustache Injection
+    desc: Mustache injection in default content
+    data: {bar: {baz: '{{qux}}'} }
+    template: |
+      {{$foo}}default {{#bar}}{{baz}}{{/bar}} content{{/foo}}
+    expected: |
+      default {{qux}} content
+
+  - name: Inherit
+    desc: Default content rendered inside inherited templates
+    data: { }
+    template: |
+      {{<include}}{{/include}}
+    partials:
+      include: "{{$foo}}default content{{/foo}}"
+    expected: "default content"
+
+  - name: Overridden content
+    desc: Overridden content
+    data: { }
+    template: "{{<super}}{{$title}}sub template title{{/title}}{{/super}}"
+    partials:
+      super: "...{{$title}}Default title{{/title}}..."
+    expected: "...sub template title..."
+
+  - name: Data does not override block
+    desc: Context does not override argument passed into parent
+    data: { var: 'var in data' }
+    template: "{{<include}}{{$var}}var in template{{/var}}{{/include}}"
+    partials:
+      include: "{{$var}}var in include{{/var}}"
+    expected: "var in template"
+
+  - name: Data does not override block default
+    desc: Context does not override default content of block
+    data: { var: 'var in data' }
+    template: "{{<include}}{{/include}}"
+    partials:
+      include: "{{$var}}var in include{{/var}}"
+    expected: "var in include"
+
+  - name: Overridden parent
+    desc: Overridden parent
+    data: { }
+    template: "test {{<parent}}{{$stuff}}override{{/stuff}}{{/parent}}"
+    partials:
+      parent: "{{$stuff}}...{{/stuff}}"
+    expected: "test override"
+
+  - name: Two overridden parents
+    desc: Two overridden parents with different content
+    data: { }
+    template: |
+      test {{<parent}}{{$stuff}}override1{{/stuff}}{{/parent}} {{<parent}}{{$stuff}}override2{{/stuff}}{{/parent}}
+    partials:
+      parent: "|{{$stuff}}...{{/stuff}}{{$default}} default{{/default}}|"
+    expected: |
+      test |override1 default| |override2 default|
+
+  - name: Override parent with newlines
+    desc: Override parent with newlines
+    data: { }
+    template: "{{<parent}}{{$ballmer}}\npeaked\n\n:(\n{{/ballmer}}{{/parent}}"
+    partials:
+      parent: "{{$ballmer}}peaking{{/ballmer}}"
+    expected: "peaked\n\n:(\n"
+
+  - name: Inherit indentation
+    desc: Inherit indentation when overriding a parent
+    data: { }
+    template: "{{<parent}}{{$nineties}}hammer time{{/nineties}}{{/parent}}"
+    partials:
+      parent: |
+        stop:
+          {{$nineties}}collaborate and listen{{/nineties}}
+    expected: |
+      stop:
+        hammer time
+
+  - name: Only one override
+    desc: Override one parameter but not the other
+    data: { }
+    template: "{{<parent}}{{$stuff2}}override two{{/stuff2}}{{/parent}}"
+    partials:
+      parent: "{{$stuff}}new default one{{/stuff}}, {{$stuff2}}new default two{{/stuff2}}"
+    expected: "new default one, override two"
+
+  - name: Parent template
+    desc: Parent templates behave identically to partials when called with no parameters
+    data: { }
+    template: "{{>parent}}|{{<parent}}{{/parent}}"
+    partials:
+      parent: "{{$foo}}default content{{/foo}}"
+    expected: "default content|default content"
+
+  - name: Recursion
+    desc: Recursion in inherited templates
+    data: {}
+    template: "{{<parent}}{{$foo}}override{{/foo}}{{/parent}}"
+    partials:
+      parent: "{{$foo}}default content{{/foo}} {{$bar}}{{<parent2}}{{/parent2}}{{/bar}}"
+      parent2: "{{$foo}}parent2 default content{{/foo}} {{<parent}}{{$bar}}don't recurse{{/bar}}{{/parent}}"
+    expected: "override override override don't recurse"
+
+  - name: Multi-level inheritance
+    desc: Top-level substitutions take precedence in multi-level inheritance
+    data: { }
+    template: "{{<parent}}{{$a}}c{{/a}}{{/parent}}"
+    partials:
+      parent: "{{<older}}{{$a}}p{{/a}}{{/older}}"
+      older: "{{<grandParent}}{{$a}}o{{/a}}{{/grandParent}}"
+      grandParent: "{{$a}}g{{/a}}"
+    expected: c
+
+  - name: Multi-level inheritance, no sub child
+    desc: Top-level substitutions take precedence in multi-level inheritance
+    data: { }
+    template: "{{<parent}}{{/parent}}"
+    partials:
+      parent: "{{<older}}{{$a}}p{{/a}}{{/older}}"
+      older: "{{<grandParent}}{{$a}}o{{/a}}{{/grandParent}}"
+      grandParent: "{{$a}}g{{/a}}"
+    expected: p
+
+  - name: Text inside parent
+    desc: Ignores text inside parent templates, but does parse $ tags
+    data: { }
+    template: "{{<parent}} asdfasd {{$foo}}hmm{{/foo}} asdfasdfasdf {{/parent}}"
+    partials:
+      parent: "{{$foo}}default content{{/foo}}"
+    expected:
+      hmm
+
+  - name: Text inside parent
+    desc: Allows text inside a parent tag, but ignores it
+    data: {}
+    template: "{{<parent}} asdfasd asdfasdfasdf {{/parent}}"
+    partials:
+      parent: "{{$foo}}default content{{/foo}}"
+    expected: default content
+
+  - name: Block scope
+    desc: Scope of a substituted block is evaluated in the context of the parent template
+    data:
+      fruit: apples
+      nested:
+        fruit: bananas
+    template: "{{<parent}}{{$block}}I say {{fruit}}.{{/block}}{{/parent}}"
+    partials:
+      parent: "{{#nested}}{{$block}}You say {{fruit}}.{{/block}}{{/nested}}"
+    expected: I say bananas.
+
+  - name: Standalone parent
+    desc: A parent's opening and closing tags need not be on separate lines in order to be standalone
+    data: {}
+    template: |
+      Hi,
+        {{<parent}}{{/parent}}
+    partials:
+      parent: |
+        one
+        two
+    expected: |
+      Hi,
+        one
+        two
+
+  - name: Standalone block
+    desc: A block's opening and closing tags need not be on separate lines in order to be standalone
+    data: {}
+    template: |
+      {{<parent}}{{$block}}
+      one
+      two{{/block}}
+      {{/parent}}
+    partials:
+      parent: |
+        Hi,
+          {{$block}}{{/block}}
+    expected: |
+      Hi,
+        one
+        two
+
+  - name: Block reindentation
+    desc: Block indentation is removed at the site of definition and added at the site of expansion
+    data: {}
+    template: |
+      {{<parent}}{{$block}}
+          one
+          two
+      {{/block}}{{/parent}}
+    partials:
+      parent: |
+        Hi,
+          {{$block}}
+          {{/block}}
+    expected: |
+      Hi,
+        one
+        two
+
+  - name: Intrinsic indentation
+    desc: When the block opening tag is standalone, indentation is determined by default content
+    data: {}
+    template: |
+      {{<parent}}{{$block}}
+      one
+      two
+      {{/block}}{{/parent}}
+    partials:
+      parent: |
+        Hi,
+        {{$block}}
+          default
+        {{/block}}
+    expected: |
+      Hi,
+        one
+        two
+
+  - name: Nested block reindentation
+    desc: Nested blocks are reindented relative to the surrounding block
+    data: {}
+    template: |
+      {{<parent}}{{$nested}}
+      three
+      {{/nested}}{{/parent}}
+    partials:
+      parent: |
+        {{<grandparent}}{{$block}}
+          one
+          {{$nested}}
+            two
+          {{/nested}}
+        {{/block}}{{/grandparent}}
+      grandparent: "{{$block}}default{{/block}}"
+    expected: |
+      one
+        three
