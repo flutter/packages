@@ -47,6 +47,11 @@ enum RenderingStrategy {
 typedef VectorGraphicsErrorWidget =
     Widget Function(BuildContext context, Object error, StackTrace stackTrace);
 
+/// The signature that [VectorGraphic.imageBuilder] uses to wrap the
+/// successfully loaded vector graphic widget.
+typedef VectorGraphicsImageWidget =
+    Widget Function(BuildContext context, Widget child);
+
 /// A vector graphic/flutter_svg compatibility shim.
 VectorGraphic createCompatVectorGraphic({
   Key? key,
@@ -61,6 +66,7 @@ VectorGraphic createCompatVectorGraphic({
   Duration? transitionDuration,
   WidgetBuilder? placeholderBuilder,
   VectorGraphicsErrorWidget? errorBuilder,
+  VectorGraphicsImageWidget? imageBuilder,
   ColorFilter? colorFilter,
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
@@ -80,6 +86,7 @@ VectorGraphic createCompatVectorGraphic({
     transitionDuration: transitionDuration,
     placeholderBuilder: placeholderBuilder,
     errorBuilder: errorBuilder,
+    imageBuilder: imageBuilder,
     colorFilter: colorFilter,
     opacity: opacity,
     strategy: strategy,
@@ -120,6 +127,7 @@ class VectorGraphic extends StatefulWidget {
     this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
+    this.imageBuilder,
     this.colorFilter,
     this.opacity,
     this.clipViewbox = true,
@@ -140,6 +148,7 @@ class VectorGraphic extends StatefulWidget {
     this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
+    this.imageBuilder,
     this.colorFilter,
     this.opacity,
     this.strategy = RenderingStrategy.picture,
@@ -218,6 +227,13 @@ class VectorGraphic extends StatefulWidget {
 
   /// A callback that fires if some exception happens during data acquisition or decoding.
   final VectorGraphicsErrorWidget? errorBuilder;
+
+  /// A builder that wraps the successfully loaded vector graphic widget.
+  ///
+  /// This builder is only called when the vector graphic has been successfully
+  /// loaded and is ready to be painted. It can be used to apply decorations
+  /// such as borders or shadows only when the image is available.
+  final VectorGraphicsImageWidget? imageBuilder;
 
   /// Set transition duration while switching from placeholder to url image
   final Duration? transitionDuration;
@@ -517,6 +533,10 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           child: SizedBox.fromSize(size: pictureInfo.size, child: child),
         ),
       );
+
+      if (widget.imageBuilder != null) {
+        child = widget.imageBuilder!(context, child);
+      }
     } else if (_error != null && widget.errorBuilder != null) {
       child = widget.errorBuilder!(
         context,

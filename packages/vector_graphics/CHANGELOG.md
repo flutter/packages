@@ -1,6 +1,7 @@
-## NEXT
+## 1.1.20
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds `imageBuilder` property to `VectorGraphic` for wrapping the loaded vector graphic widget.
 
 ## 1.1.19
 

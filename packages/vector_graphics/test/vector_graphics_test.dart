@@ -690,6 +690,70 @@ void main() {
     expect(matrix.row1.y, 1);
   });
 
+  testWidgets('imageBuilder wraps the loaded vector graphic', (
+    WidgetTester tester,
+  ) async {
+    final buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 100, 200);
+    final ByteData data = buffer.done();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: VectorGraphic(
+          loader: TestBytesLoader(data),
+          imageBuilder: (BuildContext context, Widget child) {
+            return Container(
+              key: const ValueKey<String>('image-builder'),
+              child: child,
+            );
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey<String>('image-builder')), findsOneWidget);
+  });
+
+  testWidgets('imageBuilder is not called during placeholder state', (
+    WidgetTester tester,
+  ) async {
+    final completer = Completer<ByteData>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: VectorGraphic(
+          loader: DelayedBytesLoader(completer.future),
+          imageBuilder: (BuildContext context, Widget child) {
+            return Container(
+              key: const ValueKey<String>('image-builder'),
+              child: child,
+            );
+          },
+          placeholderBuilder: (BuildContext context) {
+            return Container(key: const ValueKey<String>('placeholder'));
+          },
+        ),
+      ),
+    );
+
+    // During loading: placeholder visible, imageBuilder not called
+    expect(find.byKey(const ValueKey<String>('placeholder')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('image-builder')), findsNothing);
+
+    // Complete loading
+    final buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 100, 200);
+    completer.complete(buffer.done());
+    await tester.pumpAndSettle();
+
+    // After loading: imageBuilder visible, placeholder gone
+    expect(find.byKey(const ValueKey<String>('image-builder')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('placeholder')), findsNothing);
+  });
+
   testWidgets('VectorGraphicsWidget can handle errors from bytes loader', (
     WidgetTester tester,
   ) async {
