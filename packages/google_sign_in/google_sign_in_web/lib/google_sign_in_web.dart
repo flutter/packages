@@ -280,7 +280,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       key: Key(config.hashCode.toString()),
       future: initialized,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done) {
           return FlexHtmlElementView(
             viewType: 'gsi_login_button',
             onElementCreated: (Object element) {

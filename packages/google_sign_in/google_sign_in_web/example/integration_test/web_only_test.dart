@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'package:google_sign_in_web/google_sign_in_web.dart'
     show GoogleSignInPlugin;
+import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:google_sign_in_web/src/gis_client.dart';
 import 'package:google_sign_in_web/web_only.dart' as web;
 import 'package:integration_test/integration_test.dart';
@@ -59,6 +60,22 @@ void main() {
       final Widget button = web.renderButton();
 
       expect(button, isNotNull);
+    });
+
+    testWidgets('renderButton shows loading then renders button', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: web.renderButton())),
+      );
+
+      expect(find.text('Getting ready'), findsOneWidget);
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      expect(find.text('Getting ready'), findsNothing);
+
+      expect(find.byType(FlexHtmlElementView), findsOneWidget);
     });
   });
 }
