@@ -40,4 +40,64 @@ void main() {
   test('default implementation isAudioTrackSupportAvailable returns false', () {
     expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
+
+  test(
+    'default implementation enablePictureInPicture throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.enablePictureInPicture(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation disablePictureInPicture throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.disablePictureInPicture(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation startPictureInPicture throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.startPictureInPicture(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation stopPictureInPicture throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.stopPictureInPicture(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation isPictureInPictureSupported throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.isPictureInPictureSupported(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation isPictureInPictureActive throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.isPictureInPictureActive(1),
+        throwsUnimplementedError,
+      );
+    },
+  );
 }
