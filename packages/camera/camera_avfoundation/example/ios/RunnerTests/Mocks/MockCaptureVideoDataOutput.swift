@@ -17,6 +17,7 @@ class MockCaptureVideoDataOutput: NSObject, CaptureVideoDataOutput {
   var avOutput = AVCaptureVideoDataOutput()
   var alwaysDiscardsLateVideoFrames = false
   var videoSettings: [String: Any]! = [:]
+  var availableVideoPixelFormatTypes: [FourCharCode] = []
 
   var connectionWithMediaTypeStub: ((AVMediaType) -> CaptureConnection?)?
 
