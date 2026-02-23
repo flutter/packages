@@ -110,44 +110,35 @@ String decodeParameter(
   }
 
   for (final _TypeHelper helper in _helpers) {
-    if (annotatedDecoder != null || helper._matchesType(paramType)) {
-      var decoder = annotatedDecoder;
-      String decoded;
-      if (decoder != null) {
-        decoded = '';
-      } else {
-        ElementAnnotation? annotation;
-        for (final ElementAnnotation element
-            in metadata ?? <ElementAnnotation>[]) {
-          if (element.computeConstantValue()?.type?.getDisplayString() ==
-              'CustomParameterCodec') {
-            annotation = element;
-            break;
-          }
+    if (helper._matchesType(paramType)) {
+      String? decoder;
+      final ElementAnnotation? annotation = metadata?.firstWhereOrNull((
+        ElementAnnotation annotation,
+      ) {
+        return annotation.computeConstantValue()?.type?.getDisplayString() ==
+            'CustomParameterCodec';
+      });
+      if (annotation != null) {
+        final String? decode = _getCustomCodec(annotation, 'decode');
+        final String? encode = _getCustomCodec(annotation, 'encode');
+        if (decode != null && encode != null) {
+          decoder = decode;
+        } else {
+          throw InvalidGenerationSourceError(
+            'The parameter type '
+            '`${withoutNullability(paramType.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            element: element,
+          );
         }
-        if (annotation != null) {
-          final String? decode = _getCustomCodec(annotation, 'decode');
-          final String? encode = _getCustomCodec(annotation, 'encode');
-          if (decode != null && encode != null) {
-            decoder = decode;
-          } else {
-            throw InvalidGenerationSourceError(
-              'The parameter type '
-              '`${withoutNullability(paramType.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
-              element: element,
-            );
-          }
-        }
-        decoded = helper._decode(element, pathParameters, decoder);
       }
-
+      String decoded = helper._decode(element, pathParameters, decoder);
       if (element.isOptional && element.hasDefaultValue) {
         if (element.type.isNullableType) {
           throw NullableDefaultValueError(element);
         }
         decoded += ' ?? ${element.defaultValueCode!}';
       }
-      if (helper is _TypeHelperString && decoder != null) {
+      if (helper is _TypeHelperString) {
         return _fieldWithEncoder(decoded, decoder);
       }
       return decoded;
@@ -983,7 +974,7 @@ extension ExecutableElementExtension on ExecutableElement {
 
     if (this is ConstructorElement) {
       // The default constructor.
-      if (name == 'new') {
+      if ((name?.isEmpty ?? false) || name == 'new') {
         return enclosingElement!.name!;
       }
       return '${enclosingElement!.name}.$name';
