@@ -1,42 +1,49 @@
-// Copyright 2013 The Flutter Authors
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
-
-import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'custom_marker_icon.dart';
 import 'page.dart';
 
-class PlaceMarkerPage extends GoogleMapExampleAppPage {
-  const PlaceMarkerPage({Key? key})
-    : super(const Icon(Icons.place), 'Place marker', key: key);
+/// Page demonstrating how to use Advanced [Marker] class.
+class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
+  /// Default constructor.
+  const PlaceAdvancedMarkerPage({Key? key, required this.mapId})
+    : super(
+        const Icon(Icons.place_outlined),
+        'Place advanced marker',
+        key: key,
+      );
+
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceMarkerBody();
+    return _PlaceAdvancedMarkerBody(mapId: mapId);
   }
 }
 
-class _PlaceMarkerBody extends StatefulWidget {
-  const _PlaceMarkerBody();
+class _PlaceAdvancedMarkerBody extends StatefulWidget {
+  const _PlaceAdvancedMarkerBody({required this.mapId});
+
+  final String? mapId;
 
   @override
-  State<StatefulWidget> createState() => _PlaceMarkerBodyState();
+  State<StatefulWidget> createState() => _PlaceAdvancedMarkerBodyState();
 }
 
-class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
-  _PlaceMarkerBodyState();
+class _PlaceAdvancedMarkerBodyState extends State<_PlaceAdvancedMarkerBody> {
+  _PlaceAdvancedMarkerBodyState();
   static const LatLng center = LatLng(-33.86711, 151.1947171);
 
   GoogleMapController? controller;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<MarkerId, AdvancedMarker> markers = <MarkerId, AdvancedMarker>{};
   MarkerId? selectedMarker;
   int _markerIdCounter = 1;
   LatLng? markerPosition;
@@ -48,19 +55,22 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   void _onMarkerTapped(MarkerId markerId) {
-    final Marker? tappedMarker = markers[markerId];
+    final AdvancedMarker? tappedMarker = markers[markerId];
     if (tappedMarker != null) {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = copyWithSelectedState(
+          final AdvancedMarker resetOld = copyWithSelectedState(
             markers[previousMarkerId]!,
             false,
           );
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = copyWithSelectedState(tappedMarker, true);
+        final AdvancedMarker newMarker = copyWithSelectedState(
+          tappedMarker,
+          true,
+        );
         markers[markerId] = newMarker;
 
         markerPosition = null;
@@ -75,7 +85,7 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
-    final Marker? tappedMarker = markers[markerId];
+    final AdvancedMarker? tappedMarker = markers[markerId];
     if (tappedMarker != null) {
       setState(() {
         markerPosition = null;
@@ -113,16 +123,17 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
       return;
     }
 
-    final markerIdVal = 'marker_id_$_markerIdCounter';
+    final String markerIdVal = 'marker_id_$_markerIdCounter';
     _markerIdCounter++;
-    final markerId = MarkerId(markerIdVal);
+    final MarkerId markerId = MarkerId(markerIdVal);
 
-    final marker = Marker(
+    final AdvancedMarker marker = AdvancedMarker(
       markerId: markerId,
       position: LatLng(
         center.latitude + sin(_markerIdCounter * pi / 6.0) / 20.0,
         center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
       ),
+      icon: _getMarkerBitmapDescriptor(isSelected: false),
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
       onTap: () => _onMarkerTapped(markerId),
       onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
@@ -134,6 +145,14 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
     });
   }
 
+  BitmapDescriptor _getMarkerBitmapDescriptor({required bool isSelected}) {
+    return BitmapDescriptor.pinConfig(
+      backgroundColor: isSelected ? Colors.blue : Colors.white,
+      borderColor: isSelected ? Colors.white : Colors.blue,
+      glyph: CircleGlyph(color: isSelected ? Colors.white : Colors.blue),
+    );
+  }
+
   void _remove(MarkerId markerId) {
     setState(() {
       if (markers.containsKey(markerId)) {
@@ -143,9 +162,9 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   void _changePosition(MarkerId markerId) {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     final LatLng current = marker.position;
-    final offset = Offset(
+    final Offset offset = Offset(
       center.latitude - current.latitude,
       center.longitude - current.longitude,
     );
@@ -160,18 +179,18 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   void _changeAnchor(MarkerId markerId) {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     final Offset currentAnchor = marker.anchor;
-    final newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
+    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
       markers[markerId] = marker.copyWith(anchorParam: newAnchor);
     });
   }
 
   Future<void> _changeInfoAnchor(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     final Offset currentAnchor = marker.infoWindow.anchor;
-    final newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
+    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
       markers[markerId] = marker.copyWith(
         infoWindowParam: marker.infoWindow.copyWith(anchorParam: newAnchor),
@@ -180,22 +199,22 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   Future<void> _toggleDraggable(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     setState(() {
       markers[markerId] = marker.copyWith(draggableParam: !marker.draggable);
     });
   }
 
   Future<void> _toggleFlat(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     setState(() {
       markers[markerId] = marker.copyWith(flatParam: !marker.flat);
     });
   }
 
   Future<void> _changeInfo(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final newSnippet = '${marker.infoWindow.snippet!}*';
+    final AdvancedMarker marker = markers[markerId]!;
+    final String newSnippet = '${marker.infoWindow.snippet!}*';
     setState(() {
       markers[markerId] = marker.copyWith(
         infoWindowParam: marker.infoWindow.copyWith(snippetParam: newSnippet),
@@ -204,7 +223,7 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   Future<void> _changeAlpha(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     final double current = marker.alpha;
     setState(() {
       markers[markerId] = marker.copyWith(
@@ -214,7 +233,7 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   Future<void> _changeRotation(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     final double current = marker.rotation;
     setState(() {
       markers[markerId] = marker.copyWith(
@@ -224,41 +243,41 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
   }
 
   Future<void> _toggleVisible(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     setState(() {
       markers[markerId] = marker.copyWith(visibleParam: !marker.visible);
     });
   }
 
   Future<void> _changeZIndex(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final int current = marker.zIndexInt;
+    final AdvancedMarker marker = markers[markerId]!;
+    final double current = marker.zIndex;
     setState(() {
       markers[markerId] = marker.copyWith(
-        zIndexIntParam: current == 12 ? 0 : current + 1,
+        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
       );
     });
   }
 
   void _setMarkerIcon(MarkerId markerId, BitmapDescriptor assetIcon) {
-    final Marker marker = markers[markerId]!;
+    final AdvancedMarker marker = markers[markerId]!;
     setState(() {
       markers[markerId] = marker.copyWith(iconParam: assetIcon);
     });
   }
 
-  Future<BitmapDescriptor> _getMarkerIcon(BuildContext context) async {
-    const canvasSize = Size(48, 48);
-    final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
-    return BytesMapBitmap(bytes.buffer.asUint8List());
+  BitmapDescriptor _getMarkerIcon(BuildContext context) {
+    return BitmapDescriptor.pinConfig(
+      backgroundColor: Colors.red,
+      borderColor: Colors.red,
+      glyph: const TextGlyph(text: 'Hi!', textColor: Colors.white),
+    );
   }
 
   /// Performs customizations of the [marker] to mark it as selected or not.
-  Marker copyWithSelectedState(Marker marker, bool isSelected) {
+  AdvancedMarker copyWithSelectedState(AdvancedMarker marker, bool isSelected) {
     return marker.copyWith(
-      iconParam: isSelected
-          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
-          : BitmapDescriptor.defaultMarker,
+      iconParam: _getMarkerBitmapDescriptor(isSelected: isSelected),
     );
   }
 
@@ -271,14 +290,17 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            AdvancedMarkersCapabilityStatus(controller: controller),
             Expanded(
               child: GoogleMap(
+                mapId: widget.mapId,
+                markerType: GoogleMapMarkerType.advancedMarker,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition: const CameraPosition(
                   target: LatLng(-33.852, 151.211),
                   zoom: 11.0,
                 ),
-                markers: Set<Marker>.of(markers.values),
+                markers: Set<AdvancedMarker>.of(markers.values),
               ),
             ),
             Row(
@@ -359,12 +381,9 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
                 TextButton(
                   onPressed: selectedId == null
                       ? null
-                      : () {
-                          _getMarkerIcon(context).then((BitmapDescriptor icon) {
-                            _setMarkerIcon(selectedId, icon);
-                          });
-                        },
-                  child: const Text('set marker icon'),
+                      : () =>
+                            _setMarkerIcon(selectedId, _getMarkerIcon(context)),
+                  child: const Text('set glyph text'),
                 ),
               ],
             ),
@@ -392,6 +411,62 @@ class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Widget displaying the status of advanced markers capability check.
+class AdvancedMarkersCapabilityStatus extends StatefulWidget {
+  /// Default constructor.
+  const AdvancedMarkersCapabilityStatus({super.key, required this.controller});
+
+  /// Controller of the map to check for advanced markers capability.
+  final GoogleMapController? controller;
+
+  @override
+  State<AdvancedMarkersCapabilityStatus> createState() =>
+      _AdvancedMarkersCapabilityStatusState();
+}
+
+class _AdvancedMarkersCapabilityStatusState
+    extends State<AdvancedMarkersCapabilityStatus> {
+  /// Whether map supports advanced markers. Null indicates capability check
+  /// is in progress.
+  bool? _isAdvancedMarkersAvailable;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.controller != null) {
+      GoogleMapsFlutterPlatform.instance
+          .isAdvancedMarkersAvailable(mapId: widget.controller!.mapId)
+          .then((bool result) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _isAdvancedMarkersAvailable = result;
+              });
+            });
+          });
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        switch (_isAdvancedMarkersAvailable) {
+          null => 'Checking map capabilities…',
+          true =>
+            'Map capabilities check result:\nthis map supports advanced markers',
+          false =>
+            "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map ID is provided and correct map renderer is used",
+        },
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: switch (_isAdvancedMarkersAvailable) {
+            true => Colors.green.shade700,
+            false => Colors.red,
+            null => Colors.black,
+          },
+        ),
+      ),
     );
   }
 }

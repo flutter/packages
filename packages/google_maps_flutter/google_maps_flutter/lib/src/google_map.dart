@@ -87,6 +87,16 @@ class AndroidGoogleMapsFlutter {
   }
 }
 
+/// Indicates the type of marker that the map should use.
+enum GoogleMapMarkerType {
+  /// Represents the default marker type, [Marker]. This marker type is
+  /// deprecated on the web.
+  marker,
+
+  /// Represents the advanced marker type, [AdvancedMarker].
+  advancedMarker,
+}
+
 /// A widget which displays a map with data obtained from the Google Maps service.
 class GoogleMap extends StatefulWidget {
   /// Creates a widget displaying data from Google Maps services.
@@ -133,8 +143,15 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.cloudMapId,
-  });
+    this.markerType = GoogleMapMarkerType.marker,
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
+  }) : assert(
+         mapId == null || cloudMapId == null,
+         '''A value may be provided for either mapId or cloudMapId, or neither, but not for both.''',
+       ),
+       mapId = mapId ?? cloudMapId;
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -371,7 +388,21 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? cloudMapId;
+  final String? mapId;
+
+  /// Indicates whether map uses [AdvancedMarker]s or [Marker]s.
+  ///
+  /// [AdvancedMarker] and [Marker]s classes might not be related to each other
+  /// in the platform implementation. It's important to set the correct
+  /// [MarkerType] so that the platform implementation can handle the markers:
+  /// * If [MarkerType.advancedMarker] is used, all markers must be of type
+  /// [AdvancedMarker].
+  /// * If [MarkerType.marker] is used, markers cannot be of type
+  /// [AdvancedMarker].
+  ///
+  /// While some features work with either type, using the incorrect type
+  /// may result in unexpected behavior.
+  final GoogleMapMarkerType markerType;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -700,6 +731,11 @@ class _GoogleMapState extends State<GoogleMap> {
 
 /// Builds a [MapConfiguration] from the given [map].
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
+  final MarkerType mapConfigurationMarkerType = switch (map.markerType) {
+    GoogleMapMarkerType.marker => MarkerType.marker,
+    GoogleMapMarkerType.advancedMarker => MarkerType.advancedMarker,
+  };
+
   return MapConfiguration(
     webCameraControlPosition: map.webCameraControlPosition,
     webCameraControlEnabled: map.webCameraControlEnabled,
@@ -723,7 +759,10 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    mapId: map.cloudMapId,
+    markerType: mapConfigurationMarkerType,
+    // A null mapId in the widget means no map ID, which is expressed as '' in
+    // the configuration to distinguish from no change (null).
+    mapId: map.mapId ?? '',
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',
