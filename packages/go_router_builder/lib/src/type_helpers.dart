@@ -112,6 +112,7 @@ String decodeParameter(
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
       String? decoder;
+
       final ElementAnnotation? annotation = metadata?.firstWhereOrNull((
         ElementAnnotation annotation,
       ) {
@@ -138,7 +139,7 @@ String decodeParameter(
         }
         decoded += ' ?? ${element.defaultValueCode!}';
       }
-      if (helper is _TypeHelperString) {
+      if (helper is _TypeHelperString && decoder != null) {
         return _fieldWithEncoder(decoded, decoder);
       }
       return decoded;
