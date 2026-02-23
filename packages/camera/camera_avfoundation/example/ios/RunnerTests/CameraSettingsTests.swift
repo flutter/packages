@@ -301,4 +301,36 @@ final class CameraSettingsTests: XCTestCase {
       "Audio session should receive AVCaptureAudioDataOutput when enableAudio is true"
     )
   }
+
+  func testSettings_MaxResolutionShouldIgnoreLossyFormats() {
+      let settings = PlatformMediaSettings(
+        resolutionPreset: .max,
+        framesPerSecond: 30,
+        videoBitrate: testVideoBitrate,
+        audioBitrate: testAudioBitrate,
+        enableAudio: false
+      )
+
+      let configuration = CameraTestUtils.createTestCameraConfiguration()
+      configuration.mediaSettings = settings
+
+      let mockDevice = configuration.videoCaptureDeviceFactory("camera") as! MockCaptureDevice
+
+      let massiveLossyFormat = MockCaptureDeviceFormat()
+      massiveLossyFormat.mediaSubType = 1651798066 // The toxic format
+      massiveLossyFormat.dimensions = CMVideoDimensions(width: 4224, height: 3024)
+
+      let safe4KFormat = MockCaptureDeviceFormat()
+      safe4KFormat.mediaSubType = 875704422 // Standard uncompressed YUV
+      safe4KFormat.dimensions = CMVideoDimensions(width: 3840, height: 2160)
+
+      mockDevice.flutterFormats = [massiveLossyFormat, safe4KFormat]
+
+      let camera = CameraTestUtils.createTestCamera(configuration)
+
+      let selectedDimensions = camera.videoDimensionsConverter(camera.captureDevice.flutterActiveFormat)
+
+      XCTAssertEqual(selectedDimensions.width, 3840)
+      XCTAssertEqual(selectedDimensions.height, 2160)
+    }
 }
