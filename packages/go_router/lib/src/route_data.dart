@@ -663,10 +663,10 @@ class TypedQueryParameter<T> {
   /// A function that converts a string from the URI to a parameter value.
   final T? Function(String?)? decoder;
 
-  /// A function that compares two parameter values for equality.
+  /// A function that compares two parameter values for inequality.
   ///
-  /// Returns `true` if the values are different and `false` if they are the
-  /// same. This is used to determine whether a parameter should be included in
-  /// the URI when it has a default value.
+  /// Returns `true` if the values are considered different, and `false` if they
+  /// are the same. This is used to determine whether a parameter should be
+  /// included in the URI when it has a default value.
   final bool Function(T, T)? compare;
 }
