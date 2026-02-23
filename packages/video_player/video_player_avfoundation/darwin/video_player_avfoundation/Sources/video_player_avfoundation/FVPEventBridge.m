@@ -103,6 +103,18 @@
   [self sendOrQueue:@{@"event" : @"isPlayingStateUpdate", @"isPlaying" : @(playing)}];
 }
 
+- (void)videoPlayerDidStartPictureInPicture {
+  [self sendOrQueue:@{@"event" : @"pipStarted"}];
+}
+
+- (void)videoPlayerDidStopPictureInPicture {
+  [self sendOrQueue:@{@"event" : @"pipStopped"}];
+}
+
+- (void)videoPlayerShouldRestoreUserInterfaceForPictureInPicture {
+  [self sendOrQueue:@{@"event" : @"pipRestoreUserInterface"}];
+}
+
 - (void)videoPlayerWasDisposed {
   [self.eventChannel setStreamHandler:nil];
 }

@@ -690,5 +690,160 @@ void main() {
         ]),
       );
     });
+
+    group('Picture-in-Picture', () {
+      test('enablePictureInPicture', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        await player.enablePictureInPicture(1);
+
+        verify(playerApi.enablePictureInPicture());
+      });
+
+      test('disablePictureInPicture', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        await player.disablePictureInPicture(1);
+
+        verify(playerApi.disablePictureInPicture());
+      });
+
+      test('startPictureInPicture', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        await player.startPictureInPicture(1);
+
+        verify(playerApi.startPictureInPicture());
+      });
+
+      test('stopPictureInPicture', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        await player.stopPictureInPicture(1);
+
+        verify(playerApi.stopPictureInPicture());
+      });
+
+      test('isPictureInPictureSupported', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(
+          playerApi.isPictureInPictureSupported(),
+        ).thenAnswer((_) async => true);
+
+        final bool result = await player.isPictureInPictureSupported(1);
+
+        expect(result, true);
+        verify(playerApi.isPictureInPictureSupported());
+      });
+
+      test('isPictureInPictureActive', () async {
+        final (
+          AVFoundationVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(
+          playerApi.isPictureInPictureActive(),
+        ).thenAnswer((_) async => false);
+
+        final bool result = await player.isPictureInPictureActive(1);
+
+        expect(result, false);
+        verify(playerApi.isPictureInPictureActive());
+      });
+    });
+
+    test('videoEventsFor emits PiP events', () async {
+      const playerId = 1;
+      final (
+        AVFoundationVideoPlayer player,
+        MockAVFoundationVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(
+        playerId: playerId,
+      );
+      const mockChannel = 'flutter.dev/videoPlayer/videoEvents$playerId';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMessageHandler(mockChannel, (ByteData? message) async {
+            final MethodCall methodCall = const StandardMethodCodec()
+                .decodeMethodCall(message);
+            if (methodCall.method == 'listen') {
+              await TestDefaultBinaryMessengerBinding
+                  .instance
+                  .defaultBinaryMessenger
+                  .handlePlatformMessage(
+                    mockChannel,
+                    const StandardMethodCodec().encodeSuccessEnvelope(
+                      <String, dynamic>{'event': 'pipStarted'},
+                    ),
+                    (ByteData? data) {},
+                  );
+
+              await TestDefaultBinaryMessengerBinding
+                  .instance
+                  .defaultBinaryMessenger
+                  .handlePlatformMessage(
+                    mockChannel,
+                    const StandardMethodCodec().encodeSuccessEnvelope(
+                      <String, dynamic>{'event': 'pipStopped'},
+                    ),
+                    (ByteData? data) {},
+                  );
+
+              await TestDefaultBinaryMessengerBinding
+                  .instance
+                  .defaultBinaryMessenger
+                  .handlePlatformMessage(
+                    mockChannel,
+                    const StandardMethodCodec().encodeSuccessEnvelope(
+                      <String, dynamic>{'event': 'pipRestoreUserInterface'},
+                    ),
+                    (ByteData? data) {},
+                  );
+
+              return const StandardMethodCodec().encodeSuccessEnvelope(null);
+            } else if (methodCall.method == 'cancel') {
+              return const StandardMethodCodec().encodeSuccessEnvelope(null);
+            } else {
+              fail('Expected listen or cancel');
+            }
+          });
+      expect(
+        player.videoEventsFor(playerId),
+        emitsInOrder(<dynamic>[
+          VideoEvent(eventType: VideoEventType.pipStarted),
+          VideoEvent(eventType: VideoEventType.pipStopped),
+          VideoEvent(eventType: VideoEventType.pipRestoreUserInterface),
+        ]),
+      );
+    });
   });
 }

@@ -130,6 +130,24 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
     return true;
   }
 
+  @override
+  Future<void> enablePictureInPicture() async {}
+
+  @override
+  Future<void> disablePictureInPicture() async {}
+
+  @override
+  Future<void> startPictureInPicture() async {}
+
+  @override
+  Future<void> stopPictureInPicture() async {}
+
+  @override
+  Future<bool> isPictureInPictureSupported() async => true;
+
+  @override
+  Future<bool> isPictureInPictureActive() async => false;
+
   String? selectedAudioTrackId;
 }
 
@@ -1050,6 +1068,128 @@ void main() {
       });
     });
 
+    group('Picture-in-Picture', () {
+      test('enablePictureInPicture calls platform', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        await controller.enablePictureInPicture();
+
+        expect(fakeVideoPlayerPlatform.calls.last, 'enablePictureInPicture');
+      });
+
+      test('disablePictureInPicture calls platform', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        await controller.disablePictureInPicture();
+
+        expect(fakeVideoPlayerPlatform.calls.last, 'disablePictureInPicture');
+      });
+
+      test('startPictureInPicture calls platform', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        await controller.startPictureInPicture();
+
+        expect(fakeVideoPlayerPlatform.calls.last, 'startPictureInPicture');
+      });
+
+      test('stopPictureInPicture calls platform', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        await controller.stopPictureInPicture();
+
+        expect(fakeVideoPlayerPlatform.calls.last, 'stopPictureInPicture');
+      });
+
+      test('isPictureInPictureSupported returns result', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final bool result = await controller.isPictureInPictureSupported();
+
+        expect(result, true);
+        expect(
+          fakeVideoPlayerPlatform.calls.last,
+          'isPictureInPictureSupported',
+        );
+      });
+
+      test('isPictureInPictureActive returns result', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        final bool result = await controller.isPictureInPictureActive();
+
+        expect(result, false);
+        expect(fakeVideoPlayerPlatform.calls.last, 'isPictureInPictureActive');
+      });
+
+      test('PiP methods before initialization throw', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        expect(
+          () => controller.enablePictureInPicture(),
+          throwsA(isA<StateError>()),
+        );
+        expect(
+          () => controller.startPictureInPicture(),
+          throwsA(isA<StateError>()),
+        );
+        expect(
+          () => controller.stopPictureInPicture(),
+          throwsA(isA<StateError>()),
+        );
+      });
+
+      test('pipStarted event updates VideoPlayerValue', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        expect(controller.value.isPictureInPictureActive, false);
+
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.pipStarted),
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(controller.value.isPictureInPictureActive, true);
+      });
+
+      test('pipStopped event updates VideoPlayerValue', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // Simulate PiP started first.
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.pipStarted),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(controller.value.isPictureInPictureActive, true);
+
+        // Now stop PiP.
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.pipStopped),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(controller.value.isPictureInPictureActive, false);
+      });
+    });
+
     group('caption', () {
       test('works when position updates', () async {
         final controller = VideoPlayerController.networkUrl(
@@ -1476,7 +1616,8 @@ void main() {
         'volume: 0.5, '
         'playbackSpeed: 1.5, '
         'errorDescription: null, '
-        'isCompleted: false),',
+        'isCompleted: false, '
+        'isPictureInPictureActive: false),',
       );
     });
 
@@ -1904,4 +2045,36 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
+
+  @override
+  Future<void> enablePictureInPicture(int playerId) async {
+    calls.add('enablePictureInPicture');
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int playerId) async {
+    calls.add('disablePictureInPicture');
+  }
+
+  @override
+  Future<void> startPictureInPicture(int playerId) async {
+    calls.add('startPictureInPicture');
+  }
+
+  @override
+  Future<void> stopPictureInPicture(int playerId) async {
+    calls.add('stopPictureInPicture');
+  }
+
+  @override
+  Future<bool> isPictureInPictureSupported(int playerId) async {
+    calls.add('isPictureInPictureSupported');
+    return true;
+  }
+
+  @override
+  Future<bool> isPictureInPictureActive(int playerId) async {
+    calls.add('isPictureInPictureActive');
+    return false;
+  }
 }

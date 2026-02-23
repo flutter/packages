@@ -20,4 +20,8 @@
 /// Initializes a new instance of a native view.
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
 - (instancetype)initWithPlayer:(AVPlayer *)player;
+#if TARGET_OS_IOS
+/// Returns the AVPlayerLayer used by this view, for PiP controller setup.
+- (AVPlayerLayer *)playerLayer;
+#endif
 @end

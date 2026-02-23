@@ -172,6 +172,7 @@ class VideoPlayerValue {
     this.rotationCorrection = 0,
     this.errorDescription,
     this.isCompleted = false,
+    this.isPictureInPictureActive = false,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -238,6 +239,9 @@ class VideoPlayerValue {
   /// Does not update if video is looping.
   final bool isCompleted;
 
+  /// Whether Picture-in-Picture is currently active.
+  final bool isPictureInPictureActive;
+
   /// The [size] of the currently loaded video.
   final Size size;
 
@@ -286,6 +290,7 @@ class VideoPlayerValue {
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
+    bool? isPictureInPictureActive,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -305,6 +310,8 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      isPictureInPictureActive:
+          isPictureInPictureActive ?? this.isPictureInPictureActive,
     );
   }
 
@@ -324,7 +331,8 @@ class VideoPlayerValue {
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription, '
-        'isCompleted: $isCompleted),';
+        'isCompleted: $isCompleted, '
+        'isPictureInPictureActive: $isPictureInPictureActive),';
   }
 
   @override
@@ -346,7 +354,8 @@ class VideoPlayerValue {
           size == other.size &&
           rotationCorrection == other.rotationCorrection &&
           isInitialized == other.isInitialized &&
-          isCompleted == other.isCompleted;
+          isCompleted == other.isCompleted &&
+          isPictureInPictureActive == other.isPictureInPictureActive;
 
   @override
   int get hashCode => Object.hash(
@@ -365,6 +374,7 @@ class VideoPlayerValue {
     rotationCorrection,
     isInitialized,
     isCompleted,
+    isPictureInPictureActive,
   );
 }
 
@@ -646,6 +656,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
+        case platform_interface.VideoEventType.pipStarted:
+          value = value.copyWith(isPictureInPictureActive: true);
+        case platform_interface.VideoEventType.pipStopped:
+          value = value.copyWith(isPictureInPictureActive: false);
+        case platform_interface.VideoEventType.pipRestoreUserInterface:
+          break;
         case platform_interface.VideoEventType.unknown:
           break;
       }
@@ -986,6 +1002,71 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// ```
   bool isAudioTrackSupportAvailable() {
     return _videoPlayerPlatform.isAudioTrackSupportAvailable();
+  }
+
+  /// Enables Picture-in-Picture for this player.
+  ///
+  /// This must be called before [startPictureInPicture] to prepare the player
+  /// for PiP mode. On platforms that don't support PiP, this may be a no-op.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<void> enablePictureInPicture() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    await _videoPlayerPlatform.enablePictureInPicture(_playerId);
+  }
+
+  /// Disables Picture-in-Picture for this player.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<void> disablePictureInPicture() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    await _videoPlayerPlatform.disablePictureInPicture(_playerId);
+  }
+
+  /// Starts Picture-in-Picture mode for this player.
+  ///
+  /// [enablePictureInPicture] must be called before this method.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<void> startPictureInPicture() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    await _videoPlayerPlatform.startPictureInPicture(_playerId);
+  }
+
+  /// Stops Picture-in-Picture mode for this player.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<void> stopPictureInPicture() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    await _videoPlayerPlatform.stopPictureInPicture(_playerId);
+  }
+
+  /// Returns whether Picture-in-Picture is supported on this device.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<bool> isPictureInPictureSupported() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    return _videoPlayerPlatform.isPictureInPictureSupported(_playerId);
+  }
+
+  /// Returns whether Picture-in-Picture is currently active for this player.
+  ///
+  /// Throws a [StateError] if the controller is disposed or not initialized.
+  Future<bool> isPictureInPictureActive() async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    return _videoPlayerPlatform.isPictureInPictureActive(_playerId);
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;

@@ -35,4 +35,8 @@
 - (FVPPlayerView *)view {
   return self.playerView;
 }
+
+- (AVPlayerLayer *)playerLayer {
+  return (AVPlayerLayer *)self.playerView.layer;
+}
 @end

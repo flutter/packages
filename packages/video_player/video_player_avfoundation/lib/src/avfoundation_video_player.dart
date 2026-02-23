@@ -243,6 +243,36 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
+  Future<void> enablePictureInPicture(int playerId) {
+    return _playerWith(id: playerId).enablePictureInPicture();
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int playerId) {
+    return _playerWith(id: playerId).disablePictureInPicture();
+  }
+
+  @override
+  Future<void> startPictureInPicture(int playerId) {
+    return _playerWith(id: playerId).startPictureInPicture();
+  }
+
+  @override
+  Future<void> stopPictureInPicture(int playerId) {
+    return _playerWith(id: playerId).stopPictureInPicture();
+  }
+
+  @override
+  Future<bool> isPictureInPictureSupported(int playerId) {
+    return _playerWith(id: playerId).isPictureInPictureSupported();
+  }
+
+  @override
+  Future<bool> isPictureInPictureActive(int playerId) {
+    return _playerWith(id: playerId).isPictureInPictureActive();
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -289,6 +319,19 @@ class _PlayerInstance {
   Future<void> selectAudioTrack(int trackIndex) =>
       _api.selectAudioTrack(trackIndex);
 
+  Future<void> enablePictureInPicture() => _api.enablePictureInPicture();
+
+  Future<void> disablePictureInPicture() => _api.disablePictureInPicture();
+
+  Future<void> startPictureInPicture() => _api.startPictureInPicture();
+
+  Future<void> stopPictureInPicture() => _api.stopPictureInPicture();
+
+  Future<bool> isPictureInPictureSupported() =>
+      _api.isPictureInPictureSupported();
+
+  Future<bool> isPictureInPictureActive() => _api.isPictureInPictureActive();
+
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(
       _onStreamEvent,
@@ -330,6 +373,11 @@ class _PlayerInstance {
       'isPlayingStateUpdate' => VideoEvent(
         eventType: VideoEventType.isPlayingStateUpdate,
         isPlaying: map['isPlaying'] as bool,
+      ),
+      'pipStarted' => VideoEvent(eventType: VideoEventType.pipStarted),
+      'pipStopped' => VideoEvent(eventType: VideoEventType.pipStopped),
+      'pipRestoreUserInterface' => VideoEvent(
+        eventType: VideoEventType.pipRestoreUserInterface,
       ),
       _ => VideoEvent(eventType: VideoEventType.unknown),
     });

@@ -93,4 +93,28 @@ abstract class VideoPlayerInstanceApi {
   List<MediaSelectionAudioTrackData> getAudioTracks();
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
+
+  /// Enables Picture-in-Picture for this player.
+  @ObjCSelector('enablePictureInPicture')
+  void enablePictureInPicture();
+
+  /// Disables Picture-in-Picture for this player.
+  @ObjCSelector('disablePictureInPicture')
+  void disablePictureInPicture();
+
+  /// Starts Picture-in-Picture playback.
+  @ObjCSelector('startPictureInPicture')
+  void startPictureInPicture();
+
+  /// Stops Picture-in-Picture playback.
+  @ObjCSelector('stopPictureInPicture')
+  void stopPictureInPicture();
+
+  /// Returns whether Picture-in-Picture is supported on this device.
+  @ObjCSelector('isPictureInPictureSupported')
+  bool isPictureInPictureSupported();
+
+  /// Returns whether Picture-in-Picture is currently active.
+  @ObjCSelector('isPictureInPictureActive')
+  bool isPictureInPictureActive();
 }

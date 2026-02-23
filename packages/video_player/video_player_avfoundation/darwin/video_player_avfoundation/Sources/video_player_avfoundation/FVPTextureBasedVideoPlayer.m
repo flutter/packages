@@ -60,6 +60,13 @@
     CALayer *flutterLayer = viewProvider.view.layer;
 #endif
     [flutterLayer addSublayer:self.playerLayer];
+
+#if TARGET_OS_IOS
+    // Set up PiP using the existing invisible player layer.
+    if (@available(iOS 14.2, *)) {
+      [self setupPictureInPictureWithPlayerLayer:_playerLayer];
+    }
+#endif
   }
   return self;
 }

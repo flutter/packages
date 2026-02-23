@@ -165,6 +165,12 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   }
   _disposed = YES;
 
+#if TARGET_OS_IOS
+  if (@available(iOS 14.2, *)) {
+    [self tearDownPictureInPicture];
+  }
+#endif
+
   if (_listenersRegistered) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
@@ -507,6 +513,178 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
   }
 }
+
+#pragma mark - Picture-in-Picture
+
+#if TARGET_OS_IOS
+
+- (void)setupPictureInPictureWithPlayerLayer:(AVPlayerLayer *)playerLayer {
+  if (@available(iOS 14.2, *)) {
+    if (![AVPictureInPictureController isPictureInPictureSupported]) {
+      return;
+    }
+    _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer:playerLayer];
+    _pipController.delegate = (id<AVPictureInPictureControllerDelegate>)self;
+  }
+}
+
+- (void)tearDownPictureInPicture API_AVAILABLE(ios(14.2)) {
+  if (_pipController.isPictureInPictureActive) {
+    [_pipController stopPictureInPicture];
+  }
+  _pipController = nil;
+}
+
+- (void)enablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    // PiP controller is already set up automatically for texture-based players.
+    // For platform view players, it's set up when the view is created.
+    if (!_pipController) {
+      *error = [FlutterError
+          errorWithCode:@"pip_not_available"
+                message:@"PiP controller not configured. Ensure a player layer is available."
+                details:nil];
+    }
+  } else {
+    *error = [FlutterError errorWithCode:@"pip_not_supported"
+                                  message:@"PiP requires iOS 14.2+"
+                                  details:nil];
+  }
+}
+
+- (void)disablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    [self tearDownPictureInPicture];
+  }
+}
+
+- (void)startPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    if (!_pipController) {
+      *error = [FlutterError errorWithCode:@"pip_not_possible"
+                                    message:@"PiP is not possible at this time"
+                                    details:nil];
+      return;
+    }
+
+    if (_pipController.isPictureInPicturePossible) {
+      [_pipController startPictureInPicture];
+      return;
+    }
+
+    // Float-up animation workaround: pause to make PiP possible with empty frame,
+    // then resume immediately after starting PiP.
+    AVPlayer *player = _pipController.playerLayer.player;
+    BOOL wasPlaying = player.rate > 0;
+    if (wasPlaying && CGRectIsEmpty(_pipController.playerLayer.frame)) {
+      [player pause];
+
+      if (_pipController.isPictureInPicturePossible) {
+        [_pipController startPictureInPicture];
+        [player play];
+        return;
+      }
+
+      // isPossible may update asynchronously; retry on next run loop.
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self->_pipController.isPictureInPicturePossible) {
+          [self->_pipController startPictureInPicture];
+        }
+        // Restore playback regardless — PiP will continue playing independently.
+        [player play];
+      });
+      return;
+    }
+
+    *error = [FlutterError errorWithCode:@"pip_not_possible"
+                                  message:@"PiP is not possible at this time"
+                                  details:nil];
+  } else {
+    *error = [FlutterError errorWithCode:@"pip_not_supported"
+                                  message:@"PiP requires iOS 14.2+"
+                                  details:nil];
+  }
+}
+
+- (void)stopPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    if (_pipController && _pipController.isPictureInPictureActive) {
+      [_pipController stopPictureInPicture];
+    }
+  }
+}
+
+- (nullable NSNumber *)isPictureInPictureSupported:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    return @([AVPictureInPictureController isPictureInPictureSupported]);
+  }
+  return @(NO);
+}
+
+- (nullable NSNumber *)isPictureInPictureActive:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 14.2, *)) {
+    return @(_pipController != nil && _pipController.isPictureInPictureActive);
+  }
+  return @(NO);
+}
+
+#pragma mark - AVPictureInPictureControllerDelegate
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:
+    (AVPictureInPictureController *)controller {
+  [self.eventListener videoPlayerDidStartPictureInPicture];
+}
+
+- (void)pictureInPictureControllerDidStopPictureInPicture:
+    (AVPictureInPictureController *)controller {
+  [self.eventListener videoPlayerDidStopPictureInPicture];
+  [self updatePlayingState];
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)controller
+    restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:
+        (void (^)(BOOL))completionHandler {
+  [self.eventListener videoPlayerShouldRestoreUserInterfaceForPictureInPicture];
+  // In a production implementation, this should wait for the Dart side to confirm UI restoration.
+  // For now, immediately signal completion.
+  completionHandler(YES);
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)controller
+    failedToStartPictureInPictureWithError:(NSError *)error {
+  NSLog(@"Failed to start Picture-in-Picture: %@", error);
+}
+
+#else
+// macOS stubs - PiP is iOS only in this implementation.
+
+- (void)enablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"pip_not_supported"
+                                message:@"PiP is only supported on iOS"
+                                details:nil];
+}
+
+- (void)disablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+}
+
+- (void)startPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"pip_not_supported"
+                                message:@"PiP is only supported on iOS"
+                                details:nil];
+}
+
+- (void)stopPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
+}
+
+- (nullable NSNumber *)isPictureInPictureSupported:(FlutterError *_Nullable *_Nonnull)error {
+  return @(NO);
+}
+
+- (nullable NSNumber *)isPictureInPictureActive:(FlutterError *_Nullable *_Nonnull)error {
+  return @(NO);
+}
+
+#endif
 
 #pragma mark - Private
 
