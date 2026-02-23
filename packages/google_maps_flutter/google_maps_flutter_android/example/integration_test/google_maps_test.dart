@@ -22,7 +22,7 @@ const CameraPosition _kInitialCameraPosition = CameraPosition(
   target: _kInitialMapCenter,
   zoom: _kInitialZoomLevel,
 );
-const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+const String _kMapId = '000000000000000'; // Dummy map ID.
 
 // The tolerance value for floating-point comparisons in the tests.
 // This value was selected as the minimum possible value that the test passes.
@@ -1450,6 +1450,97 @@ void main() {
     }
   });
 
+  testWidgets('advanced markers clustering', (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    const clusterManagersAmount = 2;
+    const markersPerClusterManager = 5;
+    final markers = <MarkerId, AdvancedMarker>{};
+    final clusterManagers = <ClusterManager>{};
+
+    for (var i = 0; i < clusterManagersAmount; i++) {
+      final clusterManagerId = ClusterManagerId('cluster_manager_$i');
+      final clusterManager = ClusterManager(clusterManagerId: clusterManagerId);
+      clusterManagers.add(clusterManager);
+    }
+
+    for (final cm in clusterManagers) {
+      for (var i = 0; i < markersPerClusterManager; i++) {
+        final markerId = MarkerId('${cm.clusterManagerId.value}_marker_$i');
+        final marker = AdvancedMarker(
+          markerId: markerId,
+          clusterManagerId: cm.clusterManagerId,
+          position: LatLng(
+            _kInitialMapCenter.latitude + i,
+            _kInitialMapCenter.longitude,
+          ),
+        );
+        markers[markerId] = marker;
+      }
+    }
+
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
+
+    final GoogleMapsInspectorPlatform inspector =
+        GoogleMapsInspectorPlatform.instance!;
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: ExampleGoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          clusterManagers: clusterManagers,
+          markerType: MarkerType.advancedMarker,
+          markers: Set<Marker>.of(markers.values),
+          onMapCreated: (ExampleGoogleMapController googleMapController) {
+            controllerCompleter.complete(googleMapController);
+          },
+        ),
+      ),
+    );
+
+    final ExampleGoogleMapController controller =
+        await controllerCompleter.future;
+
+    for (final cm in clusterManagers) {
+      final List<Cluster> clusters = await inspector.getClusters(
+        mapId: controller.mapId,
+        clusterManagerId: cm.clusterManagerId,
+      );
+      final int markersAmountForClusterManager = clusters
+          .map<int>((Cluster cluster) => cluster.count)
+          .reduce((int value, int element) => value + element);
+      expect(markersAmountForClusterManager, markersPerClusterManager);
+    }
+
+    // Remove markers from clusterManagers and test that clusterManagers are empty.
+    for (final MapEntry<MarkerId, AdvancedMarker> entry in markers.entries) {
+      markers[entry.key] = _copyAdvancedMarkerWithClusterManagerId(
+        entry.value,
+        null,
+      );
+    }
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: ExampleGoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          clusterManagers: clusterManagers,
+          markers: Set<Marker>.of(markers.values),
+        ),
+      ),
+    );
+
+    for (final cm in clusterManagers) {
+      final List<Cluster> clusters = await inspector.getClusters(
+        mapId: controller.mapId,
+        clusterManagerId: cm.clusterManagerId,
+      );
+      expect(clusters.length, 0);
+    }
+  });
+
   testWidgets('testMapId', (WidgetTester tester) async {
     final mapIdCompleter = Completer<int>();
     final Key key = GlobalKey();
@@ -1463,7 +1554,7 @@ void main() {
           onMapCreated: (ExampleGoogleMapController controller) {
             mapIdCompleter.complete(controller.mapId);
           },
-          mapId: _kCloudMapId,
+          mapId: _kMapId,
         ),
       ),
     );
@@ -2161,6 +2252,37 @@ void main() {
     // https://github.com/flutter/flutter/issues/131071
     skip: true,
   );
+
+  testWidgets('markerWithPinConfig', (WidgetTester tester) async {
+    final markers = <AdvancedMarker>{
+      AdvancedMarker(
+        markerId: const MarkerId('1'),
+        icon: BitmapDescriptor.pinConfig(
+          backgroundColor: Colors.green,
+          borderColor: Colors.greenAccent,
+          glyph: const TextGlyph(text: 'A', textColor: Colors.white),
+        ),
+      ),
+    };
+
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: ui.TextDirection.ltr,
+        child: ExampleGoogleMap(
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(10.0, 20.0),
+          ),
+          markers: markers,
+          markerType: MarkerType.advancedMarker,
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+  });
 }
 
 class _DebugTileProvider implements TileProvider {
@@ -2348,4 +2470,30 @@ Future<void> _checkCameraUpdateByType(
     case CameraUpdateType.zoomOut:
       expect(currentPosition.zoom, wrapMatcher(equals(_kInitialZoomLevel - 1)));
   }
+}
+
+AdvancedMarker _copyAdvancedMarkerWithClusterManagerId(
+  AdvancedMarker marker,
+  ClusterManagerId? clusterManagerId,
+) {
+  return AdvancedMarker(
+    markerId: marker.markerId,
+    alpha: marker.alpha,
+    anchor: marker.anchor,
+    consumeTapEvents: marker.consumeTapEvents,
+    draggable: marker.draggable,
+    flat: marker.flat,
+    icon: marker.icon,
+    infoWindow: marker.infoWindow,
+    position: marker.position,
+    rotation: marker.rotation,
+    visible: marker.visible,
+    zIndex: marker.zIndex.toInt(),
+    onTap: marker.onTap,
+    onDragStart: marker.onDragStart,
+    onDrag: marker.onDrag,
+    onDragEnd: marker.onDragEnd,
+    clusterManagerId: clusterManagerId,
+    collisionBehavior: marker.collisionBehavior,
+  );
 }

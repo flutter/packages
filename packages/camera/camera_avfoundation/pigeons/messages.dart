@@ -7,14 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
-    objcSourceOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FCP',
-      headerIncludePath: './include/camera_avfoundation/messages.g.h',
-    ),
+    swiftOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -70,6 +64,13 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
+
+enum PlatformVideoStabilizationMode {
+  off,
+  standard,
+  cinematic,
+  cinematicExtended,
+}
 
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
@@ -284,6 +285,16 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setZoomLevel:')
   void setZoomLevel(double zoom);
+
+  /// Sets the video stabilization mode.
+  @async
+  @ObjCSelector('setVideoStabilizationMode:')
+  void setVideoStabilizationMode(PlatformVideoStabilizationMode mode);
+
+  /// Gets if the given video stabilization mode is supported.
+  @async
+  @ObjCSelector('isVideoStabilizationModeSupported:')
+  bool isVideoStabilizationModeSupported(PlatformVideoStabilizationMode mode);
 
   /// Pauses streaming of preview frames.
   @async

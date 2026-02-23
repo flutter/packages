@@ -28,4 +28,10 @@ class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
   public CameraCharacteristics.Key<?> sensorOrientation() {
     return CameraCharacteristics.SENSOR_ORIENTATION;
   }
+
+  @NonNull
+  @Override
+  public CameraCharacteristics.Key<?> controlAvailableVideoStabilizationModes() {
+    return CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES;
+  }
 }

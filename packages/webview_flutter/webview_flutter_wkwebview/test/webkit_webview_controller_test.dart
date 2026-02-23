@@ -1856,6 +1856,26 @@ window.addEventListener("error", function(e) {
         expect(logs[JavaScriptLogLevel.log], 'Log message');
         expect(logs[JavaScriptLogLevel.warning], 'Warning message');
       });
+
+      test('setOnConsoleMessage called twice does not throw', () async {
+        final mockUserContentController = MockWKUserContentController();
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        await controller.setOnConsoleMessage(
+          (JavaScriptConsoleMessage message) {},
+        );
+        await controller.setOnConsoleMessage(
+          (JavaScriptConsoleMessage message) {},
+        );
+
+        verifyNever(
+          mockUserContentController.removeScriptMessageHandler(
+            'fltConsoleMessage',
+          ),
+        );
+      });
     });
 
     test('setOnCanGoBackChange', () async {

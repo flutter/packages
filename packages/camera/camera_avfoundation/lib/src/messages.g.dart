@@ -95,6 +95,13 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+enum PlatformVideoStabilizationMode {
+  off,
+  standard,
+  cinematic,
+  cinematicExtended,
+}
+
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
@@ -384,20 +391,23 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformResolutionPreset) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is PlatformCameraDescription) {
+    } else if (value is PlatformVideoStabilizationMode) {
       buffer.putUint8(138);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraState) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformCameraDescription) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMediaSettings) {
+    } else if (value is PlatformCameraState) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMediaSettings) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSize) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformSize) {
+      buffer.putUint8(143);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -435,14 +445,19 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformResolutionPreset.values[value];
       case 138:
-        return PlatformCameraDescription.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null
+            ? null
+            : PlatformVideoStabilizationMode.values[value];
       case 139:
-        return PlatformCameraState.decode(readValue(buffer)!);
+        return PlatformCameraDescription.decode(readValue(buffer)!);
       case 140:
-        return PlatformMediaSettings.decode(readValue(buffer)!);
+        return PlatformCameraState.decode(readValue(buffer)!);
       case 141:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMediaSettings.decode(readValue(buffer)!);
       case 142:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 143:
         return PlatformSize.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1221,6 +1236,71 @@ class CameraApi {
       );
     } else {
       return;
+    }
+  }
+
+  /// Sets the video stabilization mode.
+  Future<void> setVideoStabilizationMode(
+    PlatformVideoStabilizationMode mode,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_avfoundation.CameraApi.setVideoStabilizationMode$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mode],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Gets if the given video stabilization mode is supported.
+  Future<bool> isVideoStabilizationModeSupported(
+    PlatformVideoStabilizationMode mode,
+  ) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_avfoundation.CameraApi.isVideoStabilizationModeSupported$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mode],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
     }
   }
 

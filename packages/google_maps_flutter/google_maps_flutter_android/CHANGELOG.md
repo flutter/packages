@@ -1,3 +1,11 @@
+## 2.19.1
+
+* Fixes a regression in 2.19.0 that caused crashes when adding markers.
+
+## 2.19.0
+
+* Adds support for advanced markers.
+
 ## 2.18.12
 
 * Bumps com.google.maps.android:android-maps-utils from 3.20.1 to 4.0.0.
