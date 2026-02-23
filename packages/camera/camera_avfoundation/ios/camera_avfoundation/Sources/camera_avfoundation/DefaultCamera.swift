@@ -16,12 +16,13 @@ final class DefaultCamera: NSObject, Camera {
   var onFrameAvailable: (() -> Void)?
 
   var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA {
-    didSet {
-      captureVideoOutput.videoSettings = [
-        kCVPixelBufferPixelFormatTypeKey as String: videoFormat
-      ]
+      didSet {
+        captureVideoOutput.videoSettings = DefaultCamera.getSafeVideoSettings(
+          requestedFormat: videoFormat,
+          availableFormats: captureVideoOutput.availableVideoPixelFormatTypes
+        )
+      }
     }
-  }
 
   private(set) var isPreviewPaused = false
 
@@ -148,9 +149,12 @@ final class DefaultCamera: NSObject, Camera {
 
     // Setup video capture output.
     let captureVideoOutput = AVCaptureVideoDataOutput()
-    captureVideoOutput.videoSettings = [
-      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
-    ]
+
+    captureVideoOutput.videoSettings = getSafeVideoSettings(
+      requestedFormat: videoFormat,
+      availableFormats: captureVideoOutput.availableVideoPixelFormatTypes
+    )
+
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
     // Setup video capture connection.
@@ -351,12 +355,24 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
+    // Filter out all compressed/lossy types that the Flutter engine can't render.
+    let unsupportedSubTypes: [FourCharCode] = [
+      1651798066, // hex for 'btp2', or 420YpCbCr8BiPlanarVideoRange
+      1651798068, // hex for 'btp4', or  420YpCbCr8BiPlanarFullRange
+      1650943852, // hex for 'bgrl', or for 32BGRA lossy
+    ]
+
     for format in captureDevice.flutterFormats {
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+
+      if unsupportedSubTypes.contains(subType) {
+        continue
+      }
+
       let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
       let pixelCount = height * width
-      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
       let isSubTypePreferred = subType == preferredSubType
 
       if pixelCount > maxPixelCount
@@ -456,6 +472,28 @@ final class DefaultCamera: NSObject, Camera {
 
     try? AVAudioSession.sharedInstance().setCategory(finalCategory, options: finalOptions)
   }
+
+  private static func getSafeVideoSettings(
+      requestedFormat: FourCharCode,
+      availableFormats: [FourCharCode]
+    ) -> [String: Any] {
+      let selectedFormat: FourCharCode
+
+      if availableFormats.contains(requestedFormat) {
+        selectedFormat = requestedFormat
+      } else if let flutterSupportedFallback = availableFormats.first(where: {
+        $0 == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
+        $0 == kCVPixelFormatType_32BGRA ||
+        $0 == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
+      }) {
+        selectedFormat = flutterSupportedFallback
+      } else {
+        // Ultimate safe fallback
+        selectedFormat = availableFormats.first ?? requestedFormat
+      }
+
+      return [kCVPixelBufferPixelFormatTypeKey as String: selectedFormat]
+    }
 
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
