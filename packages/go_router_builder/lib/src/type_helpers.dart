@@ -116,12 +116,15 @@ String decodeParameter(
       if (decoder != null) {
         decoded = '';
       } else {
-        final ElementAnnotation? annotation = metadata?.firstWhereOrNull((
-          ElementAnnotation annotation,
-        ) {
-          return annotation.computeConstantValue()?.type?.getDisplayString() ==
-              'CustomParameterCodec';
-        });
+        ElementAnnotation? annotation;
+        for (final ElementAnnotation element
+            in metadata ?? <ElementAnnotation>[]) {
+          if (element.computeConstantValue()?.type?.getDisplayString() ==
+              'CustomParameterCodec') {
+            annotation = element;
+            break;
+          }
+        }
         if (annotation != null) {
           final String? decode = _getCustomCodec(annotation, 'decode');
           final String? encode = _getCustomCodec(annotation, 'encode');
