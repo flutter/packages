@@ -620,6 +620,30 @@ class NoOpPage extends Page<void> {
       throw UnsupportedError('Should never be called');
 }
 
+/// Signature of custom query parameter encoding.
+///
+/// The function takes a parameter value of type `T` and returns a string
+/// representation suitable for use in a URI. The returned string is escaped to
+/// be URL-safe.
+///
+/// For example, a parameter value of `'field with space'` will generate a query
+/// parameter value of `'field+with+space'`.
+///
+/// If the function returns `null`, the parameter will be treated as if it were
+/// not provided, and will be omitted from the URI.
+typedef QueryParameterEncoder<T> = String? Function(T value);
+
+/// Signature for custom query parameter decoding functions.
+///
+/// Converts an encoded string from the URI into a parameter value of type `T`.
+///
+/// The [value] parameter contains the encoded string from the URI, or `null`
+/// if the parameter is absent from the URI.
+///
+/// Return `null` to indicate the parameter was not provided. In this case,
+/// the default value of the [GoRoute] parameter will be used (if defined).
+typedef QueryParameterDecoder<T> = T? Function(String? value);
+
 /// Annotation to override the URI name for a route parameter.
 @Target({TargetKind.parameter})
 class TypedQueryParameter<T> {
@@ -655,18 +679,20 @@ class TypedQueryParameter<T> {
 
   /// A function that converts a parameter value to a string for use in the URI.
   ///
-  /// The returned string is escaped to be URL-safe. For example, a parameter
-  /// value of `'field with space'` will generate a query parameter value of
-  /// `'field+with+space'`.
-  final String? Function(T?)? encoder;
+  /// See [QueryParameterEncoder] for details.
+  final QueryParameterEncoder<T>? encoder;
 
   /// A function that converts a string from the URI to a parameter value.
-  final T? Function(String?)? decoder;
-
-  /// A function that compares two parameter values for inequality.
   ///
-  /// Returns `true` if the values are considered different, and `false` if they
-  /// are the same. This is used to determine whether a parameter should be
-  /// included in the URI when it has a default value.
+  /// See [QueryParameterDecoder] for details.
+  final QueryParameterDecoder<T>? decoder;
+
+  /// A function that determines if two parameter values differ.
+  ///
+  /// Returns `true` when the values differ and `false` when they match.
+  ///
+  /// Used to decide whether to include a parameter in the URI when a default
+  /// value exists. If the parameter equals its default value, it is omitted
+  /// from the URI; otherwise, it is included.
   final bool Function(T, T)? compare;
 }
