@@ -6,11 +6,6 @@ import AVFoundation
 import CoreMotion
 import Flutter
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class DefaultCamera: NSObject, Camera {
   var dartAPI: CameraEventApi?
   var onFrameAvailable: (() -> Void)?
