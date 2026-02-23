@@ -23,7 +23,7 @@ guide:
 
 * [AdDisplayContainer][3]: A container object where ads are rendered.
 * [AdsLoader][4]: Requests ads and handles events from ads request responses. You should only
-instantiate one ads loader, which can be reused throughout the life of the application.
+instantiate one ads loader at a time, which can be reused throughout the lifecycle of a page.
 * [AdsRequest][5]: An object that defines an ads request. Ads requests specify the URL for the VAST
 ad tag, as well as additional parameters, such as ad dimensions.
 * [AdsManager][6]: Contains the response to the ads request, controls ad playback,
