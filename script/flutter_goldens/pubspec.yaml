@@ -1,4 +1,5 @@
 name: flutter_goldens
+publish_to: none
 
 environment:
   sdk: ^3.9.0-0

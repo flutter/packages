@@ -24,7 +24,6 @@ export 'skia_client.dart';
 
 // If you are trying to debug this package, you may like to use the golden test
 // titled "Inconsequential golden test" in this file:
-//   TODO(Piinks): Add canary test somewhere.
 
 // const String _kFlutterRootKey = 'FLUTTER_ROOT';
 
