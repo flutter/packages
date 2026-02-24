@@ -87,11 +87,6 @@ class SkiaGoldClient {
   /// The logging function to use when reporting messages to the console.
   final LogCallback log;
 
-  /// The local [Directory] where the packages repository is hosted.
-  ///
-  /// Uses the [fs] file system.
-  Directory get _packagesRoot => fs.directory(path.join(platform.environment[_kPackagesRootKey]!, 'packages'));
-
   /// The path to the local [Directory] where the goldctl tool is hosted.
   ///
   /// Uses the [platform] environment in this implementation.
@@ -431,24 +426,21 @@ class SkiaGoldClient {
     return imageBytes;
   }
 
-  /// Returns the current commit hash of the Flutter repository.
-  /// Returns the current commit hash of the Flutter repository.
+  /// Returns the current commit hash of the packages repository.
   Future<String> _getCurrentCommit() async {
-    if (!_packagesRoot.existsSync()) {
-      throw SkiaException('Flutter root could not be found: $_packagesRoot\n');
-    } else {
-      final io.ProcessResult revParse = await process.run(<String>[
+    print(workDirectory.path);
+    final io.ProcessResult revParse = await process.run(<String>[
         'git',
         'rev-parse',
         'HEAD',
-      ], workingDirectory: _packagesRoot.path);
+      ], workingDirectory: workDirectory.path);
       if (revParse.exitCode != 0) {
-        throw const SkiaException('Current commit of Flutter can not be found.');
+        throw const SkiaException('Current commit of flutter/packages can not be found.');
       }
       final String commit = (revParse.stdout as String).trim();
       print(commit);
       return commit;
-    }
+    
   }
 
   /// Returns a JSON String with keys value pairs used to uniquely identify the
