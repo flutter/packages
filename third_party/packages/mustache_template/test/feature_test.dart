@@ -665,7 +665,6 @@ void main() {
       );
     });
 
-
     test('inverted sections truthy', () {
       const template = '<{{^lambda}}{{static}}{{/lambda}}>';
       final values = <String, Object>{
