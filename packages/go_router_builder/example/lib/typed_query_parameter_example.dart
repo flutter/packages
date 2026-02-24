@@ -56,10 +56,10 @@ class App extends StatelessWidget {
 @TypedGoRoute<IntRoute>(path: '/int-route')
 class IntRoute extends GoRouteData with $IntRoute {
   IntRoute({
-    @TypedQueryParameter<int>(name: 'intField') this.intField,
-    @TypedQueryParameter<int>(name: 'int_field_with_default_value')
+    @TypedQueryParameter(name: 'intField') this.intField,
+    @TypedQueryParameter(name: 'int_field_with_default_value')
     this.intFieldWithDefaultValue = 1,
-    @TypedQueryParameter<int>(name: 'int field') this.intFieldWithSpace,
+    @TypedQueryParameter(name: 'int field') this.intFieldWithSpace,
     @TypedQueryParameter<CustomParameter>(
       encoder: CustomParameter.encode,
       decoder: CustomParameter.decode,

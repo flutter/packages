@@ -29,9 +29,8 @@ class CustomParameter {
 class OverriddenParameterNameRoute extends GoRouteData
     with $OverriddenParameterNameRoute {
   OverriddenParameterNameRoute({
-    @TypedQueryParameter<int>(name: 'parameterNameOverride')
-    this.withAnnotation,
-    @TypedQueryParameter<String>(name: 'name with space') this.withSpace,
+    @TypedQueryParameter(name: 'parameterNameOverride') this.withAnnotation,
+    @TypedQueryParameter(name: 'name with space') this.withSpace,
     @TypedQueryParameter<CustomParameter>(
       encoder: CustomParameter.encode,
       decoder: CustomParameter.decode,
