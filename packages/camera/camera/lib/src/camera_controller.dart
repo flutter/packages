@@ -150,7 +150,7 @@ class CameraValue {
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
 
-  /// The video stabilization mode in
+  /// The current video stabilization mode.
   final VideoStabilizationMode videoStabilizationMode;
 
   /// Creates a modified copy of the object.
@@ -193,20 +193,17 @@ class CameraValue {
           exposurePointSupported ?? this.exposurePointSupported,
       focusPointSupported: focusPointSupported ?? this.focusPointSupported,
       deviceOrientation: deviceOrientation ?? this.deviceOrientation,
-      lockedCaptureOrientation:
-          lockedCaptureOrientation == null
-              ? this.lockedCaptureOrientation
-              : lockedCaptureOrientation.orNull,
-      recordingOrientation:
-          recordingOrientation == null
-              ? this.recordingOrientation
-              : recordingOrientation.orNull,
+      lockedCaptureOrientation: lockedCaptureOrientation == null
+          ? this.lockedCaptureOrientation
+          : lockedCaptureOrientation.orNull,
+      recordingOrientation: recordingOrientation == null
+          ? this.recordingOrientation
+          : recordingOrientation.orNull,
       isPreviewPaused: isPreviewPaused ?? this.isPreviewPaused,
       description: description ?? this.description,
-      previewPauseOrientation:
-          previewPauseOrientation == null
-              ? this.previewPauseOrientation
-              : previewPauseOrientation.orNull,
+      previewPauseOrientation: previewPauseOrientation == null
+          ? this.previewPauseOrientation
+          : previewPauseOrientation.orNull,
       videoStabilizationMode:
           videoStabilizationMode ?? this.videoStabilizationMode,
     );
@@ -806,9 +803,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// [VideoStabilizationMode.off] will always be listed.
   Future<Iterable<VideoStabilizationMode>>
   getSupportedVideoStabilizationModes() async {
-    _throwIfNotInitialized('isVideoStabilizationModeSupported');
+    _throwIfNotInitialized('getSupportedVideoStabilizationModes');
     try {
-      final Set<VideoStabilizationMode> modes = <VideoStabilizationMode>{
+      final modes = <VideoStabilizationMode>{
         VideoStabilizationMode.off,
         ...await CameraPlatform.instance.getSupportedVideoStabilizationModes(
           _cameraId,

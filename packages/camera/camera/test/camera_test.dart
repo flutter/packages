@@ -1472,7 +1472,7 @@ void main() {
       'getSupportedVideoStabilizationModes() returns off when device supports no mode',
       () async {
         // arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1489,8 +1489,8 @@ void main() {
         ).thenAnswer((_) async => <VideoStabilizationMode>[]);
 
         // act
-        final Iterable<VideoStabilizationMode> modes =
-            await cameraController.getSupportedVideoStabilizationModes();
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
 
         // assert
         expect(modes, <VideoStabilizationMode>[VideoStabilizationMode.off]);
@@ -1501,7 +1501,7 @@ void main() {
       'getSupportedVideoStabilizationModes() returns off when device supports only off',
       () async {
         // arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1520,8 +1520,8 @@ void main() {
         );
 
         // act
-        final Iterable<VideoStabilizationMode> modes =
-            await cameraController.getSupportedVideoStabilizationModes();
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
 
         // assert
         expect(modes, <VideoStabilizationMode>[VideoStabilizationMode.off]);
@@ -1532,7 +1532,7 @@ void main() {
       'getSupportedVideoStabilizationModes() returns off and level1',
       () async {
         // arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1554,8 +1554,8 @@ void main() {
         );
 
         // act
-        final Iterable<VideoStabilizationMode> modes =
-            await cameraController.getSupportedVideoStabilizationModes();
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
 
         // assert
         expect(modes, <VideoStabilizationMode>[
@@ -1569,7 +1569,7 @@ void main() {
       'getSupportedVideoStabilizationModes() returns off, level1 and level2',
       () async {
         // arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1592,8 +1592,8 @@ void main() {
         );
 
         // act
-        final Iterable<VideoStabilizationMode> modes =
-            await cameraController.getSupportedVideoStabilizationModes();
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
 
         // assert
         expect(modes, <VideoStabilizationMode>[
@@ -1606,7 +1606,7 @@ void main() {
 
     test('getSupportedVideoStabilizationModes() returns all modes', () async {
       // arrange
-      final CameraController cameraController = CameraController(
+      final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -1630,8 +1630,8 @@ void main() {
       );
 
       // act
-      final Iterable<VideoStabilizationMode> modes =
-          await cameraController.getSupportedVideoStabilizationModes();
+      final Iterable<VideoStabilizationMode> modes = await cameraController
+          .getSupportedVideoStabilizationModes();
 
       // assert
       expect(modes, <VideoStabilizationMode>[
@@ -1645,7 +1645,7 @@ void main() {
     test(
       'setVideoStabilizationMode() throws $CameraException on $PlatformException',
       () async {
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1701,7 +1701,7 @@ void main() {
         //// call to CameraPlatform.instance.setVideoStabilizationMode.
 
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1765,7 +1765,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1829,7 +1829,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level1 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1894,7 +1894,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level2 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -1958,7 +1958,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level3 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2022,7 +2022,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off and level1 are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2089,7 +2089,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and only off and level1 are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2156,7 +2156,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level2 is requested and only off and level1 are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2224,7 +2224,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level3 is requested and only off and level1 are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2292,7 +2292,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2362,7 +2362,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2431,7 +2431,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level2 when level2 is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2501,7 +2501,7 @@ void main() {
       'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level3 when level3 is requested and all levels available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2571,7 +2571,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls never calls CameraPlatform.instance.setVideoStabilizationMode when off is requested no supported mode is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2627,7 +2627,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level1 is requested and no supported mode is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2693,7 +2693,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and no supported mode is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2759,7 +2759,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level3 is requested and no supported mode is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2825,7 +2825,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2891,7 +2891,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level1 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -2959,7 +2959,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3027,7 +3027,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level3 is requested and only off is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3095,7 +3095,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all level1 is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3164,7 +3164,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and level1 is available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3233,7 +3233,7 @@ void main() {
       'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and only off and level1 are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3311,7 +3311,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3382,7 +3382,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3453,7 +3453,7 @@ void main() {
       'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level2 when level2 is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
@@ -3528,10 +3528,10 @@ void main() {
     );
 
     test(
-      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level3 is requested and all levels are available',
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level3 when level3 is requested and all levels are available',
       () async {
         //arrange
-        final CameraController cameraController = CameraController(
+        final cameraController = CameraController(
           const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
