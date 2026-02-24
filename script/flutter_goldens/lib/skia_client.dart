@@ -279,7 +279,6 @@ class SkiaGoldClient {
     await keys.writeAsString(_getKeysJSON());
     await failures.create();
     final String commitHash = await _getCurrentCommit();
-    print(commitHash);
 
     final imgtestInitCommand = <String>[
       _goldctl,
@@ -311,6 +310,7 @@ class SkiaGoldClient {
       imgtestInitCommand.forEach(buf.writeln);
       throw SkiaException(buf.toString());
     }
+    print(imgtestInitCommand);
 
     final io.ProcessResult result = await process.run(imgtestInitCommand);
 
@@ -428,7 +428,6 @@ class SkiaGoldClient {
 
   /// Returns the current commit hash of the packages repository.
   Future<String> _getCurrentCommit() async {
-    print(path.join(platform.environment[_kPWDKey]!, 'packages'));
     final io.ProcessResult revParse = await process.run(<String>[
         'git',
         'rev-parse',
@@ -437,9 +436,7 @@ class SkiaGoldClient {
       if (revParse.exitCode != 0) {
         throw const SkiaException('Current commit of flutter/packages can not be found.');
       }
-      final String commit = (revParse.stdout as String).trim();
-      print(commit);
-      return commit;
+      return (revParse.stdout as String).trim();
     
   }
 
@@ -455,6 +452,7 @@ class SkiaGoldClient {
       'CI': 'luci',
       'Web' : _isBrowserTest,
     };
+    print(json.encode(keys));
     return json.encode(keys);
   }
 
