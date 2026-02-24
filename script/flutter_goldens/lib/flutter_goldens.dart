@@ -23,7 +23,7 @@ export 'skia_client.dart';
 // https://github.com/flutter/flutter/blob/main/docs/contributing/testing/Writing-a-golden-file-test-for-package-flutter.md
 
 // If you are trying to debug this package, you may like to use the golden test
-// titled "Inconsequential golden test" in this file:
+// titled "Inconsequential golden test" in this file: packages/material_ui/test/goldens/goldens_test.dart
 
 // const String _kFlutterRootKey = 'FLUTTER_ROOT';
 
