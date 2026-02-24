@@ -5,6 +5,11 @@ local development.
 
 ## Getting Started
 
+Prerequisites:
+
+The tools depend on `java` and `clang-format`. Each needs to be installed and
+in the path in order for the tools to properly format source code.
+
 Set up:
 
 ```sh

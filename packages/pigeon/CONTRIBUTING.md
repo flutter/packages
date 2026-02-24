@@ -8,11 +8,14 @@ people who would like to contribute to the project.
 
 ## State Diagram
 
-Pigeon generates a temporary file in its _LaunchIsolate_, the isolate that is
-spawned to run `main()`, then launches another isolate, _PigeonIsolate_, that
-uses `dart:mirrors` to parse the generated file, creating an
-[AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree), then running code
-generators with that AST.
+Pigeon performs the following steps when generating code:
+
+1. Pigeon generates a temporary file in its _LaunchIsolate_, the isolate that
+   is spawned to run `main()`.
+2. Pigeon then launches another isolate, _PigeonIsolate_, that uses
+   `dart:mirrors` to parse the generated file, creating an
+   [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
+3. Pigeon then runs code generators with that AST.
 
 ![State Diagram](./doc/pigeon_state.png)
 
@@ -37,7 +40,7 @@ generators with that AST.
 
 ## Testing Overview
 
-Pigeon has 3 types of tests, you'll find them all in
+Pigeon has 3 types of tests; you'll find them all in
 [test.dart](./tool/test.dart).
 
 * Unit tests - These are the fastest tests that are just typical unit tests,
@@ -79,5 +82,5 @@ This is how `dart:mirrors` gets access to the supplied Pigeon file.
 * Migrate to Dart Analyzer for AST generation ([issue
   78818](https://github.com/flutter/flutter/issues/78818)) - We might have
   reached the limitations of using dart:mirrors for parsing the Dart files.
-  That package has been deprecated and it doesn't support null-safe annotations.
+  That library has been deprecated and it doesn't support null-safe annotations.
   We should migrate to using the Dart Analyzer as the front-end parser.
