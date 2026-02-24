@@ -40,7 +40,7 @@ Update your project's `AndroidManifest.xml` file to include the
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.app">
   <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-<manifest>
+</manifest>
 ```
 
 ### Android theme
