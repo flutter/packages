@@ -500,13 +500,6 @@ void main() {
       ).renderString(<String, void>{'section': null});
       expect(output, equals(''));
     });
-
-    // Known failure
-    //		test('Null inverse section', () {
-    //			var output = parse('{{^section}}_{{var}}_{{/section}}', lenient: true)
-    //				.renderString({"section": null}, lenient: true);
-    //			expect(output, equals(''));
-    //		});
   });
 
   group('Escape tags', () {
