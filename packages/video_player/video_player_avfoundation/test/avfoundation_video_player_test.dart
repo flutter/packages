@@ -692,32 +692,6 @@ void main() {
     });
 
     group('Picture-in-Picture', () {
-      test('enablePictureInPicture', () async {
-        final (
-          AVFoundationVideoPlayer player,
-          _,
-          MockVideoPlayerInstanceApi playerApi,
-        ) = setUpMockPlayer(
-          playerId: 1,
-        );
-        await player.enablePictureInPicture(1);
-
-        verify(playerApi.enablePictureInPicture());
-      });
-
-      test('disablePictureInPicture', () async {
-        final (
-          AVFoundationVideoPlayer player,
-          _,
-          MockVideoPlayerInstanceApi playerApi,
-        ) = setUpMockPlayer(
-          playerId: 1,
-        );
-        await player.disablePictureInPicture(1);
-
-        verify(playerApi.disablePictureInPicture());
-      });
-
       test('startPictureInPicture', () async {
         final (
           AVFoundationVideoPlayer player,

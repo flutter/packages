@@ -91,10 +91,6 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMesseng
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error;
 - (void)selectAudioTrackAtIndex:(NSInteger)trackIndex error:(FlutterError *_Nullable *_Nonnull)error;
-/// Enables Picture-in-Picture for this player.
-- (void)enablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error;
-/// Disables Picture-in-Picture for this player.
-- (void)disablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error;
 /// Starts Picture-in-Picture playback.
 - (void)startPictureInPicture:(FlutterError *_Nullable *_Nonnull)error;
 /// Stops Picture-in-Picture playback.

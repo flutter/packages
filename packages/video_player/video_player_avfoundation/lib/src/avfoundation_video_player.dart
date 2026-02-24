@@ -183,21 +183,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
       id: playerId,
     ).getAudioTracks();
-    final tracks = <VideoAudioTrack>[];
-
-    for (final track in nativeData) {
-      final String? label = track.commonMetadataTitle ?? track.displayName;
-      tracks.add(
-        VideoAudioTrack(
-          id: track.index.toString(),
-          label: label,
-          language: track.languageCode,
-          isSelected: track.isSelected,
-        ),
+    return nativeData.map((MediaSelectionAudioTrackData track) {
+      return VideoAudioTrack(
+        id: track.index.toString(),
+        label: track.commonMetadataTitle ?? track.displayName,
+        language: track.languageCode,
+        isSelected: track.isSelected,
       );
-    }
-
-    return tracks;
+    }).toList();
   }
 
   @override
@@ -241,16 +234,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         creationParamsCodec: AVFoundationVideoPlayerApi.pigeonChannelCodec,
       ),
     );
-  }
-
-  @override
-  Future<void> enablePictureInPicture(int playerId) {
-    return _playerWith(id: playerId).enablePictureInPicture();
-  }
-
-  @override
-  Future<void> disablePictureInPicture(int playerId) {
-    return _playerWith(id: playerId).disablePictureInPicture();
   }
 
   @override
@@ -318,10 +301,6 @@ class _PlayerInstance {
 
   Future<void> selectAudioTrack(int trackIndex) =>
       _api.selectAudioTrack(trackIndex);
-
-  Future<void> enablePictureInPicture() => _api.enablePictureInPicture();
-
-  Future<void> disablePictureInPicture() => _api.disablePictureInPicture();
 
   Future<void> startPictureInPicture() => _api.startPictureInPicture();
 

@@ -1,7 +1,7 @@
 ## 2.10.0
 
 * Adds Picture-in-Picture (PiP) support for iOS.
-* Implements `enablePictureInPicture()`, `disablePictureInPicture()`, `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods.
+* Implements `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods.
 
 ## 2.9.3
 

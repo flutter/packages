@@ -1,7 +1,7 @@
 ## 6.7.0
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
-* Adds `enablePictureInPicture()`, `disablePictureInPicture()`, `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods for Picture-in-Picture support.
+* Adds `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods for Picture-in-Picture support.
 * Adds `pipStarted`, `pipStopped`, and `pipRestoreUserInterface` event types to `VideoEventType`.
 
 ## 6.6.0

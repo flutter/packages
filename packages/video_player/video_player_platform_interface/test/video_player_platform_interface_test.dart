@@ -42,26 +42,6 @@ void main() {
   });
 
   test(
-    'default implementation enablePictureInPicture throws unimplemented',
-    () async {
-      await expectLater(
-        () => initialInstance.enablePictureInPicture(1),
-        throwsUnimplementedError,
-      );
-    },
-  );
-
-  test(
-    'default implementation disablePictureInPicture throws unimplemented',
-    () async {
-      await expectLater(
-        () => initialInstance.disablePictureInPicture(1),
-        throwsUnimplementedError,
-      );
-    },
-  );
-
-  test(
     'default implementation startPictureInPicture throws unimplemented',
     () async {
       await expectLater(

@@ -292,8 +292,6 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.pipStopped:
           value = value.copyWith(isPictureInPictureActive: false);
         case VideoEventType.pipRestoreUserInterface:
-          // Return to the app from PiP.
-          break;
         case VideoEventType.unknown:
           break;
       }
@@ -387,11 +385,6 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   void _updatePosition(Duration position) {
     value = value.copyWith(position: position);
-  }
-
-  /// Enables Picture-in-Picture for this player.
-  Future<void> enablePictureInPicture() async {
-    await _platform.enablePictureInPicture(_playerId);
   }
 
   /// Starts Picture-in-Picture playback.

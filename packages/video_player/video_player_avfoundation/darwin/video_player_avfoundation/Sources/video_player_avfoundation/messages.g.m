@@ -506,42 +506,6 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
-  /// Enables Picture-in-Picture for this player.
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.enablePictureInPicture", messageChannelSuffix]
-        binaryMessenger:binaryMessenger
-        codec:FVPGetMessagesCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(enablePictureInPicture:)], @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(enablePictureInPicture:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        FlutterError *error;
-        [api enablePictureInPicture:&error];
-        callback(wrapResult(nil, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
-  /// Disables Picture-in-Picture for this player.
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.disablePictureInPicture", messageChannelSuffix]
-        binaryMessenger:binaryMessenger
-        codec:FVPGetMessagesCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(disablePictureInPicture:)], @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(disablePictureInPicture:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        FlutterError *error;
-        [api disablePictureInPicture:&error];
-        callback(wrapResult(nil, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
   /// Starts Picture-in-Picture playback.
   {
     FlutterBasicMessageChannel *channel =

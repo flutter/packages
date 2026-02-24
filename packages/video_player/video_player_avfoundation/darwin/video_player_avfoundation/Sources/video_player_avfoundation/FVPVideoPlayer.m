@@ -535,29 +535,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _pipController = nil;
 }
 
-- (void)enablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
-  if (@available(iOS 14.2, *)) {
-    // PiP controller is already set up automatically for texture-based players.
-    // For platform view players, it's set up when the view is created.
-    if (!_pipController) {
-      *error = [FlutterError
-          errorWithCode:@"pip_not_available"
-                message:@"PiP controller not configured. Ensure a player layer is available."
-                details:nil];
-    }
-  } else {
-    *error = [FlutterError errorWithCode:@"pip_not_supported"
-                                  message:@"PiP requires iOS 14.2+"
-                                  details:nil];
-  }
-}
-
-- (void)disablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
-  if (@available(iOS 14.2, *)) {
-    [self tearDownPictureInPicture];
-  }
-}
-
 - (void)startPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
   if (@available(iOS 14.2, *)) {
     if (!_pipController) {
@@ -657,15 +634,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 #else
 // macOS stubs - PiP is iOS only in this implementation.
-
-- (void)enablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
-  *error = [FlutterError errorWithCode:@"pip_not_supported"
-                                message:@"PiP is only supported on iOS"
-                                details:nil];
-}
-
-- (void)disablePictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
-}
 
 - (void)startPictureInPicture:(FlutterError *_Nullable *_Nonnull)error {
   *error = [FlutterError errorWithCode:@"pip_not_supported"

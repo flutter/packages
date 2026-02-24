@@ -94,14 +94,6 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
 
-  /// Enables Picture-in-Picture for this player.
-  @ObjCSelector('enablePictureInPicture')
-  void enablePictureInPicture();
-
-  /// Disables Picture-in-Picture for this player.
-  @ObjCSelector('disablePictureInPicture')
-  void disablePictureInPicture();
-
   /// Starts Picture-in-Picture playback.
   @ObjCSelector('startPictureInPicture')
   void startPictureInPicture();

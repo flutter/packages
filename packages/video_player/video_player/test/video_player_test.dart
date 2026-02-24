@@ -131,12 +131,6 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   }
 
   @override
-  Future<void> enablePictureInPicture() async {}
-
-  @override
-  Future<void> disablePictureInPicture() async {}
-
-  @override
   Future<void> startPictureInPicture() async {}
 
   @override
@@ -1069,26 +1063,6 @@ void main() {
     });
 
     group('Picture-in-Picture', () {
-      test('enablePictureInPicture calls platform', () async {
-        final controller = VideoPlayerController.networkUrl(_localhostUri);
-        addTearDown(controller.dispose);
-
-        await controller.initialize();
-        await controller.enablePictureInPicture();
-
-        expect(fakeVideoPlayerPlatform.calls.last, 'enablePictureInPicture');
-      });
-
-      test('disablePictureInPicture calls platform', () async {
-        final controller = VideoPlayerController.networkUrl(_localhostUri);
-        addTearDown(controller.dispose);
-
-        await controller.initialize();
-        await controller.disablePictureInPicture();
-
-        expect(fakeVideoPlayerPlatform.calls.last, 'disablePictureInPicture');
-      });
-
       test('startPictureInPicture calls platform', () async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
@@ -1138,10 +1112,6 @@ void main() {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
-        expect(
-          () => controller.enablePictureInPicture(),
-          throwsA(isA<StateError>()),
-        );
         expect(
           () => controller.startPictureInPicture(),
           throwsA(isA<StateError>()),
@@ -2045,16 +2015,6 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
-
-  @override
-  Future<void> enablePictureInPicture(int playerId) async {
-    calls.add('enablePictureInPicture');
-  }
-
-  @override
-  Future<void> disablePictureInPicture(int playerId) async {
-    calls.add('disablePictureInPicture');
-  }
 
   @override
   Future<void> startPictureInPicture(int playerId) async {

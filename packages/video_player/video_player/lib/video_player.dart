@@ -661,7 +661,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case platform_interface.VideoEventType.pipStopped:
           value = value.copyWith(isPictureInPictureActive: false);
         case platform_interface.VideoEventType.pipRestoreUserInterface:
-          break;
         case platform_interface.VideoEventType.unknown:
           break;
       }
@@ -1004,32 +1003,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.isAudioTrackSupportAvailable();
   }
 
-  /// Enables Picture-in-Picture for this player.
-  ///
-  /// This must be called before [startPictureInPicture] to prepare the player
-  /// for PiP mode. On platforms that don't support PiP, this may be a no-op.
-  ///
-  /// Throws a [StateError] if the controller is disposed or not initialized.
-  Future<void> enablePictureInPicture() async {
-    if (_isDisposedOrNotInitialized) {
-      throw StateError('VideoPlayerController is disposed or not initialized');
-    }
-    await _videoPlayerPlatform.enablePictureInPicture(_playerId);
-  }
-
-  /// Disables Picture-in-Picture for this player.
-  ///
-  /// Throws a [StateError] if the controller is disposed or not initialized.
-  Future<void> disablePictureInPicture() async {
-    if (_isDisposedOrNotInitialized) {
-      throw StateError('VideoPlayerController is disposed or not initialized');
-    }
-    await _videoPlayerPlatform.disablePictureInPicture(_playerId);
-  }
-
   /// Starts Picture-in-Picture mode for this player.
-  ///
-  /// [enablePictureInPicture] must be called before this method.
   ///
   /// Throws a [StateError] if the controller is disposed or not initialized.
   Future<void> startPictureInPicture() async {

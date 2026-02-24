@@ -2,7 +2,7 @@
 
 * Adds Picture-in-Picture (PiP) support for iOS.
 * Adds `isPictureInPictureActive` field to `VideoPlayerValue`.
-* Adds `enablePictureInPicture()`, `disablePictureInPicture()`, `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods to `VideoPlayerController`.
+* Adds `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods to `VideoPlayerController`.
 
 ## 2.11.0
 
