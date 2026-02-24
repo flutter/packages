@@ -18,11 +18,14 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        FairPlayDrmConfiguration,
+        VideoDrmConfiguration,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
         VideoPlayerWebOptionsControls,
-        VideoViewType;
+        VideoViewType,
+        WidevineDrmConfiguration;
 
 export 'src/closed_caption_file.dart';
 
@@ -398,6 +401,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.asset,
        formatHint = null,
        httpHeaders = const <String, String>{},
+       drmConfiguration = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
@@ -413,6 +417,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
+  ///
+  /// [drmConfiguration] allows configuring DRM playback for network videos.
   @Deprecated('Use VideoPlayerController.networkUrl instead')
   VideoPlayerController.network(
     this.dataSource, {
@@ -420,6 +426,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
     this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSourceType = platform_interface.DataSourceType.network,
@@ -435,12 +442,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
+  ///
+  /// [drmConfiguration] allows configuring DRM playback for network videos.
   VideoPlayerController.networkUrl(
     Uri url, {
     this.formatHint,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
     this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = url.toString(),
@@ -463,6 +473,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        dataSourceType = platform_interface.DataSourceType.file,
        package = null,
        formatHint = null,
+       drmConfiguration = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
@@ -484,6 +495,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
        package = null,
        formatHint = null,
        httpHeaders = const <String, String>{},
+       drmConfiguration = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
@@ -498,6 +510,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
   final platform_interface.VideoFormat? formatHint;
+
+  /// Optional DRM configuration.
+  ///
+  /// Currently only supported by Android (Widevine) and iOS (FairPlay)
+  /// network sources.
+  final platform_interface.VideoDrmConfiguration? drmConfiguration;
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -534,6 +552,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
+    if (drmConfiguration != null &&
+        dataSourceType != platform_interface.DataSourceType.network) {
+      throw ArgumentError(
+        'DRM is only supported for network data sources.',
+        'drmConfiguration',
+      );
+    }
+
     final bool allowBackgroundPlayback =
         videoPlayerOptions?.allowBackgroundPlayback ?? false;
     if (!allowBackgroundPlayback) {
@@ -556,6 +582,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
+          drmConfiguration: drmConfiguration,
         );
       case platform_interface.DataSourceType.file:
         dataSourceDescription = platform_interface.DataSource(

@@ -81,11 +81,35 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
+    final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
 
     String? uri;
     PlatformVideoFormat? formatHint;
+    PlatformWidevineDrmConfiguration? widevineDrm;
     final Map<String, String> httpHeaders = dataSource.httpHeaders;
     final String? userAgent = _userAgentFromHeaders(httpHeaders);
+    if (drmConfiguration != null &&
+        dataSource.sourceType != DataSourceType.network) {
+      throw ArgumentError.value(
+        dataSource.sourceType,
+        'dataSource.sourceType',
+        'DRM is only supported for network data sources.',
+      );
+    }
+
+    if (drmConfiguration is WidevineDrmConfiguration) {
+      widevineDrm = PlatformWidevineDrmConfiguration(
+        licenseUri: drmConfiguration.licenseUri.toString(),
+        licenseHeaders: drmConfiguration.licenseHeaders,
+      );
+    } else if (drmConfiguration != null) {
+      throw ArgumentError.value(
+        drmConfiguration.runtimeType,
+        'dataSource.drmConfiguration',
+        'Unsupported DRM configuration for Android.',
+      );
+    }
+
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
@@ -114,6 +138,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
+      widevineDrm: widevineDrm,
     );
 
     final int playerId;

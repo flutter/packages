@@ -32,6 +32,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FVPPlatformFairPlayDrmConfiguration ()
++ (FVPPlatformFairPlayDrmConfiguration *)fromList:(NSArray<id> *)list;
++ (nullable FVPPlatformFairPlayDrmConfiguration *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FVPCreationOptions ()
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list;
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list;
@@ -73,18 +79,56 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FVPPlatformFairPlayDrmConfiguration
++ (instancetype)makeWithCertificateUri:(NSString *)certificateUri
+                            licenseUri:(NSString *)licenseUri
+                        licenseHeaders:(NSDictionary<NSString *, NSString *> *)licenseHeaders
+                             contentId:(nullable NSString *)contentId {
+  FVPPlatformFairPlayDrmConfiguration *pigeonResult =
+      [[FVPPlatformFairPlayDrmConfiguration alloc] init];
+  pigeonResult.certificateUri = certificateUri;
+  pigeonResult.licenseUri = licenseUri;
+  pigeonResult.licenseHeaders = licenseHeaders;
+  pigeonResult.contentId = contentId;
+  return pigeonResult;
+}
++ (FVPPlatformFairPlayDrmConfiguration *)fromList:(NSArray<id> *)list {
+  FVPPlatformFairPlayDrmConfiguration *pigeonResult =
+      [[FVPPlatformFairPlayDrmConfiguration alloc] init];
+  pigeonResult.certificateUri = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.licenseUri = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.licenseHeaders = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.contentId = GetNullableObjectAtIndex(list, 3);
+  return pigeonResult;
+}
++ (nullable FVPPlatformFairPlayDrmConfiguration *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPPlatformFairPlayDrmConfiguration fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.certificateUri ?: [NSNull null],
+    self.licenseUri ?: [NSNull null],
+    self.licenseHeaders ?: [NSNull null],
+    self.contentId ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FVPCreationOptions
 + (instancetype)makeWithUri:(NSString *)uri
-                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders {
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+                fairPlayDrm:(nullable FVPPlatformFairPlayDrmConfiguration *)fairPlayDrm {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = uri;
   pigeonResult.httpHeaders = httpHeaders;
+  pigeonResult.fairPlayDrm = fairPlayDrm;
   return pigeonResult;
 }
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = GetNullableObjectAtIndex(list, 0);
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.fairPlayDrm = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list {
@@ -94,6 +138,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.uri ?: [NSNull null],
     self.httpHeaders ?: [NSNull null],
+    self.fairPlayDrm ?: [NSNull null],
   ];
 }
 @end
@@ -167,10 +212,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 129:
       return [FVPPlatformVideoViewCreationParams fromList:[self readValue]];
     case 130:
-      return [FVPCreationOptions fromList:[self readValue]];
+      return [FVPPlatformFairPlayDrmConfiguration fromList:[self readValue]];
     case 131:
-      return [FVPTexturePlayerIds fromList:[self readValue]];
+      return [FVPCreationOptions fromList:[self readValue]];
     case 132:
+      return [FVPTexturePlayerIds fromList:[self readValue]];
+    case 133:
       return [FVPMediaSelectionAudioTrackData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -185,14 +232,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   if ([value isKindOfClass:[FVPPlatformVideoViewCreationParams class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPCreationOptions class]]) {
+  } else if ([value isKindOfClass:[FVPPlatformFairPlayDrmConfiguration class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPTexturePlayerIds class]]) {
+  } else if ([value isKindOfClass:[FVPCreationOptions class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPMediaSelectionAudioTrackData class]]) {
+  } else if ([value isKindOfClass:[FVPTexturePlayerIds class]]) {
     [self writeByte:132];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPMediaSelectionAudioTrackData class]]) {
+    [self writeByte:133];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

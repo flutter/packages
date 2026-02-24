@@ -41,8 +41,16 @@ public abstract class VideoAsset {
       @Nullable String remoteUrl,
       @NonNull StreamingFormat streamingFormat,
       @NonNull Map<String, String> httpHeaders,
-      @Nullable String userAgent) {
-    return new HttpVideoAsset(remoteUrl, streamingFormat, new HashMap<>(httpHeaders), userAgent);
+      @Nullable String userAgent,
+      @Nullable String drmLicenseUri,
+      @NonNull Map<String, String> drmLicenseHeaders) {
+    return new HttpVideoAsset(
+        remoteUrl,
+        streamingFormat,
+        new HashMap<>(httpHeaders),
+        userAgent,
+        drmLicenseUri,
+        new HashMap<>(drmLicenseHeaders));
   }
 
   /**

@@ -88,6 +88,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
                                   options:(nullable NSDictionary<NSString *, id> *)options;
 
+@optional
+/// Creates and returns a wrapped AVAsset instance configured for FairPlay.
+///
+/// If not implemented by a test stub, the plugin falls back to
+/// URLAssetWithURL:options: and plays without DRM.
+- (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                   fairPlayCertificateURL:(nullable NSURL *)fairPlayCertificateURL
+                       fairPlayLicenseURL:(nullable NSURL *)fairPlayLicenseURL
+                   fairPlayLicenseHeaders:
+                       (nullable NSDictionary<NSString *, NSString *> *)fairPlayLicenseHeaders
+                        fairPlayContentId:(nullable NSString *)fairPlayContentId;
+
+@required
 /// Creates and returns a wrapped AVPlayerItem instance with the specified asset.
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset;
 

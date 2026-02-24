@@ -198,6 +198,10 @@ final class StubFVPAVFactory: NSObject, FVPAVFactory {
   let player: AVPlayer
   let playerItem: FVPAVPlayerItem
   let pixelBufferSource: FVPPixelBufferSource?
+  private(set) var lastFairPlayCertificateURL: URL?
+  private(set) var lastFairPlayLicenseURL: URL?
+  private(set) var lastFairPlayLicenseHeaders: [String: String]?
+  private(set) var lastFairPlayContentId: String?
   #if os(iOS)
     var audioSession: FVPAVAudioSession
   #endif
@@ -220,6 +224,25 @@ final class StubFVPAVFactory: NSObject, FVPAVFactory {
   }
 
   func urlAsset(with url: URL, options: [String: Any]?) -> FVPAVAsset {
+    return playerItem.asset
+  }
+
+  @objc(
+    urlAssetWithURL:options:fairPlayCertificateURL:fairPlayLicenseURL:fairPlayLicenseHeaders:
+    fairPlayContentId:
+  )
+  func urlAsset(
+    with url: URL,
+    options: [String: Any]?,
+    fairPlayCertificateURL: URL?,
+    fairPlayLicenseURL: URL?,
+    fairPlayLicenseHeaders: [String: String]?,
+    fairPlayContentId: String?
+  ) -> FVPAVAsset {
+    lastFairPlayCertificateURL = fairPlayCertificateURL
+    lastFairPlayLicenseURL = fairPlayLicenseURL
+    lastFairPlayLicenseHeaders = fairPlayLicenseHeaders
+    lastFairPlayContentId = fairPlayContentId
     return playerItem.asset
   }
 

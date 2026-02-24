@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds FairPlay DRM playback support for iOS network sources.
+
 ## 2.9.3
 
 * Fixes a regression where HTTP headers were ignored.

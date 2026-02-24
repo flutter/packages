@@ -5,10 +5,12 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
@@ -23,16 +25,22 @@ final class HttpVideoAsset extends VideoAsset {
   @NonNull private final StreamingFormat streamingFormat;
   @NonNull private final Map<String, String> httpHeaders;
   @Nullable private final String userAgent;
+  @Nullable private final String drmLicenseUri;
+  @NonNull private final Map<String, String> drmLicenseHeaders;
 
   HttpVideoAsset(
       @Nullable String assetUrl,
       @NonNull StreamingFormat streamingFormat,
       @NonNull Map<String, String> httpHeaders,
-      @Nullable String userAgent) {
+      @Nullable String userAgent,
+      @Nullable String drmLicenseUri,
+      @NonNull Map<String, String> drmLicenseHeaders) {
     super(assetUrl);
     this.streamingFormat = streamingFormat;
     this.httpHeaders = httpHeaders;
     this.userAgent = userAgent;
+    this.drmLicenseUri = drmLicenseUri;
+    this.drmLicenseHeaders = drmLicenseHeaders;
   }
 
   @NonNull
@@ -53,6 +61,13 @@ final class HttpVideoAsset extends VideoAsset {
     }
     if (mimeType != null) {
       builder.setMimeType(mimeType);
+    }
+    if (drmLicenseUri != null && !drmLicenseUri.isEmpty()) {
+      builder.setDrmConfiguration(
+          new MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID)
+              .setLicenseUri(Uri.parse(drmLicenseUri))
+              .setLicenseRequestHeaders(drmLicenseHeaders)
+              .build());
     }
     return builder.build();
   }

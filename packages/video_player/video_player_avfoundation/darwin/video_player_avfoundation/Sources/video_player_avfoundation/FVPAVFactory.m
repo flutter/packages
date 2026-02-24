@@ -3,18 +3,28 @@
 // found in the LICENSE file.
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
+#import "./FVPFairPlayResourceLoaderDelegate.h"
 
 @import AVFoundation;
 
 @interface FVPDefaultAVAsset : NSObject <FVPAVAsset>
 @property(nonatomic, readwrite) AVAsset *asset;
+@property(nonatomic, strong, nullable)
+    NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVAsset
 - (instancetype)initWithAsset:(AVAsset *)asset {
+  return [self initWithAsset:asset resourceLoaderDelegate:nil];
+}
+
+- (instancetype)initWithAsset:(AVAsset *)asset
+       resourceLoaderDelegate:
+           (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _asset = asset;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
@@ -136,7 +146,37 @@
 @implementation FVPDefaultAVFactory
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
                                   options:(nullable NSDictionary<NSString *, id> *)options {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:[AVURLAsset URLAssetWithURL:URL options:options]];
+  return [self URLAssetWithURL:URL
+                       options:options
+        fairPlayCertificateURL:nil
+            fairPlayLicenseURL:nil
+        fairPlayLicenseHeaders:nil
+             fairPlayContentId:nil];
+}
+
+- (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                   fairPlayCertificateURL:(nullable NSURL *)fairPlayCertificateURL
+                       fairPlayLicenseURL:(nullable NSURL *)fairPlayLicenseURL
+                   fairPlayLicenseHeaders:
+                       (nullable NSDictionary<NSString *, NSString *> *)fairPlayLicenseHeaders
+                        fairPlayContentId:(nullable NSString *)fairPlayContentId {
+  AVURLAsset *asset = [AVURLAsset URLAssetWithURL:URL options:options];
+  NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
+  if (fairPlayCertificateURL != nil && fairPlayLicenseURL != nil) {
+    resourceLoaderDelegate =
+        [[FVPFairPlayResourceLoaderDelegate alloc] initWithCertificateURL:fairPlayCertificateURL
+                                                               licenseURL:fairPlayLicenseURL
+                                                           licenseHeaders:fairPlayLicenseHeaders
+                                                                contentId:fairPlayContentId];
+    dispatch_queue_t resourceLoaderQueue =
+        dispatch_queue_create("io.flutter.plugins.videoplayer.fairplay", DISPATCH_QUEUE_SERIAL);
+    [asset.resourceLoader setDelegate:resourceLoaderDelegate queue:resourceLoaderQueue];
+  } else {
+    resourceLoaderDelegate = nil;
+  }
+  return [[FVPDefaultAVAsset alloc] initWithAsset:asset
+                           resourceLoaderDelegate:resourceLoaderDelegate];
 }
 
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {

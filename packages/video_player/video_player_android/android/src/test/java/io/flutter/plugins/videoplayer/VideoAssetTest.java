@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -30,8 +31,8 @@ import org.robolectric.RobolectricTestRunner;
  * Unit tests for {@link VideoAsset}.
  *
  * <p>This test suite <em>narrowly verifies</em> that the {@link VideoAsset} factory methods, {@link
- * VideoAsset#fromRemoteUrl(String, VideoAsset.StreamingFormat, Map)} and {@link
- * VideoAsset#fromAssetUrl(String)} follow the contract they have documented.
+ * VideoAsset#fromRemoteUrl(String, VideoAsset.StreamingFormat, Map, String, String, Map)} and
+ * {@link VideoAsset#fromAssetUrl(String)} follow the contract they have documented.
  *
  * <p>In other tests of the player, a fake asset is likely to be used.
  */
@@ -69,7 +70,9 @@ public final class VideoAssetTest {
             "https://flutter.dev/video.mp4",
             VideoAsset.StreamingFormat.UNKNOWN,
             new HashMap<>(),
-            userAgent);
+            userAgent,
+            null,
+            new HashMap<>());
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
@@ -92,7 +95,9 @@ public final class VideoAssetTest {
             "https://flutter.dev/video.mp4",
             VideoAsset.StreamingFormat.UNKNOWN,
             new HashMap<>(),
-            null);
+            null,
+            null,
+            new HashMap<>());
 
     MediaSource source =
         asset
@@ -110,7 +115,12 @@ public final class VideoAssetTest {
 
     VideoAsset asset =
         VideoAsset.fromRemoteUrl(
-            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, headers, null);
+            "https://flutter.dev/video.mp4",
+            VideoAsset.StreamingFormat.UNKNOWN,
+            headers,
+            null,
+            null,
+            new HashMap<>());
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
@@ -136,5 +146,28 @@ public final class VideoAssetTest {
     assert mediaItem.localConfiguration != null;
     assertEquals(
         mediaItem.localConfiguration.uri, Uri.parse("rtsp://test:pass@flutter.dev/stream"));
+  }
+
+  @Test
+  public void remoteVideoAddsWidevineDrmConfigurationWhenProvided() {
+    final String licenseUri = "https://license.example.com";
+    final Map<String, String> drmHeaders = new HashMap<>();
+    drmHeaders.put("Authorization", "Bearer test-token");
+    VideoAsset asset =
+        VideoAsset.fromRemoteUrl(
+            "https://flutter.dev/video.mpd",
+            VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE,
+            new HashMap<>(),
+            null,
+            licenseUri,
+            drmHeaders);
+
+    MediaItem mediaItem = asset.getMediaItem();
+
+    assert mediaItem.localConfiguration != null;
+    MediaItem.DrmConfiguration drmConfiguration = mediaItem.localConfiguration.drmConfiguration;
+    assertNotNull(drmConfiguration);
+    assertEquals(Uri.parse(licenseUri), drmConfiguration.licenseUri);
+    assertEquals(drmHeaders, drmConfiguration.licenseRequestHeaders);
   }
 }

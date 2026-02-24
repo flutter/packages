@@ -309,8 +309,43 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
   NSDictionary<NSString *, NSString *> *headers = options.httpHeaders;
   NSDictionary<NSString *, id> *itemOptions =
       headers.count == 0 ? nil : @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  NSObject<FVPAVAsset> *asset = [self.avFactory URLAssetWithURL:[NSURL URLWithString:options.uri]
-                                                        options:itemOptions];
+  NSURL *assetURL = [NSURL URLWithString:options.uri];
+  FVPPlatformFairPlayDrmConfiguration *fairPlayDrm = options.fairPlayDrm;
+  NSURL *fairPlayCertificateURL;
+  NSURL *fairPlayLicenseURL;
+  NSDictionary<NSString *, NSString *> *fairPlayLicenseHeaders;
+  NSString *fairPlayContentId;
+  if (fairPlayDrm == nil) {
+    fairPlayCertificateURL = nil;
+    fairPlayLicenseURL = nil;
+    fairPlayLicenseHeaders = nil;
+    fairPlayContentId = nil;
+  } else {
+    fairPlayCertificateURL = [NSURL URLWithString:fairPlayDrm.certificateUri];
+    fairPlayLicenseURL = [NSURL URLWithString:fairPlayDrm.licenseUri];
+    if (fairPlayCertificateURL == nil || fairPlayLicenseURL == nil) {
+      @throw [NSException exceptionWithName:@"InvalidFairPlayConfiguration"
+                                     reason:@"FairPlay certificate and license URLs must be valid."
+                                   userInfo:nil];
+    }
+    fairPlayLicenseHeaders = fairPlayDrm.licenseHeaders;
+    fairPlayContentId = fairPlayDrm.contentId;
+  }
+
+  NSObject<FVPAVAsset> *asset;
+  if ([self.avFactory respondsToSelector:@selector
+                      (URLAssetWithURL:
+                               options:fairPlayCertificateURL:fairPlayLicenseURL
+                                      :fairPlayLicenseHeaders:fairPlayContentId:)]) {
+    asset = [self.avFactory URLAssetWithURL:assetURL
+                                    options:itemOptions
+                     fairPlayCertificateURL:fairPlayCertificateURL
+                         fairPlayLicenseURL:fairPlayLicenseURL
+                     fairPlayLicenseHeaders:fairPlayLicenseHeaders
+                          fairPlayContentId:fairPlayContentId];
+  } else {
+    asset = [self.avFactory URLAssetWithURL:assetURL options:itemOptions];
+  }
   return [self.avFactory playerItemWithAsset:asset];
 }
 

@@ -65,8 +65,34 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
     final VideoViewType viewType = options.viewType;
+    final VideoDrmConfiguration? drmConfiguration = dataSource.drmConfiguration;
 
     String? uri;
+    PlatformFairPlayDrmConfiguration? fairPlayDrm;
+    if (drmConfiguration != null &&
+        dataSource.sourceType != DataSourceType.network) {
+      throw ArgumentError.value(
+        dataSource.sourceType,
+        'dataSource.sourceType',
+        'DRM is only supported for network data sources.',
+      );
+    }
+
+    if (drmConfiguration is FairPlayDrmConfiguration) {
+      fairPlayDrm = PlatformFairPlayDrmConfiguration(
+        certificateUri: drmConfiguration.certificateUri.toString(),
+        licenseUri: drmConfiguration.licenseUri.toString(),
+        licenseHeaders: drmConfiguration.licenseHeaders,
+        contentId: drmConfiguration.contentId,
+      );
+    } else if (drmConfiguration != null) {
+      throw ArgumentError.value(
+        drmConfiguration.runtimeType,
+        'dataSource.drmConfiguration',
+        'Unsupported DRM configuration for iOS.',
+      );
+    }
+
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
@@ -95,6 +121,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
+      fairPlayDrm: fairPlayDrm,
     );
 
     final int playerId;
