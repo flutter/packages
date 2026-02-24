@@ -18,7 +18,7 @@ import 'package:process/process.dart';
 // Flutter repos, consider reading this wiki page:
 // https://github.com/flutter/flutter/blob/main/docs/contributing/testing/Writing-a-golden-file-test-for-package-flutter.md
 
-// const String _kFlutterRootKey = 'FLUTTER_ROOT';
+const String _kPackagesRootKey = 'PWD';
 const String _kGoldctlKey = 'GOLDCTL';
 const String _kTestBrowserKey = 'CHROME_EXECUTABLE';
 
@@ -87,10 +87,10 @@ class SkiaGoldClient {
   /// The logging function to use when reporting messages to the console.
   final LogCallback log;
 
-  /// The local [Directory] where the Flutter repository is hosted.
+  /// The local [Directory] where the packages repository is hosted.
   ///
   /// Uses the [fs] file system.
-  // Directory get _flutterRoot => fs.directory(platform.environment[_kFlutterRootKey]);
+  Directory get _packagesRoot => fs.directory(path.join(platform.environment[_kPackagesRootKey]!, 'packages'));
 
   /// The path to the local [Directory] where the goldctl tool is hosted.
   ///
@@ -432,19 +432,22 @@ class SkiaGoldClient {
   }
 
   /// Returns the current commit hash of the Flutter repository.
+  /// Returns the current commit hash of the Flutter repository.
   Future<String> _getCurrentCommit() async {
-    if (!workDirectory.existsSync()) {
-      throw SkiaException('The SkiaClient.workDirectory could not be found: $workDirectory\n');
+    if (!_packagesRoot.existsSync()) {
+      throw SkiaException('Flutter root could not be found: $_packagesRoot\n');
     } else {
       final io.ProcessResult revParse = await process.run(<String>[
         'git',
         'rev-parse',
         'HEAD',
-      ], workingDirectory: workDirectory.path);
+      ], workingDirectory: _packagesRoot.path);
       if (revParse.exitCode != 0) {
         throw const SkiaException('Current commit of Flutter can not be found.');
       }
-      return (revParse.stdout as String).trim();
+      final String commit = (revParse.stdout as String).trim();
+      print(commit);
+      return commit;
     }
   }
 
