@@ -9,6 +9,8 @@ import 'dart:io';
 import 'package:mustache_template/mustache.dart';
 import 'package:test/test.dart';
 
+import 'specs/specs.dart';
+
 String render(
   String source,
   dynamic values, {
@@ -27,16 +29,13 @@ String render(
 }
 
 void defineTests(List<String> unsupportedSpecs) {
-  final specsDir = Directory('test/specs');
-  specsDir.listSync().forEach((FileSystemEntity f) {
-    if (f is File) {
-      final String filename = f.path;
-      if (shouldRun(filename, unsupportedSpecs)) {
-        final String text = f.readAsStringSync();
-        _defineGroupFromFile(filename, text);
-      }
+  for (final MapEntry<String, String> entry in SPECS.entries) {
+    if (shouldRun(entry.key, unsupportedSpecs)) {
+      final String specName = entry.key;
+      final String text = entry.value;
+      _defineGroupFromFile(specName, text);
     }
-  });
+  }
 }
 
 void _defineGroupFromFile(String filename, String text) {
@@ -87,12 +86,7 @@ void _defineGroupFromFile(String filename, String text) {
   });
 }
 
-bool shouldRun(String filename, List<String> unsupportedSpecs) {
-  // filter out only .json files
-  if (!filename.endsWith('.json')) {
-    return false;
-  }
-  final String specName = filename.substring(filename.lastIndexOf('/') + 1).replaceFirst('.json', '');
+bool shouldRun(String specName, List<String> unsupportedSpecs) {
   return !unsupportedSpecs.contains(specName);
 }
 

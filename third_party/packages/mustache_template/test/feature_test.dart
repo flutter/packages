@@ -665,8 +665,7 @@ void main() {
       );
     });
 
-    // TODO(stuartmorgan): Fix and re-enable this test, which was skipped when
-    //  the package was first imported.
+
     test('inverted sections truthy', () {
       const template = '<{{^lambda}}{{static}}{{/lambda}}>';
       final values = <String, Object>{
@@ -675,7 +674,7 @@ void main() {
       };
       const output = '<>';
       expect(parse(template).renderString(values), equals(output));
-    }, skip: 'skip test');
+    });
 
     test("seth's use case", () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
