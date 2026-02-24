@@ -119,7 +119,7 @@ class GoogleMapController
       BinaryMessenger binaryMessenger,
       LifecycleProvider lifecycleProvider,
       GoogleMapOptions options,
-      PlatformMarkerType markerType) {
+      @NonNull PlatformMarkerType markerType) {
     this.id = id;
     this.context = context;
     this.options = options;

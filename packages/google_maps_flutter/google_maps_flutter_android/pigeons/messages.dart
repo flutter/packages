@@ -528,7 +528,7 @@ class PlatformMapConfiguration {
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
   final bool? liteModeEnabled;
-  final PlatformMarkerType? markerType;
+  final PlatformMarkerType markerType;
   final String? mapId;
   final String? style;
 }
