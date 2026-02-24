@@ -427,7 +427,20 @@ class RouteConfiguration {
           if (newMatch.isError) {
             return newMatch;
           }
-          return redirect(context, newMatch, redirectHistory: redirectHistory);
+          // Re-evaluate top-level redirect on the new location before
+          // recursing into route-level redirects. This ensures that
+          // route-level redirects landing on a new path also trigger
+          // top-level redirect evaluation for that path.
+          final FutureOr<RouteMatchList> afterTopLevel = applyTopLegacyRedirect(
+            context,
+            newMatch,
+            redirectHistory: redirectHistory,
+          );
+          return redirect(
+            context,
+            afterTopLevel,
+            redirectHistory: redirectHistory,
+          );
         }
         return prevMatchList;
       }
@@ -484,9 +497,10 @@ class RouteConfiguration {
   ///
   /// Shares [redirectHistory] with later route-level redirects for proper loop detection.
   ///
-  /// Note: Legacy top-level redirect is executed at most once per navigation,
-  /// before route-level redirects. It does not re-evaluate if it redirects to
-  /// a location that would itself trigger another top-level redirect.
+  /// Recursively re-evaluates the top-level redirect when it produces a new
+  /// location, so that top-level redirect chains (e.g. `/` → `/a` → `/b`) are
+  /// fully resolved. Loop detection and redirect limit are enforced via the
+  /// shared [redirectHistory].
   FutureOr<RouteMatchList> applyTopLegacyRedirect(
     BuildContext context,
     RouteMatchList prevMatchList, {
@@ -500,7 +514,15 @@ class RouteConfiguration {
           prevMatchList.uri,
           redirectHistory,
         );
-        return newMatch;
+        if (newMatch.isError) {
+          return newMatch;
+        }
+        // Recursively re-evaluate the top-level redirect on the new location.
+        return applyTopLegacyRedirect(
+          context,
+          newMatch,
+          redirectHistory: redirectHistory,
+        );
       }
       return prevMatchList;
     }
