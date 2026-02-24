@@ -1379,7 +1379,7 @@ final class DefaultCamera: NSObject, Camera {
         bytes: FlutterStandardTypedData(bytes: bytes),
         bytesPerRow: Int64(bytesPerRow),
         height: Int64(height),
-        width: Int64(width),
+        width: Int64(width)
       )
       planes.append(planeBuffer)
     }
@@ -1395,7 +1395,7 @@ final class DefaultCamera: NSObject, Camera {
       planes: planes,
       lensAperture: Double(captureDevice.lensAperture),
       sensorExposureTimeNanoseconds: Int64(captureDevice.exposureDuration.seconds * 1_000_000_000),
-      sensorSensitivity: Double(captureDevice.iso),
+      sensorSensitivity: Double(captureDevice.iso)
     )
 
     DispatchQueue.main.async {
