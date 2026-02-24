@@ -18,7 +18,7 @@ import 'package:process/process.dart';
 // Flutter repos, consider reading this wiki page:
 // https://github.com/flutter/flutter/blob/main/docs/contributing/testing/Writing-a-golden-file-test-for-package-flutter.md
 
-const String _kPackagesRootKey = 'PWD';
+const String _kPWDKey = 'PWD';
 const String _kGoldctlKey = 'GOLDCTL';
 const String _kTestBrowserKey = 'CHROME_EXECUTABLE';
 
@@ -428,12 +428,12 @@ class SkiaGoldClient {
 
   /// Returns the current commit hash of the packages repository.
   Future<String> _getCurrentCommit() async {
-    print(workDirectory.path);
+    print(path.join(platform.environment[_kPWDRootKey]!, 'packages'));
     final io.ProcessResult revParse = await process.run(<String>[
         'git',
         'rev-parse',
         'HEAD',
-      ], workingDirectory: workDirectory.path);
+      ], workingDirectory: path.join(platform.environment[_kPWDRootKey]!, 'packages'));
       if (revParse.exitCode != 0) {
         throw const SkiaException('Current commit of flutter/packages can not be found.');
       }
