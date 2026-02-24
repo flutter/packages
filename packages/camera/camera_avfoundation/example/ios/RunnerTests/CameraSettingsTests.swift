@@ -317,20 +317,39 @@ final class CameraSettingsTests: XCTestCase {
       let mockDevice = configuration.videoCaptureDeviceFactory("camera") as! MockCaptureDevice
 
       let massiveLossyFormat = MockCaptureDeviceFormat()
-      massiveLossyFormat.mediaSubType = 1651798066 // The toxic format
-      massiveLossyFormat.dimensions = CMVideoDimensions(width: 4224, height: 3024)
+      var lossyDesc: CMVideoFormatDescription?
+      CMVideoFormatDescriptionCreate(
+        allocator: kCFAllocatorDefault,
+        codecType: 1651798066, // The toxic format
+        width: 4224,
+        height: 3024,
+        extensions: nil,
+        formatDescriptionOut: &lossyDesc
+      )
+      massiveLossyFormat._formatDescription = lossyDesc
 
       let safe4KFormat = MockCaptureDeviceFormat()
-      safe4KFormat.mediaSubType = 875704422 // Standard uncompressed YUV
-      safe4KFormat.dimensions = CMVideoDimensions(width: 3840, height: 2160)
+      var safeDesc: CMVideoFormatDescription?
+      CMVideoFormatDescriptionCreate(
+        allocator: kCFAllocatorDefault,
+        codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange, // Standard uncompressed YUV
+        width: 3840,
+        height: 2160,
+        extensions: nil,
+        formatDescriptionOut: &safeDesc
+      )
+      safe4KFormat._formatDescription = safeDesc
 
       mockDevice.flutterFormats = [massiveLossyFormat, safe4KFormat]
 
+      mockDevice.flutterActiveFormat = safe4KFormat
+
       let camera = CameraTestUtils.createTestCamera(configuration)
 
-      let selectedDimensions = camera.videoDimensionsConverter(camera.captureDevice.flutterActiveFormat)
+      let selectedFormat = camera.captureDevice.flutterActiveFormat
+      let selectedDimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription)
 
-      XCTAssertEqual(selectedDimensions.width, 3840)
-      XCTAssertEqual(selectedDimensions.height, 2160)
+      XCTAssertEqual(selectedDimensions.width, 3840, "Camera should have selected the safe 4K format, skipping the 12MP lossy format.")
+      XCTAssertEqual(selectedDimensions.height, 2160, "Camera should have selected the safe 4K format, skipping the 12MP lossy format.")
     }
 }

@@ -16,13 +16,12 @@ final class DefaultCamera: NSObject, Camera {
   var onFrameAvailable: (() -> Void)?
 
   var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA {
-      didSet {
-        captureVideoOutput.videoSettings = DefaultCamera.getSafeVideoSettings(
-          requestedFormat: videoFormat,
-          availableFormats: captureVideoOutput.availableVideoPixelFormatTypes
-        )
-      }
+    didSet {
+      captureVideoOutput.videoSettings = [
+        kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+      ]
     }
+  }
 
   private(set) var isPreviewPaused = false
 
@@ -149,12 +148,9 @@ final class DefaultCamera: NSObject, Camera {
 
     // Setup video capture output.
     let captureVideoOutput = AVCaptureVideoDataOutput()
-
-    captureVideoOutput.videoSettings = getSafeVideoSettings(
-      requestedFormat: videoFormat,
-      availableFormats: captureVideoOutput.availableVideoPixelFormatTypes
-    )
-
+    captureVideoOutput.videoSettings = [
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+    ]
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
     // Setup video capture connection.
@@ -345,47 +341,50 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   /// Finds the highest available resolution in terms of pixel count for the given device.
-  /// Preferred are formats with the same subtype as current activeFormat.
-  private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
-    -> CaptureDeviceFormat?
-  {
-    let preferredSubType = CMFormatDescriptionGetMediaSubType(
-      captureDevice.flutterActiveFormat.formatDescription)
-    var bestFormat: CaptureDeviceFormat? = nil
-    var maxPixelCount: UInt = 0
-    var isBestSubTypePreferred = false
+    /// Preferred are formats with the same subtype as current activeFormat.
+    private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
+      -> CaptureDeviceFormat?
+    {
+      let preferredSubType = CMFormatDescriptionGetMediaSubType(
+        captureDevice.flutterActiveFormat.formatDescription)
+      var bestFormat: CaptureDeviceFormat? = nil
+      var maxPixelCount: UInt = 0
+      var isBestSubTypePreferred = false
 
-    // Filter out all compressed/lossy types that the Flutter engine can't render.
-    let unsupportedSubTypes: [FourCharCode] = [
-      1651798066, // hex for 'btp2', or 420YpCbCr8BiPlanarVideoRange
-      1651798068, // hex for 'btp4', or  420YpCbCr8BiPlanarFullRange
-      1650943852, // hex for 'bgrl', or for 32BGRA lossy
-    ]
+      // Apple's lossy compressed formats that Flutter Metal cannot render.
+      // Filtering these out prevents AVFoundation from crashing when it tries to
+      // stream 12MP video, forcing a safe fallback to uncompressed 4K.
+      let unsupportedSubTypes: [FourCharCode] = [
+        1651798066, // 'btp2' - 420YpCbCr8BiPlanarVideoRange (Lossy)
+        1651798068, // 'btp4' - 420YpCbCr8BiPlanarFullRange (Lossy)
+        1650943852, // 'bgrl' - 32BGRA (Lossy)
+      ]
 
-    for format in captureDevice.flutterFormats {
-      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+      for format in captureDevice.flutterFormats {
+        let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
 
-      if unsupportedSubTypes.contains(subType) {
-        continue
+        // Skip formats that will crash the Flutter Engine
+        if unsupportedSubTypes.contains(subType) {
+          continue
+        }
+
+        let resolution = videoDimensionsConverter(format)
+        let height = UInt(resolution.height)
+        let width = UInt(resolution.width)
+        let pixelCount = height * width
+        let isSubTypePreferred = subType == preferredSubType
+
+        if pixelCount > maxPixelCount
+          || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
+        {
+          bestFormat = format
+          maxPixelCount = pixelCount
+          isBestSubTypePreferred = isSubTypePreferred
+        }
       }
 
-      let resolution = videoDimensionsConverter(format)
-      let height = UInt(resolution.height)
-      let width = UInt(resolution.width)
-      let pixelCount = height * width
-      let isSubTypePreferred = subType == preferredSubType
-
-      if pixelCount > maxPixelCount
-        || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
-      {
-        bestFormat = format
-        maxPixelCount = pixelCount
-        isBestSubTypePreferred = isSubTypePreferred
-      }
+      return bestFormat
     }
-
-    return bestFormat
-  }
 
   func setUpCaptureSessionForAudioIfNeeded() {
     // Don't setup audio twice or we will lose the audio.
@@ -472,28 +471,6 @@ final class DefaultCamera: NSObject, Camera {
 
     try? AVAudioSession.sharedInstance().setCategory(finalCategory, options: finalOptions)
   }
-
-  private static func getSafeVideoSettings(
-      requestedFormat: FourCharCode,
-      availableFormats: [FourCharCode]
-    ) -> [String: Any] {
-      let selectedFormat: FourCharCode
-
-      if availableFormats.contains(requestedFormat) {
-        selectedFormat = requestedFormat
-      } else if let flutterSupportedFallback = availableFormats.first(where: {
-        $0 == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ||
-        $0 == kCVPixelFormatType_32BGRA ||
-        $0 == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange
-      }) {
-        selectedFormat = flutterSupportedFallback
-      } else {
-        // Ultimate safe fallback
-        selectedFormat = availableFormats.first ?? requestedFormat
-      }
-
-      return [kCVPixelBufferPixelFormatTypeKey as String: selectedFormat]
-    }
 
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
