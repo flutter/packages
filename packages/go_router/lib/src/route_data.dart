@@ -645,6 +645,7 @@ typedef QueryParameterEncoder<T> = String? Function(T value);
 typedef QueryParameterDecoder<T> = T? Function(String? value);
 
 /// Annotation to override the URI name for a route parameter.
+@optionalTypeArgs
 @Target({TargetKind.parameter})
 class TypedQueryParameter<T> {
   /// Annotation to override the URI name for a route parameter.
@@ -653,7 +654,14 @@ class TypedQueryParameter<T> {
     this.encoder,
     this.decoder,
     this.compare,
-  });
+  }) : assert(
+         (encoder == null) == (decoder == null),
+         'encoder and decoder must both be provided together',
+       ),
+       assert(
+         compare == null || encoder != null,
+         'compare function requires an encoder to be provided',
+       );
 
   /// The name of the parameter in the URI.
   ///
@@ -694,5 +702,8 @@ class TypedQueryParameter<T> {
   /// Used to decide whether to include a parameter in the URI when a default
   /// value exists. If the parameter equals its default value, it is omitted
   /// from the URI; otherwise, it is included.
+  ///
+  /// This should be provided if the parameter has a default value and is is not
+  /// a primitive type.
   final bool Function(T, T)? compare;
 }
