@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `patternToPath` to throw `GoException` when a path parameter is missing instead of producing URLs containing the literal "null".
+version: patch

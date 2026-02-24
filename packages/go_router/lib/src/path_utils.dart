@@ -85,7 +85,11 @@ String patternToPath(String pattern, Map<String, String> pathParameters) {
       buffer.write(pattern.substring(start, match.start));
     }
     final String name = match[1]!;
-    buffer.write(pathParameters[name]);
+    final String? value = pathParameters[name];
+    if (value == null) {
+      throw GoException('Missing path parameter: $name');
+    }
+    buffer.write(value);
     start = match.end;
   }
 

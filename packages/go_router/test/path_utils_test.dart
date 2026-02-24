@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart' show GoException;
 import 'package:go_router/src/path_utils.dart';
 
 void main() {
@@ -93,6 +94,19 @@ void main() {
     final String restoredUrl = patternToPath(pattern, parameterValues);
 
     expect(url, restoredUrl);
+  });
+
+  test('patternToPath throws when path parameter is missing', () {
+    const pattern = '/user/:id/book/:bookId';
+    final incompleteParams = <String, String>{'id': '123'};
+    expect(
+      () => patternToPath(pattern, incompleteParams),
+      throwsA(isA<GoException>().having(
+        (GoException e) => e.message,
+        'message',
+        contains('Missing path parameter: bookId'),
+      )),
+    );
   });
 
   test('concatenatePaths', () {
