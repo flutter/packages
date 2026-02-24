@@ -4,7 +4,6 @@
 // See: https://github.com/valotas/mustache4dart
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:mustache_template/mustache.dart';
 import 'package:test/test.dart';
