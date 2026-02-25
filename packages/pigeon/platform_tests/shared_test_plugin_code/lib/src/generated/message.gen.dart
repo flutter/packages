@@ -310,12 +310,12 @@ class MessageApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as MessageSearchReply;
+    )!;
+    return pigeonVar_replyValue as MessageSearchReply;
   }
 }
 
@@ -353,12 +353,12 @@ class MessageNestedApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as MessageSearchReply;
+    )!;
+    return pigeonVar_replyValue as MessageSearchReply;
   }
 }
 

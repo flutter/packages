@@ -181,12 +181,12 @@ class ExampleHostApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as String;
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   Future<int> add(int a, int b) async {
@@ -202,12 +202,12 @@ class ExampleHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as int;
+    )!;
+    return pigeonVar_replyValue as int;
   }
 
   Future<bool> sendMessage(MessageData message) async {
@@ -223,12 +223,12 @@ class ExampleHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as bool;
+    )!;
+    return pigeonVar_replyValue as bool;
   }
 }
 

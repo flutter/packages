@@ -1349,22 +1349,27 @@ _validateReplyValue(
       indent.format('$validateCall;');
     } else {
       const accessor = '${varNamePrefix}replyValue';
-      indent.format('final Object? $accessor = $validateCall;');
-      final String returnTypeName = _makeGenericTypeArguments(returnType);
+      if (returnType.isNullable) {
+        indent.format('final Object? $accessor = $validateCall;');
+      } else {
+        indent.format('final Object $accessor = $validateCall!;');
+      }
+      String returnTypeName = _makeGenericTypeArguments(returnType);
+      if (returnType.isNullable) {
+        returnTypeName = '$returnTypeName?';
+      }
       final String genericCastCall = _makeGenericCastCall(returnType);
 
       if (genericCastCall.isEmpty) {
-        final nullAssert = returnType.isNullable ? '' : '!';
-        final nullabilitySuffix = returnType.isNullable ? '?' : '';
-        final castedAccessor = returnTypeName == 'Object'
-            ? '$accessor!'
-            : '$accessor$nullAssert as $returnTypeName$nullabilitySuffix';
+        final castedAccessor = returnType.baseName == 'Object'
+            ? accessor
+            : '$accessor as $returnTypeName';
         indent.format('return $castedAccessor;');
       } else {
-        final nullablyTypedAccessor = returnTypeName == 'Object'
+        final nullablyTypedAccessor = returnType.baseName == 'Object'
             ? accessor
-            : '($accessor as $returnTypeName?)';
-        final nullHandler = returnType.isNullable ? '?' : '!';
+            : '($accessor as $returnTypeName)';
+        final nullHandler = returnType.isNullable ? '?' : '';
         indent.format(
           'return $nullablyTypedAccessor$nullHandler$genericCastCall;',
         );

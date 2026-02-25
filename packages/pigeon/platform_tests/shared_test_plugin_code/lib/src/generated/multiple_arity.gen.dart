@@ -102,12 +102,12 @@ class MultipleArityHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as int;
+    )!;
+    return pigeonVar_replyValue as int;
   }
 }
 

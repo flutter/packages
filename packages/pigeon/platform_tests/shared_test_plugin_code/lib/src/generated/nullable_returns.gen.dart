@@ -178,12 +178,12 @@ class NullableArgHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return pigeonVar_replyValue! as int;
+    )!;
+    return pigeonVar_replyValue as int;
   }
 }
 
@@ -338,12 +338,12 @@ class NullableCollectionArgHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _validateReplyValue(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    );
-    return (pigeonVar_replyValue as List<Object?>?)!.cast<String?>();
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<String?>();
   }
 }
 
