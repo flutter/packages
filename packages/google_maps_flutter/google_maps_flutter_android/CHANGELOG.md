@@ -1,3 +1,7 @@
+## 2.19.3
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
 ## 2.19.2
 
 * Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
@@ -9,10 +13,6 @@
 ## 2.19.0
 
 * Adds support for advanced markers.
-
-## 2.18.13
-
-* Batches clustered marker add/remove operations to avoid redundant re-rendering.
 
 ## 2.18.12
 

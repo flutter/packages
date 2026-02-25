@@ -161,7 +161,7 @@ class ClusterManagersController
   }
 
   /** Adds multiple items to the ClusterManager with the given ID. */
-  public void addItems(String clusterManagerId, List<MarkerBuilder> items) {
+  public void addItems(String clusterManagerId, @NonNull List<MarkerBuilder> items) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager != null) {
       clusterManager.addItems(items);
@@ -180,7 +180,7 @@ class ClusterManagersController
   }
 
   /** Removes multiple items from the ClusterManager with the given ID. */
-  public void removeItems(String clusterManagerId, List<MarkerBuilder> items) {
+  public void removeItems(String clusterManagerId, @NonNull List<MarkerBuilder> items) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager != null) {
       clusterManager.removeItems(items);

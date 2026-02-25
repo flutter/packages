@@ -60,7 +60,7 @@ class MarkersController {
     for (Messages.PlatformMarker markerToAdd : markersToAdd) {
       String markerId = markerToAdd.getMarkerId();
       String clusterManagerId = markerToAdd.getClusterManagerId();
-      MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
+      MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId, markerType);
       Convert.interpretMarkerOptions(
           markerToAdd, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
 
@@ -112,7 +112,7 @@ class MarkersController {
         }
 
         // Prepare new marker for addition
-        MarkerBuilder newMarkerBuilder = new MarkerBuilder(markerId, clusterManagerId);
+        MarkerBuilder newMarkerBuilder = new MarkerBuilder(markerId, clusterManagerId, markerType);
         Convert.interpretMarkerOptions(
             markerToChange,
             newMarkerBuilder,

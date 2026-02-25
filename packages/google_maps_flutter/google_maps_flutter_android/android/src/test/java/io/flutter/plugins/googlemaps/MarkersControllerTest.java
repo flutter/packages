@@ -28,6 +28,7 @@ import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import io.flutter.plugins.googlemaps.Messages.PlatformMarkerCollisionBehavior;
 import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.After;
@@ -35,6 +36,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -330,7 +332,7 @@ public class MarkersControllerTest {
     final String clusterManagerId = "cm123";
 
     // Create multiple markers with the same cluster manager
-    final List<Messages.PlatformMarker> markers = new java.util.ArrayList<>();
+    final List<Messages.PlatformMarker> markers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
       builder
@@ -367,8 +369,8 @@ public class MarkersControllerTest {
     final String clusterManagerId = "cm123";
 
     // First add markers
-    final List<Messages.PlatformMarker> markers = new java.util.ArrayList<>();
-    final List<String> markerIds = new java.util.ArrayList<>();
+    final List<Messages.PlatformMarker> markers = new ArrayList<>();
+    final List<String> markerIds = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       String markerId = "marker" + i;
       markerIds.add(markerId);
@@ -410,7 +412,7 @@ public class MarkersControllerTest {
     final String clusterManagerId2 = "cm456";
 
     // First add markers to cluster manager 1
-    final List<Messages.PlatformMarker> initialMarkers = new java.util.ArrayList<>();
+    final List<Messages.PlatformMarker> initialMarkers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
       builder
@@ -429,7 +431,7 @@ public class MarkersControllerTest {
     Mockito.reset(clusterManagersController);
 
     // Now change all markers to cluster manager 2
-    final List<Messages.PlatformMarker> changedMarkers = new java.util.ArrayList<>();
+    final List<Messages.PlatformMarker> changedMarkers = new ArrayList<>();
     for (int i = 0; i < 5; i++) {
       final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
       builder
@@ -470,4 +472,50 @@ public class MarkersControllerTest {
     Mockito.verify(clusterManagersController, times(0)).addItem(any());
     Mockito.verify(clusterManagersController, times(0)).removeItem(any());
   }
+
+  @Test
+  public void controller_ChangeMarkerInPlace() {
+    final Marker marker = mock(Marker.class);
+    final String markerId = "marker1";
+    final String clusterManagerId = "cm123";
+
+    when(marker.getId()).thenReturn(markerId);
+
+    // Add a clustered marker
+    final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+    builder
+        .setMarkerId(markerId)
+        .setClusterManagerId(clusterManagerId)
+        .setPosition(
+            new Messages.PlatformLatLng.Builder().setLatitude(1.0).setLongitude(2.0).build());
+    controller.addMarkers(Collections.singletonList(builder.build()));
+
+    // Capture the MarkerBuilder passed to addItems
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<MarkerBuilder>> captor = ArgumentCaptor.forClass(List.class);
+    Mockito.verify(clusterManagersController).addItems(eq(clusterManagerId), captor.capture());
+    MarkerBuilder capturedMarkerBuilder = captor.getValue().get(0);
+
+    // Simulate cluster render so markerController exists
+    controller.onClusterItemRendered(capturedMarkerBuilder, marker);
+
+    // Reset to clear invocation counts
+    Mockito.reset(clusterManagersController);
+
+    // Change marker in place (same clusterManagerId)
+    final LatLng newLatLng = new LatLng(3.0, 4.0);
+    builder.setPosition(
+        new Messages.PlatformLatLng.Builder()
+            .setLatitude(newLatLng.latitude)
+            .setLongitude(newLatLng.longitude)
+            .build());
+    controller.changeMarkers(Collections.singletonList(builder.build()));
+
+    // In-place update: marker position is updated directly
+    Mockito.verify(marker, times(1)).setPosition(newLatLng);
+    // No re-clustering needed
+    Mockito.verify(clusterManagersController, times(0)).addItems(any(), any());
+    Mockito.verify(clusterManagersController, times(0)).removeItems(any(), any());
+  }
+
 }
