@@ -120,8 +120,8 @@ class PlatformCameraState {
 class PlatformCameraImageData {
   PlatformCameraImageData({
     required this.formatCode,
-    required this.height,
     required this.width,
+    required this.height,
     required this.planes,
     required this.lensAperture,
     required this.sensorExposureTimeNanoseconds,
@@ -131,8 +131,8 @@ class PlatformCameraImageData {
   /// The FourCharCode of the image format.
   final int formatCode;
 
-  final int height;
   final int width;
+  final int height;
   final List<PlatformCameraImagePlane> planes;
   final double lensAperture;
   final int sensorExposureTimeNanoseconds;
@@ -144,14 +144,14 @@ class PlatformCameraImagePlane {
   const PlatformCameraImagePlane({
     required this.bytes,
     required this.bytesPerRow,
-    required this.height,
     required this.width,
+    required this.height,
   });
 
   final Uint8List bytes;
   final int bytesPerRow;
-  final int height;
   final int width;
+  final int height;
 }
 
 // Pigeon version of to MediaSettings.

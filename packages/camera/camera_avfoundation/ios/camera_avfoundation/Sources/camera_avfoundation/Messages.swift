@@ -292,8 +292,8 @@ struct PlatformCameraState: Hashable {
 struct PlatformCameraImageData: Hashable {
   /// The FourCharCode of the image format.
   var formatCode: Int64
-  var height: Int64
   var width: Int64
+  var height: Int64
   var planes: [PlatformCameraImagePlane]
   var lensAperture: Double
   var sensorExposureTimeNanoseconds: Int64
@@ -302,8 +302,8 @@ struct PlatformCameraImageData: Hashable {
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraImageData? {
     let formatCode = pigeonVar_list[0] as! Int64
-    let height = pigeonVar_list[1] as! Int64
-    let width = pigeonVar_list[2] as! Int64
+    let width = pigeonVar_list[1] as! Int64
+    let height = pigeonVar_list[2] as! Int64
     let planes = pigeonVar_list[3] as! [PlatformCameraImagePlane]
     let lensAperture = pigeonVar_list[4] as! Double
     let sensorExposureTimeNanoseconds = pigeonVar_list[5] as! Int64
@@ -311,8 +311,8 @@ struct PlatformCameraImageData: Hashable {
 
     return PlatformCameraImageData(
       formatCode: formatCode,
-      height: height,
       width: width,
+      height: height,
       planes: planes,
       lensAperture: lensAperture,
       sensorExposureTimeNanoseconds: sensorExposureTimeNanoseconds,
@@ -322,8 +322,8 @@ struct PlatformCameraImageData: Hashable {
   func toList() -> [Any?] {
     return [
       formatCode,
-      height,
       width,
+      height,
       planes,
       lensAperture,
       sensorExposureTimeNanoseconds,
@@ -342,29 +342,29 @@ struct PlatformCameraImageData: Hashable {
 struct PlatformCameraImagePlane: Hashable {
   var bytes: FlutterStandardTypedData
   var bytesPerRow: Int64
-  var height: Int64
   var width: Int64
+  var height: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraImagePlane? {
     let bytes = pigeonVar_list[0] as! FlutterStandardTypedData
     let bytesPerRow = pigeonVar_list[1] as! Int64
-    let height = pigeonVar_list[2] as! Int64
-    let width = pigeonVar_list[3] as! Int64
+    let width = pigeonVar_list[2] as! Int64
+    let height = pigeonVar_list[3] as! Int64
 
     return PlatformCameraImagePlane(
       bytes: bytes,
       bytesPerRow: bytesPerRow,
-      height: height,
-      width: width
+      width: width,
+      height: height
     )
   }
   func toList() -> [Any?] {
     return [
       bytes,
       bytesPerRow,
-      height,
       width,
+      height,
     ]
   }
   static func == (lhs: PlatformCameraImagePlane, rhs: PlatformCameraImagePlane) -> Bool {

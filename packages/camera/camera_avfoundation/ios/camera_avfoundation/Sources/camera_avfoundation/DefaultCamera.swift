@@ -1202,14 +1202,14 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     ensureToRunOnMainQueue { [weak self] in
-      guard let self = self else {
+      guard let self else {
         completion(.success(()))
         return
       }
       ImageDataStreamStreamHandler.register(with: messenger, streamHandler: imageStreamHandler)
       self.imageStreamHandler = imageStreamHandler
       self.captureSessionQueue.async { [weak self] in
-        if let self = self {
+        if let self {
           self.isStreamingImages = true
           self.streamingPendingFramesCount = 0
         }
@@ -1378,8 +1378,8 @@ final class DefaultCamera: NSObject, Camera {
       let planeBuffer = PlatformCameraImagePlane(
         bytes: FlutterStandardTypedData(bytes: bytes),
         bytesPerRow: Int64(bytesPerRow),
-        height: Int64(height),
-        width: Int64(width)
+        width: Int64(width),
+        height: Int64(height)
       )
       planes.append(planeBuffer)
     }
@@ -1390,8 +1390,8 @@ final class DefaultCamera: NSObject, Camera {
 
     let imageBuffer = PlatformCameraImageData(
       formatCode: Int64(videoFormat),
-      height: Int64(imageHeight),
       width: Int64(imageWidth),
+      height: Int64(imageHeight),
       planes: planes,
       lensAperture: Double(captureDevice.lensAperture),
       sensorExposureTimeNanoseconds: Int64(captureDevice.exposureDuration.seconds * 1_000_000_000),

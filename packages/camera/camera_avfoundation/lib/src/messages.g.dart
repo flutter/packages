@@ -222,8 +222,8 @@ class PlatformCameraState {
 class PlatformCameraImageData {
   PlatformCameraImageData({
     required this.formatCode,
-    required this.height,
     required this.width,
+    required this.height,
     required this.planes,
     required this.lensAperture,
     required this.sensorExposureTimeNanoseconds,
@@ -233,9 +233,9 @@ class PlatformCameraImageData {
   /// The FourCharCode of the image format.
   int formatCode;
 
-  int height;
-
   int width;
+
+  int height;
 
   List<PlatformCameraImagePlane> planes;
 
@@ -248,8 +248,8 @@ class PlatformCameraImageData {
   List<Object?> _toList() {
     return <Object?>[
       formatCode,
-      height,
       width,
+      height,
       planes,
       lensAperture,
       sensorExposureTimeNanoseconds,
@@ -265,8 +265,8 @@ class PlatformCameraImageData {
     result as List<Object?>;
     return PlatformCameraImageData(
       formatCode: result[0]! as int,
-      height: result[1]! as int,
-      width: result[2]! as int,
+      width: result[1]! as int,
+      height: result[2]! as int,
       planes: (result[3] as List<Object?>?)!.cast<PlatformCameraImagePlane>(),
       lensAperture: result[4]! as double,
       sensorExposureTimeNanoseconds: result[5]! as int,
@@ -295,20 +295,20 @@ class PlatformCameraImagePlane {
   PlatformCameraImagePlane({
     required this.bytes,
     required this.bytesPerRow,
-    required this.height,
     required this.width,
+    required this.height,
   });
 
   Uint8List bytes;
 
   int bytesPerRow;
 
-  int height;
-
   int width;
 
+  int height;
+
   List<Object?> _toList() {
-    return <Object?>[bytes, bytesPerRow, height, width];
+    return <Object?>[bytes, bytesPerRow, width, height];
   }
 
   Object encode() {
@@ -320,8 +320,8 @@ class PlatformCameraImagePlane {
     return PlatformCameraImagePlane(
       bytes: result[0]! as Uint8List,
       bytesPerRow: result[1]! as int,
-      height: result[2]! as int,
-      width: result[3]! as int,
+      width: result[2]! as int,
+      height: result[3]! as int,
     );
   }
 

@@ -11,8 +11,8 @@ import 'messages.g.dart';
 CameraImageData cameraImageFromPlatformData(PlatformCameraImageData data) {
   return CameraImageData(
     format: _cameraImageFormatFromPlatformImageFormat(data.formatCode),
-    height: data.height,
     width: data.width,
+    height: data.height,
     lensAperture: data.lensAperture,
     sensorExposureTime: data.sensorExposureTimeNanoseconds,
     sensorSensitivity: data.sensorSensitivity,
@@ -50,7 +50,7 @@ CameraImagePlane _cameraImagePlaneFromPlatformData(
   return CameraImagePlane(
     bytes: data.bytes,
     bytesPerRow: data.bytesPerRow,
-    height: data.height,
     width: data.width,
+    height: data.height,
   );
 }

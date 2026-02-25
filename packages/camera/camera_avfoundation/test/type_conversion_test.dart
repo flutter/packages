@@ -14,8 +14,8 @@ void main() {
     final CameraImageData cameraImage = cameraImageFromPlatformData(
       PlatformCameraImageData(
         formatCode: 1,
-        height: 1,
         width: 4,
+        height: 1,
         lensAperture: 1.8,
         sensorExposureTimeNanoseconds: 9991324,
         sensorSensitivity: 92.0,
@@ -23,8 +23,8 @@ void main() {
           PlatformCameraImagePlane(
             bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
             bytesPerRow: 4,
-            height: 1,
             width: 4,
+            height: 1,
           ),
         ],
       ),
@@ -39,8 +39,8 @@ void main() {
     final CameraImageData cameraImage = cameraImageFromPlatformData(
       PlatformCameraImageData(
         formatCode: 875704438,
-        height: 1,
         width: 4,
+        height: 1,
         lensAperture: 1.8,
         sensorExposureTimeNanoseconds: 9991324,
         sensorSensitivity: 92.0,
@@ -48,8 +48,8 @@ void main() {
           PlatformCameraImagePlane(
             bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
             bytesPerRow: 4,
-            height: 1,
             width: 4,
+            height: 1,
           ),
         ],
       ),
