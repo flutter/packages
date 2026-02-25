@@ -16,6 +16,7 @@ Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
   required bool isNullValid,
+  required bool isValueExpected,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -28,13 +29,13 @@ Object? _extractReplyValueOrThrow(
       message: replyList[1] as String?,
       details: replyList[2],
     );
-  } else if (!isNullValid && replyList[0] == null) {
+  } else if (!isNullValid && isValueExpected && replyList[0] == null) {
     throw PlatformException(
       code: 'null-error',
       message: 'Host platform returned null value for non-null return value.',
     );
   }
-  return replyList[0];
+  return isValueExpected ? replyList[0] : null;
 }
 
 List<Object?> wrapResponse({
@@ -882,7 +883,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -904,6 +906,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllTypes;
   }
@@ -924,6 +927,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -943,7 +947,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -963,6 +968,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -985,6 +991,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -1007,6 +1014,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -1029,6 +1037,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -1051,6 +1060,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -1073,6 +1083,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -1095,6 +1106,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue;
   }
@@ -1117,6 +1129,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -1139,6 +1152,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
   }
@@ -1163,6 +1177,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
   }
@@ -1185,6 +1200,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AnEnum>();
   }
@@ -1209,6 +1225,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes>();
   }
@@ -1231,6 +1248,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<Object?, Object?>();
@@ -1256,6 +1274,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, String?>();
@@ -1279,6 +1298,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
   }
@@ -1303,6 +1323,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
@@ -1328,6 +1349,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
@@ -1353,6 +1375,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String, String>();
@@ -1376,6 +1399,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int, int>();
   }
@@ -1400,6 +1424,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<AnEnum, AnEnum>();
@@ -1425,6 +1450,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<int, AllNullableTypes>();
@@ -1448,6 +1474,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllClassesWrapper;
   }
@@ -1470,6 +1497,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnEnum;
   }
@@ -1492,6 +1520,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnotherEnum;
   }
@@ -1514,6 +1543,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -1536,6 +1566,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -1558,6 +1589,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -1582,6 +1614,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypes?;
   }
@@ -1607,6 +1640,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion?;
   }
@@ -1630,6 +1664,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -1655,6 +1690,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllClassesWrapper;
   }
@@ -1681,6 +1717,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllNullableTypes;
   }
@@ -1708,6 +1745,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion;
   }
@@ -1730,6 +1768,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -1752,6 +1791,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -1774,6 +1814,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -1796,6 +1837,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -1820,6 +1862,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -1842,6 +1885,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -1864,6 +1908,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -1886,6 +1931,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AnEnum?>();
   }
@@ -1910,6 +1956,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes?>();
   }
@@ -1934,6 +1981,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AnEnum>();
   }
@@ -1958,6 +2006,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes>();
   }
@@ -1982,6 +2031,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<Object?, Object?>();
@@ -2007,6 +2057,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, String?>();
@@ -2030,6 +2081,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, int?>();
   }
@@ -2054,6 +2106,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<AnEnum?, AnEnum?>();
@@ -2079,6 +2132,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<int?, AllNullableTypes?>();
@@ -2104,6 +2158,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String, String>();
@@ -2129,6 +2184,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int, int>();
   }
@@ -2153,6 +2209,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<AnEnum, AnEnum>();
@@ -2178,6 +2235,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<int, AllNullableTypes>();
@@ -2200,6 +2258,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnEnum?;
   }
@@ -2221,6 +2280,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnotherEnum?;
   }
@@ -2243,6 +2303,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -2265,6 +2326,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -2285,7 +2347,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -2307,6 +2370,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -2329,6 +2393,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -2351,6 +2416,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -2373,6 +2439,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -2395,6 +2462,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -2417,6 +2485,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue;
   }
@@ -2439,6 +2508,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -2461,6 +2531,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
   }
@@ -2485,6 +2556,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
   }
@@ -2507,6 +2579,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<Object?, Object?>();
@@ -2532,6 +2605,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, String?>();
@@ -2555,6 +2629,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
   }
@@ -2579,6 +2654,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
@@ -2604,6 +2680,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
@@ -2627,6 +2704,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnEnum;
   }
@@ -2649,6 +2727,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnotherEnum;
   }
@@ -2669,6 +2748,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -2688,7 +2768,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -2708,6 +2789,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -2730,6 +2812,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllTypes;
   }
@@ -2754,6 +2837,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypes?;
   }
@@ -2779,6 +2863,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion?;
   }
@@ -2801,6 +2886,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -2823,6 +2909,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -2845,6 +2932,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -2867,6 +2955,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -2889,6 +2978,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -2911,6 +3001,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -2933,6 +3024,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -2957,6 +3049,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AnEnum?>();
   }
@@ -2981,6 +3074,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes?>();
   }
@@ -3005,6 +3099,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<Object?, Object?>();
@@ -3030,6 +3125,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, String?>();
@@ -3055,6 +3151,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, int?>();
   }
@@ -3079,6 +3176,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<AnEnum?, AnEnum?>();
@@ -3104,6 +3202,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<int?, AllNullableTypes?>();
@@ -3127,6 +3226,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnEnum?;
   }
@@ -3151,6 +3251,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnotherEnum?;
   }
@@ -3172,6 +3273,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -3193,6 +3295,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -3211,7 +3314,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -3230,6 +3334,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -3248,7 +3353,8 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -3269,6 +3375,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllTypes;
   }
@@ -3292,6 +3399,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypes?;
   }
@@ -3317,6 +3425,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllNullableTypes;
   }
@@ -3341,6 +3450,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion?;
   }
@@ -3367,6 +3477,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AllNullableTypesWithoutRecursion;
   }
@@ -3388,6 +3499,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -3409,6 +3521,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -3430,6 +3543,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -3451,6 +3565,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -3472,6 +3587,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -3493,6 +3609,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -3514,6 +3631,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
   }
@@ -3537,6 +3655,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
   }
@@ -3560,6 +3679,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AnEnum>();
   }
@@ -3583,6 +3703,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes>();
   }
@@ -3606,6 +3727,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<Object?, Object?>();
@@ -3630,6 +3752,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, String?>();
@@ -3652,6 +3775,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
   }
@@ -3675,6 +3799,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
@@ -3699,6 +3824,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
@@ -3723,6 +3849,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String, String>();
@@ -3747,6 +3874,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int, int>();
   }
@@ -3770,6 +3898,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<AnEnum, AnEnum>();
@@ -3794,6 +3923,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<int, AllNullableTypes>();
@@ -3816,6 +3946,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnEnum;
   }
@@ -3839,6 +3970,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as AnotherEnum;
   }
@@ -3860,6 +3992,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -3881,6 +4014,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -3902,6 +4036,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -3923,6 +4058,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -3944,6 +4080,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -3967,6 +4104,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -3990,6 +4128,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AnEnum?>();
   }
@@ -4013,6 +4152,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes?>();
   }
@@ -4036,6 +4176,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AnEnum>();
   }
@@ -4059,6 +4200,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<AllNullableTypes>();
   }
@@ -4082,6 +4224,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<Object?, Object?>();
@@ -4106,6 +4249,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, String?>();
@@ -4130,6 +4274,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int?, int?>();
   }
@@ -4153,6 +4298,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<AnEnum?, AnEnum?>();
@@ -4177,6 +4323,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<int?, AllNullableTypes?>();
@@ -4201,6 +4348,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String, String>();
@@ -4225,6 +4373,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)?.cast<int, int>();
   }
@@ -4248,6 +4397,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<AnEnum, AnEnum>();
@@ -4272,6 +4422,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<int, AllNullableTypes>();
@@ -4294,6 +4445,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnEnum?;
   }
@@ -4317,6 +4469,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as AnotherEnum?;
   }
@@ -4338,6 +4491,7 @@ class HostIntegrationCoreApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -6239,7 +6393,8 @@ class HostTrivialApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 }
@@ -6279,6 +6434,7 @@ class HostSmallApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -6297,7 +6453,8 @@ class HostSmallApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 }

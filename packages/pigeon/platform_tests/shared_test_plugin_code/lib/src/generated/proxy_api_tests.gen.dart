@@ -19,6 +19,7 @@ Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
   required bool isNullValid,
+  required bool isValueExpected,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -31,13 +32,13 @@ Object? _extractReplyValueOrThrow(
       message: replyList[1] as String?,
       details: replyList[2],
     );
-  } else if (!isNullValid && replyList[0] == null) {
+  } else if (!isNullValid && isValueExpected && replyList[0] == null) {
     throw PlatformException(
       code: 'null-error',
       message: 'Host platform returned null value for non-null return value.',
     );
   }
-  return replyList[0];
+  return isValueExpected ? replyList[0] : null;
 }
 
 List<Object?> wrapResponse({
@@ -657,7 +658,8 @@ class _PigeonInternalInstanceManagerApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -678,7 +680,8 @@ class _PigeonInternalInstanceManagerApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 }
@@ -1124,7 +1127,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
   }
@@ -1421,7 +1425,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
   }
@@ -3260,7 +3265,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
     return pigeonVar_instance;
@@ -3291,7 +3297,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
     return pigeonVar_instance;
@@ -3318,7 +3325,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -3343,6 +3351,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -3367,7 +3376,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -3392,6 +3402,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -3417,6 +3428,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -3442,6 +3454,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -3467,6 +3480,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -3492,6 +3506,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -3517,6 +3532,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -3542,6 +3558,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue;
   }
@@ -3567,6 +3584,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -3595,6 +3613,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass>();
   }
@@ -3620,6 +3639,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, Object?>();
@@ -3649,6 +3669,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String, ProxyApiTestClass>();
@@ -3675,6 +3696,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as ProxyApiTestEnum;
   }
@@ -3700,6 +3722,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as ProxyApiSuperClass;
   }
@@ -3725,6 +3748,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -3750,6 +3774,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -3775,6 +3800,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -3800,6 +3826,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -3827,6 +3854,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -3852,6 +3880,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -3877,6 +3906,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -3904,6 +3934,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, Object?>();
@@ -3931,6 +3962,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
@@ -3958,6 +3990,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as ProxyApiSuperClass?;
   }
@@ -3983,7 +4016,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4008,6 +4042,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -4033,6 +4068,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -4058,6 +4094,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -4083,6 +4120,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -4108,6 +4146,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -4133,6 +4172,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue;
   }
@@ -4158,6 +4198,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -4183,6 +4224,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, Object?>();
@@ -4209,6 +4251,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as ProxyApiTestEnum;
   }
@@ -4234,6 +4277,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -4258,7 +4302,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4283,6 +4328,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -4308,6 +4354,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -4333,6 +4380,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -4358,6 +4406,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -4383,6 +4432,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -4408,6 +4458,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -4433,6 +4484,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -4458,6 +4510,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -4485,6 +4538,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, Object?>();
@@ -4513,6 +4567,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
@@ -4542,7 +4597,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4575,6 +4631,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -4604,7 +4661,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4627,7 +4685,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4651,6 +4710,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue;
   }
@@ -4674,7 +4734,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -4698,6 +4759,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as bool;
   }
@@ -4722,6 +4784,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as int;
   }
@@ -4746,6 +4809,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as double;
   }
@@ -4770,6 +4834,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -4794,6 +4859,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as Uint8List;
   }
@@ -4818,6 +4884,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
@@ -4844,6 +4911,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass?>();
   }
@@ -4870,6 +4938,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, Object?>();
@@ -4897,6 +4966,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return (pigeonVar_replyValue as Map<Object?, Object?>)
         .cast<String?, ProxyApiTestClass?>();
@@ -4922,6 +4992,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as ProxyApiTestEnum;
   }
@@ -4948,6 +5019,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as ProxyApiSuperClass;
   }
@@ -4972,6 +5044,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as bool?;
   }
@@ -4996,6 +5069,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as int?;
   }
@@ -5020,6 +5094,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as double?;
   }
@@ -5044,6 +5119,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as String?;
   }
@@ -5070,6 +5146,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as Uint8List?;
   }
@@ -5096,6 +5173,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
@@ -5122,6 +5200,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return (pigeonVar_replyValue as Map<Object?, Object?>?)
         ?.cast<String?, Object?>();
@@ -5149,6 +5228,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
@@ -5175,6 +5255,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
+      isValueExpected: true,
     );
     return pigeonVar_replyValue as ProxyApiSuperClass?;
   }
@@ -5198,7 +5279,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -5222,6 +5304,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
+      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as String;
   }
@@ -5320,7 +5403,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
   }
@@ -5413,7 +5497,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
@@ -5602,7 +5687,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
-        isNullValid: true,
+        isNullValid: false,
+        isValueExpected: false,
       );
     }();
   }
@@ -5695,7 +5781,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: true,
+      isNullValid: false,
+      isValueExpected: false,
     );
   }
 
