@@ -1803,9 +1803,7 @@ void main() {
             filled: true,
             fillColor: const Color(0xFF00FF00),
             labelText: labelText,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(borderRadius)),
           ),
         ),
       );
