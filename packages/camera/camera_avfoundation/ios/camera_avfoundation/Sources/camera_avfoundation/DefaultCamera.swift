@@ -369,12 +369,11 @@ final class DefaultCamera: NSObject, Camera {
         let resolution = videoDimensionsConverter(format)
         let height = UInt(resolution.height)
         let width = UInt(resolution.width)
+        let ratio = Double(max(resolution.width, resolution.height)) / Double(min(resolution.width, resolution.height))
 
-        let ratio = max(resolution.width, resolution.height) / min(resolution.width, resolution.height)
-        let is16x9 = abs(Double(ratio) - Double(16.0 / 9.0)) < 0.05
-
-        if !is16x9 {
-            continue
+        // No squares allowed
+        if ratio == 1 {
+          continue
         }
 
         let pixelCount = height * width
@@ -388,6 +387,7 @@ final class DefaultCamera: NSObject, Camera {
           isBestSubTypePreferred = isSubTypePreferred
         }
       }
+      print("DEBUG: Final bestFormat: \(bestFormat != nil ? "Found" : "NIL")")
       return bestFormat
     }
 
