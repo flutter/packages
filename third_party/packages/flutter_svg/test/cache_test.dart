@@ -135,11 +135,13 @@ void main() {
 
     expect(cache.count, 0);
 
-    unawaited(cache.putIfAbsent(1, () => completerA.future));
-    completerA.completeError(Exception('network error'));
+    final Future<ByteData> result = cache
+        .putIfAbsent(1, () => completerA.future)
+        .catchError((_, _) => ByteData(0));
 
-    expect(cache.count, 0);
-    await null;
+    completerA.completeError(Exception('network error'));
+    await result;
+
     expect(cache.count, 0);
 
     unawaited(cache.putIfAbsent(1, () => completerB.future));
