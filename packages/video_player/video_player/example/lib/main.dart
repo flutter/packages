@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 import 'audio_tracks_demo.dart';
+import 'drm_demos.dart';
 
 void main() {
   runApp(MaterialApp(home: _App()));
@@ -48,6 +49,19 @@ class _App extends StatelessWidget {
                   context,
                   MaterialPageRoute<AudioTracksDemo>(
                     builder: (BuildContext context) => const AudioTracksDemo(),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              key: const ValueKey<String>('drm_demos'),
+              icon: const Icon(Icons.verified_user),
+              tooltip: 'DRM Demos',
+              onPressed: () {
+                Navigator.push<DrmDemosHome>(
+                  context,
+                  MaterialPageRoute<DrmDemosHome>(
+                    builder: (BuildContext context) => const DrmDemosHome(),
                   ),
                 );
               },
