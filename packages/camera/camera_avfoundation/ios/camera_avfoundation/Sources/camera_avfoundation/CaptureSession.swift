@@ -4,11 +4,6 @@
 
 import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// A protocol which is a direct passthrough to AVCaptureSession.
 /// It exists to allow replacing AVCaptureSession in tests.
 protocol CaptureSession: NSObjectProtocol {

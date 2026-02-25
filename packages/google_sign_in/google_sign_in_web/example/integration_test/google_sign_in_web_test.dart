@@ -65,36 +65,8 @@ void main() {
       await plugin.init(
         const InitParameters(clientId: 'some-non-null-client-id'),
       );
-    });
 
-    testWidgets('throws if init is called twice', (_) async {
-      await plugin.init(
-        const InitParameters(clientId: 'some-non-null-client-id'),
-      );
-
-      // Calling init() a second time should throw state error
-      expect(
-        () => plugin.init(
-          const InitParameters(clientId: 'some-non-null-client-id'),
-        ),
-        throwsStateError,
-      );
-    });
-
-    testWidgets('throws if init is called twice synchronously', (_) async {
-      final Future<void> firstInit = plugin.init(
-        const InitParameters(clientId: 'some-non-null-client-id'),
-      );
-
-      // Calling init() a second time synchronously should throw state error
-      expect(
-        () => plugin.init(
-          const InitParameters(clientId: 'some-non-null-client-id'),
-        ),
-        throwsStateError,
-      );
-
-      await firstInit;
+      expect(plugin.initialized, completes);
     });
 
     testWidgets('asserts clientId is not null', (_) async {
@@ -112,6 +84,35 @@ void main() {
           ),
         );
       }, throwsAssertionError);
+    });
+
+    testWidgets('must be called for most of the API to work', (_) async {
+      expect(() async {
+        await plugin.attemptLightweightAuthentication(
+          const AttemptLightweightAuthenticationParameters(),
+        );
+      }, throwsStateError);
+
+      expect(() async {
+        await plugin.clientAuthorizationTokensForScopes(
+          const ClientAuthorizationTokensForScopesParameters(
+            request: AuthorizationRequestDetails(
+              scopes: <String>[],
+              userId: null,
+              email: null,
+              promptIfUnauthorized: false,
+            ),
+          ),
+        );
+      }, throwsStateError);
+
+      expect(() async {
+        await plugin.signOut(const SignOutParams());
+      }, throwsStateError);
+
+      expect(() async {
+        await plugin.disconnect(const DisconnectParams());
+      }, throwsStateError);
     });
   });
 

@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class CameraMethodChannelTests: XCTestCase {
   private func createCameraPlugin(with session: MockCaptureSession) -> CameraPlugin {
     return CameraPlugin(
