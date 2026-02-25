@@ -1,5 +1,7 @@
-## NEXT
+## 3.0.1
 
+* Replaces platform-specific setup instructions with links to the relevant
+  implementation package READMEs.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
