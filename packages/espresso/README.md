@@ -18,7 +18,7 @@ Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ``
 of the Android app used for testing. Also add the meta-data tag in the ```<application>``` that
 will notify Flutter of the network configuration:
 
-```
+```xml
 <meta-data android:name="io.flutter.network-policy"
     android:resource="@xml/network_security_config"/>
 ```
