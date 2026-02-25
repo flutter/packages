@@ -12,7 +12,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-Object? _validateReplyValue(
+Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
   required bool isNullValid,
@@ -102,7 +102,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -123,7 +123,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -144,7 +144,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -165,7 +165,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -186,7 +186,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -207,7 +207,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -228,7 +228,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -249,7 +249,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -270,7 +270,7 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,

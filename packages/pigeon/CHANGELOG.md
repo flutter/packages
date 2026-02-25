@@ -1,3 +1,7 @@
+## 26.1.8
+
+* [dart] Reduce much duplication in reply-handling code.
+
 ## 26.1.7
 
 * [objc] Updates to use module imports.

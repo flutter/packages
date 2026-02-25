@@ -15,7 +15,7 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
-Object? _validateReplyValue(
+Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
   required bool isNullValid,
@@ -654,7 +654,7 @@ class _PigeonInternalInstanceManagerApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -675,7 +675,7 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -1121,7 +1121,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -1418,7 +1418,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -3257,7 +3257,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -3288,7 +3288,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -3315,7 +3315,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3339,7 +3339,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3364,7 +3364,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3388,7 +3388,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3413,7 +3413,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3438,7 +3438,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3463,7 +3463,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3488,7 +3488,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3513,7 +3513,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3538,7 +3538,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3563,7 +3563,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3591,7 +3591,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3616,7 +3616,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3645,7 +3645,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3671,7 +3671,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3696,7 +3696,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -3721,7 +3721,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3746,7 +3746,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3771,7 +3771,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3796,7 +3796,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3823,7 +3823,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3848,7 +3848,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3873,7 +3873,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3900,7 +3900,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3927,7 +3927,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3954,7 +3954,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -3980,7 +3980,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4004,7 +4004,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4029,7 +4029,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4054,7 +4054,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4079,7 +4079,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4104,7 +4104,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4129,7 +4129,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4154,7 +4154,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4179,7 +4179,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4205,7 +4205,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4230,7 +4230,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4255,7 +4255,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4279,7 +4279,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4304,7 +4304,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4329,7 +4329,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4354,7 +4354,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4379,7 +4379,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4404,7 +4404,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4429,7 +4429,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4454,7 +4454,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4481,7 +4481,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4509,7 +4509,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4539,7 +4539,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4571,7 +4571,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4601,7 +4601,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4624,7 +4624,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4647,7 +4647,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4671,7 +4671,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4694,7 +4694,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4718,7 +4718,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4742,7 +4742,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4766,7 +4766,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4790,7 +4790,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4814,7 +4814,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4840,7 +4840,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4866,7 +4866,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4893,7 +4893,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4918,7 +4918,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4944,7 +4944,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -4968,7 +4968,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -4992,7 +4992,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5016,7 +5016,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5040,7 +5040,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5066,7 +5066,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5092,7 +5092,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5118,7 +5118,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5145,7 +5145,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5171,7 +5171,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object? pigeonVar_replyValue = _validateReplyValue(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5195,7 +5195,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5218,7 +5218,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _validateReplyValue(
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
@@ -5317,7 +5317,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -5410,7 +5410,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,
@@ -5599,7 +5599,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-      _validateReplyValue(
+      _extractReplyValueOrThrow(
         pigeonVar_replyList,
         pigeonVar_channelName,
         isNullValid: true,
@@ -5692,7 +5692,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    _validateReplyValue(
+    _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: true,

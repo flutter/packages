@@ -1116,7 +1116,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
   }) {
     if (root.containsHostApi || root.containsProxyApi) {
-      _writeValidateReplyValue(indent);
+      _writeExtractReplyValueOrThrow(indent);
     }
     if (root.containsFlutterApi ||
         root.containsProxyApi ||
@@ -1173,10 +1173,10 @@ bool _deepEquals(Object? a, Object? b) {
 ''');
   }
 
-  static void _writeValidateReplyValue(Indent indent) {
+  static void _writeExtractReplyValueOrThrow(Indent indent) {
     indent.newln();
     indent.format('''
-Object? _validateReplyValue(
+Object? _extractReplyValueOrThrow(
 \t\tList<Object?>? replyList,
 \t\tString channelName, {
 \t\trequired bool isNullValid,
@@ -1339,7 +1339,7 @@ final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 ''');
     final validateCall =
         '''
-_validateReplyValue(
+_extractReplyValueOrThrow(
 \t\t${varNamePrefix}replyList,
 \t\t${varNamePrefix}channelName,
 \t\tisNullValid: ${returnType.isNullable || returnType.isVoid},
