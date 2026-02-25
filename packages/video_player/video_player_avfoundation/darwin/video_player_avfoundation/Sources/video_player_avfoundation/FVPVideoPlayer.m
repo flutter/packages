@@ -67,6 +67,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 }
 
 @implementation FVPVideoPlayer {
+  // Keep a strong reference to the wrapped player item so FairPlay resource loader delegates
+  // attached to its asset remain alive for the lifetime of this player.
+  NSObject<FVPAVPlayerItem> *_playerItem;
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
 }
@@ -77,9 +80,10 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
+  _playerItem = item;
   _viewProvider = viewProvider;
 
-  NSObject<FVPAVAsset> *asset = item.asset;
+  NSObject<FVPAVAsset> *asset = _playerItem.asset;
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
@@ -104,7 +108,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
                   [self videoCompositionWithTransform:self->_preferredTransform
                                                 asset:asset
                                            videoTrack:videoTrack];
-              item.videoComposition = videoComposition;
+              self->_playerItem.videoComposition = videoComposition;
             }
           };
           [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]

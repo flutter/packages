@@ -63,19 +63,33 @@
 
 @interface FVPDefaultAVPlayerItem : NSObject <FVPAVPlayerItem>
 @property(nonatomic, readwrite) AVPlayerItem *playerItem;
+@property(nonatomic, strong, nullable)
+    NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem
+            resourceLoaderDelegate:
+                (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVPlayerItem
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem {
+  return [self initWithPlayerItem:playerItem resourceLoaderDelegate:nil];
+}
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem
+            resourceLoaderDelegate:
+                (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _playerItem = playerItem;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
 
 - (NSObject<FVPAVAsset> *)asset {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset];
+  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset
+                           resourceLoaderDelegate:self.resourceLoaderDelegate];
 }
 
 - (AVVideoComposition *)videoComposition {
@@ -181,8 +195,10 @@
 
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {
   // The default factory always vends FVPDefault* implementations, so it is safe to cast back.
+  FVPDefaultAVAsset *defaultAsset = (FVPDefaultAVAsset *)asset;
   return [[FVPDefaultAVPlayerItem alloc]
-      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:((FVPDefaultAVAsset *)asset).asset]];
+      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:defaultAsset.asset]
+   resourceLoaderDelegate:defaultAsset.resourceLoaderDelegate];
 }
 
 - (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem {
