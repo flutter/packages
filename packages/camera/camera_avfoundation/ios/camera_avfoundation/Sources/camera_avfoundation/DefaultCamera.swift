@@ -353,9 +353,7 @@ final class DefaultCamera: NSObject, Camera {
 
       // Apple's lossy compressed formats that Flutter Metal can't render.
       let unsupportedSubTypes: [FourCharCode] = [
-        1651798066, // 'btp2' - 420YpCbCr8BiPlanarVideoRange (Lossy)
-        1651798068, // 'btp4' - 420YpCbCr8BiPlanarFullRange (Lossy)
-        1650943852, // 'bgrl' - 32BGRA (Lossy)
+        1651798066, // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
       ]
 
       for format in captureDevice.flutterFormats {
@@ -387,7 +385,6 @@ final class DefaultCamera: NSObject, Camera {
           isBestSubTypePreferred = isSubTypePreferred
         }
       }
-      print("DEBUG: Final bestFormat: \(bestFormat != nil ? "Found" : "NIL")")
       return bestFormat
     }
 
