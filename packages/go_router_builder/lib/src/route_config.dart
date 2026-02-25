@@ -590,6 +590,8 @@ abstract class RouteBaseConfig {
       );
     }
 
+    definition._validateNoDuplicatePaths();
+
     return definition;
   }
 
@@ -757,6 +759,63 @@ abstract class RouteBaseConfig {
 
   /// The parent of this route config.
   final RouteBaseConfig? parent;
+
+  /// Validates that no two sibling routes share conflicting paths.
+  ///
+  /// This walks the route tree and at each level collects all path-bearing
+  /// routes that share the same URL namespace. Shell routes and branches are
+  /// "transparent" — their child GoRoutes compete in the parent's URL space.
+  ///
+  /// Path parameters are normalized (e.g. `:id` and `:userId` are treated as
+  /// equivalent) since they match the same URL segments at runtime.
+  void _validateNoDuplicatePaths() {
+    final effectiveSiblings = <GoRouteConfig>[];
+    _collectEffectiveGoRouteChildren(_children, effectiveSiblings);
+
+    final seen = <String, GoRouteConfig>{};
+    for (final route in effectiveSiblings) {
+      final String normalized = _normalizePath(route.path);
+      final GoRouteConfig? existing = seen[normalized];
+      if (existing != null) {
+        throw InvalidGenerationSourceError(
+          'Duplicate route path detected: '
+          '"${existing.path}" from ${existing._className} and '
+          '"${route.path}" from ${route._className} '
+          'both match the same URL pattern.',
+          element: route.routeDataClass,
+        );
+      }
+      seen[normalized] = route;
+    }
+
+    for (final RouteBaseConfig child in _children) {
+      child._validateNoDuplicatePaths();
+    }
+  }
+
+  /// Collects all [GoRouteConfig] children that effectively compete for the
+  /// same URL namespace. Shell routes and branches are transparent — we look
+  /// through them to find the GoRoutes inside.
+  static void _collectEffectiveGoRouteChildren(
+    List<RouteBaseConfig> children,
+    List<GoRouteConfig> result,
+  ) {
+    for (final child in children) {
+      if (child is GoRouteConfig) {
+        result.add(child);
+      } else {
+        // ShellRouteConfig, StatefulShellRouteConfig, and
+        // StatefulShellBranchConfig are transparent in URL space — their
+        // child GoRoutes compete with siblings at this level.
+        _collectEffectiveGoRouteChildren(child._children, result);
+      }
+    }
+  }
+
+  /// Normalizes a route path for structural comparison by replacing named
+  /// parameters (e.g. `:id`, `:userId`) with a placeholder (`:_`).
+  static String _normalizePath(String path) =>
+      path.replaceAll(RegExp(r':\w+'), ':_');
 
   static String _generateChildrenGetterName(String name) {
     return (name == 'TypedStatefulShellRoute' || name == 'StatefulShellRouteData')
