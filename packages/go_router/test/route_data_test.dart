@@ -807,23 +807,16 @@ void main() {
     expect(parameter.name, 'customName');
   });
 
-  test('TypedQueryParameter stores the encoder and decoder', () {
+  test('TypedQueryParameter stores the encoder, decoder and compare', () {
     const TypedQueryParameter<String> parameter = TypedQueryParameter(
       name: 'customName',
       encoder: _coder,
       decoder: _coder,
+      compare: _compare,
     );
 
     expect(parameter.encoder, _coder);
     expect(parameter.decoder, _coder);
-  });
-
-  test('TypedQueryParameter stores compare', () {
-    const TypedQueryParameter<String> parameter = TypedQueryParameter(
-      name: 'customName',
-      compare: _compare,
-    );
-
     expect(parameter.compare, _compare);
   });
 }
