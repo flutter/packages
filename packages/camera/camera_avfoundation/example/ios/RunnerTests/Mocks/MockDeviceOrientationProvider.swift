@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @testable import camera_avfoundation
+import UIKit
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)

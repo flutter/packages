@@ -340,7 +340,7 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-  /// Finds the highest available resolution in terms of pixel count for the given device.
+    /// Finds the highest available resolution 16:9 in terms of pixel count for the given device.
     /// Preferred are formats with the same subtype as current activeFormat.
     private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
       -> CaptureDeviceFormat?
@@ -351,9 +351,7 @@ final class DefaultCamera: NSObject, Camera {
       var maxPixelCount: UInt = 0
       var isBestSubTypePreferred = false
 
-      // Apple's lossy compressed formats that Flutter Metal cannot render.
-      // Filtering these out prevents AVFoundation from crashing when it tries to
-      // stream 12MP video, forcing a safe fallback to uncompressed 4K.
+      // Apple's lossy compressed formats that Flutter Metal can't render.
       let unsupportedSubTypes: [FourCharCode] = [
         1651798066, // 'btp2' - 420YpCbCr8BiPlanarVideoRange (Lossy)
         1651798068, // 'btp4' - 420YpCbCr8BiPlanarFullRange (Lossy)
@@ -371,6 +369,14 @@ final class DefaultCamera: NSObject, Camera {
         let resolution = videoDimensionsConverter(format)
         let height = UInt(resolution.height)
         let width = UInt(resolution.width)
+
+        let ratio = max(resolution.width, resolution.height) / min(resolution.width, resolution.height)
+        let is16x9 = abs(Double(ratio) - Double(16.0 / 9.0)) < 0.05
+
+        if !is16x9 {
+            continue
+        }
+
         let pixelCount = height * width
         let isSubTypePreferred = subType == preferredSubType
 
@@ -382,7 +388,6 @@ final class DefaultCamera: NSObject, Camera {
           isBestSubTypePreferred = isSubTypePreferred
         }
       }
-
       return bestFormat
     }
 
