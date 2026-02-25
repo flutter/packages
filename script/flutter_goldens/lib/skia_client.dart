@@ -428,6 +428,7 @@ class SkiaGoldClient {
 
   /// Returns the current commit hash of the packages repository.
   Future<String> _getCurrentCommit() async {
+    print(path.join(platform.environment[_kPWDKey]!, 'packages'));
     final io.ProcessResult revParse = await process.run(<String>[
         'git',
         'rev-parse',
@@ -436,7 +437,9 @@ class SkiaGoldClient {
       if (revParse.exitCode != 0) {
         throw const SkiaException('Current commit of flutter/packages can not be found.');
       }
-      return (revParse.stdout as String).trim();
+      final String commit = (revParse.stdout as String).trim();
+      print(commit);
+      return commit;
     
   }
 
