@@ -253,14 +253,31 @@ void main() {
       render('{{\t# foo}}oi{{\n/foo}}', <String, bool>{'foo': true}, 'oi');
 
       render('{{{\tfoo\t}}}', <String, bool>{'foo': true}, 'true');
+    });
 
-      // TODO(stuartmorgan): Fix and enable this test, which was commented out
-      //  when the source was first imported.
-      // empty, or error in strict mode.
-      //      render(
-      //        "{{ > }}",
-      //        {'>': 'oi'},
-      //        '');
+    test('Sigils in tag names in lenient mode', () {
+      void render(String source, dynamic values, dynamic output) => expect(
+        parse(source, lenient: true).renderString(values),
+        equals(output),
+      );
+
+      // Even in lenient mode, tag names may not be a single sigil
+      // character.
+      expect(() => parse('{{#}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(() => parse('{{>}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(() => parse('{{&}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(() => parse('{{/}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(() => parse('{{^}}', lenient: true), throwsA(isA<TemplateException>()));
+
+      // >a means 'a partial named "a"', not a variable named ">a",
+      // and in lenient mode the missing partial should fail silently
+      // and yield an empty string.
+      render('{{ >a }}', <String, String>{'>a': 'oi'}, '');
+
+      // sigils are valid in variable tag names as long as they aren't
+      // in the initial position.
+      render('{{ a> }}', <String, String>{'a>': 'oi'}, 'oi');
+      render('{{ a# }}', <String, String>{'a#': 'oi'}, 'oi');
     });
 
     test('Empty source', () {
