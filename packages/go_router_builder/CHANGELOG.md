@@ -2,6 +2,11 @@
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
+## 4.4.0
+
+- Adds support for `overrideOnExit` parameter in `TypedGoRoute` and `TypedRelativeGoRoute` annotations.
+  When set to `true`, the generated route will include `overrideOnExit: true` in the GoRoute constructor, enabling custom `onExit` callback implementation for the route. Defaults to `false`.
+
 ## 4.3.0
 
 - Adds support for custom types through `TypedQueryParameter` annotation. The `encoder`, `decoder` and `compare` parameters allow specifying custom functions for encoding, decoding and comparing query parameters in `TypedGoRoute` constructors. For example, you can use a `DateTime` parameter with a custom encoder and decoder to convert it to and from a string representation in the URL.
