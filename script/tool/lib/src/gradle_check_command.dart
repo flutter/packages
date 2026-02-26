@@ -240,9 +240,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
             r'\)',
           )
         : RegExp(
-      r'if.*System\.getenv.*\.containsKey.*'
-      '$keyVariable',
-    );
+            r'if.*System\.getenv.*\.containsKey.*'
+            '$keyVariable',
+          );
     final keyUsedRegex = isKts
         ? RegExp(
             r'url = uri\('
@@ -250,9 +250,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
             r'\)',
           )
         : RegExp(
-      r'maven.*url.*System\.getenv\('
-      '$keyVariable',
-    );
+            r'maven.*url.*System\.getenv\('
+            '$keyVariable',
+          );
 
     final bool keyPresent = gradleLines.any(
       (String line) => keyPresentRegex.hasMatch(line),
