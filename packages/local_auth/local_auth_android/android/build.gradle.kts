@@ -1,14 +1,16 @@
-group = 'io.flutter.plugins.localauth'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.localauth"
+version = "1.0-SNAPSHOT"
 
 buildscript {
+    val kotlinVersion = "2.2.20"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -19,15 +21,18 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+}
 
 android {
     namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 24
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -35,21 +40,29 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    lintOptions {
-        checkAllWarnings = true
-        warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
+        disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
+    }
 
     testOptions {
-        unitTests.includeAndroidResources = true
-        unitTests.returnDefaultValues = true
-        unitTests.all {
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            all {
+                it.useJUnitPlatform()
+
+                it.outputs.upToDateWhen { false }
+
+                it.testLogging {
+                    events("passed", "skipped", "failed", "standardOut", "standardError")
+                    showStandardStreams = true
+                }
             }
         }
     }
