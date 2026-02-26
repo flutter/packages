@@ -357,6 +357,7 @@ final class DefaultCamera: NSObject, Camera {
       ]
 
       for format in captureDevice.flutterFormats {
+        print("format \(format) \n")
         let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
 
         // Skip formats that will crash the Flutter Engine
@@ -368,9 +369,10 @@ final class DefaultCamera: NSObject, Camera {
         let height = UInt(resolution.height)
         let width = UInt(resolution.width)
         let ratio = Double(max(resolution.width, resolution.height)) / Double(min(resolution.width, resolution.height))
+        let is4x3 = abs(ratio - 4.0/3.0) < 0.05
 
-        // No squares allowed
-        if ratio == 1 {
+        // Check that the ratio is 4:3
+        if !is4x3 {
           continue
         }
 
