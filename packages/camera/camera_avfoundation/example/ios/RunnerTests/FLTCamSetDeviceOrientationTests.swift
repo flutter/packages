@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class FLTCamSetDeviceOrientationTests: XCTestCase {
   private func createCamera() -> (Camera, MockCaptureConnection, MockCaptureConnection) {
     let camera = CameraTestUtils.createTestCamera()
@@ -73,7 +68,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
       videoSetVideoOrientationCalled = true
     }
 
-    camera.lockCaptureOrientation(FCPPlatformDeviceOrientation.portraitDown)
+    camera.lockCaptureOrientation(PlatformDeviceOrientation.portraitDown)
 
     camera.deviceOrientation = .landscapeLeft
 

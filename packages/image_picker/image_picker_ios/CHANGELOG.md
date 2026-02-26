@@ -1,3 +1,16 @@
+## 0.8.13+6
+
+* Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
+
+## 0.8.13+5
+
+* Fixes camera confirmation buttons (e.g., Retake/Use Photo) taps passing through to the underlying Flutter UI while the picker is dismissing on some iOS versions (e.g., iOS 26).
+
+## 0.8.13+4
+
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.8.13+3
 
 * Fixes a performance regression on iOS where picking videos could cause a long delay due to transcoding. The picker is now configured to request the original asset to avoid conversion.

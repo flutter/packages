@@ -284,7 +284,22 @@ $pluginSection
 ''';
 
   package.pubspecFile.createSync();
-  package.pubspecFile.writeAsStringSync(yaml);
+  package.pubspecFile.writeAsStringSync('${yaml.trim()}\n');
+}
+
+/// Creates a `ci_config.yaml` file for [package].
+void createFakeCiConfig({
+  required RepositoryPackage package,
+  required bool batchRelease,
+}) {
+  final yaml =
+      '''
+release:
+  batch: $batchRelease
+''';
+
+  package.ciConfigFile.createSync();
+  package.ciConfigFile.writeAsStringSync(yaml);
 }
 
 String _pluginPlatformSection(

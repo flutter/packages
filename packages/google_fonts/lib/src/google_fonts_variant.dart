@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(stuartmorgan): Remove, and fix violations.
-// ignore_for_file: public_member_api_docs
-
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show immutable;
@@ -12,6 +9,7 @@ import 'package:flutter/foundation.dart' show immutable;
 /// Represents a Google Fonts API variant in Flutter-specific types.
 @immutable
 class GoogleFontsVariant {
+  /// Creates a [GoogleFontsVariant] with a specific font weight and style.
   const GoogleFontsVariant({required this.fontWeight, required this.fontStyle});
 
   /// Creates a [GoogleFontsVariant] from a Google Fonts API specific
@@ -52,7 +50,14 @@ class GoogleFontsVariant {
           ? FontStyle.italic
           : FontStyle.normal;
 
+  /// The font weight of this variant.
+  ///
+  /// Example: [FontWeight.w400] for regular weight, [FontWeight.w700] for bold.
   final FontWeight fontWeight;
+
+  /// The font style of this variant.
+  ///
+  /// Example: [FontStyle.normal] for regular, [FontStyle.italic] for italic.
   final FontStyle fontStyle;
 
   static FontWeight _extractFontWeightFromApiFilenamePart(String filenamePart) {

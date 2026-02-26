@@ -22,6 +22,17 @@ import 'android_video_player_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Provide dummy values for audio track types
+  provideDummy<NativeAudioTrackData>(
+    NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
+  );
+  provideDummy<Future<NativeAudioTrackData>>(
+    Future<NativeAudioTrackData>.value(
+      NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
+    ),
+  );
+  provideDummy<Future<void>>(Future<void>.value());
+
   (AndroidVideoPlayer, MockAndroidVideoPlayerApi, MockVideoPlayerInstanceApi)
   setUpMockPlayer({required int playerId, int? textureId}) {
     final pluginApi = MockAndroidVideoPlayerApi();
@@ -788,6 +799,155 @@ void main() {
             ),
           ]),
         );
+      });
+    });
+
+    group('audio tracks', () {
+      test('isAudioTrackSupportAvailable returns true', () {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(player.isAudioTrackSupportAvailable(), true);
+      });
+
+      test('getAudioTracks returns empty list when no tracks', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(api.getAudioTracks()).thenAnswer(
+          (_) async => NativeAudioTrackData(
+            exoPlayerTracks: <ExoPlayerAudioTrackData>[],
+          ),
+        );
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, isEmpty);
+        verify(api.getAudioTracks());
+      });
+
+      test(
+        'getAudioTracks converts native tracks to VideoAudioTrack',
+        () async {
+          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+              setUpMockPlayer(playerId: 1);
+          when(api.getAudioTracks()).thenAnswer(
+            (_) async => NativeAudioTrackData(
+              exoPlayerTracks: <ExoPlayerAudioTrackData>[
+                ExoPlayerAudioTrackData(
+                  groupIndex: 0,
+                  trackIndex: 1,
+                  label: 'English',
+                  language: 'en',
+                  isSelected: true,
+                  bitrate: 128000,
+                  sampleRate: 44100,
+                  channelCount: 2,
+                  codec: 'mp4a.40.2',
+                ),
+                ExoPlayerAudioTrackData(
+                  groupIndex: 0,
+                  trackIndex: 2,
+                  label: 'Spanish',
+                  language: 'es',
+                  isSelected: false,
+                  bitrate: 128000,
+                  sampleRate: 44100,
+                  channelCount: 2,
+                  codec: 'mp4a.40.2',
+                ),
+              ],
+            ),
+          );
+
+          final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+          expect(tracks.length, 2);
+
+          expect(tracks[0].id, '0_1');
+          expect(tracks[0].label, 'English');
+          expect(tracks[0].language, 'en');
+          expect(tracks[0].isSelected, true);
+          expect(tracks[0].bitrate, 128000);
+          expect(tracks[0].sampleRate, 44100);
+          expect(tracks[0].channelCount, 2);
+          expect(tracks[0].codec, 'mp4a.40.2');
+
+          expect(tracks[1].id, '0_2');
+          expect(tracks[1].label, 'Spanish');
+          expect(tracks[1].language, 'es');
+          expect(tracks[1].isSelected, false);
+        },
+      );
+
+      test('getAudioTracks handles null exoPlayerTracks', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(
+          api.getAudioTracks(),
+        ).thenAnswer((_) async => NativeAudioTrackData());
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, isEmpty);
+      });
+
+      test('selectAudioTrack parses trackId and calls API', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(
+          playerId: 1,
+        );
+        when(api.selectAudioTrack(2, 3)).thenAnswer((_) async {});
+
+        // Start the selection and immediately send the track changed event
+        final Future<void> selectionFuture = player.selectAudioTrack(1, '2_3');
+        streamController.add(AudioTrackChangedEvent());
+        await selectionFuture;
+
+        verify(api.selectAudioTrack(2, 3));
+      });
+
+      test('selectAudioTrack throws on invalid trackId format', () async {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(
+          () => player.selectAudioTrack(1, 'invalid'),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('selectAudioTrack throws on trackId with too many parts', () async {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(
+          () => player.selectAudioTrack(1, '1_2_3'),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('selectAudioTrack completes on AudioTrackChangedEvent', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi api,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(
+          playerId: 1,
+        );
+        when(api.selectAudioTrack(0, 1)).thenAnswer((_) async {});
+
+        // Start selection
+        final Future<void> selectionFuture = player.selectAudioTrack(1, '0_1');
+
+        // Simulate the track changed event from ExoPlayer
+        streamController.add(AudioTrackChangedEvent());
+
+        // Should complete without timeout
+        await selectionFuture;
+
+        verify(api.selectAudioTrack(0, 1));
       });
     });
   });

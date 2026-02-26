@@ -40,7 +40,7 @@ class ImaSdkSettingsProxyApiTest {
     val featureFlags = mapOf("myString" to "myString2")
     api.setFeatureFlags(instance, featureFlags)
 
-    verify(instance).featureFlags = featureFlags
+    verify(instance).setFeatureFlags(featureFlags)
   }
 
   @Test
@@ -51,7 +51,7 @@ class ImaSdkSettingsProxyApiTest {
     val language = "myString"
     api.setLanguage(instance, language)
 
-    verify(instance).language = language
+    verify(instance).setLanguage(language)
   }
 
   @Test
@@ -73,7 +73,7 @@ class ImaSdkSettingsProxyApiTest {
     val playerType = "myString"
     api.setPlayerType(instance, playerType)
 
-    verify(instance).playerType = playerType
+    verify(instance).setPlayerType(playerType)
   }
 
   @Test
@@ -84,7 +84,7 @@ class ImaSdkSettingsProxyApiTest {
     val playerVersion = "myString"
     api.setPlayerVersion(instance, playerVersion)
 
-    verify(instance).playerVersion = playerVersion
+    verify(instance).setPlayerVersion(playerVersion)
   }
 
   @Test
@@ -95,7 +95,7 @@ class ImaSdkSettingsProxyApiTest {
     val ppid = "myString"
     api.setPpid(instance, ppid)
 
-    verify(instance).ppid = ppid
+    verify(instance).setPpid(ppid)
   }
 
   @Test
@@ -106,6 +106,6 @@ class ImaSdkSettingsProxyApiTest {
     val sessionId = "myString"
     api.setSessionId(instance, sessionId)
 
-    verify(instance).sessionId = sessionId
+    verify(instance).setSessionId(sessionId)
   }
 }

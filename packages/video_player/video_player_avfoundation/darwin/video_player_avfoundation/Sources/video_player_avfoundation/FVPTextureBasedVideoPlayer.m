@@ -35,7 +35,7 @@
 
 @implementation FVPTextureBasedVideoPlayer
 
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(NSObject<FVPDisplayLink> *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
@@ -54,7 +54,12 @@
     // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
     // for issue #1, and restore the correct width and height for issue #2.
     _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-    [viewProvider.view.layer addSublayer:self.playerLayer];
+#if TARGET_OS_IOS
+    CALayer *flutterLayer = viewProvider.viewController.view.layer;
+#else
+    CALayer *flutterLayer = viewProvider.view.layer;
+#endif
+    [flutterLayer addSublayer:self.playerLayer];
   }
   return self;
 }
@@ -136,9 +141,10 @@
   self.targetTime += duration;
 
   CVPixelBufferRef buffer = NULL;
-  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
-  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
+  CMTime outputItemTime = [self.pixelBufferSource itemTimeForHostTime:self.targetTime];
+  if ([self.pixelBufferSource hasNewPixelBufferForItemTime:outputItemTime]) {
+    buffer = [self.pixelBufferSource copyPixelBufferForItemTime:outputItemTime
+                                             itemTimeForDisplay:NULL];
     if (buffer) {
       // Balance the owned reference from copyPixelBufferForItemTime.
       CVBufferRelease(self.latestPixelBuffer);
