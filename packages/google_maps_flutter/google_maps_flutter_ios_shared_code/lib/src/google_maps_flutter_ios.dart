@@ -1047,7 +1047,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         // the linter will flag the switch as needing an update.
         // ignore: dead_code
         throw UnimplementedError(
-          'Unrecognized glyph type: ${pinConfig.glyph.runtimeType}',
+          'Glyph type "${pinConfig.glyph.runtimeType}" has not been implemented',
         );
       default:
         throw ArgumentError(
@@ -1370,7 +1370,7 @@ PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
   // the switch rather than a `default` so that the linter will flag the
   // switch as needing an update.
   // ignore: dead_code
-  throw UnimplementedError('Unrecognized marker type: $markerType');
+  throw UnimplementedError('MarkerType "$markerType" has not been implemented');
 }
 
 // For supporting the deprecated updateMapOptions API.
