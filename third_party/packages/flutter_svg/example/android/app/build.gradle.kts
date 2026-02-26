@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "io.flutter.plugins.flutter_svg_example"
+    namespace = "dev.flutter.plugins.flutter_svg_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.flutter.plugins.flutter_svg_example"
+        applicationId = "dev.flutter.plugins.flutter_svg_example"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

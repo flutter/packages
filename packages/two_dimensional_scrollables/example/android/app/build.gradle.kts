@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.two_dimensional_examples"
+    namespace = "dev.flutter.two_dimensional_examples"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.two_dimensional_examples"
+        applicationId = "dev.flutter.two_dimensional_examples"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.google_fonts_tester"
+    namespace = "dev.flutter.google_fonts_tester"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.google_fonts_tester"
+        applicationId = "dev.flutter.google_fonts_tester"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

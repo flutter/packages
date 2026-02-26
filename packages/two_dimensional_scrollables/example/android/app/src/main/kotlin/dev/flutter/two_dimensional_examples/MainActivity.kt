@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package com.example.google_fonts_tester
+package dev.flutter.two_dimensional_examples
 
 import io.flutter.embedding.android.FlutterActivity
 

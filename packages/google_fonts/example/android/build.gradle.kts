@@ -5,7 +5,9 @@ allprojects {
         val artifactRepoUrl = System.getenv(artifactRepoKey)
         if (artifactRepoUrl != null) {
             println("Using artifact hub")
-            maven { url = uri(artifactRepoUrl) }
+            maven {
+                url = uri(artifactRepoUrl)
+            }
         }
         google()
         mavenCentral()

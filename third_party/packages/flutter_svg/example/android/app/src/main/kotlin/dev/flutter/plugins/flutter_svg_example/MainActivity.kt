@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package com.example.two_dimensional_examples
+package dev.flutter.plugins.flutter_svg_example
 
 import io.flutter.embedding.android.FlutterActivity
 
