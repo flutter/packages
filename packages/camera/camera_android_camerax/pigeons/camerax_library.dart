@@ -18,6 +18,11 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
+@HostApi()
+abstract class CameraPreviewViewApi {
+  void registerPlatformView();
+}
+
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
