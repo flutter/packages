@@ -5,6 +5,7 @@
 @import Flutter;
 
 #import "FGMImageUtils.h"
+#import "FGMConversionUtils.h"
 
 @import Foundation;
 
