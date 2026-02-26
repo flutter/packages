@@ -194,20 +194,17 @@ void main() {
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
-    // sleep(const Duration(milliseconds: 500));
-    await Future<void>.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     for (var i = 0; i < pauseIterations; i++) {
       await controller.pauseVideoRecording();
       startPause = DateTime.now().millisecondsSinceEpoch;
-      // sleep(const Duration(milliseconds: 500));
-      await Future<void>.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
 
       await controller.resumeVideoRecording();
       timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-      // sleep(const Duration(milliseconds: 500));
-      await Future<void>.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
     }
 
     final XFile file = await controller.stopVideoRecording();
@@ -243,7 +240,7 @@ void main() {
 
     await controller.startVideoRecording();
 
-    await Future<void>.delayed(const Duration(seconds: 5));
+    await Future<void>.delayed(const Duration(seconds: 1));
 
     await controller.setDescription(cameras[1]);
 
@@ -251,11 +248,9 @@ void main() {
 
     await controller.setDescription(cameras[0]);
 
-    await Future<void>.delayed(const Duration(seconds: 5));
+    await Future<void>.delayed(const Duration(seconds: 1));
 
     final XFile file = await controller.stopVideoRecording();
-
-    await Future<void>.delayed(const Duration(seconds: 4));
 
     final videoFile = File(file.path);
     final videoController = VideoPlayerController.file(videoFile);
