@@ -1,3 +1,12 @@
+## 0.3.0+11
+
+* Updates `README` to recommend that a single `AdsLoader` should be used per page not for the entire
+  application.
+
+## 0.3.0+10
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.38.0 to 3.39.0.
+
 ## 0.3.0+9
 
 * Bumps kotlin_version to 2.3.0.

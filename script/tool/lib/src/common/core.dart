@@ -95,6 +95,9 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 35, 0): Version(3, 9, 0),
   Version(3, 35, 7): Version(3, 9, 2),
   Version(3, 38, 0): Version(3, 10, 0),
+  Version(3, 38, 4): Version(3, 10, 3),
+  Version(3, 38, 10): Version(3, 10, 9),
+  Version(3, 41, 0): Version(3, 11, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter

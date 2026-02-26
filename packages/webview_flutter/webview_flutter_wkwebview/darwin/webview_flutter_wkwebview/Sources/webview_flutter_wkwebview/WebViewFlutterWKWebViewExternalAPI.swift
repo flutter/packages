@@ -28,9 +28,12 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   public static func webView(
     forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry
   ) -> WKWebView? {
-    let plugin = registry.valuePublished(byPlugin: "WebViewFlutterPlugin") as! WebViewFlutterPlugin
+    let plugin = registry.valuePublished(byPlugin: "WebViewFlutterPlugin")
+    guard let webviewPlugin = plugin as? WebViewFlutterPlugin else {
+      return nil
+    }
 
-    let webView: WKWebView? = plugin.proxyApiRegistrar?.instanceManager.instance(
+    let webView: WKWebView? = webviewPlugin.proxyApiRegistrar?.instanceManager.instance(
       forIdentifier: identifier)
     return webView
   }

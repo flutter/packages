@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@testable import camera_avfoundation
+import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
+@testable import camera_avfoundation
 
 /// A mock implementation of `FLTCaptureDevice` that allows mocking the class
 /// properties.
@@ -110,11 +107,17 @@ class MockCaptureDevice: NSObject, CaptureDevice {
     return isExposureModeSupportedStub?(mode) ?? false
   }
 
-  var lensAperture: Float { 0 }
+  var lensAperture: Float { 1.8 }
 
   var exposureDuration: CMTime { CMTime(value: 1, timescale: 1) }
 
-  var iso: Float { 0 }
+  var iso: Float { 100 }
+
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+  {
+    return false
+  }
 
   func lockForConfiguration() throws {
     try lockForConfigurationStub?()

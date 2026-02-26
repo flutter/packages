@@ -883,6 +883,29 @@ void main() {
       const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
+
+    test('LambdaContext renderString on non-section throws', () {
+      final t = Template('{{ foo }}');
+      expect(
+        () => t.renderString(<String, Object>{
+          'foo': (LambdaContext lc) => lc.renderString(),
+        }),
+        throwsA(isA<TemplateException>()),
+      );
+    });
+
+    test('LambdaContext render on non-section throws', () {
+      final t = Template('{{ foo }}');
+      expect(
+        () => t.renderString(<String, Object>{
+          'foo': (LambdaContext lc) {
+            lc.render();
+            return '';
+          },
+        }),
+        throwsA(isA<TemplateException>()),
+      );
+    });
   });
 }
 

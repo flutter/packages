@@ -18,7 +18,7 @@ class URLLauncherUITests: XCTestCase {
     let app = self.app!
 
     let buttonNames: [String] = [
-      "Launch in app", "Launch in app(JavaScript ON)", "Launch in app(DOM storage ON)",
+      "Launch in app",
       "Launch a universal link in a native app, fallback to Safari.(Youtube)",
     ]
     for buttonName in buttonNames {
