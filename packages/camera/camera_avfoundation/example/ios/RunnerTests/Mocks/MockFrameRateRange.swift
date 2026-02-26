@@ -4,11 +4,6 @@
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// A mock implementation of `FrameRateRange` that allows mocking the class properties.
 final class MockFrameRateRange: NSObject, FrameRateRange {
   var minFrameRate: Float64
