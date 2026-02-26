@@ -90,19 +90,20 @@ class _GoRouteParameters {
     required this.builder,
     required this.pageBuilder,
     required this.redirect,
-    required this.onExit,
+    this.onExit,
   });
 
   final GoRouterWidgetBuilder builder;
   final GoRouterPageBuilder pageBuilder;
   final GoRouterRedirect redirect;
-  final ExitCallback onExit;
+  final ExitCallback? onExit;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
+  bool overrideOnExit = false,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -123,8 +124,10 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit(context, state),
+    onExit: overrideOnExit
+        ? (BuildContext context, GoRouterState state) =>
+              factoryImpl(state).onExit(context, state)
+        : null,
   );
 }
 
@@ -156,10 +159,12 @@ abstract class GoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool overrideOnExit = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      overrideOnExit: overrideOnExit,
     );
 
     return GoRoute(
@@ -227,10 +232,12 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool overrideOnExit = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
+      overrideOnExit: overrideOnExit,
     );
 
     return GoRoute(
@@ -483,6 +490,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
     this.name,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
+    this.overrideOnExit = false,
   });
 
   /// The path that corresponds to this route.
@@ -515,6 +523,18 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   /// Defaults to `true`.
   final bool caseSensitive;
+
+  /// Whether to override the default behavior of [GoRoute.onExit] to invoke the
+  /// [GoRouteData.onExit] method of the route data class.
+  ///
+  /// When `true`, the [GoRouteData.onExit] method will be invoked when
+  /// the route is removed from GoRouter's route history.
+  ///
+  /// When `false`, the default behavior is used, which does not invoke
+  /// the [GoRouteData.onExit] method.
+  ///
+  /// Defaults to `false`.
+  final bool overrideOnExit;
 }
 
 /// A superclass for each typed relative go route descendant
@@ -526,6 +546,7 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
     required this.path,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
+    this.overrideOnExit = false,
   });
 
   /// The relative path that corresponds to this route.
@@ -550,6 +571,18 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
   ///
   /// Defaults to `true`.
   final bool caseSensitive;
+
+  /// Whether to override the default behavior of [GoRoute.onExit] to invoke the
+  /// [RelativeGoRouteData.onExit] method of the route data class.
+  ///
+  /// When `true`, the [RelativeGoRouteData.onExit] method will be invoked when
+  /// the route is removed from GoRouter's route history.
+  ///
+  /// When `false`, the default behavior is used, which does not invoke
+  /// the [RelativeGoRouteData.onExit] method.
+  ///
+  /// Defaults to `false`.
+  final bool overrideOnExit;
 }
 
 /// A superclass for each typed shell route descendant

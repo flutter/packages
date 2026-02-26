@@ -1,3 +1,7 @@
+## 17.2.0
+
+- Adds `overrideOnExit` parameter to `TypedGoRoute` and `TypedRelativeGoRoute` to control whether the `onExit` method of route data classes should be invoked.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.
