@@ -26,7 +26,7 @@ will notify Flutter of the network configuration:
 Then you will need to create a `network_security_config.xml` in the
 `res/xml/` directory.  
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <!-- Cleartext is needed for Espresso testing. -->
