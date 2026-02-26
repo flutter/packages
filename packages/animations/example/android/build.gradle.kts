@@ -1,5 +1,14 @@
 allprojects {
     repositories {
+        // See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.
+        val artifactRepoKey = "ARTIFACT_HUB_REPOSITORY"
+        val artifactRepoUrl = System.getenv(artifactRepoKey)
+        if (artifactRepoUrl != null) {
+            println("Using artifact hub")
+            maven {
+                url = uri(artifactRepoUrl)
+            }
+        }
         google()
         mavenCentral()
     }
