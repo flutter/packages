@@ -6,6 +6,7 @@
 @import UIKit;
 
 #import "FGMAssetProvider.h"
+#import "FGMConversionUtils.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
