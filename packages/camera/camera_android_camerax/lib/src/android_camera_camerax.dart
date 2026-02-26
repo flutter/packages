@@ -1167,8 +1167,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     final dynamic Function(CameraImageData)? streamCallback =
         options.streamCallback;
     if (streamCallback == null) {
-      // ImageAnalysis is not universally supported with Preview + VideoCapture,
-      // so unbind ImageAnalysis if it is not in use.
+      // For potential performance improvements, unbind imageAnalysis if not in use.
+      // See https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
+      // for details.
       await _unbindUseCaseFromLifecycle(imageAnalysis!);
     }
 
