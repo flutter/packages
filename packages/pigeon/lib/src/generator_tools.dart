@@ -114,7 +114,7 @@ class Indent {
   void addScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
@@ -134,7 +134,7 @@ class Indent {
   void writeScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     int nestCount = 1,
     bool addTrailingNewline = true,
   }) {
@@ -150,9 +150,9 @@ class Indent {
   /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented by the given amount.
-  void nest(int count, Function func) {
+  void nest(int count, void Function() func) {
     inc(count);
-    func(); // ignore: avoid_dynamic_calls
+    func();
     dec(count);
   }
 
