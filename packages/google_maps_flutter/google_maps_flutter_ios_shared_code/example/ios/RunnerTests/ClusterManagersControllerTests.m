@@ -71,7 +71,7 @@
                                                          zIndex:1
                                                        markerId:markerId1
                                                clusterManagerId:clusterManagerId
-                                              collisionBehavior:NULL];
+                                              collisionBehavior:nil];
   FGMPlatformMarker *marker2 = [FGMPlatformMarker makeWithAlpha:1
                                                          anchor:zeroPoint
                                                consumeTapEvents:NO
@@ -85,7 +85,7 @@
                                                          zIndex:1
                                                        markerId:markerId2
                                                clusterManagerId:clusterManagerId
-                                              collisionBehavior:NULL];
+                                              collisionBehavior:nil];
 
   [markersController addMarkers:@[ marker1, marker2 ]];
 

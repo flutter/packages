@@ -302,10 +302,9 @@
   UIImage *resultImage =
       FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], assetProvider, screenScale);
 
-  // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
-  // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
-  // in test environment - the important thing is that the call doesn't crash.
-  // When the image is valid, it should have positive dimensions.
+  // PinConfig may return nil on old Google Maps SDK versions (<=8.4.0).
+  // Also, due to a Google Maps SDK issue (https://issuetracker.google.com/issues/370536110),
+  // GMSPinImage can return a zero-sized image.
   XCTAssertTrue(resultImage == nil || resultImage.size.width >= 0);
   XCTAssertTrue(resultImage == nil || resultImage.size.height >= 0);
 }

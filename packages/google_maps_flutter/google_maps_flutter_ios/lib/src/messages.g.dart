@@ -53,6 +53,7 @@ bool _deepEquals(Object? a, Object? b) {
 /// Pigeon equivalent of MapType
 enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 
+/// Pigeon equivalent of MarkerCollisionBehavior.
 enum PlatformMarkerCollisionBehavior {
   requiredDisplay,
   optionalAndHidesLowerPriority,

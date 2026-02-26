@@ -917,14 +917,22 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
     MarkerCollisionBehavior collisionBehavior,
   ) {
-    return switch (collisionBehavior) {
-      MarkerCollisionBehavior.requiredDisplay =>
-        PlatformMarkerCollisionBehavior.requiredDisplay,
-      MarkerCollisionBehavior.optionalAndHidesLowerPriority =>
-        PlatformMarkerCollisionBehavior.optionalAndHidesLowerPriority,
-      MarkerCollisionBehavior.requiredAndHidesOptional =>
-        PlatformMarkerCollisionBehavior.requiredAndHidesOptional,
-    };
+    switch (collisionBehavior) {
+      case MarkerCollisionBehavior.requiredDisplay:
+        return PlatformMarkerCollisionBehavior.requiredDisplay;
+      case MarkerCollisionBehavior.optionalAndHidesLowerPriority:
+        return PlatformMarkerCollisionBehavior.optionalAndHidesLowerPriority;
+      case MarkerCollisionBehavior.requiredAndHidesOptional:
+        return PlatformMarkerCollisionBehavior.requiredAndHidesOptional;
+    }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformMarkerCollisionBehavior.requiredDisplay;
   }
 
   /// Converts [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
@@ -1031,6 +1039,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
               ),
             );
         }
+
+        // The sealed class comes from a different package, which could get a
+        // new subtype at any time, so provide a fallback that ensures this
+        // won't break when used with a version that contains new types. This
+        // is deliberately outside the switch rather than a `default` so that
+        // the linter will flag the switch as needing an update.
+        // ignore: dead_code
+        throw UnimplementedError(
+          'Unrecognized glyph type: ${pinConfig.glyph.runtimeType}',
+        );
       default:
         throw ArgumentError(
           'Unrecognized type of bitmap ${bitmap.runtimeType}',
@@ -1339,10 +1357,20 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
 }
 
 PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
-  return switch (markerType) {
-    MarkerType.marker => PlatformMarkerType.marker,
-    MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
-  };
+  switch (markerType) {
+    case MarkerType.marker:
+      return PlatformMarkerType.marker;
+    case MarkerType.advancedMarker:
+      return PlatformMarkerType.advancedMarker;
+  }
+
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  throw UnimplementedError('Unrecognized marker type: $markerType');
 }
 
 // For supporting the deprecated updateMapOptions API.

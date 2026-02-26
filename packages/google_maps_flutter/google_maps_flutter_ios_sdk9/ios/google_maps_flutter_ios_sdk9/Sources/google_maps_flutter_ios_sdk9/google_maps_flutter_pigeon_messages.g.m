@@ -46,6 +46,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+/// Pigeon equivalent of MarkerCollisionBehavior.
 @implementation FGMPlatformMarkerCollisionBehaviorBox
 - (instancetype)initWithValue:(FGMPlatformMarkerCollisionBehavior)value {
   self = [super init];

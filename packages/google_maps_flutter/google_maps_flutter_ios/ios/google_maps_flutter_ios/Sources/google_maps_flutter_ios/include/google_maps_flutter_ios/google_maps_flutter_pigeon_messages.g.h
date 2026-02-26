@@ -28,6 +28,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)initWithValue:(FGMPlatformMapType)value;
 @end
 
+/// Pigeon equivalent of MarkerCollisionBehavior.
 typedef NS_ENUM(NSUInteger, FGMPlatformMarkerCollisionBehavior) {
   FGMPlatformMarkerCollisionBehaviorRequiredDisplay = 0,
   FGMPlatformMarkerCollisionBehaviorOptionalAndHidesLowerPriority = 1,

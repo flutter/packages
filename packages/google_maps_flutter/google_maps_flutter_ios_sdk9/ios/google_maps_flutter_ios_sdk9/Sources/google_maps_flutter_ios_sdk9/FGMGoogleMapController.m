@@ -284,7 +284,7 @@
   options.frame = frame;
   options.camera = camera;
   NSString *mapId = creationParameters.mapConfiguration.mapId;
-  if (mapId && mapId.length > 0) {
+  if (mapId.length > 0) {
     options.mapID = [GMSMapID mapIDWithIdentifier:mapId];
   }
 

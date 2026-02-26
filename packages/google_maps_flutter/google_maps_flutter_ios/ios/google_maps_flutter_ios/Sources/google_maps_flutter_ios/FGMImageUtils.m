@@ -146,9 +146,9 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     FGMPlatformColor *glyphColor = pinConfig.glyphColor;
     FGMPlatformBitmap *glyphBitmap = pinConfig.glyphBitmap;
     if (glyphText) {
-      FGMPlatformColor *glyphTextColorInt = pinConfig.glyphTextColor;
-      UIColor *glyphTextColor =
-          glyphTextColorInt ? FGMGetColorForPigeonColor(glyphTextColorInt) : [UIColor blackColor];
+      FGMPlatformColor *glyphTextColorValue = pinConfig.glyphTextColor;
+      UIColor *glyphTextColor = glyphTextColorValue ? FGMGetColorForPigeonColor(glyphTextColorValue)
+                                                    : [UIColor blackColor];
       glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
     } else if (glyphColor) {
       UIColor *color = FGMGetColorForPigeonColor(glyphColor);
@@ -158,9 +158,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
       glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
     }
 
-    if (glyph) {
-      options.glyph = glyph;
-    }
+    options.glyph = glyph;
 
     image = [GMSPinImage pinImageWithOptions:options];
   }

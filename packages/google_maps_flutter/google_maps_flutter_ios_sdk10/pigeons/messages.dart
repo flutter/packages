@@ -242,6 +242,7 @@ class PlatformMarker {
   final PlatformMarkerCollisionBehavior? collisionBehavior;
 }
 
+/// Pigeon equivalent of the MarkerCollisionBehavior enum.
 enum PlatformMarkerCollisionBehavior {
   requiredDisplay,
   optionalAndHidesLowerPriority,
