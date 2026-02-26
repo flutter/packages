@@ -14,7 +14,11 @@ RouteBase get $homeRoute => GoRouteData.$route(
   path: '/',
   factory: $HomeRoute._fromState,
   routes: [
-    GoRouteData.$route(path: 'sub-route', factory: $SubRoute._fromState),
+    GoRouteData.$route(
+      path: 'sub-route',
+      overrideOnExit: true,
+      factory: $SubRoute._fromState,
+    ),
   ],
 );
 

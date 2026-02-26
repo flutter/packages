@@ -1,3 +1,8 @@
+## 4.3.0
+
+- Adds support for `overrideOnExit` parameter in `TypedGoRoute` and `TypedRelativeGoRoute` annotations.
+  When set to `true`, the generated route will include `overrideOnExit: true` in the GoRoute constructor, enabling custom `onExit` callback implementation for the route. Defaults to `false`.
+
 ## 4.2.0
 
 - Adds supports for `TypedQueryParameter` annotation.
