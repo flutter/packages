@@ -23,7 +23,8 @@ will notify Flutter of the network configuration:
     android:resource="@xml/network_security_config"/>
 ```
 
-Then you will need to create a `network_security_config.xml`: 
+Then you will need to create a `network_security_config.xml` in the
+`res/xml/` directory.  
 
 ```
 <?xml version="1.0" encoding="utf-8"?>
@@ -34,7 +35,9 @@ Then you will need to create a `network_security_config.xml`:
 </network-security-config>
 ```
 
-It's best to put this in a debug or androidTest
+For example, the Espresso example app has this file in the location `example/android/app/src/debug/res/xml/network_security_config.xml`.
+
+It is best to put this in a debug or androidTest
 AndroidManifest.xml so that you don't ship it to end users. (See the example app of this package.)
 
 Add the following dependencies in android/app/build.gradle:
