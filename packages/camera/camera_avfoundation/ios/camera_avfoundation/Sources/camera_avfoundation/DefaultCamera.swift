@@ -357,7 +357,6 @@ final class DefaultCamera: NSObject, Camera {
       ]
 
       for format in captureDevice.flutterFormats {
-        print("format \(format) \n")
         let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
 
         // Skip formats that will crash the Flutter Engine
