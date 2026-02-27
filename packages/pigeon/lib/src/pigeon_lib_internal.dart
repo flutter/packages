@@ -193,26 +193,19 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
   }
-  IOSink sink;
-  File file;
   if (output == 'stdout') {
-    sink = stdout;
-  } else {
-    file = File(path.posix.join(basePath, output));
-    file.createSync(recursive: true);
-    sink = file.openWrite();
+    return stdout;
   }
-  return sink;
+  final file = File(path.posix.join(basePath, output));
+  file.createSync(recursive: true);
+  return file.openWrite();
 }
 
 /// An adapter that will call a generator to write code to a sink
 /// based on the contents of [InternalPigeonOptions].
 abstract class GeneratorAdapter {
-  /// Constructor for [GeneratorAdapter]
-  GeneratorAdapter(this.fileTypeList);
-
   /// A list of file types the generator should create.
-  List<FileType> fileTypeList;
+  List<FileType> get fileTypeList;
 
   /// Returns an [IOSink] instance to be written to
   /// if the [GeneratorAdapter] should generate.
@@ -257,10 +250,10 @@ void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
-  AstGeneratorAdapter();
+  const AstGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.na];
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -283,13 +276,13 @@ class AstGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Dart source code.
 class DartGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartGeneratorAdapter].
-  DartGeneratorAdapter();
+  const DartGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'Dart';
+  static const String languageString = 'Dart';
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.na];
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -322,10 +315,10 @@ class DartGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Dart test source code.
 class DartTestGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartTestGeneratorAdapter].
-  DartTestGeneratorAdapter();
+  const DartTestGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.na];
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -370,15 +363,16 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Objective-C code.
 class ObjcGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [ObjcGeneratorAdapter].
-  ObjcGeneratorAdapter({
-    this.fileTypeList = const <FileType>[FileType.header, FileType.source],
-  });
+  const ObjcGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'Objective-C';
+  static const String languageString = 'Objective-C';
 
   @override
-  List<FileType> fileTypeList;
+  List<FileType> get fileTypeList => const <FileType>[
+    FileType.header,
+    FileType.source,
+  ];
 
   @override
   void generate(
@@ -431,13 +425,13 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Java source code.
 class JavaGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [JavaGeneratorAdapter].
-  JavaGeneratorAdapter();
+  const JavaGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'Java';
+  static const String languageString = 'Java';
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.na];
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -475,13 +469,13 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Swift source code.
 class SwiftGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [SwiftGeneratorAdapter].
-  SwiftGeneratorAdapter();
+  const SwiftGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'Swift';
+  static const String languageString = 'Swift';
 
   @override
-  List<FileType> fileTypeList = const <FileType>[FileType.na];
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(
@@ -516,15 +510,16 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates C++ source code.
 class CppGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [CppGeneratorAdapter].
-  CppGeneratorAdapter({
-    this.fileTypeList = const <FileType>[FileType.header, FileType.source],
-  });
+  const CppGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'C++';
+  static const String languageString = 'C++';
 
   @override
-  List<FileType> fileTypeList;
+  List<FileType> get fileTypeList => const <FileType>[
+    FileType.header,
+    FileType.source,
+  ];
 
   @override
   void generate(
@@ -577,15 +572,16 @@ class CppGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates GObject source code.
 class GObjectGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [GObjectGeneratorAdapter].
-  GObjectGeneratorAdapter({
-    this.fileTypeList = const <FileType>[FileType.header, FileType.source],
-  });
+  const GObjectGeneratorAdapter();
 
   /// A string representing the name of the language being generated.
-  String languageString = 'GObject';
+  static const String languageString = 'GObject';
 
   @override
-  List<FileType> fileTypeList;
+  List<FileType> get fileTypeList => const <FileType>[
+    FileType.header,
+    FileType.source,
+  ];
 
   @override
   void generate(
@@ -649,10 +645,10 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
 /// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
-  KotlinGeneratorAdapter({this.fileTypeList = const <FileType>[FileType.na]});
+  const KotlinGeneratorAdapter();
 
   @override
-  List<FileType> fileTypeList;
+  List<FileType> get fileTypeList => const <FileType>[FileType.na];
 
   @override
   void generate(

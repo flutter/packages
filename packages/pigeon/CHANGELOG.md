@@ -1,3 +1,7 @@
+## 26.1.8
+
+* Makes some internal class constructors constant.
+
 ## 26.1.7
 
 * [objc] Updates to use module imports.
