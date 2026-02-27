@@ -34,13 +34,15 @@ android {
 
     defaultConfig {
         minSdk = 21
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
