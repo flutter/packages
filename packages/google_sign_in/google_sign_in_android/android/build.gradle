@@ -44,10 +44,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-    }
-
     lint {
         checkAllWarnings = true
         warningsAsErrors = true

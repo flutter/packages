@@ -51,10 +51,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-    }
-
     dependencies {
         def exoplayer_version = "1.9.2"
         implementation("androidx.media3:media3-exoplayer:${exoplayer_version}")

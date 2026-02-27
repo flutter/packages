@@ -40,10 +40,6 @@ android {
         allWarningsAsErrors = true
     }
 
-    sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-    }
-
     defaultConfig {
         minSdk = 24
     }
