@@ -73,7 +73,7 @@ android {
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable += "AndroidGradlePluginVersion" + "GradleDependency" + "InvalidPackage" + "NewerVersionAvailable"
+        disable.addAll(setOf("AndroidGradlePluginVersion", "GradleDependency", "InvalidPackage", "NewerVersionAvailable"))
         baseline = file("lint-baseline.xml")
     }
 }

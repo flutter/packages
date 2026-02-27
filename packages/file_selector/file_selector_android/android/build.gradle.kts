@@ -47,7 +47,7 @@ android {
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
+        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
     }
 
     testOptions {
