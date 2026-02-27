@@ -340,7 +340,7 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-  /// Finds the highest available resolution 16:9 in terms of pixel count for the given device.
+  /// Finds the highest available 4:3 resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
     -> CaptureDeviceFormat?
@@ -351,7 +351,6 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
-    // Apple's lossy compressed formats that Flutter Metal can't render.
     let unsupportedSubTypes: [FourCharCode] = [
       1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
     ]
