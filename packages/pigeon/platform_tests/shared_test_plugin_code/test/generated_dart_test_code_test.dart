@@ -210,7 +210,7 @@ void main() {
     final api = MessageApi();
     final mock = Mock();
     TestHostApi.setUp(mock);
-    await api.initialize();
+    expect(() => api.initialize(), throwsA(isA<PlatformException>()));
     expect(mock.log, <String>['initialize']);
   });
 
