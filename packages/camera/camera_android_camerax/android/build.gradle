@@ -2,7 +2,7 @@ group = "io.flutter.plugins.camerax"
 version = "1.0"
 
 buildscript {
-    ext.kotlin_version = "2.3.0"
+    val kotlinVersion = "2.3.0"
     repositories {
         google()
         mavenCentral()
@@ -10,7 +10,7 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:8.13.1"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
