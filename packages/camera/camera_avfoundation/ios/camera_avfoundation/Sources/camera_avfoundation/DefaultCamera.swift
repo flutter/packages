@@ -340,53 +340,55 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-    /// Finds the highest available resolution 16:9 in terms of pixel count for the given device.
-    /// Preferred are formats with the same subtype as current activeFormat.
-    private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
-      -> CaptureDeviceFormat?
-    {
-      let preferredSubType = CMFormatDescriptionGetMediaSubType(
-        captureDevice.flutterActiveFormat.formatDescription)
-      var bestFormat: CaptureDeviceFormat? = nil
-      var maxPixelCount: UInt = 0
-      var isBestSubTypePreferred = false
+  /// Finds the highest available resolution 16:9 in terms of pixel count for the given device.
+  /// Preferred are formats with the same subtype as current activeFormat.
+  private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
+    -> CaptureDeviceFormat?
+  {
+    let preferredSubType = CMFormatDescriptionGetMediaSubType(
+      captureDevice.flutterActiveFormat.formatDescription)
+    var bestFormat: CaptureDeviceFormat? = nil
+    var maxPixelCount: UInt = 0
+    var isBestSubTypePreferred = false
 
-      // Apple's lossy compressed formats that Flutter Metal can't render.
-      let unsupportedSubTypes: [FourCharCode] = [
-        1651798066, // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
-      ]
+    // Apple's lossy compressed formats that Flutter Metal can't render.
+    let unsupportedSubTypes: [FourCharCode] = [
+      1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
+    ]
 
-      for format in captureDevice.flutterFormats {
-        let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+    for format in captureDevice.flutterFormats {
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
 
-        // Skip formats that will crash the Flutter Engine
-        if unsupportedSubTypes.contains(subType) {
-          continue
-        }
-
-        let resolution = videoDimensionsConverter(format)
-        let height = UInt(resolution.height)
-        let width = UInt(resolution.width)
-        let ratio = Double(max(resolution.width, resolution.height)) / Double(min(resolution.width, resolution.height))
-        let is4x3 = abs(ratio - 4.0/3.0) < 0.05
-
-        if !is4x3 {
-          continue
-        }
-
-        let pixelCount = height * width
-        let isSubTypePreferred = subType == preferredSubType
-
-        if pixelCount > maxPixelCount
-          || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
-        {
-          bestFormat = format
-          maxPixelCount = pixelCount
-          isBestSubTypePreferred = isSubTypePreferred
-        }
+      // Skip formats that will crash the Flutter Engine
+      if unsupportedSubTypes.contains(subType) {
+        continue
       }
-      return bestFormat
+
+      let resolution = videoDimensionsConverter(format)
+      let height = UInt(resolution.height)
+      let width = UInt(resolution.width)
+      let ratio =
+        Double(max(resolution.width, resolution.height))
+        / Double(min(resolution.width, resolution.height))
+      let is4x3 = abs(ratio - 4.0 / 3.0) < 0.05
+
+      if !is4x3 {
+        continue
+      }
+
+      let pixelCount = height * width
+      let isSubTypePreferred = subType == preferredSubType
+
+      if pixelCount > maxPixelCount
+        || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
+      {
+        bestFormat = format
+        maxPixelCount = pixelCount
+        isBestSubTypePreferred = isSubTypePreferred
+      }
     }
+    return bestFormat
+  }
 
   func setUpCaptureSessionForAudioIfNeeded() {
     // Don't setup audio twice or we will lose the audio.

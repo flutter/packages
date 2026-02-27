@@ -303,58 +303,58 @@ final class CameraSettingsTests: XCTestCase {
   }
 
   func testResolutionPresetWithMax_mustIgnoreLossyFormatsAndSquares() {
-      let videoSessionMock = MockCaptureSession()
-      videoSessionMock.canSetSessionPresetStub = { _ in true }
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
 
-      let lossyFormat = MockCaptureDeviceFormat(
-        codecType: 1651798066, // 'btp2'
-        width: 4224,
-        height: 3024
-      )
-      let squareFormat = MockCaptureDeviceFormat(
-        codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-        width: 4032,
-        height: 4032
-      )
-      let safe4KFormat = MockCaptureDeviceFormat(
-        codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-        width: 3840,
-        height: 2160
-      )
+    let lossyFormat = MockCaptureDeviceFormat(
+      codecType: 1_651_798_066,  // 'btp2'
+      width: 4224,
+      height: 3024
+    )
+    let squareFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 4032,
+      height: 4032
+    )
+    let safe4KFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 3840,
+      height: 2160
+    )
 
-      let captureDeviceMock = MockCaptureDevice()
-      captureDeviceMock.flutterFormats = [lossyFormat, squareFormat, safe4KFormat]
+    let captureDeviceMock = MockCaptureDevice()
+    captureDeviceMock.flutterFormats = [lossyFormat, squareFormat, safe4KFormat]
 
     var currentFormat: CaptureDeviceFormat = safe4KFormat
-        captureDeviceMock.activeFormatStub = { currentFormat }
-        captureDeviceMock.setActiveFormatStub = { newFormat in currentFormat = newFormat }
+    captureDeviceMock.activeFormatStub = { currentFormat }
+    captureDeviceMock.setActiveFormatStub = { newFormat in currentFormat = newFormat }
 
-      let configuration = CameraTestUtils.createTestCameraConfiguration()
-      configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
-      configuration.videoCaptureSession = videoSessionMock
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureSession = videoSessionMock
 
-      configuration.videoDimensionsConverter = { format in
-        return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-      }
-
-      configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-        resolutionPreset: PlatformResolutionPreset.max
-      )
-
-      let _ = CameraTestUtils.createTestCamera(configuration)
-
-      let selectedFormat = captureDeviceMock.flutterActiveFormat
-      let selectedDimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription)
-
-      XCTAssertEqual(
-        selectedDimensions.width,
-        3840,
-        "Camera should have ignored the lossy and square formats, safely falling back to 4K."
-      )
-      XCTAssertEqual(
-        selectedDimensions.height,
-        2160,
-        "Camera should have ignored the lossy and square formats, safely falling back to 4K."
-      )
+    configuration.videoDimensionsConverter = { format in
+      return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
     }
+
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max
+    )
+
+    let _ = CameraTestUtils.createTestCamera(configuration)
+
+    let selectedFormat = captureDeviceMock.flutterActiveFormat
+    let selectedDimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription)
+
+    XCTAssertEqual(
+      selectedDimensions.width,
+      3840,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
+    )
+    XCTAssertEqual(
+      selectedDimensions.height,
+      2160,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
+    )
+  }
 }

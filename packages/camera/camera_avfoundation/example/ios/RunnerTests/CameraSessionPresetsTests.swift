@@ -32,7 +32,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     captureDeviceMock.flutterFormats = [captureFormatMock]
     var currentFormat: CaptureDeviceFormat = captureFormatMock
     captureDeviceMock.activeFormatStub = {
-        return currentFormat
+      return currentFormat
     }
     captureDeviceMock.lockForConfigurationStub = {
       lockForConfigurationExpectation.fulfill()
@@ -41,7 +41,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
     configuration.videoDimensionsConverter = { _ in
-        return CMVideoDimensions(width: 1920, height: 1080)
+      return CMVideoDimensions(width: 1920, height: 1080)
     }
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
