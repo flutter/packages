@@ -37,10 +37,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
+        disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
         baseline file("lint-baseline.xml")
     }
 

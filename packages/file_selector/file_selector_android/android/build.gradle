@@ -44,10 +44,10 @@ android {
         testImplementation("org.robolectric:robolectric:4.16")
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
+        disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
     }
 
     testOptions {
