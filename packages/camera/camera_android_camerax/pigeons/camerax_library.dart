@@ -18,11 +18,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-@HostApi()
-abstract class CameraPreviewViewApi {
-  void registerPlatformView();
-}
-
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
@@ -436,7 +431,9 @@ abstract class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  int setSurfaceProvider(SystemServicesManager systemServicesManager);
+  // int setSurfaceProvider(SystemServicesManager systemServicesManager);
+
+  void setSurfaceProvider(SurfaceProvider surfaceProvider);
 
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.
@@ -1323,3 +1320,23 @@ abstract class DisplayOrientedMeteringPointFactory
     double height,
   );
 }
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.view.PreviewView',
+  ),
+)
+abstract class PreviewView {
+  PreviewView();
+
+  SurfaceProvider getSurfaceProvider();
+
+  void registerPreviewView();
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.Preview.SurfaceProvider',
+  ),
+)
+abstract class SurfaceProvider {}

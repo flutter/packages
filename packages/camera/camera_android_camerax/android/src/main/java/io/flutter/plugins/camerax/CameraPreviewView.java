@@ -18,8 +18,8 @@ import androidx.camera.view.PreviewView;
 class CameraPreviewView implements PlatformView {
    @NonNull private final PreviewView previewView;
 
-    CameraPreviewView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams) {
-        previewView = new PreviewView(context);
+    CameraPreviewView(@NonNull Context context, int id, @Nullable Map<String, Object> creationParams, PreviewView previewView) {
+        this.previewView = previewView;
     }
 
     @NonNull
