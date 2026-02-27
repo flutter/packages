@@ -55,7 +55,6 @@ android {
         baseline = file("lint-baseline.xml")
     }
 
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

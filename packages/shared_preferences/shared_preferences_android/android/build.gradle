@@ -75,7 +75,6 @@ android {
         testImplementation("io.mockk:mockk:1.14.9")
     }
 
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

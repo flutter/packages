@@ -48,7 +48,6 @@ android {
         implementation("androidx.annotation:annotation:1.9.1")
     }
 
-
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

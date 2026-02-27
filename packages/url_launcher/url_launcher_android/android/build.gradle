@@ -27,6 +27,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
     namespace = "io.flutter.plugins.urllauncher"
     compileSdk = flutter.compileSdkVersion
 
@@ -45,7 +46,6 @@ android {
         warningsAsErrors = true
         disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
     }
-
 
     testOptions {
         unitTests {
