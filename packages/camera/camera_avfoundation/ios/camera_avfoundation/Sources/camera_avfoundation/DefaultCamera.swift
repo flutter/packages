@@ -371,7 +371,6 @@ final class DefaultCamera: NSObject, Camera {
         let ratio = Double(max(resolution.width, resolution.height)) / Double(min(resolution.width, resolution.height))
         let is4x3 = abs(ratio - 4.0/3.0) < 0.05
 
-        // Check that the ratio is 4:3
         if !is4x3 {
           continue
         }
