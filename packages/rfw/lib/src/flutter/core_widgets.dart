@@ -657,21 +657,12 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       final builder = StringBuffer();
       final int count = source.length(['text']);
       for (var index = 0; index < count; index += 1) {
-        final String? stringSegment = source.v<String>(['text', index]);
-        if (stringSegment != null) {
-          builder.write(stringSegment);
-          continue;
-        }
-
-        final int? intSegment = source.v<int>(['text', index]);
-        if (intSegment != null) {
-          builder.write(intSegment.toString());
-          continue;
-        }
-
-        final double? doubleSegment = source.v<double>(['text', index]);
-        if (doubleSegment != null) {
-          builder.write(doubleSegment.toString());
+        final List<Object> key = <Object>['text', index];
+        String? segment = source.v<String>(key);
+        segment ??= source.v<int>(key)?.toString();
+        segment ??= source.v<double>(key)?.toString();
+        if (segment != null) {
+          builder.write(segment);
         }
       }
       text = builder.toString();
