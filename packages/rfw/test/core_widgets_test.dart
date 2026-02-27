@@ -491,4 +491,47 @@ void main() {
     expect(flexibleWidgets[2].flex, equals(1));
     expect(flexibleWidgets[2].fit, equals(FlexFit.loose));
   });
+
+  testWidgets('Text renders numeric dynamic values', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent()
+      ..update('singleInt', 42)
+      ..update('left', 67)
+      ..update('right', 69)
+      ..update('singleDouble', 13.37)
+      ..update('leftDouble', -9000.01)
+      ..update('rightDouble', 9000.01);
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          crossAxisAlignment: "start",
+          children: [
+            Text(text: data.singleInt),
+            Text(text: [data.left, " / ", data.right]),
+            Text(text: data.singleDouble),
+            Text(text: [data.leftDouble, " / ", data.rightDouble]),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('42'), findsOneWidget);
+    expect(find.text('67 / 69'), findsOneWidget);
+    expect(find.text('13.37'), findsOneWidget);
+    expect(find.text('-9000.01 / 9000.01'), findsOneWidget);
+  });
 }
