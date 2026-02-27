@@ -66,18 +66,23 @@ class PreviewProxyApi extends PigeonApiPreview {
     return builder.build();
   }
 
+  // @Override
+  // public long setSurfaceProvider(
+  //     @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
+  //   final TextureRegistry.SurfaceProducer surfaceProducer =
+  //       getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+  //   final Preview.SurfaceProvider surfaceProvider =
+  //       createSurfaceProvider(surfaceProducer, systemServicesManager);
+
+  //   pigeonInstance.setSurfaceProvider(surfaceProvider);
+  //   surfaceProducers.put(pigeonInstance, surfaceProducer);
+
+  //   return surfaceProducer.id();
+  // }
+
   @Override
-  public long setSurfaceProvider(
-      @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
-    final Preview.SurfaceProvider surfaceProvider =
-        createSurfaceProvider(surfaceProducer, systemServicesManager);
-
+  public void setSurfaceProvider(@NonNull Preview pigeonInstance, @NonNull Preview.SurfaceProvider surfaceProvider) {
     pigeonInstance.setSurfaceProvider(surfaceProvider);
-    surfaceProducers.put(pigeonInstance, surfaceProducer);
-
-    return surfaceProducer.id();
   }
 
   @Override

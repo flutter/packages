@@ -501,6 +501,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
+    final previewView = PreviewView();
+    await previewView.registerPreviewView();
+    final SurfaceProvider surfaceProvider = await previewView
+        .getSurfaceProvider();
+    await preview!.setSurfaceProvider(surfaceProvider);
     camera = await processCameraProvider!.bindToLifecycle(
       cameraSelector!,
       <UseCase>[preview!, imageCapture!, imageAnalysis!],
@@ -508,9 +513,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
-
-    final api = CameraPreviewViewApi();
-    await api.registerPlatformView();
 
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:

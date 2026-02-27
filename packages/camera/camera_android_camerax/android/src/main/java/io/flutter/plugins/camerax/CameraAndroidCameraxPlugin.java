@@ -10,9 +10,10 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import androidx.camera.view.PreviewView;
 
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
-public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware, CameraPreviewViewApi {
+public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private FlutterPluginBinding pluginBinding;
   @VisibleForTesting @Nullable ProxyApiRegistrar proxyApiRegistrar;
 
@@ -31,19 +32,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         new ProxyApiRegistrar(
             binding.getBinaryMessenger(),
             binding.getApplicationContext(),
+            binding.getPlatformViewRegistry(),
             binding.getTextureRegistry());
     proxyApiRegistrar.setUp();
-
-    CameraPreviewViewApi.Companion.setUp(binding.getBinaryMessenger(), this);
-  }
-
-  @Override
-  public void registerPlatformView() {
-    pluginBinding
-            .getPlatformViewRegistry()
-            .registerViewFactory(
-                "plugins.flutter.dev/camera_android_camerax",
-                new CameraPreviewFactory());
   }
 
   @Override
