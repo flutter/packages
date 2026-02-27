@@ -28,7 +28,7 @@ Object? _extractReplyValueOrThrow(
       message: replyList[1] as String?,
       details: replyList[2],
     );
-  } else if (!isNullValid && (replyList.isEmpty || replyList[0] == null)) {
+  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
     throw PlatformException(
       code: 'null-error',
       message: 'Host platform returned null value for non-null return value.',

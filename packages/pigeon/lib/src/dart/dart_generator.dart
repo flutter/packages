@@ -1196,7 +1196,7 @@ Object? _extractReplyValueOrThrow(
     // handling.  Returning a nil value and not returning an error is an
     // exception.
     indent.format('''
-\t} else if (!isNullValid && (replyList.isEmpty || replyList[0] == null)) {
+\t} else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
 \t\tthrow PlatformException(
 \t\t\tcode: 'null-error',
 \t\t\tmessage: 'Host platform returned null value for non-null return value.',
