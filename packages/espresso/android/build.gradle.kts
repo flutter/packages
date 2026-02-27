@@ -41,7 +41,7 @@ android {
         checkAllWarnings = true
         warningsAsErrors = true
         disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
-        baseline file("lint-baseline.xml")
+        baseline = file("lint-baseline.xml")
     }
 
     testOptions {

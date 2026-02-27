@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "io.flutter.plugins.camerax"
 version = "1.0"
 
@@ -26,6 +28,12 @@ plugins {
     id("kotlin-android")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+    }
+}
+
 android {
     namespace = "io.flutter.plugins.camerax"
     // CameraX dependencies require compilation against version 33 or later.
@@ -34,11 +42,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        // This must match the Java version provided in compileOptions.
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {

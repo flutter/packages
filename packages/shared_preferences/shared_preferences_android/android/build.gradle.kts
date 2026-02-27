@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "io.flutter.plugins.sharedpreferences"
 version = "1.0-SNAPSHOT"
 
@@ -32,6 +34,12 @@ plugins {
     id("kotlin-android")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+    }
+}
+
 android {
     namespace = "io.flutter.plugins.sharedpreferences"
     compileSdk = flutter.compileSdkVersion
@@ -39,10 +47,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
