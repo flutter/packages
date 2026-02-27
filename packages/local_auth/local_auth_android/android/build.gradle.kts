@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "io.flutter.plugins.localauth"
 version = "1.0-SNAPSHOT"
 
@@ -26,6 +28,12 @@ plugins {
     id("kotlin-android")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+    }
+}
+
 android {
     namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
@@ -40,14 +48,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable += "AndroidGradlePluginVersion" + "InvalidPackage" + "GradleDependency" + "NewerVersionAvailable"
+        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
     }
 
     testOptions {
@@ -56,9 +60,7 @@ android {
             isReturnDefaultValues = true
             all {
                 it.useJUnitPlatform()
-
                 it.outputs.upToDateWhen { false }
-
                 it.testLogging {
                     events("passed", "skipped", "failed", "standardOut", "standardError")
                     showStandardStreams = true
