@@ -1582,5 +1582,271 @@ void main() {
         expect(find.text('Home'), findsOneWidget);
       },
     );
+
+    group('with refreshListenable', () {
+      testWidgets(
+        'Block.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  // Public routes — always allow
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  // Protected routes — require auth
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.go('/login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          // Toggle auth off — refreshListenable fires, guard blocks and
+          // calls router.go('/login') in Block.then callback.
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
+
+          // The callback navigation must commit.
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then(router.goNamed) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final isAuthenticated = ValueNotifier<bool>(true);
+          addTearDown(isAuthenticated.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: isAuthenticated,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  if (!isAuthenticated.value) {
+                    return Block.then(() => goRouter.goNamed('login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                name: 'login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          isAuthenticated.value = false;
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then(router.go) navigates after multiple rapid refreshListenable emissions',
+        (WidgetTester tester) async {
+          final authState = ValueNotifier<int>(0);
+          addTearDown(authState.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: authState,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/login') {
+                    return const Allow();
+                  }
+
+                  if (authState.value > 2) {
+                    return Block.then(() => goRouter.go('/login'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Login'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          // Rapid emissions simulating CombineLatestStream
+          authState.value = 1;
+          authState.value = 2;
+          authState.value = 3; // triggers Block.then
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/login'));
+          expect(find.text('Login'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Allow.then(router.go) navigates after refreshListenable fires',
+        (WidgetTester tester) async {
+          final shouldRedirect = ValueNotifier<bool>(false);
+          addTearDown(shouldRedirect.dispose);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: shouldRedirect,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (next.uri.path == '/dashboard') {
+                    return const Allow();
+                  }
+
+                  if (shouldRedirect.value && next.uri.path == '/home') {
+                    return Allow(then: () => goRouter.go('/dashboard'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+              GoRoute(
+                path: '/dashboard',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Dashboard'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          shouldRedirect.value = true;
+          await tester.pumpAndSettle();
+
+          expect(router.state.uri.path, equals('/dashboard'));
+          expect(find.text('Dashboard'), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'Block.then error is reported after refreshListenable fires',
+        (WidgetTester tester) async {
+          final trigger = ValueNotifier<bool>(false);
+          addTearDown(trigger.dispose);
+
+          FlutterErrorDetails? reported;
+          final void Function(FlutterErrorDetails)? oldHandler =
+              FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            reported = details;
+          };
+          addTearDown(() => FlutterError.onError = oldHandler);
+
+          router = GoRouter(
+            initialLocation: '/home',
+            refreshListenable: trigger,
+            onEnter:
+                (
+                  BuildContext context,
+                  GoRouterState current,
+                  GoRouterState next,
+                  GoRouter goRouter,
+                ) {
+                  if (trigger.value && next.uri.path == '/home') {
+                    return Block.then(() => throw StateError('callback error'));
+                  }
+                  return const Allow();
+                },
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (_, __) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          expect(find.text('Home'), findsOneWidget);
+
+          trigger.value = true;
+          await tester.pumpAndSettle();
+
+          // Error should be reported (not swallowed)
+          expect(reported, isNotNull);
+          expect(reported!.exception.toString(), contains('callback error'));
+        },
+      );
+    });
   });
 }

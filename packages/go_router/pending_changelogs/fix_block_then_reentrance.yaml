@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Block.then()` and `Allow.then()` navigation callbacks being silently lost when triggered by `refreshListenable` due to re-entrant route processing.
+version: patch
