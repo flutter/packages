@@ -1,6 +1,6 @@
 ## 3.23.8
 
-* Fixes lossless transition from Dart Color to native UIColor when calling `setBackgroundColor`.
+* Fixes lossy transition from Dart Color to native UIColor when calling `setBackgroundColor`.
 
 ## 3.23.7
 
