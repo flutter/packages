@@ -461,9 +461,9 @@ Iterable<cb.Constructor> constructors(
             const cb.Code('super.${classMemberNamePrefix}detached()'),
         ])
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: channelName,
             insideAsyncMethod: false,
@@ -492,7 +492,7 @@ Iterable<cb.Constructor> constructors(
             cb.Code(
               'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
             ),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
           ]);
         });
     });
@@ -792,10 +792,10 @@ cb.Method setUpMessageHandlerMethod({
         ],
         if (hasCallbackConstructor)
           ...cb.Block((cb.BlockBuilder builder) {
-            final messageHandlerSink = StringBuffer();
+            final messageHandlerIndent = Indent();
             const methodName = '${classMemberNamePrefix}newInstance';
             DartGenerator.writeFlutterMethodMessageHandler(
-              Indent(messageHandlerSink),
+              messageHandlerIndent,
               name: methodName,
               parameters: <Parameter>[
                 Parameter(
@@ -844,13 +844,13 @@ cb.Method setUpMessageHandlerMethod({
                         ')';
                   },
             );
-            builder.statements.add(cb.Code(messageHandlerSink.toString()));
+            builder.statements.add(cb.Code(messageHandlerIndent.toString()));
           }).statements,
         for (final Method method in flutterMethods)
           ...cb.Block((cb.BlockBuilder builder) {
-            final messageHandlerSink = StringBuffer();
+            final messageHandlerIndent = Indent();
             DartGenerator.writeFlutterMethodMessageHandler(
-              Indent(messageHandlerSink),
+              messageHandlerIndent,
               name: method.name,
               parameters: <Parameter>[
                 Parameter(
@@ -885,7 +885,7 @@ cb.Method setUpMessageHandlerMethod({
                     return '($methodName ?? ${safeArgumentNames.first}.$methodName)$nullability.call(${safeArgumentNames.join(',')})';
                   },
             );
-            builder.statements.add(cb.Code(messageHandlerSink.toString()));
+            builder.statements.add(cb.Code(messageHandlerIndent.toString()));
           }).statements,
       ]),
   );
@@ -913,9 +913,9 @@ Iterable<cb.Method> attachedFieldMethods(
         ..static = field.isStatic
         ..returns = cb.refer(type)
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: makeChannelNameWithStrings(
               apiName: apiName,
@@ -968,7 +968,7 @@ Iterable<cb.Method> attachedFieldMethods(
               ),
             ],
             const cb.Code('() async {'),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
             const cb.Code('}();'),
             const cb.Code('return $instanceName;'),
           ]);
@@ -1023,9 +1023,9 @@ Iterable<cb.Method> hostMethods(
           ],
         ])
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: makeChannelNameWithStrings(
               apiName: apiName,
@@ -1073,7 +1073,7 @@ Iterable<cb.Method> hostMethods(
             const cb.Code(
               'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
             ),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
           ]);
         }),
     );
