@@ -1180,7 +1180,6 @@ Object? _extractReplyValueOrThrow(
 \t\tList<Object?>? replyList,
 \t\tString channelName, {
 \t\trequired bool isNullValid,
-\t\trequired bool isValueExpected,
 }) {
 \tif (replyList == null) {
 \t\tthrow PlatformException(
@@ -1197,13 +1196,13 @@ Object? _extractReplyValueOrThrow(
     // handling.  Returning a nil value and not returning an error is an
     // exception.
     indent.format('''
-\t} else if (!isNullValid && isValueExpected && replyList[0] == null) {
+\t} else if (!isNullValid && replyList[0] == null) {
 \t\tthrow PlatformException(
 \t\t\tcode: 'null-error',
 \t\t\tmessage: 'Host platform returned null value for non-null return value.',
 \t\t);
 \t}
-\treturn isValueExpected ? replyList[0] : null;
+\treturn replyList.firstOrNull;
 }
 ''');
   }
@@ -1344,7 +1343,6 @@ _extractReplyValueOrThrow(
 \t\t${varNamePrefix}replyList,
 \t\t${varNamePrefix}channelName,
 \t\tisNullValid: ${returnType.isNullable},
-\t\tisValueExpected: ${!returnType.isVoid},
 )
 ''';
     if (returnType.isVoid) {

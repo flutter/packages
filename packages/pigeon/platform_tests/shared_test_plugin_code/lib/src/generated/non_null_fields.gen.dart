@@ -16,7 +16,6 @@ Object? _extractReplyValueOrThrow(
   List<Object?>? replyList,
   String channelName, {
   required bool isNullValid,
-  required bool isValueExpected,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -29,13 +28,13 @@ Object? _extractReplyValueOrThrow(
       message: replyList[1] as String?,
       details: replyList[2],
     );
-  } else if (!isNullValid && isValueExpected && replyList[0] == null) {
+  } else if (!isNullValid && replyList[0] == null) {
     throw PlatformException(
       code: 'null-error',
       message: 'Host platform returned null value for non-null return value.',
     );
   }
-  return isValueExpected ? replyList[0] : null;
+  return replyList.firstOrNull;
 }
 
 List<Object?> wrapResponse({
@@ -281,7 +280,6 @@ class NonNullFieldHostApi {
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-      isValueExpected: true,
     )!;
     return pigeonVar_replyValue as NonNullFieldSearchReply;
   }
