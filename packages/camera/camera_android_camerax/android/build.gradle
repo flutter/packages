@@ -77,11 +77,11 @@ android {
 
 dependencies {
     // CameraX core library using the camera2 implementation must use same version number.
-    def camerax_version = "1.5.3"
-    implementation("androidx.camera:camera-core:${camerax_version}")
-    implementation("androidx.camera:camera-camera2:${camerax_version}")
-    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
-    implementation("androidx.camera:camera-video:${camerax_version}")
+    val cameraxVersion = "1.5.3"
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    implementation("androidx.camera:camera-video:${cameraxVersion}")
     implementation("com.google.guava:guava:33.5.0-android")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.22.0")

@@ -52,17 +52,17 @@ android {
     }
 
     dependencies {
-        def exoplayer_version = "1.9.2"
-        implementation("androidx.media3:media3-exoplayer:${exoplayer_version}")
-        implementation("androidx.media3:media3-exoplayer-hls:${exoplayer_version}")
-        implementation("androidx.media3:media3-exoplayer-dash:${exoplayer_version}")
-        implementation("androidx.media3:media3-exoplayer-rtsp:${exoplayer_version}")
-        implementation("androidx.media3:media3-exoplayer-smoothstreaming:${exoplayer_version}")
+        val exoplayerVersion = "1.9.2"
+        implementation("androidx.media3:media3-exoplayer:${exoplayerVersion}")
+        implementation("androidx.media3:media3-exoplayer-hls:${exoplayerVersion}")
+        implementation("androidx.media3:media3-exoplayer-dash:${exoplayerVersion}")
+        implementation("androidx.media3:media3-exoplayer-rtsp:${exoplayerVersion}")
+        implementation("androidx.media3:media3-exoplayer-smoothstreaming:${exoplayerVersion}")
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.test:core:1.7.0")
         testImplementation("org.mockito:mockito-core:5.22.0")
         testImplementation("org.robolectric:robolectric:4.16")
-        testImplementation("androidx.media3:media3-test-utils:${exoplayer_version}")
+        testImplementation("androidx.media3:media3-test-utils:${exoplayerVersion}")
     }
 
     testOptions {
