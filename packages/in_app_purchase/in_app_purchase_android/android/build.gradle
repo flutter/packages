@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.inapppurchase'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.inapppurchase"
+version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,7 +19,9 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     buildFeatures {
@@ -37,7 +39,7 @@ android {
     lintOptions {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

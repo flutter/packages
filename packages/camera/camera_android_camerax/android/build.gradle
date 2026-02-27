@@ -1,15 +1,15 @@
-group = 'io.flutter.plugins.camerax'
-version = '1.0'
+group = "io.flutter.plugins.camerax"
+version = "1.0"
 
 buildscript {
-    ext.kotlin_version = '2.3.0'
+    ext.kotlin_version = "2.3.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath "com.android.tools.build:gradle:8.13.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -21,8 +21,10 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+}
 
 android {
     namespace = "io.flutter.plugins.camerax"
@@ -65,7 +67,7 @@ android {
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'GradleDependency', 'InvalidPackage', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "GradleDependency", "InvalidPackage", "NewerVersionAvailable"
         baseline = file("lint-baseline.xml")
     }
 }

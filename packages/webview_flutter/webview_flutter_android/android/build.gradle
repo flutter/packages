@@ -1,15 +1,15 @@
-group = 'io.flutter.plugins.webviewflutter'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.webviewflutter"
+version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = '2.3.0'
+    ext.kotlin_version = "2.3.0"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -21,8 +21,10 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+plugins {
+    id("com.android.library")
+    id("kotlin-android")
+}
 
 android {
     namespace = "io.flutter.plugins.webviewflutter"
@@ -38,14 +40,14 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk = 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
         baseline = file("lint-baseline.xml")
     }
 

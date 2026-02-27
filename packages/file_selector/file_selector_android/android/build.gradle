@@ -1,5 +1,5 @@
-group = 'dev.flutter.packages.file_selector_android'
-version = '1.0'
+group = "dev.flutter.packages.file_selector_android"
+version = "1.0"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,7 +19,9 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "dev.flutter.packages.file_selector_android"
@@ -31,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk = 24
     }
 
     dependencies {
@@ -45,7 +47,7 @@ android {
     lintOptions {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
     }
 
     testOptions {

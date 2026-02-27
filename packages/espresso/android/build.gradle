@@ -1,5 +1,5 @@
-group = 'com.example.espresso'
-version = '1.0'
+group = "com.example.espresso"
+version = "1.0"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,14 +19,16 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "com.example.espresso"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk = 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,10 +40,9 @@ android {
     lintOptions {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
         baseline file("lint-baseline.xml")
     }
-
 
     testOptions {
         unitTests.includeAndroidResources = true
@@ -57,10 +58,10 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:33.5.0-android'
-    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
-    implementation 'com.google.code.gson:gson:2.13.2'
-    androidTestImplementation 'org.hamcrest:hamcrest:3.0'
+    implementation("com.google.guava:guava:33.5.0-android")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.google.code.gson:gson:2.13.2")
+    androidTestImplementation("org.hamcrest:hamcrest:3.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.4.5")
@@ -88,7 +89,7 @@ dependencies {
 
     // The following Espresso dependency can be either "implementation"
     // or "androidTestImplementation", depending on whether you want the
-    // dependency to appear on your APK's compile classpath or the test APK
+    // dependency to appear on your APK"s compile classpath or the test APK
     // classpath.
     api("androidx.test.espresso:espresso-idling-resource:3.7.0")
 }

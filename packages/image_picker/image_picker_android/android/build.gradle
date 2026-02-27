@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.imagepicker'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.imagepicker"
+version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,20 +19,22 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "io.flutter.plugins.imagepicker"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk = 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable "AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"
     }
     dependencies {
         implementation("androidx.core:core:1.17.0")
