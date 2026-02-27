@@ -17,10 +17,10 @@ class UIViewProxyAPITests: XCTestCase {
       let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
       let instance = UIView(frame: .zero)
-      let red = 0.5
-      let green = 0.5
-      let blue = 0.5
-      let alpha = 0.5
+      let red = 0.1
+      let green = 0.2
+      let blue = 0.3
+      let alpha = 0.4
       try? api.pigeonDelegate.setBackgroundColor(
         pigeonApi: api, pigeonInstance: instance,
         value: UIColor(red: red, green: green, blue: blue, alpha: alpha))
