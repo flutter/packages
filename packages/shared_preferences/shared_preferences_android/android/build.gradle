@@ -21,12 +21,10 @@ allprojects {
     }
 }
 
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-    }
+// TODO(stuartmorgan): See if this can be removed.
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Xlint:deprecation")
+    options.compilerArgs.add("-Xlint:unchecked")
 }
 
 plugins {

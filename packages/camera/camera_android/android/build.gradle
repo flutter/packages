@@ -1,6 +1,5 @@
 group = "io.flutter.plugins.camera"
 version = "1.0-SNAPSHOT"
-def args = ["-Xlint:deprecation","-Xlint:unchecked"]
 
 buildscript {
     repositories {
@@ -20,8 +19,9 @@ allprojects {
     }
 }
 
-project.getTasks().withType(JavaCompile){
-    options.compilerArgs.addAll(args)
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("-Xlint:deprecation")
+    options.compilerArgs.add("-Xlint:unchecked")
 }
 
 plugins {
