@@ -68,7 +68,7 @@ base class PlatformScopedStorageXDirectoryCreationParams
 mixin PlatformScopedStorageXDirectoryExtension
     implements PlatformXDirectoryExtension {}
 
-/// A reference to a directory (or folder) on the file system within a devices
+/// A reference to a directory (or folder) on the file system within a device's
 /// scoped storage.
 abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   /// Creates a new [PlatformScopedStorageXDirectory]
