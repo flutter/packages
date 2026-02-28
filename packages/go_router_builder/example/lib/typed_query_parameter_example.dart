@@ -17,17 +17,11 @@ class CustomParameter {
   final String valueString;
   final int valueInt;
 
-  static String? encode(CustomParameter? parameter) {
-    if (parameter == null) {
-      return null;
-    }
+  static String encode(CustomParameter parameter) {
     return '${parameter.valueString},${parameter.valueInt}';
   }
 
-  static CustomParameter? decode(String? value) {
-    if (value == null) {
-      return null;
-    }
+  static CustomParameter decode(String value) {
     final List<String> parts = value.split(',');
     return CustomParameter(
       valueString: parts[0],
@@ -163,7 +157,9 @@ class Screen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('customField:'),
-            subtitle: Text(CustomParameter.encode(customField) ?? ''),
+            subtitle: Text(
+              customField == null ? '' : CustomParameter.encode(customField!),
+            ),
             trailing: const Icon(Icons.add),
             onTap: () {
               final newValue = CustomParameter(
@@ -181,9 +177,7 @@ class Screen extends StatelessWidget {
           ),
           ListTile(
             title: const Text('customFieldWithDefaultValue:'),
-            subtitle: Text(
-              CustomParameter.encode(customFieldWithDefaultValue)!,
-            ),
+            subtitle: Text(CustomParameter.encode(customFieldWithDefaultValue)),
             trailing: const Icon(Icons.add),
             onTap: () {
               final newValue = CustomParameter(
