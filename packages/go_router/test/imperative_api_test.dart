@@ -195,32 +195,32 @@ void main() {
   testWidgets(
     'push to a sibling shell route under the same parent shell route',
     (WidgetTester tester) async {
-      const appleNavigatorKey = _CollidingNavigatorKey('apple');
-      const googleNavigatorKey = _CollidingNavigatorKey('google');
+      const firstNavigatorKey = _CollidingNavigatorKey('first');
+      const secondNavigatorKey = _CollidingNavigatorKey('second');
       final routes = <RouteBase>[
         ShellRoute(
           builder: (_, __, Widget child) =>
               _ShellScaffold(label: 'project-shell', child: child),
           routes: <RouteBase>[
             ShellRoute(
-              navigatorKey: appleNavigatorKey,
+              navigatorKey: firstNavigatorKey,
               builder: (_, __, Widget child) =>
-                  _ShellScaffold(label: 'apple-shell', child: child),
+                  _ShellScaffold(label: 'first-shell', child: child),
               routes: <RouteBase>[
                 GoRoute(
-                  path: '/apple',
-                  builder: (_, __) => const _CounterPage(label: 'apple count'),
+                  path: '/first',
+                  builder: (_, __) => const _CounterPage(label: 'first count'),
                 ),
               ],
             ),
             ShellRoute(
-              navigatorKey: googleNavigatorKey,
+              navigatorKey: secondNavigatorKey,
               builder: (_, __, Widget child) =>
-                  _ShellScaffold(label: 'google-shell', child: child),
+                  _ShellScaffold(label: 'second-shell', child: child),
               routes: <RouteBase>[
                 GoRoute(
-                  path: '/google',
-                  builder: (_, __) => const Text('google page'),
+                  path: '/second',
+                  builder: (_, __) => const Text('second page'),
                 ),
               ],
             ),
@@ -230,32 +230,32 @@ void main() {
       final GoRouter router = await createRouter(
         routes,
         tester,
-        initialLocation: '/apple',
+        initialLocation: '/first',
       );
 
       expect(find.text('project-shell'), findsOneWidget);
-      expect(find.text('apple-shell'), findsOneWidget);
-      expect(find.text('apple count: 0'), findsOneWidget);
+      expect(find.text('first-shell'), findsOneWidget);
+      expect(find.text('first count: 0'), findsOneWidget);
 
-      await tester.tap(find.text('apple count: 0'));
+      await tester.tap(find.text('first count: 0'));
       await tester.pump();
-      expect(find.text('apple count: 1'), findsOneWidget);
+      expect(find.text('first count: 1'), findsOneWidget);
 
-      router.push('/google');
+      router.push('/second');
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('project-shell'), findsOneWidget);
-      expect(find.text('apple-shell'), findsNothing);
-      expect(find.text('google-shell'), findsOneWidget);
-      expect(find.text('google page'), findsOneWidget);
+      expect(find.text('first-shell'), findsNothing);
+      expect(find.text('second-shell'), findsOneWidget);
+      expect(find.text('second page'), findsOneWidget);
 
       router.pop();
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('project-shell'), findsOneWidget);
-      expect(find.text('google-shell'), findsNothing);
-      expect(find.text('apple-shell'), findsOneWidget);
-      expect(find.text('apple count: 1'), findsOneWidget);
+      expect(find.text('second-shell'), findsNothing);
+      expect(find.text('first-shell'), findsOneWidget);
+      expect(find.text('first count: 1'), findsOneWidget);
     },
   );
 
@@ -431,12 +431,15 @@ class _CounterPageState extends State<_CounterPage> {
   }
 }
 
-class _CollidingNavigatorKey extends GlobalObjectKey<NavigatorState> {
-  const _CollidingNavigatorKey(super.value);
+class _CollidingNavigatorKey extends GlobalKey<NavigatorState> {
+  const _CollidingNavigatorKey(this._label) : super.constructor();
+
+  final String _label;
 
   @override
   int get hashCode => 0;
 
   @override
-  bool operator ==(Object other) => identical(this, other);
+  bool operator ==(Object other) =>
+      other is _CollidingNavigatorKey && other._label == _label;
 }
