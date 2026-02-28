@@ -95,12 +95,12 @@ class DataWithEnum {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(state, other.state);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => state.hashCode;
 }
 
 class _PigeonCodec extends StandardMessageCodec {

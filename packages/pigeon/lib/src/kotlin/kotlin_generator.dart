@@ -326,13 +326,43 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeScoped('if (this === other) {', '}', () {
         indent.writeln('return true');
       });
-      indent.write(
-        'return ${_getUtilsClassName(generatorOptions)}.deepEquals(toList(), other.toList())',
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
       );
+      if (fields.isEmpty) {
+        indent.writeln('return true');
+      } else {
+        final String utils = _getUtilsClassName(generatorOptions);
+        final String comparisons = fields
+            .map(
+              (NamedType field) =>
+                  '$utils.deepEquals(this.${field.name}, other.${field.name})',
+            )
+            .join(' && ');
+        indent.writeln('return $comparisons');
+      }
     });
 
     indent.newln();
-    indent.writeln('override fun hashCode(): Int = toList().hashCode()');
+    indent.writeScoped('override fun hashCode(): Int {', '}', () {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
+      );
+      if (fields.isEmpty) {
+        indent.writeln('return 0');
+      } else {
+        final String utils = _getUtilsClassName(generatorOptions);
+        indent.writeln(
+          'var result = $utils.deepHash(this.${fields.first.name})',
+        );
+        for (final NamedType field in fields.skip(1)) {
+          indent.writeln(
+            'result = 31 * result + $utils.deepHash(this.${field.name})',
+          );
+        }
+        indent.writeln('return result');
+      }
+    });
   }
 
   void _writeDataClassSignature(
@@ -1317,35 +1347,71 @@ if (wrapped == null) {
   void _writeDeepEquals(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.format('''
 fun deepEquals(a: Any?, b: Any?): Boolean {
+  if (a === b) {
+    return true
+  }
   if (a is ByteArray && b is ByteArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is IntArray && b is IntArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is LongArray && b is LongArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
   }
   if (a is DoubleArray && b is DoubleArray) {
-      return a.contentEquals(b)
+    return a.contentEquals(b)
+  }
+  if (a is FloatArray && b is FloatArray) {
+    return a.contentEquals(b)
   }
   if (a is Array<*> && b is Array<*>) {
-    return a.size == b.size &&
-        a.indices.all{ deepEquals(a[it], b[it]) }
+    return a.contentDeepEquals(b)
   }
   if (a is List<*> && b is List<*>) {
     return a.size == b.size &&
-        a.indices.all{ deepEquals(a[it], b[it]) }
+        a.indices.all { deepEquals(a[it], b[it]) }
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size && a.all {
-        (b as Map<Any?, Any?>).contains(it.key) &&
-        deepEquals(it.value, b[it.key])
+      (b as Map<Any?, Any?>).contains(it.key) &&
+      deepEquals(it.value, b[it.key])
     }
   }
   return a == b
 }
-    ''');
+''');
+  }
+
+  void _writeDeepHash(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+fun deepHash(value: Any?): Int {
+  return when (value) {
+    null -> 0
+    is ByteArray -> value.contentHashCode()
+    is IntArray -> value.contentHashCode()
+    is LongArray -> value.contentHashCode()
+    is DoubleArray -> value.contentHashCode()
+    is FloatArray -> value.contentHashCode()
+    is Array<*> -> value.contentDeepHashCode()
+    is List<*> -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + deepHash(item)
+      }
+      result
+    }
+    is Map<*, *> -> {
+      var result = 0
+      for (entry in value) {
+        result += (deepHash(entry.key) xor deepHash(entry.value))
+      }
+      result
+    }
+    else -> value.hashCode()
+  }
+}
+''');
   }
 
   @override
@@ -1368,6 +1434,7 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
         }
         if (root.classes.isNotEmpty) {
           _writeDeepEquals(generatorOptions, indent);
+          _writeDeepHash(generatorOptions, indent);
         }
       },
     );

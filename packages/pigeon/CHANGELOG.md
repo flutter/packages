@@ -1,3 +1,10 @@
+## 26.1.9
+
+* [swift] [kotlin] [dart] Optimizes data class equality and hashing.
+  * Avoids `toList()` and `encode()` calls to reduce object allocations during comparisons.
+  * Adds `deepEquals` and `deepHash` utilities for robust recursive handling of nested collections and arrays.
+  * [dart] Fixes `Object.hash` usage for single-field classes.
+
 ## 26.1.8
 
 * Makes some internal class constructors constant.

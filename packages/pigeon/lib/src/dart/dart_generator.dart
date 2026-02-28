@@ -357,6 +357,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
+    final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+      classDefinition,
+    );
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
     indent.writeScoped('bool operator ==(Object other) {', '}', () {
@@ -370,13 +373,36 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('if (identical(this, other)) {', '}', () {
         indent.writeln('return true;');
       });
-      indent.writeln('return _deepEquals(encode(), other.encode());');
+      if (fields.isEmpty) {
+        indent.writeln('return true;');
+      } else {
+        final String comparisons = fields
+            .map(
+              (NamedType field) =>
+                  '_deepEquals(${field.name}, other.${field.name})',
+            )
+            .join(' && ');
+        indent.writeln('return $comparisons;');
+      }
     });
+
     indent.newln();
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
-    indent.writeln('int get hashCode => Object.hashAll(_toList())');
-    indent.addln(';');
+    if (fields.isEmpty) {
+      indent.writeln('int get hashCode => 0;');
+    } else if (fields.length == 1) {
+      indent.writeln('int get hashCode => ${fields.first.name}.hashCode;');
+    } else if (fields.length <= 20) {
+      final String argString = fields
+          .map((NamedType field) => field.name)
+          .join(', ');
+      indent.writeln('int get hashCode => Object.hash($argString);');
+    } else {
+      indent.writeln(
+        'int get hashCode => Object.hashAll(<Object?>[${fields.map((NamedType field) => field.name).join(', ')}]);',
+      );
+    }
   }
 
   @override

@@ -17,6 +17,9 @@ import java.nio.ByteBuffer
 
 private object EventChannelTestsPigeonUtils {
   fun deepEquals(a: Any?, b: Any?): Boolean {
+    if (a === b) {
+      return true
+    }
     if (a is ByteArray && b is ByteArray) {
       return a.contentEquals(b)
     }
@@ -29,8 +32,11 @@ private object EventChannelTestsPigeonUtils {
     if (a is DoubleArray && b is DoubleArray) {
       return a.contentEquals(b)
     }
+    if (a is FloatArray && b is FloatArray) {
+      return a.contentEquals(b)
+    }
     if (a is Array<*> && b is Array<*>) {
-      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+      return a.contentDeepEquals(b)
     }
     if (a is List<*> && b is List<*>) {
       return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
@@ -40,6 +46,33 @@ private object EventChannelTestsPigeonUtils {
           a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
+  }
+
+  fun deepHash(value: Any?): Int {
+    return when (value) {
+      null -> 0
+      is ByteArray -> value.contentHashCode()
+      is IntArray -> value.contentHashCode()
+      is LongArray -> value.contentHashCode()
+      is DoubleArray -> value.contentHashCode()
+      is FloatArray -> value.contentHashCode()
+      is Array<*> -> value.contentDeepHashCode()
+      is List<*> -> {
+        var result = 1
+        for (item in value) {
+          result = 31 * result + deepHash(item)
+        }
+        result
+      }
+      is Map<*, *> -> {
+        var result = 0
+        for (entry in value) {
+          result += (deepHash(entry.key) xor deepHash(entry.value))
+        }
+        result
+      }
+      else -> value.hashCode()
+    }
   }
 }
 
@@ -229,10 +262,79 @@ data class EventAllNullableTypes(
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullableByteArray, other.aNullableByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        EventChannelTestsPigeonUtils.deepEquals(
+            this.recursiveClassList, other.recursiveClassList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.aNullableBool)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableInt)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableInt64)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableDouble)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableByteArray)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullable4ByteArray)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullable8ByteArray)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableFloatArray)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableEnum)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.anotherNullableEnum)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableString)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.aNullableObject)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.allNullableTypes)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.list)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.stringList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.intList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.doubleList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.boolList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.enumList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.objectList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.mapList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.recursiveClassList)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.map)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.stringMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.intMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.enumMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.objectMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.mapMap)
+    result = 31 * result + EventChannelTestsPigeonUtils.deepHash(this.recursiveClassMap)
+    return result
+  }
 }
 
 /**
@@ -262,10 +364,13 @@ data class IntEvent(val value: Long) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -290,10 +395,13 @@ data class StringEvent(val value: String) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -318,10 +426,13 @@ data class BoolEvent(val value: Boolean) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -346,10 +457,13 @@ data class DoubleEvent(val value: Double) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -374,10 +488,13 @@ data class ObjectsEvent(val value: Any) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -402,10 +519,13 @@ data class EnumEvent(val value: EventEnum) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -430,10 +550,13 @@ data class ClassEvent(val value: EventAllNullableTypes) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
-  override fun hashCode(): Int = toList().hashCode()
+  override fun hashCode(): Int {
+    var result = EventChannelTestsPigeonUtils.deepHash(this.value)
+    return result
+  }
 }
 
 private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {

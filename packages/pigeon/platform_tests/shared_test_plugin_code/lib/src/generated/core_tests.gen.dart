@@ -82,12 +82,12 @@ class UnusedClass {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(aField, other.aField);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => aField.hashCode;
 }
 
 /// A class containing all supported types.
@@ -261,12 +261,68 @@ class AllTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(aBool, other.aBool) &&
+        _deepEquals(anInt, other.anInt) &&
+        _deepEquals(anInt64, other.anInt64) &&
+        _deepEquals(aDouble, other.aDouble) &&
+        _deepEquals(aByteArray, other.aByteArray) &&
+        _deepEquals(a4ByteArray, other.a4ByteArray) &&
+        _deepEquals(a8ByteArray, other.a8ByteArray) &&
+        _deepEquals(aFloatArray, other.aFloatArray) &&
+        _deepEquals(anEnum, other.anEnum) &&
+        _deepEquals(anotherEnum, other.anotherEnum) &&
+        _deepEquals(aString, other.aString) &&
+        _deepEquals(anObject, other.anObject) &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[
+    aBool,
+    anInt,
+    anInt64,
+    aDouble,
+    aByteArray,
+    a4ByteArray,
+    a8ByteArray,
+    aFloatArray,
+    anEnum,
+    anotherEnum,
+    aString,
+    anObject,
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    objectList,
+    listList,
+    mapList,
+    map,
+    stringMap,
+    intMap,
+    enumMap,
+    objectMap,
+    listMap,
+    mapMap,
+  ]);
 }
 
 /// A class containing all supported nullable types.
@@ -459,12 +515,74 @@ class AllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(aNullableBool, other.aNullableBool) &&
+        _deepEquals(aNullableInt, other.aNullableInt) &&
+        _deepEquals(aNullableInt64, other.aNullableInt64) &&
+        _deepEquals(aNullableDouble, other.aNullableDouble) &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        _deepEquals(aNullableEnum, other.aNullableEnum) &&
+        _deepEquals(anotherNullableEnum, other.anotherNullableEnum) &&
+        _deepEquals(aNullableString, other.aNullableString) &&
+        _deepEquals(aNullableObject, other.aNullableObject) &&
+        _deepEquals(allNullableTypes, other.allNullableTypes) &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[
+    aNullableBool,
+    aNullableInt,
+    aNullableInt64,
+    aNullableDouble,
+    aNullableByteArray,
+    aNullable4ByteArray,
+    aNullable8ByteArray,
+    aNullableFloatArray,
+    aNullableEnum,
+    anotherNullableEnum,
+    aNullableString,
+    aNullableObject,
+    allNullableTypes,
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    objectList,
+    listList,
+    mapList,
+    recursiveClassList,
+    map,
+    stringMap,
+    intMap,
+    enumMap,
+    objectMap,
+    listMap,
+    mapMap,
+    recursiveClassMap,
+  ]);
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -643,12 +761,68 @@ class AllNullableTypesWithoutRecursion {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(aNullableBool, other.aNullableBool) &&
+        _deepEquals(aNullableInt, other.aNullableInt) &&
+        _deepEquals(aNullableInt64, other.aNullableInt64) &&
+        _deepEquals(aNullableDouble, other.aNullableDouble) &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        _deepEquals(aNullableEnum, other.aNullableEnum) &&
+        _deepEquals(anotherNullableEnum, other.anotherNullableEnum) &&
+        _deepEquals(aNullableString, other.aNullableString) &&
+        _deepEquals(aNullableObject, other.aNullableObject) &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[
+    aNullableBool,
+    aNullableInt,
+    aNullableInt64,
+    aNullableDouble,
+    aNullableByteArray,
+    aNullable4ByteArray,
+    aNullable8ByteArray,
+    aNullableFloatArray,
+    aNullableEnum,
+    anotherNullableEnum,
+    aNullableString,
+    aNullableObject,
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    objectList,
+    listList,
+    mapList,
+    map,
+    stringMap,
+    intMap,
+    enumMap,
+    objectMap,
+    listMap,
+    mapMap,
+  ]);
 }
 
 /// A class for testing nested class handling.
@@ -722,12 +896,29 @@ class AllClassesWrapper {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(allNullableTypes, other.allNullableTypes) &&
+        _deepEquals(
+          allNullableTypesWithoutRecursion,
+          other.allNullableTypesWithoutRecursion,
+        ) &&
+        _deepEquals(allTypes, other.allTypes) &&
+        _deepEquals(classList, other.classList) &&
+        _deepEquals(nullableClassList, other.nullableClassList) &&
+        _deepEquals(classMap, other.classMap) &&
+        _deepEquals(nullableClassMap, other.nullableClassMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(
+    allNullableTypes,
+    allNullableTypesWithoutRecursion,
+    allTypes,
+    classList,
+    nullableClassList,
+    classMap,
+    nullableClassMap,
+  );
 }
 
 /// A data class containing a List, used in unit tests.
@@ -758,12 +949,12 @@ class TestMessage {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(testList, other.testList);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => testList.hashCode;
 }
 
 class _PigeonCodec extends StandardMessageCodec {

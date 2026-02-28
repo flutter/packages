@@ -225,12 +225,74 @@ class EventAllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(aNullableBool, other.aNullableBool) &&
+        _deepEquals(aNullableInt, other.aNullableInt) &&
+        _deepEquals(aNullableInt64, other.aNullableInt64) &&
+        _deepEquals(aNullableDouble, other.aNullableDouble) &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        _deepEquals(aNullableEnum, other.aNullableEnum) &&
+        _deepEquals(anotherNullableEnum, other.anotherNullableEnum) &&
+        _deepEquals(aNullableString, other.aNullableString) &&
+        _deepEquals(aNullableObject, other.aNullableObject) &&
+        _deepEquals(allNullableTypes, other.allNullableTypes) &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[
+    aNullableBool,
+    aNullableInt,
+    aNullableInt64,
+    aNullableDouble,
+    aNullableByteArray,
+    aNullable4ByteArray,
+    aNullable8ByteArray,
+    aNullableFloatArray,
+    aNullableEnum,
+    anotherNullableEnum,
+    aNullableString,
+    aNullableObject,
+    allNullableTypes,
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    objectList,
+    listList,
+    mapList,
+    recursiveClassList,
+    map,
+    stringMap,
+    intMap,
+    enumMap,
+    objectMap,
+    listMap,
+    mapMap,
+    recursiveClassMap,
+  ]);
 }
 
 sealed class PlatformEvent {}
@@ -262,12 +324,12 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class StringEvent extends PlatformEvent {
@@ -297,12 +359,12 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class BoolEvent extends PlatformEvent {
@@ -332,12 +394,12 @@ class BoolEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -367,12 +429,12 @@ class DoubleEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -402,12 +464,12 @@ class ObjectsEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class EnumEvent extends PlatformEvent {
@@ -437,12 +499,12 @@ class EnumEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class ClassEvent extends PlatformEvent {
@@ -472,12 +534,12 @@ class ClassEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(value, other.value);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => value.hashCode;
 }
 
 class _PigeonCodec extends StandardMessageCodec {

@@ -1785,4 +1785,82 @@ void main() {
       ),
     );
   });
+
+  test('data class equality', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(
+      code,
+      contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'),
+    );
+    expect(code, contains('deepEquals(lhs.field1, rhs.field1)'));
+    expect(code, contains('func hash(into hasher: inout Hasher) {'));
+    expect(code, contains('deepHash(value: field1, hasher: &hasher)'));
+  });
+
+  test('data class equality multi-field', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'field2',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(
+      code,
+      contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'),
+    );
+    expect(
+      code,
+      contains(
+        'deepEquals(lhs.field1, rhs.field1) && deepEquals(lhs.field2, rhs.field2)',
+      ),
+    );
+    expect(code, contains('func hash(into hasher: inout Hasher) {'));
+    expect(code, contains('deepHash(value: field1, hasher: &hasher)'));
+    expect(code, contains('deepHash(value: field2, hasher: &hasher)'));
+  });
 }

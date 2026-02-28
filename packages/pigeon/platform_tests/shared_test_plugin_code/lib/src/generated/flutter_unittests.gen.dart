@@ -64,12 +64,12 @@ class FlutterSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(query, other.query);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => query.hashCode;
 }
 
 class FlutterSearchReply {
@@ -104,12 +104,12 @@ class FlutterSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(result, other.result) && _deepEquals(error, other.error);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(result, error);
 }
 
 class FlutterSearchRequests {
@@ -139,12 +139,12 @@ class FlutterSearchRequests {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(requests, other.requests);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => requests.hashCode;
 }
 
 class FlutterSearchReplies {
@@ -174,12 +174,12 @@ class FlutterSearchReplies {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(replies, other.replies);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => replies.hashCode;
 }
 
 class _PigeonCodec extends StandardMessageCodec {

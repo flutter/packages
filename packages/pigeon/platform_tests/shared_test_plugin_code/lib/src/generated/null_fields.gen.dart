@@ -85,12 +85,13 @@ class NullFieldsSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(query, other.query) &&
+        _deepEquals(identifier, other.identifier);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(query, identifier);
 }
 
 class NullFieldsSearchReply {
@@ -140,12 +141,16 @@ class NullFieldsSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(result, other.result) &&
+        _deepEquals(error, other.error) &&
+        _deepEquals(indices, other.indices) &&
+        _deepEquals(request, other.request) &&
+        _deepEquals(type, other.type);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(result, error, indices, request, type);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

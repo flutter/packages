@@ -81,12 +81,12 @@ class NonNullFieldSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(query, other.query);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => query.hashCode;
 }
 
 class ExtraData {
@@ -121,12 +121,13 @@ class ExtraData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(detailA, other.detailA) &&
+        _deepEquals(detailB, other.detailB);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(detailA, detailB);
 }
 
 class NonNullFieldSearchReply {
@@ -176,12 +177,16 @@ class NonNullFieldSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(result, other.result) &&
+        _deepEquals(error, other.error) &&
+        _deepEquals(indices, other.indices) &&
+        _deepEquals(extraData, other.extraData) &&
+        _deepEquals(type, other.type);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(result, error, indices, extraData, type);
 }
 
 class _PigeonCodec extends StandardMessageCodec {
