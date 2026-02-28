@@ -12,11 +12,11 @@ class CustomParameter {
   final String valueString;
   final int valueInt;
 
-  static String? encode(CustomParameter? parameter) {
+  static String encode(CustomParameter parameter) {
     return '';
   }
 
-  static CustomParameter? decode(String? value) {
+  static CustomParameter decode(String value) {
     return const CustomParameter(valueString: '', valueInt: 0);
   }
 
