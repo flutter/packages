@@ -98,8 +98,16 @@ String decodeParameter(
 
   if (annotatedDecoder != null) {
     // If there is a custom decoder, use it directly.
-    var decoded =
-        '$annotatedDecoder(state.${_stateValueAccess(element, pathParameters)})';
+    final stateValueAccess =
+        'state.${_stateValueAccess(element, pathParameters)}';
+    String decoded;
+    if (!element.type.isNullableType && !element.hasDefaultValue) {
+      decoded = '$annotatedDecoder($stateValueAccess)';
+    } else {
+      decoded =
+          '($stateValueAccess == null ? null : $annotatedDecoder($stateValueAccess!))';
+    }
+
     if (element.isOptional && element.hasDefaultValue) {
       if (element.type.isNullableType) {
         throw NullableDefaultValueError(element);
@@ -163,7 +171,14 @@ String encodeField(
 ) {
   final String? annotatedEncoder = element.encoder;
   if (annotatedEncoder != null) {
-    return '$annotatedEncoder($selfFieldName.${element.displayName})';
+    final fieldAccess = '$selfFieldName.${element.displayName}';
+    final bool isNullable = element.returnType.isNullableType;
+    final encoded = '$annotatedEncoder($fieldAccess${isNullable ? '!' : ''})';
+    if (isNullable) {
+      return '$fieldAccess != null ? $encoded : null';
+    } else {
+      return encoded;
+    }
   }
 
   for (final _TypeHelper helper in _helpers) {
