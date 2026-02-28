@@ -688,7 +688,7 @@ if (wrapped == nil) {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
-      for (final NamedType field in fields) {
+      for (final field in fields) {
         indent.writeln(
           'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}(value: ${field.name}, hasher: &hasher)',
         );
@@ -1499,9 +1499,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   }
 
   void _writeDeepEquals(InternalSwiftOptions generatorOptions, Indent indent) {
-    final String deepEqualsName =
+    final deepEqualsName =
         'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
-    final String deepHashName =
+    final deepHashName =
         'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
     indent.format('''
 func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
