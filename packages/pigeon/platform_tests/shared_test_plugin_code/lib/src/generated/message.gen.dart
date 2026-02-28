@@ -292,7 +292,7 @@ class MessageApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 

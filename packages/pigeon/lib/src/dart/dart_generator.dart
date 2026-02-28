@@ -1342,7 +1342,7 @@ final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 _extractReplyValueOrThrow(
 \t\t${varNamePrefix}replyList,
 \t\t${varNamePrefix}channelName,
-\t\tisNullValid: ${returnType.isNullable},
+\t\tisNullValid: ${returnType.isNullable || returnType.isVoid},
 )
 ''';
     if (returnType.isVoid) {

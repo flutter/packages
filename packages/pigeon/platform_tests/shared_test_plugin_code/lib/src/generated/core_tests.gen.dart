@@ -882,7 +882,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -943,7 +943,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -2285,7 +2285,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -2688,7 +2688,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -3211,7 +3211,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -3248,7 +3248,7 @@ class HostIntegrationCoreApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 
@@ -6239,7 +6239,7 @@ class HostTrivialApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 }
@@ -6297,7 +6297,7 @@ class HostSmallApi {
     _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
-      isNullValid: false,
+      isNullValid: true,
     );
   }
 }
