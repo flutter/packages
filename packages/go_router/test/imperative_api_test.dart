@@ -192,6 +192,73 @@ void main() {
     expect(find.byKey(b), findsOneWidget);
   });
 
+  testWidgets(
+    'push to a sibling shell route under the same parent shell route',
+    (WidgetTester tester) async {
+      const appleNavigatorKey = _CollidingNavigatorKey('apple');
+      const googleNavigatorKey = _CollidingNavigatorKey('google');
+      final routes = <RouteBase>[
+        ShellRoute(
+          builder: (_, __, Widget child) =>
+              _ShellScaffold(label: 'project-shell', child: child),
+          routes: <RouteBase>[
+            ShellRoute(
+              navigatorKey: appleNavigatorKey,
+              builder: (_, __, Widget child) =>
+                  _ShellScaffold(label: 'apple-shell', child: child),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/apple',
+                  builder: (_, __) => const _CounterPage(label: 'apple count'),
+                ),
+              ],
+            ),
+            ShellRoute(
+              navigatorKey: googleNavigatorKey,
+              builder: (_, __, Widget child) =>
+                  _ShellScaffold(label: 'google-shell', child: child),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/google',
+                  builder: (_, __) => const Text('google page'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/apple',
+      );
+
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('apple-shell'), findsOneWidget);
+      expect(find.text('apple count: 0'), findsOneWidget);
+
+      await tester.tap(find.text('apple count: 0'));
+      await tester.pump();
+      expect(find.text('apple count: 1'), findsOneWidget);
+
+      router.push('/google');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('apple-shell'), findsNothing);
+      expect(find.text('google-shell'), findsOneWidget);
+      expect(find.text('google page'), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('google-shell'), findsNothing);
+      expect(find.text('apple-shell'), findsOneWidget);
+      expect(find.text('apple count: 1'), findsOneWidget);
+    },
+  );
+
   testWidgets('push inside or outside shell route', (
     WidgetTester tester,
   ) async {
@@ -316,4 +383,60 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+}
+
+class _ShellScaffold extends StatelessWidget {
+  const _ShellScaffold({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Column(
+        children: <Widget>[
+          Text(label),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class _CounterPage extends StatefulWidget {
+  const _CounterPage({required this.label});
+
+  final String label;
+
+  @override
+  State<_CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<_CounterPage> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            _count++;
+          });
+        },
+        child: Text('${widget.label}: $_count'),
+      ),
+    );
+  }
+}
+
+class _CollidingNavigatorKey extends GlobalObjectKey<NavigatorState> {
+  const _CollidingNavigatorKey(super.value);
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  bool operator ==(Object other) => identical(this, other);
 }

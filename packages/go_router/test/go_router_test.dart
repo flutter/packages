@@ -5579,7 +5579,7 @@ void main() {
                     return Scaffold(
                       body: TextButton(
                         onPressed: () async {
-                          shellNavigatorKey.currentState!.push(
+                          Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) {
                                 return const Scaffold(

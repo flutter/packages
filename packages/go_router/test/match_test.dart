@@ -43,27 +43,35 @@ void main() {
       expect(matches.first.pageKey, isNotNull);
     });
 
-    test('ShellRoute Match has stable unique key', () {
+    test('ShellRoute Match has unique keys and preserves them on copy', () {
       final route = ShellRoute(
         builder: _shellBuilder,
         routes: <GoRoute>[GoRoute(path: '/users/:userId', builder: _builder)],
       );
-      final pathParameters = <String, String>{};
       final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
-        pathParameters: pathParameters,
+        pathParameters: <String, String>{},
         uri: Uri.parse('/users/123'),
         rootNavigatorKey: GlobalKey<NavigatorState>(),
       );
       final List<RouteMatchBase> matches2 = RouteMatchBase.match(
         route: route,
-        pathParameters: pathParameters,
+        pathParameters: <String, String>{},
         uri: Uri.parse('/users/1234'),
         rootNavigatorKey: GlobalKey<NavigatorState>(),
       );
       expect(matches1.length, 1);
       expect(matches2.length, 1);
-      expect(matches1.first.pageKey, matches2.first.pageKey);
+      final match1 = matches1.first as ShellRouteMatch;
+      final match2 = matches2.first as ShellRouteMatch;
+      expect(match1.pageKey, isNot(equals(match2.pageKey)));
+      expect(match1.navigatorKey, isNot(same(match2.navigatorKey)));
+
+      final ShellRouteMatch copiedMatch = match1.copyWith(
+        matches: match1.matches,
+      );
+      expect(copiedMatch.pageKey, match1.pageKey);
+      expect(copiedMatch.navigatorKey, same(match1.navigatorKey));
     });
 
     test('GoRoute Match has stable unique key', () {

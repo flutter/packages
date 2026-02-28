@@ -108,7 +108,7 @@ class RouteBuilder {
       context,
       _CustomNavigator(
         // The state needs to persist across rebuild.
-        key: GlobalObjectKey(configuration.navigatorKey.hashCode),
+        key: GlobalObjectKey(configuration.navigatorKey),
         navigatorKey: configuration.navigatorKey,
         observers: observers,
         navigatorRestorationId: restorationScopeId,
@@ -300,7 +300,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               canPop: match.matches.length == 1,
               child: _CustomNavigator(
                 // The state needs to persist across rebuild.
-                key: GlobalObjectKey(navigatorKey.hashCode),
+                key: GlobalObjectKey(navigatorKey),
                 navigatorRestorationId: restorationScopeId,
                 navigatorKey: navigatorKey,
                 matches: match.matches,
