@@ -628,21 +628,15 @@ class NoOpPage extends Page<void> {
 ///
 /// For example, a parameter value of `'field with space'` will generate a query
 /// parameter value of `'field+with+space'`.
-///
-/// If the function returns `null`, the parameter will be treated as if it were
-/// not provided, and will be omitted from the URI.
-typedef QueryParameterEncoder<T> = String? Function(T value);
+typedef QueryParameterEncoder<T> = String Function(T value);
 
 /// Signature for custom query parameter decoding functions.
 ///
 /// Converts an encoded string from the URI into a parameter value of type `T`.
 ///
-/// The [value] parameter contains the encoded string from the URI, or `null`
-/// if the parameter is absent from the URI.
-///
-/// Return `null` to indicate the parameter was not provided. In this case,
-/// the default value of the [GoRoute] parameter will be used (if defined).
-typedef QueryParameterDecoder<T> = T? Function(String? value);
+/// The [value] parameter contains the encoded string from the URI. if the
+/// parameter is absent from the URI.
+typedef QueryParameterDecoder<T> = T Function(String value);
 
 /// Annotation to override the URI name for a route parameter.
 @optionalTypeArgs
