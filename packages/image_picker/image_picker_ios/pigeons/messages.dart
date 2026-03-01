@@ -45,6 +45,10 @@ enum SourceCamera { rear, front }
 // Corresponds to `ImageSource` from the platform interface package.
 enum SourceType { camera, gallery }
 
+// Corresponds to `VideoQuality` from the platform interface package.
+// Named ApiVideoQuality to avoid a name collision when importing the generated Dart.
+enum ApiVideoQuality { low, medium, high }
+
 class SourceSpecification {
   SourceSpecification(this.type, this.camera);
   SourceType type;
@@ -70,8 +74,12 @@ abstract class ImagePickerApi {
     int? limit,
   );
   @async
-  @ObjCSelector('pickVideoWithSource:maxDuration:')
-  String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
+  @ObjCSelector('pickVideoWithSource:maxDuration:videoQuality:')
+  String? pickVideo(
+    SourceSpecification source,
+    int? maxDurationSeconds,
+    ApiVideoQuality? videoQuality,
+  );
   @async
   @ObjCSelector('pickMultiVideoWithMaxDuration:limit:')
   List<String> pickMultiVideo(int? maxDurationSeconds, int? limit);
