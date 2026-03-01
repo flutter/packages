@@ -14,6 +14,7 @@ export 'package:image_picker_platform_interface/image_picker_platform_interface.
         LostDataResponse,
         PickedFile,
         RetrieveType,
+        VideoQuality,
         XFile,
         kTypeImage,
         kTypeVideo;
@@ -277,6 +278,8 @@ class ImagePicker {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
+  /// The [quality] argument specifies the video quality for recording/picking. Defaults to [VideoQuality.high].
+  ///
   /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
@@ -289,11 +292,13 @@ class ImagePicker {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) {
     return platform.getVideo(
       source: source,
       preferredCameraDevice: preferredCameraDevice,
       maxDuration: maxDuration,
+      quality: quality,
     );
   }
 
