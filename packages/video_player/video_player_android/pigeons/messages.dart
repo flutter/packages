@@ -67,12 +67,23 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
+class PlatformWidevineDrmConfiguration {
+  PlatformWidevineDrmConfiguration({
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+  });
+
+  String licenseUri;
+  Map<String, String> licenseHeaders;
+}
+
 class CreationOptions {
   CreationOptions({required this.uri, required this.httpHeaders});
   String uri;
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+  PlatformWidevineDrmConfiguration? widevineDrm;
 }
 
 class TexturePlayerIds {

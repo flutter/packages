@@ -14,6 +14,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class FVPPlatformVideoViewCreationParams;
+@class FVPPlatformFairPlayDrmConfiguration;
 @class FVPCreationOptions;
 @class FVPTexturePlayerIds;
 @class FVPMediaSelectionAudioTrackData;
@@ -26,13 +27,28 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) NSInteger playerId;
 @end
 
+@interface FVPPlatformFairPlayDrmConfiguration : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithCertificateUri:(NSString *)certificateUri
+                            licenseUri:(NSString *)licenseUri
+                        licenseHeaders:(NSDictionary<NSString *, NSString *> *)licenseHeaders
+                             contentId:(nullable NSString *)contentId;
+@property(nonatomic, copy) NSString *certificateUri;
+@property(nonatomic, copy) NSString *licenseUri;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *licenseHeaders;
+@property(nonatomic, copy, nullable) NSString *contentId;
+@end
+
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUri:(NSString *)uri
-                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+                fairPlayDrm:(nullable FVPPlatformFairPlayDrmConfiguration *)fairPlayDrm;
 @property(nonatomic, copy) NSString *uri;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
+@property(nonatomic, strong, nullable) FVPPlatformFairPlayDrmConfiguration *fairPlayDrm;
 @end
 
 @interface FVPTexturePlayerIds : NSObject

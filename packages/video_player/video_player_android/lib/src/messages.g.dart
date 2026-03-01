@@ -255,12 +255,58 @@ class PlatformVideoViewCreationParams {
   int get hashCode => Object.hashAll(_toList());
 }
 
+class PlatformWidevineDrmConfiguration {
+  PlatformWidevineDrmConfiguration({
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+  });
+
+  String licenseUri;
+
+  Map<String, String> licenseHeaders;
+
+  List<Object?> _toList() {
+    return <Object?>[licenseUri, licenseHeaders];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformWidevineDrmConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PlatformWidevineDrmConfiguration(
+      licenseUri: result[0]! as String,
+      licenseHeaders: (result[1] as Map<Object?, Object?>?)!
+          .cast<String, String>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformWidevineDrmConfiguration ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class CreationOptions {
   CreationOptions({
     required this.uri,
     this.formatHint,
     required this.httpHeaders,
     this.userAgent,
+    this.widevineDrm,
   });
 
   String uri;
@@ -271,8 +317,10 @@ class CreationOptions {
 
   String? userAgent;
 
+  PlatformWidevineDrmConfiguration? widevineDrm;
+
   List<Object?> _toList() {
-    return <Object?>[uri, formatHint, httpHeaders, userAgent];
+    return <Object?>[uri, formatHint, httpHeaders, userAgent, widevineDrm];
   }
 
   Object encode() {
@@ -287,6 +335,7 @@ class CreationOptions {
       httpHeaders: (result[2] as Map<Object?, Object?>?)!
           .cast<String, String>(),
       userAgent: result[3] as String?,
+      widevineDrm: result[4] as PlatformWidevineDrmConfiguration?,
     );
   }
 
@@ -616,23 +665,26 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewCreationParams) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is CreationOptions) {
+    } else if (value is PlatformWidevineDrmConfiguration) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is TexturePlayerIds) {
+    } else if (value is CreationOptions) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackState) {
+    } else if (value is TexturePlayerIds) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is AudioTrackMessage) {
+    } else if (value is PlaybackState) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is ExoPlayerAudioTrackData) {
+    } else if (value is AudioTrackMessage) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is NativeAudioTrackData) {
+    } else if (value is ExoPlayerAudioTrackData) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeAudioTrackData) {
+      buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -659,16 +711,18 @@ class _PigeonCodec extends StandardMessageCodec {
       case 135:
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
       case 136:
-        return CreationOptions.decode(readValue(buffer)!);
+        return PlatformWidevineDrmConfiguration.decode(readValue(buffer)!);
       case 137:
-        return TexturePlayerIds.decode(readValue(buffer)!);
+        return CreationOptions.decode(readValue(buffer)!);
       case 138:
-        return PlaybackState.decode(readValue(buffer)!);
+        return TexturePlayerIds.decode(readValue(buffer)!);
       case 139:
-        return AudioTrackMessage.decode(readValue(buffer)!);
+        return PlaybackState.decode(readValue(buffer)!);
       case 140:
-        return ExoPlayerAudioTrackData.decode(readValue(buffer)!);
+        return AudioTrackMessage.decode(readValue(buffer)!);
       case 141:
+        return ExoPlayerAudioTrackData.decode(readValue(buffer)!);
+      case 142:
         return NativeAudioTrackData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

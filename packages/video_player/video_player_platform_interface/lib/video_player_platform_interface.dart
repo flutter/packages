@@ -157,6 +157,56 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
 
+/// Base class for DRM configuration used by [DataSource].
+@immutable
+abstract class VideoDrmConfiguration {
+  /// Constructs a DRM configuration.
+  const VideoDrmConfiguration();
+}
+
+/// Widevine DRM configuration for Android.
+@immutable
+class WidevineDrmConfiguration extends VideoDrmConfiguration {
+  /// Constructs a [WidevineDrmConfiguration].
+  const WidevineDrmConfiguration({
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+  });
+
+  /// The license acquisition URL.
+  final Uri licenseUri;
+
+  /// Headers attached to license requests.
+  final Map<String, String> licenseHeaders;
+}
+
+/// FairPlay DRM configuration for iOS.
+@immutable
+class FairPlayDrmConfiguration extends VideoDrmConfiguration {
+  /// Constructs a [FairPlayDrmConfiguration].
+  const FairPlayDrmConfiguration({
+    required this.certificateUri,
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+    this.contentId,
+  });
+
+  /// The FairPlay application certificate URL.
+  final Uri certificateUri;
+
+  /// The license acquisition URL.
+  final Uri licenseUri;
+
+  /// Headers attached to license requests.
+  final Map<String, String> licenseHeaders;
+
+  /// Optional content ID override used in SPC generation.
+  ///
+  /// If omitted, the iOS implementation derives the content ID from the
+  /// requested `skd://` URL.
+  final String? contentId;
+}
+
 /// Description of the data source used to create an instance of
 /// the video player.
 class DataSource {
@@ -180,6 +230,7 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
   });
 
   /// The way in which the video was originally loaded.
@@ -202,6 +253,11 @@ class DataSource {
   /// Only for [DataSourceType.network] videos.
   /// Always empty for other video types.
   Map<String, String> httpHeaders;
+
+  /// Optional DRM configuration.
+  ///
+  /// Only supported for [DataSourceType.network] videos.
+  final VideoDrmConfiguration? drmConfiguration;
 
   /// The name of the asset. Only set for [DataSourceType.asset] videos.
   final String? asset;

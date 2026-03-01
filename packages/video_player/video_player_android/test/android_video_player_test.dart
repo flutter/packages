@@ -185,6 +185,80 @@ void main() {
       expect(creationOptions.httpHeaders, headers);
     });
 
+    test('create with network passes widevine drm configuration', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mpd',
+          drmConfiguration: WidevineDrmConfiguration(
+            licenseUri: Uri.parse('https://license.example.com/widevine'),
+            licenseHeaders: const <String, String>{
+              'Authorization': 'Bearer token',
+            },
+          ),
+        ),
+      );
+      final VerificationResult verification = verify(
+        api.createForTextureView(captureAny),
+      );
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.widevineDrm, isNotNull);
+      expect(
+        creationOptions.widevineDrm!.licenseUri,
+        'https://license.example.com/widevine',
+      );
+      expect(creationOptions.widevineDrm!.licenseHeaders, <String, String>{
+        'Authorization': 'Bearer token',
+      });
+    });
+
+    test('create rejects drm for non-network source', () async {
+      final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+
+      expect(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'file:///foo/bar',
+            drmConfiguration: WidevineDrmConfiguration(
+              licenseUri: Uri.parse('https://license.example.com/widevine'),
+            ),
+          ),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('create rejects unsupported drm configuration on Android', () async {
+      final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+
+      expect(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.m3u8',
+            drmConfiguration: FairPlayDrmConfiguration(
+              certificateUri: Uri.parse('https://license.example.com/cert'),
+              licenseUri: Uri.parse('https://license.example.com/fairplay'),
+            ),
+          ),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('create with network sets a default user agent', () async {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);

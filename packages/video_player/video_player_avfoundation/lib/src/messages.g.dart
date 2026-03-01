@@ -73,15 +73,74 @@ class PlatformVideoViewCreationParams {
   int get hashCode => Object.hashAll(_toList());
 }
 
+class PlatformFairPlayDrmConfiguration {
+  PlatformFairPlayDrmConfiguration({
+    required this.certificateUri,
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+    this.contentId,
+  });
+
+  String certificateUri;
+
+  String licenseUri;
+
+  Map<String, String> licenseHeaders;
+
+  String? contentId;
+
+  List<Object?> _toList() {
+    return <Object?>[certificateUri, licenseUri, licenseHeaders, contentId];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformFairPlayDrmConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PlatformFairPlayDrmConfiguration(
+      certificateUri: result[0]! as String,
+      licenseUri: result[1]! as String,
+      licenseHeaders: (result[2] as Map<Object?, Object?>?)!
+          .cast<String, String>(),
+      contentId: result[3] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformFairPlayDrmConfiguration ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class CreationOptions {
-  CreationOptions({required this.uri, required this.httpHeaders});
+  CreationOptions({
+    required this.uri,
+    required this.httpHeaders,
+    this.fairPlayDrm,
+  });
 
   String uri;
 
   Map<String, String> httpHeaders;
 
+  PlatformFairPlayDrmConfiguration? fairPlayDrm;
+
   List<Object?> _toList() {
-    return <Object?>[uri, httpHeaders];
+    return <Object?>[uri, httpHeaders, fairPlayDrm];
   }
 
   Object encode() {
@@ -94,6 +153,7 @@ class CreationOptions {
       uri: result[0]! as String,
       httpHeaders: (result[1] as Map<Object?, Object?>?)!
           .cast<String, String>(),
+      fairPlayDrm: result[2] as PlatformFairPlayDrmConfiguration?,
     );
   }
 
@@ -227,14 +287,17 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewCreationParams) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is CreationOptions) {
+    } else if (value is PlatformFairPlayDrmConfiguration) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TexturePlayerIds) {
+    } else if (value is CreationOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MediaSelectionAudioTrackData) {
+    } else if (value is TexturePlayerIds) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is MediaSelectionAudioTrackData) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -247,10 +310,12 @@ class _PigeonCodec extends StandardMessageCodec {
       case 129:
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
       case 130:
-        return CreationOptions.decode(readValue(buffer)!);
+        return PlatformFairPlayDrmConfiguration.decode(readValue(buffer)!);
       case 131:
-        return TexturePlayerIds.decode(readValue(buffer)!);
+        return CreationOptions.decode(readValue(buffer)!);
       case 132:
+        return TexturePlayerIds.decode(readValue(buffer)!);
+      case 133:
         return MediaSelectionAudioTrackData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

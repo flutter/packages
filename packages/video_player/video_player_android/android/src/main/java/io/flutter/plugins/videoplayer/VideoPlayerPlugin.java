@@ -18,6 +18,8 @@ import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
+import java.util.Collections;
+import java.util.Map;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
 public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
@@ -126,6 +128,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       return VideoAsset.fromRtspUrl(uri);
     } else {
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
+      String drmLicenseUri = null;
+      Map<String, String> drmLicenseHeaders = Collections.emptyMap();
       PlatformVideoFormat formatHint = options.getFormatHint();
       if (formatHint != null) {
         switch (formatHint) {
@@ -140,8 +144,18 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             break;
         }
       }
+      PlatformWidevineDrmConfiguration widevineDrm = options.getWidevineDrm();
+      if (widevineDrm != null) {
+        drmLicenseUri = widevineDrm.getLicenseUri();
+        drmLicenseHeaders = widevineDrm.getLicenseHeaders();
+      }
       return VideoAsset.fromRemoteUrl(
-          uri, streamingFormat, options.getHttpHeaders(), options.getUserAgent());
+          uri,
+          streamingFormat,
+          options.getHttpHeaders(),
+          options.getUserAgent(),
+          drmLicenseUri,
+          drmLicenseHeaders);
     }
   }
 

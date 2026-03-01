@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds Widevine DRM playback support via creation options.
+
 ## 2.9.4
 
 * Updates `androidx.media3` to 1.9.2.

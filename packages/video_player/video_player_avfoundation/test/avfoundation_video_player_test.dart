@@ -207,6 +207,93 @@ void main() {
       expect(creationOptions.httpHeaders, headers);
     });
 
+    test('create with network passes fairplay drm configuration', () async {
+      final (
+        AVFoundationVideoPlayer player,
+        MockAVFoundationVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 101,
+      );
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.m3u8',
+          drmConfiguration: FairPlayDrmConfiguration(
+            certificateUri: Uri.parse('https://license.example.com/cert'),
+            licenseUri: Uri.parse('https://license.example.com/fairplay'),
+            licenseHeaders: const <String, String>{
+              'Authorization': 'Bearer token',
+            },
+            contentId: 'asset-content-id',
+          ),
+        ),
+      );
+      final VerificationResult verification = verify(
+        api.createForTextureView(captureAny),
+      );
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.fairPlayDrm, isNotNull);
+      expect(
+        creationOptions.fairPlayDrm!.certificateUri,
+        'https://license.example.com/cert',
+      );
+      expect(
+        creationOptions.fairPlayDrm!.licenseUri,
+        'https://license.example.com/fairplay',
+      );
+      expect(creationOptions.fairPlayDrm!.licenseHeaders, <String, String>{
+        'Authorization': 'Bearer token',
+      });
+      expect(creationOptions.fairPlayDrm!.contentId, 'asset-content-id');
+    });
+
+    test('create rejects drm for non-network source', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 101,
+      );
+
+      expect(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'file:///foo/bar',
+            drmConfiguration: FairPlayDrmConfiguration(
+              certificateUri: Uri.parse('https://license.example.com/cert'),
+              licenseUri: Uri.parse('https://license.example.com/fairplay'),
+            ),
+          ),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('create rejects unsupported drm configuration on iOS', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 101,
+      );
+
+      expect(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mpd',
+            drmConfiguration: WidevineDrmConfiguration(
+              licenseUri: Uri.parse('https://license.example.com/widevine'),
+            ),
+          ),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('create with file', () async {
       final (
         AVFoundationVideoPlayer player,

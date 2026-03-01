@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds typed DRM configuration support for Android Widevine and iOS FairPlay network playback.
+
 ## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.

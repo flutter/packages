@@ -46,7 +46,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let player =
@@ -64,11 +64,36 @@ private let hlsAudioTestURI =
 
     var error: FlutterError?
     videoPlayerPlugin.createPlatformViewPlayer(
-      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:], fairPlayDrm: nil),
       error: &error)
     #expect(error == nil)
 
     #expect(!textureRegistry.registeredTexture)
+  }
+
+  @Test func fairPlayCreationOptionsAreForwardedToAssetFactory() {
+    let stubFactory = StubFVPAVFactory()
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: stubFactory)
+    let fairPlayDrm = FVPPlatformFairPlayDrmConfiguration.make(
+      withCertificateUri: "https://example.com/cert",
+      licenseUri: "https://example.com/license",
+      licenseHeaders: ["Authorization": "Bearer token"],
+      contentId: "asset-content-id"
+    )
+    var error: FlutterError?
+    _ = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(
+        withUri: mp4TestURI,
+        httpHeaders: [:],
+        fairPlayDrm: fairPlayDrm
+      ),
+      error: &error
+    )
+    #expect(error == nil)
+    #expect(stubFactory.lastFairPlayCertificateURL?.absoluteString == "https://example.com/cert")
+    #expect(stubFactory.lastFairPlayLicenseURL?.absoluteString == "https://example.com/license")
+    #expect(stubFactory.lastFairPlayLicenseHeaders?["Authorization"] == "Bearer token")
+    #expect(stubFactory.lastFairPlayContentId == "asset-content-id")
   }
 
   @Test func seekToWhilePausedStartsDisplayLinkTemporarily() async throws {
@@ -83,7 +108,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let player =
@@ -119,7 +144,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
 
@@ -148,7 +173,7 @@ private let hlsAudioTestURI =
 
     var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(
-      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:], fairPlayDrm: nil),
       error: &error)
     #expect(error == nil)
     let player =
@@ -180,7 +205,7 @@ private let hlsAudioTestURI =
 
     var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(
-      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:], fairPlayDrm: nil),
       error: &error)
     #expect(error == nil)
     let player =
@@ -202,7 +227,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
@@ -221,7 +246,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
@@ -437,7 +462,7 @@ private let hlsAudioTestURI =
       var error: FlutterError?
       let identifiers = try #require(
         videoPlayerPlugin.createTexturePlayer(
-          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
           error: &error))
       #expect(error == nil)
 
@@ -482,7 +507,7 @@ private let hlsAudioTestURI =
       var error: FlutterError?
       let identifiers = try #require(
         videoPlayerPlugin.createTexturePlayer(
-          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
           error: &error))
       #expect(error == nil)
 
@@ -515,7 +540,8 @@ private let hlsAudioTestURI =
 
     var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(
-      with: FVPCreationOptions.make(withUri: "", httpHeaders: [:]), error: &error)
+      with: FVPCreationOptions.make(withUri: "", httpHeaders: [:], fairPlayDrm: nil),
+      error: &error)
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
 
@@ -565,7 +591,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let playerIdentifier = identifiers.playerId
@@ -596,7 +622,7 @@ private let hlsAudioTestURI =
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:], fairPlayDrm: nil),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer

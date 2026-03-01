@@ -25,11 +25,26 @@ class PlatformVideoViewCreationParams {
   final int playerId;
 }
 
+class PlatformFairPlayDrmConfiguration {
+  PlatformFairPlayDrmConfiguration({
+    required this.certificateUri,
+    required this.licenseUri,
+    this.licenseHeaders = const <String, String>{},
+    this.contentId,
+  });
+
+  String certificateUri;
+  String licenseUri;
+  Map<String, String> licenseHeaders;
+  String? contentId;
+}
+
 class CreationOptions {
   CreationOptions({required this.uri, required this.httpHeaders});
 
   String uri;
   Map<String, String> httpHeaders;
+  PlatformFairPlayDrmConfiguration? fairPlayDrm;
 }
 
 class TexturePlayerIds {

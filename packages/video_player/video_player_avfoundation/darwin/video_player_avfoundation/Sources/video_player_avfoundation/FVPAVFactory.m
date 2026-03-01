@@ -3,18 +3,28 @@
 // found in the LICENSE file.
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
+#import "./FVPFairPlayResourceLoaderDelegate.h"
 
 @import AVFoundation;
 
 @interface FVPDefaultAVAsset : NSObject <FVPAVAsset>
 @property(nonatomic, readwrite) AVAsset *asset;
+@property(nonatomic, strong, nullable)
+    NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVAsset
 - (instancetype)initWithAsset:(AVAsset *)asset {
+  return [self initWithAsset:asset resourceLoaderDelegate:nil];
+}
+
+- (instancetype)initWithAsset:(AVAsset *)asset
+       resourceLoaderDelegate:
+           (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _asset = asset;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
@@ -53,19 +63,33 @@
 
 @interface FVPDefaultAVPlayerItem : NSObject <FVPAVPlayerItem>
 @property(nonatomic, readwrite) AVPlayerItem *playerItem;
+@property(nonatomic, strong, nullable)
+    NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem
+            resourceLoaderDelegate:
+                (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate;
 @end
 
 @implementation FVPDefaultAVPlayerItem
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem {
+  return [self initWithPlayerItem:playerItem resourceLoaderDelegate:nil];
+}
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)playerItem
+            resourceLoaderDelegate:
+                (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate {
   self = [super init];
   if (self) {
     _playerItem = playerItem;
+    _resourceLoaderDelegate = resourceLoaderDelegate;
   }
   return self;
 }
 
 - (NSObject<FVPAVAsset> *)asset {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset];
+  return [[FVPDefaultAVAsset alloc] initWithAsset:self.playerItem.asset
+                           resourceLoaderDelegate:self.resourceLoaderDelegate];
 }
 
 - (AVVideoComposition *)videoComposition {
@@ -136,13 +160,45 @@
 @implementation FVPDefaultAVFactory
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
                                   options:(nullable NSDictionary<NSString *, id> *)options {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:[AVURLAsset URLAssetWithURL:URL options:options]];
+  return [self URLAssetWithURL:URL
+                       options:options
+        fairPlayCertificateURL:nil
+            fairPlayLicenseURL:nil
+        fairPlayLicenseHeaders:nil
+             fairPlayContentId:nil];
+}
+
+- (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                   fairPlayCertificateURL:(nullable NSURL *)fairPlayCertificateURL
+                       fairPlayLicenseURL:(nullable NSURL *)fairPlayLicenseURL
+                   fairPlayLicenseHeaders:
+                       (nullable NSDictionary<NSString *, NSString *> *)fairPlayLicenseHeaders
+                        fairPlayContentId:(nullable NSString *)fairPlayContentId {
+  AVURLAsset *asset = [AVURLAsset URLAssetWithURL:URL options:options];
+  NSObject<AVAssetResourceLoaderDelegate> *resourceLoaderDelegate;
+  if (fairPlayCertificateURL != nil && fairPlayLicenseURL != nil) {
+    resourceLoaderDelegate =
+        [[FVPFairPlayResourceLoaderDelegate alloc] initWithCertificateURL:fairPlayCertificateURL
+                                                               licenseURL:fairPlayLicenseURL
+                                                           licenseHeaders:fairPlayLicenseHeaders
+                                                                contentId:fairPlayContentId];
+    dispatch_queue_t resourceLoaderQueue =
+        dispatch_queue_create("io.flutter.plugins.videoplayer.fairplay", DISPATCH_QUEUE_SERIAL);
+    [asset.resourceLoader setDelegate:resourceLoaderDelegate queue:resourceLoaderQueue];
+  } else {
+    resourceLoaderDelegate = nil;
+  }
+  return [[FVPDefaultAVAsset alloc] initWithAsset:asset
+                           resourceLoaderDelegate:resourceLoaderDelegate];
 }
 
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {
   // The default factory always vends FVPDefault* implementations, so it is safe to cast back.
+  FVPDefaultAVAsset *defaultAsset = (FVPDefaultAVAsset *)asset;
   return [[FVPDefaultAVPlayerItem alloc]
-      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:((FVPDefaultAVAsset *)asset).asset]];
+      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:defaultAsset.asset]
+   resourceLoaderDelegate:defaultAsset.resourceLoaderDelegate];
 }
 
 - (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem {

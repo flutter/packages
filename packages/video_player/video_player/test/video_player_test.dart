@@ -76,6 +76,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   VideoFormat? get formatHint => null;
 
   @override
+  VideoDrmConfiguration? get drmConfiguration => null;
+
+  @override
   Future<ClosedCaptionFile> get closedCaptionFile => _loadClosedCaption();
 
   @override
@@ -499,6 +502,36 @@ void main() {
           fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
           <String, String>{'Authorization': 'Bearer token'},
         );
+      });
+
+      test('network url with widevine drm', () async {
+        final controller = VideoPlayerController.networkUrl(
+          Uri.parse('https://127.0.0.1'),
+          drmConfiguration: WidevineDrmConfiguration(
+            licenseUri: Uri.parse('https://license.example.com/widevine'),
+            licenseHeaders: const <String, String>{
+              'Authorization': 'Bearer token',
+            },
+          ),
+        );
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        expect(fakeVideoPlayerPlatform.dataSources[0].uri, 'https://127.0.0.1');
+        expect(
+          fakeVideoPlayerPlatform.dataSources[0].drmConfiguration,
+          isA<WidevineDrmConfiguration>(),
+        );
+        final drmConfiguration =
+            fakeVideoPlayerPlatform.dataSources[0].drmConfiguration!
+                as WidevineDrmConfiguration;
+        expect(
+          drmConfiguration.licenseUri,
+          Uri.parse('https://license.example.com/widevine'),
+        );
+        expect(drmConfiguration.licenseHeaders, <String, String>{
+          'Authorization': 'Bearer token',
+        });
       });
 
       test(
