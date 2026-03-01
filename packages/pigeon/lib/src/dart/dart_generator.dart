@@ -136,9 +136,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, omit_obvious_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
-    );
+    indent.writeln('// ignore_for_file: unused_import, unused_shown_name');
+    indent.writeln('// ignore_for_file: type=lint');
     indent.newln();
   }
 
@@ -154,19 +153,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln("import 'dart:io' show Platform;");
     }
     indent.writeln(
-      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
+      "import 'dart:typed_data' show Float64List, Int32List, Int64List;",
     );
     indent.newln();
 
-    indent.writeln(
-      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected, visibleForTesting' : ''};",
-    );
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.containsProxyApi) {
       indent.writeln(
         "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
       );
     }
+    indent.writeln(
+      "import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;",
+    );
   }
 
   @override
