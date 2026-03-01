@@ -1,3 +1,7 @@
+## 26.1.9
+
+* [dart] Reduces much duplication in reply-handling code.
+
 ## 26.1.8
 
 * Makes some internal class constructors constant.
