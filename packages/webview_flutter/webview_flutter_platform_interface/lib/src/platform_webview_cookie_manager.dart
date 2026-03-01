@@ -65,7 +65,7 @@ abstract class PlatformWebViewCookieManager extends PlatformInterface {
     );
   }
 
-  /// Gets a list of existing cookie for specified domain from all
+  /// Returns a list of existing cookies for the specified domain from all
   /// [WebView] instances of the application.
   Future<List<WebViewCookie>> getCookies(Uri url) {
     throw UnimplementedError(
