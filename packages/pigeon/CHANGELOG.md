@@ -1,3 +1,10 @@
+## 26.1.10
+
+* [dart] Ignores all lint rules in generated code.
+* [dart] In generated code, imports the meta package for annotations, instead of
+  the Flutter foundation library.
+* [dart] In generated code, no longer imports Uint8List.
+
 ## 26.1.9
 
 * [dart] Reduces much duplication in reply-handling code.
