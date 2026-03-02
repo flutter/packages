@@ -25,7 +25,10 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
   @NonNull
   @Override
   public PreviewView pigeon_defaultConstructor() {
-    return new PreviewView(getPigeonRegistrar().getContext());
+    PreviewView previewView = new PreviewView(getPigeonRegistrar().getContext());
+    previewView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
+    
+    return previewView;
   }
 
   @NonNull
