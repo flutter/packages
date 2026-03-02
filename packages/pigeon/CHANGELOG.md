@@ -1,3 +1,7 @@
+## 26.1.11
+
+* [dart] Improves nullability-handling in generated code.
+
 ## 26.1.10
 
 * Dramatically reduces the number of File write operations sent to the operating
