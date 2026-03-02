@@ -308,19 +308,11 @@ abstract class NonNullFieldFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final NonNullFieldSearchRequest? arg_request =
-              args[0] as NonNullFieldSearchRequest?;
-          assert(
-            arg_request != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.',
-          );
+          final NonNullFieldSearchRequest arg_request =
+              args[0]! as NonNullFieldSearchRequest;
           try {
-            final NonNullFieldSearchReply output = api.search(arg_request!);
+            final NonNullFieldSearchReply output = api.search(arg_request);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

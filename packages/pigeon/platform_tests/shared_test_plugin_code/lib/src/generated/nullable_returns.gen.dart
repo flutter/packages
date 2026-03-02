@@ -210,10 +210,6 @@ abstract class NullableArgFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final int? arg_x = args[0] as int?;
           try {
@@ -370,10 +366,6 @@ abstract class NullableCollectionArgFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<String?>? arg_x = (args[0] as List<Object?>?)
               ?.cast<String?>();

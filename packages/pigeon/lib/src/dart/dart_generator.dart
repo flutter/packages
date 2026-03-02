@@ -321,10 +321,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       if (field.type.typeArguments.isNotEmpty) {
         final String castCall = _makeGenericCastCall(field.type);
         if (castCall.isNotEmpty) {
-          final castCallPrefix = field.type.isNullable ? '?' : '';
-          indent.add(
-            '($resultAt$nullAssert as $genericType)$castCallPrefix$castCall',
-          );
+          indent.add('($resultAt$nullAssert as $genericType)$castCall');
         } else {
           indent.add('($resultAt as $genericType)');
         }
@@ -1361,9 +1358,9 @@ _extractReplyValueOrThrow(
         indent.format('final Object $accessor = $extractCall!;');
       }
       final String returnTypeName = _makeGenericTypeArguments(returnType);
-      final String genericCastCall = _makeGenericCastCall(returnType);
+      final String castCall = _makeGenericCastCall(returnType);
 
-      if (genericCastCall.isEmpty) {
+      if (castCall.isEmpty) {
         final castedAccessor = returnType.baseName == 'Object'
             ? accessor
             : '$accessor as $returnTypeName';
@@ -1372,10 +1369,7 @@ _extractReplyValueOrThrow(
         final nullablyTypedAccessor = returnType.baseName == 'Object'
             ? accessor
             : '($accessor as $returnTypeName)';
-        final nullHandler = returnType.isNullable ? '?' : '';
-        indent.format(
-          'return $nullablyTypedAccessor$nullHandler$genericCastCall;',
-        );
+        indent.format('return $nullablyTypedAccessor$castCall;');
       }
     }
 
@@ -1428,50 +1422,31 @@ _extractReplyValueOrThrow(
         );
         indent.addScoped('{', '});', () {
           final String returnTypeString = addGenericTypes(returnType);
-          final isAsync = isAsynchronous;
           const emptyReturnStatement = 'return wrapResponse(empty: true);';
           String call;
           if (parameters.isEmpty) {
             call = 'api.$name()';
           } else {
-            indent.writeln('assert(message != null,');
-            indent.writeln("'Argument for $channelName was null.');");
             const argsArray = 'args';
             indent.writeln(
               'final List<Object?> $argsArray = message! as List<Object?>;',
             );
             enumerate(parameters, (int count, NamedType arg) {
               final String argType = addGenericTypes(arg.type);
-              // TODO(srawlins): It seems at some point we can stop making this
-              // local variable unconditionally nullable, with the assert
-              // statement below it. Instead we can use the nullability of
-              // `arg.type`.
-              final String argTypeNullable = addGenericTypes(
-                arg.type.copyWithNullability(true),
-              );
               final String argName = _getSafeArgumentName(count, arg);
-              final leftHandSide = 'final $argTypeNullable $argName';
+              final leftHandSide = 'final $argType $argName';
+              final nullAssert = arg.type.isNullable ? '' : '!';
+              final argValue = '$argsArray[$count]$nullAssert';
               final String castCall = _makeGenericCastCall(arg.type);
 
               if (castCall.isEmpty) {
-                indent.writeln(
-                  '$leftHandSide = $argsArray[$count] as $argTypeNullable;',
-                );
+                indent.writeln('$leftHandSide = $argValue as $argType;');
               } else {
                 final String genericArgType = _makeGenericTypeArguments(
-                  arg.type.copyWithNullability(true),
+                  arg.type,
                 );
-                final valueAsArgType = '$argsArray[$count] as $genericArgType';
-                // As `argTypeNullable` is unconditionally nullable, we must use
-                // `?.` to invoke `cast()`.
-                indent.writeln('$leftHandSide = ($valueAsArgType)?$castCall;');
-              }
-
-              if (!arg.type.isNullable) {
-                indent.writeln('assert($argName != null,');
-                indent.writeln(
-                  "    'Argument for $channelName was null, expected non-null $argType.');",
-                );
+                final valueAsArgType = '$argValue as $genericArgType';
+                indent.writeln('$leftHandSide = ($valueAsArgType)$castCall;');
               }
             });
             final Iterable<String> argNames = indexMap(parameters, (
@@ -1479,20 +1454,20 @@ _extractReplyValueOrThrow(
               Parameter field,
             ) {
               final String name = _getSafeArgumentName(index, field);
-              return '${field.isNamed ? '${field.name}: ' : ''}$name${field.type.isNullable ? '' : '!'}';
+              return '${field.isNamed ? '${field.name}: ' : ''}$name';
             });
             call = onCreateApiCall(name, parameters, argNames);
           }
           indent.writeScoped('try {', '} ', () {
             if (returnType.isVoid) {
-              if (isAsync) {
+              if (isAsynchronous) {
                 indent.writeln('await $call;');
               } else {
                 indent.writeln('$call;');
               }
               indent.writeln(emptyReturnStatement);
             } else {
-              if (isAsync) {
+              if (isAsynchronous) {
                 indent.writeln('final $returnTypeString output = await $call;');
               } else {
                 indent.writeln('final $returnTypeString output = $call;');
@@ -1553,7 +1528,7 @@ String _makeGenericTypeArguments(TypeDeclaration type) {
 }
 
 /// Returns a `.cast<>()` call for [type]. Returns an empty string if [type] has
-/// no type arguments.
+/// no type arguments. The call will begin with `?.` if [type] is nullable.
 String _makeGenericCastCall(TypeDeclaration type) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
   if (typeArguments.isEmpty) {
@@ -1562,7 +1537,8 @@ String _makeGenericCastCall(TypeDeclaration type) {
   if (typeArguments.every((e) => e.baseName == 'Object' && e.isNullable)) {
     return '';
   }
-  return '.cast<${_flattenTypeArguments(type.typeArguments)}>()';
+  final nullAwareOperator = type.isNullable ? '?' : '';
+  return '$nullAwareOperator.cast<${_flattenTypeArguments(type.typeArguments)}>()';
 }
 
 /// Returns an argument name that can be used in a context where it is possible to collide.

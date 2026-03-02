@@ -255,10 +255,6 @@ abstract class MessageFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final String? arg_aString = args[0] as String?;
           try {

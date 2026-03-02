@@ -219,18 +219,10 @@ abstract class EnumApi2Flutter {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final DataWithEnum? arg_data = args[0] as DataWithEnum?;
-          assert(
-            arg_data != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null, expected non-null DataWithEnum.',
-          );
+          final DataWithEnum arg_data = args[0]! as DataWithEnum;
           try {
-            final DataWithEnum output = api.echo(arg_data!);
+            final DataWithEnum output = api.echo(arg_data);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

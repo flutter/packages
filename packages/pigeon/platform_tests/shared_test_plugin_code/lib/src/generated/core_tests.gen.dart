@@ -4615,18 +4615,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final AllTypes? arg_everything = args[0] as AllTypes?;
-          assert(
-            arg_everything != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.',
-          );
+          final AllTypes arg_everything = args[0]! as AllTypes;
           try {
-            final AllTypes output = api.echoAllTypes(arg_everything!);
+            final AllTypes output = api.echoAllTypes(arg_everything);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4648,10 +4640,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final AllNullableTypes? arg_everything = args[0] as AllNullableTypes?;
           try {
@@ -4679,10 +4667,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final bool? arg_aNullableBool = args[0] as bool?;
           final int? arg_aNullableInt = args[1] as int?;
@@ -4714,10 +4698,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final AllNullableTypesWithoutRecursion? arg_everything =
               args[0] as AllNullableTypesWithoutRecursion?;
@@ -4745,10 +4725,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final bool? arg_aNullableBool = args[0] as bool?;
           final int? arg_aNullableInt = args[1] as int?;
@@ -4781,18 +4757,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final bool? arg_aBool = args[0] as bool?;
-          assert(
-            arg_aBool != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null, expected non-null bool.',
-          );
+          final bool arg_aBool = args[0]! as bool;
           try {
-            final bool output = api.echoBool(arg_aBool!);
+            final bool output = api.echoBool(arg_aBool);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4814,18 +4782,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final int? arg_anInt = args[0] as int?;
-          assert(
-            arg_anInt != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null, expected non-null int.',
-          );
+          final int arg_anInt = args[0]! as int;
           try {
-            final int output = api.echoInt(arg_anInt!);
+            final int output = api.echoInt(arg_anInt);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4847,18 +4807,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final double? arg_aDouble = args[0] as double?;
-          assert(
-            arg_aDouble != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null, expected non-null double.',
-          );
+          final double arg_aDouble = args[0]! as double;
           try {
-            final double output = api.echoDouble(arg_aDouble!);
+            final double output = api.echoDouble(arg_aDouble);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4880,18 +4832,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final String? arg_aString = args[0] as String?;
-          assert(
-            arg_aString != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null, expected non-null String.',
-          );
+          final String arg_aString = args[0]! as String;
           try {
-            final String output = api.echoString(arg_aString!);
+            final String output = api.echoString(arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4913,18 +4857,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Uint8List? arg_list = args[0] as Uint8List?;
-          assert(
-            arg_list != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.',
-          );
+          final Uint8List arg_list = args[0]! as Uint8List;
           try {
-            final Uint8List output = api.echoUint8List(arg_list!);
+            final Uint8List output = api.echoUint8List(arg_list);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4946,18 +4882,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final List<Object?>? arg_list = args[0] as List<Object?>?;
-          assert(
-            arg_list != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.',
-          );
+          final List<Object?> arg_list = args[0]! as List<Object?>;
           try {
-            final List<Object?> output = api.echoList(arg_list!);
+            final List<Object?> output = api.echoList(arg_list);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -4979,19 +4907,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)
-              ?.cast<AnEnum?>();
-          assert(
-            arg_enumList != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList was null, expected non-null List<AnEnum?>.',
-          );
+          final List<AnEnum?> arg_enumList = (args[0]! as List<Object?>)
+              .cast<AnEnum?>();
           try {
-            final List<AnEnum?> output = api.echoEnumList(arg_enumList!);
+            final List<AnEnum?> output = api.echoEnumList(arg_enumList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5013,20 +4933,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes?>? arg_classList =
-              (args[0] as List<Object?>?)?.cast<AllNullableTypes?>();
-          assert(
-            arg_classList != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList was null, expected non-null List<AllNullableTypes?>.',
-          );
+          final List<AllNullableTypes?> arg_classList =
+              (args[0]! as List<Object?>).cast<AllNullableTypes?>();
           try {
             final List<AllNullableTypes?> output = api.echoClassList(
-              arg_classList!,
+              arg_classList,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5049,19 +4961,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)
-              ?.cast<AnEnum>();
-          assert(
-            arg_enumList != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList was null, expected non-null List<AnEnum>.',
-          );
+          final List<AnEnum> arg_enumList = (args[0]! as List<Object?>)
+              .cast<AnEnum>();
           try {
-            final List<AnEnum> output = api.echoNonNullEnumList(arg_enumList!);
+            final List<AnEnum> output = api.echoNonNullEnumList(arg_enumList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5083,20 +4987,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final List<AllNullableTypes>? arg_classList =
-              (args[0] as List<Object?>?)?.cast<AllNullableTypes>();
-          assert(
-            arg_classList != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList was null, expected non-null List<AllNullableTypes>.',
-          );
+          final List<AllNullableTypes> arg_classList =
+              (args[0]! as List<Object?>).cast<AllNullableTypes>();
           try {
             final List<AllNullableTypes> output = api.echoNonNullClassList(
-              arg_classList!,
+              arg_classList,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5119,19 +5015,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<Object?, Object?>? arg_map =
-              args[0] as Map<Object?, Object?>?;
-          assert(
-            arg_map != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<Object?, Object?>.',
-          );
+          final Map<Object?, Object?> arg_map =
+              args[0]! as Map<Object?, Object?>;
           try {
-            final Map<Object?, Object?> output = api.echoMap(arg_map!);
+            final Map<Object?, Object?> output = api.echoMap(arg_map);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5153,20 +5041,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<String?, String?>? arg_stringMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, String?>();
-          assert(
-            arg_stringMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap was null, expected non-null Map<String?, String?>.',
-          );
+          final Map<String?, String?> arg_stringMap =
+              (args[0]! as Map<Object?, Object?>).cast<String?, String?>();
           try {
             final Map<String?, String?> output = api.echoStringMap(
-              arg_stringMap!,
+              arg_stringMap,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5189,19 +5069,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, int?>? arg_intMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<int?, int?>();
-          assert(
-            arg_intMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap was null, expected non-null Map<int?, int?>.',
-          );
+          final Map<int?, int?> arg_intMap = (args[0]! as Map<Object?, Object?>)
+              .cast<int?, int?>();
           try {
-            final Map<int?, int?> output = api.echoIntMap(arg_intMap!);
+            final Map<int?, int?> output = api.echoIntMap(arg_intMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5223,19 +5095,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum?, AnEnum?>? arg_enumMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
-          assert(
-            arg_enumMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap was null, expected non-null Map<AnEnum?, AnEnum?>.',
-          );
+          final Map<AnEnum?, AnEnum?> arg_enumMap =
+              (args[0]! as Map<Object?, Object?>).cast<AnEnum?, AnEnum?>();
           try {
-            final Map<AnEnum?, AnEnum?> output = api.echoEnumMap(arg_enumMap!);
+            final Map<AnEnum?, AnEnum?> output = api.echoEnumMap(arg_enumMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5257,21 +5121,13 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<int?, AllNullableTypes?>? arg_classMap =
-              (args[0] as Map<Object?, Object?>?)
-                  ?.cast<int?, AllNullableTypes?>();
-          assert(
-            arg_classMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassMap was null, expected non-null Map<int?, AllNullableTypes?>.',
-          );
+          final Map<int?, AllNullableTypes?> arg_classMap =
+              (args[0]! as Map<Object?, Object?>)
+                  .cast<int?, AllNullableTypes?>();
           try {
             final Map<int?, AllNullableTypes?> output = api.echoClassMap(
-              arg_classMap!,
+              arg_classMap,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5294,20 +5150,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<String, String>? arg_stringMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String, String>();
-          assert(
-            arg_stringMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap was null, expected non-null Map<String, String>.',
-          );
+          final Map<String, String> arg_stringMap =
+              (args[0]! as Map<Object?, Object?>).cast<String, String>();
           try {
             final Map<String, String> output = api.echoNonNullStringMap(
-              arg_stringMap!,
+              arg_stringMap,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5330,19 +5178,11 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)
-              ?.cast<int, int>();
-          assert(
-            arg_intMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap was null, expected non-null Map<int, int>.',
-          );
+          final Map<int, int> arg_intMap = (args[0]! as Map<Object?, Object?>)
+              .cast<int, int>();
           try {
-            final Map<int, int> output = api.echoNonNullIntMap(arg_intMap!);
+            final Map<int, int> output = api.echoNonNullIntMap(arg_intMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5364,20 +5204,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<AnEnum, AnEnum>? arg_enumMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<AnEnum, AnEnum>();
-          assert(
-            arg_enumMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap was null, expected non-null Map<AnEnum, AnEnum>.',
-          );
+          final Map<AnEnum, AnEnum> arg_enumMap =
+              (args[0]! as Map<Object?, Object?>).cast<AnEnum, AnEnum>();
           try {
             final Map<AnEnum, AnEnum> output = api.echoNonNullEnumMap(
-              arg_enumMap!,
+              arg_enumMap,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5400,21 +5232,12 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final Map<int, AllNullableTypes>? arg_classMap =
-              (args[0] as Map<Object?, Object?>?)
-                  ?.cast<int, AllNullableTypes>();
-          assert(
-            arg_classMap != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap was null, expected non-null Map<int, AllNullableTypes>.',
-          );
+          final Map<int, AllNullableTypes> arg_classMap =
+              (args[0]! as Map<Object?, Object?>).cast<int, AllNullableTypes>();
           try {
             final Map<int, AllNullableTypes> output = api.echoNonNullClassMap(
-              arg_classMap!,
+              arg_classMap,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -5437,18 +5260,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final AnEnum? arg_anEnum = args[0] as AnEnum?;
-          assert(
-            arg_anEnum != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.',
-          );
+          final AnEnum arg_anEnum = args[0]! as AnEnum;
           try {
-            final AnEnum output = api.echoEnum(arg_anEnum!);
+            final AnEnum output = api.echoEnum(arg_anEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5470,18 +5285,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final AnotherEnum? arg_anotherEnum = args[0] as AnotherEnum?;
-          assert(
-            arg_anotherEnum != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum was null, expected non-null AnotherEnum.',
-          );
+          final AnotherEnum arg_anotherEnum = args[0]! as AnotherEnum;
           try {
-            final AnotherEnum output = api.echoAnotherEnum(arg_anotherEnum!);
+            final AnotherEnum output = api.echoAnotherEnum(arg_anotherEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -5503,10 +5310,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final bool? arg_aBool = args[0] as bool?;
           try {
@@ -5532,10 +5335,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final int? arg_anInt = args[0] as int?;
           try {
@@ -5561,10 +5360,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final double? arg_aDouble = args[0] as double?;
           try {
@@ -5590,10 +5385,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final String? arg_aString = args[0] as String?;
           try {
@@ -5619,10 +5410,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Uint8List? arg_list = args[0] as Uint8List?;
           try {
@@ -5648,10 +5435,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<Object?>? arg_list = args[0] as List<Object?>?;
           try {
@@ -5677,10 +5460,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<AnEnum?>? arg_enumList = (args[0] as List<Object?>?)
               ?.cast<AnEnum?>();
@@ -5709,10 +5488,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<AllNullableTypes?>? arg_classList =
               (args[0] as List<Object?>?)?.cast<AllNullableTypes?>();
@@ -5741,10 +5516,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<AnEnum>? arg_enumList = (args[0] as List<Object?>?)
               ?.cast<AnEnum>();
@@ -5773,10 +5544,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final List<AllNullableTypes>? arg_classList =
               (args[0] as List<Object?>?)?.cast<AllNullableTypes>();
@@ -5804,10 +5571,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<Object?, Object?>? arg_map =
               args[0] as Map<Object?, Object?>?;
@@ -5834,10 +5597,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<String?, String?>? arg_stringMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, String?>();
@@ -5866,10 +5625,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<int?, int?>? arg_intMap =
               (args[0] as Map<Object?, Object?>?)?.cast<int?, int?>();
@@ -5896,10 +5651,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<AnEnum?, AnEnum?>? arg_enumMap =
               (args[0] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>();
@@ -5928,10 +5679,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<int?, AllNullableTypes?>? arg_classMap =
               (args[0] as Map<Object?, Object?>?)
@@ -5960,10 +5707,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullStringMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<String, String>? arg_stringMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String, String>();
@@ -5991,10 +5734,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<int, int>? arg_intMap = (args[0] as Map<Object?, Object?>?)
               ?.cast<int, int>();
@@ -6023,10 +5762,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<AnEnum, AnEnum>? arg_enumMap =
               (args[0] as Map<Object?, Object?>?)?.cast<AnEnum, AnEnum>();
@@ -6055,10 +5790,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassMap was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final Map<int, AllNullableTypes>? arg_classMap =
               (args[0] as Map<Object?, Object?>?)
@@ -6087,10 +5818,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final AnEnum? arg_anEnum = args[0] as AnEnum?;
           try {
@@ -6116,10 +5843,6 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
           final AnotherEnum? arg_anotherEnum = args[0] as AnotherEnum?;
           try {
@@ -6170,18 +5893,10 @@ abstract class FlutterIntegrationCoreApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final String? arg_aString = args[0] as String?;
-          assert(
-            arg_aString != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.',
-          );
+          final String arg_aString = args[0]! as String;
           try {
-            final String output = await api.echoAsyncString(arg_aString!);
+            final String output = await api.echoAsyncString(arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6317,18 +6032,10 @@ abstract class FlutterSmallApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final TestMessage? arg_msg = args[0] as TestMessage?;
-          assert(
-            arg_msg != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.',
-          );
+          final TestMessage arg_msg = args[0]! as TestMessage;
           try {
-            final TestMessage output = api.echoWrappedList(arg_msg!);
+            final TestMessage output = api.echoWrappedList(arg_msg);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6350,18 +6057,10 @@ abstract class FlutterSmallApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString was null.',
-          );
           final List<Object?> args = message! as List<Object?>;
-          final String? arg_aString = args[0] as String?;
-          assert(
-            arg_aString != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString was null, expected non-null String.',
-          );
+          final String arg_aString = args[0]! as String;
           try {
-            final String output = api.echoString(arg_aString!);
+            final String output = api.echoString(arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
