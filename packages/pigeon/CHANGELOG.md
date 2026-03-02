@@ -1,6 +1,6 @@
 ## 26.1.10
 
-* Dramatically reduce the number of File write operations sent to the operating
+* Dramatically reduces the number of File write operations sent to the operating
   system during code-generation. This improves performance of IDEs and the Dart
   analysis server.
 
