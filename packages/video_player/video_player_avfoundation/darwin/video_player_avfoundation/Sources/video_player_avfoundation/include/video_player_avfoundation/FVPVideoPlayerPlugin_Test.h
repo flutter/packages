@@ -17,6 +17,8 @@
 #import "FVPViewProvider.h"
 #import "messages.g.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Protocol for an AVPlayer instance factory. Used for injecting display links in tests.
 @protocol FVPDisplayLinkFactory
 - (NSObject<FVPDisplayLink> *)displayLinkWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
@@ -38,3 +40,5 @@
                     assetProvider:(NSObject<FVPAssetProvider> *)assetProvider;
 
 @end
+
+NS_ASSUME_NONNULL_END

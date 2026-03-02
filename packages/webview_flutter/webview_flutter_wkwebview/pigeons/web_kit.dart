@@ -602,10 +602,7 @@ abstract class WKWebsiteDataStore extends NSObject {
 )
 abstract class UIView extends NSObject {
   /// The view’s background color.
-  // TODO(bparrishMines): Using an int here is lossy, and should be replaced
-  //  with a full color representation. See
-  //  https://github.com/flutter/flutter/issues/178870.
-  void setBackgroundColor(int? value);
+  void setBackgroundColor(UIColor? value);
 
   /// A Boolean value that determines whether the view is opaque.
   void setOpaque(bool opaque);
@@ -1260,4 +1257,19 @@ abstract class SecCertificate extends NSObject {
   /// Returns a DER representation of a certificate given a certificate object.
   @static
   Uint8List copyData(SecCertificate certificate);
+}
+
+/// An object that stores color data and sometimes opacity.
+///
+/// See https://developer.apple.com/documentation/uikit/uicolor.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
+)
+abstract class UIColor extends NSObject {
+  /// Creates a color object using the specified opacity and RGB component
+  /// values.
+  ///
+  /// The colors are specified in an extended color space, and the input value
+  /// is never clamped.
+  UIColor(double red, double green, double blue, double alpha);
 }

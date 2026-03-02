@@ -6,7 +6,7 @@ import AVFoundation
 import Flutter
 
 /// Completion handler for camera permission requests.
-typealias CameraPermissionRequestCompletionHandler = (FlutterError?) -> Void
+typealias CameraPermissionRequestCompletionHandler = (PigeonError?) -> Void
 
 private enum Permission {
   case camera
@@ -70,14 +70,14 @@ class CameraPermissionManager: NSObject {
       let flutterError =
         switch permission {
         case .audio:
-          FlutterError(
+          PigeonError(
             code: "AudioAccessDeniedWithoutPrompt",
             message:
               "User has previously denied the audio access request. Go to Settings to enable audio access.",
             details: nil
           )
         case .camera:
-          FlutterError(
+          PigeonError(
             code: "CameraAccessDeniedWithoutPrompt",
             message:
               "User has previously denied the camera access request. Go to Settings to enable camera access.",
@@ -90,13 +90,13 @@ class CameraPermissionManager: NSObject {
       let flutterError =
         switch permission {
         case .audio:
-          FlutterError(
+          PigeonError(
             code: "AudioAccessRestricted",
             message: "Audio access is restricted.",
             details: nil
           )
         case .camera:
-          FlutterError(
+          PigeonError(
             code: "CameraAccessRestricted",
             message: "Camera access is restricted.",
             details: nil
@@ -113,13 +113,13 @@ class CameraPermissionManager: NSObject {
           let flutterError =
             switch permission {
             case .audio:
-              FlutterError(
+              PigeonError(
                 code: "AudioAccessDenied",
                 message: "User denied the audio access request.",
                 details: nil
               )
             case .camera:
-              FlutterError(
+              PigeonError(
                 code: "CameraAccessDenied",
                 message: "User denied the camera access request.",
                 details: nil

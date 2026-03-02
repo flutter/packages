@@ -1,6 +1,14 @@
-## 26.1.8
+## 26.1.10
 
 * [kotlin] Adds option to add javax.annotation.Generated annotation.
+
+## 26.1.9
+
+* [dart] Reduces much duplication in reply-handling code.
+
+## 26.1.8
+
+* Makes some internal class constructors constant.
 
 ## 26.1.7
 

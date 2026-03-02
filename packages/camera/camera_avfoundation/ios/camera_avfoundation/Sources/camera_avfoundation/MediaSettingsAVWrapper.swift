@@ -5,11 +5,6 @@
 import AVFoundation
 import CoreMedia
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// An interface for performing media settings operations.
 ///
 /// xctest-expectation-checking implementation (`TestMediaSettingsAVWrapper`) of this interface can

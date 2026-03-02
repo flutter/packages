@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Includes test cases related to resolution presets setting operations for FLTCam class.
 final class CameraSessionPresetsTests: XCTestCase {
   func testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset() {
@@ -41,7 +36,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     }
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.max)
+      resolutionPreset: PlatformResolutionPreset.max)
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 
@@ -64,7 +59,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.max)
+      resolutionPreset: PlatformResolutionPreset.max)
     configuration.videoCaptureDeviceFactory = { _ in MockCaptureDevice() }
 
     let _ = CameraTestUtils.createTestCamera(configuration)
@@ -89,7 +84,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.ultraHigh)
+      resolutionPreset: PlatformResolutionPreset.ultraHigh)
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 

@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '26.1.8';
+const String pigeonVersion = '26.1.10';
 
 /// Annotation for generated code.
 const String generatedAnnotation =
@@ -37,7 +37,7 @@ bool debugGenerators = false;
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
-  /// Constructor which takes a [StringSink] [Indent] will wrap.
+  /// Constructor which takes a [StringSink] which this [Indent] will wrap.
   Indent(this._sink);
 
   int _count = 0;
@@ -75,10 +75,12 @@ class Indent {
     return result;
   }
 
-  /// Replaces the newlines and tabs of input and adds it to the stream.
+  /// Replaces the newlines and tabs of [input] and adds the result to the
+  /// stream.
   ///
-  /// [trimIndentation] flag finds the line with the fewest leading empty
-  /// spaces and trims the beginning of all lines by this number.
+  /// If the [trimIndentation] parameter is true, this function also finds the
+  /// smallest leading space count and trims the beginning of all lines by this
+  /// number.
   void format(
     String input, {
     bool leadingSpace = true,
@@ -116,7 +118,7 @@ class Indent {
   void addScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
@@ -132,11 +134,11 @@ class Indent {
     }
   }
 
-  /// Like `addScoped` but writes the current indentation level.
+  /// Like [addScoped] but writes the current indentation.
   void writeScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     int nestCount = 1,
     bool addTrailingNewline = true,
   }) {
@@ -152,9 +154,9 @@ class Indent {
   /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented by the given amount.
-  void nest(int count, Function func) {
+  void nest(int count, void Function() func) {
     inc(count);
-    func(); // ignore: avoid_dynamic_calls
+    func();
     dec(count);
   }
 

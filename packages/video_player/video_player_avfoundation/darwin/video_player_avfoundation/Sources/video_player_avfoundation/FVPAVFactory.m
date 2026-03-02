@@ -136,7 +136,7 @@
 @implementation FVPDefaultAVFactory
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
                                   options:(nullable NSDictionary<NSString *, id> *)options {
-  return [[FVPDefaultAVAsset alloc] initWithAsset:[AVAsset assetWithURL:URL]];
+  return [[FVPDefaultAVAsset alloc] initWithAsset:[AVURLAsset URLAssetWithURL:URL options:options]];
 }
 
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {

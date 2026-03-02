@@ -10,8 +10,34 @@ Provides bindings for Espresso tests of Flutter Android apps.
 
 Add the `espresso` package as a `dev_dependency` in your app's pubspec.yaml. If you're testing the example app of a package, add it as a dev_dependency of the main package as well.
 
-Add ```android:usesCleartextTraffic="true"``` in the ```<application>``` in the AndroidManifest.xml
-of the Android app used for testing. It's best to put this in a debug or androidTest
+Since Espresso uses cleartext traffic via a websocket to coordinate
+testing, cleartext traffic will need to be enabled for testing. Please
+only do this for testing (in debug or androidTest).
+
+Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ```<application>``` in the AndroidManifest.xml
+of the Android app used for testing. Also add the meta-data tag in the ```<application>``` that
+will notify Flutter of the network configuration:
+
+```xml
+<meta-data android:name="io.flutter.network-policy"
+    android:resource="@xml/network_security_config"/>
+```
+
+Then you will need to create a `network_security_config.xml` in the
+`res/xml/` directory.  
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Cleartext is needed for Espresso testing. -->
+    <base-config cleartextTrafficPermitted="true">
+    </base-config>
+</network-security-config>
+```
+
+For example, the Espresso example app has this file in the location `example/android/app/src/debug/res/xml/network_security_config.xml`.
+
+It is best to put this in a debug or androidTest
 AndroidManifest.xml so that you don't ship it to end users. (See the example app of this package.)
 
 Add the following dependencies in android/app/build.gradle:
