@@ -66,6 +66,7 @@ android {
     }
 
     dependencies {
+        compileOnly 'javax.annotation:javax.annotation-api:1.3.2'
         testImplementation("junit:junit:4.13.2")
         testImplementation("io.mockk:mockk:1.14.9")
         // org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.

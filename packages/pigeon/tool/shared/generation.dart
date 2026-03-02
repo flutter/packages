@@ -214,8 +214,8 @@ Future<int> generateTestPigeons({
   final int generateCodeWithAnnotation = await runPigeon(
     input: './pigeons/core_tests.dart',
     kotlinOut:
-        '$outputBase/android/src/main/kotlin/com/example/test_plugin/${corePascalCaseName}WithAnnotation.gen.kt',
-    kotlinPackage: 'com.example.test_plugin',
+        '$outputBase/android/src/main/kotlin/com/example/test_plugin/annotation/${corePascalCaseName}WithAnnotation.gen.kt',
+    kotlinPackage: 'com.example.test_plugin.annotation',
     kotlinErrorClassName: 'FlutterError',
     kotlinUseGeneratedAnnotation: true,
   );
