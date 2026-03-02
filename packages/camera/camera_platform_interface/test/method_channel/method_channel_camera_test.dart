@@ -1317,10 +1317,7 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall(
             'setImageQuality',
-            arguments: <String, Object?>{
-              'cameraId': cameraId,
-              'quality': 50,
-            },
+            arguments: <String, Object?>{'cameraId': cameraId, 'quality': 50},
           ),
         ]);
       });
