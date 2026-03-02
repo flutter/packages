@@ -391,9 +391,9 @@ abstract class MessageFlutterSearchApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final MessageSearchRequest? arg_request =
-              (args[0] as MessageSearchRequest?);
+              args[0] as MessageSearchRequest?;
           assert(
             arg_request != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null, expected non-null MessageSearchRequest.',

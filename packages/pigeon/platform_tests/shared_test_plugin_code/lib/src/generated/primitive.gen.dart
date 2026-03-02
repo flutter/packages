@@ -323,8 +323,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_value = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_value = args[0] as int?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null, expected non-null int.',
@@ -356,8 +356,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final bool? arg_value = (args[0] as bool?);
+          final List<Object?> args = message! as List<Object?>;
+          final bool? arg_value = args[0] as bool?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null, expected non-null bool.',
@@ -389,8 +389,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_value = (args[0] as String?);
+          final List<Object?> args = message! as List<Object?>;
+          final String? arg_value = args[0] as String?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null, expected non-null String.',
@@ -422,8 +422,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final double? arg_value = (args[0] as double?);
+          final List<Object?> args = message! as List<Object?>;
+          final double? arg_value = args[0] as double?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null, expected non-null double.',
@@ -455,9 +455,9 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final Map<Object?, Object?>? arg_value =
-              (args[0] as Map<Object?, Object?>?);
+              args[0] as Map<Object?, Object?>?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.',
@@ -489,8 +489,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_value = (args[0] as List<Object?>?);
+          final List<Object?> args = message! as List<Object?>;
+          final List<Object?>? arg_value = args[0] as List<Object?>?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.',
@@ -522,8 +522,8 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Int32List? arg_value = (args[0] as Int32List?);
+          final List<Object?> args = message! as List<Object?>;
+          final Int32List? arg_value = args[0] as Int32List?;
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.',
@@ -555,7 +555,7 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final List<bool?>? arg_value = (args[0] as List<Object?>?)
               ?.cast<bool?>();
           assert(
@@ -589,7 +589,7 @@ abstract class PrimitiveFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final Map<String?, int?>? arg_value =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, int?>();
           assert(

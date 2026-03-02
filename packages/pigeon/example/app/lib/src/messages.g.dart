@@ -100,7 +100,7 @@ class MessageData {
       name: result[0] as String?,
       description: result[1] as String?,
       code: result[2]! as Code,
-      data: (result[3] as Map<Object?, Object?>?)!.cast<String, String>(),
+      data: (result[3]! as Map<Object?, Object?>).cast<String, String>(),
     );
   }
 
@@ -259,8 +259,8 @@ abstract class MessageFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_aString = (args[0] as String?);
+          final List<Object?> args = message! as List<Object?>;
+          final String? arg_aString = args[0] as String?;
           try {
             final String output = api.flutterMethod(arg_aString);
             return wrapResponse(result: output);

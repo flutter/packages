@@ -231,7 +231,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           docCommentSpec,
         );
 
-        final String datatype = addGenericTypesNullable(field.type);
+        final String datatype = addGenericTypes(field.type);
         indent.writeln('$datatype ${field.name};');
         indent.newln();
       }
@@ -316,19 +316,24 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }) {
     void writeValueDecode(NamedType field, int index) {
       final resultAt = 'result[$index]';
-      final castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
-      final String castCall = _makeGenericCastCall(field.type);
-      final nullableTag = field.type.isNullable ? '?' : '';
+      final nullAssert = field.type.isNullable ? '' : '!';
       if (field.type.typeArguments.isNotEmpty) {
-        indent.add('($resultAt as $genericType?)$castCallPrefix$castCall');
+        final String castCall = _makeGenericCastCall(field.type);
+        if (castCall.isNotEmpty) {
+          final castCallPrefix = field.type.isNullable ? '?' : '';
+          indent.add(
+            '($resultAt$nullAssert as $genericType)$castCallPrefix$castCall',
+          );
+        } else {
+          indent.add('($resultAt as $genericType)');
+        }
       } else {
-        final castCallForcePrefix = field.type.isNullable ? '' : '!';
         final castString = field.type.baseName == 'Object'
             ? ''
-            : ' as $genericType$nullableTag';
+            : ' as $genericType';
 
-        indent.add('$resultAt$castCallForcePrefix$castString');
+        indent.add('$resultAt$nullAssert$castString');
       }
     }
 
@@ -555,8 +560,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
         final bool isAsync = func.isAsynchronous;
         final String returnType = isAsync
-            ? 'Future<${addGenericTypesNullable(func.returnType)}>'
-            : addGenericTypesNullable(func.returnType);
+            ? 'Future<${addGenericTypes(func.returnType)}>'
+            : addGenericTypes(func.returnType);
         final String argSignature = _getMethodParameterSignature(
           func.parameters,
         );
@@ -1136,7 +1141,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     }
   }
 
-  /// Writes [wrapResponse] method.
+  /// Writes the `wrapResponse` method.
   void _writeWrapResponse(InternalDartOptions opt, Root root, Indent indent) {
     indent.newln();
     indent.writeScoped(
@@ -1275,7 +1280,7 @@ if (wrapped == null) {
     addDocumentationComments(indent, documentationComments, docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
     indent.write(
-      'Future<${addGenericTypesNullable(returnType)}> $name($argSignature) async ',
+      'Future<${addGenericTypes(returnType)}> $name($argSignature) async ',
     );
     indent.addScoped('{', '}', () {
       writeHostMethodMessageCall(
@@ -1338,7 +1343,7 @@ if (wrapped == null) {
     indent.format('''
 final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 ''');
-    final validateCall =
+    final extractCall =
         '''
 _extractReplyValueOrThrow(
 \t\t${varNamePrefix}replyList,
@@ -1347,18 +1352,15 @@ _extractReplyValueOrThrow(
 )
 ''';
     if (returnType.isVoid) {
-      indent.format('$validateCall;');
+      indent.format('$extractCall;');
     } else {
       const accessor = '${varNamePrefix}replyValue';
       if (returnType.isNullable) {
-        indent.format('final Object? $accessor = $validateCall;');
+        indent.format('final Object? $accessor = $extractCall;');
       } else {
-        indent.format('final Object $accessor = $validateCall!;');
+        indent.format('final Object $accessor = $extractCall!;');
       }
-      String returnTypeName = _makeGenericTypeArguments(returnType);
-      if (returnType.isNullable) {
-        returnTypeName = '$returnTypeName?';
-      }
+      final String returnTypeName = _makeGenericTypeArguments(returnType);
       final String genericCastCall = _makeGenericCastCall(returnType);
 
       if (genericCastCall.isEmpty) {
@@ -1425,7 +1427,7 @@ _extractReplyValueOrThrow(
           '$messageHandlerSetterWithOpeningParentheses(Object? message) async ',
         );
         indent.addScoped('{', '});', () {
-          final String returnTypeString = addGenericTypesNullable(returnType);
+          final String returnTypeString = addGenericTypes(returnType);
           final isAsync = isAsynchronous;
           const emptyReturnStatement = 'return wrapResponse(empty: true);';
           String call;
@@ -1436,21 +1438,34 @@ _extractReplyValueOrThrow(
             indent.writeln("'Argument for $channelName was null.');");
             const argsArray = 'args';
             indent.writeln(
-              'final List<Object?> $argsArray = (message as List<Object?>?)!;',
+              'final List<Object?> $argsArray = message! as List<Object?>;',
             );
-            String argNameFunc(int index, NamedType type) =>
-                _getSafeArgumentName(index, type);
             enumerate(parameters, (int count, NamedType arg) {
-              final String argType = _addGenericTypes(arg.type);
-              final String argName = argNameFunc(count, arg);
-              final String genericArgType = _makeGenericTypeArguments(arg.type);
+              final String argType = addGenericTypes(arg.type);
+              // TODO(srawlins): It seems at some point we can stop making this
+              // local variable unconditionally nullable, with the assert
+              // statement below it. Instead we can use the nullability of
+              // `arg.type`.
+              final String argTypeNullable = addGenericTypes(
+                arg.type.copyWithNullability(true),
+              );
+              final String argName = _getSafeArgumentName(count, arg);
+              final leftHandSide = 'final $argTypeNullable $argName';
               final String castCall = _makeGenericCastCall(arg.type);
 
-              final leftHandSide = 'final $argType? $argName';
-
-              indent.writeln(
-                '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};',
-              );
+              if (castCall.isEmpty) {
+                indent.writeln(
+                  '$leftHandSide = $argsArray[$count] as $argTypeNullable;',
+                );
+              } else {
+                final String genericArgType = _makeGenericTypeArguments(
+                  arg.type.copyWithNullability(true),
+                );
+                final valueAsArgType = '$argsArray[$count] as $genericArgType';
+                // As `argTypeNullable` is unconditionally nullable, we must use
+                // `?.` to invoke `cast()`.
+                indent.writeln('$leftHandSide = ($valueAsArgType)?$castCall;');
+              }
 
               if (!arg.type.isNullable) {
                 indent.writeln('assert($argName != null,');
@@ -1515,7 +1530,7 @@ _extractReplyValueOrThrow(
 
 /// Converts a [TypeDeclaration] to a `code_builder` Reference.
 cb.Reference refer(TypeDeclaration type, {bool asFuture = false}) {
-  final String symbol = addGenericTypesNullable(type);
+  final String symbol = addGenericTypes(type);
   return cb.refer(asFuture ? 'Future<$symbol>' : symbol);
 }
 
@@ -1526,19 +1541,28 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r"'", r"\'");
 }
 
-/// Creates a Dart type where all type arguments are [Objects].
+/// Creates a Dart type where all type arguments are [Object]s.
 String _makeGenericTypeArguments(TypeDeclaration type) {
-  return type.typeArguments.isNotEmpty
-      ? '${type.baseName}<${type.typeArguments.map<String>((TypeDeclaration e) => 'Object?').join(', ')}>'
-      : _addGenericTypes(type);
+  if (type.typeArguments.isEmpty) {
+    return addGenericTypes(type);
+  }
+
+  final withTypeArguments =
+      '${type.baseName}<${type.typeArguments.map<String>((TypeDeclaration e) => 'Object?').join(', ')}>';
+  return '$withTypeArguments${type.isNullable ? '?' : ''}';
 }
 
-/// Creates a `.cast<>` call for an type. Returns an empty string if the
-/// type has no type arguments.
+/// Returns a `.cast<>()` call for [type]. Returns an empty string if [type] has
+/// no type arguments.
 String _makeGenericCastCall(TypeDeclaration type) {
-  return type.typeArguments.isNotEmpty
-      ? '.cast<${_flattenTypeArguments(type.typeArguments)}>()'
-      : '';
+  final List<TypeDeclaration> typeArguments = type.typeArguments;
+  if (typeArguments.isEmpty) {
+    return '';
+  }
+  if (typeArguments.every((e) => e.baseName == 'Object' && e.isNullable)) {
+    return '';
+  }
+  return '.cast<${_flattenTypeArguments(type.typeArguments)}>()';
 }
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
@@ -1573,7 +1597,7 @@ String _getMethodParameterSignature(
   String getParameterString(Parameter p) {
     final required = p.isRequired && !p.isPositional ? 'required ' : '';
 
-    final String type = addGenericTypesNullable(p.type);
+    final String type = addGenericTypes(p.type);
 
     final defaultValue = p.defaultValue == null ? '' : ' = ${p.defaultValue}';
     return '$required$type ${p.name}$defaultValue';
@@ -1626,28 +1650,21 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
       .join(', ');
 }
 
-/// Creates the type declaration for use in Dart code from a [NamedType] making sure
-/// that type arguments are used for primitive generic types.
-String _addGenericTypes(TypeDeclaration type) {
+/// Returns the string representation of a [TypeDeclaration], including type
+/// arguments and a nullability suffix, if the type is nullable.
+String addGenericTypes(TypeDeclaration type) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
-  switch (type.baseName) {
-    case 'List':
-      return typeArguments.isEmpty
+  final String genericType = switch (type.baseName) {
+    'List' =>
+      typeArguments.isEmpty
           ? 'List<Object?>'
-          : 'List<${_flattenTypeArguments(typeArguments)}>';
-    case 'Map':
-      return typeArguments.isEmpty
+          : 'List<${_flattenTypeArguments(typeArguments)}>',
+    'Map' =>
+      typeArguments.isEmpty
           ? 'Map<Object?, Object?>'
-          : 'Map<${_flattenTypeArguments(typeArguments)}>';
-    default:
-      return type.baseName;
-  }
-}
-
-/// Converts the type signature of a [TypeDeclaration] that include generic
-/// types.
-String addGenericTypesNullable(TypeDeclaration type) {
-  final String genericType = _addGenericTypes(type);
+          : 'Map<${_flattenTypeArguments(typeArguments)}>',
+    _ => type.baseName,
+  };
   return type.isNullable ? '$genericType?' : genericType;
 }
 

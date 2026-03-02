@@ -269,9 +269,9 @@ abstract class NullFieldsFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final NullFieldsSearchRequest? arg_request =
-              (args[0] as NullFieldsSearchRequest?);
+              args[0] as NullFieldsSearchRequest?;
           assert(
             arg_request != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null, expected non-null NullFieldsSearchRequest.',

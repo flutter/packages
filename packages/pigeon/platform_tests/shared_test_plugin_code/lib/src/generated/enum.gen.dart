@@ -223,8 +223,8 @@ abstract class EnumApi2Flutter {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final DataWithEnum? arg_data = (args[0] as DataWithEnum?);
+          final List<Object?> args = message! as List<Object?>;
+          final DataWithEnum? arg_data = args[0] as DataWithEnum?;
           assert(
             arg_data != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null, expected non-null DataWithEnum.',

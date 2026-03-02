@@ -214,8 +214,8 @@ abstract class NullableArgFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_x = args[0] as int?;
           try {
             final int? output = api.doit(arg_x);
             return wrapResponse(result: output);
@@ -374,7 +374,7 @@ abstract class NullableCollectionArgFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final List<String?>? arg_x = (args[0] as List<Object?>?)
               ?.cast<String?>();
           try {

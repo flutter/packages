@@ -618,8 +618,8 @@ class _PigeonInternalInstanceManagerApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_identifier = args[0] as int?;
           assert(
             arg_identifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.',
@@ -2220,9 +2220,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop was null, expected non-null ProxyApiTestClass.',
@@ -2257,9 +2257,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError was null, expected non-null ProxyApiTestClass.',
@@ -2294,9 +2294,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid was null, expected non-null ProxyApiTestClass.',
@@ -2331,14 +2331,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null, expected non-null ProxyApiTestClass.',
           );
-          final bool? arg_aBool = (args[1] as bool?);
+          final bool? arg_aBool = args[1] as bool?;
           assert(
             arg_aBool != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null, expected non-null bool.',
@@ -2375,14 +2375,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null, expected non-null ProxyApiTestClass.',
           );
-          final int? arg_anInt = (args[1] as int?);
+          final int? arg_anInt = args[1] as int?;
           assert(
             arg_anInt != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null, expected non-null int.',
@@ -2419,14 +2419,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null, expected non-null ProxyApiTestClass.',
           );
-          final double? arg_aDouble = (args[1] as double?);
+          final double? arg_aDouble = args[1] as double?;
           assert(
             arg_aDouble != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null, expected non-null double.',
@@ -2461,14 +2461,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final String? arg_aString = args[1] as String?;
           assert(
             arg_aString != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null, expected non-null String.',
@@ -2503,14 +2503,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null, expected non-null ProxyApiTestClass.',
           );
-          final Uint8List? arg_aList = (args[1] as Uint8List?);
+          final Uint8List? arg_aList = args[1] as Uint8List?;
           assert(
             arg_aList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null, expected non-null Uint8List.',
@@ -2546,15 +2546,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null, expected non-null ProxyApiTestClass.',
           );
-          final List<Object?>? arg_aList = (args[1] as List<Object?>?)
-              ?.cast<Object?>();
+          final List<Object?>? arg_aList = args[1] as List<Object?>?;
           assert(
             arg_aList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null, expected non-null List<Object?>.',
@@ -2591,9 +2590,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList was null, expected non-null ProxyApiTestClass.',
@@ -2635,9 +2634,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap was null, expected non-null ProxyApiTestClass.',
@@ -2680,9 +2679,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap was null, expected non-null ProxyApiTestClass.',
@@ -2725,14 +2724,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
+          final ProxyApiTestEnum? arg_anEnum = args[1] as ProxyApiTestEnum?;
           assert(
             arg_anEnum != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestEnum.',
@@ -2769,15 +2768,15 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null, expected non-null ProxyApiTestClass.',
           );
           final ProxyApiSuperClass? arg_aProxyApi =
-              (args[1] as ProxyApiSuperClass?);
+              args[1] as ProxyApiSuperClass?;
           assert(
             arg_aProxyApi != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null, expected non-null ProxyApiSuperClass.',
@@ -2813,14 +2812,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool was null, expected non-null ProxyApiTestClass.',
           );
-          final bool? arg_aBool = (args[1] as bool?);
+          final bool? arg_aBool = args[1] as bool?;
           try {
             final bool? output =
                 (flutterEchoNullableBool ??
@@ -2852,14 +2851,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt was null, expected non-null ProxyApiTestClass.',
           );
-          final int? arg_anInt = (args[1] as int?);
+          final int? arg_anInt = args[1] as int?;
           try {
             final int? output =
                 (flutterEchoNullableInt ??
@@ -2891,14 +2890,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble was null, expected non-null ProxyApiTestClass.',
           );
-          final double? arg_aDouble = (args[1] as double?);
+          final double? arg_aDouble = args[1] as double?;
           try {
             final double? output =
                 (flutterEchoNullableDouble ??
@@ -2930,14 +2929,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final String? arg_aString = args[1] as String?;
           try {
             final String? output =
                 (flutterEchoNullableString ??
@@ -2969,14 +2968,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List was null, expected non-null ProxyApiTestClass.',
           );
-          final Uint8List? arg_aList = (args[1] as Uint8List?);
+          final Uint8List? arg_aList = args[1] as Uint8List?;
           try {
             final Uint8List? output =
                 (flutterEchoNullableUint8List ??
@@ -3008,15 +3007,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList was null, expected non-null ProxyApiTestClass.',
           );
-          final List<Object?>? arg_aList = (args[1] as List<Object?>?)
-              ?.cast<Object?>();
+          final List<Object?>? arg_aList = args[1] as List<Object?>?;
           try {
             final List<Object?>? output =
                 (flutterEchoNullableList ??
@@ -3048,9 +3046,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap was null, expected non-null ProxyApiTestClass.',
@@ -3088,14 +3086,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
+          final ProxyApiTestEnum? arg_anEnum = args[1] as ProxyApiTestEnum?;
           try {
             final ProxyApiTestEnum? output =
                 (flutterEchoNullableEnum ??
@@ -3127,15 +3125,15 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi was null, expected non-null ProxyApiTestClass.',
           );
           final ProxyApiSuperClass? arg_aProxyApi =
-              (args[1] as ProxyApiSuperClass?);
+              args[1] as ProxyApiSuperClass?;
           try {
             final ProxyApiSuperClass? output =
                 (flutterEchoNullableProxyApi ??
@@ -3167,9 +3165,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync was null, expected non-null ProxyApiTestClass.',
@@ -3203,14 +3201,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass? arg_pigeon_instance =
-              (args[0] as ProxyApiTestClass?);
+              args[0] as ProxyApiTestClass?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final String? arg_aString = args[1] as String?;
           assert(
             arg_aString != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null, expected non-null String.',
@@ -3568,7 +3566,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: false,
     )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>;
   }
 
   /// Returns the passed list with ProxyApis, to test serialization and
@@ -3878,7 +3876,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>?;
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -4159,7 +4157,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: false,
     )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>;
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -4459,7 +4457,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>?;
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -4819,7 +4817,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: false,
     )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>;
   }
 
   Future<List<ProxyApiTestClass?>> callFlutterEchoProxyApiList(
@@ -5097,7 +5095,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonVar_channelName,
       isNullValid: true,
     );
-    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
+    return pigeonVar_replyValue as List<Object?>?;
   }
 
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
@@ -5365,8 +5363,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_pigeon_instanceIdentifier = args[0] as int?;
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null, expected non-null int.',
@@ -5486,8 +5484,8 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_pigeon_instanceIdentifier = args[0] as int?;
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null, expected non-null int.',
@@ -5528,9 +5526,9 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final ProxyApiInterface? arg_pigeon_instance =
-              (args[0] as ProxyApiInterface?);
+              args[0] as ProxyApiInterface?;
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod was null, expected non-null ProxyApiInterface.',
@@ -5647,8 +5645,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_pigeon_instanceIdentifier = args[0] as int?;
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null, expected non-null int.',

@@ -179,7 +179,7 @@ class NonNullFieldSearchReply {
     return NonNullFieldSearchReply(
       result: result[0]! as String,
       error: result[1]! as String,
-      indices: (result[2] as List<Object?>?)!.cast<int?>(),
+      indices: (result[2]! as List<Object?>).cast<int?>(),
       extraData: result[3]! as ExtraData,
       type: result[4]! as ReplyType,
     );
@@ -312,9 +312,9 @@ abstract class NonNullFieldFlutterApi {
             message != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.',
           );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final NonNullFieldSearchRequest? arg_request =
-              (args[0] as NonNullFieldSearchRequest?);
+              args[0] as NonNullFieldSearchRequest?;
           assert(
             arg_request != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.',

@@ -555,7 +555,8 @@ class TypeDeclaration {
     }
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
+  /// Returns a new [TypeDeclaration] with [enumDefinition] as the
+  /// [associatedEnum] value.
   TypeDeclaration copyWithEnum(Enum enumDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -565,7 +566,8 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
+  /// Returns a new [TypeDeclaration] with [classDefinition] as the
+  /// [associatedClass] value.
   TypeDeclaration copyWithClass(Class classDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -575,7 +577,8 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  /// Returns a new [TypeDeclaration] with [proxyApiDefinition] as the
+  /// [associatedProxyApi] value.
   TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
     return TypeDeclaration(
       baseName: baseName,
@@ -585,12 +588,24 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  /// Returns a new [TypeDeclaration] with [associatedProxyApi].
   TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
       typeArguments: types,
+      associatedClass: associatedClass,
+      associatedEnum: associatedEnum,
+      associatedProxyApi: associatedProxyApi,
+    );
+  }
+
+  /// Returns a new [TypeDeclaration] with [nullable] as the [isNullable] value.
+  TypeDeclaration copyWithNullability(bool nullable) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: nullable,
+      typeArguments: typeArguments,
       associatedClass: associatedClass,
       associatedEnum: associatedEnum,
       associatedProxyApi: associatedProxyApi,

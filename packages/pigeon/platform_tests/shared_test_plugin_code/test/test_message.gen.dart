@@ -128,9 +128,9 @@ abstract class TestHostApi {
                 message != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null.',
               );
-              final List<Object?> args = (message as List<Object?>?)!;
+              final List<Object?> args = message! as List<Object?>;
               final MessageSearchRequest? arg_request =
-                  (args[0] as MessageSearchRequest?);
+                  args[0] as MessageSearchRequest?;
               assert(
                 arg_request != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null, expected non-null MessageSearchRequest.',
@@ -191,8 +191,8 @@ abstract class TestNestedApi {
                 message != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null.',
               );
-              final List<Object?> args = (message as List<Object?>?)!;
-              final MessageNested? arg_nested = (args[0] as MessageNested?);
+              final List<Object?> args = message! as List<Object?>;
+              final MessageNested? arg_nested = args[0] as MessageNested?;
               assert(
                 arg_nested != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null, expected non-null MessageNested.',
