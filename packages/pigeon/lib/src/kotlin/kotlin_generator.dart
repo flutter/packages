@@ -36,7 +36,8 @@ const String _pigeonMethodChannelCodec = 'PigeonMethodCodec';
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Kotlin file-level annotation for generated code.
-const String kotlinGeneratedAnnotation = '@file:Generated("$pluginPackageName")';
+const String kotlinGeneratedAnnotation =
+    '@file:Generated("$pluginPackageName")';
 
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
