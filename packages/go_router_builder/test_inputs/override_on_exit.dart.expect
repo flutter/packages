@@ -1,0 +1,56 @@
+RouteBase get $overrideOnExitRoute => GoRouteData.$route(
+      path: '/override-on-exit-route',
+      overrideOnExit: true,
+      factory: $OverrideOnExitRoute._fromState,
+    );
+
+mixin $OverrideOnExitRoute on GoRouteData {
+  static OverrideOnExitRoute _fromState(GoRouterState state) =>
+      OverrideOnExitRoute();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/override-on-exit-route',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $notOverrideOnExitRoute => GoRouteData.$route(
+      path: '/not-override-on-exit-route',
+      factory: $NotOverrideOnExitRoute._fromState,
+    );
+
+mixin $NotOverrideOnExitRoute on GoRouteData {
+  static NotOverrideOnExitRoute _fromState(GoRouterState state) =>
+      NotOverrideOnExitRoute();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/not-override-on-exit-route',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
