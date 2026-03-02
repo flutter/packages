@@ -517,5 +517,4 @@ public class MarkersControllerTest {
     Mockito.verify(clusterManagersController, times(0)).addItems(any(), any());
     Mockito.verify(clusterManagersController, times(0)).removeItems(any(), any());
   }
-
 }
