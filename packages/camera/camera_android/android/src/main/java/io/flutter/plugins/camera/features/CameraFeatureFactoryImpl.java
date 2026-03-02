@@ -109,8 +109,7 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
 
   @NonNull
   @Override
-  public JpegQualityFeature createJpegQualityFeature(
-      @NonNull CameraProperties cameraProperties) {
+  public JpegQualityFeature createJpegQualityFeature(@NonNull CameraProperties cameraProperties) {
     return new JpegQualityFeature(cameraProperties);
   }
 }

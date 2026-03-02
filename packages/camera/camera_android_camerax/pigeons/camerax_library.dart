@@ -598,7 +598,11 @@ enum CameraXFlashMode {
   ),
 )
 abstract class ImageCapture extends UseCase {
-  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode, int? jpegQuality);
+  ImageCapture(
+    int? targetRotation,
+    CameraXFlashMode? flashMode,
+    int? jpegQuality,
+  );
 
   late final ResolutionSelector? resolutionSelector;
 

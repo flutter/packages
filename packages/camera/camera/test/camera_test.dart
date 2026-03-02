@@ -899,10 +899,7 @@ void main() {
       await cameraController.setImageQuality(50);
 
       verify(
-        CameraPlatform.instance.setImageQuality(
-          cameraController.cameraId,
-          50,
-        ),
+        CameraPlatform.instance.setImageQuality(cameraController.cameraId, 50),
       ).called(1);
     });
 
