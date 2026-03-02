@@ -11,6 +11,9 @@ import java.util.Objects;
 
 
 class PreviewViewProxyApi extends PigeonApiPreviewView {
+  // Cached previewView.
+  PreviewView previewView;
+
   PreviewViewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -25,9 +28,13 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
   @NonNull
   @Override
   public PreviewView pigeon_defaultConstructor() {
-    PreviewView previewView = new PreviewView(getPigeonRegistrar().getContext());
+    if (previewView != null) {
+        return previewView;
+    }
+
+    previewView = new PreviewView(getPigeonRegistrar().getContext());
     previewView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
-    
+
     return previewView;
   }
 
