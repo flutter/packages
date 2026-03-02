@@ -19,6 +19,24 @@ class MockFlutterApi: IOSQuickActionsFlutterApiProtocol {
   }
 }
 
+class FakeConnectionOptions: UIScene.ConnectionOptions {
+  var _shortcutItem: UIApplicationShortcutItem?
+
+  override var shortcutItem: UIApplicationShortcutItem? {
+    return _shortcutItem
+  }
+
+  /// Creates a `FakeConnectionOptions` with the given shortcut item.
+  ///
+  /// `UIScene.ConnectionOptions` has no accessible initializer in Swift, so
+  /// we go through `NSObject.Type.init()` (ObjC runtime) to allocate the subclass.
+  static func withShortcutItem(_ item: UIApplicationShortcutItem) -> FakeConnectionOptions {
+    let instance = (self as NSObject.Type).init() as! FakeConnectionOptions
+    instance._shortcutItem = item
+    return instance
+  }
+}
+
 @MainActor
 struct QuickActionsPluginTests {
 
@@ -318,15 +336,16 @@ struct QuickActionsPluginTests {
         confirmed()
       }
 
-      // Simulate cold start: scene connects with a shortcut item via connectionOptions.
-      // We can't construct UIScene.ConnectionOptions directly, so we simulate the effect
-      // by calling the AppDelegate-style method that sets launchingShortcutType.
-      let launchResult = plugin.application(
-        UIApplication.shared,
-        didFinishLaunchingWithOptions: [UIApplication.LaunchOptionsKey.shortcutItem: item])
-      #expect(!launchResult)
+      let options = FakeConnectionOptions.withShortcutItem(item)
 
-      plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
+      let scene = UIApplication.shared.connectedScenes.first!
+      let connectResult = plugin.scene(
+        scene,
+        willConnectTo: scene.session,
+        options: options)
+      #expect(connectResult, "scene willConnectTo must return true when shortcut is provided.")
+
+      plugin.sceneDidBecomeActive(scene)
     }
   }
 }
