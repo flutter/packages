@@ -588,7 +588,7 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns a new [TypeDeclaration] with [associatedProxyApi].
+  /// Returns a new [TypeDeclaration] with [types] as the [typeArguments] value.
   TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
     return TypeDeclaration(
       baseName: baseName,
