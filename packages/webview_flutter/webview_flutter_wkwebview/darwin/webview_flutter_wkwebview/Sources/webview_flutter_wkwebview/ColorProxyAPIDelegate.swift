@@ -2,24 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+
 #if os(iOS)
   import UIKit
 #endif
 
-/// ProxyApi implementation for `UIView`.
+/// ProxyApi implementation for `UIColor`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class UIViewProxyAPIDelegate: PigeonApiDelegateUIView {
+class ColorProxyAPIDelegate: PigeonApiDelegateUIColor {
   #if os(iOS)
-    func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: UIColor?)
-      throws
-    {
-      pigeonInstance.backgroundColor = value
-    }
-
-    func setOpaque(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, opaque: Bool) throws {
-      pigeonInstance.isOpaque = opaque
+    func pigeonDefaultConstructor(
+      pigeonApi: PigeonApiUIColor, red: Double, green: Double, blue: Double, alpha: Double
+    ) throws -> UIColor {
+      return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
   #endif
 }
