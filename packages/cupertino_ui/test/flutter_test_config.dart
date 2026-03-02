@@ -10,5 +10,5 @@ import 'goldens_io.dart'
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) {
   // Enable golden file testing using Skia Gold.
-  return flutter_goldens.testExecutable(testMain, namePrefix: 'material_ui');
+  return flutter_goldens.testExecutable(testMain, namePrefix: 'cupertino_ui');
 }
