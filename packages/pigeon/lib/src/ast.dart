@@ -600,18 +600,6 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns a new [TypeDeclaration] with [nullable] as the [isNullable] value.
-  TypeDeclaration copyWithNullability(bool nullable) {
-    return TypeDeclaration(
-      baseName: baseName,
-      isNullable: nullable,
-      typeArguments: typeArguments,
-      associatedClass: associatedClass,
-      associatedEnum: associatedEnum,
-      associatedProxyApi: associatedProxyApi,
-    );
-  }
-
   @override
   String toString() {
     final typeArgumentsStr = typeArguments.isEmpty

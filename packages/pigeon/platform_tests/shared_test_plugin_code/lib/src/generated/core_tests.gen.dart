@@ -447,7 +447,7 @@ class AllNullableTypes {
       doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
       boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[18] as List<Object?>?)?.cast<AnEnum?>(),
-      objectList: (result[19] as List<Object?>?),
+      objectList: result[19] as List<Object?>?,
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       recursiveClassList: (result[22] as List<Object?>?)
@@ -457,7 +457,7 @@ class AllNullableTypes {
           ?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[26] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
-      objectMap: (result[27] as Map<Object?, Object?>?),
+      objectMap: result[27] as Map<Object?, Object?>?,
       listMap: (result[28] as Map<Object?, Object?>?)
           ?.cast<int?, List<Object?>?>(),
       mapMap: (result[29] as Map<Object?, Object?>?)
@@ -633,7 +633,7 @@ class AllNullableTypesWithoutRecursion {
       doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
       boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[17] as List<Object?>?)?.cast<AnEnum?>(),
-      objectList: (result[18] as List<Object?>?),
+      objectList: result[18] as List<Object?>?,
       listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       map: result[21] as Map<Object?, Object?>?,
@@ -641,7 +641,7 @@ class AllNullableTypesWithoutRecursion {
           ?.cast<String?, String?>(),
       intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[24] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
-      objectMap: (result[25] as Map<Object?, Object?>?),
+      objectMap: result[25] as Map<Object?, Object?>?,
       listMap: (result[26] as Map<Object?, Object?>?)
           ?.cast<int?, List<Object?>?>(),
       mapMap: (result[27] as Map<Object?, Object?>?)
@@ -898,12 +898,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllTypes;
+    );
+    return pigeonVar_replyValue! as AllTypes;
   }
 
   /// Returns an error, to test error handling.
@@ -979,12 +979,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns passed in double.
@@ -1001,12 +1001,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   /// Returns the passed in boolean.
@@ -1023,12 +1023,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns the passed in string.
@@ -1045,12 +1045,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns the passed in Uint8List.
@@ -1067,12 +1067,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   /// Returns the passed in generic Object.
@@ -1089,12 +1089,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue;
+    );
+    return pigeonVar_replyValue!;
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -1111,12 +1111,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -1133,12 +1133,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AnEnum?>();
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -1157,12 +1157,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes?>();
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -1179,12 +1179,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AnEnum>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AnEnum>();
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -1203,12 +1203,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1225,12 +1225,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Map<Object?, Object?>;
+    );
+    return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1249,12 +1249,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, String?>();
   }
 
@@ -1272,12 +1272,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, int?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1296,12 +1296,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
   }
 
@@ -1321,12 +1321,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
   }
 
@@ -1346,12 +1346,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String, String>();
   }
 
@@ -1369,12 +1369,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int, int>();
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int, int>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -1393,12 +1393,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<AnEnum, AnEnum>();
   }
 
@@ -1418,12 +1418,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<int, AllNullableTypes>();
   }
 
@@ -1441,12 +1441,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllClassesWrapper;
+    );
+    return pigeonVar_replyValue! as AllClassesWrapper;
   }
 
   /// Returns the passed enum to test serialization and deserialization.
@@ -1463,12 +1463,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnEnum;
+    );
+    return pigeonVar_replyValue! as AnEnum;
   }
 
   /// Returns the passed enum to test serialization and deserialization.
@@ -1485,12 +1485,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnotherEnum;
+    );
+    return pigeonVar_replyValue! as AnotherEnum;
   }
 
   /// Returns the default string.
@@ -1507,12 +1507,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns passed in double.
@@ -1529,12 +1529,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   /// Returns passed in int.
@@ -1551,12 +1551,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -1648,12 +1648,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllClassesWrapper;
+    );
+    return pigeonVar_replyValue! as AllClassesWrapper;
   }
 
   /// Returns passed in arguments of multiple types.
@@ -1674,12 +1674,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllNullableTypes;
+    );
+    return pigeonVar_replyValue! as AllNullableTypes;
   }
 
   /// Returns passed in arguments of multiple types.
@@ -1701,12 +1701,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllNullableTypesWithoutRecursion;
+    );
+    return pigeonVar_replyValue! as AllNullableTypesWithoutRecursion;
   }
 
   /// Returns passed in int.
@@ -2299,12 +2299,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns passed in double asynchronously.
@@ -2321,12 +2321,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   /// Returns the passed in boolean asynchronously.
@@ -2343,12 +2343,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns the passed string asynchronously.
@@ -2365,12 +2365,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns the passed in Uint8List asynchronously.
@@ -2387,12 +2387,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   /// Returns the passed in generic Object asynchronously.
@@ -2409,12 +2409,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue;
+    );
+    return pigeonVar_replyValue!;
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -2431,12 +2431,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -2453,12 +2453,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AnEnum?>();
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -2477,12 +2477,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -2499,12 +2499,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Map<Object?, Object?>;
+    );
+    return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -2523,12 +2523,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, String?>();
   }
 
@@ -2546,12 +2546,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, int?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -2570,12 +2570,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
   }
 
@@ -2595,12 +2595,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
   }
 
@@ -2618,12 +2618,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnEnum;
+    );
+    return pigeonVar_replyValue! as AnEnum;
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
@@ -2640,12 +2640,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnotherEnum;
+    );
+    return pigeonVar_replyValue! as AnotherEnum;
   }
 
   /// Responds with an error from an async function returning a value.
@@ -2721,12 +2721,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllTypes;
+    );
+    return pigeonVar_replyValue! as AllTypes;
   }
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -3162,12 +3162,12 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns true if the handler is run on a non-main thread, which should be
@@ -3183,12 +3183,12 @@ class HostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   Future<void> callFlutterNoop() async {
@@ -3259,12 +3259,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllTypes;
+    );
+    return pigeonVar_replyValue! as AllTypes;
   }
 
   Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
@@ -3307,12 +3307,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllNullableTypes;
+    );
+    return pigeonVar_replyValue! as AllNullableTypes;
   }
 
   Future<AllNullableTypesWithoutRecursion?>
@@ -3357,12 +3357,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AllNullableTypesWithoutRecursion;
+    );
+    return pigeonVar_replyValue! as AllNullableTypesWithoutRecursion;
   }
 
   Future<bool> callFlutterEchoBool(bool aBool) async {
@@ -3378,12 +3378,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   Future<int> callFlutterEchoInt(int anInt) async {
@@ -3399,12 +3399,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   Future<double> callFlutterEchoDouble(double aDouble) async {
@@ -3420,12 +3420,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   Future<String> callFlutterEchoString(String aString) async {
@@ -3441,12 +3441,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List list) async {
@@ -3462,12 +3462,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> list) async {
@@ -3483,12 +3483,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   Future<List<AnEnum?>> callFlutterEchoEnumList(List<AnEnum?> enumList) async {
@@ -3504,12 +3504,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AnEnum?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AnEnum?>();
   }
 
   Future<List<AllNullableTypes?>> callFlutterEchoClassList(
@@ -3527,12 +3527,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes?>();
   }
 
   Future<List<AnEnum>> callFlutterEchoNonNullEnumList(
@@ -3550,12 +3550,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AnEnum>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AnEnum>();
   }
 
   Future<List<AllNullableTypes>> callFlutterEchoNonNullClassList(
@@ -3573,12 +3573,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<AllNullableTypes>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes>();
   }
 
   Future<Map<Object?, Object?>> callFlutterEchoMap(
@@ -3596,12 +3596,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Map<Object?, Object?>;
+    );
+    return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
   Future<Map<String?, String?>> callFlutterEchoStringMap(
@@ -3619,12 +3619,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, String?>();
   }
 
@@ -3641,12 +3641,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int?, int?>();
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int?, int?>();
   }
 
   Future<Map<AnEnum?, AnEnum?>> callFlutterEchoEnumMap(
@@ -3664,12 +3664,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<AnEnum?, AnEnum?>();
   }
 
@@ -3688,12 +3688,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<int?, AllNullableTypes?>();
   }
 
@@ -3712,12 +3712,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String, String>();
   }
 
@@ -3736,12 +3736,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>).cast<int, int>();
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<int, int>();
   }
 
   Future<Map<AnEnum, AnEnum>> callFlutterEchoNonNullEnumMap(
@@ -3759,12 +3759,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<AnEnum, AnEnum>();
   }
 
@@ -3783,12 +3783,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<int, AllNullableTypes>();
   }
 
@@ -3805,12 +3805,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnEnum;
+    );
+    return pigeonVar_replyValue! as AnEnum;
   }
 
   Future<AnotherEnum> callFlutterEchoAnotherEnum(
@@ -3828,12 +3828,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as AnotherEnum;
+    );
+    return pigeonVar_replyValue! as AnotherEnum;
   }
 
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
@@ -4326,12 +4326,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 }
 
@@ -5979,12 +5979,12 @@ class HostSmallApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<void> voidVoid() async {

@@ -102,12 +102,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   Future<bool> aBool(bool value) async {
@@ -123,12 +123,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   Future<String> aString(String value) async {
@@ -144,12 +144,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<double> aDouble(double value) async {
@@ -165,12 +165,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
@@ -186,12 +186,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Map<Object?, Object?>;
+    );
+    return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
@@ -207,12 +207,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
@@ -228,12 +228,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Int32List;
+    );
+    return pigeonVar_replyValue! as Int32List;
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
@@ -249,12 +249,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<bool?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<bool?>();
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
@@ -270,12 +270,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, int?>();
   }
 }

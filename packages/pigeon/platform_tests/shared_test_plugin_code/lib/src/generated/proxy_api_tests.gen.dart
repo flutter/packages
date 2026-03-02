@@ -3154,12 +3154,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns passed in double.
@@ -3179,12 +3179,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   /// Returns the passed in boolean.
@@ -3204,12 +3204,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns the passed in string.
@@ -3229,12 +3229,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns the passed in Uint8List.
@@ -3254,12 +3254,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   /// Returns the passed in generic Object.
@@ -3279,12 +3279,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue;
+    );
+    return pigeonVar_replyValue!;
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -3304,12 +3304,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   /// Returns the passed list with ProxyApis, to test serialization and
@@ -3332,12 +3332,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<ProxyApiTestClass>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -3357,12 +3357,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, Object?>();
   }
 
@@ -3386,12 +3386,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String, ProxyApiTestClass>();
   }
 
@@ -3412,12 +3412,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as ProxyApiTestEnum;
+    );
+    return pigeonVar_replyValue! as ProxyApiTestEnum;
   }
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
@@ -3437,12 +3437,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as ProxyApiSuperClass;
+    );
+    return pigeonVar_replyValue! as ProxyApiSuperClass;
   }
 
   /// Returns passed in int.
@@ -3745,12 +3745,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns passed in double asynchronously.
@@ -3770,12 +3770,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   /// Returns the passed in boolean asynchronously.
@@ -3795,12 +3795,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns the passed string asynchronously.
@@ -3820,12 +3820,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   /// Returns the passed in Uint8List asynchronously.
@@ -3845,12 +3845,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   /// Returns the passed in generic Object asynchronously.
@@ -3870,12 +3870,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue;
+    );
+    return pigeonVar_replyValue!;
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -3895,12 +3895,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -3920,12 +3920,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, Object?>();
   }
 
@@ -3946,12 +3946,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as ProxyApiTestEnum;
+    );
+    return pigeonVar_replyValue! as ProxyApiTestEnum;
   }
 
   /// Responds with an error from an async function returning a value.
@@ -4312,12 +4312,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   static Future<void> staticAsyncNoop({
@@ -4435,12 +4435,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   Future<int> callFlutterEchoInt(int anInt) async {
@@ -4459,12 +4459,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   Future<double> callFlutterEchoDouble(double aDouble) async {
@@ -4483,12 +4483,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   Future<String> callFlutterEchoString(String aString) async {
@@ -4507,12 +4507,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List aUint8List) async {
@@ -4531,12 +4531,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Uint8List;
+    );
+    return pigeonVar_replyValue! as Uint8List;
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
@@ -4555,12 +4555,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   Future<List<ProxyApiTestClass?>> callFlutterEchoProxyApiList(
@@ -4581,12 +4581,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<ProxyApiTestClass?>();
   }
 
   Future<Map<String?, Object?>> callFlutterEchoMap(
@@ -4607,12 +4607,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, Object?>();
   }
 
@@ -4634,12 +4634,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, ProxyApiTestClass?>();
   }
 
@@ -4659,12 +4659,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as ProxyApiTestEnum;
+    );
+    return pigeonVar_replyValue! as ProxyApiTestEnum;
   }
 
   Future<ProxyApiSuperClass> callFlutterEchoProxyApi(
@@ -4685,12 +4685,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as ProxyApiSuperClass;
+    );
+    return pigeonVar_replyValue! as ProxyApiSuperClass;
   }
 
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
@@ -4959,12 +4959,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   @override

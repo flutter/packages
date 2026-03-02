@@ -185,12 +185,12 @@ class EnumApi2Host {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as DataWithEnum;
+    );
+    return pigeonVar_replyValue! as DataWithEnum;
   }
 }
 
