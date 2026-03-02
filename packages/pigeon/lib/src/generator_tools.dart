@@ -17,9 +17,8 @@ import 'generator.dart';
 /// This must match the version in pubspec.yaml.
 const String pigeonVersion = '26.1.10';
 
-/// Annotation for generated code.
-const String generatedAnnotation =
-    '@javax.annotation.Generated("dev.flutter.pigeon")';
+/// Plugin pacakage name.
+const String generatedAnnotation = 'dev.flutter.pigeon';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {

@@ -202,7 +202,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})',
     );
     if (generatorOptions.useGeneratedAnnotation ?? false) {
-      indent.writeln(generatedAnnotation);
+      indent.writeln('@javax.annotation.Generated("$pluginPackageName")');
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
