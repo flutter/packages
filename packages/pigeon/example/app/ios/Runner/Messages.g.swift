@@ -83,56 +83,59 @@ func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (nil, _), (_, nil):
     return false
 
+  case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+    return true
+
   case is (Void, Void):
     return true
 
-  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
-    return cleanLhsHashable == cleanRhsHashable
-
-  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
-    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
-    for (index, element) in cleanLhsArray.enumerated() {
-      if !deepEqualsMessages(element, cleanRhsArray[index]) {
+  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEqualsMessages(element, rhsArray[index]) {
         return false
       }
     }
     return true
 
-  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
-    for (key, cleanLhsValue) in cleanLhsDictionary {
-      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
-      if !deepEqualsMessages(cleanLhsValue, cleanRhsDictionary[key]!) {
+  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (key, lhsValue) in lhsDictionary {
+      guard let rhsValue = rhsDictionary[key] else { return false }
+      if !deepEqualsMessages(lhsValue, rhsValue) {
         return false
       }
     }
     return true
+
+  case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+    return lhsHashable == rhsHashable
 
   default:
-    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
     return false
   }
 }
 
 func deepHashMessages(value: Any?, hasher: inout Hasher) {
-  if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashMessages(value: item, hasher: &hasher) }
-    return
-  }
-
-  if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys {
-      hasher.combine(key)
-      deepHashMessages(value: valueDict[key]!, hasher: &hasher)
+  let cleanValue = nilOrValue(value) as Any?
+  if let cleanValue = cleanValue {
+    if let valueList = cleanValue as? [Any?] {
+      for item in valueList {
+        deepHashMessages(value: item, hasher: &hasher)
+      }
+    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+      for key in valueDict.keys.sorted(by: { String(describing: $0) < String(describing: $1) }) {
+        hasher.combine(key)
+        deepHashMessages(value: valueDict[key]!, hasher: &hasher)
+      }
+    } else if let hashableValue = cleanValue as? AnyHashable {
+      hasher.combine(hashableValue)
+    } else {
+      hasher.combine(String(describing: cleanValue))
     }
-    return
+  } else {
+    hasher.combine(0)
   }
-
-  if let hashableValue = value as? AnyHashable {
-    hasher.combine(hashableValue.hashValue)
-  }
-
-  return hasher.combine(String(describing: value))
 }
 
 enum Code: Int {
@@ -170,10 +173,16 @@ struct MessageData: Hashable {
     ]
   }
   static func == (lhs: MessageData, rhs: MessageData) -> Bool {
-    return deepEqualsMessages(lhs.toList(), rhs.toList())
+    return deepEqualsMessages(lhs.name, rhs.name)
+      && deepEqualsMessages(lhs.description, rhs.description)
+      && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashMessages(value: toList(), hasher: &hasher)
+    deepHashMessages(value: name, hasher: &hasher)
+    deepHashMessages(value: description, hasher: &hasher)
+    deepHashMessages(value: code, hasher: &hasher)
+    deepHashMessages(value: data, hasher: &hasher)
   }
 }
 

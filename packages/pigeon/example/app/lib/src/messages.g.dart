@@ -95,12 +95,15 @@ class MessageData {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(name, other.name) &&
+        _deepEquals(description, other.description) &&
+        _deepEquals(code, other.code) &&
+        _deepEquals(data, other.data);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hash(name, description, code, data);
 }
 
 class _PigeonCodec extends StandardMessageCodec {
