@@ -18,7 +18,7 @@ import 'generator.dart';
 const String pigeonVersion = '26.1.10';
 
 /// Plugin pacakage name.
-const String generatedAnnotation = 'dev.flutter.pigeon';
+const String pluginPackageName = 'dev.flutter.pigeon';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
