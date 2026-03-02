@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camera.features.jpegquality;
 
+import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
 import io.flutter.plugins.camera.CameraProperties;
@@ -28,6 +29,7 @@ public class JpegQualityFeature extends CameraFeature<Integer> {
     return "JpegQualityFeature";
   }
 
+  @SuppressLint("KotlinPropertyAccess")
   @NonNull
   @Override
   public Integer getValue() {
