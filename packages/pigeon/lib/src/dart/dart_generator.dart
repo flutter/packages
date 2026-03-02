@@ -329,7 +329,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         final castString = field.type.baseName == 'Object'
             ? ''
             : ' as $genericType';
-
         indent.add('$resultAt$nullAssert$castString');
       }
     }
@@ -1360,16 +1359,13 @@ _extractReplyValueOrThrow(
       final String returnTypeName = _makeGenericTypeArguments(returnType);
       final String castCall = _makeGenericCastCall(returnType);
 
+      final castedAccessor = returnType.baseName == 'Object'
+          ? accessor
+          : '$accessor as $returnTypeName';
       if (castCall.isEmpty) {
-        final castedAccessor = returnType.baseName == 'Object'
-            ? accessor
-            : '$accessor as $returnTypeName';
         indent.format('return $castedAccessor;');
       } else {
-        final nullablyTypedAccessor = returnType.baseName == 'Object'
-            ? accessor
-            : '($accessor as $returnTypeName)';
-        indent.format('return $nullablyTypedAccessor$castCall;');
+        indent.format('return ($castedAccessor)$castCall;');
       }
     }
 
