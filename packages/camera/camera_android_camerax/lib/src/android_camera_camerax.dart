@@ -305,6 +305,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The configured format of outputted images from image streaming.
   int? _imageAnalysisOutputImageFormat;
 
+  // Platform view camera preview.
+  PreviewView? _previewView;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -387,6 +390,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
+    print(
+      'CAMILLE: CREATING CAMERA WITH LENS DIRECTION: ${cameraDescription.lensDirection}',
+    );
     enableRecordingAudio = mediaSettings?.enableAudio ?? false;
     final CameraPermissionsError? error = await systemServicesManager
         .requestCameraPermissions(enableRecordingAudio);
@@ -501,9 +507,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
-    final previewView = PreviewView();
-    await previewView.registerPreviewView();
-    final SurfaceProvider surfaceProvider = await previewView
+    if (_previewView == null) {
+      _previewView = PreviewView();
+      await _previewView!.registerPreviewView();
+    }
+
+    final SurfaceProvider surfaceProvider = await _previewView!
         .getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
     camera = await processCameraProvider!.bindToLifecycle(
@@ -545,7 +554,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
-    await preview?.releaseSurfaceProvider();
+    // await preview?.releaseSurfaceProvider();
+    await preview?.setSurfaceProvider(null);
     await liveCameraState?.removeObservers();
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();

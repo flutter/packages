@@ -433,7 +433,7 @@ abstract class Preview extends UseCase {
   /// `SurfaceProducer`.
   // int setSurfaceProvider(SystemServicesManager systemServicesManager);
 
-  void setSurfaceProvider(SurfaceProvider surfaceProvider);
+  void setSurfaceProvider(SurfaceProvider? surfaceProvider);
 
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.

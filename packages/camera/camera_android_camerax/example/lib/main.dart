@@ -628,16 +628,21 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
+    if (controller != null && controller!.value.isRecordingVideo) {
       return controller!.setDescription(cameraDescription);
-    } else {
-      return _initializeCameraController(cameraDescription);
     }
+    return _initializeCameraController(cameraDescription);
   }
 
   Future<void> _initializeCameraController(
     CameraDescription cameraDescription,
   ) async {
+    print(
+      'CAMILLE: EXAMPLE APP INITIALIZING CAMERA CONTROLLER WITH LENS DIRECTION: ${cameraDescription.lensDirection}',
+    );
+    print(
+      'CAMILLE: CONTROLLER VALUE: ${controller?.description.lensDirection}',
+    );
     final cameraController = CameraController(
       cameraDescription,
       mediaSettings: MediaSettings(
