@@ -207,6 +207,9 @@ abstract class CameraApi {
   ///
   /// This should be called only while video recording is active.
   void setDescriptionWhileRecording(String description);
+
+  /// Sets the JPEG compression quality for still image capture.
+  void setImageQuality(int quality);
 }
 
 /// Handles calls from native side to Dart that are not camera-specific.

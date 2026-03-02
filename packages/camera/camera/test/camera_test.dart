@@ -885,6 +885,86 @@ void main() {
       },
     );
 
+    test('setImageQuality() calls $CameraPlatform', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      await cameraController.setImageQuality(50);
+
+      verify(
+        CameraPlatform.instance.setImageQuality(
+          cameraController.cameraId,
+          50,
+        ),
+      ).called(1);
+    });
+
+    test(
+      'setImageQuality() throws $CameraException on $PlatformException',
+      () async {
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setImageQuality(
+            cameraController.cameraId,
+            50,
+          ),
+        ).thenThrow(
+          PlatformException(
+            code: 'TEST_ERROR',
+            message: 'This is a test error message',
+          ),
+        );
+
+        expect(
+          cameraController.setImageQuality(50),
+          throwsA(
+            isA<CameraException>().having(
+              (CameraException error) => error.description,
+              'TEST_ERROR',
+              'This is a test error message',
+            ),
+          ),
+        );
+      },
+    );
+
+    test('setImageQuality() throws ArgumentError for invalid values', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+      await cameraController.initialize();
+
+      expect(
+        () => cameraController.setImageQuality(0),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => cameraController.setImageQuality(101),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('setExposureMode() calls $CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -4152,6 +4232,12 @@ class MockCameraPlatform extends Mock
   ) async => super.noSuchMethod(
     Invocation.method(#setVideoStabilizationMode, <Object?>[cameraId, mode]),
   );
+
+  @override
+  Future<void> setImageQuality(int? cameraId, int? quality) async =>
+      super.noSuchMethod(
+        Invocation.method(#setImageQuality, <Object?>[cameraId, quality]),
+      );
 }
 
 class MockCameraDescription extends CameraDescription {

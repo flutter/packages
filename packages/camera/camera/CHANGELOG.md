@@ -1,3 +1,7 @@
+## 0.12.1
+
+* Adds `setImageQuality` for controlling JPEG compression quality.
+
 ## 0.12.0+1
 
 * Makes `Optional.of` constructor `const`.

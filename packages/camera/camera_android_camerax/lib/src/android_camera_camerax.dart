@@ -205,6 +205,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool captureOrientationLocked = false;
 
+  /// The target rotation set by [lockCaptureOrientation], if any.
+  ///
+  /// Used to preserve the locked rotation when recreating use cases (e.g.,
+  /// in [setImageQuality]).
+  @visibleForTesting
+  int? lockedCaptureOrientation;
+
   /// Whether or not the default rotation for [UseCase]s needs to be set
   /// manually because the capture orientation was previously locked.
   ///
@@ -588,6 +595,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int targetLockedRotation = _getRotationConstantFromDeviceOrientation(
       orientation,
     );
+    lockedCaptureOrientation = targetLockedRotation;
 
     // Update UseCases to use target device orientation.
     await imageCapture!.setTargetRotation(targetLockedRotation);
@@ -600,6 +608,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> unlockCaptureOrientation(int cameraId) async {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
+    lockedCaptureOrientation = null;
   }
 
   /// Sets the exposure point for automatically determining the exposure values for
@@ -1124,6 +1133,30 @@ class AndroidCameraCameraX extends CameraPlatform {
         await _enableTorchMode(true);
         torchEnabled = true;
     }
+  }
+
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// CameraX only supports setting JPEG quality via `ImageCapture.Builder`
+  /// at construction time, so this recreates the `ImageCapture` use case
+  /// with the requested quality. The next call to [takePicture] will bind
+  /// the new instance automatically.
+  @override
+  Future<void> setImageQuality(int cameraId, int quality) async {
+    // Unbind the current ImageCapture if it exists and is bound.
+    if (imageCapture != null) {
+      await _unbindUseCaseFromLifecycle(imageCapture!);
+    }
+
+    // Recreate ImageCapture with the requested JPEG quality.
+    // Preserve locked orientation if set, otherwise use default display rotation.
+    final int targetRotation = lockedCaptureOrientation ??
+        await deviceOrientationManager.getDefaultDisplayRotation();
+    imageCapture = ImageCapture(
+      resolutionSelector: _presetResolutionSelector,
+      targetRotation: targetRotation,
+      jpegQuality: quality,
+    );
   }
 
   /// Prepare the capture session for video recording.

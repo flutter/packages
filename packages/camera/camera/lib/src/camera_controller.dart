@@ -994,6 +994,24 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
   }
 
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// The [quality] must be between 1 (lowest) and 100 (highest).
+  Future<void> setImageQuality(int quality) async {
+    if (quality < 1 || quality > 100) {
+      throw ArgumentError.value(
+        quality,
+        'quality',
+        'Must be between 1 and 100.',
+      );
+    }
+    try {
+      await CameraPlatform.instance.setImageQuality(_cameraId, quality);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
   /// Check whether the camera platform supports image streaming.
   bool supportsImageStreaming() =>
       CameraPlatform.instance.supportsImageStreaming();

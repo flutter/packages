@@ -347,4 +347,11 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
     throw UnimplementedError('setImageFileFormat() is not implemented.');
   }
+
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// The [quality] must be between 1 (lowest) and 100 (highest).
+  Future<void> setImageQuality(int cameraId, int quality) {
+    throw UnimplementedError('setImageQuality() is not implemented.');
+  }
 }
