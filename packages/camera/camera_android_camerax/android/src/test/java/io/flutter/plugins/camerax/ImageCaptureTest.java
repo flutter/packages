@@ -39,7 +39,7 @@ public class ImageCaptureTest {
     final long targetResolution = Surface.ROTATION_0;
     final ImageCapture imageCapture =
         api.pigeon_defaultConstructor(
-            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF);
+            mockResolutionSelector, targetResolution, CameraXFlashMode.OFF, null);
 
     assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
