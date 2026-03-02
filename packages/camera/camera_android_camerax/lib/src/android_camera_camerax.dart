@@ -422,7 +422,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
-    unawaited(processCameraProvider!.unbindAll());
+    await processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
     preview = Preview(
