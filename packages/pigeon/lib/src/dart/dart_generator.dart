@@ -417,7 +417,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       EnumeratedType customType,
       int nonSerializedClassCount,
     ) {
-      indent.writeln('case ${customType.offset(nonSerializedClassCount)}: ');
+      indent.writeln('case ${customType.offset(nonSerializedClassCount)}:');
       indent.nest(1, () {
         if (customType.type == CustomTypes.customClass) {
           if (customType.offset(nonSerializedClassCount) ==
@@ -774,9 +774,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
               ])
               ..body = cb.Block.of(
                 cb.Block((cb.BlockBuilder builder) {
-                  final messageHandlerSink = StringBuffer();
+                  final messageHandlerIndent = Indent();
                   writeFlutterMethodMessageHandler(
-                    Indent(messageHandlerSink),
+                    messageHandlerIndent,
                     name: 'removeStrongReferenceName',
                     parameters: <Parameter>[
                       Parameter(
@@ -805,7 +805,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                         },
                   );
                   builder.statements.add(
-                    cb.Code(messageHandlerSink.toString()),
+                    cb.Code(messageHandlerIndent.toString()),
                   );
                 }).statements,
               );
@@ -825,9 +825,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 ),
               )
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final messageCallSink = StringBuffer();
+                final messageCallIndent = Indent();
                 writeHostMethodMessageCall(
-                  Indent(messageCallSink),
+                  messageCallIndent,
                   addSuffixVariable: false,
                   channelName: makeRemoveStrongReferenceChannelName(
                     dartPackageName,
@@ -844,7 +844,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   returnType: const TypeDeclaration.voidDeclaration(),
                 );
                 builder.statements.addAll(<cb.Code>[
-                  cb.Code(messageCallSink.toString()),
+                  cb.Code(messageCallIndent.toString()),
                 ]);
               });
           }),
@@ -859,16 +859,16 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 '/// This is typically called after a hot restart.',
               ])
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final messageCallSink = StringBuffer();
+                final messageCallIndent = Indent();
                 writeHostMethodMessageCall(
-                  Indent(messageCallSink),
+                  messageCallIndent,
                   addSuffixVariable: false,
                   channelName: makeClearChannelName(dartPackageName),
                   parameters: <Parameter>[],
                   returnType: const TypeDeclaration.voidDeclaration(),
                 );
                 builder.statements.addAll(<cb.Code>[
-                  cb.Code(messageCallSink.toString()),
+                  cb.Code(messageCallIndent.toString()),
                 ]);
               });
           }),
@@ -1029,7 +1029,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
-    final indent = Indent(sink);
+    final indent = Indent();
     final String sourceOutPath = generatorOptions.dartOut ?? '';
     final String testOutPath = generatorOptions.testOut ?? '';
     _writeTestPrologue(generatorOptions, root, indent);
@@ -1079,6 +1079,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         );
       }
     }
+    sink.write(indent.toString());
   }
 
   /// Writes file header to sink.
@@ -1116,7 +1117,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
   }) {
     if (root.containsHostApi || root.containsProxyApi) {
-      _writeCreateConnectionError(indent);
+      _writeExtractReplyValueOrThrow(indent);
     }
     if (root.containsFlutterApi ||
         root.containsProxyApi ||
@@ -1173,15 +1174,38 @@ bool _deepEquals(Object? a, Object? b) {
 ''');
   }
 
-  void _writeCreateConnectionError(Indent indent) {
+  static void _writeExtractReplyValueOrThrow(Indent indent) {
     indent.newln();
     indent.format('''
-PlatformException _createConnectionError(String channelName) {
-\treturn PlatformException(
-\t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
-\t);
-}''');
+Object? _extractReplyValueOrThrow(
+\t\tList<Object?>? replyList,
+\t\tString channelName, {
+\t\trequired bool isNullValid,
+}) {
+\tif (replyList == null) {
+\t\tthrow PlatformException(
+\t\t\tcode: 'channel-error',
+\t\t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
+\t\t);
+\t} else if (replyList.length > 1) {
+\t\tthrow PlatformException(
+\t\t\tcode: replyList[0]! as String,
+\t\t\tmessage: replyList[1] as String?,
+\t\t\tdetails: replyList[2],
+\t\t);''');
+    // On iOS we can return nil from functions to accommodate error
+    // handling.  Returning a nil value and not returning an error is an
+    // exception.
+    indent.format('''
+\t} else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
+\t\tthrow PlatformException(
+\t\t\tcode: 'null-error',
+\t\t\tmessage: 'Host platform returned null value for non-null return value.',
+\t\t);
+\t}
+\treturn replyList.firstOrNull;
+}
+''');
   }
 
   void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
@@ -1298,22 +1322,6 @@ if (wrapped == null) {
         indent.writeln('binaryMessenger: ${varNamePrefix}binaryMessenger,');
       },
     );
-    final String returnTypeName = _makeGenericTypeArguments(returnType);
-    final String genericCastCall = _makeGenericCastCall(returnType);
-    const accessor = '${varNamePrefix}replyList[0]';
-    // Avoid warnings from pointlessly casting to `Object?`.
-    final nullablyTypedAccessor = returnTypeName == 'Object'
-        ? accessor
-        : '($accessor as $returnTypeName?)';
-    final nullHandler = returnType.isNullable
-        ? (genericCastCall.isEmpty ? '' : '?')
-        : '!';
-    var returnStatement = 'return';
-    if (!returnType.isVoid) {
-      returnStatement =
-          '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
-    }
-    returnStatement = '$returnStatement;';
 
     const sendFutureVar = '${varNamePrefix}sendFuture';
     indent.writeln(
@@ -1329,29 +1337,45 @@ if (wrapped == null) {
 
     indent.format('''
 final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
-if (${varNamePrefix}replyList == null) {
-\tthrow _createConnectionError(${varNamePrefix}channelName);
-} else if (${varNamePrefix}replyList.length > 1) {
-\tthrow PlatformException(
-\t\tcode: ${varNamePrefix}replyList[0]! as String,
-\t\tmessage: ${varNamePrefix}replyList[1] as String?,
-\t\tdetails: ${varNamePrefix}replyList[2],
-\t);''');
-    // On iOS we can return nil from functions to accommodate error
-    // handling.  Returning a nil value and not returning an error is an
-    // exception.
-    if (!returnType.isNullable && !returnType.isVoid) {
-      indent.format('''
-} else if (${varNamePrefix}replyList[0] == null) {
-\tthrow PlatformException(
-\t\tcode: 'null-error',
-\t\tmessage: 'Host platform returned null value for non-null return value.',
-\t);''');
+''');
+    final validateCall =
+        '''
+_extractReplyValueOrThrow(
+\t\t${varNamePrefix}replyList,
+\t\t${varNamePrefix}channelName,
+\t\tisNullValid: ${returnType.isNullable || returnType.isVoid},
+)
+''';
+    if (returnType.isVoid) {
+      indent.format('$validateCall;');
+    } else {
+      const accessor = '${varNamePrefix}replyValue';
+      if (returnType.isNullable) {
+        indent.format('final Object? $accessor = $validateCall;');
+      } else {
+        indent.format('final Object $accessor = $validateCall!;');
+      }
+      String returnTypeName = _makeGenericTypeArguments(returnType);
+      if (returnType.isNullable) {
+        returnTypeName = '$returnTypeName?';
+      }
+      final String genericCastCall = _makeGenericCastCall(returnType);
+
+      if (genericCastCall.isEmpty) {
+        final castedAccessor = returnType.baseName == 'Object'
+            ? accessor
+            : '$accessor as $returnTypeName';
+        indent.format('return $castedAccessor;');
+      } else {
+        final nullablyTypedAccessor = returnType.baseName == 'Object'
+            ? accessor
+            : '($accessor as $returnTypeName)';
+        final nullHandler = returnType.isNullable ? '?' : '';
+        indent.format(
+          'return $nullablyTypedAccessor$nullHandler$genericCastCall;',
+        );
+      }
     }
-    indent.format('''
-} else {
-\t$returnStatement
-}''');
 
     if (!insideAsyncMethod) {
       indent.dec();

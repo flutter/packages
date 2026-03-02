@@ -456,7 +456,6 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
-    expect(code, contains('return;'));
   });
 
   test('flutter void return', () {
@@ -1339,9 +1338,7 @@ void main() {
     expect(code, contains('Future<List<int?>> doit('));
     expect(
       code,
-      contains(
-        'return (pigeonVar_replyList[0] as List<Object?>?)!.cast<int?>();',
-      ),
+      contains('return (pigeonVar_replyValue as List<Object?>).cast<int?>();'),
     );
   });
 
@@ -1430,7 +1427,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (pigeonVar_replyList[0] as int?);'));
+    expect(code, contains('return pigeonVar_replyValue as int?;'));
   });
 
   test('return nullable collection host', () {
@@ -1470,7 +1467,7 @@ void main() {
     expect(
       code,
       contains(
-        'return (pigeonVar_replyList[0] as List<Object?>?)?.cast<int?>();',
+        'return (pigeonVar_replyValue as List<Object?>?)?.cast<int?>();',
       ),
     );
   });
@@ -1507,7 +1504,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (pigeonVar_replyList[0] as int?);'));
+    expect(code, contains('return pigeonVar_replyValue as int?;'));
   });
 
   test('return nullable flutter', () {
@@ -1599,6 +1596,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsHostApi: true,
     );
     final sink = StringBuffer();
     const generator = DartGenerator();
@@ -2007,10 +2005,6 @@ name: foobar
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(
-      code,
-      contains('throw _createConnectionError(pigeonVar_channelName);'),
-    );
     expect(
       code,
       contains(

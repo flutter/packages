@@ -500,8 +500,7 @@ void main() {
   });
 
   test('Indent.format trims indentation', () {
-    final buffer = StringBuffer();
-    final indent = Indent(buffer);
+    final indent = Indent();
 
     indent.format('''
       void myMethod() {
@@ -509,7 +508,7 @@ void main() {
         print('hello');
       }''');
 
-    expect(buffer.toString(), '''
+    expect(indent.toString(), '''
 void myMethod() {
 
   print('hello');
