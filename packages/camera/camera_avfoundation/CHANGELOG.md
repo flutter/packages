@@ -1,3 +1,7 @@
+## 0.10.1
+
+* Adds `setImageQuality` for controlling JPEG compression quality.
+
 ## 0.10.0+3
 
 * Switches to type-safe Pigeon code for image streaming.

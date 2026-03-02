@@ -121,6 +121,7 @@ final class DefaultCamera: NSObject, Camera {
   private var maxStreamingPendingFramesCount = 4
 
   private var fileFormat = PlatformImageFileFormat.jpeg
+  private var imageQuality: Int64 = 100
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -723,6 +724,7 @@ final class DefaultCamera: NSObject, Camera {
     let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
+      imageQuality: fileExtension == "jpg" && imageQuality < 100 ? imageQuality : nil,
       completionHandler: { [weak self] path, error in
         guard let strongSelf = self else { return }
 
@@ -824,6 +826,10 @@ final class DefaultCamera: NSObject, Camera {
 
   func setImageFileFormat(_ fileFormat: PlatformImageFileFormat) {
     self.fileFormat = fileFormat
+  }
+
+  func setImageQuality(_ quality: Int64) {
+    self.imageQuality = quality
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

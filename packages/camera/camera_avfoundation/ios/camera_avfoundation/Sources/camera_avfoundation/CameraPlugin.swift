@@ -555,4 +555,13 @@ extension CameraPlugin: CameraApi {
       completion(.success(()))
     }
   }
+
+  func setImageQuality(
+    quality: Int64, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.camera?.setImageQuality(quality)
+      completion(.success(()))
+    }
+  }
 }

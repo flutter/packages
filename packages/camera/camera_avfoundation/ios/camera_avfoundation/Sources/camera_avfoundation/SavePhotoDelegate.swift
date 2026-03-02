@@ -5,6 +5,8 @@
 import AVFoundation
 import Flutter
 import Foundation
+import ImageIO
+import UIKit
 
 /// The completion handler block for save photo operations.
 /// Can be called from either main queue or IO queue.
@@ -22,6 +24,9 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
   /// The queue on which captured photos are written to disk.
   private let ioQueue: DispatchQueue
 
+  /// The JPEG compression quality (1-100), or nil for default quality.
+  private let imageQuality: Int64?
+
   /// The completion handler block for capture and save photo operations.
   let completionHandler: SavePhotoDelegateCompletionHandler
 
@@ -34,15 +39,19 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
   /// Initialize a photo capture delegate.
   /// path - the path for captured photo file.
   /// ioQueue - the queue on which captured photos are written to disk.
+  /// imageQuality - optional JPEG compression quality (1-100). When nil or 100,
+  ///   the original photo data is used without re-encoding.
   /// completionHandler - The completion handler block for save photo operations. Can
   /// be called from either main queue or IO queue.
   init(
     path: String,
     ioQueue: DispatchQueue,
+    imageQuality: Int64? = nil,
     completionHandler: @escaping SavePhotoDelegateCompletionHandler
   ) {
     self.path = path
     self.ioQueue = ioQueue
+    self.imageQuality = imageQuality
     self.completionHandler = completionHandler
     super.init()
   }
@@ -78,8 +87,49 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
     didFinishProcessingPhoto photo: AVCapturePhoto,
     error: Error?
   ) {
-    handlePhotoCaptureResult(error: error) {
-      photo.fileDataRepresentation()
+    handlePhotoCaptureResult(error: error) { [weak self] in
+      guard let quality = self?.imageQuality, quality < 100 else {
+        return photo.fileDataRepresentation()
+      }
+      guard let originalData = photo.fileDataRepresentation() else {
+        return nil
+      }
+      return Self.reencodeJPEG(data: originalData, quality: quality)
     }
+  }
+
+  /// Re-encodes JPEG data at the given quality (1-99) while preserving EXIF metadata.
+  static func reencodeJPEG(data: Data, quality: Int64) -> Data? {
+    guard
+      let source = CGImageSourceCreateWithData(data as CFData, nil),
+      let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
+    else {
+      return data
+    }
+
+    let metadata =
+      CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
+
+    let mutableData = NSMutableData()
+    guard
+      let destination = CGImageDestinationCreateWithData(
+        mutableData as CFMutableData,
+        "public.jpeg" as CFString,
+        1,
+        nil)
+    else {
+      return data
+    }
+
+    var properties = metadata
+    properties[kCGImageDestinationLossyCompressionQuality] = CGFloat(quality) / 100.0
+
+    CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
+
+    guard CGImageDestinationFinalize(destination) else {
+      return data
+    }
+
+    return mutableData as Data
   }
 }

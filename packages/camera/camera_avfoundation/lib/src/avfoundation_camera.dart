@@ -443,6 +443,11 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<void> setImageQuality(int cameraId, int quality) async {
+    await _hostApi.setImageQuality(quality);
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
   }
