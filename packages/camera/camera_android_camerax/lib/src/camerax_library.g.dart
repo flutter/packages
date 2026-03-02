@@ -3476,7 +3476,7 @@ class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  Future<void> setSurfaceProvider(SurfaceProvider surfaceProvider) async {
+  Future<void> setSurfaceProvider(SurfaceProvider? surfaceProvider) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecPreview;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;

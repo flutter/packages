@@ -3051,7 +3051,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
    * 3. Returns the texture id of the `TextureEntry` that provided the
    * `SurfaceProducer`.
    */
-  abstract fun setSurfaceProvider(pigeon_instance: androidx.camera.core.Preview, surfaceProvider: androidx.camera.core.Preview.SurfaceProvider)
+  abstract fun setSurfaceProvider(pigeon_instance: androidx.camera.core.Preview, surfaceProvider: androidx.camera.core.Preview.SurfaceProvider?)
 
   /**
    * Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
@@ -3102,7 +3102,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.Preview
-            val surfaceProviderArg = args[1] as androidx.camera.core.Preview.SurfaceProvider
+            val surfaceProviderArg = args[1] as androidx.camera.core.Preview.SurfaceProvider?
             val wrapped: List<Any?> = try {
               api.setSurfaceProvider(pigeon_instanceArg, surfaceProviderArg)
               listOf(null)
