@@ -1,9 +1,15 @@
-## 26.1.10
+## 26.1.11
 
 * [dart] Ignores all lint rules in generated code.
 * [dart] In generated code, imports the meta package for annotations, instead of
   the Flutter foundation library.
 * [dart] In generated code, no longer imports Uint8List.
+
+## 26.1.10
+
+* Dramatically reduces the number of File write operations sent to the operating
+  system during code-generation. This improves performance of IDEs and the Dart
+  analysis server.
 
 ## 26.1.9
 

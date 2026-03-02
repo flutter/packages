@@ -773,9 +773,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
               ])
               ..body = cb.Block.of(
                 cb.Block((cb.BlockBuilder builder) {
-                  final messageHandlerSink = StringBuffer();
+                  final messageHandlerIndent = Indent();
                   writeFlutterMethodMessageHandler(
-                    Indent(messageHandlerSink),
+                    messageHandlerIndent,
                     name: 'removeStrongReferenceName',
                     parameters: <Parameter>[
                       Parameter(
@@ -804,7 +804,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                         },
                   );
                   builder.statements.add(
-                    cb.Code(messageHandlerSink.toString()),
+                    cb.Code(messageHandlerIndent.toString()),
                   );
                 }).statements,
               );
@@ -824,9 +824,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 ),
               )
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final messageCallSink = StringBuffer();
+                final messageCallIndent = Indent();
                 writeHostMethodMessageCall(
-                  Indent(messageCallSink),
+                  messageCallIndent,
                   addSuffixVariable: false,
                   channelName: makeRemoveStrongReferenceChannelName(
                     dartPackageName,
@@ -843,7 +843,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   returnType: const TypeDeclaration.voidDeclaration(),
                 );
                 builder.statements.addAll(<cb.Code>[
-                  cb.Code(messageCallSink.toString()),
+                  cb.Code(messageCallIndent.toString()),
                 ]);
               });
           }),
@@ -858,16 +858,16 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 '/// This is typically called after a hot restart.',
               ])
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final messageCallSink = StringBuffer();
+                final messageCallIndent = Indent();
                 writeHostMethodMessageCall(
-                  Indent(messageCallSink),
+                  messageCallIndent,
                   addSuffixVariable: false,
                   channelName: makeClearChannelName(dartPackageName),
                   parameters: <Parameter>[],
                   returnType: const TypeDeclaration.voidDeclaration(),
                 );
                 builder.statements.addAll(<cb.Code>[
-                  cb.Code(messageCallSink.toString()),
+                  cb.Code(messageCallIndent.toString()),
                 ]);
               });
           }),
@@ -1028,7 +1028,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
-    final indent = Indent(sink);
+    final indent = Indent();
     final String sourceOutPath = generatorOptions.dartOut ?? '';
     final String testOutPath = generatorOptions.testOut ?? '';
     _writeTestPrologue(generatorOptions, root, indent);
@@ -1078,6 +1078,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         );
       }
     }
+    sink.write(indent.toString());
   }
 
   /// Writes file header to sink.
