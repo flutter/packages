@@ -1599,6 +1599,25 @@ void main() {
         shouldPlayInBackground: false,
       );
     });
+
+    test('androidOptions are forwarded during player creation', () async {
+      const androidOptions = VideoPlayerAndroidOptions(
+        enableDecoderFallback: true,
+        disableMediaCodecAsyncQueueing: true,
+      );
+      final controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(androidOptions: androidOptions),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      expect(
+        fakeVideoPlayerPlatform.creationOptions.single.androidOptions,
+        androidOptions,
+      );
+    });
   });
 
   test('VideoProgressColors', () {
@@ -1723,6 +1742,7 @@ void main() {
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
   List<String> calls = <String>[];
+  List<VideoCreationOptions> creationOptions = <VideoCreationOptions>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams =
@@ -1761,6 +1781,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     calls.add('createWithOptions');
+    creationOptions.add(options);
     final stream = StreamController<VideoEvent>();
     streams[nextPlayerId] = stream;
     if (forceInitError) {

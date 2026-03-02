@@ -300,7 +300,9 @@ data class CreationOptions(
     val uri: String,
     val formatHint: PlatformVideoFormat? = null,
     val httpHeaders: Map<String, String>,
-    val userAgent: String? = null
+    val userAgent: String? = null,
+    val enableDecoderFallback: Boolean,
+    val disableMediaCodecAsyncQueueing: Boolean
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CreationOptions {
@@ -308,7 +310,15 @@ data class CreationOptions(
       val formatHint = pigeonVar_list[1] as PlatformVideoFormat?
       val httpHeaders = pigeonVar_list[2] as Map<String, String>
       val userAgent = pigeonVar_list[3] as String?
-      return CreationOptions(uri, formatHint, httpHeaders, userAgent)
+      val enableDecoderFallback = pigeonVar_list[4] as Boolean
+      val disableMediaCodecAsyncQueueing = pigeonVar_list[5] as Boolean
+      return CreationOptions(
+          uri,
+          formatHint,
+          httpHeaders,
+          userAgent,
+          enableDecoderFallback,
+          disableMediaCodecAsyncQueueing)
     }
   }
 
@@ -318,6 +328,8 @@ data class CreationOptions(
         formatHint,
         httpHeaders,
         userAgent,
+        enableDecoderFallback,
+        disableMediaCodecAsyncQueueing,
     )
   }
 

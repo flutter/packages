@@ -7,8 +7,10 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
@@ -18,6 +20,7 @@ import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
@@ -86,6 +89,24 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @NonNull
   protected abstract ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
+
+  @UnstableApi
+  protected static DefaultRenderersFactory createRenderersFactory(
+      @NonNull Context context, @NonNull VideoPlayerOptions options) {
+    final DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context);
+    configureRenderersFactory(renderersFactory, options);
+    return renderersFactory;
+  }
+
+  @VisibleForTesting
+  @UnstableApi
+  static void configureRenderersFactory(
+      @NonNull DefaultRenderersFactory renderersFactory, @NonNull VideoPlayerOptions options) {
+    renderersFactory.setEnableDecoderFallback(options.enableDecoderFallback);
+    if (options.disableMediaCodecAsyncQueueing) {
+      renderersFactory.forceDisableMediaCodecAsynchronousQueueing();
+    }
+  }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
     exoPlayer.setAudioAttributes(

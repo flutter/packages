@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds `VideoPlayerAndroidOptions` to configure Android renderer settings during player creation.
+
 ## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.

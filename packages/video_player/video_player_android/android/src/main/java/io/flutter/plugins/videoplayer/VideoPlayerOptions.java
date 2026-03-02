@@ -6,4 +6,6 @@ package io.flutter.plugins.videoplayer;
 
 public class VideoPlayerOptions {
   public boolean mixWithOthers;
+  public boolean enableDecoderFallback;
+  public boolean disableMediaCodecAsyncQueueing;
 }
