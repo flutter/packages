@@ -14,11 +14,9 @@ Since Espresso uses cleartext traffic via a websocket to coordinate
 testing, cleartext traffic will need to be enabled for testing. Please
 only do this for testing (in debug or androidTest).
 
-Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ```<application>``` in the AndroidManifest.xml
-of the Android app used for testing. 
+Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ```<application>``` in the AndroidManifest.xml of the Android app used for testing.
 
-Then you will need to create a `network_security_config.xml` in the
-`res/xml/` directory.  
+Then you will need to create a `network_security_config.xml` in the `res/xml/` directory.  
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
