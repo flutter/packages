@@ -34,6 +34,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -48,7 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 /// This comment is to test enum documentation comments.
@@ -100,7 +101,7 @@ class DataWithEnum {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => state.hashCode;
+  int get hashCode => Object.hash(runtimeType, state);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

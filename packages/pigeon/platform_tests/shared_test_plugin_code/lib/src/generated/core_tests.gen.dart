@@ -34,6 +34,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -48,7 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 enum AnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
@@ -87,7 +88,7 @@ class UnusedClass {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => aField.hashCode;
+  int get hashCode => Object.hash(runtimeType, aField);
 }
 
 /// A class containing all supported types.
@@ -293,7 +294,7 @@ class AllTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[runtimeType, ..._toList()]);
 }
 
 /// A class containing all supported nullable types.
@@ -521,7 +522,7 @@ class AllNullableTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[runtimeType, ..._toList()]);
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -732,7 +733,7 @@ class AllNullableTypesWithoutRecursion {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[runtimeType, ..._toList()]);
 }
 
 /// A class for testing nested class handling.
@@ -821,6 +822,7 @@ class AllClassesWrapper {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hash(
+    runtimeType,
     allNullableTypes,
     allNullableTypesWithoutRecursion,
     allTypes,
@@ -864,7 +866,7 @@ class TestMessage {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => testList.hashCode;
+  int get hashCode => Object.hash(runtimeType, testList);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

@@ -34,6 +34,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -48,7 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 enum ReplyType { success, error }
@@ -86,7 +87,7 @@ class NonNullFieldSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => query.hashCode;
+  int get hashCode => Object.hash(runtimeType, query);
 }
 
 class ExtraData {
@@ -127,7 +128,7 @@ class ExtraData {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(detailA, detailB);
+  int get hashCode => Object.hash(runtimeType, detailA, detailB);
 }
 
 class NonNullFieldSearchReply {
@@ -186,7 +187,8 @@ class NonNullFieldSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(result, error, indices, extraData, type);
+  int get hashCode =>
+      Object.hash(runtimeType, result, error, indices, extraData, type);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

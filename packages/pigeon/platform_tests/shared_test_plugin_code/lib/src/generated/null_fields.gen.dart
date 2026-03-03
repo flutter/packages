@@ -34,6 +34,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -48,7 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 enum NullFieldsSearchReplyType { success, failure }
@@ -91,7 +92,7 @@ class NullFieldsSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(query, identifier);
+  int get hashCode => Object.hash(runtimeType, query, identifier);
 }
 
 class NullFieldsSearchReply {
@@ -150,7 +151,8 @@ class NullFieldsSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(result, error, indices, request, type);
+  int get hashCode =>
+      Object.hash(runtimeType, result, error, indices, request, type);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

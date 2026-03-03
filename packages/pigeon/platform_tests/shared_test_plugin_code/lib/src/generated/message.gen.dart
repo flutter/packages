@@ -34,6 +34,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -48,7 +49,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 /// This comment is to test enum documentation comments.
@@ -108,7 +109,7 @@ class MessageSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(query, anInt, aBool);
+  int get hashCode => Object.hash(runtimeType, query, anInt, aBool);
 }
 
 /// This comment is to test class documentation comments.
@@ -159,7 +160,7 @@ class MessageSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(result, error, state);
+  int get hashCode => Object.hash(runtimeType, result, error, state);
 }
 
 /// This comment is to test class documentation comments.
@@ -196,7 +197,7 @@ class MessageNested {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => request.hashCode;
+  int get hashCode => Object.hash(runtimeType, request);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

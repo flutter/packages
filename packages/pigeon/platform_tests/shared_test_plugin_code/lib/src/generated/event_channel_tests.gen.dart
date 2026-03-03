@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -27,7 +28,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 enum EventEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
@@ -260,7 +261,7 @@ class EventAllNullableTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => Object.hashAll(<Object?>[runtimeType, ..._toList()]);
 }
 
 sealed class PlatformEvent {}
@@ -297,7 +298,7 @@ class IntEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class StringEvent extends PlatformEvent {
@@ -332,7 +333,7 @@ class StringEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class BoolEvent extends PlatformEvent {
@@ -367,7 +368,7 @@ class BoolEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -402,7 +403,7 @@ class DoubleEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -437,7 +438,7 @@ class ObjectsEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class EnumEvent extends PlatformEvent {
@@ -472,7 +473,7 @@ class EnumEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class ClassEvent extends PlatformEvent {
@@ -507,7 +508,7 @@ class ClassEvent extends PlatformEvent {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => value.hashCode;
+  int get hashCode => Object.hash(runtimeType, value);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

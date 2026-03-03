@@ -20,6 +20,7 @@ PlatformException _createConnectionError(String channelName) {
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -34,7 +35,7 @@ bool _deepEquals(Object? a, Object? b) {
               _deepEquals(entry.value, b[entry.key]),
         );
   }
-  return a == b;
+  return false;
 }
 
 class FlutterSearchRequest {
@@ -69,7 +70,7 @@ class FlutterSearchRequest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => query.hashCode;
+  int get hashCode => Object.hash(runtimeType, query);
 }
 
 class FlutterSearchReply {
@@ -109,7 +110,7 @@ class FlutterSearchReply {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(result, error);
+  int get hashCode => Object.hash(runtimeType, result, error);
 }
 
 class FlutterSearchRequests {
@@ -144,7 +145,7 @@ class FlutterSearchRequests {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => requests.hashCode;
+  int get hashCode => Object.hash(runtimeType, requests);
 }
 
 class FlutterSearchReplies {
@@ -179,7 +180,7 @@ class FlutterSearchReplies {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => replies.hashCode;
+  int get hashCode => Object.hash(runtimeType, replies);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

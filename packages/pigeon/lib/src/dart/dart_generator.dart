@@ -1177,6 +1177,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   void _writeDeepEquals(Indent indent) {
     indent.format(r'''
 bool _deepEquals(Object? a, Object? b) {
+  if (a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
@@ -1187,7 +1188,7 @@ bool _deepEquals(Object? a, Object? b) {
         (b as Map<Object?, Object?>).containsKey(entry.key) &&
         _deepEquals(entry.value, b[entry.key]));
   }
-  return a == b;
+  return false;
 }
 ''');
   }
