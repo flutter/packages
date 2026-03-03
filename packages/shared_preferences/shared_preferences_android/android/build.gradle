@@ -51,7 +51,7 @@ android {
 
     defaultConfig {
         minSdkVersion 24
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     lint {
         checkAllWarnings = true
