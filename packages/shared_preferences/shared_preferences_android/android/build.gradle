@@ -53,12 +53,14 @@ android {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
         baseline = file("lint-baseline.xml")
     }
+
     dependencies {
         implementation("androidx.datastore:datastore:1.1.7")
         implementation("androidx.datastore:datastore-preferences:1.1.7")
@@ -70,7 +72,6 @@ android {
         testImplementation("org.mockito:mockito-inline:5.2.0")
         testImplementation("io.mockk:mockk:1.14.9")
     }
-
 
     testOptions {
         unitTests.includeAndroidResources = true

@@ -29,11 +29,13 @@ android {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
+
     dependencies {
         implementation("androidx.core:core:1.17.0")
         implementation("androidx.annotation:annotation:1.9.1")

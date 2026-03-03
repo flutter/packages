@@ -41,7 +41,6 @@ android {
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
-
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true

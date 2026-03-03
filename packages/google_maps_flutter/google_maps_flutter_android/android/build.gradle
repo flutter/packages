@@ -29,6 +29,7 @@ android {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lint {
         checkAllWarnings = true
         warningsAsErrors = true
