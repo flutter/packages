@@ -20,7 +20,7 @@ PlatformException _createConnectionError(String channelName) {
 }
 
 bool _deepEquals(Object? a, Object? b) {
-  if (a == b) return true;
+  if (identical(a, b) || a == b) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
