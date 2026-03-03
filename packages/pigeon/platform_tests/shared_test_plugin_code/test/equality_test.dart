@@ -26,9 +26,6 @@ void main() {
       map: map,
     );
 
-    print('all1 == all2: ${all1 == all2}');
-    print('all1.hashCode: ${all1.hashCode}');
-    print('all2.hashCode: ${all2.hashCode}');
     expect(all1, all2);
     expect(all1.hashCode, all2.hashCode);
   });

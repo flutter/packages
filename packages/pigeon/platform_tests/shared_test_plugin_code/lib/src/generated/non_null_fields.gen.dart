@@ -52,8 +52,12 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
-  if (identical(a, b) || a == b) return true;
-  if (a is double && b is double && a.isNaN && b.isNaN) return true;
+  if (identical(a, b) || a == b) {
+    return true;
+  }
+  if (a is double && b is double && a.isNaN && b.isNaN) {
+    return true;
+  }
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(

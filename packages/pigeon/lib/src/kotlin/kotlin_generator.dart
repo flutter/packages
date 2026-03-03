@@ -356,7 +356,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       );
       final String utils = _getUtilsClassName(generatorOptions);
       indent.writeln('var result = javaClass.hashCode()');
-      for (final NamedType field in fields) {
+      for (final field in fields) {
         indent.writeln(
           'result = 31 * result + $utils.deepHash(this.${field.name})',
         );
