@@ -15,13 +15,7 @@ testing, cleartext traffic will need to be enabled for testing. Please
 only do this for testing (in debug or androidTest).
 
 Add ```android:networkSecurityConfig="@xml/network_security_config"``` in the ```<application>``` in the AndroidManifest.xml
-of the Android app used for testing. Also add the meta-data tag in the ```<application>``` that
-will notify Flutter of the network configuration:
-
-```xml
-<meta-data android:name="io.flutter.network-policy"
-    android:resource="@xml/network_security_config"/>
-```
+of the Android app used for testing. 
 
 Then you will need to create a `network_security_config.xml` in the
 `res/xml/` directory.  
