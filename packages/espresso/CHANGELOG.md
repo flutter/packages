@@ -1,6 +1,6 @@
 ## 0.4.0+23
 
-* Updates README to remove instructions to use network metadata tag.
+* Removed the unused `io.flutter.network-policy` metadata tag from the README and example application.
 
 ## 0.4.0+22
 
