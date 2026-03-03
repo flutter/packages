@@ -327,6 +327,31 @@ class GObjectHeaderGenerator
         '$returnType ${methodPrefix}_get_$fieldName(${getterArgs.join(', ')});',
       );
     }
+
+    indent.newln();
+    addDocumentationComments(indent, <String>[
+      '${methodPrefix}_equals:',
+      '@a: a #$className.',
+      '@b: another #$className.',
+      '',
+      'Checks if two #$className objects are equal.',
+      '',
+      'Returns: TRUE if @a and @b are equal.',
+    ], _docCommentSpec);
+    indent.writeln(
+      'gboolean ${methodPrefix}_equals($className* a, $className* b);',
+    );
+
+    indent.newln();
+    addDocumentationComments(indent, <String>[
+      '${methodPrefix}_hash:',
+      '@object: a #$className.',
+      '',
+      'Calculates a hash code for a #$className object.',
+      '',
+      'Returns: the hash code.',
+    ], _docCommentSpec);
+    indent.writeln('guint ${methodPrefix}_hash($className* object);');
   }
 
   @override
@@ -818,7 +843,13 @@ class GObjectSourceGenerator
     required String dartPackageName,
   }) {
     indent.newln();
+    indent.writeln('#include <cmath>');
+    indent.writeln('#include <string.h>');
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
+
+    _writeHashHelpers(indent);
+    _writeDeepEquals(indent);
+    _writeDeepHash(indent);
   }
 
   @override
@@ -1039,6 +1070,234 @@ class GObjectSourceGenerator
         indent.writeln('return ${methodPrefix}_new(${args.join(', ')});');
       },
     );
+
+    _writeClassEquality(
+      generatorOptions,
+      root,
+      indent,
+      classDefinition,
+      dartPackageName: dartPackageName,
+    );
+  }
+
+  void _writeClassEquality(
+    InternalGObjectOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    final String module = _getModule(generatorOptions, dartPackageName);
+    final String snakeModule = _snakeCaseFromCamelCase(module);
+    final String className = _getClassName(module, classDefinition.name);
+    final String snakeClassName = _snakeCaseFromCamelCase(classDefinition.name);
+
+    final String methodPrefix = _getMethodPrefix(module, classDefinition.name);
+    final String testMacro = '${snakeModule}_IS_$snakeClassName'.toUpperCase();
+
+    indent.newln();
+    indent.writeScoped('gboolean ${methodPrefix}_equals($className* a, $className* b) {', '}', () {
+      indent.writeln('if (a == b) return TRUE;');
+      indent.writeln('if (a == nullptr || b == nullptr) return FALSE;');
+      for (final NamedType field in classDefinition.fields) {
+        final String fieldName = _getFieldName(field.name);
+        if (field.type.isClass) {
+          final String fieldMethodPrefix = _getMethodPrefix(
+            module,
+            field.type.baseName,
+          );
+          indent.writeScoped(
+            'if (!${fieldMethodPrefix}_equals(a->$fieldName, b->$fieldName)) {',
+            '}',
+            () {
+              indent.writeln('return FALSE;');
+            },
+          );
+        } else if (field.type.isEnum) {
+          if (field.type.isNullable) {
+            indent.writeScoped(
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
+              '',
+              () {},
+            );
+            indent.writeScoped(
+              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) return FALSE;',
+              '',
+              () {},
+            );
+          } else {
+            indent.writeScoped(
+              'if (a->$fieldName != b->$fieldName) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
+            );
+          }
+        } else if (_isNumericListType(field.type)) {
+          indent.writeScoped('if (a->$fieldName != b->$fieldName) {', '}', () {
+            indent.writeln(
+              'if (a->$fieldName == nullptr || b->$fieldName == nullptr) return FALSE;',
+            );
+            indent.writeln(
+              'if (a->${fieldName}_length != b->${fieldName}_length) return FALSE;',
+            );
+            final elementSize = field.type.baseName == 'Uint8List'
+                ? 'sizeof(uint8_t)'
+                : field.type.baseName == 'Int32List'
+                ? 'sizeof(int32_t)'
+                : field.type.baseName == 'Int64List'
+                ? 'sizeof(int64_t)'
+                : field.type.baseName == 'Float32List'
+                ? 'sizeof(float)'
+                : 'sizeof(double)';
+            indent.writeln(
+              'if (memcmp(a->$fieldName, b->$fieldName, a->${fieldName}_length * $elementSize) != 0) return FALSE;',
+            );
+          });
+        } else if (field.type.baseName == 'bool' ||
+            field.type.baseName == 'int') {
+          if (field.type.isNullable) {
+            indent.writeScoped(
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
+              '',
+              () {},
+            );
+            indent.writeScoped(
+              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) return FALSE;',
+              '',
+              () {},
+            );
+          } else {
+            indent.writeScoped(
+              'if (a->$fieldName != b->$fieldName) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
+            );
+          }
+        } else if (field.type.baseName == 'double') {
+          if (field.type.isNullable) {
+            indent.writeScoped(
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
+              '',
+              () {},
+            );
+            indent.writeScoped(
+              'if (a->$fieldName != nullptr && !(*a->$fieldName == *b->$fieldName || (std::isnan(*a->$fieldName) && std::isnan(*b->$fieldName)))) return FALSE;',
+              '',
+              () {},
+            );
+          } else {
+            indent.writeScoped(
+              'if (!(a->$fieldName == b->$fieldName || (std::isnan(a->$fieldName) && std::isnan(b->$fieldName)))) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
+            );
+          }
+        } else if (field.type.baseName == 'String') {
+          indent.writeScoped(
+            'if (g_strcmp0(a->$fieldName, b->$fieldName) != 0) {',
+            '}',
+            () {
+              indent.writeln('return FALSE;');
+            },
+          );
+        } else {
+          indent.writeScoped(
+            'if (!flpigeon_deep_equals(a->$fieldName, b->$fieldName)) {',
+            '}',
+            () {
+              indent.writeln('return FALSE;');
+            },
+          );
+        }
+      }
+      indent.writeln('return TRUE;');
+    });
+
+    indent.newln();
+    indent.writeScoped('guint ${methodPrefix}_hash($className* self) {', '}', () {
+      indent.writeln('g_return_val_if_fail($testMacro(self), 0);');
+      indent.writeln('guint result = 0;');
+      for (final NamedType field in classDefinition.fields) {
+        final String fieldName = _getFieldName(field.name);
+        if (field.type.isClass) {
+          final String fieldMethodPrefix = _getMethodPrefix(
+            module,
+            field.type.baseName,
+          );
+          indent.writeln(
+            'result = result * 31 + ${fieldMethodPrefix}_hash(self->$fieldName);',
+          );
+        } else if (field.type.isEnum) {
+          if (field.type.isNullable) {
+            indent.writeln(
+              'result = result * 31 + (self->$fieldName != nullptr ? (guint)*self->$fieldName : 0);',
+            );
+          } else {
+            indent.writeln('result = result * 31 + (guint)self->$fieldName;');
+          }
+        } else if (_isNumericListType(field.type)) {
+          indent.writeScoped('{', '}', () {
+            indent.writeln('size_t len = self->${fieldName}_length;');
+            final String elementTypeName = _getType(
+              module,
+              field.type,
+              primitive: true,
+            );
+            indent.writeln('const $elementTypeName* data = self->$fieldName;');
+            indent.writeScoped('if (data != nullptr) {', '}', () {
+              indent.writeScoped('for (size_t i = 0; i < len; i++) {', '}', () {
+                if (field.type.baseName == 'Int64List') {
+                  indent.writeln(
+                    'result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));',
+                  );
+                } else if (field.type.baseName == 'Float32List' ||
+                    field.type.baseName == 'Float64List') {
+                  indent.writeln(
+                    'result = result * 31 + flpigeon_hash_double(data[i]);',
+                  );
+                } else {
+                  indent.writeln('result = result * 31 + (guint)data[i];');
+                }
+              });
+            });
+          });
+        } else if (field.type.baseName == 'bool' ||
+            field.type.baseName == 'int') {
+          if (field.type.isNullable) {
+            indent.writeln(
+              'result = result * 31 + (self->$fieldName != nullptr ? (guint)*self->$fieldName : 0);',
+            );
+          } else {
+            indent.writeln('result = result * 31 + (guint)self->$fieldName;');
+          }
+        } else if (field.type.baseName == 'double') {
+          if (field.type.isNullable) {
+            indent.writeln(
+              'result = result * 31 + (self->$fieldName != nullptr ? flpigeon_hash_double(*self->$fieldName) : 0);',
+            );
+          } else {
+            indent.writeln(
+              'result = result * 31 + flpigeon_hash_double(self->$fieldName);',
+            );
+          }
+        } else if (field.type.baseName == 'String') {
+          indent.writeln(
+            'result = result * 31 + (self->$fieldName != nullptr ? g_str_hash(self->$fieldName) : 0);',
+          );
+        } else {
+          indent.writeln(
+            'result = result * 31 + flpigeon_deep_hash(self->$fieldName);',
+          );
+        }
+      }
+      indent.writeln('return result;');
+    });
   }
 
   @override
@@ -2511,4 +2770,195 @@ String _getResponseName(String name, String methodName) {
   final String upperMethodName =
       methodName[0].toUpperCase() + methodName.substring(1);
   return '$name${upperMethodName}Response';
+}
+
+void _writeHashHelpers(Indent indent) {
+  indent.writeScoped('static guint flpigeon_hash_double(double v) {', '}', () {
+    indent.writeln('if (std::isnan(v)) return (guint)0x7FF80000;');
+    indent.writeln('union { double d; uint64_t u; } u;');
+    indent.writeln('u.d = v;');
+    indent.writeln('return (guint)(u.u ^ (u.u >> 32));');
+  });
+}
+
+void _writeDeepEquals(Indent indent) {
+  indent.writeScoped('static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {', '}', () {
+    indent.writeln('if (a == b) return TRUE;');
+    indent.writeln('if (a == nullptr || b == nullptr) return FALSE;');
+    indent.writeScoped(
+      'if (fl_value_get_type(a) != fl_value_get_type(b)) {',
+      '}',
+      () {
+        indent.writeln('return FALSE;');
+      },
+    );
+    indent.writeScoped('switch (fl_value_get_type(a)) {', '}', () {
+      indent.writeln('case FL_VALUE_TYPE_BOOL:');
+      indent.writeln('  return fl_value_get_bool(a) == fl_value_get_bool(b);');
+      indent.writeln('case FL_VALUE_TYPE_INT:');
+      indent.writeln('  return fl_value_get_int(a) == fl_value_get_int(b);');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT: {');
+      indent.writeln('  double va = fl_value_get_float(a);');
+      indent.writeln('  double vb = fl_value_get_float(b);');
+      indent.writeln(
+        '  return va == vb || (std::isnan(va) && std::isnan(vb));',
+      );
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_STRING:');
+      indent.writeln(
+        '  return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_UINT8_LIST:');
+      indent.writeln(
+        '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
+      );
+      indent.writeln(
+        '         memcmp(fl_value_get_uint8_list(a), fl_value_get_uint8_list(b), fl_value_get_length(a)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_INT32_LIST:');
+      indent.writeln(
+        '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
+      );
+      indent.writeln(
+        '         memcmp(fl_value_get_int32_list(a), fl_value_get_int32_list(b), fl_value_get_length(a) * sizeof(int32_t)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_INT64_LIST:');
+      indent.writeln(
+        '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
+      );
+      indent.writeln(
+        '         memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b), fl_value_get_length(a) * sizeof(int64_t)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST:');
+      indent.writeln(
+        '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
+      );
+      indent.writeln(
+        '         memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b), fl_value_get_length(a) * sizeof(float)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_DOUBLE_LIST:');
+      indent.writeln(
+        '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
+      );
+      indent.writeln(
+        '         memcmp(fl_value_get_double_list(a), fl_value_get_double_list(b), fl_value_get_length(a) * sizeof(double)) == 0;',
+      );
+      indent.writeln('case FL_VALUE_TYPE_LIST: {');
+      indent.writeln('  size_t len = fl_value_get_length(a);');
+      indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln(
+          'if (!flpigeon_deep_equals(fl_value_get_list_value(a, i), fl_value_get_list_value(b, i))) return FALSE;',
+        );
+      });
+      indent.writeln('  return TRUE;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_MAP: {');
+      indent.writeln('  size_t len = fl_value_get_length(a);');
+      indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln('FlValue* key = fl_value_get_map_key(a, i);');
+        indent.writeln('FlValue* val = fl_value_get_map_value(a, i);');
+        indent.writeln('FlValue* b_val = fl_value_lookup(b, key);');
+        indent.writeln(
+          'if (b_val == nullptr || !flpigeon_deep_equals(val, b_val)) return FALSE;',
+        );
+      });
+      indent.writeln('  return TRUE;');
+      indent.writeln('}');
+      indent.writeln('default:');
+      indent.writeln('  return FALSE;');
+    });
+    indent.writeln('return FALSE;');
+  });
+}
+
+void _writeDeepHash(Indent indent) {
+  indent.writeScoped('static guint flpigeon_deep_hash(FlValue* value) {', '}', () {
+    indent.writeln('if (value == nullptr) return 0;');
+    indent.writeScoped('switch (fl_value_get_type(value)) {', '}', () {
+      indent.writeln('case FL_VALUE_TYPE_BOOL:');
+      indent.writeln('  return fl_value_get_bool(value) ? 1231 : 1237;');
+      indent.writeln('case FL_VALUE_TYPE_INT: {');
+      indent.writeln('  int64_t v = fl_value_get_int(value);');
+      indent.writeln('  return (guint)(v ^ (v >> 32));');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT:');
+      indent.writeln(
+        '  return flpigeon_hash_double(fl_value_get_float(value));',
+      );
+      indent.writeln('case FL_VALUE_TYPE_STRING:');
+      indent.writeln('  return g_str_hash(fl_value_get_string(value));');
+      indent.writeln('case FL_VALUE_TYPE_UINT8_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeln('  const uint8_t* data = fl_value_get_uint8_list(value);');
+      indent.writeln(
+        '  for (size_t i = 0; i < len; i++) result = result * 31 + data[i];',
+      );
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_INT32_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeln('  const int32_t* data = fl_value_get_int32_list(value);');
+      indent.writeln(
+        '  for (size_t i = 0; i < len; i++) result = result * 31 + (guint)data[i];',
+      );
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_INT64_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeln('  const int64_t* data = fl_value_get_int64_list(value);');
+      indent.writeln(
+        '  for (size_t i = 0; i < len; i++) result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));',
+      );
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeln('  const float* data = fl_value_get_float_list(value);');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln(
+          'result = result * 31 + flpigeon_hash_double((double)data[i]);',
+        );
+      });
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_DOUBLE_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeln('  const double* data = fl_value_get_double_list(value);');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln('result = result * 31 + flpigeon_hash_double(data[i]);');
+      });
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_LIST: {');
+      indent.writeln('  guint result = 1;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln(
+          'result = result * 31 + flpigeon_deep_hash(fl_value_get_list_value(value, i));',
+        );
+      });
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('case FL_VALUE_TYPE_MAP: {');
+      indent.writeln('  guint result = 0;');
+      indent.writeln('  size_t len = fl_value_get_length(value);');
+      indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+        indent.writeln(
+          'result += (flpigeon_deep_hash(fl_value_get_map_key(value, i)) ^ flpigeon_deep_hash(fl_value_get_map_value(value, i)));',
+        );
+      });
+      indent.writeln('  return result;');
+      indent.writeln('}');
+      indent.writeln('default:');
+      indent.writeln('  return (guint)fl_value_get_type(value);');
+    });
+    indent.writeln('return 0;');
+  });
 }

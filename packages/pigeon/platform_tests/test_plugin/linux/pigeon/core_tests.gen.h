@@ -70,6 +70,29 @@ FlValue* core_tests_pigeon_test_unused_class_get_a_field(
     CoreTestsPigeonTestUnusedClass* object);
 
 /**
+ * core_tests_pigeon_test_unused_class_equals:
+ * @a: a #CoreTestsPigeonTestUnusedClass.
+ * @b: another #CoreTestsPigeonTestUnusedClass.
+ *
+ * Checks if two #CoreTestsPigeonTestUnusedClass objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_unused_class_equals(
+    CoreTestsPigeonTestUnusedClass* a, CoreTestsPigeonTestUnusedClass* b);
+
+/**
+ * core_tests_pigeon_test_unused_class_hash:
+ * @object: a #CoreTestsPigeonTestUnusedClass.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestUnusedClass object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_unused_class_hash(
+    CoreTestsPigeonTestUnusedClass* object);
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.
@@ -443,6 +466,29 @@ FlValue* core_tests_pigeon_test_all_types_get_list_map(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_types_get_map_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_equals:
+ * @a: a #CoreTestsPigeonTestAllTypes.
+ * @b: another #CoreTestsPigeonTestAllTypes.
+ *
+ * Checks if two #CoreTestsPigeonTestAllTypes objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_all_types_equals(
+    CoreTestsPigeonTestAllTypes* a, CoreTestsPigeonTestAllTypes* b);
+
+/**
+ * core_tests_pigeon_test_all_types_hash:
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAllTypes object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_all_types_hash(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -869,6 +915,30 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_recursive_class_map(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_equals:
+ * @a: a #CoreTestsPigeonTestAllNullableTypes.
+ * @b: another #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Checks if two #CoreTestsPigeonTestAllNullableTypes objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_all_nullable_types_equals(
+    CoreTestsPigeonTestAllNullableTypes* a,
+    CoreTestsPigeonTestAllNullableTypes* b);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_hash:
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAllNullableTypes object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_all_nullable_types_hash(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * CoreTestsPigeonTestAllNullableTypesWithoutRecursion:
  *
  * The primary purpose for this class is to ensure coverage of Swift structs
@@ -1280,6 +1350,32 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_map_map(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_equals:
+ * @a: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ * @b: another #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Checks if two #CoreTestsPigeonTestAllNullableTypesWithoutRecursion objects
+ * are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_all_nullable_types_without_recursion_equals(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* a,
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* b);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_hash:
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Calculates a hash code for a
+ * #CoreTestsPigeonTestAllNullableTypesWithoutRecursion object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
  * CoreTestsPigeonTestAllClassesWrapper:
  *
  * A class for testing nested class handling.
@@ -1397,6 +1493,30 @@ FlValue* core_tests_pigeon_test_all_classes_wrapper_get_nullable_class_map(
     CoreTestsPigeonTestAllClassesWrapper* object);
 
 /**
+ * core_tests_pigeon_test_all_classes_wrapper_equals:
+ * @a: a #CoreTestsPigeonTestAllClassesWrapper.
+ * @b: another #CoreTestsPigeonTestAllClassesWrapper.
+ *
+ * Checks if two #CoreTestsPigeonTestAllClassesWrapper objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_all_classes_wrapper_equals(
+    CoreTestsPigeonTestAllClassesWrapper* a,
+    CoreTestsPigeonTestAllClassesWrapper* b);
+
+/**
+ * core_tests_pigeon_test_all_classes_wrapper_hash:
+ * @object: a #CoreTestsPigeonTestAllClassesWrapper.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAllClassesWrapper object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_all_classes_wrapper_hash(
+    CoreTestsPigeonTestAllClassesWrapper* object);
+
+/**
  * CoreTestsPigeonTestTestMessage:
  *
  * A data class containing a List, used in unit tests.
@@ -1426,6 +1546,29 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_test_message_get_test_list(
+    CoreTestsPigeonTestTestMessage* object);
+
+/**
+ * core_tests_pigeon_test_test_message_equals:
+ * @a: a #CoreTestsPigeonTestTestMessage.
+ * @b: another #CoreTestsPigeonTestTestMessage.
+ *
+ * Checks if two #CoreTestsPigeonTestTestMessage objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_test_message_equals(
+    CoreTestsPigeonTestTestMessage* a, CoreTestsPigeonTestTestMessage* b);
+
+/**
+ * core_tests_pigeon_test_test_message_hash:
+ * @object: a #CoreTestsPigeonTestTestMessage.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestTestMessage object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_test_message_hash(
     CoreTestsPigeonTestTestMessage* object);
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
