@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import XCTest
-import WebKit
 
 @testable import webview_flutter_wkwebview
 
@@ -11,16 +10,17 @@ import WebKit
   import UIKit
 #endif
 
+@MainActor
 class PlatformViewImplTests: XCTestCase {
   #if os(iOS)
-    func testPlatformViewImplStoresViewWithAWeakReference() {
-      var view: WKWebView? = WKWebView()
+    @MainActor func testPlatformViewImplStoresViewWithAWeakReference() {
+      var view: UIView? = UIView()
       let platformView = PlatformViewImpl(uiView: view!)
 
-      XCTAssertTrue(platformView.view() is WKWebView)
+      XCTAssertNotNil(platformView.uiView)
 
       view = nil
-      XCTAssertFalse(platformView.view() is WKWebView)
+      XCTAssertNil(platformView.uiView)
     }
   #endif
 }
