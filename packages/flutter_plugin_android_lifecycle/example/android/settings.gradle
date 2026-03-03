@@ -24,7 +24,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1"
+        classpath("gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1")
     }
 }
 

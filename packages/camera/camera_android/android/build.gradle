@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.camera'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.camera"
+version = "1.0-SNAPSHOT"
 def args = ["-Xlint:deprecation","-Xlint:unchecked"]
 
 buildscript {
@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
