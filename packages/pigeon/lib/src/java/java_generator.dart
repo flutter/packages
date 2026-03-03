@@ -206,6 +206,8 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
+    _writeDeepEquals(indent);
+    _writeDeepHashCode(indent);
   }
 
   @override
@@ -381,13 +383,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       final Iterable<String> checks = classDefinition.fields.map((
         NamedType field,
       ) {
-        // Objects.equals only does pointer equality for array types.
-        if (_javaTypeIsArray(field.type)) {
-          return 'Arrays.equals(${field.name}, that.${field.name})';
-        }
-        return field.type.isNullable
-            ? 'Objects.equals(${field.name}, that.${field.name})'
-            : '${field.name}.equals(that.${field.name})';
+        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
       });
       indent.writeln('return ${checks.join(' && ')};');
     });
@@ -396,33 +392,157 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     // Implement hashCode().
     indent.writeln('@Override');
     indent.writeScoped('public int hashCode() {', '}', () {
-      // As with equalty checks, arrays need special handling.
-      final Iterable<String> arrayFieldNames = classDefinition.fields
-          .where((NamedType field) => _javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final Iterable<String> nonArrayFieldNames = classDefinition.fields
-          .where((NamedType field) => !_javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final nonArrayHashValue = nonArrayFieldNames.isNotEmpty
-          ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
-          : '0';
-
-      if (arrayFieldNames.isEmpty) {
-        // Return directly if there are no array variables, to avoid redundant
-        // variable lint warnings.
-        indent.writeln('return $nonArrayHashValue;');
+      final Iterable<String> fieldNames = classDefinition.fields.map(
+        (NamedType field) => field.name,
+      );
+      if (fieldNames.isEmpty) {
+        indent.writeln('return Objects.hash(getClass());');
       } else {
-        const resultVar = '${varNamePrefix}result';
-        indent.writeln('int $resultVar = $nonArrayHashValue;');
-        // Manually mix in the Arrays.hashCode values.
-        for (final name in arrayFieldNames) {
-          indent.writeln(
-            '$resultVar = 31 * $resultVar + Arrays.hashCode($name);',
-          );
-        }
-        indent.writeln('return $resultVar;');
+        indent.writeln(
+          'Object[] fields = new Object[] {getClass(), ${fieldNames.join(', ')}};',
+        );
+        indent.writeln('return pigeonDeepHashCode(fields);');
       }
     });
+    indent.newln();
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.writeScoped(
+      'private static boolean pigeonDeepEquals(Object a, Object b) {',
+      '}',
+      () {
+        indent.writeln('if (a == b) { return true; }');
+        indent.writeln('if (a == null || b == null) { return false; }');
+        indent.writeScoped(
+          'if (a instanceof byte[] && b instanceof byte[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((byte[]) a, (byte[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof int[] && b instanceof int[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((int[]) a, (int[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof long[] && b instanceof long[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((long[]) a, (long[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof double[] && b instanceof double[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((double[]) a, (double[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof List && b instanceof List) {',
+          '}',
+          () {
+            indent.writeln('List<?> listA = (List<?>) a;');
+            indent.writeln('List<?> listB = (List<?>) b;');
+            indent.writeln(
+              'if (listA.size() != listB.size()) { return false; }',
+            );
+            indent.writeScoped(
+              'for (int i = 0; i < listA.size(); i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Map && b instanceof Map) {',
+          '}',
+          () {
+            indent.writeln('Map<?, ?> mapA = (Map<?, ?>) a;');
+            indent.writeln('Map<?, ?> mapB = (Map<?, ?>) b;');
+            indent.writeln('if (mapA.size() != mapB.size()) { return false; }');
+            indent.writeScoped('for (Object key : mapA.keySet()) {', '}', () {
+              indent.writeScoped('if (!mapB.containsKey(key)) {', '}', () {
+                indent.writeln('return false;');
+              });
+              indent.writeScoped(
+                'if (!pigeonDeepEquals(mapA.get(key), mapB.get(key))) {',
+                '}',
+                () {
+                  indent.writeln('return false;');
+                },
+              );
+            });
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeln('return a.equals(b);');
+      },
+    );
+    indent.newln();
+  }
+
+  void _writeDeepHashCode(Indent indent) {
+    indent.writeScoped(
+      'private static int pigeonDeepHashCode(Object value) {',
+      '}',
+      () {
+        indent.writeln('if (value == null) { return 0; }');
+        indent.writeScoped('if (value instanceof byte[]) {', '}', () {
+          indent.writeln('return Arrays.hashCode((byte[]) value);');
+        });
+        indent.writeScoped('if (value instanceof int[]) {', '}', () {
+          indent.writeln('return Arrays.hashCode((int[]) value);');
+        });
+        indent.writeScoped('if (value instanceof long[]) {', '}', () {
+          indent.writeln('return Arrays.hashCode((long[]) value);');
+        });
+        indent.writeScoped('if (value instanceof double[]) {', '}', () {
+          indent.writeln('return Arrays.hashCode((double[]) value);');
+        });
+        indent.writeScoped('if (value instanceof List) {', '}', () {
+          indent.writeln('int result = 1;');
+          indent.writeScoped('for (Object item : (List<?>) value) {', '}', () {
+            indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+          });
+          indent.writeln('return result;');
+        });
+        indent.writeScoped('if (value instanceof Map) {', '}', () {
+          indent.writeln('int result = 0;');
+          indent.writeScoped(
+            'for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {',
+            '}',
+            () {
+              indent.writeln(
+                'result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));',
+              );
+            },
+          );
+          indent.writeln('return result;');
+        });
+        indent.writeScoped('if (value instanceof Object[]) {', '}', () {
+          indent.writeln('int result = 1;');
+          indent.writeScoped('for (Object item : (Object[]) value) {', '}', () {
+            indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+          });
+          indent.writeln('return result;');
+        });
+        indent.writeln('return value.hashCode();');
+      },
+    );
     indent.newln();
   }
 
@@ -1368,10 +1488,6 @@ String _javaTypeForBuiltinGenericDartType(
   } else {
     return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
   }
-}
-
-bool _javaTypeIsArray(TypeDeclaration type) {
-  return _javaTypeForBuiltinDartType(type)?.endsWith('[]') ?? false;
 }
 
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {

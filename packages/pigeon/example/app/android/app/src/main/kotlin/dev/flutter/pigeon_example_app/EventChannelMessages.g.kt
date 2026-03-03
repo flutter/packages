@@ -94,17 +94,19 @@ data class IntEvent(val data: Long) : PlatformEvent() {
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is IntEvent) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return EventChannelMessagesPigeonUtils.deepEquals(this.data, other.data)
+    val otherActual = other as IntEvent
+    return EventChannelMessagesPigeonUtils.deepEquals(this.data, otherActual.data)
   }
 
   override fun hashCode(): Int {
-    var result = EventChannelMessagesPigeonUtils.deepHash(this.data)
+    var result = javaClass.hashCode()
+    result = 31 * result + EventChannelMessagesPigeonUtils.deepHash(this.data)
     return result
   }
 }
@@ -125,17 +127,19 @@ data class StringEvent(val data: String) : PlatformEvent() {
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is StringEvent) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return EventChannelMessagesPigeonUtils.deepEquals(this.data, other.data)
+    val otherActual = other as StringEvent
+    return EventChannelMessagesPigeonUtils.deepEquals(this.data, otherActual.data)
   }
 
   override fun hashCode(): Int {
-    var result = EventChannelMessagesPigeonUtils.deepHash(this.data)
+    var result = javaClass.hashCode()
+    result = 31 * result + EventChannelMessagesPigeonUtils.deepHash(this.data)
     return result
   }
 }

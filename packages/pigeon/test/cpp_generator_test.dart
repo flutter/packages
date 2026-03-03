@@ -567,6 +567,7 @@ void main() {
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
 #include <map>
 #include <optional>
 #include <string>
@@ -2613,5 +2614,120 @@ void main() {
       ),
     );
     expect(code, contains('channel.Send'));
+  });
+
+  test('data class equality', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool operator==(const Foo& other) const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+      expect(
+        code,
+        contains('return PigeonInternalDeepEquals(bar_, other.bar_);'),
+      );
+    }
+  });
+
+  test('data class equality with pointers', () {
+    final nested = Class(
+      name: 'Nested',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'data',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: TypeDeclaration(
+                baseName: 'Nested',
+                isNullable: true,
+                associatedClass: nested,
+              ),
+              name: 'nested',
+            ),
+          ],
+        ),
+        nested,
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(
+      code,
+      contains('return PigeonInternalDeepEquals(nested_, other.nested_);'),
+    );
   });
 }

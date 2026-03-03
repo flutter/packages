@@ -151,17 +151,19 @@ data class UnusedClass(val aField: Any? = null) {
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is UnusedClass) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.aField, other.aField)
+    val otherActual = other as UnusedClass
+    return CoreTestsPigeonUtils.deepEquals(this.aField, otherActual.aField)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.aField)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aField)
     return result
   }
 }
@@ -297,44 +299,46 @@ data class AllTypes(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is AllTypes) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.aBool, other.aBool) &&
-        CoreTestsPigeonUtils.deepEquals(this.anInt, other.anInt) &&
-        CoreTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) &&
-        CoreTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) &&
-        CoreTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
-        CoreTestsPigeonUtils.deepEquals(this.anObject, other.anObject) &&
-        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    val otherActual = other as AllTypes
+    return CoreTestsPigeonUtils.deepEquals(this.aBool, otherActual.aBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.anInt, otherActual.anInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.anInt64, otherActual.anInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aDouble, otherActual.aDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aByteArray, otherActual.aByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.a4ByteArray, otherActual.a4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.a8ByteArray, otherActual.a8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aFloatArray, otherActual.aFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.anEnum, otherActual.anEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.anotherEnum, otherActual.anotherEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aString, otherActual.aString) &&
+        CoreTestsPigeonUtils.deepEquals(this.anObject, otherActual.anObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, otherActual.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, otherActual.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, otherActual.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, otherActual.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, otherActual.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, otherActual.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, otherActual.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, otherActual.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, otherActual.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, otherActual.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, otherActual.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, otherActual.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, otherActual.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, otherActual.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, otherActual.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, otherActual.mapMap)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.aBool)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aBool)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.anInt)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.anInt64)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aDouble)
@@ -509,47 +513,53 @@ data class AllNullableTypes(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is AllNullableTypes) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
-        CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
-        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        CoreTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) &&
-        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
+    val otherActual = other as AllNullableTypes
+    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, otherActual.aNullableBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, otherActual.aNullableInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, otherActual.aNullableInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, otherActual.aNullableDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, otherActual.aNullableByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, otherActual.aNullable4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, otherActual.aNullable8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, otherActual.aNullableFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, otherActual.aNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, otherActual.anotherNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableString, otherActual.aNullableString) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, otherActual.aNullableObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, otherActual.allNullableTypes) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, otherActual.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, otherActual.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, otherActual.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, otherActual.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, otherActual.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, otherActual.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, otherActual.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, otherActual.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, otherActual.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.recursiveClassList, otherActual.recursiveClassList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, otherActual.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, otherActual.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, otherActual.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, otherActual.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, otherActual.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, otherActual.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, otherActual.mapMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.recursiveClassMap, otherActual.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.aNullableBool)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableBool)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableInt)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableInt64)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableDouble)
@@ -716,44 +726,50 @@ data class AllNullableTypesWithoutRecursion(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is AllNullableTypesWithoutRecursion) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
-        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
-        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
-        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
-        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
-        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
-        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
-        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
-        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    val otherActual = other as AllNullableTypesWithoutRecursion
+    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, otherActual.aNullableBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, otherActual.aNullableInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, otherActual.aNullableInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, otherActual.aNullableDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, otherActual.aNullableByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullable4ByteArray, otherActual.aNullable4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullable8ByteArray, otherActual.aNullable8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.aNullableFloatArray, otherActual.aNullableFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, otherActual.aNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.anotherNullableEnum, otherActual.anotherNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableString, otherActual.aNullableString) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, otherActual.aNullableObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, otherActual.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, otherActual.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, otherActual.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, otherActual.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, otherActual.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, otherActual.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, otherActual.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, otherActual.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, otherActual.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, otherActual.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, otherActual.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, otherActual.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, otherActual.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, otherActual.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, otherActual.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, otherActual.mapMap)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.aNullableBool)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableBool)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableInt)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableInt64)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.aNullableDouble)
@@ -836,24 +852,26 @@ data class AllClassesWrapper(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is AllClassesWrapper) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+    val otherActual = other as AllClassesWrapper
+    return CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, otherActual.allNullableTypes) &&
         CoreTestsPigeonUtils.deepEquals(
-            this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) &&
-        CoreTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) &&
-        CoreTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
-        CoreTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
-        CoreTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
-        CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
+            this.allNullableTypesWithoutRecursion, otherActual.allNullableTypesWithoutRecursion) &&
+        CoreTestsPigeonUtils.deepEquals(this.allTypes, otherActual.allTypes) &&
+        CoreTestsPigeonUtils.deepEquals(this.classList, otherActual.classList) &&
+        CoreTestsPigeonUtils.deepEquals(this.nullableClassList, otherActual.nullableClassList) &&
+        CoreTestsPigeonUtils.deepEquals(this.classMap, otherActual.classMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, otherActual.nullableClassMap)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.allNullableTypes)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.allNullableTypes)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.allNullableTypesWithoutRecursion)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.allTypes)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.classList)
@@ -884,17 +902,19 @@ data class TestMessage(val testList: List<Any?>? = null) {
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is TestMessage) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return CoreTestsPigeonUtils.deepEquals(this.testList, other.testList)
+    val otherActual = other as TestMessage
+    return CoreTestsPigeonUtils.deepEquals(this.testList, otherActual.testList)
   }
 
   override fun hashCode(): Int {
-    var result = CoreTestsPigeonUtils.deepHash(this.testList)
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.testList)
     return result
   }
 }

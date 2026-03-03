@@ -4040,4 +4040,70 @@ void main() {
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
   });
+
+  test('data class equality', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalObjcOptions(
+          prefix: 'ABC',
+          objcHeaderOut: '',
+          objcSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('- (BOOL)isEqual:(id)object;'));
+      expect(code, contains('- (NSUInteger)hash;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalObjcOptions(
+          prefix: 'ABC',
+          objcHeaderOut: '',
+          objcSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('- (BOOL)isEqual:(id)object {'));
+      expect(code, contains('ABCFoo *other = (ABCFoo *)object;'));
+      expect(code, contains('return self.bar == other.bar;'));
+      expect(code, contains('- (NSUInteger)hash {'));
+      expect(code, contains('NSUInteger result = [self class].hash;'));
+      expect(code, contains('result = result * 31 + @(self.bar).hash;'));
+    }
+  });
 }

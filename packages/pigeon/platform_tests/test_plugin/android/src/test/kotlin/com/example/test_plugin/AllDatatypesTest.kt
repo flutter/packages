@@ -227,4 +227,46 @@ internal class AllDatatypesTest {
     val withDifferentMapInList = AllNullableTypes(list = matchingMapInList)
     assertEquals(withMapInList, withDifferentMapInList)
   }
+
+  @Test
+  fun `equality method correctly identifies NaN matches`() {
+    val withNaN = AllNullableTypes(aNullableDouble = Double.NaN)
+    val withAnotherNaN = AllNullableTypes(aNullableDouble = Double.NaN)
+    assertEquals(withNaN, withAnotherNaN)
+    assertEquals(withNaN.hashCode(), withAnotherNaN.hashCode())
+  }
+
+  @Test
+  fun `cross-type equality returns false`() {
+    val a = AllNullableTypes(aNullableInt = 1)
+    val b = AllNullableTypesWithoutRecursion(aNullableInt = 1)
+    assertNotEquals(a, b)
+    assertNotEquals(b, a)
+  }
+
+  @Test
+  fun `byteArray equality`() {
+    val a = AllNullableTypes(aNullableByteArray = byteArrayOf(1, 2, 3))
+    val b = AllNullableTypes(aNullableByteArray = byteArrayOf(1, 2, 3))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `zero equality`() {
+    val a = AllNullableTypes(aNullableDouble = 0.0)
+    val b = AllNullableTypes(aNullableDouble = -0.0)
+    // In Kotlin/Java, boxed 0.0 and -0.0 are NOT equal.
+    // This is consistent with their different hash codes.
+    assertNotEquals(a, b)
+    assertNotEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `nested NaN equality`() {
+    val a = AllNullableTypes(doubleList = listOf(Double.NaN))
+    val b = AllNullableTypes(doubleList = listOf(Double.NaN))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
 }

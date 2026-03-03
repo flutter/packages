@@ -88,6 +88,8 @@ class UnusedClass {
   void set_a_field(const flutter::EncodableValue* value_arg);
   void set_a_field(const flutter::EncodableValue& value_arg);
 
+  bool operator==(const UnusedClass& other) const;
+
  private:
   static UnusedClass FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
@@ -215,6 +217,8 @@ class AllTypes {
 
   const flutter::EncodableMap& map_map() const;
   void set_map_map(const flutter::EncodableMap& value_arg);
+
+  bool operator==(const AllTypes& other) const;
 
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
@@ -424,6 +428,8 @@ class AllNullableTypes {
   void set_recursive_class_map(const flutter::EncodableMap* value_arg);
   void set_recursive_class_map(const flutter::EncodableMap& value_arg);
 
+  bool operator==(const AllNullableTypes& other) const;
+
  private:
   static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
@@ -617,6 +623,8 @@ class AllNullableTypesWithoutRecursion {
   void set_map_map(const flutter::EncodableMap* value_arg);
   void set_map_map(const flutter::EncodableMap& value_arg);
 
+  bool operator==(const AllNullableTypesWithoutRecursion& other) const;
+
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
       const flutter::EncodableList& list);
@@ -716,6 +724,8 @@ class AllClassesWrapper {
   void set_nullable_class_map(const flutter::EncodableMap* value_arg);
   void set_nullable_class_map(const flutter::EncodableMap& value_arg);
 
+  bool operator==(const AllClassesWrapper& other) const;
+
  private:
   static AllClassesWrapper FromEncodableList(
       const flutter::EncodableList& list);
@@ -751,6 +761,8 @@ class TestMessage {
   const flutter::EncodableList* test_list() const;
   void set_test_list(const flutter::EncodableList* value_arg);
   void set_test_list(const flutter::EncodableList& value_arg);
+
+  bool operator==(const TestMessage& other) const;
 
  private:
   static TestMessage FromEncodableList(const flutter::EncodableList& list);

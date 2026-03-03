@@ -661,6 +661,13 @@ if (wrapped == nil) {
       'static func == (lhs: ${classDefinition.name}, rhs: ${classDefinition.name}) -> Bool {',
       '}',
       () {
+        indent.writeScoped(
+          'if Swift.type(of: lhs) != Swift.type(of: rhs) {',
+          '}',
+          () {
+            indent.writeln('return false');
+          },
+        );
         if (classDefinition.isSwiftClass) {
           indent.writeScoped('if (lhs === rhs) {', '}', () {
             indent.writeln('return true');
@@ -685,6 +692,7 @@ if (wrapped == nil) {
 
     indent.newln();
     indent.writeScoped('func hash(into hasher: inout Hasher) {', '}', () {
+      indent.writeln('hasher.combine("${classDefinition.name}")');
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
@@ -1466,7 +1474,7 @@ if (wrapped == nil) {
       indent.write('return ');
       indent.addScoped('[', ']', () {
         indent.writeln(r'"\(error)",');
-        indent.writeln(r'"\(type(of: error))",');
+        indent.writeln(r'"\(Swift.type(of: error))",');
         indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)",');
       });
     });
@@ -1539,6 +1547,9 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     }
     return true
 
+  case (let lhs as Double, let rhs as Double) where lhs.isNaN && rhs.isNaN:
+    return true
+
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
 
@@ -1550,7 +1561,9 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
 func $deepHashName(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
-    if let valueList = cleanValue as? [Any?] {
+    if let doubleValue = cleanValue as? Double, doubleValue.isNaN {
+      hasher.combine(0x7FF8000000000000)
+    } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         $deepHashName(value: item, hasher: &hasher)
       }

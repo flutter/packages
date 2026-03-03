@@ -13,6 +13,7 @@
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
 #include <map>
 #include <optional>
 #include <string>
@@ -29,6 +30,54 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       "channel-error",
       "Unable to establish connection on channel: '" + channel_name + "'.",
       EncodableValue(""));
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b) {
+  return a == b;
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a,
+                              const std::vector<T>& b) {
+  if (a.size() != b.size()) return false;
+  for (size_t i = 0; i < a.size(); ++i) {
+    if (!PigeonInternalDeepEquals(a[i], b[i])) return false;
+  }
+  return true;
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::map<T, T>& a,
+                              const std::map<T, T>& b) {
+  if (a.size() != b.size()) return false;
+  for (const auto& kv : a) {
+    auto it = b.find(kv.first);
+    if (it == b.end()) return false;
+    if (!PigeonInternalDeepEquals(kv.second, it->second)) return false;
+  }
+  return true;
+}
+
+inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  return a == b || (std::isnan(a) && std::isnan(b));
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+inline bool PigeonInternalDeepEquals(const flutter::EncodableValue& a,
+                                     const flutter::EncodableValue& b) {
+  if (a.type() == b.type() &&
+      a.type() == flutter::EncodableValue::Type::kDouble) {
+    return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
+  }
+  return a == b;
 }
 
 // MessageData
@@ -100,6 +149,13 @@ MessageData MessageData::FromEncodableList(const EncodableList& list) {
     decoded.set_description(std::get<std::string>(encodable_description));
   }
   return decoded;
+}
+
+bool MessageData::operator==(const MessageData& other) const {
+  return PigeonInternalDeepEquals(name_, other.name_) &&
+         PigeonInternalDeepEquals(description_, other.description_) &&
+         PigeonInternalDeepEquals(code_, other.code_) &&
+         PigeonInternalDeepEquals(data_, other.data_);
 }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}

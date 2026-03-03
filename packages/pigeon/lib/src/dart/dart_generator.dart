@@ -389,13 +389,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
-    final String hashCodeValue = switch (fields.length) {
-      0 => 'runtimeType.hashCode',
-      < 20 =>
-        'Object.hash(runtimeType, ${fields.map((NamedType field) => field.name).join(', ')})',
-      _ => 'Object.hashAll(<Object?>[runtimeType, ..._toList()])',
-    };
-    indent.writeln('int get hashCode => $hashCodeValue;');
+    indent.writeln(
+      'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
+    );
   }
 
   @override
@@ -1144,6 +1140,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     }
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
+      _writeDeepHash(indent);
     }
     if (root.containsProxyApi) {
       proxy_api_helper.writeProxyApiPigeonOverrides(
@@ -1178,6 +1175,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.format(r'''
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b) || a == b) return true;
+  if (a is double && b is double && a.isNaN && b.isNaN) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
@@ -1189,6 +1187,25 @@ bool _deepEquals(Object? a, Object? b) {
         _deepEquals(entry.value, b[entry.key]));
   }
   return false;
+}
+''');
+  }
+
+  void _writeDeepHash(Indent indent) {
+    indent.format(r'''
+int _deepHash(Object? value) {
+  if (value is List) {
+    return Object.hashAll(value.map(_deepHash));
+  } else if (value is Map) {
+    int result = 0;
+    for (final MapEntry<Object?, Object?> entry in value.entries) {
+      result += Object.hash(_deepHash(entry.key), _deepHash(entry.value));
+    }
+    return result;
+  } else if (value is double && value.isNaN) {
+    return 0x7FF8000000000000.hashCode;
+  }
+  return value.hashCode;
 }
 ''');
   }

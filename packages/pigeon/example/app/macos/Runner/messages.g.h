@@ -37,6 +37,8 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 @property(nonatomic, copy, nullable) NSString *description;
 @property(nonatomic, assign) PGNCode code;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
+- (BOOL)isEqual:(id)object;
+- (NSUInteger)hash;
 @end
 
 /// The codec used by all APIs.

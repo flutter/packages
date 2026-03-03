@@ -19,14 +19,104 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class Messages {
+  private static boolean pigeonDeepEquals(Object a, Object b) {
+    if (a == b) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
+    if (a instanceof byte[] && b instanceof byte[]) {
+      return Arrays.equals((byte[]) a, (byte[]) b);
+    }
+    if (a instanceof int[] && b instanceof int[]) {
+      return Arrays.equals((int[]) a, (int[]) b);
+    }
+    if (a instanceof long[] && b instanceof long[]) {
+      return Arrays.equals((long[]) a, (long[]) b);
+    }
+    if (a instanceof double[] && b instanceof double[]) {
+      return Arrays.equals((double[]) a, (double[]) b);
+    }
+    if (a instanceof List && b instanceof List) {
+      List<?> listA = (List<?>) a;
+      List<?> listB = (List<?>) b;
+      if (listA.size() != listB.size()) {
+        return false;
+      }
+      for (int i = 0; i < listA.size(); i++) {
+        if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (a instanceof Map && b instanceof Map) {
+      Map<?, ?> mapA = (Map<?, ?>) a;
+      Map<?, ?> mapB = (Map<?, ?>) b;
+      if (mapA.size() != mapB.size()) {
+        return false;
+      }
+      for (Object key : mapA.keySet()) {
+        if (!mapB.containsKey(key)) {
+          return false;
+        }
+        if (!pigeonDeepEquals(mapA.get(key), mapB.get(key))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return a.equals(b);
+  }
+
+  private static int pigeonDeepHashCode(Object value) {
+    if (value == null) {
+      return 0;
+    }
+    if (value instanceof byte[]) {
+      return Arrays.hashCode((byte[]) value);
+    }
+    if (value instanceof int[]) {
+      return Arrays.hashCode((int[]) value);
+    }
+    if (value instanceof long[]) {
+      return Arrays.hashCode((long[]) value);
+    }
+    if (value instanceof double[]) {
+      return Arrays.hashCode((double[]) value);
+    }
+    if (value instanceof List) {
+      int result = 1;
+      for (Object item : (List<?>) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    if (value instanceof Map) {
+      int result = 0;
+      for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+        result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));
+      }
+      return result;
+    }
+    if (value instanceof Object[]) {
+      int result = 1;
+      for (Object item : (Object[]) value) {
+        result = 31 * result + pigeonDeepHashCode(item);
+      }
+      return result;
+    }
+    return value.hashCode();
+  }
 
   /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
   public static class FlutterError extends RuntimeException {
@@ -142,15 +232,16 @@ public class Messages {
         return false;
       }
       MessageData that = (MessageData) o;
-      return Objects.equals(name, that.name)
-          && Objects.equals(description, that.description)
-          && code.equals(that.code)
-          && data.equals(that.data);
+      return pigeonDeepEquals(name, that.name)
+          && pigeonDeepEquals(description, that.description)
+          && pigeonDeepEquals(code, that.code)
+          && pigeonDeepEquals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(name, description, code, data);
+      Object[] fields = new Object[] {getClass(), name, description, code, data};
+      return pigeonDeepHashCode(fields);
     }
 
     public static final class Builder {

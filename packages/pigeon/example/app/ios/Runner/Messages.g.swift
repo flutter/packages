@@ -53,7 +53,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   }
   return [
     "\(error)",
-    "\(type(of: error))",
+    "\(Swift.type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
@@ -108,6 +108,9 @@ func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
     }
     return true
 
+  case (let lhs as Double, let rhs as Double) where lhs.isNaN && rhs.isNaN:
+    return true
+
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
 
@@ -119,7 +122,9 @@ func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 func deepHashMessages(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
-    if let valueList = cleanValue as? [Any?] {
+    if let doubleValue = cleanValue as? Double, doubleValue.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         deepHashMessages(value: item, hasher: &hasher)
       }
@@ -173,12 +178,16 @@ struct MessageData: Hashable {
     ]
   }
   static func == (lhs: MessageData, rhs: MessageData) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsMessages(lhs.name, rhs.name)
       && deepEqualsMessages(lhs.description, rhs.description)
       && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("MessageData")
     deepHashMessages(value: name, hasher: &hasher)
     deepHashMessages(value: description, hasher: &hasher)
     deepHashMessages(value: code, hasher: &hasher)

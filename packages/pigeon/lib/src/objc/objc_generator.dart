@@ -518,6 +518,8 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     indent.writeln('@import Flutter;');
     indent.writeln('#endif');
     indent.newln();
+    _writeDeepEquals(indent);
+    _writeDeepHash(indent);
   }
 
   @override
@@ -614,8 +616,74 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       classDefinition,
       dartPackageName: dartPackageName,
     );
+    _writeObjcEquality(generatorOptions, indent, classDefinition);
     indent.writeln('@end');
     indent.newln();
+  }
+
+  void _writeObjcEquality(
+    InternalObjcOptions generatorOptions,
+    Indent indent,
+    Class classDefinition,
+  ) {
+    final String className = _className(
+      generatorOptions.prefix,
+      classDefinition.name,
+    );
+    indent.write('- (BOOL)isEqual:(id)object ');
+    indent.addScoped('{', '}', () {
+      indent.writeScoped('if (self == object) {', '}', () {
+        indent.writeln('return YES;');
+      });
+      indent.writeScoped(
+        'if (![object isKindOfClass:[self class]]) {',
+        '}',
+        () {
+          indent.writeln('return NO;');
+        },
+      );
+      indent.writeln('$className *other = ($className *)object;');
+      final Iterable<String> checks = classDefinition.fields.map((
+        NamedType field,
+      ) {
+        final String name = field.name;
+        if (_usesPrimitive(field.type)) {
+          if (field.type.baseName == 'double') {
+            return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
+          }
+          return 'self.$name == other.$name';
+        } else {
+          return 'FLTPigeonDeepEquals(self.$name, other.$name)';
+        }
+      });
+      if (checks.isEmpty) {
+        indent.writeln('return YES;');
+      } else {
+        indent.writeln('return ${checks.join(' && ')};');
+      }
+    });
+    indent.newln();
+    indent.write('- (NSUInteger)hash ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('NSUInteger result = [self class].hash;');
+      for (final NamedType field in classDefinition.fields) {
+        final String name = field.name;
+        if (_usesPrimitive(field.type)) {
+          if (field.type.baseName == 'double') {
+            indent.writeln(
+              'result = result * 31 + (isnan(self.$name) ? (NSUInteger)0x7FF8000000000000 : @(self.$name).hash);',
+            );
+          } else {
+            indent.writeln('result = result * 31 + @(self.$name).hash;');
+          }
+        } else {
+          indent.writeln(
+            'result = result * 31 + FLTPigeonDeepHash(self.$name);',
+          );
+        }
+      }
+      indent.writeln('return result;');
+    });
   }
 
   @override
@@ -1601,6 +1669,89 @@ const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
       'Object': _ObjcType(baseName: 'id'),
     };
 
+void _writeDeepEquals(Indent indent) {
+  indent.format('''
+static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) __attribute__((unused));
+static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
+  if (a == b) {
+    return YES;
+  }
+  if (a == nil || b == nil) {
+    return NO;
+  }
+  if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
+    NSNumber *na = (NSNumber *)a;
+    NSNumber *nb = (NSNumber *)b;
+    if (isnan(na.doubleValue) && isnan(nb.doubleValue)) {
+      return YES;
+    }
+  }
+  if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
+    NSArray *arrayA = (NSArray *)a;
+    NSArray *arrayB = (NSArray *)b;
+    if (arrayA.count != arrayB.count) {
+      return NO;
+    }
+    for (NSUInteger i = 0; i < arrayA.count; i++) {
+      if (!FLTPigeonDeepEquals(arrayA[i], arrayB[i])) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  if ([a isKindOfClass:[NSDictionary class]] && [b isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictA = (NSDictionary *)a;
+    NSDictionary *dictB = (NSDictionary *)b;
+    if (dictA.count != dictB.count) {
+      return NO;
+    }
+    for (id key in dictA) {
+      id valueA = dictA[key];
+      id valueB = dictB[key];
+      if (!FLTPigeonDeepEquals(valueA, valueB)) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  return [a isEqual:b];
+}
+''');
+}
+
+void _writeDeepHash(Indent indent) {
+  indent.format('''
+static NSUInteger FLTPigeonDeepHash(id _Nullable value) __attribute__((unused));
+static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
+  if (value == nil) {
+    return 0;
+  }
+  if ([value isKindOfClass:[NSNumber class]]) {
+    NSNumber *n = (NSNumber *)value;
+    if (isnan(n.doubleValue)) {
+      return (NSUInteger)0x7FF8000000000000;
+    }
+  }
+  if ([value isKindOfClass:[NSArray class]]) {
+    NSUInteger result = 1;
+    for (id item in (NSArray *)value) {
+      result = result * 31 + FLTPigeonDeepHash(item);
+    }
+    return result;
+  }
+  if ([value isKindOfClass:[NSDictionary class]]) {
+    NSUInteger result = 0;
+    NSDictionary *dict = (NSDictionary *)value;
+    for (id key in dict) {
+      result += (FLTPigeonDeepHash(key) ^ FLTPigeonDeepHash(dict[key]));
+    }
+    return result;
+  }
+  return [value hash];
+}
+''');
+}
+
 bool _usesPrimitive(TypeDeclaration type) {
   // Only non-nullable types are unboxed.
   if (!type.isNullable) {
@@ -2005,6 +2156,8 @@ void _writeDataClassDeclaration(
       '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};',
     );
   }
+  indent.writeln('- (BOOL)isEqual:(id)object;');
+  indent.writeln('- (NSUInteger)hash;');
   indent.writeln('@end');
   indent.newln();
 }

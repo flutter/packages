@@ -58,6 +58,9 @@ func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
     }
     return true
 
+  case (let lhs as Double, let rhs as Double) where lhs.isNaN && rhs.isNaN:
+    return true
+
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
 
@@ -69,7 +72,9 @@ func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 func deepHashEventChannelMessages(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
-    if let valueList = cleanValue as? [Any?] {
+    if let doubleValue = cleanValue as? Double, doubleValue.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         deepHashEventChannelMessages(value: item, hasher: &hasher)
       }
@@ -112,10 +117,14 @@ struct IntEvent: PlatformEvent {
     ]
   }
   static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelMessages(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("IntEvent")
     deepHashEventChannelMessages(value: data, hasher: &hasher)
   }
 }
@@ -138,10 +147,14 @@ struct StringEvent: PlatformEvent {
     ]
   }
   static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelMessages(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("StringEvent")
     deepHashEventChannelMessages(value: data, hasher: &hasher)
   }
 }

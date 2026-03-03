@@ -459,6 +459,14 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           }
           indent.newln();
         }
+
+        _writeFunctionDeclaration(
+          indent,
+          'operator==',
+          returnType: 'bool',
+          parameters: <String>['const ${classDefinition.name}& other'],
+          isConst: true,
+        );
       });
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
@@ -937,6 +945,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     ]);
     indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
+      'cmath',
       'map',
       'string',
       'optional',
@@ -988,6 +997,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       EncodableValue(""));''');
       },
     );
+    _writeDeepEquals(indent);
   }
 
   @override
@@ -1052,6 +1062,73 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       classDefinition,
       dartPackageName: dartPackageName,
     );
+
+    _writeFunctionDefinition(
+      indent,
+      'operator==',
+      scope: classDefinition.name,
+      returnType: 'bool',
+      parameters: <String>['const ${classDefinition.name}& other'],
+      isConst: true,
+      body: () {
+        final Iterable<String> checks = orderedFields.map((NamedType field) {
+          final String name = _makeInstanceVariableName(field);
+          return 'PigeonInternalDeepEquals($name, other.$name)';
+        });
+        if (checks.isEmpty) {
+          indent.writeln('return true;');
+        } else {
+          indent.writeln('return ${checks.join(' && ')};');
+        }
+      },
+    );
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.format('''
+template<typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b) {
+  return a == b;
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) {
+  if (a.size() != b.size()) return false;
+  for (size_t i = 0; i < a.size(); ++i) {
+    if (!PigeonInternalDeepEquals(a[i], b[i])) return false;
+  }
+  return true;
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::map<T, T>& a, const std::map<T, T>& b) {
+  if (a.size() != b.size()) return false;
+  for (const auto& kv : a) {
+    auto it = b.find(kv.first);
+    if (it == b.end()) return false;
+    if (!PigeonInternalDeepEquals(kv.second, it->second)) return false;
+  }
+  return true;
+}
+
+inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  return a == b || (std::isnan(a) && std::isnan(b));
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+inline bool PigeonInternalDeepEquals(const flutter::EncodableValue& a, const flutter::EncodableValue& b) {
+  if (a.type() == b.type() && a.type() == flutter::EncodableValue::Type::kDouble) {
+    return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
+  }
+  return a == b;
+}
+''');
   }
 
   @override

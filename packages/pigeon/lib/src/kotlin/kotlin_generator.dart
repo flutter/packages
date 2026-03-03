@@ -320,12 +320,18 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     required String dartPackageName,
   }) {
     indent.writeScoped('override fun equals(other: Any?): Boolean {', '}', () {
-      indent.writeScoped('if (other !is ${classDefinition.name}) {', '}', () {
-        indent.writeln('return false');
-      });
+      indent.writeScoped(
+        'if (other == null || other.javaClass != javaClass) {',
+        '}',
+        () {
+          indent.writeln('return false');
+        },
+      );
       indent.writeScoped('if (this === other) {', '}', () {
         indent.writeln('return true');
       });
+
+      indent.writeln('val otherActual = other as ${classDefinition.name}');
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
@@ -336,7 +342,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         final String comparisons = fields
             .map(
               (NamedType field) =>
-                  '$utils.deepEquals(this.${field.name}, other.${field.name})',
+                  '$utils.deepEquals(this.${field.name}, otherActual.${field.name})',
             )
             .join(' && ');
         indent.writeln('return $comparisons');
@@ -348,20 +354,14 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
-      if (fields.isEmpty) {
-        indent.writeln('return 0');
-      } else {
-        final String utils = _getUtilsClassName(generatorOptions);
+      final String utils = _getUtilsClassName(generatorOptions);
+      indent.writeln('var result = javaClass.hashCode()');
+      for (final NamedType field in fields) {
         indent.writeln(
-          'var result = $utils.deepHash(this.${fields.first.name})',
+          'result = 31 * result + $utils.deepHash(this.${field.name})',
         );
-        for (final NamedType field in fields.skip(1)) {
-          indent.writeln(
-            'result = 31 * result + $utils.deepHash(this.${field.name})',
-          );
-        }
-        indent.writeln('return result');
       }
+      indent.writeln('return result');
     });
   }
 

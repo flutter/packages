@@ -211,4 +211,34 @@ TEST_F(NullFieldsTest, ReplyToListWithNulls) {
   }
 }
 
+TEST(NullFields, Equality) {
+  NullFieldsSearchRequest request1(1);
+  request1.set_query("hello");
+  NullFieldsSearchRequest request2(1);
+  request2.set_query("hello");
+  NullFieldsSearchRequest request3(2);
+  request3.set_query("hello");
+  NullFieldsSearchRequest request4(1);
+  request4.set_query("world");
+
+  EXPECT_EQ(request1, request2);
+  EXPECT_FALSE(request1 == request3);
+  EXPECT_FALSE(request1 == request4);
+
+  NullFieldsSearchReply reply1;
+  reply1.set_result("result");
+  reply1.set_request(request1);
+
+  NullFieldsSearchReply reply2;
+  reply2.set_result("result");
+  reply2.set_request(request2);
+
+  NullFieldsSearchReply reply3;
+  reply3.set_result("result");
+  reply3.set_request(request3);
+
+  EXPECT_EQ(reply1, reply2);
+  EXPECT_FALSE(reply1 == reply3);
+}
+
 }  // namespace null_fields_pigeontest

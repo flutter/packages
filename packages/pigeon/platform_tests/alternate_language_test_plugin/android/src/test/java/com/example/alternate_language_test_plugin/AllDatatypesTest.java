@@ -266,4 +266,50 @@ public class AllDatatypesTest {
         });
     assertTrue(didCall[0]);
   }
+
+  @Test
+  public void equalityWithNaN() {
+    AllNullableTypes withNaN =
+        new AllNullableTypes.Builder().setANullableDouble(Double.NaN).build();
+    AllNullableTypes withAnotherNaN =
+        new AllNullableTypes.Builder().setANullableDouble(Double.NaN).build();
+    assertEquals(withNaN, withAnotherNaN);
+    assertEquals(withNaN.hashCode(), withAnotherNaN.hashCode());
+  }
+
+  @Test
+  public void crossTypeEquality() {
+    AllNullableTypes a = new AllNullableTypes.Builder().setANullableInt(1L).build();
+    CoreTests.AllNullableTypesWithoutRecursion b =
+        new CoreTests.AllNullableTypesWithoutRecursion.Builder().setANullableInt(1L).build();
+    assertNotEquals(a, b);
+    assertNotEquals(b, a);
+  }
+
+  @Test
+  public void zeroEquality() {
+    AllNullableTypes a = new AllNullableTypes.Builder().setANullableDouble(0.0).build();
+    AllNullableTypes b = new AllNullableTypes.Builder().setANullableDouble(-0.0).build();
+
+    // Double Distinguishes 0.0 and -0.0
+    assertNotEquals(a, b);
+    assertNotEquals(a.hashCode(), b.hashCode());
+  }
+
+  @Test
+  public void nestedByteArrayEquality() {
+    byte[] data = new byte[] {1, 2, 3};
+    List<byte[]> list1 = new ArrayList<>();
+    list1.add(data);
+    AllNullableTypes a = new AllNullableTypes.Builder().setList(list1).build();
+
+    List<byte[]> list2 = new ArrayList<>();
+    list2.add(new byte[] {1, 2, 3});
+    AllNullableTypes b = new AllNullableTypes.Builder().setList(list2).build();
+
+    // List.equals calls Object.equals on elements. byte[] identity check will fail.
+    // This is a known issue we should decide if we want to fix.
+    assertEquals(a, b);
+    assertEquals(a.hashCode(), b.hashCode());
+  }
 }

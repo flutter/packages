@@ -2118,7 +2118,9 @@ name: foobar
     expect(code, contains('_deepEquals(field1, other.field1)'));
     expect(
       code,
-      contains('int get hashCode => Object.hash(runtimeType, field1);'),
+      contains(
+        'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
+      ),
     );
   });
 
@@ -2155,7 +2157,9 @@ name: foobar
     expect(code, contains('_deepEquals(field2, other.field2)'));
     expect(
       code,
-      contains('int get hashCode => Object.hash(runtimeType, field1, field2);'),
+      contains(
+        'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
+      ),
     );
   });
 }

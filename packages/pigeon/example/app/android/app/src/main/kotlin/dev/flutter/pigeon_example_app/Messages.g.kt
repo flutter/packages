@@ -146,20 +146,22 @@ data class MessageData(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is MessageData) {
+    if (other == null || other.javaClass != javaClass) {
       return false
     }
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(this.name, other.name) &&
-        MessagesPigeonUtils.deepEquals(this.description, other.description) &&
-        MessagesPigeonUtils.deepEquals(this.code, other.code) &&
-        MessagesPigeonUtils.deepEquals(this.data, other.data)
+    val otherActual = other as MessageData
+    return MessagesPigeonUtils.deepEquals(this.name, otherActual.name) &&
+        MessagesPigeonUtils.deepEquals(this.description, otherActual.description) &&
+        MessagesPigeonUtils.deepEquals(this.code, otherActual.code) &&
+        MessagesPigeonUtils.deepEquals(this.data, otherActual.data)
   }
 
   override fun hashCode(): Int {
-    var result = MessagesPigeonUtils.deepHash(this.name)
+    var result = javaClass.hashCode()
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.name)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.description)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.code)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.data)

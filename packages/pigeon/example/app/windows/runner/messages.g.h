@@ -85,6 +85,8 @@ class MessageData {
   const flutter::EncodableMap& data() const;
   void set_data(const flutter::EncodableMap& value_arg);
 
+  bool operator==(const MessageData& other) const;
+
  private:
   static MessageData FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;

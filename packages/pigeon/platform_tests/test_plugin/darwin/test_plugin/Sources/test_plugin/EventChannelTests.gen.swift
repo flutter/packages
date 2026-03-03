@@ -77,6 +77,9 @@ func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
     }
     return true
 
+  case (let lhs as Double, let rhs as Double) where lhs.isNaN && rhs.isNaN:
+    return true
+
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
 
@@ -88,7 +91,9 @@ func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
 func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
-    if let valueList = cleanValue as? [Any?] {
+    if let doubleValue = cleanValue as? Double, doubleValue.isNaN {
+      hasher.combine(0x7FF8_0000_0000_0000)
+    } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         deepHashEventChannelTests(value: item, hasher: &hasher)
       }
@@ -324,6 +329,9 @@ class EventAllNullableTypes: Hashable {
     ]
   }
   static func == (lhs: EventAllNullableTypes, rhs: EventAllNullableTypes) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     if lhs === rhs {
       return true
     }
@@ -361,6 +369,7 @@ class EventAllNullableTypes: Hashable {
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("EventAllNullableTypes")
     deepHashEventChannelTests(value: aNullableBool, hasher: &hasher)
     deepHashEventChannelTests(value: aNullableInt, hasher: &hasher)
     deepHashEventChannelTests(value: aNullableInt64, hasher: &hasher)
@@ -419,10 +428,14 @@ struct IntEvent: PlatformEvent {
     ]
   }
   static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("IntEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -445,10 +458,14 @@ struct StringEvent: PlatformEvent {
     ]
   }
   static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("StringEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -471,10 +488,14 @@ struct BoolEvent: PlatformEvent {
     ]
   }
   static func == (lhs: BoolEvent, rhs: BoolEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("BoolEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -497,10 +518,14 @@ struct DoubleEvent: PlatformEvent {
     ]
   }
   static func == (lhs: DoubleEvent, rhs: DoubleEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("DoubleEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -523,10 +548,14 @@ struct ObjectsEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ObjectsEvent, rhs: ObjectsEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("ObjectsEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -549,10 +578,14 @@ struct EnumEvent: PlatformEvent {
     ]
   }
   static func == (lhs: EnumEvent, rhs: EnumEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("EnumEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
@@ -575,10 +608,14 @@ struct ClassEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ClassEvent, rhs: ClassEvent) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
 
   func hash(into hasher: inout Hasher) {
+    hasher.combine("ClassEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }

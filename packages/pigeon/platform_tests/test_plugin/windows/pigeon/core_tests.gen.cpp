@@ -14,6 +14,7 @@
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
 #include <map>
 #include <optional>
 #include <string>
@@ -30,6 +31,54 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       "channel-error",
       "Unable to establish connection on channel: '" + channel_name + "'.",
       EncodableValue(""));
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b) {
+  return a == b;
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a,
+                              const std::vector<T>& b) {
+  if (a.size() != b.size()) return false;
+  for (size_t i = 0; i < a.size(); ++i) {
+    if (!PigeonInternalDeepEquals(a[i], b[i])) return false;
+  }
+  return true;
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::map<T, T>& a,
+                              const std::map<T, T>& b) {
+  if (a.size() != b.size()) return false;
+  for (const auto& kv : a) {
+    auto it = b.find(kv.first);
+    if (it == b.end()) return false;
+    if (!PigeonInternalDeepEquals(kv.second, it->second)) return false;
+  }
+  return true;
+}
+
+inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  return a == b || (std::isnan(a) && std::isnan(b));
+}
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+inline bool PigeonInternalDeepEquals(const flutter::EncodableValue& a,
+                                     const flutter::EncodableValue& b) {
+  if (a.type() == b.type() &&
+      a.type() == flutter::EncodableValue::Type::kDouble) {
+    return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
+  }
+  return a == b;
 }
 
 // UnusedClass
@@ -67,6 +116,10 @@ UnusedClass UnusedClass::FromEncodableList(const EncodableList& list) {
     decoded.set_a_field(encodable_a_field);
   }
   return decoded;
+}
+
+bool UnusedClass::operator==(const UnusedClass& other) const {
+  return PigeonInternalDeepEquals(a_field_, other.a_field_);
 }
 
 // AllTypes
@@ -335,6 +388,37 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<EncodableMap>(list[24]), std::get<EncodableMap>(list[25]),
       std::get<EncodableMap>(list[26]), std::get<EncodableMap>(list[27]));
   return decoded;
+}
+
+bool AllTypes::operator==(const AllTypes& other) const {
+  return PigeonInternalDeepEquals(a_bool_, other.a_bool_) &&
+         PigeonInternalDeepEquals(an_int_, other.an_int_) &&
+         PigeonInternalDeepEquals(an_int64_, other.an_int64_) &&
+         PigeonInternalDeepEquals(a_double_, other.a_double_) &&
+         PigeonInternalDeepEquals(a_byte_array_, other.a_byte_array_) &&
+         PigeonInternalDeepEquals(a4_byte_array_, other.a4_byte_array_) &&
+         PigeonInternalDeepEquals(a8_byte_array_, other.a8_byte_array_) &&
+         PigeonInternalDeepEquals(a_float_array_, other.a_float_array_) &&
+         PigeonInternalDeepEquals(an_enum_, other.an_enum_) &&
+         PigeonInternalDeepEquals(another_enum_, other.another_enum_) &&
+         PigeonInternalDeepEquals(a_string_, other.a_string_) &&
+         PigeonInternalDeepEquals(an_object_, other.an_object_) &&
+         PigeonInternalDeepEquals(list_, other.list_) &&
+         PigeonInternalDeepEquals(string_list_, other.string_list_) &&
+         PigeonInternalDeepEquals(int_list_, other.int_list_) &&
+         PigeonInternalDeepEquals(double_list_, other.double_list_) &&
+         PigeonInternalDeepEquals(bool_list_, other.bool_list_) &&
+         PigeonInternalDeepEquals(enum_list_, other.enum_list_) &&
+         PigeonInternalDeepEquals(object_list_, other.object_list_) &&
+         PigeonInternalDeepEquals(list_list_, other.list_list_) &&
+         PigeonInternalDeepEquals(map_list_, other.map_list_) &&
+         PigeonInternalDeepEquals(map_, other.map_) &&
+         PigeonInternalDeepEquals(string_map_, other.string_map_) &&
+         PigeonInternalDeepEquals(int_map_, other.int_map_) &&
+         PigeonInternalDeepEquals(enum_map_, other.enum_map_) &&
+         PigeonInternalDeepEquals(object_map_, other.object_map_) &&
+         PigeonInternalDeepEquals(list_map_, other.list_map_) &&
+         PigeonInternalDeepEquals(map_map_, other.map_map_);
 }
 
 // AllNullableTypes
@@ -1187,6 +1271,51 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   return decoded;
 }
 
+bool AllNullableTypes::operator==(const AllNullableTypes& other) const {
+  return PigeonInternalDeepEquals(a_nullable_bool_, other.a_nullable_bool_) &&
+         PigeonInternalDeepEquals(a_nullable_int_, other.a_nullable_int_) &&
+         PigeonInternalDeepEquals(a_nullable_int64_, other.a_nullable_int64_) &&
+         PigeonInternalDeepEquals(a_nullable_double_,
+                                  other.a_nullable_double_) &&
+         PigeonInternalDeepEquals(a_nullable_byte_array_,
+                                  other.a_nullable_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable4_byte_array_,
+                                  other.a_nullable4_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable8_byte_array_,
+                                  other.a_nullable8_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable_float_array_,
+                                  other.a_nullable_float_array_) &&
+         PigeonInternalDeepEquals(a_nullable_enum_, other.a_nullable_enum_) &&
+         PigeonInternalDeepEquals(another_nullable_enum_,
+                                  other.another_nullable_enum_) &&
+         PigeonInternalDeepEquals(a_nullable_string_,
+                                  other.a_nullable_string_) &&
+         PigeonInternalDeepEquals(a_nullable_object_,
+                                  other.a_nullable_object_) &&
+         PigeonInternalDeepEquals(all_nullable_types_,
+                                  other.all_nullable_types_) &&
+         PigeonInternalDeepEquals(list_, other.list_) &&
+         PigeonInternalDeepEquals(string_list_, other.string_list_) &&
+         PigeonInternalDeepEquals(int_list_, other.int_list_) &&
+         PigeonInternalDeepEquals(double_list_, other.double_list_) &&
+         PigeonInternalDeepEquals(bool_list_, other.bool_list_) &&
+         PigeonInternalDeepEquals(enum_list_, other.enum_list_) &&
+         PigeonInternalDeepEquals(object_list_, other.object_list_) &&
+         PigeonInternalDeepEquals(list_list_, other.list_list_) &&
+         PigeonInternalDeepEquals(map_list_, other.map_list_) &&
+         PigeonInternalDeepEquals(recursive_class_list_,
+                                  other.recursive_class_list_) &&
+         PigeonInternalDeepEquals(map_, other.map_) &&
+         PigeonInternalDeepEquals(string_map_, other.string_map_) &&
+         PigeonInternalDeepEquals(int_map_, other.int_map_) &&
+         PigeonInternalDeepEquals(enum_map_, other.enum_map_) &&
+         PigeonInternalDeepEquals(object_map_, other.object_map_) &&
+         PigeonInternalDeepEquals(list_map_, other.list_map_) &&
+         PigeonInternalDeepEquals(map_map_, other.map_map_) &&
+         PigeonInternalDeepEquals(recursive_class_map_,
+                                  other.recursive_class_map_);
+}
+
 // AllNullableTypesWithoutRecursion
 
 AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion() {}
@@ -1873,6 +2002,46 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
+bool AllNullableTypesWithoutRecursion::operator==(
+    const AllNullableTypesWithoutRecursion& other) const {
+  return PigeonInternalDeepEquals(a_nullable_bool_, other.a_nullable_bool_) &&
+         PigeonInternalDeepEquals(a_nullable_int_, other.a_nullable_int_) &&
+         PigeonInternalDeepEquals(a_nullable_int64_, other.a_nullable_int64_) &&
+         PigeonInternalDeepEquals(a_nullable_double_,
+                                  other.a_nullable_double_) &&
+         PigeonInternalDeepEquals(a_nullable_byte_array_,
+                                  other.a_nullable_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable4_byte_array_,
+                                  other.a_nullable4_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable8_byte_array_,
+                                  other.a_nullable8_byte_array_) &&
+         PigeonInternalDeepEquals(a_nullable_float_array_,
+                                  other.a_nullable_float_array_) &&
+         PigeonInternalDeepEquals(a_nullable_enum_, other.a_nullable_enum_) &&
+         PigeonInternalDeepEquals(another_nullable_enum_,
+                                  other.another_nullable_enum_) &&
+         PigeonInternalDeepEquals(a_nullable_string_,
+                                  other.a_nullable_string_) &&
+         PigeonInternalDeepEquals(a_nullable_object_,
+                                  other.a_nullable_object_) &&
+         PigeonInternalDeepEquals(list_, other.list_) &&
+         PigeonInternalDeepEquals(string_list_, other.string_list_) &&
+         PigeonInternalDeepEquals(int_list_, other.int_list_) &&
+         PigeonInternalDeepEquals(double_list_, other.double_list_) &&
+         PigeonInternalDeepEquals(bool_list_, other.bool_list_) &&
+         PigeonInternalDeepEquals(enum_list_, other.enum_list_) &&
+         PigeonInternalDeepEquals(object_list_, other.object_list_) &&
+         PigeonInternalDeepEquals(list_list_, other.list_list_) &&
+         PigeonInternalDeepEquals(map_list_, other.map_list_) &&
+         PigeonInternalDeepEquals(map_, other.map_) &&
+         PigeonInternalDeepEquals(string_map_, other.string_map_) &&
+         PigeonInternalDeepEquals(int_map_, other.int_map_) &&
+         PigeonInternalDeepEquals(enum_map_, other.enum_map_) &&
+         PigeonInternalDeepEquals(object_map_, other.object_map_) &&
+         PigeonInternalDeepEquals(list_map_, other.list_map_) &&
+         PigeonInternalDeepEquals(map_map_, other.map_map_);
+}
+
 // AllClassesWrapper
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
@@ -2079,6 +2248,21 @@ AllClassesWrapper AllClassesWrapper::FromEncodableList(
   return decoded;
 }
 
+bool AllClassesWrapper::operator==(const AllClassesWrapper& other) const {
+  return PigeonInternalDeepEquals(all_nullable_types_,
+                                  other.all_nullable_types_) &&
+         PigeonInternalDeepEquals(
+             all_nullable_types_without_recursion_,
+             other.all_nullable_types_without_recursion_) &&
+         PigeonInternalDeepEquals(all_types_, other.all_types_) &&
+         PigeonInternalDeepEquals(class_list_, other.class_list_) &&
+         PigeonInternalDeepEquals(nullable_class_list_,
+                                  other.nullable_class_list_) &&
+         PigeonInternalDeepEquals(class_map_, other.class_map_) &&
+         PigeonInternalDeepEquals(nullable_class_map_,
+                                  other.nullable_class_map_);
+}
+
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -2114,6 +2298,10 @@ TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
     decoded.set_test_list(std::get<EncodableList>(encodable_test_list));
   }
   return decoded;
+}
+
+bool TestMessage::operator==(const TestMessage& other) const {
+  return PigeonInternalDeepEquals(test_list_, other.test_list_);
 }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}

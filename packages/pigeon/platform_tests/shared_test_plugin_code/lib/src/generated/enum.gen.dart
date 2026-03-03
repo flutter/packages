@@ -35,6 +35,7 @@ List<Object?> wrapResponse({
 
 bool _deepEquals(Object? a, Object? b) {
   if (identical(a, b) || a == b) return true;
+  if (a is double && b is double && a.isNaN && b.isNaN) return true;
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -50,6 +51,21 @@ bool _deepEquals(Object? a, Object? b) {
         );
   }
   return false;
+}
+
+int _deepHash(Object? value) {
+  if (value is List) {
+    return Object.hashAll(value.map(_deepHash));
+  } else if (value is Map) {
+    int result = 0;
+    for (final MapEntry<Object?, Object?> entry in value.entries) {
+      result += Object.hash(_deepHash(entry.key), _deepHash(entry.value));
+    }
+    return result;
+  } else if (value is double && value.isNaN) {
+    return 0x7FF8000000000000.hashCode;
+  }
+  return value.hashCode;
 }
 
 /// This comment is to test enum documentation comments.
@@ -101,7 +117,7 @@ class DataWithEnum {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hash(runtimeType, state);
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
 class _PigeonCodec extends StandardMessageCodec {
