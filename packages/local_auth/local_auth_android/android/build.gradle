@@ -26,7 +26,7 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdk = 24
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -35,11 +35,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    lint {
+    lintOptions {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
+
 
     testOptions {
         unitTests.includeAndroidResources = true
