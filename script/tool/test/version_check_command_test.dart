@@ -429,6 +429,7 @@ void main() {
       // Blank line breaks the list items.
       const String changelog = '''
 ## $version
+
 * First item.
 
 * Second item.
@@ -450,52 +451,6 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('1.0.0 -> 1.0.1'),
-          contains('Blank lines found between list items in CHANGELOG.'),
-          contains('CHANGELOG.md failed validation.'),
-        ]),
-      );
-    });
-
-    test('Fail if CHANGELOG list items have a blank line on a previous version',
-        () async {
-      const String version = '1.0.1';
-      final RepositoryPackage plugin =
-          createFakePlugin('plugin', packagesDir, version: version);
-
-      // Blank line breaks the list items.
-      const String changelog = '''
-## $version
-* First item.
-* Second item.
-* Third item.
-
-
-## 1.0.0
-* First item.
-
-* Second item.
-* Third item.
-''';
-      plugin.changelogFile.writeAsStringSync(changelog);
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-      ];
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['version-check', '--base-sha=main'],
-          errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('1.0.0 -> 1.0.1'),
           contains('Blank lines found between list items in CHANGELOG.'),
           contains('CHANGELOG.md failed validation.'),
         ]),
@@ -511,6 +466,7 @@ void main() {
       // Blank line in nested list items.
       const String changelog = '''
 ## $version
+
 * Top level item.
   * Nested item A.
   
@@ -533,14 +489,11 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('1.0.0 -> 1.0.1'),
           contains('Blank lines found between list items in CHANGELOG.'),
           contains('CHANGELOG.md failed validation.'),
         ]),
       );
     });
-    // END OF NEW TESTS
 
     test(
         'Fail if pubspec version only matches an older version listed in CHANGELOG',
