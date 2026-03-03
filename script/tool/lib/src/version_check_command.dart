@@ -456,13 +456,9 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     // Check for blank lines between list items in the version section.
-    // Check for blank lines between list items in the version section.
-    // We reuse the existing iterator, which is currently positioned at the
-    // version header line.
     bool inList = false;
     bool seenBlankLineInList = false;
-    final RegExp listItemRegex = RegExp(r'^[ \t]*[*+-]\s');
-
+    final RegExp listItemRegex = RegExp(r'^\s*[*+-]\s');
     while (iterator.moveNext()) {
       final String line = iterator.current;
       final bool isListItem = listItemRegex.hasMatch(line);
