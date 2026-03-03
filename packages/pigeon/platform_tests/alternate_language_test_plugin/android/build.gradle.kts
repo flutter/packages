@@ -41,7 +41,6 @@ android {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
             all {
-                it.useJUnitPlatform()
                 it.outputs.upToDateWhen { false }
                 it.testLogging {
                     events("passed", "skipped", "failed", "standardOut", "standardError")
