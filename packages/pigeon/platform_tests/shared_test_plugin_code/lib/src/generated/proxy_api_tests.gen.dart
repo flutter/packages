@@ -15,11 +15,29 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
-PlatformException _createConnectionError(String channelName) {
-  return PlatformException(
-    code: 'channel-error',
-    message: 'Unable to establish connection on channel: "$channelName".',
-  );
+Object? _extractReplyValueOrThrow(
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
+}) {
+  if (replyList == null) {
+    throw PlatformException(
+      code: 'channel-error',
+      message: 'Unable to establish connection on channel: "$channelName".',
+    );
+  } else if (replyList.length > 1) {
+    throw PlatformException(
+      code: replyList[0]! as String,
+      message: replyList[1] as String?,
+      details: replyList[2],
+    );
+  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
+    throw PlatformException(
+      code: 'null-error',
+      message: 'Host platform returned null value for non-null return value.',
+    );
+  }
+  return replyList.firstOrNull;
 }
 
 List<Object?> wrapResponse({
@@ -635,17 +653,12 @@ class _PigeonInternalInstanceManagerApi {
       <Object?>[identifier],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Clear the native `PigeonInstanceManager`.
@@ -661,17 +674,12 @@ class _PigeonInternalInstanceManagerApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 }
 
@@ -1112,17 +1120,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -1414,17 +1417,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -3258,17 +3256,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         <Object?>[this, pigeonVar_instanceIdentifier],
       );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
     return pigeonVar_instance;
   }
@@ -3294,17 +3287,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         <Object?>[pigeonVar_instanceIdentifier],
       );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
     return pigeonVar_instance;
   }
@@ -3326,17 +3314,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Returns an error, to test error handling.
@@ -3355,17 +3338,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Returns an error from a void function, to test error handling.
@@ -3384,17 +3363,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Returns a Flutter error, to test error handling.
@@ -3413,17 +3387,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Returns passed in int.
@@ -3442,22 +3412,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as int;
   }
 
   /// Returns passed in double.
@@ -3476,22 +3437,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as double;
   }
 
   /// Returns the passed in boolean.
@@ -3510,22 +3462,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as bool;
   }
 
   /// Returns the passed in string.
@@ -3544,22 +3487,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   /// Returns the passed in Uint8List.
@@ -3578,22 +3512,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as Uint8List;
   }
 
   /// Returns the passed in generic Object.
@@ -3612,22 +3537,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anObject],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return pigeonVar_replyList[0]!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue;
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -3646,22 +3562,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
 
   /// Returns the passed list with ProxyApis, to test serialization and
@@ -3683,23 +3590,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<ProxyApiTestClass>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -3718,23 +3615,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String?, Object?>();
   }
 
   /// Returns the passed map with ProxyApis, to test serialization and
@@ -3756,23 +3644,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String, ProxyApiTestClass>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String, ProxyApiTestClass>();
   }
 
   /// Returns the passed enum to test serialization and deserialization.
@@ -3791,22 +3670,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as ProxyApiTestEnum;
   }
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
@@ -3825,22 +3695,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aProxyApi],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiSuperClass?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as ProxyApiSuperClass;
   }
 
   /// Returns passed in int.
@@ -3859,17 +3720,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as int?;
   }
 
   /// Returns passed in double.
@@ -3888,17 +3745,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as double?;
   }
 
   /// Returns the passed in boolean.
@@ -3917,17 +3770,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as bool?;
   }
 
   /// Returns the passed in string.
@@ -3946,17 +3795,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as String?;
   }
 
   /// Returns the passed in Uint8List.
@@ -3977,17 +3822,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as Uint8List?;
   }
 
   /// Returns the passed in generic Object.
@@ -4006,17 +3847,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableObject],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -4035,17 +3872,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -4066,18 +3899,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)
+        ?.cast<String?, Object?>();
   }
 
   Future<ProxyApiTestEnum?> echoNullableEnum(
@@ -4097,17 +3926,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
@@ -4128,17 +3953,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aNullableProxyApi],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiSuperClass?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as ProxyApiSuperClass?;
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -4158,17 +3979,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Returns passed in int asynchronously.
@@ -4187,22 +4003,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as int;
   }
 
   /// Returns passed in double asynchronously.
@@ -4221,22 +4028,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as double;
   }
 
   /// Returns the passed in boolean asynchronously.
@@ -4255,22 +4053,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as bool;
   }
 
   /// Returns the passed string asynchronously.
@@ -4289,22 +4078,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   /// Returns the passed in Uint8List asynchronously.
@@ -4323,22 +4103,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as Uint8List;
   }
 
   /// Returns the passed in generic Object asynchronously.
@@ -4357,22 +4128,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anObject],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return pigeonVar_replyList[0]!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue;
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -4391,22 +4153,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -4425,23 +4178,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String?, Object?>();
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
@@ -4460,22 +4204,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as ProxyApiTestEnum;
   }
 
   /// Responds with an error from an async function returning a value.
@@ -4494,17 +4229,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Responds with an error from an async void function.
@@ -4523,17 +4254,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   /// Responds with a Flutter error from an async function returning a value.
@@ -4552,17 +4278,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Returns passed in int asynchronously.
@@ -4581,17 +4303,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as int?;
   }
 
   /// Returns passed in double asynchronously.
@@ -4610,17 +4328,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as double?;
   }
 
   /// Returns the passed in boolean asynchronously.
@@ -4639,17 +4353,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as bool?;
   }
 
   /// Returns the passed string asynchronously.
@@ -4668,17 +4378,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as String?;
   }
 
   /// Returns the passed in Uint8List asynchronously.
@@ -4697,17 +4403,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as Uint8List?;
   }
 
   /// Returns the passed in generic Object asynchronously.
@@ -4726,17 +4428,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anObject],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -4755,17 +4453,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
@@ -4786,18 +4480,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)
+        ?.cast<String?, Object?>();
   }
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
@@ -4818,17 +4508,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
 
   static Future<void> staticNoop({
@@ -4852,17 +4538,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   static Future<String> echoStaticString(
@@ -4889,22 +4570,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   static Future<void> staticAsyncNoop({
@@ -4928,17 +4600,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<void> callFlutterNoop() async {
@@ -4956,17 +4623,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<Object?> callFlutterThrowError() async {
@@ -4984,17 +4646,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue;
   }
 
   Future<void> callFlutterThrowErrorFromVoid() async {
@@ -5012,17 +4670,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<bool> callFlutterEchoBool(bool aBool) async {
@@ -5040,22 +4693,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as bool;
   }
 
   Future<int> callFlutterEchoInt(int anInt) async {
@@ -5073,22 +4717,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as int;
   }
 
   Future<double> callFlutterEchoDouble(double aDouble) async {
@@ -5106,22 +4741,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as double;
   }
 
   Future<String> callFlutterEchoString(String aString) async {
@@ -5139,22 +4765,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List aUint8List) async {
@@ -5172,22 +4789,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as Uint8List;
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
@@ -5205,22 +4813,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<Object?>();
   }
 
   Future<List<ProxyApiTestClass?>> callFlutterEchoProxyApiList(
@@ -5240,23 +4839,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!
-          .cast<ProxyApiTestClass?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<ProxyApiTestClass?>();
   }
 
   Future<Map<String?, Object?>> callFlutterEchoMap(
@@ -5276,23 +4865,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, Object?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String?, Object?>();
   }
 
   Future<Map<String?, ProxyApiTestClass?>> callFlutterEchoProxyApiMap(
@@ -5312,23 +4892,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, ProxyApiTestClass?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String?, ProxyApiTestClass?>();
   }
 
   Future<ProxyApiTestEnum> callFlutterEchoEnum(ProxyApiTestEnum anEnum) async {
@@ -5346,22 +4917,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as ProxyApiTestEnum;
   }
 
   Future<ProxyApiSuperClass> callFlutterEchoProxyApi(
@@ -5381,22 +4943,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aProxyApi],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiSuperClass?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as ProxyApiSuperClass;
   }
 
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
@@ -5414,17 +4967,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aBool],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as bool?;
   }
 
   Future<int?> callFlutterEchoNullableInt(int? anInt) async {
@@ -5442,17 +4991,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anInt],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as int?;
   }
 
   Future<double?> callFlutterEchoNullableDouble(double? aDouble) async {
@@ -5470,17 +5015,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aDouble],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as double?;
   }
 
   Future<String?> callFlutterEchoNullableString(String? aString) async {
@@ -5498,17 +5039,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as String?;
   }
 
   Future<Uint8List?> callFlutterEchoNullableUint8List(
@@ -5528,17 +5065,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aUint8List],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Uint8List?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as Uint8List?;
   }
 
   Future<List<Object?>?> callFlutterEchoNullableList(
@@ -5558,17 +5091,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aList],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as List<Object?>?)?.cast<Object?>();
   }
 
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
@@ -5588,18 +5117,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aMap],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
-          ?.cast<String?, Object?>();
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return (pigeonVar_replyValue as Map<Object?, Object?>?)
+        ?.cast<String?, Object?>();
   }
 
   Future<ProxyApiTestEnum?> callFlutterEchoNullableEnum(
@@ -5619,17 +5144,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, anEnum],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiTestEnum?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as ProxyApiTestEnum?;
   }
 
   Future<ProxyApiSuperClass?> callFlutterEchoNullableProxyApi(
@@ -5649,17 +5170,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aProxyApi],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as ProxyApiSuperClass?);
-    }
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as ProxyApiSuperClass?;
   }
 
   Future<void> callFlutterNoopAsync() async {
@@ -5677,17 +5194,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   Future<String> callFlutterEchoAsyncString(String aString) async {
@@ -5705,22 +5217,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       <Object?>[this, aString],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   @override
@@ -5813,17 +5316,12 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -5911,17 +5409,12 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
@@ -6105,17 +5598,12 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
+
+      _extractReplyValueOrThrow(
+        pigeonVar_replyList,
+        pigeonVar_channelName,
+        isNullValid: true,
+      );
     }();
   }
 
@@ -6203,17 +5691,12 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
   }
 
   @override
