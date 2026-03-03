@@ -6,16 +6,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class QueueUtilsTests: XCTestCase {
   func testShouldStayOnMainQueueIfCalledFromMainQueue() {
     let expectation = expectation(description: "Block must be run on the main queue")
 
-    FLTEnsureToRunOnMainQueue {
+    ensureToRunOnMainQueue {
       if Thread.isMainThread {
         expectation.fulfill()
       }
@@ -28,7 +23,7 @@ final class QueueUtilsTests: XCTestCase {
     let expectation = expectation(description: "Block must be run on the main queue")
 
     DispatchQueue.global(qos: .default).async {
-      FLTEnsureToRunOnMainQueue {
+      ensureToRunOnMainQueue {
         if Thread.isMainThread {
           expectation.fulfill()
         }

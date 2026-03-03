@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(stuartmorgan): Remove, and fix violations.
-// ignore_for_file: public_member_api_docs
-
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show immutable;
@@ -12,6 +9,7 @@ import 'package:flutter/foundation.dart' show immutable;
 /// Represents a Google Fonts API variant in Flutter-specific types.
 @immutable
 class GoogleFontsVariant {
+  /// Creates a [GoogleFontsVariant] with a specific font weight and style.
   const GoogleFontsVariant({required this.fontWeight, required this.fontStyle});
 
   /// Creates a [GoogleFontsVariant] from a Google Fonts API specific
@@ -48,10 +46,18 @@ class GoogleFontsVariant {
                   variantString == _italic
               ? 3
               : (int.parse(variantString.replaceAll(_italic, '')) ~/ 100) - 1],
-      fontStyle =
-          variantString.contains(_italic) ? FontStyle.italic : FontStyle.normal;
+      fontStyle = variantString.contains(_italic)
+          ? FontStyle.italic
+          : FontStyle.normal;
 
+  /// The font weight of this variant.
+  ///
+  /// Example: [FontWeight.w400] for regular weight, [FontWeight.w700] for bold.
   final FontWeight fontWeight;
+
+  /// The font style of this variant.
+  ///
+  /// Example: [FontStyle.normal] for regular, [FontStyle.italic] for italic.
   final FontStyle fontStyle;
 
   static FontWeight _extractFontWeightFromApiFilenamePart(String filenamePart) {
@@ -114,7 +120,7 @@ class GoogleFontsVariant {
     final String weightPrefix =
         _fontWeightToFilenameWeightParts[fontWeight] ??
         _fontWeightToFilenameWeightParts[FontWeight.w400]!;
-    final String italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
+    final italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
     if (weightPrefix == 'Regular') {
       return italicSuffix == '' ? weightPrefix : italicSuffix;
     }
@@ -133,12 +139,13 @@ class GoogleFontsVariant {
   /// See [GoogleFontsVariant.toString] for the inverse function.
   @override
   String toString() {
-    final Object fontWeightString =
-        fontWeight.index == 3 ? '' : (fontWeight.index + 1) * 100;
+    final Object fontWeightString = fontWeight == FontWeight.normal
+        ? ''
+        : fontWeight.value;
     final String fontStyleString = fontStyle
         .toString()
         .replaceAll('FontStyle.', '')
-        .replaceFirst(_normal, fontWeight.index == 3 ? _regular : '');
+        .replaceFirst(_normal, fontWeight == FontWeight.normal ? _regular : '');
     return '$fontWeightString$fontStyleString';
   }
 

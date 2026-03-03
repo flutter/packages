@@ -70,19 +70,18 @@ class _WebViewState extends State<WebView> {
   Widget build(BuildContext context) {
     return WebView.platform.build(
       context: context,
-      onWebViewPlatformCreated: (
-        WebViewPlatformController? webViewPlatformController,
-      ) {
-        final WebViewController controller = WebViewController(
-          widget,
-          webViewPlatformController!,
-        );
-        _controller.complete(controller);
+      onWebViewPlatformCreated:
+          (WebViewPlatformController? webViewPlatformController) {
+            final controller = WebViewController(
+              widget,
+              webViewPlatformController!,
+            );
+            _controller.complete(controller);
 
-        if (widget.onWebViewCreated != null) {
-          widget.onWebViewCreated!(controller);
-        }
-      },
+            if (widget.onWebViewCreated != null) {
+              widget.onWebViewCreated!(controller);
+            }
+          },
       webViewPlatformCallbacksHandler: _platformCallbacksHandler,
       creationParams: CreationParams(
         initialUrl: widget.initialUrl,
@@ -333,7 +332,7 @@ class WebViewController {
     bool? hasNavigationDelegate;
     bool? hasProgressTracking;
     bool? debuggingEnabled;
-    WebSetting<String?> userAgent = const WebSetting<String?>.absent();
+    var userAgent = const WebSetting<String?>.absent();
     bool? zoomEnabled;
     if (currentValue.javascriptMode != newValue.javascriptMode) {
       javascriptMode = newValue.javascriptMode;

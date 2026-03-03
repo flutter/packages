@@ -51,7 +51,7 @@ void main() {
   });
 
   testWidgets('Initializing a polygon', (WidgetTester tester) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
@@ -65,8 +65,8 @@ void main() {
   });
 
   testWidgets('Adding a polygon', (WidgetTester tester) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p2 = Polygon(polygonId: PolygonId('polygon_2'));
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1, p2}));
@@ -83,7 +83,7 @@ void main() {
   });
 
   testWidgets('Removing a polygon', (WidgetTester tester) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{}));
@@ -100,11 +100,8 @@ void main() {
   });
 
   testWidgets('Updating a polygon', (WidgetTester tester) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(
-      polygonId: PolygonId('polygon_1'),
-      geodesic: true,
-    );
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p2 = Polygon(polygonId: PolygonId('polygon_1'), geodesic: true);
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p2}));
@@ -118,11 +115,8 @@ void main() {
   });
 
   testWidgets('Mutate a polygon', (WidgetTester tester) async {
-    final List<LatLng> points = <LatLng>[const LatLng(0.0, 0.0)];
-    final Polygon p1 = Polygon(
-      polygonId: const PolygonId('polygon_1'),
-      points: points,
-    );
+    final points = <LatLng>[const LatLng(0.0, 0.0)];
+    final p1 = Polygon(polygonId: const PolygonId('polygon_1'), points: points);
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
 
     p1.points.add(const LatLng(1.0, 1.0));
@@ -137,12 +131,12 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Polygon p1 = const Polygon(polygonId: PolygonId('polygon_1'));
-    Polygon p2 = const Polygon(polygonId: PolygonId('polygon_2'));
-    final Set<Polygon> prev = <Polygon>{p1, p2};
+    var p1 = const Polygon(polygonId: PolygonId('polygon_1'));
+    var p2 = const Polygon(polygonId: PolygonId('polygon_2'));
+    final prev = <Polygon>{p1, p2};
     p1 = const Polygon(polygonId: PolygonId('polygon_1'), visible: false);
     p2 = const Polygon(polygonId: PolygonId('polygon_2'), geodesic: true);
-    final Set<Polygon> cur = <Polygon>{p1, p2};
+    final cur = <Polygon>{p1, p2};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -155,14 +149,14 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Polygon p2 = const Polygon(polygonId: PolygonId('polygon_2'));
-    const Polygon p3 = Polygon(polygonId: PolygonId('polygon_3'));
-    final Set<Polygon> prev = <Polygon>{p2, p3};
+    var p2 = const Polygon(polygonId: PolygonId('polygon_2'));
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'));
+    final prev = <Polygon>{p2, p3};
 
     // p1 is added, p2 is updated, p3 is removed.
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     p2 = const Polygon(polygonId: PolygonId('polygon_2'), geodesic: true);
-    final Set<Polygon> cur = <Polygon>{p1, p2};
+    final cur = <Polygon>{p1, p2};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -182,12 +176,12 @@ void main() {
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    Polygon p3 = const Polygon(polygonId: PolygonId('polygon_3'));
-    final Set<Polygon> prev = <Polygon>{p1, p2, p3};
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    var p3 = const Polygon(polygonId: PolygonId('polygon_3'));
+    final prev = <Polygon>{p1, p2, p3};
     p3 = const Polygon(polygonId: PolygonId('polygon_3'), geodesic: true);
-    final Set<Polygon> cur = <Polygon>{p1, p2, p3};
+    final cur = <Polygon>{p1, p2, p3};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -200,10 +194,10 @@ void main() {
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
-    Polygon p1 = const Polygon(polygonId: PolygonId('polygon_1'));
-    final Set<Polygon> prev = <Polygon>{p1};
+    var p1 = const Polygon(polygonId: PolygonId('polygon_1'));
+    final prev = <Polygon>{p1};
     p1 = Polygon(polygonId: const PolygonId('polygon_1'), onTap: () {});
-    final Set<Polygon> cur = <Polygon>{p1};
+    final cur = <Polygon>{p1};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -234,7 +228,7 @@ void main() {
   testWidgets('Adding a polygon with points and hole', (
     WidgetTester tester,
   ) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     final Polygon p2 = _polygonWithPointsAndHole(const PolygonId('polygon_2'));
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
@@ -273,7 +267,7 @@ void main() {
   testWidgets('Updating a polygon by adding points and hole', (
     WidgetTester tester,
   ) async {
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     final Polygon p2 = _polygonWithPointsAndHole(const PolygonId('polygon_1'));
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
@@ -290,7 +284,7 @@ void main() {
   testWidgets('Mutate a polygon with points and holes', (
     WidgetTester tester,
   ) async {
-    final Polygon p1 = Polygon(
+    final p1 = Polygon(
       polygonId: const PolygonId('polygon_1'),
       points: _rectPoints(size: 1),
       holes: <List<LatLng>>[_rectPoints(size: 0.5)],
@@ -316,19 +310,19 @@ void main() {
   testWidgets('Multi Update polygons with points and hole', (
     WidgetTester tester,
   ) async {
-    Polygon p1 = const Polygon(polygonId: PolygonId('polygon_1'));
-    Polygon p2 = Polygon(
+    var p1 = const Polygon(polygonId: PolygonId('polygon_1'));
+    var p2 = Polygon(
       polygonId: const PolygonId('polygon_2'),
       points: _rectPoints(size: 2),
       holes: <List<LatLng>>[_rectPoints(size: 1)],
     );
-    final Set<Polygon> prev = <Polygon>{p1, p2};
+    final prev = <Polygon>{p1, p2};
     p1 = const Polygon(polygonId: PolygonId('polygon_1'), visible: false);
     p2 = p2.copyWith(
       pointsParam: _rectPoints(size: 5),
       holesParam: <List<LatLng>>[_rectPoints(size: 2)],
     );
-    final Set<Polygon> cur = <Polygon>{p1, p2};
+    final cur = <Polygon>{p1, p2};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -343,13 +337,13 @@ void main() {
   testWidgets('Multi Update polygons with points and hole', (
     WidgetTester tester,
   ) async {
-    Polygon p2 = Polygon(
+    var p2 = Polygon(
       polygonId: const PolygonId('polygon_2'),
       points: _rectPoints(size: 2),
       holes: <List<LatLng>>[_rectPoints(size: 1)],
     );
-    const Polygon p3 = Polygon(polygonId: PolygonId('polygon_3'));
-    final Set<Polygon> prev = <Polygon>{p2, p3};
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'));
+    final prev = <Polygon>{p2, p3};
 
     // p1 is added, p2 is updated, p3 is removed.
     final Polygon p1 = _polygonWithPointsAndHole(const PolygonId('polygon_1'));
@@ -357,7 +351,7 @@ void main() {
       pointsParam: _rectPoints(size: 5),
       holesParam: <List<LatLng>>[_rectPoints(size: 3)],
     );
-    final Set<Polygon> cur = <Polygon>{p1, p2};
+    final cur = <Polygon>{p1, p2};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -380,18 +374,18 @@ void main() {
     WidgetTester tester,
   ) async {
     final Polygon p1 = _polygonWithPointsAndHole(const PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    Polygon p3 = Polygon(
+    const p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    var p3 = Polygon(
       polygonId: const PolygonId('polygon_3'),
       points: _rectPoints(size: 2),
       holes: <List<LatLng>>[_rectPoints(size: 1)],
     );
-    final Set<Polygon> prev = <Polygon>{p1, p2, p3};
+    final prev = <Polygon>{p1, p2, p3};
     p3 = p3.copyWith(
       pointsParam: _rectPoints(size: 5),
       holesParam: <List<LatLng>>[_rectPoints(size: 3)],
     );
-    final Set<Polygon> cur = <Polygon>{p1, p2, p3};
+    final cur = <Polygon>{p1, p2, p3};
 
     await tester.pumpWidget(_mapWithPolygons(prev));
     await tester.pumpWidget(_mapWithPolygons(cur));
@@ -406,13 +400,10 @@ void main() {
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const Polygon p3 = Polygon(
-      polygonId: PolygonId('polygon_3'),
-      strokeWidth: 1,
-    );
-    const Polygon p3updated = Polygon(
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
+    const p3updated = Polygon(
       polygonId: PolygonId('polygon_3'),
       strokeWidth: 2,
     );

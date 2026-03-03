@@ -101,16 +101,18 @@ class Timeseries {
       name,
       cleanValues,
     );
-    final double noise =
-        cleanAverage > 0.0 ? standardDeviation / cleanAverage : 0.0;
+    final double noise = cleanAverage > 0.0
+        ? standardDeviation / cleanAverage
+        : 0.0;
 
     // Compute outlier average. If there are no outliers the outlier average is
     // the same as clean value average. In other words, in a perfect benchmark
     // with no noise the difference between average and outlier average is zero,
     // which the best possible outcome. Noise produces a positive difference
     // between the two.
-    final double outlierAverage =
-        outliers.isNotEmpty ? _computeAverage(name, outliers) : cleanAverage;
+    final double outlierAverage = outliers.isNotEmpty
+        ? _computeAverage(name, outliers)
+        : cleanAverage;
 
     // Compute percentile values (e.g. p50, p90, p95).
     final Map<double, double> percentiles = computePercentiles(
@@ -119,7 +121,7 @@ class Timeseries {
       candidateValues,
     );
 
-    final List<AnnotatedSample> annotatedValues = <AnnotatedSample>[
+    final annotatedValues = <AnnotatedSample>[
       for (final double warmUpValue in warmUpValues)
         AnnotatedSample(
           magnitude: warmUpValue,
@@ -235,14 +237,13 @@ class TimeseriesStats {
   /// This is a measure of performance consistency. The higher this number the
   /// worse is jank when it happens. Smaller is better, with 1.0 being the
   /// perfect score. If [average] is zero, this value defaults to 1.0.
-  double get outlierRatio =>
-      average > 0.0
-          ? outlierAverage / average
-          : 1.0; // this can only happen in perfect benchmark that reports only zeros
+  double get outlierRatio => average > 0.0
+      ? outlierAverage / average
+      : 1.0; // this can only happen in perfect benchmark that reports only zeros
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.writeln(
       '$name: (samples: $cleanSampleCount clean/$outlierSampleCount '
       'outliers/${cleanSampleCount + outlierSampleCount} '
@@ -341,7 +342,7 @@ Map<double, double> computePercentiles(
       '$label: attempted to compute a percentile of an empty value list.',
     );
   }
-  for (final double percentile in percentiles) {
+  for (final percentile in percentiles) {
     if (percentile < 0.0 || percentile > 1.0) {
       throw StateError(
         '$label: attempted to compute a percentile for an invalid '
@@ -353,8 +354,8 @@ Map<double, double> computePercentiles(
   final List<double> sorted = values.sorted(
     (double a, double b) => a.compareTo(b),
   );
-  final Map<double, double> computed = <double, double>{};
-  for (final double percentile in percentiles) {
+  final computed = <double, double>{};
+  for (final percentile in percentiles) {
     final int percentileIndex = (sorted.length * percentile).round().clamp(
       0,
       sorted.length - 1,

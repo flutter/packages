@@ -25,7 +25,7 @@ void main() {
 
   group('#pickImage', () {
     test('calls the method correctly', () async {
-      const String fakePath = '/foo.jpg';
+      const fakePath = '/foo.jpg';
       api.returnValue = <String>[fakePath];
       final PickedFile? result = await picker.pickImage(
         source: ImageSource.camera,
@@ -141,7 +141,7 @@ void main() {
 
   group('#pickMultiImage', () {
     test('calls the method correctly', () async {
-      const List<String> fakePaths = <String>['/foo.jgp', 'bar.jpg'];
+      const fakePaths = <String>['/foo.jgp', 'bar.jpg'];
       api.returnValue = fakePaths;
 
       final List<PickedFile>? files = await picker.pickMultiImage();
@@ -214,7 +214,7 @@ void main() {
 
   group('#pickVideo', () {
     test('calls the method correctly', () async {
-      const String fakePath = '/foo.jpg';
+      const fakePath = '/foo.jpg';
       api.returnValue = <String>[fakePath];
       final PickedFile? result = await picker.pickVideo(
         source: ImageSource.camera,
@@ -341,7 +341,7 @@ void main() {
 
   group('#getImage', () {
     test('calls the method correctly', () async {
-      const String fakePath = '/foo.jpg';
+      const fakePath = '/foo.jpg';
       api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getImage(source: ImageSource.camera);
 
@@ -455,7 +455,7 @@ void main() {
 
   group('#getMultiImage', () {
     test('calls the method correctly', () async {
-      const List<String> fakePaths = <String>['/foo.jgp', 'bar.jpg'];
+      const fakePaths = <String>['/foo.jgp', 'bar.jpg'];
       api.returnValue = fakePaths;
 
       final List<XFile>? files = await picker.getMultiImage();
@@ -526,7 +526,7 @@ void main() {
 
   group('#getVideo', () {
     test('calls the method correctly', () async {
-      const String fakePath = '/foo.jpg';
+      const fakePath = '/foo.jpg';
       api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getVideo(source: ImageSource.camera);
 
@@ -601,7 +601,7 @@ void main() {
 
   group('#getMultiVideoWithOptions', () {
     test('calls the method correctly', () async {
-      const List<String> fakePaths = <String>['/foo.mp4', 'bar.mp4'];
+      const fakePaths = <String>['/foo.mp4', 'bar.mp4'];
       api.returnValue = fakePaths;
       final List<XFile> result = await picker.getMultiVideoWithOptions();
 
@@ -692,7 +692,7 @@ void main() {
 
   group('#getMedia', () {
     test('calls the method correctly', () async {
-      const List<String> fakePaths = <String>['/foo.jgp', 'bar.jpg'];
+      const fakePaths = <String>['/foo.jgp', 'bar.jpg'];
       api.returnValue = fakePaths;
 
       final List<XFile> files = await picker.getMedia(
@@ -844,7 +844,7 @@ void main() {
 
   group('#getImageFromSource', () {
     test('calls the method correctly', () async {
-      const String fakePath = '/foo.jpg';
+      const fakePath = '/foo.jpg';
       api.returnValue = <String>[fakePath];
       final XFile? result = await picker.getImage(source: ImageSource.camera);
 

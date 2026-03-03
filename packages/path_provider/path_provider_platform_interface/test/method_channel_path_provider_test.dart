@@ -10,18 +10,18 @@ import 'package:platform/platform.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const String kTemporaryPath = 'temporaryPath';
-  const String kApplicationSupportPath = 'applicationSupportPath';
-  const String kLibraryPath = 'libraryPath';
-  const String kApplicationDocumentsPath = 'applicationDocumentsPath';
-  const String kApplicationCachePath = 'applicationCachePath';
-  const String kExternalCachePaths = 'externalCachePaths';
-  const String kExternalStoragePaths = 'externalStoragePaths';
-  const String kDownloadsPath = 'downloadsPath';
+  const kTemporaryPath = 'temporaryPath';
+  const kApplicationSupportPath = 'applicationSupportPath';
+  const kLibraryPath = 'libraryPath';
+  const kApplicationDocumentsPath = 'applicationDocumentsPath';
+  const kApplicationCachePath = 'applicationCachePath';
+  const kExternalCachePaths = 'externalCachePaths';
+  const kExternalStoragePaths = 'externalStoragePaths';
+  const kDownloadsPath = 'downloadsPath';
 
   group('$MethodChannelPathProvider', () {
     late MethodChannelPathProvider methodChannelPathProvider;
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
 
     setUp(() async {
       methodChannelPathProvider = MethodChannelPathProvider();
@@ -73,8 +73,8 @@ void main() {
     });
 
     test('getApplicationSupportPath', () async {
-      final String? path =
-          await methodChannelPathProvider.getApplicationSupportPath();
+      final String? path = await methodChannelPathProvider
+          .getApplicationSupportPath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationSupportDirectory', arguments: null),
       ]);
@@ -115,8 +115,8 @@ void main() {
     });
 
     test('getApplicationDocumentsPath', () async {
-      final String? path =
-          await methodChannelPathProvider.getApplicationDocumentsPath();
+      final String? path = await methodChannelPathProvider
+          .getApplicationDocumentsPath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationDocumentsDirectory', arguments: null),
       ]);
@@ -124,8 +124,8 @@ void main() {
     });
 
     test('getApplicationCachePath succeeds', () async {
-      final String? result =
-          await methodChannelPathProvider.getApplicationCachePath();
+      final String? result = await methodChannelPathProvider
+          .getApplicationCachePath();
       expect(log, <Matcher>[
         isMethodCall('getApplicationCacheDirectory', arguments: null),
       ]);
@@ -133,8 +133,8 @@ void main() {
     });
 
     test('getExternalCachePaths android succeeds', () async {
-      final List<String>? result =
-          await methodChannelPathProvider.getExternalCachePaths();
+      final List<String>? result = await methodChannelPathProvider
+          .getExternalCachePaths();
       expect(log, <Matcher>[
         isMethodCall('getExternalCacheDirectories', arguments: null),
       ]);
@@ -155,10 +155,7 @@ void main() {
       }
     });
 
-    for (final StorageDirectory? type in <StorageDirectory?>[
-      null,
-      ...StorageDirectory.values,
-    ]) {
+    for (final type in <StorageDirectory?>[null, ...StorageDirectory.values]) {
       test('getExternalStoragePaths (type: $type) android succeeds', () async {
         final List<String>? result = await methodChannelPathProvider
             .getExternalStoragePaths(type: type);

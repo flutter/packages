@@ -1,5 +1,17 @@
-## NEXT
+## 2.11.0
 
+* Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+* Updates example app minimum platform versions.
+
+## 2.10.1
+
+* Fixes a bug where the `VideoPlayer` widget and `VideoProgressIndicator` widget would stop updating after GlobalKey reparenting.
+* Updates the `VideoProgressIndicator` widget to handle zero-duration videos.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.10.0

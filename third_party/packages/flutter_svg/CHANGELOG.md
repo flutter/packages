@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.2.3
+
+* Replaces use of deprecated Color.value.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 2.2.2
 
 * Fixes typo of `allowDrawingOutsideViewBox` in doc comments.

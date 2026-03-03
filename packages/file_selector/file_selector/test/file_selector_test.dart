@@ -9,10 +9,11 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   late FakeFileSelector fakePlatformImplementation;
-  const String initialDirectory = '/home/flutteruser';
-  const String confirmButtonText = 'Use this profile picture';
-  const String suggestedName = 'suggested_name';
-  const List<XTypeGroup> acceptedTypeGroups = <XTypeGroup>[
+  const initialDirectory = '/home/flutteruser';
+  const confirmButtonText = 'Use this profile picture';
+  const suggestedName = 'suggested_name';
+
+  const acceptedTypeGroups = <XTypeGroup>[
     XTypeGroup(
       label: 'documents',
       mimeTypes: <String>[
@@ -29,7 +30,7 @@ void main() {
   });
 
   group('openFile', () {
-    final XFile expectedFile = XFile('path');
+    final expectedFile = XFile('path');
 
     test('works', () async {
       fakePlatformImplementation
@@ -88,7 +89,7 @@ void main() {
   });
 
   group('openFiles', () {
-    final List<XFile> expectedFiles = <XFile>[XFile('path')];
+    final expectedFiles = <XFile>[XFile('path')];
 
     test('works', () async {
       fakePlatformImplementation
@@ -151,10 +152,10 @@ void main() {
   });
 
   group('getSaveLocation', () {
-    const String expectedSavePath = '/example/path';
+    const expectedSavePath = '/example/path';
 
     test('works', () async {
-      const int expectedActiveFilter = 1;
+      const expectedActiveFilter = 1;
       fakePlatformImplementation
         ..setExpectations(
           initialDirectory: initialDirectory,
@@ -227,10 +228,22 @@ void main() {
       );
       expect(location?.path, expectedSavePath);
     });
+
+    test('sets the directory creation control flag', () async {
+      const canCreateDirectories = false;
+      fakePlatformImplementation
+        ..setExpectations(canCreateDirectories: canCreateDirectories)
+        ..setPathsResponse(<String>[expectedSavePath]);
+
+      final FileSaveLocation? location = await getSaveLocation(
+        canCreateDirectories: canCreateDirectories,
+      );
+      expect(location?.path, expectedSavePath);
+    });
   });
 
   group('getDirectoryPath', () {
-    const String expectedDirectoryPath = '/example/path';
+    const expectedDirectoryPath = '/example/path';
 
     test('works', () async {
       fakePlatformImplementation
@@ -278,13 +291,22 @@ void main() {
       );
       expect(directoryPath, expectedDirectoryPath);
     });
+
+    test('sets the directory creation control flag', () async {
+      const canCreateDirectories = true;
+      fakePlatformImplementation
+        ..setExpectations(canCreateDirectories: canCreateDirectories)
+        ..setPathsResponse(<String>[expectedDirectoryPath]);
+
+      final String? directoryPath = await getDirectoryPath(
+        canCreateDirectories: canCreateDirectories,
+      );
+      expect(directoryPath, expectedDirectoryPath);
+    });
   });
 
   group('getDirectoryPaths', () {
-    const List<String> expectedDirectoryPaths = <String>[
-      '/example/path',
-      '/example/2/path',
-    ];
+    const expectedDirectoryPaths = <String>['/example/path', '/example/2/path'];
 
     test('works', () async {
       fakePlatformImplementation
@@ -330,6 +352,17 @@ void main() {
       );
       expect(directoryPaths, expectedDirectoryPaths);
     });
+    test('sets the directory creation control flag', () async {
+      const canCreateDirectories = true;
+      fakePlatformImplementation
+        ..setExpectations(canCreateDirectories: canCreateDirectories)
+        ..setPathsResponse(expectedDirectoryPaths);
+
+      final List<String?> directoryPaths = await getDirectoryPaths(
+        canCreateDirectories: canCreateDirectories,
+      );
+      expect(directoryPaths, expectedDirectoryPaths);
+    });
   });
 }
 
@@ -341,6 +374,7 @@ class FakeFileSelector extends Fake
   String? initialDirectory;
   String? confirmButtonText;
   String? suggestedName;
+  bool? canCreateDirectories;
   // Return values.
   List<XFile>? files;
   List<String>? paths;
@@ -351,11 +385,13 @@ class FakeFileSelector extends Fake
     String? initialDirectory,
     String? suggestedName,
     String? confirmButtonText,
+    bool? canCreateDirectories,
   }) {
     this.acceptedTypeGroups = acceptedTypeGroups;
     this.initialDirectory = initialDirectory;
     this.suggestedName = suggestedName;
     this.confirmButtonText = confirmButtonText;
+    this.canCreateDirectories = canCreateDirectories;
   }
 
   // ignore: use_setters_to_change_properties
@@ -424,21 +460,30 @@ class FakeFileSelector extends Fake
     return path == null
         ? null
         : FileSaveLocation(
-          path,
-          activeFilter:
-              activeFilterIndex == null
-                  ? null
-                  : acceptedTypeGroups?[activeFilterIndex],
-        );
+            path,
+            activeFilter: activeFilterIndex == null
+                ? null
+                : acceptedTypeGroups?[activeFilterIndex],
+          );
   }
 
   @override
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
+    bool canCreateDirectories = true,
   }) async {
     expect(initialDirectory, this.initialDirectory);
     expect(confirmButtonText, this.confirmButtonText);
+    expect(canCreateDirectories, this.canCreateDirectories);
+    return paths?[0];
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
+    expect(options.initialDirectory, initialDirectory);
+    expect(options.confirmButtonText, confirmButtonText);
+    expect(options.canCreateDirectories, canCreateDirectories);
     return paths?[0];
   }
 
@@ -446,9 +491,21 @@ class FakeFileSelector extends Fake
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
+    bool canCreateDirectories = true,
   }) async {
     expect(initialDirectory, this.initialDirectory);
     expect(confirmButtonText, this.confirmButtonText);
+    expect(canCreateDirectories, this.canCreateDirectories);
+    return paths!;
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
+    expect(options.initialDirectory, initialDirectory);
+    expect(options.confirmButtonText, confirmButtonText);
+    expect(options.canCreateDirectories, canCreateDirectories);
     return paths!;
   }
 }

@@ -15,7 +15,7 @@ final class ObjectTranslatorTest: XCTestCase {
   private var discountMap: [String: Any] {
     // Type is being instantiated like this because of Swift naming weirdness
     let type: SKProductDiscount.`Type` = .introductory
-    var map: [String: Any] = [
+    let map: [String: Any] = [
       "identifier": "test offer id",
       "price": "1",
       "priceLocale": FIAObjectTranslator.getMapFrom(NSLocale.system),

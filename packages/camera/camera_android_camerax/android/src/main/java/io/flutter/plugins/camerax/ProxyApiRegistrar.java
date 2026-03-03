@@ -144,10 +144,15 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
       "deprecation") // getSystemService was the way of getting the default display prior to API 30
   @Nullable
   Display getDisplay() {
+    Activity activity = getActivity();
+    if (activity == null || activity.isDestroyed()) {
+      return null;
+    }
+
     if (sdkIsAtLeast(Build.VERSION_CODES.R)) {
-      return getContext().getDisplay();
+      return activity.getDisplay();
     } else {
-      return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+      return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE))
           .getDefaultDisplay();
     }
   }

@@ -15,8 +15,8 @@ class _DummyPlatformView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String viewType = 'dummy_platform_view';
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
+    const viewType = 'dummy_platform_view';
+    final creationParams = <String, dynamic>{};
 
     return UiKitView(
       viewType: viewType,

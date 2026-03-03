@@ -220,15 +220,12 @@ class _SharedPreferencesStateProviderState
   void initState() {
     super.initState();
     final VmService service = serviceManager.service!;
-    final EvalOnDartLibrary extensionEval = EvalOnDartLibrary(
+    final extensionEval = EvalOnDartLibrary(
       'package:shared_preferences/src/shared_preferences_devtools_extension_data.dart',
       service,
       serviceManager: serviceManager,
     );
-    final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(
-      service,
-      extensionEval,
-    );
+    final toolEval = SharedPreferencesToolEval(service, extensionEval);
     _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();
   }

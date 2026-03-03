@@ -9,26 +9,32 @@ import 'package:flutter_plugin_tools/src/repo_package_info_check_command.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
+import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   late CommandRunner<void> runner;
   late Directory root;
   late Directory packagesDir;
+  late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
 
-    final RepoPackageInfoCheckCommand command = RepoPackageInfoCheckCommand(
-      packagesDir,
-      gitDir: gitDir,
-    );
+    final command = RepoPackageInfoCheckCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
-        'dependabot_test', 'Test for $RepoPackageInfoCheckCommand');
+      'dependabot_test',
+      'Test for $RepoPackageInfoCheckCommand',
+    );
     runner.addCommand(command);
+
+    // Default to failing these checks so that tests of non-batch-release packages
+    // (the default) don't fail due to "unexpected" branches/labels being found.
+    gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+        <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
   });
 
   String readmeTableHeader() {
@@ -40,10 +46,14 @@ void main() {
 
   void writeCodeOwners(List<RepositoryPackage> ownedPackages) {
     final List<String> subpaths = ownedPackages
-        .map((RepositoryPackage p) => p.isFederated
-            ? <String>[p.directory.parent.basename, p.directory.basename]
-                .join('/')
-            : p.directory.basename)
+        .map(
+          (RepositoryPackage p) => p.isFederated
+              ? <String>[
+                  p.directory.parent.basename,
+                  p.directory.basename,
+                ].join('/')
+              : p.directory.basename,
+        )
         .toList();
     root.childFile('CODEOWNERS').writeAsStringSync('''
 ${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
@@ -61,22 +71,27 @@ ${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
   }
 
   void writeAutoLabelerYaml(List<RepositoryPackage> packages) {
-    final File labelerYaml =
-        root.childDirectory('.github').childFile('labeler.yml');
+    final File labelerYaml = root
+        .childDirectory('.github')
+        .childFile('labeler.yml');
     labelerYaml.createSync(recursive: true);
-    labelerYaml.writeAsStringSync(packages.map((RepositoryPackage p) {
-      final bool isThirdParty = p.path.contains('third_party/');
-      return '''
+    labelerYaml.writeAsStringSync(
+      packages
+          .map((RepositoryPackage p) {
+            final bool isThirdParty = p.path.contains('third_party/');
+            return '''
 -p: ${p.directory.basename}
   - changed-files:
     - any-glob-to-any-file:
       - ${isThirdParty ? 'third_party/' : ''}packages/${p.directory.basename}/**/*
 ''';
-    }).join('\n\n'));
+          })
+          .join('\n\n'),
+    );
   }
 
   test('passes for correct coverage', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -87,40 +102,58 @@ ${readmeTableEntry('a_package')}
     writeAutoLabelerYaml(packages);
     writeCodeOwners(packages);
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['repo-package-info-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'repo-package-info-check',
+    ]);
 
-    expect(output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]));
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+    );
   });
 
-  test('passes for federated plugins with only app-facing package listed',
-      () async {
-    const String pluginName = 'foo';
-    final Directory pluginDir = packagesDir.childDirectory(pluginName);
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
-      createFakePlugin(pluginName, pluginDir),
-      createFakePlugin('${pluginName}_platform_interface', pluginDir),
-      createFakePlugin('${pluginName}_android', pluginDir),
-      createFakePlugin('${pluginName}_ios', pluginDir),
-    ];
+  test(
+    'passes for federated plugins with only app-facing package listed',
+    () async {
+      const pluginName = 'foo';
+      final Directory pluginDir = packagesDir.childDirectory(pluginName);
+      final packages = <RepositoryPackage>[
+        createFakePlugin(pluginName, pluginDir),
+        createFakePlugin('${pluginName}_platform_interface', pluginDir),
+        createFakePlugin('${pluginName}_android', pluginDir),
+        createFakePlugin('${pluginName}_ios', pluginDir),
+      ];
 
-    root.childFile('README.md').writeAsStringSync('''
+      root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
 ${readmeTableEntry(pluginName)}
 ''');
-    writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
-    writeCodeOwners(packages);
+      writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
+      writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
+      writeCodeOwners(packages);
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['repo-package-info-check']);
+      // 4 packages * 2 checks (git, gh) = 8 calls.
+      // Default mocks in setUp cover 1 call each. We need 3 more each.
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote']!
+          .addAll(<FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(exitCode: 1)),
+            FakeProcessInfo(MockProcess(exitCode: 1)),
+            FakeProcessInfo(MockProcess(exitCode: 1)),
+          ]);
 
-    expect(output,
-        containsAllInOrder(<Matcher>[contains('Ran for 4 package(s)')]));
-  });
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'repo-package-info-check',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 4 package(s)')]),
+      );
+    },
+  );
 
   test('fails for unexpected README table entry', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -133,20 +166,24 @@ ${readmeTableEntry('another_package')}
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Unknown package "another_package" in root README.md table'),
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Unknown package "another_package" in root README.md table'),
+      ]),
+    );
   });
 
   test('fails for missing README table entry', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
       createFakePackage('another_package', packagesDir),
     ];
@@ -160,28 +197,35 @@ ${readmeTableEntry('another_package')}
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Missing repo root README.md table entry'),
-          contains('a_package:\n'
-              '    Missing repo root README.md table entry')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Missing repo root README.md table entry'),
+        contains(
+          'a_package:\n'
+          '    Missing repo root README.md table entry',
+        ),
+      ]),
+    );
   });
 
   test('fails for unexpected format in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry =
+        '| [$packageName](./packages/$packageName/) | '
         'Some random text | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -197,30 +241,35 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Invalid repo root README.md table entry: "Some random text"'),
-          contains('a_package:\n'
-              '    Invalid root README.md table entry')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Invalid repo root README.md table entry: "Some random text"'),
+        contains(
+          'a_package:\n'
+          '    Invalid root README.md table entry',
+        ),
+      ]),
+    );
   });
 
   test('fails for incorrect source link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry =
+    final entry =
         '| [$packageName](./packages/$incorrectPackageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -237,30 +286,38 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Incorrect link in root README.md table: "./packages/$incorrectPackageName/"'),
-          contains('a_package:\n'
-              '    Incorrect link in root README.md table')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'Incorrect link in root README.md table: "./packages/$incorrectPackageName/"',
+        ),
+        contains(
+          'a_package:\n'
+          '    Incorrect link in root README.md table',
+        ),
+      ]),
+    );
   });
 
   test('fails for incorrect packages/* link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry =
+        '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$incorrectPackageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -276,30 +333,38 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Incorrect link in root README.md table: "https://pub.dev/packages/$incorrectPackageName/score"'),
-          contains('a_package:\n'
-              '    Incorrect link in root README.md table')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'Incorrect link in root README.md table: "https://pub.dev/packages/$incorrectPackageName/score"',
+        ),
+        contains(
+          'a_package:\n'
+          '    Incorrect link in root README.md table',
+        ),
+      ]),
+    );
   });
 
   test('fails for incorrect labels/* link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry =
+        '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -315,30 +380,38 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Incorrect link in root README.md table: "https://github.com/flutter/flutter/labels/$incorrectTag"'),
-          contains('a_package:\n'
-              '    Incorrect link in root README.md table')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'Incorrect link in root README.md table: "https://github.com/flutter/flutter/labels/$incorrectTag"',
+        ),
+        contains(
+          'a_package:\n'
+          '    Incorrect link in root README.md table',
+        ),
+      ]),
+    );
   });
 
   test('fails for incorrect packages/* anchor in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry =
+        '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$incorrectPackageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -354,30 +427,38 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Incorrect anchor in root README.md table: "![pub points](https://img.shields.io/pub/points/$incorrectPackageName)"'),
-          contains('a_package:\n'
-              '    Incorrect anchor in root README.md table')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'Incorrect anchor in root README.md table: "![pub points](https://img.shields.io/pub/points/$incorrectPackageName)"',
+        ),
+        contains(
+          'a_package:\n'
+          '    Incorrect anchor in root README.md table',
+        ),
+      ]),
+    );
   });
 
   test('fails for incorrect tag query anchor in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry =
+        '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -393,24 +474,31 @@ $entry
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Incorrect anchor in root README.md table: "![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$incorrectTag?label=)'),
-          contains('a_package:\n'
-              '    Incorrect anchor in root README.md table')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains(
+          'Incorrect anchor in root README.md table: "![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$incorrectTag?label=)',
+        ),
+        contains(
+          'a_package:\n'
+          '    Incorrect anchor in root README.md table',
+        ),
+      ]),
+    );
   });
 
   test('fails for missing CODEOWNER', () async {
-    const String packageName = 'a_package';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const packageName = 'a_package';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -423,23 +511,29 @@ ${readmeTableEntry(packageName)}
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Missing CODEOWNERS entry.'),
-          contains('a_package:\n'
-              '    Missing CODEOWNERS entry')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Missing CODEOWNERS entry.'),
+        contains(
+          'a_package:\n'
+          '    Missing CODEOWNERS entry',
+        ),
+      ]),
+    );
   });
 
   test('fails for missing auto-labeler entry', () async {
-    const String packageName = 'a_package';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const packageName = 'a_package';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -452,24 +546,32 @@ ${readmeTableEntry(packageName)}
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['repo-package-info-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Missing a rule in .github/labeler.yml.'),
-          contains('a_package:\n'
-              '    Missing auto-labeler entry')
-        ]));
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Missing a rule in .github/labeler.yml.'),
+        contains(
+          'a_package:\n'
+          '    Missing auto-labeler entry',
+        ),
+      ]),
+    );
   });
 
   group('ci_config check', () {
     test('control test', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
@@ -483,21 +585,18 @@ release:
   batch: false
     ''');
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['repo-package-info-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'repo-package-info-check',
+      ]);
 
-      expect(
-        output,
-        containsAll(<Matcher>[
-          contains('  Checking ci_config.yaml...'),
-          contains('No issues found!'),
-        ]),
-      );
+      expect(output, containsAll(<Matcher>[contains('No issues found!')]));
     });
 
     test('missing ci_config file is ok', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
@@ -506,20 +605,21 @@ ${readmeTableEntry('a_package')}
       writeAutoLabelerYaml(<RepositoryPackage>[package]);
       writeCodeOwners(<RepositoryPackage>[package]);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['repo-package-info-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'repo-package-info-check',
+      ]);
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('No issues found!'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('No issues found!')]),
       );
     });
 
     test('fails for unknown key', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
@@ -533,9 +633,12 @@ something: true
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
@@ -546,10 +649,11 @@ something: true
       );
     });
 
-    test('fails for invalid value type for batch property in release',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+    test('fails for invalid value type for batch property in release', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
@@ -564,17 +668,383 @@ release:
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
         output,
         containsAllInOrder(<Matcher>[
           contains(
-              'Invalid value `1` for key `release.batch`, the possible values are [true, false]'),
+            'Invalid value `1` for key `release.batch`, the possible values are [true, false]',
+          ),
         ]),
+      );
+    });
+  });
+
+  group('release strategy check', () {
+    RepositoryPackage setupReleaseStrategyTest() {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
+      writeCodeOwners(<RepositoryPackage>[package]);
+      return package;
+    }
+
+    void writeBatchConfig(RepositoryPackage package) {
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+    }
+
+    void writeWorkflowFiles({
+      bool validBatchFile = true,
+      bool validReleaseFromBranches = true,
+      bool validSyncRelease = true,
+    }) {
+      final Directory workflowDir = root
+          .childDirectory('.github')
+          .childDirectory('workflows');
+      workflowDir.createSync(recursive: true);
+
+      if (validBatchFile) {
+        workflowDir.childFile('a_package_batch.yml').writeAsStringSync('''
+name: Batch Release
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+jobs:
+  dispatch_release_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f
+        with:
+          event-type: batch-release-pr
+          client-payload: '{"package": "a_package"}'
+''');
+      }
+
+      if (validReleaseFromBranches) {
+        workflowDir.childFile('release_from_branches.yml').writeAsStringSync('''
+on:
+  push:
+    branches:
+      - 'release-a_package'
+''');
+      }
+
+      if (validSyncRelease) {
+        workflowDir.childFile('sync_release_pr.yml').writeAsStringSync('''
+on:
+  push:
+    branches:
+      - 'release-a_package'
+''');
+      }
+    }
+
+    test(
+      'ignores non-batch release packages if they have no artifacts',
+      () async {
+        setupReleaseStrategyTest();
+        // No config, so batch is false by default.
+
+        gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(exitCode: 1),
+              ), // git ls-remote fails (branch doesn't exist)
+            ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'repo-package-info-check',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[contains('No issues found!')]),
+        );
+      },
+    );
+
+    test('fails if non-batch package has batch artifacts', () async {
+      setupReleaseStrategyTest();
+      // batch defaults to false
+      writeWorkflowFiles();
+
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(),
+            ), // git ls-remote succeeds (branch exists)
+          ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Unexpected batch workflow file: .github/workflows/a_package_batch.yml',
+          ),
+        ),
+      );
+      expect(
+        output,
+        contains(
+          contains(
+            'Unexpected trigger for release-a_package in .github/workflows/release_from_branches.yml',
+          ),
+        ),
+      );
+      expect(
+        output,
+        contains(
+          contains(
+            'Unexpected trigger for release-a_package in .github/workflows/sync_release_pr.yml',
+          ),
+        ),
+      );
+    });
+
+    test('fails if batch package has pre-release version', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      writeWorkflowFiles();
+      package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 1.0.0-wip
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess()), // git ls-remote succeeds
+          ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Batch release packages must not have a pre-release version.',
+          ),
+        ),
+      );
+    });
+
+    test('fails if batch workflow file is missing', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      // Don't write workflow files.
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Missing batch workflow file: .github/workflows/a_package_batch.yml',
+          ),
+        ),
+      );
+    });
+
+    test('fails if batch workflow content is invalid', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      final Directory workflowDir = root
+          .childDirectory('.github')
+          .childDirectory('workflows');
+      workflowDir.createSync(recursive: true);
+      workflowDir.childFile('a_package_batch.yml').writeAsStringSync('''
+name: Batch Release
+jobs:
+  dispatch_release_pr:
+    steps:
+      - uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f
+        with:
+          event-type: something-else
+          client-payload: '{"package": "a_package"}'
+''');
+      // Write other files to be valid so we focus on this error
+      workflowDir
+          .childFile('release_from_branches.yml')
+          .writeAsStringSync("- 'release-a_package'");
+      workflowDir
+          .childFile('sync_release_pr.yml')
+          .writeAsStringSync("- 'release-a_package'");
+
+      // Mock successful git and gh calls
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Invalid batch workflow content in a_package_batch.yml. '
+            'Must contain a step using peter-evans/repository-dispatch with:\n'
+            '  event-type: batch-release-pr\n'
+            '  client-payload: \'{"package": "a_package"}\'',
+          ),
+        ),
+      );
+    });
+
+    test('fails if global workflows are missing triggers', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      writeWorkflowFiles(
+        validReleaseFromBranches: false,
+        validSyncRelease: false,
+      );
+      // Create files but without correct content
+      final Directory workflowDir = root
+          .childDirectory('.github')
+          .childDirectory('workflows');
+      workflowDir
+          .childFile('release_from_branches.yml')
+          .writeAsStringSync('name: something');
+      workflowDir
+          .childFile('sync_release_pr.yml')
+          .writeAsStringSync('name: something');
+
+      gitProcessRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess()),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Missing trigger for release-a_package in .github/workflows/release_from_branches.yml',
+          ),
+        ),
+      );
+      expect(
+        output,
+        contains(
+          contains(
+            'Missing trigger for release-a_package in .github/workflows/sync_release_pr.yml',
+          ),
+        ),
+      );
+    });
+
+    test('fails if remote branch check fails', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      writeWorkflowFiles();
+
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(exitCode: 1)), // git ls-remote fails
+          ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Branch release-a_package does not exist on remote flutter/packages',
+          ),
+        ),
+      );
+    });
+
+    test('passes if all checks pass', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      writeWorkflowFiles();
+
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      if (commandError != null) {
+        print('ERROR: Command failed in "passes if all checks pass"');
+        print('Output:\n${output.join('\n')}');
+      }
+
+      expect(commandError, isNull);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('No issues found!')]),
       );
     });
   });

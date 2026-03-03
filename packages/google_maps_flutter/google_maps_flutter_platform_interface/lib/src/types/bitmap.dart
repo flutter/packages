@@ -63,14 +63,14 @@ abstract class BitmapDescriptor {
   @Deprecated('No longer supported')
   static BitmapDescriptor fromJson(Object json) {
     assert(json is List<dynamic>);
-    final List<dynamic> jsonList = json as List<dynamic>;
+    final jsonList = json as List<dynamic>;
     assert(_validTypes.contains(jsonList[0]));
     switch (jsonList[0]) {
       case _defaultMarker:
         assert(jsonList.length <= 2);
         if (jsonList.length == 2) {
           assert(jsonList[1] is num);
-          final num secondElement = jsonList[1] as num;
+          final secondElement = jsonList[1] as num;
           assert(0 <= secondElement && secondElement < 360);
           return DefaultMarker(hue: secondElement);
         }
@@ -101,7 +101,7 @@ abstract class BitmapDescriptor {
         if (jsonList.length == 4) {
           assert(jsonList[3] != null && jsonList[3] is List<dynamic>);
           assert((jsonList[3] as List<dynamic>).length == 2);
-          final List<dynamic> sizeList = jsonList[3] as List<dynamic>;
+          final sizeList = jsonList[3] as List<dynamic>;
           return AssetImageBitmap(
             name: jsonList[1] as String,
             scale: jsonList[2] as double,
@@ -118,8 +118,7 @@ abstract class BitmapDescriptor {
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final Map<String, dynamic> jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('assetName'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -128,10 +127,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return AssetMapBitmap(
           jsonMap['assetName'] as String,
           bitmapScaling: mapBitmapScalingFromString(
@@ -144,8 +145,7 @@ abstract class BitmapDescriptor {
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final Map<String, dynamic> jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('byteData'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -154,10 +154,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return BytesMapBitmap(
           jsonMap['byteData'] as Uint8List,
           bitmapScaling: mapBitmapScalingFromString(
@@ -252,11 +254,7 @@ abstract class BitmapDescriptor {
     if (!mipmaps && devicePixelRatio != null) {
       return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
-    final AssetImage assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );
@@ -365,6 +363,11 @@ abstract class BitmapDescriptor {
   ///
   /// See [PinConfig] for more information on the parameters.
   ///
+  /// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+  /// For details and updates, see https://issuetracker.google.com/issues/370536110.
+  /// If this issue has not been fixed in the version of the Google Maps SDK you
+  /// are using, consider using an asset or bitmap for customization on iOS.
+  ///
   /// Returns a new [PinConfig] instance.
   static BitmapDescriptor pinConfig({
     Color? backgroundColor,
@@ -391,10 +394,9 @@ class DefaultMarker extends BitmapDescriptor {
   final num? hue;
 
   @override
-  Object toJson() =>
-      (hue == null)
-          ? const <Object>[BitmapDescriptor._defaultMarker]
-          : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  Object toJson() => (hue == null)
+      ? const <Object>[BitmapDescriptor._defaultMarker]
+      : <Object>[BitmapDescriptor._defaultMarker, hue!];
 }
 
 /// A BitmapDescriptor using an array of bytes that must be encoded
@@ -808,11 +810,7 @@ class AssetMapBitmap extends MapBitmap {
     MapBitmapScaling bitmapScaling = MapBitmapScaling.auto,
   }) async {
     assert(assetName.isNotEmpty, 'The asset name must not be empty.');
-    final AssetImage assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );
@@ -1065,6 +1063,10 @@ class BytesMapBitmap extends MapBitmap {
 /// )
 /// ```
 ///
+/// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+/// For details and updates, see https://issuetracker.google.com/issues/370536110.
+/// If this issue has not been fixed in the version of the Google Maps SDK you
+/// are using, consider using an asset or bitmap for customization on iOS.
 class PinConfig extends BitmapDescriptor {
   /// Constructs a [PinConfig] that is created from a pin configuration.
   ///
@@ -1075,6 +1077,11 @@ class PinConfig extends BitmapDescriptor {
   /// pin marker.
   ///
   /// At least one of the parameters must not be null.
+  ///
+  /// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+  /// For details and updates, see https://issuetracker.google.com/issues/370536110.
+  /// If this issue has not been fixed in the version of the Google Maps SDK you
+  /// are using, consider using an asset or bitmap for customization on iOS.
   const PinConfig({this.backgroundColor, this.borderColor, this.glyph})
     : assert(
         backgroundColor != null || borderColor != null || glyph != null,
@@ -1104,8 +1111,9 @@ class PinConfig extends BitmapDescriptor {
   Object toJson() => <Object>[
     type,
     <String, Object?>{
-      if (backgroundColor != null) 'backgroundColor': backgroundColor?.value,
-      if (borderColor != null) 'borderColor': borderColor?.value,
+      if (backgroundColor != null)
+        'backgroundColor': backgroundColor?.toARGB32(),
+      if (borderColor != null) 'borderColor': borderColor?.toARGB32(),
       if (glyph != null) 'glyph': glyph?.toJson(),
     },
   ];
@@ -1128,7 +1136,7 @@ class CircleGlyph extends AdvancedMarkerGlyph {
   @override
   Object toJson() => <Object>[
     'circleGlyph',
-    <String, Object>{'color': color.value},
+    <String, Object>{'color': color.toARGB32()},
   ];
 }
 
@@ -1172,7 +1180,7 @@ class TextGlyph extends AdvancedMarkerGlyph {
       'textGlyph',
       <String, Object>{
         'text': text,
-        if (textColor != null) 'textColor': textColor!.value,
+        if (textColor != null) 'textColor': textColor!.toARGB32(),
       },
     ];
   }

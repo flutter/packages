@@ -100,11 +100,13 @@ void main() {
     testWidgets('emits the initial DeviceOrientationChangedEvent', (
       WidgetTester _,
     ) async {
-      final Stream<DeviceOrientationChangedEvent> eventStream =
-          CameraPlatform.instance.onDeviceOrientationChanged();
+      final Stream<DeviceOrientationChangedEvent> eventStream = CameraPlatform
+          .instance
+          .onDeviceOrientationChanged();
 
-      final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
-          StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+      final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+        eventStream,
+      );
 
       expect(
         await streamQueue.next,

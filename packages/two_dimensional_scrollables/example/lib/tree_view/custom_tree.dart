@@ -109,7 +109,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
     AnimationStyle toggleAnimationStyle,
   ) {
     final bool isParentNode = node.children.isNotEmpty;
-    final BorderSide border = BorderSide(width: 2, color: Colors.purple[300]!);
+    final border = BorderSide(width: 2, color: Colors.purple[300]!);
     // TRY THIS: TreeView.toggleNodeWith can be wrapped around any Widget (even
     // the whole row) to trigger parent nodes to toggle opened and closed.
     // Currently, the toggle is triggered in _getTapRecognizer below using the
@@ -120,10 +120,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
         SizedBox(width: 10.0 * node.depth! + 8.0),
         DecoratedBox(
           decoration: BoxDecoration(
-            border:
-                node.parent != null
-                    ? Border(left: border, bottom: border)
-                    : null,
+            border: node.parent != null
+                ? Border(left: border, bottom: border)
+                : null,
           ),
           child: const SizedBox(height: 50.0, width: 20.0),
         ),
@@ -148,12 +147,10 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
     TreeViewNode<String> node,
   ) {
     return <Type, GestureRecognizerFactory>{
-      TapGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-        TapGestureRecognizer
-      >(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) =>
-            t.onTap = () {
+      TapGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) => t.onTap = () {
               setState(() {
                 // Toggling the node here instead means any tap on the row can
                 // toggle parent nodes opened and closed.
@@ -161,7 +158,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
                 _selectedNode = node;
               });
             },
-      ),
+          ),
     };
   }
 
@@ -231,7 +228,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
   Widget build(BuildContext context) {
     // This example is assumes the full screen is available.
     final Size screenSize = MediaQuery.sizeOf(context);
-    final List<Widget> selectedChildren = <Widget>[];
+    final selectedChildren = <Widget>[];
     if (_selectedNode != null) {
       selectedChildren.addAll(<Widget>[
         const Spacer(),

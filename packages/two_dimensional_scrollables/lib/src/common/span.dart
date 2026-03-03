@@ -383,10 +383,9 @@ class SpanDecoration {
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
     if (color != null) {
-      final Paint paint =
-          Paint()
-            ..color = color!
-            ..isAntiAlias = borderRadius != null;
+      final paint = Paint()
+        ..color = color!
+        ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
       } else {
@@ -442,13 +441,13 @@ class SpanBorder {
     final AxisDirection axisDirection = details.axisDirection;
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
-        final Border border = Border(
+        final border = Border(
           top: axisDirection == AxisDirection.right ? leading : trailing,
           bottom: axisDirection == AxisDirection.right ? trailing : leading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
-        final Border border = Border(
+        final border = Border(
           left: axisDirection == AxisDirection.down ? leading : trailing,
           right: axisDirection == AxisDirection.down ? trailing : leading,
         );

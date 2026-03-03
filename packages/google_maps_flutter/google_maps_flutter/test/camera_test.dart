@@ -20,8 +20,7 @@ void main() {
   });
 
   testWidgets('Can animate camera with duration', (WidgetTester tester) async {
-    final Completer<GoogleMapController> controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -42,7 +41,7 @@ void main() {
     final CameraUpdate newCameraUpdate = CameraUpdate.newLatLng(
       const LatLng(20.0, 25.0),
     );
-    const Duration updateDuration = Duration(seconds: 10);
+    const updateDuration = Duration(seconds: 10);
 
     await controller.animateCamera(newCameraUpdate, duration: updateDuration);
 

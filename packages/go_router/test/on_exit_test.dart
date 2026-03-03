@@ -12,21 +12,19 @@ import 'test_helpers.dart';
 
 void main() {
   testWidgets('back button works synchronously', (WidgetTester tester) async {
-    bool allow = false;
-    final UniqueKey home = UniqueKey();
-    final UniqueKey page1 = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = false;
+    final home = UniqueKey();
+    final page1 = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -53,21 +51,19 @@ void main() {
   });
 
   testWidgets('context.go works synchronously', (WidgetTester tester) async {
-    bool allow = false;
-    final UniqueKey home = UniqueKey();
-    final UniqueKey page1 = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = false;
+    final home = UniqueKey();
+    final page1 = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
@@ -92,21 +88,19 @@ void main() {
   });
 
   testWidgets('back button works asynchronously', (WidgetTester tester) async {
-    Completer<bool> allow = Completer<bool>();
-    final UniqueKey home = UniqueKey();
-    final UniqueKey page1 = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = Completer<bool>();
+    final home = UniqueKey();
+    final page1 = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
@@ -141,21 +135,19 @@ void main() {
   });
 
   testWidgets('context.go works asynchronously', (WidgetTester tester) async {
-    Completer<bool> allow = Completer<bool>();
-    final UniqueKey home = UniqueKey();
-    final UniqueKey page1 = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = Completer<bool>();
+    final home = UniqueKey();
+    final page1 = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
@@ -190,14 +182,13 @@ void main() {
   testWidgets('android back button respects the last route.', (
     WidgetTester tester,
   ) async {
-    bool allow = false;
-    final UniqueKey home = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = false;
+    final home = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
@@ -217,14 +208,13 @@ void main() {
   testWidgets('android back button respects the last route. async', (
     WidgetTester tester,
   ) async {
-    bool allow = false;
-    final UniqueKey home = UniqueKey();
-    final List<GoRoute> routes = <GoRoute>[
+    var allow = false;
+    final home = UniqueKey();
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow;
         },
@@ -244,17 +234,16 @@ void main() {
   testWidgets('android back button respects the last route with shell route.', (
     WidgetTester tester,
   ) async {
-    bool allow = false;
-    final UniqueKey home = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    var allow = false;
+    final home = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, __, Widget child) => child,
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: home),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: home),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -276,25 +265,23 @@ void main() {
   testWidgets('It should provide the correct uri to the onExit callback', (
     WidgetTester tester,
   ) async {
-    final UniqueKey home = UniqueKey();
-    final UniqueKey page1 = UniqueKey();
-    final UniqueKey page2 = UniqueKey();
-    final UniqueKey page3 = UniqueKey();
+    final home = UniqueKey();
+    final page1 = UniqueKey();
+    final page2 = UniqueKey();
+    final page3 = UniqueKey();
     late final GoRouterState onExitState1;
     late final GoRouterState onExitState2;
     late final GoRouterState onExitState3;
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               onExitState1 = state;
               return true;
@@ -302,9 +289,8 @@ void main() {
             routes: <GoRoute>[
               GoRoute(
                 path: '2',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        DummyScreen(key: page2),
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyScreen(key: page2),
                 onExit: (BuildContext context, GoRouterState state) {
                   onExitState2 = state;
                   return true;
@@ -312,9 +298,8 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '3',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DummyScreen(key: page3),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyScreen(key: page3),
                     onExit: (BuildContext context, GoRouterState state) {
                       onExitState3 = state;
                       return true;
@@ -355,25 +340,23 @@ void main() {
   testWidgets(
     'It should provide the correct path parameters to the onExit callback',
     (WidgetTester tester) async {
-      final UniqueKey page0 = UniqueKey();
-      final UniqueKey page1 = UniqueKey();
-      final UniqueKey page2 = UniqueKey();
-      final UniqueKey page3 = UniqueKey();
+      final page0 = UniqueKey();
+      final page1 = UniqueKey();
+      final page2 = UniqueKey();
+      final page3 = UniqueKey();
       late final GoRouterState onExitState1;
       late final GoRouterState onExitState2;
       late final GoRouterState onExitState3;
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/route-0/:id0',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page0),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page0),
         ),
         GoRoute(
           path: '/route-1/:id1',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page1),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page1),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState1 = state;
             return true;
@@ -381,9 +364,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-2/:id2',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page2),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page2),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState2 = state;
             return true;
@@ -439,19 +421,18 @@ void main() {
   testWidgets(
     'It should provide the correct path parameters to the onExit callback during a go',
     (WidgetTester tester) async {
-      final UniqueKey page0 = UniqueKey();
-      final UniqueKey page1 = UniqueKey();
-      final UniqueKey page2 = UniqueKey();
-      final UniqueKey page3 = UniqueKey();
+      final page0 = UniqueKey();
+      final page1 = UniqueKey();
+      final page2 = UniqueKey();
+      final page3 = UniqueKey();
       late final GoRouterState onExitState0;
       late final GoRouterState onExitState1;
       late final GoRouterState onExitState2;
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/route-0/:id0',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page0),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page0),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState0 = state;
             return true;
@@ -459,9 +440,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-1/:id1',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page1),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page1),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState1 = state;
             return true;
@@ -469,9 +449,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-2/:id2',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page2),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page2),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState2 = state;
             return true;

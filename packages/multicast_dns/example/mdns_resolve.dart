@@ -21,15 +21,19 @@ For example:
 
   final String name = args[0];
 
-  final MDnsClient client = MDnsClient();
+  final client = MDnsClient();
   await client.start();
-  await for (final IPAddressResourceRecord record in client
-      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(name))) {
+  await for (final IPAddressResourceRecord record
+      in client.lookup<IPAddressResourceRecord>(
+        ResourceRecordQuery.addressIPv4(name),
+      )) {
     print('Found address (${record.address}).');
   }
 
-  await for (final IPAddressResourceRecord record in client
-      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv6(name))) {
+  await for (final IPAddressResourceRecord record
+      in client.lookup<IPAddressResourceRecord>(
+        ResourceRecordQuery.addressIPv6(name),
+      )) {
     print('Found address (${record.address}).');
   }
   client.stop();

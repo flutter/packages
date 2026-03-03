@@ -11,6 +11,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'audio_tracks_demo.dart';
+
 void main() {
   runApp(MaterialApp(home: _App()));
 }
@@ -37,6 +39,19 @@ class _App extends StatelessWidget {
                 );
               },
             ),
+            IconButton(
+              key: const ValueKey<String>('audio_tracks_demo'),
+              icon: const Icon(Icons.audiotrack),
+              tooltip: 'Audio Tracks Demo',
+              onPressed: () {
+                Navigator.push<AudioTracksDemo>(
+                  context,
+                  MaterialPageRoute<AudioTracksDemo>(
+                    builder: (BuildContext context) => const AudioTracksDemo(),
+                  ),
+                );
+              },
+            ),
           ],
           bottom: const TabBar(
             isScrollable: true,
@@ -50,17 +65,16 @@ class _App extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             _ViewTypeTabBar(
-              builder:
-                  (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder:
-                  (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder:
-                  (VideoViewType viewType) =>
-                      _ButterFlyAssetVideoInList(viewType),
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideoInList(viewType),
             ),
           ],
         ),
@@ -381,20 +395,19 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 50),
           reverseDuration: const Duration(milliseconds: 200),
-          child:
-              controller.value.isPlaying
-                  ? const SizedBox.shrink()
-                  : const ColoredBox(
-                    color: Colors.black26,
-                    child: Center(
-                      child: Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                        size: 100.0,
-                        semanticLabel: 'Play',
-                      ),
+          child: controller.value.isPlaying
+              ? const SizedBox.shrink()
+              : const ColoredBox(
+                  color: Colors.black26,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 100.0,
+                      semanticLabel: 'Play',
                     ),
                   ),
+                ),
         ),
         GestureDetector(
           onTap: () {

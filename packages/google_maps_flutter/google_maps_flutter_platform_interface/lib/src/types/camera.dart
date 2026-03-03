@@ -296,14 +296,13 @@ class CameraUpdateZoomBy extends CameraUpdate {
   /// Optional point around which the zoom is focused.
   final Offset? focus;
   @override
-  Object toJson() =>
-      (focus == null)
-          ? <Object>['zoomBy', amount]
-          : <Object>[
-            'zoomBy',
-            amount,
-            <double>[focus!.dx, focus!.dy],
-          ];
+  Object toJson() => (focus == null)
+      ? <Object>['zoomBy', amount]
+      : <Object>[
+          'zoomBy',
+          amount,
+          <double>[focus!.dx, focus!.dy],
+        ];
 }
 
 /// Defines a camera zoom in.

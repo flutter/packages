@@ -64,7 +64,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// Gets external button presses that could occur in another instance, thread,
   /// or via some native system.
   Future<void> _getExternalCounter() async {
-    final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+    final prefs = SharedPreferencesAsync();
     final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
     setState(() {
       _externalCounter = externalCounter;
@@ -73,8 +73,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
 
   Future<void> _migratePreferences() async {
     // #docregion migrate
-    const SharedPreferencesOptions sharedPreferencesOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
       legacySharedPreferencesInstance: prefs,
@@ -103,27 +102,26 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
       body: Center(
         child: _WaitForInitialization(
           initialized: _preferencesReady.future,
-          builder:
-              (BuildContext context) => FutureBuilder<int>(
-                future: _counter,
-                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return const CircularProgressIndicator();
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return Text(
-                          'Button tapped ${snapshot.data ?? 0 + _externalCounter} time${(snapshot.data ?? 0 + _externalCounter) == 1 ? '' : 's'}.\n\n'
-                          'This should persist across restarts.',
-                        );
-                      }
+          builder: (BuildContext context) => FutureBuilder<int>(
+            future: _counter,
+            builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const CircularProgressIndicator();
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Text(
+                      'Button tapped ${snapshot.data ?? 0 + _externalCounter} time${(snapshot.data ?? 0 + _externalCounter) == 1 ? '' : 's'}.\n\n'
+                      'This should persist across restarts.',
+                    );
                   }
-                },
-              ),
+              }
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

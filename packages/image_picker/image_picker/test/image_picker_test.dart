@@ -41,7 +41,7 @@ void main() {
         });
 
         test('passes the image source argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(source: ImageSource.camera);
           await picker.pickImage(source: ImageSource.gallery);
 
@@ -64,7 +64,7 @@ void main() {
         });
 
         test('passes the width and height arguments correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(source: ImageSource.camera);
           await picker.pickImage(source: ImageSource.camera, maxWidth: 10.0);
           await picker.pickImage(source: ImageSource.camera, maxHeight: 10.0);
@@ -249,7 +249,7 @@ void main() {
         });
 
         test('does not accept a negative width or height argument', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(
             () => picker.pickImage(source: ImageSource.camera, maxWidth: -1.0),
             throwsArgumentError,
@@ -262,14 +262,14 @@ void main() {
         });
 
         test('handles a null image file response gracefully', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
 
           expect(await picker.pickImage(source: ImageSource.gallery), isNull);
           expect(await picker.pickImage(source: ImageSource.camera), isNull);
         });
 
         test('camera position defaults to back', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(source: ImageSource.camera);
 
           verify(
@@ -288,7 +288,7 @@ void main() {
         });
 
         test('camera position can set to front', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(
             source: ImageSource.camera,
             preferredCameraDevice: CameraDevice.front,
@@ -310,7 +310,7 @@ void main() {
         });
 
         test('full metadata argument defaults to true', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(source: ImageSource.gallery);
 
           verify(
@@ -329,7 +329,7 @@ void main() {
         });
 
         test('passes the full metadata argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickImage(
             source: ImageSource.gallery,
             requestFullMetadata: false,
@@ -363,7 +363,7 @@ void main() {
         });
 
         test('passes the image source argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickVideo(source: ImageSource.camera);
           await picker.pickVideo(source: ImageSource.gallery);
 
@@ -374,7 +374,7 @@ void main() {
         });
 
         test('passes the duration argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickVideo(source: ImageSource.camera);
           await picker.pickVideo(
             source: ImageSource.camera,
@@ -391,21 +391,21 @@ void main() {
         });
 
         test('handles a null video file response gracefully', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
 
           expect(await picker.pickVideo(source: ImageSource.gallery), isNull);
           expect(await picker.pickVideo(source: ImageSource.camera), isNull);
         });
 
         test('camera position defaults to back', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickVideo(source: ImageSource.camera);
 
           verify(mockPlatform.getVideo(source: ImageSource.camera));
         });
 
         test('camera position can set to front', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickVideo(
             source: ImageSource.camera,
             preferredCameraDevice: CameraDevice.front,
@@ -422,8 +422,8 @@ void main() {
 
       group('#retrieveLostData', () {
         test('retrieveLostData get success response', () async {
-          final ImagePicker picker = ImagePicker();
-          final XFile lostFile = XFile('/example/path');
+          final picker = ImagePicker();
+          final lostFile = XFile('/example/path');
           when(mockPlatform.getLostData()).thenAnswer(
             (Invocation _) async => LostDataResponse(
               file: lostFile,
@@ -441,8 +441,8 @@ void main() {
         test(
           'retrieveLostData should successfully retrieve multiple files',
           () async {
-            final ImagePicker picker = ImagePicker();
-            final List<XFile> lostFiles = <XFile>[
+            final picker = ImagePicker();
+            final lostFiles = <XFile>[
               XFile('/example/path0'),
               XFile('/example/path1'),
             ];
@@ -465,7 +465,7 @@ void main() {
         );
 
         test('retrieveLostData get error response', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           when(mockPlatform.getLostData()).thenAnswer(
             (Invocation _) async => LostDataResponse(
               exception: PlatformException(
@@ -492,7 +492,7 @@ void main() {
         });
 
         test('passes the arguments correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultiVideo();
           await picker.pickMultiVideo(maxDuration: const Duration(seconds: 10));
           await picker.pickMultiVideo(limit: 5);
@@ -538,7 +538,7 @@ void main() {
 
       group('#pickMultiImage', () {
         test('passes the width and height arguments correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultiImage();
           await picker.pickMultiImage(maxWidth: 10.0);
           await picker.pickMultiImage(maxHeight: 10.0);
@@ -697,7 +697,7 @@ void main() {
         });
 
         test('does not accept a negative width or height argument', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(
             () => picker.pickMultiImage(maxWidth: -1.0),
             throwsArgumentError,
@@ -710,7 +710,7 @@ void main() {
         });
 
         test('does not accept a limit argument lower than 2', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(() => picker.pickMultiImage(limit: -1), throwsArgumentError);
 
           expect(() => picker.pickMultiImage(limit: 0), throwsArgumentError);
@@ -719,14 +719,14 @@ void main() {
         });
 
         test('handles an empty image file response gracefully', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
 
           expect(await picker.pickMultiImage(), isEmpty);
           expect(await picker.pickMultiImage(), isEmpty);
         });
 
         test('full metadata argument defaults to true', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultiImage();
 
           verify(
@@ -745,7 +745,7 @@ void main() {
         });
 
         test('passes the full metadata argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultiImage(requestFullMetadata: false);
 
           verify(
@@ -774,7 +774,7 @@ void main() {
 
       group('#pickMedia', () {
         test('passes the width and height arguments correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMedia();
           await picker.pickMedia(maxWidth: 10.0);
           await picker.pickMedia(maxHeight: 10.0);
@@ -892,21 +892,21 @@ void main() {
         });
 
         test('does not accept a negative width or height argument', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(() => picker.pickMedia(maxWidth: -1.0), throwsArgumentError);
 
           expect(() => picker.pickMedia(maxHeight: -1.0), throwsArgumentError);
         });
 
         test('handles an empty image file response gracefully', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
 
           expect(await picker.pickMedia(), isNull);
           expect(await picker.pickMedia(), isNull);
         });
 
         test('full metadata argument defaults to true', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMedia();
 
           verify(
@@ -925,7 +925,7 @@ void main() {
         });
 
         test('passes the full metadata argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMedia(requestFullMetadata: false);
 
           verify(
@@ -946,7 +946,7 @@ void main() {
 
       group('#pickMultipleMedia', () {
         test('passes the width and height arguments correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultipleMedia();
           await picker.pickMultipleMedia(maxWidth: 10.0);
           await picker.pickMultipleMedia(maxHeight: 10.0);
@@ -1092,7 +1092,7 @@ void main() {
         });
 
         test('does not accept a negative width or height argument', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(
             () => picker.pickMultipleMedia(maxWidth: -1.0),
             throwsArgumentError,
@@ -1105,7 +1105,7 @@ void main() {
         });
 
         test('does not accept a limit argument lower than 2', () {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           expect(
             () => picker.pickMultipleMedia(limit: -1),
             throwsArgumentError,
@@ -1117,14 +1117,14 @@ void main() {
         });
 
         test('handles an empty image file response gracefully', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
 
           expect(await picker.pickMultipleMedia(), isEmpty);
           expect(await picker.pickMultipleMedia(), isEmpty);
         });
 
         test('full metadata argument defaults to true', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultipleMedia();
 
           verify(
@@ -1143,7 +1143,7 @@ void main() {
         });
 
         test('passes the full metadata argument correctly', () async {
-          final ImagePicker picker = ImagePicker();
+          final picker = ImagePicker();
           await picker.pickMultipleMedia(requestFullMetadata: false);
 
           verify(
@@ -1162,7 +1162,7 @@ void main() {
         });
       });
       test('supportsImageSource calls through to platform', () async {
-        final ImagePicker picker = ImagePicker();
+        final picker = ImagePicker();
         when(mockPlatform.supportsImageSource(any)).thenReturn(true);
 
         final bool supported = picker.supportsImageSource(ImageSource.camera);

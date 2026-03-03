@@ -37,21 +37,9 @@ class _TableExampleState extends State<TableExample> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        child:
-            _selectionMode == _TableSelection.multiCell
-                ? SelectionArea(
-                  child: TableView.builder(
-                    verticalDetails: ScrollableDetails.vertical(
-                      controller: _verticalController,
-                    ),
-                    cellBuilder: _buildCell,
-                    columnCount: 20,
-                    columnBuilder: _buildColumnSpan,
-                    rowCount: _rowCount,
-                    rowBuilder: _buildRowSpan,
-                  ),
-                )
-                : TableView.builder(
+        child: _selectionMode == _TableSelection.multiCell
+            ? SelectionArea(
+                child: TableView.builder(
                   verticalDetails: ScrollableDetails.vertical(
                     controller: _verticalController,
                   ),
@@ -61,6 +49,17 @@ class _TableExampleState extends State<TableExample> {
                   rowCount: _rowCount,
                   rowBuilder: _buildRowSpan,
                 ),
+              )
+            : TableView.builder(
+                verticalDetails: ScrollableDetails.vertical(
+                  controller: _verticalController,
+                ),
+                cellBuilder: _buildCell,
+                columnCount: 20,
+                columnBuilder: _buildColumnSpan,
+                rowCount: _rowCount,
+                rowBuilder: _buildRowSpan,
+              ),
       ),
       persistentFooterButtons: <Widget>[
         OverflowBar(
@@ -144,7 +143,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildColumnSpan(int index) {
-    const TableSpanDecoration decoration = TableSpanDecoration(
+    const decoration = TableSpanDecoration(
       border: TableSpanBorder(trailing: BorderSide()),
     );
 
@@ -196,7 +195,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildRowSpan(int index) {
-    final TableSpanDecoration decoration = TableSpanDecoration(
+    final decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(trailing: BorderSide(width: 3)),
     );

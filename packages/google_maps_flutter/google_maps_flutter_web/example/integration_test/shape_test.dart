@@ -51,9 +51,8 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final CircleController controller = CircleController(circle: circle);
-      final gmaps.CircleOptions options =
-          gmaps.CircleOptions()..draggable = true;
+      final controller = CircleController(circle: circle);
+      final options = gmaps.CircleOptions()..draggable = true;
 
       expect(circle.isDraggableDefined(), isFalse);
 
@@ -78,8 +77,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.CircleOptions options =
-            gmaps.CircleOptions()..draggable = true;
+        final options = gmaps.CircleOptions()..draggable = true;
 
         controller.remove();
 
@@ -108,9 +106,8 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final PolygonController controller = PolygonController(polygon: polygon);
-      final gmaps.PolygonOptions options =
-          gmaps.PolygonOptions()..draggable = true;
+      final controller = PolygonController(polygon: polygon);
+      final options = gmaps.PolygonOptions()..draggable = true;
 
       expect(polygon.isDraggableDefined(), isFalse);
 
@@ -135,8 +132,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.PolygonOptions options =
-            gmaps.PolygonOptions()..draggable = true;
+        final options = gmaps.PolygonOptions()..draggable = true;
 
         controller.remove();
 
@@ -169,11 +165,8 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final PolylineController controller = PolylineController(
-        polyline: polyline,
-      );
-      final gmaps.PolylineOptions options =
-          gmaps.PolylineOptions()..draggable = true;
+      final controller = PolylineController(polyline: polyline);
+      final options = gmaps.PolylineOptions()..draggable = true;
 
       expect(polyline.isDraggableDefined(), isFalse);
 
@@ -198,8 +191,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.PolylineOptions options =
-            gmaps.PolylineOptions()..draggable = true;
+        final options = gmaps.PolylineOptions()..draggable = true;
 
         controller.remove();
 
@@ -218,10 +210,9 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final HeatmapController controller = HeatmapController(heatmap: heatmap);
-      final visualization.HeatmapLayerOptions options =
-          visualization.HeatmapLayerOptions()
-            ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
+      final controller = HeatmapController(heatmap: heatmap);
+      final options = visualization.HeatmapLayerOptions()
+        ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
 
       expect(heatmap.data.array.toDart, hasLength(0));
 
@@ -246,8 +237,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final visualization.HeatmapLayerOptions options =
-            visualization.HeatmapLayerOptions()..dissipating = true;
+        final options = visualization.HeatmapLayerOptions()..dissipating = true;
 
         controller.remove();
 

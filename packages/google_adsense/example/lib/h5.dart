@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool adBreakAvailable = _showAdFn != null;
+    final adBreakAvailable = _showAdFn != null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -183,8 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 TextButton.icon(
-                  onPressed:
-                      _h5Ready && !adBreakAvailable ? _requestRewardedAd : null,
+                  onPressed: _h5Ready && !adBreakAvailable
+                      ? _requestRewardedAd
+                      : null,
                   label: const Text('Prepare Reward'),
                   icon: const Icon(Icons.download_rounded),
                 ),

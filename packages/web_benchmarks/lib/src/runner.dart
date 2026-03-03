@@ -113,10 +113,9 @@ class BenchmarkServer {
   /// The default value is [defaultInitialPath].
   final String benchmarkPath;
 
-  String get _benchmarkAppUrl =>
-      Uri.parse(benchmarkPath)
-          .replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort)
-          .toString();
+  String get _benchmarkAppUrl => Uri.parse(benchmarkPath)
+      .replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort)
+      .toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -129,7 +128,7 @@ class BenchmarkServer {
       );
     }
 
-    final DateTime startTime = DateTime.now();
+    final startTime = DateTime.now();
     print('Building Flutter web app $compilationOptions...');
     final io.ProcessResult buildResult = await _processManager.run(<String>[
       'flutter',
@@ -143,12 +142,11 @@ class BenchmarkServer {
       entryPoint,
     ], workingDirectory: benchmarkAppDirectory.path);
 
-    final int buildTime =
-        Duration(
-          milliseconds:
-              DateTime.now().millisecondsSinceEpoch -
-              startTime.millisecondsSinceEpoch,
-        ).inSeconds;
+    final int buildTime = Duration(
+      milliseconds:
+          DateTime.now().millisecondsSinceEpoch -
+          startTime.millisecondsSinceEpoch,
+    ).inSeconds;
     print('Build took ${buildTime}s to complete.');
 
     if (buildResult.exitCode != 0) {
@@ -157,10 +155,8 @@ class BenchmarkServer {
       throw Exception('Failed to build the benchmark.');
     }
 
-    final Completer<List<Map<String, dynamic>>> profileData =
-        Completer<List<Map<String, dynamic>>>();
-    final List<Map<String, dynamic>> collectedProfiles =
-        <Map<String, dynamic>>[];
+    final profileData = Completer<List<Map<String, dynamic>>>();
+    final collectedProfiles = <Map<String, dynamic>>[];
     List<String>? benchmarks;
     late Iterator<String> benchmarkIterator;
 
@@ -171,7 +167,7 @@ class BenchmarkServer {
     Chrome? chrome;
     late io.HttpServer server;
     List<Map<String, dynamic>>? latestPerformanceTrace;
-    Cascade cascade = Cascade();
+    var cascade = Cascade();
 
     // Serves the static files built for the app (html, js, images, fonts, etc)
     final Handler buildFolderHandler = createStaticHandler(
@@ -204,9 +200,9 @@ class BenchmarkServer {
       try {
         chrome ??= await whenChromeIsReady;
         if (request.requestedUri.path.endsWith('/profile-data')) {
-          final Map<String, dynamic> profile =
+          final profile =
               json.decode(await request.readAsString()) as Map<String, dynamic>;
-          final String? benchmarkName = profile['name'] as String?;
+          final benchmarkName = profile['name'] as String?;
           if (benchmarkName != benchmarkIterator.current) {
             profileData.completeError(
               Exception(
@@ -246,11 +242,11 @@ class BenchmarkServer {
           latestPerformanceTrace = await chrome!.endRecordingPerformance();
           return Response.ok('Stopped performance tracing');
         } else if (request.requestedUri.path.endsWith('/on-error')) {
-          final Map<String, dynamic> errorDetails =
+          final errorDetails =
               json.decode(await request.readAsString()) as Map<String, dynamic>;
           unawaited(server.close());
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
-          final String errorMessage =
+          final errorMessage =
               'Caught browser-side error: ${errorDetails['error']}\n${errorDetails['stackTrace']}';
           if (!profileData.isCompleted) {
             profileData.completeError(errorMessage);
@@ -302,7 +298,7 @@ class BenchmarkServer {
     cascade = cascade.add((Request request) async {
       if (request.method == 'GET') {
         final Uri newRequestUri = request.requestedUri.replace(path: '/');
-        final Request newRequest = Request(
+        final newRequest = Request(
           request.method,
           newRequestUri,
           headers: request.headers,
@@ -322,12 +318,11 @@ class BenchmarkServer {
         benchmarkAppDirectory.path,
         '.dart_tool',
       );
-      final String userDataDir =
-          io.Directory(
-            dartToolDirectory,
-          ).createTempSync('chrome_user_data_').path;
+      final String userDataDir = io.Directory(
+        dartToolDirectory,
+      ).createTempSync('chrome_user_data_').path;
 
-      final ChromeOptions options = ChromeOptions(
+      final options = ChromeOptions(
         url: _benchmarkAppUrl,
         userDataDirectory: userDataDir,
         headless: headless,
@@ -351,21 +346,20 @@ class BenchmarkServer {
       final List<Map<String, dynamic>> profiles = await profileData.future;
 
       print('Received profile data');
-      final Map<String, List<BenchmarkScore>> results =
-          <String, List<BenchmarkScore>>{};
-      for (final Map<String, dynamic> profile in profiles) {
-        final String benchmarkName = profile['name'] as String;
+      final results = <String, List<BenchmarkScore>>{};
+      for (final profile in profiles) {
+        final benchmarkName = profile['name'] as String;
         if (benchmarkName.isEmpty) {
           throw StateError('Benchmark name is empty');
         }
 
-        final List<String> scoreKeys = List<String>.from(
+        final scoreKeys = List<String>.from(
           profile['scoreKeys'] as Iterable<dynamic>,
         );
         if (scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
-        for (final String scoreKey in scoreKeys) {
+        for (final scoreKey in scoreKeys) {
           if (scoreKey.isEmpty) {
             throw StateError(
               'Score key is empty in benchmark "$benchmarkName". '
@@ -374,7 +368,7 @@ class BenchmarkServer {
           }
         }
 
-        final List<BenchmarkScore> scores = <BenchmarkScore>[];
+        final scores = <BenchmarkScore>[];
         for (final String key in profile.keys) {
           if (key == 'name' || key == 'scoreKeys') {
             continue;

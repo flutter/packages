@@ -9,7 +9,7 @@ import 'package:cross_file/cross_file.dart';
 /// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
   // #docregion Instantiate
-  final XFile file = XFile('assets/hello.txt');
+  final file = XFile('assets/hello.txt');
 
   print('File information:');
   print('- Path: ${file.path}');

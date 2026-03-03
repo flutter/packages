@@ -11,7 +11,7 @@ const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
 
 void main() {
   test('TableVicinity converts ChildVicinity', () {
-    const TableVicinity vicinity = TableVicinity(column: 5, row: 10);
+    const vicinity = TableVicinity(column: 5, row: 10);
     expect(vicinity.xIndex, 5);
     expect(vicinity.yIndex, 10);
     expect(vicinity.row, 10);
@@ -177,7 +177,7 @@ void main() {
       ) async {
         // Merge span start is greater than given index, ex: column 10 has merge
         // start at 20.
-        final List<Object> exceptions = <Object>[];
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
@@ -194,7 +194,7 @@ void main() {
         // |         |
         // +---------+
         // This cell should only be built for (0, 1) and (0, 2), not (0,0).
-        TableViewCell cell = const TableViewCell(
+        var cell = const TableViewCell(
           rowMergeStart: 1,
           rowMergeSpan: 2,
           child: SizedBox.shrink(),
@@ -253,13 +253,13 @@ void main() {
       ) async {
         // Merge exceeds table content, ex: at column 10, cell spans 4 columns,
         // but table only has 12 columns.
-        final List<Object> exceptions = <Object>[];
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         // Row
-        TableViewCell cell = const TableViewCell(
+        var cell = const TableViewCell(
           rowMergeStart: 0,
           rowMergeSpan: 10, // Exceeds the number of rows
           child: SizedBox.shrink(),
@@ -313,13 +313,13 @@ void main() {
       ) async {
         // Merge spans pinned and unpinned cells, ex: column 0 is pinned, 0-2
         // expected merge.
-        final List<Object> exceptions = <Object>[];
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         // Row
-        TableViewCell cell = const TableViewCell(
+        var cell = const TableViewCell(
           rowMergeStart: 0,
           rowMergeSpan: 3,
           child: SizedBox.shrink(),
@@ -397,24 +397,22 @@ void main() {
       // |         |                 |
       // +---------+--------+--------+
       //   ...       ...      ...
-      final Map<TableVicinity, (int, int)> mergedColumns =
-          <TableVicinity, (int, int)>{
-            const TableVicinity(row: 0, column: 1): (1, 2), // M(0, 1)
-            const TableVicinity(row: 0, column: 2): (1, 2), // M(0, 1)
-            const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
-          };
-      final Map<TableVicinity, (int, int)> mergedRows =
-          <TableVicinity, (int, int)>{
-            TableVicinity.zero: (0, 2), // M(0, 0)
-            TableVicinity.zero.copyWith(row: 1): (0, 2), // M(0,0)
-            const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
-          };
+      final mergedColumns = <TableVicinity, (int, int)>{
+        const TableVicinity(row: 0, column: 1): (1, 2), // M(0, 1)
+        const TableVicinity(row: 0, column: 2): (1, 2), // M(0, 1)
+        const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
+      };
+      final mergedRows = <TableVicinity, (int, int)>{
+        TableVicinity.zero: (0, 2), // M(0, 0)
+        TableVicinity.zero.copyWith(row: 1): (0, 2), // M(0,0)
+        const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
+      };
 
       TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
         if (mergedColumns.keys.contains(vicinity) ||

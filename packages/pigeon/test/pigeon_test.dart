@@ -7,22 +7,22 @@ import 'package:test/test.dart';
 
 void main() {
   test('Should be able to import JavaOptions', () async {
-    const JavaOptions javaOptions = JavaOptions();
+    const javaOptions = JavaOptions();
     expect(javaOptions, isNotNull);
   });
 
   test('Should be able to import ObjcOptions', () async {
-    const ObjcOptions objcOptions = ObjcOptions();
+    const objcOptions = ObjcOptions();
     expect(objcOptions, isNotNull);
   });
 
   test('Should be able to import SwiftOptions', () async {
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const swiftOptions = SwiftOptions();
     expect(swiftOptions, isNotNull);
   });
 
   test('Should be able to import KotlinOptions', () async {
-    const KotlinOptions kotlinOptions = KotlinOptions();
+    const kotlinOptions = KotlinOptions();
     expect(kotlinOptions, isNotNull);
   });
 }

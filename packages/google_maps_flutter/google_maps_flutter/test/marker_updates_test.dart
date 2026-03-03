@@ -28,7 +28,7 @@ void main() {
   });
 
   testWidgets('Initializing a marker', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
+    const m1 = Marker(markerId: MarkerId('marker_1'));
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
@@ -41,8 +41,8 @@ void main() {
   });
 
   testWidgets('Adding a marker', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(markerId: MarkerId('marker_2'));
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(markerId: MarkerId('marker_2'));
 
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1}));
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m2}));
@@ -59,7 +59,7 @@ void main() {
   });
 
   testWidgets('Removing a marker', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
+    const m1 = Marker(markerId: MarkerId('marker_1'));
 
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1}));
     await tester.pumpWidget(_mapWithMarkers(<Marker>{}));
@@ -73,8 +73,8 @@ void main() {
   });
 
   testWidgets('Updating a marker', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(markerId: MarkerId('marker_1'), alpha: 0.5);
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(markerId: MarkerId('marker_1'), alpha: 0.5);
 
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1}));
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m2}));
@@ -88,8 +88,8 @@ void main() {
   });
 
   testWidgets('Updating a marker', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(
       markerId: MarkerId('marker_1'),
       infoWindow: InfoWindow(snippet: 'changed'),
     );
@@ -106,12 +106,12 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Marker m1 = const Marker(markerId: MarkerId('marker_1'));
-    Marker m2 = const Marker(markerId: MarkerId('marker_2'));
-    final Set<Marker> prev = <Marker>{m1, m2};
+    var m1 = const Marker(markerId: MarkerId('marker_1'));
+    var m2 = const Marker(markerId: MarkerId('marker_2'));
+    final prev = <Marker>{m1, m2};
     m1 = const Marker(markerId: MarkerId('marker_1'), visible: false);
     m2 = const Marker(markerId: MarkerId('marker_2'), draggable: true);
-    final Set<Marker> cur = <Marker>{m1, m2};
+    final cur = <Marker>{m1, m2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -124,14 +124,14 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Marker m2 = const Marker(markerId: MarkerId('marker_2'));
-    const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    final Set<Marker> prev = <Marker>{m2, m3};
+    var m2 = const Marker(markerId: MarkerId('marker_2'));
+    const m3 = Marker(markerId: MarkerId('marker_3'));
+    final prev = <Marker>{m2, m3};
 
     // m1 is added, m2 is updated, m3 is removed.
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
+    const m1 = Marker(markerId: MarkerId('marker_1'));
     m2 = const Marker(markerId: MarkerId('marker_2'), draggable: true);
-    final Set<Marker> cur = <Marker>{m1, m2};
+    final cur = <Marker>{m1, m2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -148,12 +148,12 @@ void main() {
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(markerId: MarkerId('marker_2'));
-    Marker m3 = const Marker(markerId: MarkerId('marker_3'));
-    final Set<Marker> prev = <Marker>{m1, m2, m3};
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(markerId: MarkerId('marker_2'));
+    var m3 = const Marker(markerId: MarkerId('marker_3'));
+    final prev = <Marker>{m1, m2, m3};
     m3 = const Marker(markerId: MarkerId('marker_3'), draggable: true);
-    final Set<Marker> cur = <Marker>{m1, m2, m3};
+    final cur = <Marker>{m1, m2, m3};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -166,14 +166,14 @@ void main() {
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
-    Marker m1 = const Marker(markerId: MarkerId('marker_1'));
-    final Set<Marker> prev = <Marker>{m1};
+    var m1 = const Marker(markerId: MarkerId('marker_1'));
+    final prev = <Marker>{m1};
     m1 = Marker(
       markerId: const MarkerId('marker_1'),
       onTap: () {},
       onDragEnd: (LatLng latLng) {},
     );
-    final Set<Marker> cur = <Marker>{m1};
+    final cur = <Marker>{m1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -188,13 +188,10 @@ void main() {
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(markerId: MarkerId('marker_2'));
-    const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    const Marker m3updated = Marker(
-      markerId: MarkerId('marker_3'),
-      draggable: true,
-    );
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(markerId: MarkerId('marker_2'));
+    const m3 = Marker(markerId: MarkerId('marker_3'));
+    const m3updated = Marker(markerId: MarkerId('marker_3'), draggable: true);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m2}));

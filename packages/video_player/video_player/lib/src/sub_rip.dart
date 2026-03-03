@@ -27,7 +27,7 @@ class SubRipCaptionFile extends ClosedCaptionFile {
 }
 
 List<Caption> _parseCaptionsFromSubRipString(String file) {
-  final List<Caption> captions = <Caption>[];
+  final captions = <Caption>[];
   for (final List<String> captionLines in _readSubRipFile(file)) {
     if (captionLines.length < 3) {
       break;
@@ -40,7 +40,7 @@ List<Caption> _parseCaptionsFromSubRipString(String file) {
 
     final String text = captionLines.sublist(2).join('\n');
 
-    final Caption newCaption = Caption(
+    final newCaption = Caption(
       number: captionNumber,
       start: captionRange.start,
       end: captionRange.end,
@@ -64,9 +64,7 @@ class _CaptionRange {
   // For example:
   // 00:01:54,724 --> 00:01:56,760
   static _CaptionRange fromSubRipString(String line) {
-    final RegExp format = RegExp(
-      _subRipTimeStamp + _subRipArrow + _subRipTimeStamp,
-    );
+    final format = RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
 
     if (!format.hasMatch(line)) {
       return _CaptionRange(Duration.zero, Duration.zero);
@@ -113,10 +111,10 @@ Duration _parseSubRipTimestamp(String timestampString) {
 List<List<String>> _readSubRipFile(String file) {
   final List<String> lines = LineSplitter.split(file).toList();
 
-  final List<List<String>> captionStrings = <List<String>>[];
-  List<String> currentCaption = <String>[];
-  int lineIndex = 0;
-  for (final String line in lines) {
+  final captionStrings = <List<String>>[];
+  var currentCaption = <String>[];
+  var lineIndex = 0;
+  for (final line in lines) {
     final bool isLineBlank = line.trim().isEmpty;
     if (!isLineBlank) {
       currentCaption.add(line);

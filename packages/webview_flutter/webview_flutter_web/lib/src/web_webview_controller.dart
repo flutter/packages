@@ -39,12 +39,11 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final web.HTMLIFrameElement iFrame =
-      web.HTMLIFrameElement()
-        ..id = 'webView${_nextIFrameId++}'
-        ..style.width = '100%'
-        ..style.height = '100%'
-        ..style.border = 'none';
+  final web.HTMLIFrameElement iFrame = web.HTMLIFrameElement()
+    ..id = 'webView${_nextIFrameId++}'
+    ..style.width = '100%'
+    ..style.height = '100%'
+    ..style.border = 'none';
 }
 
 /// An implementation of [PlatformWebViewController] using Flutter for Web API.
@@ -55,8 +54,8 @@ class WebWebViewController extends PlatformWebViewController {
         params is WebWebViewControllerCreationParams
             ? params
             : WebWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
-              params,
-            ),
+                params,
+              ),
       );
 
   WebWebViewControllerCreationParams get _webWebViewParams =>
@@ -64,12 +63,11 @@ class WebWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
-    _webWebViewParams.iFrame.src =
-        Uri.dataFromString(
-          html,
-          mimeType: 'text/html',
-          encoding: utf8,
-        ).toString();
+    _webWebViewParams.iFrame.src = Uri.dataFromString(
+      html,
+      mimeType: 'text/html',
+      encoding: utf8,
+    ).toString();
   }
 
   @override
@@ -91,7 +89,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final web.Response response =
+    final response =
         await _webWebViewParams.httpRequestFactory.request(
               params.uri.toString(),
               method: params.method.serialize(),
@@ -101,15 +99,14 @@ class WebWebViewController extends PlatformWebViewController {
             as web.Response;
 
     final String header = response.headers.get('content-type') ?? 'text/html';
-    final ContentType contentType = ContentType.parse(header);
+    final contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
-    _webWebViewParams.iFrame.src =
-        Uri.dataFromString(
-          (await response.text().toDart).toDart,
-          mimeType: contentType.mimeType,
-          encoding: encoding,
-        ).toString();
+    _webWebViewParams.iFrame.src = Uri.dataFromString(
+      (await response.text().toDart).toDart,
+      mimeType: contentType.mimeType,
+      encoding: encoding,
+    ).toString();
   }
 }
 
@@ -118,8 +115,7 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
   WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
     : super.implementation(params) {
-    final WebWebViewController controller =
-        params.controller as WebWebViewController;
+    final controller = params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(
       controller._webWebViewParams.iFrame.id,
       (int viewId) => controller._webWebViewParams.iFrame,
@@ -130,11 +126,10 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   Widget build(BuildContext context) {
     return HtmlElementView(
       key: params.key,
-      viewType:
-          (params.controller as WebWebViewController)
-              ._webWebViewParams
-              .iFrame
-              .id,
+      viewType: (params.controller as WebWebViewController)
+          ._webWebViewParams
+          .iFrame
+          .id,
     );
   }
 }

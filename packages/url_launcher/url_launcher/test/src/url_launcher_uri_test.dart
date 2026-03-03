@@ -10,7 +10,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final MockUrlLauncher mock = MockUrlLauncher();
+  final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
   test('closeInAppWebView', () async {
@@ -281,7 +281,7 @@ void main() {
     });
 
     test('non-web URL with default options', () async {
-      final Uri emailLaunchUrl = Uri(
+      final emailLaunchUrl = Uri(
         scheme: 'mailto',
         path: 'smith@example.com',
         queryParameters: <String, String>{'subject': 'Hello'},

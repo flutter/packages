@@ -100,9 +100,9 @@ class Chrome {
       print('Launching Chrome...');
     }
     final String? url = options.url;
-    final bool withDebugging = options.debugPort != null;
+    final withDebugging = options.debugPort != null;
 
-    final List<String> args = <String>[
+    final args = <String>[
       if (options.userDataDirectory != null)
         '--user-data-dir=${options.userDataDirectory}',
       if (url != null) url,
@@ -251,13 +251,13 @@ String _findSystemChromeExecutable() {
       throw Exception('Failed to locate system Chrome installation.');
     }
 
-    final String output = which.stdout as String;
+    final output = which.stdout as String;
     return output.trim();
   } else if (io.Platform.isMacOS) {
     return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   } else if (io.Platform.isWindows) {
-    const String kWindowsExecutable = r'Google\Chrome\Application\chrome.exe';
-    final List<String> kWindowsPrefixes = <String>[
+    const kWindowsExecutable = r'Google\Chrome\Application\chrome.exe';
+    final kWindowsPrefixes = <String>[
       for (final String? item in <String?>[
         io.Platform.environment['LOCALAPPDATA'],
         io.Platform.environment['PROGRAMFILES'],
@@ -311,7 +311,7 @@ Future<WipConnection> _connectToChromeDebugPort(
     Uri.parse('http://localhost:$port'),
   );
   print('Connecting to DevTools: $devtoolsUri');
-  final ChromeConnection chromeConnection = ChromeConnection('localhost', port);
+  final chromeConnection = ChromeConnection('localhost', port);
   final Iterable<ChromeTab> tabs = (await chromeConnection.getTabs()).where((
     ChromeTab tab,
   ) {
@@ -325,12 +325,12 @@ Future<WipConnection> _connectToChromeDebugPort(
 
 /// Gets the Chrome debugger URL for the web page being benchmarked.
 Future<Uri> _getRemoteDebuggerUrl(Uri base) async {
-  final io.HttpClient client = io.HttpClient();
+  final client = io.HttpClient();
   final io.HttpClientRequest request = await client.getUrl(
     base.resolve('/json/list'),
   );
   final io.HttpClientResponse response = await request.close();
-  final List<dynamic>? jsonObject =
+  final jsonObject =
       await json.fuse(utf8).decoder.bind(response).single as List<dynamic>?;
   if (jsonObject == null || jsonObject.isEmpty) {
     return base;
@@ -376,16 +376,15 @@ class BlinkTraceSummary {
       final int tabPid = firstMeasuredFrameEvent.pid;
 
       // Filter out data from unrelated processes
-      events =
-          events
-              .where((BlinkTraceEvent element) => element.pid == tabPid)
-              .toList();
+      events = events
+          .where((BlinkTraceEvent element) => element.pid == tabPid)
+          .toList();
 
       // Extract frame data.
-      final List<BlinkFrame> frames = <BlinkFrame>[];
-      int skipCount = 0;
-      BlinkFrame frame = BlinkFrame();
-      for (final BlinkTraceEvent event in events) {
+      final frames = <BlinkFrame>[];
+      var skipCount = 0;
+      var frame = BlinkFrame();
+      for (final event in events) {
         if (event.isBeginFrame) {
           frame.beginFrame = event;
         } else if (event.isUpdateAllLifecyclePhases) {
@@ -426,7 +425,7 @@ class BlinkTraceSummary {
         ),
       );
     } catch (_) {
-      final io.File traceFile = io.File('./chrome-trace.json');
+      final traceFile = io.File('./chrome-trace.json');
       io.stderr.writeln(
         'Failed to interpret the Chrome trace contents. The trace was saved in ${traceFile.path}',
       );
@@ -644,7 +643,7 @@ class BlinkTraceEvent {
 ///
 /// Returns null if the value is null.
 int? _readInt(Map<String, dynamic> json, String key) {
-  final num? jsonValue = json[key] as num?;
+  final jsonValue = json[key] as num?;
 
   if (jsonValue == null) {
     return null; // ignore: avoid_returning_null

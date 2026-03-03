@@ -6,8 +6,7 @@ import 'package:web/web.dart' as web;
 
 /// Injects a `<meta>` tag with the provided [attributes] into the [web.document].
 void injectMetaTag(Map<String, String> attributes) {
-  final web.HTMLMetaElement meta =
-      web.document.createElement('meta') as web.HTMLMetaElement;
+  final meta = web.document.createElement('meta') as web.HTMLMetaElement;
   for (final MapEntry<String, String> attribute in attributes.entries) {
     meta.setAttribute(attribute.key, attribute.value);
   }

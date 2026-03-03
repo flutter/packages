@@ -11,8 +11,8 @@ import 'package:go_router/go_router.dart';
 void main() {
   group('RouteMatch', () {
     test('simple', () {
-      final GoRoute route = GoRoute(path: '/users/:userId', builder: _builder);
-      final Map<String, String> pathParameters = <String, String>{};
+      final route = GoRoute(path: '/users/:userId', builder: _builder);
+      final pathParameters = <String, String>{};
       final List<RouteMatchBase> matches = RouteMatchBase.match(
         route: route,
         pathParameters: pathParameters,
@@ -28,11 +28,11 @@ void main() {
     });
 
     test('ShellRoute has a unique pageKey', () {
-      final ShellRoute route = ShellRoute(
+      final route = ShellRoute(
         builder: _shellBuilder,
         routes: <GoRoute>[GoRoute(path: '/users/:userId', builder: _builder)],
       );
-      final Map<String, String> pathParameters = <String, String>{};
+      final pathParameters = <String, String>{};
       final List<RouteMatchBase> matches = RouteMatchBase.match(
         route: route,
         uri: Uri.parse('/users/123'),
@@ -44,11 +44,11 @@ void main() {
     });
 
     test('ShellRoute Match has stable unique key', () {
-      final ShellRoute route = ShellRoute(
+      final route = ShellRoute(
         builder: _shellBuilder,
         routes: <GoRoute>[GoRoute(path: '/users/:userId', builder: _builder)],
       );
-      final Map<String, String> pathParameters = <String, String>{};
+      final pathParameters = <String, String>{};
       final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
         pathParameters: pathParameters,
@@ -67,8 +67,8 @@ void main() {
     });
 
     test('GoRoute Match has stable unique key', () {
-      final GoRoute route = GoRoute(path: '/users/:userId', builder: _builder);
-      final Map<String, String> pathParameters = <String, String>{};
+      final route = GoRoute(path: '/users/:userId', builder: _builder);
+      final pathParameters = <String, String>{};
       final List<RouteMatchBase> matches1 = RouteMatchBase.match(
         route: route,
         uri: Uri.parse('/users/123'),
@@ -89,10 +89,10 @@ void main() {
   });
 
   test('complex parentNavigatorKey works', () {
-    final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shell1 = GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>();
-    final GoRoute route = GoRoute(
+    final root = GlobalKey<NavigatorState>();
+    final shell1 = GlobalKey<NavigatorState>();
+    final shell2 = GlobalKey<NavigatorState>();
+    final route = GoRoute(
       path: '/',
       builder: _builder,
       routes: <RouteBase>[
@@ -134,7 +134,7 @@ void main() {
         ),
       ],
     );
-    final Map<String, String> pathParameters = <String, String>{};
+    final pathParameters = <String, String>{};
     final List<RouteMatchBase> matches = RouteMatchBase.match(
       route: route,
       pathParameters: pathParameters,
@@ -165,7 +165,7 @@ void main() {
   });
 
   group('ImperativeRouteMatch', () {
-    final RouteMatchList matchList1 = RouteMatchList(
+    final matchList1 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
           route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
@@ -177,7 +177,7 @@ void main() {
       pathParameters: const <String, String>{},
     );
 
-    final RouteMatchList matchList2 = RouteMatchList(
+    final matchList2 = RouteMatchList(
       matches: <RouteMatch>[
         RouteMatch(
           route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
@@ -189,19 +189,19 @@ void main() {
       pathParameters: const <String, String>{},
     );
 
-    const ValueKey<String> key1 = ValueKey<String>('key1');
-    const ValueKey<String> key2 = ValueKey<String>('key2');
+    const key1 = ValueKey<String>('key1');
+    const key2 = ValueKey<String>('key2');
 
-    final Completer<void> completer1 = Completer<void>();
-    final Completer<void> completer2 = Completer<void>();
+    final completer1 = Completer<void>();
+    final completer2 = Completer<void>();
 
     test('can equal and has', () async {
-      ImperativeRouteMatch match1 = ImperativeRouteMatch(
+      var match1 = ImperativeRouteMatch(
         pageKey: key1,
         matches: matchList1,
         completer: completer1,
       );
-      ImperativeRouteMatch match2 = ImperativeRouteMatch(
+      var match2 = ImperativeRouteMatch(
         pageKey: key1,
         matches: matchList1,
         completer: completer1,

@@ -15,8 +15,8 @@ final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder:
-          (BuildContext context, GoRouterState state) => const HomeScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const HomeScreen(),
     ),
   ],
   extraCodec: const MyExtraCodec(),
@@ -109,7 +109,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (input == null) {
       return null;
     }
-    final List<Object?> inputAsList = input as List<Object?>;
+    final inputAsList = input as List<Object?>;
     if (inputAsList[0] == 'ComplexData1') {
       return ComplexData1(inputAsList[1]! as String);
     }

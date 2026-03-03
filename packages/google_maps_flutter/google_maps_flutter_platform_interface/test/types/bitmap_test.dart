@@ -219,9 +219,7 @@ void main() {
         test(
           'mipmaps determines dpi',
           () async {
-            const ImageConfiguration imageConfiguration = ImageConfiguration(
-              devicePixelRatio: 3,
-            );
+            const imageConfiguration = ImageConfiguration(devicePixelRatio: 3);
 
             final BitmapDescriptor mip = await BitmapDescriptor.fromAssetImage(
               imageConfiguration,
@@ -592,10 +590,8 @@ void main() {
       );
 
       test('create with size', () async {
-        const Size size = Size(100, 200);
-        const ImageConfiguration imageConfiguration = ImageConfiguration(
-          size: size,
-        );
+        const size = Size(100, 200);
+        const imageConfiguration = ImageConfiguration(size: size);
         final BitmapDescriptor descriptor = await AssetMapBitmap.create(
           imageConfiguration,
           'red_square.png',
@@ -774,7 +770,7 @@ void main() {
     });
 
     test('construct', () {
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.green,
         borderColor: Colors.blue,
       );
@@ -784,14 +780,14 @@ void main() {
       expect(pinConfig.toJson(), <Object>[
         PinConfig.type,
         <String, Object>{
-          'backgroundColor': Colors.green.value,
-          'borderColor': Colors.blue.value,
+          'backgroundColor': Colors.green.toARGB32(),
+          'borderColor': Colors.blue.toARGB32(),
         },
       ]);
     });
 
     test('construct with glyph text', () {
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.green,
         borderColor: Colors.blue,
         glyph: TextGlyph(text: 'Hello', textColor: Colors.red),
@@ -802,11 +798,14 @@ void main() {
       expect(pinConfig.toJson(), <Object>[
         PinConfig.type,
         <String, Object>{
-          'backgroundColor': Colors.green.value,
-          'borderColor': Colors.blue.value,
+          'backgroundColor': Colors.green.toARGB32(),
+          'borderColor': Colors.blue.toARGB32(),
           'glyph': <Object>[
             'textGlyph',
-            <Object, Object>{'text': 'Hello', 'textColor': Colors.red.value},
+            <Object, Object>{
+              'text': 'Hello',
+              'textColor': Colors.red.toARGB32(),
+            },
           ],
         },
       ]);
@@ -814,7 +813,7 @@ void main() {
 
     test('construct with glyph bitmap', () async {
       const BitmapDescriptor bitmap = AssetBitmap(name: 'red_square.png');
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.black,
         borderColor: Colors.red,
         glyph: BitmapGlyph(bitmap: bitmap),
@@ -831,8 +830,8 @@ void main() {
               'bitmap': <Object>['fromAsset', 'red_square.png'],
             },
           ],
-          'backgroundColor': Colors.black.value,
-          'borderColor': Colors.red.value,
+          'backgroundColor': Colors.black.toARGB32(),
+          'borderColor': Colors.red.toARGB32(),
         },
       ]);
     });

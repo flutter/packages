@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     objcHeaderOut:
         'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
     objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
@@ -52,7 +51,7 @@ class SourceSpecification {
   SourceCamera camera;
 }
 
-@HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
+@HostApi()
 abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickImageWithSource:maxSize:quality:fullMetadata:')

@@ -20,11 +20,11 @@ void main() {
 
 void testOverwrite() {
   test('Cache can overwrite entries', () {
-    final InternetAddress ip1 = InternetAddress('192.168.1.1');
-    final InternetAddress ip2 = InternetAddress('192.168.1.2');
+    final ip1 = InternetAddress('192.168.1.1');
+    final ip2 = InternetAddress('192.168.1.2');
     final int valid = DateTime.now().millisecondsSinceEpoch + 86400 * 1000;
 
-    final ResourceRecordCache cache = ResourceRecordCache();
+    final cache = ResourceRecordCache();
 
     // Add two different records.
     cache.updateRecords(<ResourceRecord>[
@@ -58,11 +58,11 @@ void testOverwrite() {
 
 void testTimeout() {
   test('Cache can evict records after timeout', () {
-    final InternetAddress ip1 = InternetAddress('192.168.1.1');
+    final ip1 = InternetAddress('192.168.1.1');
     final int valid = DateTime.now().millisecondsSinceEpoch + 86400 * 1000;
     final int notValid = DateTime.now().millisecondsSinceEpoch - 1;
 
-    final ResourceRecordCache cache = ResourceRecordCache();
+    final cache = ResourceRecordCache();
 
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
@@ -73,7 +73,7 @@ void testTimeout() {
       IPAddressResourceRecord('fisk', notValid, address: ip1),
     ]);
 
-    List<ResourceRecord> results = <ResourceRecord>[];
+    var results = <ResourceRecord>[];
     cache.lookup('hest', ResourceRecordType.addressIPv4, results);
     expect(results.isEmpty, isFalse);
 

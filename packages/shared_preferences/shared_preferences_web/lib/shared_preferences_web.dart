@@ -71,7 +71,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     GetAllParameters parameters,
   ) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String, Object> allData = <String, Object>{};
+    final allData = <String, Object>{};
     for (final String key in _getPrefixedKeys(
       filter.prefix,
       allowList: filter.allowList,
@@ -137,7 +137,7 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
     Set<String>? allowList,
     SharedPreferencesOptions options,
   ) async {
-    final Map<String, Object> allData = <String, Object>{};
+    final allData = <String, Object>{};
     for (final String key in _getAllowedKeys(allowList: allowList)) {
       final Object? value = _decodeValue(
         html.window.localStorage.getItem(key)!,

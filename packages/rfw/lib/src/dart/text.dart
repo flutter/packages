@@ -169,7 +169,7 @@ import 'model.dart';
 ///    Remote Flutter Widgets text library files.
 ///  * [decodeDataBlob], which decodes the binary variant of this format.
 DynamicMap parseDataFile(String file) {
-  final _Parser parser = _Parser(_tokenize(file), null);
+  final parser = _Parser(_tokenize(file), null);
   return parser.readDataFile();
 }
 
@@ -628,7 +628,7 @@ DynamicMap parseDataFile(String file) {
 ///    Remote Flutter Widgets text data files.
 ///  * [decodeLibraryBlob], which decodes the binary variant of this format.
 RemoteWidgetLibrary parseLibraryFile(String file, { Object? sourceIdentifier }) {
-  final _Parser parser = _Parser(_tokenize(file), sourceIdentifier);
+  final parser = _Parser(_tokenize(file), sourceIdentifier);
   return parser.readLibraryFile();
 }
 
@@ -814,12 +814,12 @@ String _describeRune(int current) {
 
 Iterable<_Token> _tokenize(String file) sync* {
   final List<int> characters = file.runes.toList();
-  int start = 0;
-  int index = 0;
-  int line = 1;
-  int column = 0;
-  final List<int> buffer = <int>[];
-  final List<int> buffer2 = <int>[];
+  var start = 0;
+  var index = 0;
+  var line = 1;
+  var column = 0;
+  final buffer = <int>[];
+  final buffer2 = <int>[];
   _TokenizerMode mode = _TokenizerMode.main;
   while (true) {
     final int current;
@@ -2263,7 +2263,7 @@ class _Parser {
     List<String> widgetBuilderScope = const <String>[],
   }) {
     final Object value = _readValue(extended: true, widgetBuilderScope: widgetBuilderScope);
-    final Map<Object?, Object> cases = <Object?, Object>{};
+    final cases = <Object?, Object>{};
     _expectSymbol(_SymbolToken.openBrace);
     while (_source.current is! _SymbolToken) {
       final Object? key;
@@ -2296,7 +2296,7 @@ class _Parser {
     if (optional && !_foundSymbol(_SymbolToken.dot)) {
       return const <Object>[];
     }
-    final List<Object> results = <Object>[];
+    final results = <Object>[];
     do {
       _expectSymbol(_SymbolToken.dot);
       if (_source.current is _IntegerToken) {
@@ -2478,7 +2478,7 @@ class _Parser {
   Import _readImport() {
     final SourceLocation? start = _getSourceLocation();
     _expectIdentifier('import');
-    final List<String> parts = <String>[];
+    final parts = <String>[];
     do {
       parts.add(_readKey());
     } while (_maybeReadSymbol(_SymbolToken.dot));
@@ -2499,7 +2499,7 @@ class _Parser {
   }
 
   RemoteWidgetLibrary readLibraryFile() {
-    final RemoteWidgetLibrary result = RemoteWidgetLibrary(
+    final result = RemoteWidgetLibrary(
       _readImports().toList(),
       _readWidgetDeclarations().toList(),
     );

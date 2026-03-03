@@ -11,7 +11,7 @@ import 'camera_preview_test.dart';
 void main() {
   group('camera_value', () {
     test('Can be created', () {
-      const CameraValue cameraValue = CameraValue(
+      const cameraValue = CameraValue(
         isInitialized: false,
         previewSize: Size(10, 10),
         isRecordingPaused: false,
@@ -28,6 +28,7 @@ void main() {
         focusPointSupported: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        videoStabilizationMode: VideoStabilizationMode.level2,
       );
 
       expect(cameraValue, isA<CameraValue>());
@@ -49,10 +50,11 @@ void main() {
       expect(cameraValue.recordingOrientation, DeviceOrientation.portraitUp);
       expect(cameraValue.isPreviewPaused, false);
       expect(cameraValue.previewPauseOrientation, DeviceOrientation.portraitUp);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.level2);
     });
 
     test('Can be created as uninitialized', () {
-      const CameraValue cameraValue = CameraValue.uninitialized(
+      const cameraValue = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
 
@@ -73,12 +75,11 @@ void main() {
       expect(cameraValue.recordingOrientation, null);
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
     });
 
     test('Can be copied with isInitialized', () {
-      const CameraValue cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(isInitialized: true);
 
       expect(cameraValue, isA<CameraValue>());
@@ -98,12 +99,11 @@ void main() {
       expect(cameraValue.recordingOrientation, null);
       expect(cameraValue.isPreviewPaused, isFalse);
       expect(cameraValue.previewPauseOrientation, null);
+      expect(cameraValue.videoStabilizationMode, VideoStabilizationMode.off);
     });
 
     test('Has aspectRatio after setting size', () {
-      const CameraValue cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(
         isInitialized: true,
         previewSize: const Size(20, 10),
@@ -113,9 +113,7 @@ void main() {
     });
 
     test('hasError is true after setting errorDescription', () {
-      const CameraValue cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(errorDescription: 'error');
 
       expect(cameraValue.hasError, isTrue);
@@ -123,9 +121,7 @@ void main() {
     });
 
     test('Recording paused is false when not recording', () {
-      const CameraValue cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(
         isInitialized: true,
         isRecordingVideo: false,
@@ -136,7 +132,7 @@ void main() {
     });
 
     test('toString() works as expected', () {
-      const CameraValue cameraValue = CameraValue(
+      const cameraValue = CameraValue(
         isInitialized: false,
         previewSize: Size(10, 10),
         isRecordingPaused: false,
@@ -154,6 +150,7 @@ void main() {
         isPreviewPaused: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        videoStabilizationMode: VideoStabilizationMode.level3,
       );
 
       expect(
@@ -168,6 +165,7 @@ void main() {
         'recordingOrientation: DeviceOrientation.portraitUp, '
         'isPreviewPaused: true, '
         'previewPausedOrientation: DeviceOrientation.portraitUp, '
+        'videoStabilizationMode: VideoStabilizationMode.level3, '
         // CameraDescription.toString is defined in the platform interface
         // package, so don't assert a specific value for it, only that
         // whatever it returns is inserted as expected.

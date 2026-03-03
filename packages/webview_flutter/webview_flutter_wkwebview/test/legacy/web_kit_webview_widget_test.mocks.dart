@@ -32,6 +32,7 @@ import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -255,7 +256,7 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
           as _i2.UIScrollView);
 
   @override
-  _i4.Future<void> setBackgroundColor(int? value) =>
+  _i4.Future<void> setBackgroundColor(_i2.UIColor? value) =>
       (super.noSuchMethod(
             Invocation.method(#setBackgroundColor, [value]),
             returnValue: _i4.Future<void>.value(),
@@ -975,7 +976,7 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
           as _i2.UIViewWKWebView);
 
   @override
-  _i4.Future<void> setBackgroundColor(int? value) =>
+  _i4.Future<void> setBackgroundColor(_i2.UIColor? value) =>
       (super.noSuchMethod(
             Invocation.method(#setBackgroundColor, [value]),
             returnValue: _i4.Future<void>.value(),

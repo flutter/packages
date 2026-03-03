@@ -25,10 +25,9 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
   }) async {
     final List<String>? path = await _channel
         .invokeListMethod<String>('openFile', <String, dynamic>{
-          'acceptedTypeGroups':
-              acceptedTypeGroups
-                  ?.map((XTypeGroup group) => group.toJSON())
-                  .toList(),
+          'acceptedTypeGroups': acceptedTypeGroups
+              ?.map((XTypeGroup group) => group.toJSON())
+              .toList(),
           'initialDirectory': initialDirectory,
           'confirmButtonText': confirmButtonText,
           'multiple': false,
@@ -44,10 +43,9 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
   }) async {
     final List<String>? pathList = await _channel
         .invokeListMethod<String>('openFile', <String, dynamic>{
-          'acceptedTypeGroups':
-              acceptedTypeGroups
-                  ?.map((XTypeGroup group) => group.toJSON())
-                  .toList(),
+          'acceptedTypeGroups': acceptedTypeGroups
+              ?.map((XTypeGroup group) => group.toJSON())
+              .toList(),
           'initialDirectory': initialDirectory,
           'confirmButtonText': confirmButtonText,
           'multiple': true,
@@ -63,10 +61,9 @@ class MethodChannelFileSelector extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     return _channel.invokeMethod<String>('getSavePath', <String, dynamic>{
-      'acceptedTypeGroups':
-          acceptedTypeGroups
-              ?.map((XTypeGroup group) => group.toJSON())
-              .toList(),
+      'acceptedTypeGroups': acceptedTypeGroups
+          ?.map((XTypeGroup group) => group.toJSON())
+          .toList(),
       'initialDirectory': initialDirectory,
       'suggestedName': suggestedName,
       'confirmButtonText': confirmButtonText,

@@ -288,10 +288,8 @@ Page resource error:
   }
 
   Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final TextEditingController usernameTextController =
-        TextEditingController();
-    final TextEditingController passwordTextController =
-        TextEditingController();
+    final usernameTextController = TextEditingController();
+    final passwordTextController = TextEditingController();
 
     return showDialog(
       context: context,
@@ -498,7 +496,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onListCookies(BuildContext context) async {
-    final String cookies =
+    final cookies =
         await webViewController.runJavaScriptReturningResult('document.cookie')
             as String;
     if (context.mounted) {
@@ -546,7 +544,7 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onClearCookies(BuildContext context) async {
     final bool hadCookies = await cookieManager.clearCookies();
-    String message = 'There were cookies. Now, they are gone!';
+    var message = 'There were cookies. Now, they are gone!';
     if (!hadCookies) {
       message = 'There are no cookies.';
     }
@@ -581,8 +579,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onVideoExample(BuildContext context) {
-    final AndroidWebViewController androidController =
-        webViewController as AndroidWebViewController;
+    final androidController = webViewController as AndroidWebViewController;
     // #docregion fullscreen_example
     androidController.setCustomWidgetCallbacks(
       onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
@@ -682,7 +679,7 @@ class SampleMenu extends StatelessWidget {
 
   static Future<String> _prepareLocalFile() async {
     final String tmpDir = (await getTemporaryDirectory()).path;
-    final File indexFile = File(
+    final indexFile = File(
       <String>{tmpDir, 'www', 'index.html'}.join(Platform.pathSeparator),
     );
 
@@ -704,7 +701,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _promptForUrl(BuildContext context) {
-    final TextEditingController urlTextController = TextEditingController();
+    final urlTextController = TextEditingController();
 
     return showDialog<String>(
       context: context,

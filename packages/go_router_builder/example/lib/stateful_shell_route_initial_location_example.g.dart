@@ -66,10 +66,9 @@ mixin $HomeRouteData on GoRouteData {
 mixin $NotificationsRouteData on GoRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
-        section:
-            _$NotificationsPageSectionEnumMap._$fromName(
-              state.pathParameters['section']!,
-            )!,
+        section: _$NotificationsPageSectionEnumMap._$fromName(
+          state.pathParameters['section']!,
+        )!,
       );
 
   NotificationsRouteData get _self => this as NotificationsRouteData;

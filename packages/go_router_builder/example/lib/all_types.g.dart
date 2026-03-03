@@ -154,8 +154,8 @@ mixin $BoolRoute on GoRouteData {
     queryParams: {
       if (_self.boolField != null) 'bool-field': _self.boolField!.toString(),
       if (_self.boolFieldWithDefaultValue != true)
-        'bool-field-with-default-value':
-            _self.boolFieldWithDefaultValue.toString(),
+        'bool-field-with-default-value': _self.boolFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -238,8 +238,8 @@ mixin $DoubleRoute on GoRouteData {
       if (_self.doubleField != null)
         'double-field': _self.doubleField!.toString(),
       if (_self.doubleFieldWithDefaultValue != 1.0)
-        'double-field-with-default-value':
-            _self.doubleFieldWithDefaultValue.toString(),
+        'double-field-with-default-value': _self.doubleFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -282,8 +282,8 @@ mixin $IntRoute on GoRouteData {
     queryParams: {
       if (_self.intField != null) 'int-field': _self.intField!.toString(),
       if (_self.intFieldWithDefaultValue != 1)
-        'int-field-with-default-value':
-            _self.intFieldWithDefaultValue.toString(),
+        'int-field-with-default-value': _self.intFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -326,8 +326,8 @@ mixin $NumRoute on GoRouteData {
     queryParams: {
       if (_self.numField != null) 'num-field': _self.numField!.toString(),
       if (_self.numFieldWithDefaultValue != 1)
-        'num-field-with-default-value':
-            _self.numFieldWithDefaultValue.toString(),
+        'num-field-with-default-value': _self.numFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -347,10 +347,9 @@ mixin $NumRoute on GoRouteData {
 
 mixin $EnumRoute on GoRouteData {
   static EnumRoute _fromState(GoRouterState state) => EnumRoute(
-    requiredEnumField:
-        _$PersonDetailsEnumMap._$fromName(
-          state.pathParameters['requiredEnumField']!,
-        )!,
+    requiredEnumField: _$PersonDetailsEnumMap._$fromName(
+      state.pathParameters['requiredEnumField']!,
+    )!,
     enumField: _$convertMapValue(
       'enum-field',
       state.uri.queryParameters,
@@ -401,10 +400,9 @@ const _$PersonDetailsEnumMap = {
 
 mixin $EnhancedEnumRoute on GoRouteData {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
-    requiredEnumField:
-        _$SportDetailsEnumMap._$fromName(
-          state.pathParameters['requiredEnumField']!,
-        )!,
+    requiredEnumField: _$SportDetailsEnumMap._$fromName(
+      state.pathParameters['requiredEnumField']!,
+    )!,
     enumField: _$convertMapValue(
       'enum-field',
       state.uri.queryParameters,
@@ -525,84 +523,71 @@ mixin $UriRoute on GoRouteData {
 
 mixin $IterableRoute on GoRouteData {
   static IterableRoute _fromState(GoRouterState state) => IterableRoute(
-    intIterableField:
-        state.uri.queryParametersAll['int-iterable-field']
-            ?.map(int.parse)
-            .cast<int>(),
-    doubleIterableField:
-        state.uri.queryParametersAll['double-iterable-field']
-            ?.map(double.parse)
-            .cast<double>(),
+    intIterableField: state.uri.queryParametersAll['int-iterable-field']
+        ?.map(int.parse)
+        .cast<int>(),
+    doubleIterableField: state.uri.queryParametersAll['double-iterable-field']
+        ?.map(double.parse)
+        .cast<double>(),
     stringIterableField: state.uri.queryParametersAll['string-iterable-field']
         ?.map((e) => e),
-    boolIterableField:
-        state.uri.queryParametersAll['bool-iterable-field']
-            ?.map(_$boolConverter)
-            .cast<bool>(),
-    enumIterableField:
-        state.uri.queryParametersAll['enum-iterable-field']
-            ?.map(_$SportDetailsEnumMap._$fromName)
-            .cast<SportDetails>(),
-    enumOnlyInIterableField:
-        state.uri.queryParametersAll['enum-only-in-iterable-field']
-            ?.map(_$CookingRecipeEnumMap._$fromName)
-            .cast<CookingRecipe>(),
-    intListField:
-        state.uri.queryParametersAll['int-list-field']
-            ?.map(int.parse)
-            .cast<int>()
-            .toList(),
-    doubleListField:
-        state.uri.queryParametersAll['double-list-field']
-            ?.map(double.parse)
-            .cast<double>()
-            .toList(),
-    stringListField:
-        state.uri.queryParametersAll['string-list-field']
-            ?.map((e) => e)
-            .toList(),
-    boolListField:
-        state.uri.queryParametersAll['bool-list-field']
-            ?.map(_$boolConverter)
-            .cast<bool>()
-            .toList(),
-    enumListField:
-        state.uri.queryParametersAll['enum-list-field']
-            ?.map(_$SportDetailsEnumMap._$fromName)
-            .cast<SportDetails>()
-            .toList(),
-    enumOnlyInListField:
-        state.uri.queryParametersAll['enum-only-in-list-field']
-            ?.map(_$CookingRecipeEnumMap._$fromName)
-            .cast<CookingRecipe>()
-            .toList(),
-    intSetField:
-        state.uri.queryParametersAll['int-set-field']
-            ?.map(int.parse)
-            .cast<int>()
-            .toSet(),
-    doubleSetField:
-        state.uri.queryParametersAll['double-set-field']
-            ?.map(double.parse)
-            .cast<double>()
-            .toSet(),
-    stringSetField:
-        state.uri.queryParametersAll['string-set-field']?.map((e) => e).toSet(),
-    boolSetField:
-        state.uri.queryParametersAll['bool-set-field']
-            ?.map(_$boolConverter)
-            .cast<bool>()
-            .toSet(),
-    enumSetField:
-        state.uri.queryParametersAll['enum-set-field']
-            ?.map(_$SportDetailsEnumMap._$fromName)
-            .cast<SportDetails>()
-            .toSet(),
-    enumOnlyInSetField:
-        state.uri.queryParametersAll['enum-only-in-set-field']
-            ?.map(_$CookingRecipeEnumMap._$fromName)
-            .cast<CookingRecipe>()
-            .toSet(),
+    boolIterableField: state.uri.queryParametersAll['bool-iterable-field']
+        ?.map(_$boolConverter)
+        .cast<bool>(),
+    enumIterableField: state.uri.queryParametersAll['enum-iterable-field']
+        ?.map(_$SportDetailsEnumMap._$fromName)
+        .cast<SportDetails>(),
+    enumOnlyInIterableField: state
+        .uri
+        .queryParametersAll['enum-only-in-iterable-field']
+        ?.map(_$CookingRecipeEnumMap._$fromName)
+        .cast<CookingRecipe>(),
+    intListField: state.uri.queryParametersAll['int-list-field']
+        ?.map(int.parse)
+        .cast<int>()
+        .toList(),
+    doubleListField: state.uri.queryParametersAll['double-list-field']
+        ?.map(double.parse)
+        .cast<double>()
+        .toList(),
+    stringListField: state.uri.queryParametersAll['string-list-field']
+        ?.map((e) => e)
+        .toList(),
+    boolListField: state.uri.queryParametersAll['bool-list-field']
+        ?.map(_$boolConverter)
+        .cast<bool>()
+        .toList(),
+    enumListField: state.uri.queryParametersAll['enum-list-field']
+        ?.map(_$SportDetailsEnumMap._$fromName)
+        .cast<SportDetails>()
+        .toList(),
+    enumOnlyInListField: state.uri.queryParametersAll['enum-only-in-list-field']
+        ?.map(_$CookingRecipeEnumMap._$fromName)
+        .cast<CookingRecipe>()
+        .toList(),
+    intSetField: state.uri.queryParametersAll['int-set-field']
+        ?.map(int.parse)
+        .cast<int>()
+        .toSet(),
+    doubleSetField: state.uri.queryParametersAll['double-set-field']
+        ?.map(double.parse)
+        .cast<double>()
+        .toSet(),
+    stringSetField: state.uri.queryParametersAll['string-set-field']
+        ?.map((e) => e)
+        .toSet(),
+    boolSetField: state.uri.queryParametersAll['bool-set-field']
+        ?.map(_$boolConverter)
+        .cast<bool>()
+        .toSet(),
+    enumSetField: state.uri.queryParametersAll['enum-set-field']
+        ?.map(_$SportDetailsEnumMap._$fromName)
+        .cast<SportDetails>()
+        .toSet(),
+    enumOnlyInSetField: state.uri.queryParametersAll['enum-only-in-set-field']
+        ?.map(_$CookingRecipeEnumMap._$fromName)
+        .cast<CookingRecipe>()
+        .toSet(),
   );
 
   IterableRoute get _self => this as IterableRoute;
@@ -612,62 +597,67 @@ mixin $IterableRoute on GoRouteData {
     '/iterable-route',
     queryParams: {
       if (_self.intIterableField != null)
-        'int-iterable-field':
-            _self.intIterableField?.map((e) => e.toString()).toList(),
+        'int-iterable-field': _self.intIterableField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.doubleIterableField != null)
-        'double-iterable-field':
-            _self.doubleIterableField?.map((e) => e.toString()).toList(),
+        'double-iterable-field': _self.doubleIterableField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.stringIterableField != null)
-        'string-iterable-field':
-            _self.stringIterableField?.map((e) => e).toList(),
+        'string-iterable-field': _self.stringIterableField
+            ?.map((e) => e)
+            .toList(),
       if (_self.boolIterableField != null)
-        'bool-iterable-field':
-            _self.boolIterableField?.map((e) => e.toString()).toList(),
+        'bool-iterable-field': _self.boolIterableField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.enumIterableField != null)
-        'enum-iterable-field':
-            _self.enumIterableField
-                ?.map((e) => _$SportDetailsEnumMap[e])
-                .toList(),
+        'enum-iterable-field': _self.enumIterableField
+            ?.map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
       if (_self.enumOnlyInIterableField != null)
-        'enum-only-in-iterable-field':
-            _self.enumOnlyInIterableField
-                ?.map((e) => _$CookingRecipeEnumMap[e])
-                .toList(),
+        'enum-only-in-iterable-field': _self.enumOnlyInIterableField
+            ?.map((e) => _$CookingRecipeEnumMap[e])
+            .toList(),
       if (_self.intListField != null)
         'int-list-field': _self.intListField?.map((e) => e.toString()).toList(),
       if (_self.doubleListField != null)
-        'double-list-field':
-            _self.doubleListField?.map((e) => e.toString()).toList(),
+        'double-list-field': _self.doubleListField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.stringListField != null)
         'string-list-field': _self.stringListField?.map((e) => e).toList(),
       if (_self.boolListField != null)
-        'bool-list-field':
-            _self.boolListField?.map((e) => e.toString()).toList(),
+        'bool-list-field': _self.boolListField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.enumListField != null)
-        'enum-list-field':
-            _self.enumListField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+        'enum-list-field': _self.enumListField
+            ?.map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
       if (_self.enumOnlyInListField != null)
-        'enum-only-in-list-field':
-            _self.enumOnlyInListField
-                ?.map((e) => _$CookingRecipeEnumMap[e])
-                .toList(),
+        'enum-only-in-list-field': _self.enumOnlyInListField
+            ?.map((e) => _$CookingRecipeEnumMap[e])
+            .toList(),
       if (_self.intSetField != null)
         'int-set-field': _self.intSetField?.map((e) => e.toString()).toList(),
       if (_self.doubleSetField != null)
-        'double-set-field':
-            _self.doubleSetField?.map((e) => e.toString()).toList(),
+        'double-set-field': _self.doubleSetField
+            ?.map((e) => e.toString())
+            .toList(),
       if (_self.stringSetField != null)
         'string-set-field': _self.stringSetField?.map((e) => e).toList(),
       if (_self.boolSetField != null)
         'bool-set-field': _self.boolSetField?.map((e) => e.toString()).toList(),
       if (_self.enumSetField != null)
-        'enum-set-field':
-            _self.enumSetField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
+        'enum-set-field': _self.enumSetField
+            ?.map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
       if (_self.enumOnlyInSetField != null)
-        'enum-only-in-set-field':
-            _self.enumOnlyInSetField
-                ?.map((e) => _$CookingRecipeEnumMap[e])
-                .toList(),
+        'enum-only-in-set-field': _self.enumOnlyInSetField
+            ?.map((e) => _$CookingRecipeEnumMap[e])
+            .toList(),
     },
   );
 
@@ -787,50 +777,57 @@ mixin $IterableRouteWithDefaultValues on GoRouteData {
     '/iterable-route-with-default-values',
     queryParams: {
       if (!_$iterablesEqual(_self.intIterableField, const <int>[0]))
-        'int-iterable-field':
-            _self.intIterableField.map((e) => e.toString()).toList(),
+        'int-iterable-field': _self.intIterableField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.doubleIterableField, const <double>[0, 1, 2]))
-        'double-iterable-field':
-            _self.doubleIterableField.map((e) => e.toString()).toList(),
+        'double-iterable-field': _self.doubleIterableField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.stringIterableField, const <String>[
         'defaultValue',
       ]))
-        'string-iterable-field':
-            _self.stringIterableField.map((e) => e).toList(),
+        'string-iterable-field': _self.stringIterableField
+            .map((e) => e)
+            .toList(),
       if (!_$iterablesEqual(_self.boolIterableField, const <bool>[false]))
-        'bool-iterable-field':
-            _self.boolIterableField.map((e) => e.toString()).toList(),
+        'bool-iterable-field': _self.boolIterableField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.enumIterableField, const <SportDetails>[
         SportDetails.tennis,
         SportDetails.hockey,
       ]))
-        'enum-iterable-field':
-            _self.enumIterableField
-                .map((e) => _$SportDetailsEnumMap[e])
-                .toList(),
+        'enum-iterable-field': _self.enumIterableField
+            .map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
       if (!_$iterablesEqual(_self.intListField, const <int>[0]))
         'int-list-field': _self.intListField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.doubleListField, const <double>[1, 2, 3]))
-        'double-list-field':
-            _self.doubleListField.map((e) => e.toString()).toList(),
+        'double-list-field': _self.doubleListField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.stringListField, const <String>[
         'defaultValue0',
         'defaultValue1',
       ]))
         'string-list-field': _self.stringListField.map((e) => e).toList(),
       if (!_$iterablesEqual(_self.boolListField, const <bool>[true]))
-        'bool-list-field':
-            _self.boolListField.map((e) => e.toString()).toList(),
+        'bool-list-field': _self.boolListField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.enumListField, const <SportDetails>[
         SportDetails.football,
       ]))
-        'enum-list-field':
-            _self.enumListField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+        'enum-list-field': _self.enumListField
+            .map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
       if (!_$iterablesEqual(_self.intSetField, const <int>{0, 1}))
         'int-set-field': _self.intSetField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.doubleSetField, const <double>{}))
-        'double-set-field':
-            _self.doubleSetField.map((e) => e.toString()).toList(),
+        'double-set-field': _self.doubleSetField
+            .map((e) => e.toString())
+            .toList(),
       if (!_$iterablesEqual(_self.stringSetField, const <String>{
         'defaultValue',
       }))
@@ -840,8 +837,9 @@ mixin $IterableRouteWithDefaultValues on GoRouteData {
       if (!_$iterablesEqual(_self.enumSetField, const <SportDetails>{
         SportDetails.hockey,
       }))
-        'enum-set-field':
-            _self.enumSetField.map((e) => _$SportDetailsEnumMap[e]).toList(),
+        'enum-set-field': _self.enumSetField
+            .map((e) => _$SportDetailsEnumMap[e])
+            .toList(),
     },
   );
 

@@ -5,12 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('DefaultSvgTheme', () {
     testWidgets('changes propagate to SvgPicture', (WidgetTester tester) async {
-      const SvgTheme svgTheme = SvgTheme(
-        currentColor: Color(0xFF733821),
-        xHeight: 6.0,
-      );
+      const svgTheme = SvgTheme(currentColor: Color(0xFF733821), xHeight: 6.0);
 
-      final SvgPicture svgPictureWidget = SvgPicture.string('''
+      final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10em" height="10" fill="currentColor" />
 </svg>''');
@@ -27,7 +24,7 @@ void main() {
         equals(svgTheme),
       );
 
-      const SvgTheme anotherSvgTheme = SvgTheme(
+      const anotherSvgTheme = SvgTheme(
         currentColor: Color(0xFF05290E),
         fontSize: 12.0,
         xHeight: 7.0,
@@ -48,9 +45,9 @@ void main() {
 
     testWidgets("currentColor from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
-      const SvgTheme svgTheme = SvgTheme(currentColor: Color(0xFF733821));
+      const svgTheme = SvgTheme(currentColor: Color(0xFF733821));
 
-      final SvgPicture svgPictureWidget = SvgPicture.string('''
+      final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10" height="10" fill="currentColor" />
 </svg>''', theme: const SvgTheme(currentColor: Color(0xFF05290E)));
@@ -71,9 +68,9 @@ void main() {
 
     testWidgets("fontSize from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
-      const SvgTheme svgTheme = SvgTheme();
+      const svgTheme = SvgTheme();
 
-      final SvgPicture svgPictureWidget = SvgPicture.string('''
+      final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10em" height="10em" />
 </svg>''', theme: const SvgTheme(fontSize: 12.0));
@@ -96,7 +93,7 @@ void main() {
       'fontSize defaults to 14 '
       "if no widget's theme, DefaultSvgTheme or DefaultTextStyle is provided",
       (WidgetTester tester) async {
-        final SvgPicture svgPictureWidget = SvgPicture.string('''
+        final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10em" height="10em" />
 </svg>''');
@@ -119,9 +116,9 @@ void main() {
 
     testWidgets("xHeight from the widget's theme takes precedence over "
         'the theme from DefaultSvgTheme', (WidgetTester tester) async {
-      const SvgTheme svgTheme = SvgTheme(xHeight: 6.5);
+      const svgTheme = SvgTheme(xHeight: 6.5);
 
-      final SvgPicture svgPictureWidget = SvgPicture.string('''
+      final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10ex" height="10ex" />
 </svg>''', theme: const SvgTheme(fontSize: 12.0, xHeight: 7.0));
@@ -143,7 +140,7 @@ void main() {
         "if no widget's theme or DefaultSvgTheme is provided", (
       WidgetTester tester,
     ) async {
-      final SvgPicture svgPictureWidget = SvgPicture.string('''
+      final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="10ex" height="10ex" />
 </svg>''');

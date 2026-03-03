@@ -152,10 +152,9 @@ class DetailsScreen extends StatelessWidget {
               child: const Text('Go back'),
             ),
             ElevatedButton(
-              onPressed:
-                  () => const SettingsRoute(
-                    settingId: 'SettingsId',
-                  ).goRelative(context),
+              onPressed: () => const SettingsRoute(
+                settingId: 'SettingsId',
+              ).goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],

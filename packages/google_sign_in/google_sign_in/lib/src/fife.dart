@@ -36,7 +36,7 @@ final RegExp sizeDirective = RegExp(r'^s[0-9]{1,5}(-c)?$');
 /// Modified image URLs are recomposed by performing the parsing steps in reverse.
 String addSizeDirectiveToUrl(String photoUrl, double size) {
   final Uri profileUri = Uri.parse(photoUrl);
-  final List<String> pathSegments = List<String>.from(profileUri.pathSegments);
+  final pathSegments = List<String>.from(profileUri.pathSegments);
   if (pathSegments.length <= 2) {
     final String imagePath = pathSegments.last;
     // Does this have any existing transformation directives?
@@ -46,12 +46,11 @@ String addSizeDirectiveToUrl(String photoUrl, double size) {
       final String baseUrl = imagePath.substring(0, directiveSeparator);
       final String directive = imagePath.substring(directiveSeparator + 1);
       // Split the directive by "-"
-      final Set<String> directives =
-          Set<String>.from(directive.split('-'))
-            // Remove the size directive, if present, and any empty values
-            ..removeWhere((String s) => s.isEmpty || sizeDirective.hasMatch(s))
-            // Add the size and crop directives
-            ..addAll(<String>['c', 's${size.round()}']);
+      final directives = Set<String>.from(directive.split('-'))
+        // Remove the size directive, if present, and any empty values
+        ..removeWhere((String s) => s.isEmpty || sizeDirective.hasMatch(s))
+        // Add the size and crop directives
+        ..addAll(<String>['c', 's${size.round()}']);
       // Recompose the URL by performing the reverse of the parsing
       pathSegments.last = '$baseUrl=${directives.join("-")}';
     } else {

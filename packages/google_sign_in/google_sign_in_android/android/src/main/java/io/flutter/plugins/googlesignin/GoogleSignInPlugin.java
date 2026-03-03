@@ -215,7 +215,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       try {
         String serverClientId = params.getServerClientId();
         if (serverClientId == null || serverClientId.isEmpty()) {
-          ResultUtilsKt.completeWithGetCredentialFailure(
+          ResultUtilsKt.completeWithValue(
               callback,
               new GetCredentialFailure(
                   GetCredentialFailureType.MISSING_SERVER_CLIENT_ID,
@@ -228,7 +228,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         // the API docs.
         Activity activity = getActivity();
         if (activity == null) {
-          ResultUtilsKt.completeWithGetCredentialFailure(
+          ResultUtilsKt.completeWithValue(
               callback,
               new GetCredentialFailure(
                   GetCredentialFailureType.NO_ACTIVITY, "No activity available", null));
@@ -280,7 +280,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                   GoogleIdTokenCredential googleIdTokenCredential =
                       credentialConverter.createFrom(credential);
                   Uri profilePictureUri = googleIdTokenCredential.getProfilePictureUri();
-                  ResultUtilsKt.completeWithGetGetCredentialResult(
+                  ResultUtilsKt.completeWithValue(
                       callback,
                       new GetCredentialSuccess(
                           new PlatformGoogleIdTokenCredential(
@@ -291,7 +291,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                               googleIdTokenCredential.getIdToken(),
                               profilePictureUri == null ? null : profilePictureUri.toString())));
                 } else {
-                  ResultUtilsKt.completeWithGetCredentialFailure(
+                  ResultUtilsKt.completeWithValue(
                       callback,
                       new GetCredentialFailure(
                           GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE,
@@ -318,12 +318,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                 }
                 // Errors are reported through the return value as structured data, rather than
                 // a Result error's PlatformException.
-                ResultUtilsKt.completeWithGetCredentialFailure(
+                ResultUtilsKt.completeWithValue(
                     callback, new GetCredentialFailure(type, e.getMessage(), null));
               }
             });
       } catch (RuntimeException e) {
-        ResultUtilsKt.completeWithGetCredentialFailure(
+        ResultUtilsKt.completeWithValue(
             callback,
             new GetCredentialFailure(
                 GetCredentialFailureType.UNKNOWN,
@@ -400,7 +400,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                     if (promptIfUnauthorized) {
                       Activity activity = getActivity();
                       if (activity == null) {
-                        ResultUtilsKt.completeWithAuthorizeFailure(
+                        ResultUtilsKt.completeWithValue(
                             callback,
                             new AuthorizeFailure(
                                 AuthorizeFailureType.NO_ACTIVITY, "No activity available", null));
@@ -422,7 +422,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                             /* options */ null);
                       } catch (IntentSender.SendIntentException e) {
                         pendingAuthorizationCallback = null;
-                        ResultUtilsKt.completeWithAuthorizeFailure(
+                        ResultUtilsKt.completeWithValue(
                             callback,
                             new AuthorizeFailure(
                                 AuthorizeFailureType.PENDING_INTENT_EXCEPTION,
@@ -430,12 +430,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                                 null));
                       }
                     } else {
-                      ResultUtilsKt.completeWithAuthorizeFailure(
+                      ResultUtilsKt.completeWithValue(
                           callback,
                           new AuthorizeFailure(AuthorizeFailureType.UNAUTHORIZED, null, null));
                     }
                   } else {
-                    ResultUtilsKt.completeWithAuthorizationResult(
+                    ResultUtilsKt.completeWithValue(
                         callback,
                         new PlatformAuthorizationResult(
                             authorizationResult.getAccessToken(),
@@ -445,12 +445,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                 })
             .addOnFailureListener(
                 e ->
-                    ResultUtilsKt.completeWithAuthorizeFailure(
+                    ResultUtilsKt.completeWithValue(
                         callback,
                         new AuthorizeFailure(
                             AuthorizeFailureType.AUTHORIZE_FAILURE, e.getMessage(), null)));
       } catch (RuntimeException e) {
-        ResultUtilsKt.completeWithAuthorizeFailure(
+        ResultUtilsKt.completeWithValue(
             callback,
             new AuthorizeFailure(
                 AuthorizeFailureType.API_EXCEPTION,
@@ -488,7 +488,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           try {
             AuthorizationResult authorizationResult =
                 authorizationClientFactory.create(context).getAuthorizationResultFromIntent(data);
-            ResultUtilsKt.completeWithAuthorizationResult(
+            ResultUtilsKt.completeWithValue(
                 pendingAuthorizationCallback,
                 new PlatformAuthorizationResult(
                     authorizationResult.getAccessToken(),
@@ -496,7 +496,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                     authorizationResult.getGrantedScopes()));
             return true;
           } catch (ApiException e) {
-            ResultUtilsKt.completeWithAuthorizeFailure(
+            ResultUtilsKt.completeWithValue(
                 pendingAuthorizationCallback,
                 new AuthorizeFailure(AuthorizeFailureType.API_EXCEPTION, e.getMessage(), null));
           }

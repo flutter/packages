@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Includes test cases related to photo capture operations for FLTCam class.
 final class PhotoCaptureTests: XCTestCase {
   private func createCam(with captureSessionQueue: DispatchQueue) -> DefaultCamera {
@@ -43,9 +38,13 @@ final class PhotoCaptureTests: XCTestCase {
 
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
-      cam.captureToFile { result, error in
-        XCTAssertNil(result)
-        XCTAssertNotNil(error)
+      cam.captureToFile { result in
+        switch result {
+        case .success(_):
+          XCTFail("Expected failure")
+        case .failure(_):
+          break
+        }
         errorExpectation.fulfill()
       }
     }
@@ -76,8 +75,13 @@ final class PhotoCaptureTests: XCTestCase {
 
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
-      cam.captureToFile { result, error in
-        XCTAssertEqual(result, filePath)
+      cam.captureToFile { result in
+        switch result {
+        case .success(let result):
+          XCTAssertEqual(result, filePath)
+        case .failure(_):
+          XCTFail("Unexpected failure")
+        }
         pathExpectation.fulfill()
       }
     }
@@ -93,7 +97,7 @@ final class PhotoCaptureTests: XCTestCase {
     captureSessionQueue.setSpecific(
       key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
-    cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
+    cam.setImageFileFormat(PlatformImageFileFormat.heif)
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.availablePhotoCodecTypes = [AVVideoCodecType.hevc]
@@ -110,8 +114,10 @@ final class PhotoCaptureTests: XCTestCase {
 
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
-      cam.captureToFile { filePath, error in
-        XCTAssertEqual((filePath! as NSString).pathExtension, "heif")
+      cam.captureToFile { result in
+        if let filePath = self.assertSuccess(result) {
+          XCTAssertEqual((filePath as NSString).pathExtension, "heif")
+        }
         expectation.fulfill()
       }
     }
@@ -128,7 +134,7 @@ final class PhotoCaptureTests: XCTestCase {
     captureSessionQueue.setSpecific(
       key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
-    cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
+    cam.setImageFileFormat(PlatformImageFileFormat.heif)
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
@@ -144,8 +150,10 @@ final class PhotoCaptureTests: XCTestCase {
 
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
-      cam.captureToFile { filePath, error in
-        XCTAssertEqual((filePath! as NSString).pathExtension, "jpg")
+      cam.captureToFile { result in
+        if let filePath = self.assertSuccess(result) {
+          XCTAssertEqual((filePath as NSString).pathExtension, "jpg")
+        }
         expectation.fulfill()
       }
     }
@@ -193,9 +201,45 @@ final class PhotoCaptureTests: XCTestCase {
     // `FLTCam::captureToFile` runs on capture session queue.
     captureSessionQueue.async {
       cam.setFlashMode(.torch) { _ in }
-      cam.captureToFile { result, error in
-        XCTAssertEqual(result, filePath)
+      cam.captureToFile { result in
+        if let result = self.assertSuccess(result) {
+          XCTAssertEqual(result, filePath)
+        }
         pathExpectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
+  func testCaptureToFile_mustSavePhotoToCameraPicturesDirectory() {
+    let expectedPath = "/tmp/camera/pictures/"
+    let expectation = self.expectation(
+      description: "Photo must be saved to \(expectedPath) directory.")
+
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+    let cam = createCam(with: captureSessionQueue)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
+    }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { result in
+        if let filePath = self.assertSuccess(result) {
+          XCTAssertTrue(
+            filePath.contains(expectedPath)
+          )
+        }
+        expectation.fulfill()
       }
     }
 

@@ -36,8 +36,8 @@ void main() {
     });
 
     test('should fetch all keys', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
@@ -48,8 +48,8 @@ void main() {
     });
 
     test('should filter out keys with "flutter." prefix async keys', () async {
-      const List<String> asyncKeys = <String>['flutter.key1', 'key2'];
-      const List<String> legacyKeys = <String>['key1', 'key3'];
+      const asyncKeys = <String>['flutter.key1', 'key2'];
+      const legacyKeys = <String>['key1', 'key3'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
@@ -60,10 +60,8 @@ void main() {
     });
 
     test('should select key', () async {
-      const List<String> keys = <String>['key1', 'key2'];
-      const SharedPreferencesData keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keys = <String>['key1', 'key2'];
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(evalMock.fetchAllKeys()).thenAnswer(
         (_) async => (asyncKeys: keys, legacyKeys: const <String>[]),
       );
@@ -86,10 +84,8 @@ void main() {
     });
 
     test('should select key for legacy api', () async {
-      const List<String> keys = <String>['key1', 'key2'];
-      const SharedPreferencesData keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keys = <String>['key1', 'key2'];
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(evalMock.fetchAllKeys()).thenAnswer(
         (_) async => (asyncKeys: const <String>[], legacyKeys: keys),
       );
@@ -115,8 +111,8 @@ void main() {
     });
 
     test('should filter keys and clear filter', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
@@ -132,8 +128,8 @@ void main() {
     });
 
     test('should start/stop editing', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
@@ -148,14 +144,12 @@ void main() {
     });
 
     test('should change value', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
-      const SharedPreferencesData keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(
         evalMock.fetchValue('key1', false),
       ).thenAnswer((_) async => keyValue);
@@ -168,14 +162,12 @@ void main() {
     });
 
     test('should change value', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
-      const SharedPreferencesData keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(
         evalMock.fetchValue('key1', false),
       ).thenAnswer((_) async => keyValue);
@@ -196,8 +188,8 @@ void main() {
     });
 
     test('should change select legacy api and async api', () async {
-      const List<String> asyncKeys = <String>['key1', 'key2'];
-      const List<String> legacyKeys = <String>['key11', 'key22'];
+      const asyncKeys = <String>['key1', 'key2'];
+      const legacyKeys = <String>['key11', 'key22'];
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));

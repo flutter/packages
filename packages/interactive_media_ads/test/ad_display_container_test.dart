@@ -14,11 +14,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('build', (WidgetTester tester) async {
-    final TestPlatformAdDisplayContainer adDisplayContainer =
-        TestPlatformAdDisplayContainer(
-          PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
-          onBuild: (_) => Container(),
-        );
+    final adDisplayContainer = TestPlatformAdDisplayContainer(
+      PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
+      onBuild: (_) => Container(),
+    );
 
     await tester.pumpWidget(
       AdDisplayContainer.fromPlatform(platform: adDisplayContainer),
@@ -50,7 +49,7 @@ void main() {
         },
       );
 
-      final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
+      final adDisplayContainer = AdDisplayContainer(
         key: GlobalKey(),
         onContainerAdded: (_) {},
       );

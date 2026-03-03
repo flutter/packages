@@ -143,8 +143,8 @@ mixin $BoolExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.boolField != null) 'bool-field': _self.boolField!.toString(),
       if (_self.boolFieldWithDefaultValue != const BoolExtension(true))
-        'bool-field-with-default-value':
-            _self.boolFieldWithDefaultValue.toString(),
+        'bool-field-with-default-value': _self.boolFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -201,24 +201,23 @@ mixin $DateTimeExtensionRoute on GoRouteData {
 }
 
 mixin $DoubleExtensionRoute on GoRouteData {
-  static DoubleExtensionRoute _fromState(GoRouterState state) =>
-      DoubleExtensionRoute(
-        requiredDoubleField:
-            double.parse(state.pathParameters['requiredDoubleField']!)
-                as DoubleExtension,
-        doubleField:
-            double.tryParse(state.uri.queryParameters['double-field'] ?? '')
-                as DoubleExtension?,
-        doubleFieldWithDefaultValue:
-            double.tryParse(
-                  state
-                          .uri
-                          .queryParameters['double-field-with-default-value'] ??
-                      '',
-                )
-                as DoubleExtension? ??
-            const DoubleExtension(1.0),
-      );
+  static DoubleExtensionRoute _fromState(
+    GoRouterState state,
+  ) => DoubleExtensionRoute(
+    requiredDoubleField:
+        double.parse(state.pathParameters['requiredDoubleField']!)
+            as DoubleExtension,
+    doubleField:
+        double.tryParse(state.uri.queryParameters['double-field'] ?? '')
+            as DoubleExtension?,
+    doubleFieldWithDefaultValue:
+        double.tryParse(
+              state.uri.queryParameters['double-field-with-default-value'] ??
+                  '',
+            )
+            as DoubleExtension? ??
+        const DoubleExtension(1.0),
+  );
 
   DoubleExtensionRoute get _self => this as DoubleExtensionRoute;
 
@@ -229,8 +228,8 @@ mixin $DoubleExtensionRoute on GoRouteData {
       if (_self.doubleField != null)
         'double-field': _self.doubleField!.toString(),
       if (_self.doubleFieldWithDefaultValue != const DoubleExtension(1.0))
-        'double-field-with-default-value':
-            _self.doubleFieldWithDefaultValue.toString(),
+        'double-field-with-default-value': _self.doubleFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -271,8 +270,8 @@ mixin $IntExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.intField != null) 'int-field': _self.intField!.toString(),
       if (_self.intFieldWithDefaultValue != const IntExtension(1))
-        'int-field-with-default-value':
-            _self.intFieldWithDefaultValue.toString(),
+        'int-field-with-default-value': _self.intFieldWithDefaultValue
+            .toString(),
     },
   );
 
@@ -313,8 +312,8 @@ mixin $NumExtensionRoute on GoRouteData {
     queryParams: {
       if (_self.numField != null) 'num-field': _self.numField!.toString(),
       if (_self.numFieldWithDefaultValue != const NumExtension(1))
-        'num-field-with-default-value':
-            _self.numFieldWithDefaultValue.toString(),
+        'num-field-with-default-value': _self.numFieldWithDefaultValue
+            .toString(),
     },
   );
 

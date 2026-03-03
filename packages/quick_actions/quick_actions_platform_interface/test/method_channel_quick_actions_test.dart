@@ -13,9 +13,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$MethodChannelQuickActions', () {
-    final MethodChannelQuickActions quickActions = MethodChannelQuickActions();
+    final quickActions = MethodChannelQuickActions();
 
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
 
     setUp(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -39,7 +39,7 @@ void main() {
       });
 
       test('initialize', () async {
-        final Completer<bool> quickActionsHandler = Completer<bool>();
+        final quickActionsHandler = Completer<bool>();
         await quickActions.initialize(
           (_) => quickActionsHandler.complete(true),
         );
@@ -109,10 +109,10 @@ void main() {
       );
 
       test('setShortcutItems with demo data', () async {
-        const String type = 'type';
-        const String localizedTitle = 'localizedTitle';
-        const String localizedSubtitle = 'localizedSubtitle';
-        const String icon = 'icon';
+        const type = 'type';
+        const localizedTitle = 'localizedTitle';
+        const localizedSubtitle = 'localizedSubtitle';
+        const icon = 'icon';
         await quickActions.setShortcutItems(const <ShortcutItem>[
           ShortcutItem(
             type: type,
@@ -161,12 +161,12 @@ void main() {
 
   group('$ShortcutItem', () {
     test('Shortcut item can be constructed', () {
-      const String type = 'type';
-      const String localizedTitle = 'title';
-      const String localizedSubtitle = 'subtitle';
-      const String icon = 'foo';
+      const type = 'type';
+      const localizedTitle = 'title';
+      const localizedSubtitle = 'subtitle';
+      const icon = 'foo';
 
-      const ShortcutItem item = ShortcutItem(
+      const item = ShortcutItem(
         type: type,
         localizedTitle: localizedTitle,
         localizedSubtitle: localizedSubtitle,

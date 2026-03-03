@@ -103,7 +103,7 @@ void main() {
       // Verify that we stopped playing after the pause.
       // TODO(stuartmorgan): Investigate why this has a slight discrepency, and
       // fix it if possible. Is AVPlayer's pause method internally async?
-      const Duration allowableDelta = Duration(milliseconds: 10);
+      const allowableDelta = Duration(milliseconds: 10);
       expect(
         await controller.position,
         lessThan(pausedPosition + allowableDelta),
@@ -119,7 +119,7 @@ void main() {
 
       // Write it to a file to use as a source.
       final String filename = _videoAssetKey.split('/').last;
-      final File file = File('$tempDir/$filename');
+      final file = File('$tempDir/$filename');
       await file.writeAsBytes(bytes.buffer.asInt8List());
 
       controller = MiniController.file(file);
@@ -148,8 +148,8 @@ void main() {
       (WidgetTester tester) async {
         await controller.initialize();
 
-        final Completer<void> started = Completer<void>();
-        final Completer<void> ended = Completer<void>();
+        final started = Completer<void>();
+        final ended = Completer<void>();
         controller.addListener(() {
           if (!started.isCompleted && controller.value.isBuffering) {
             started.complete();
@@ -180,7 +180,7 @@ void main() {
     );
 
     testWidgets('live stream duration != 0', (WidgetTester tester) async {
-      final MiniController livestreamController = MiniController.network(
+      final livestreamController = MiniController.network(
         'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8',
       );
       await livestreamController.initialize();
@@ -199,7 +199,7 @@ void main() {
     ) async {
       // Some m3u8 files contain rotation data that may incorrectly invert the aspect ratio.
       // More info [here](https://github.com/flutter/flutter/issues/109116).
-      final MiniController livestreamController = MiniController.network(
+      final livestreamController = MiniController.network(
         'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/rotated_nail_manifest.m3u8',
       );
       await livestreamController.initialize();

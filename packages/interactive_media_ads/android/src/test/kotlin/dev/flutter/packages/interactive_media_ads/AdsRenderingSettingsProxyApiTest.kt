@@ -131,7 +131,7 @@ class AdsRenderingSettingsProxyApiTest {
     val mimeTypes = listOf("myString")
     api.setMimeTypes(instance, mimeTypes)
 
-    verify(instance).mimeTypes = mimeTypes
+    verify(instance).setMimeTypes(mimeTypes)
   }
 
   @Test

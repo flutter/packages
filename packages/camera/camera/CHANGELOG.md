@@ -1,3 +1,21 @@
+## 0.12.0
+
+* Adds support for video stabilization.
+
+## 0.11.4
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Fixes a bug where exceptions thrown during return within try blocks in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).
+* Updates example to demonstrate correct exception handling for async return within try blocks, ensuring exceptions thrown during return are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
+
+## 0.11.3+1
+
+* Fixes delivering errors from onCameraError.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
 ## 0.11.3
 
 * Adds support to configure persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.

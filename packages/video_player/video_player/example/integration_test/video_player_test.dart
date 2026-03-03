@@ -16,8 +16,9 @@ import 'package:video_player/video_player.dart';
 const Duration _playDuration = Duration(seconds: 1);
 
 // Use WebM for web to allow CI to use Chromium.
-const String _videoAssetKey =
-    kIsWeb ? 'assets/Butterfly-209.webm' : 'assets/Butterfly-209.mp4';
+const String _videoAssetKey = kIsWeb
+    ? 'assets/Butterfly-209.webm'
+    : 'assets/Butterfly-209.mp4';
 
 // Returns the URL to load an asset from this example app as a network source.
 //
@@ -56,8 +57,7 @@ void main() {
     });
 
     testWidgets('live stream duration != 0', (WidgetTester tester) async {
-      final VideoPlayerController
-      networkController = VideoPlayerController.networkUrl(
+      final networkController = VideoPlayerController.networkUrl(
         Uri.parse(
           'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8',
         ),
@@ -198,7 +198,7 @@ void main() {
     testWidgets(
       'test video player view with local asset',
       (WidgetTester tester) async {
-        final Completer<void> loaded = Completer<void>();
+        final loaded = Completer<void>();
         Future<bool> started() async {
           await controller.initialize();
           await controller.play();
@@ -213,19 +213,17 @@ void main() {
               child: Center(
                 child: FutureBuilder<bool>(
                   future: started(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<bool> snapshot,
-                  ) {
-                    if (snapshot.data ?? false) {
-                      return AspectRatio(
-                        aspectRatio: controller.value.aspectRatio,
-                        child: VideoPlayer(controller),
-                      );
-                    } else {
-                      return const Text('waiting for video to load');
-                    }
-                  },
+                  builder:
+                      (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.data ?? false) {
+                          return AspectRatio(
+                            aspectRatio: controller.value.aspectRatio,
+                            child: VideoPlayer(controller),
+                          );
+                        } else {
+                          return const Text('waiting for video to load');
+                        }
+                      },
                 ),
               ),
             ),
@@ -249,7 +247,7 @@ void main() {
 
       // Write it to a file to use as a source.
       final String filename = _videoAssetKey.split('/').last;
-      final File file = File('$tempDir/$filename');
+      final file = File('$tempDir/$filename');
       await file.writeAsBytes(bytes.buffer.asInt8List());
 
       controller = VideoPlayerController.file(file);
@@ -282,8 +280,8 @@ void main() {
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
         await controller.setVolume(0);
-        final Completer<void> started = Completer<void>();
-        final Completer<void> ended = Completer<void>();
+        final started = Completer<void>();
+        final ended = Completer<void>();
         controller.addListener(() {
           if (!started.isCompleted && controller.value.isBuffering) {
             started.complete();

@@ -60,9 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      final VideoPlayerController controller = VideoPlayerController.file(
-        File(file.path),
-      );
+      final controller = VideoPlayerController.file(File(file.path));
       _controller = controller;
       await controller.setVolume(1.0);
       await controller.initialize();
@@ -105,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int? quality,
         ) async {
           try {
-            final ImageOptions imageOptions = ImageOptions(
+            final imageOptions = ImageOptions(
               maxWidth: maxWidth,
               maxHeight: maxHeight,
               imageQuality: quality,
@@ -141,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int? quality,
         ) async {
           try {
-            final List<XFile> pickedFileList = <XFile>[];
+            final pickedFileList = <XFile>[];
             final XFile? media = _firstOrNull(
               await _picker.getMedia(
                 options: MediaOptions(
@@ -295,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final VideoPlayerController controller = VideoPlayerController.file(
+    final controller = VideoPlayerController.file(
       File(_mediaFileList![index].path),
     );
     controller.setVolume(1.0);
@@ -455,7 +453,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Text? _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError!);
+      final result = Text(_retrieveDataError!);
       _retrieveDataError = null;
       return result;
     }

@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // Mute the video so it auto-plays in web!
       // This is not needed if the call to .play is the result of user
       // interaction (clicking on a "play" button, for example).
-      const double volume = kIsWeb ? 0.0 : 1.0;
+      const volume = kIsWeb ? 0.0 : 1.0;
       await controller.setVolume(volume);
       await controller.initialize();
       await controller.setLooping(true);
@@ -113,20 +113,19 @@ class _MyHomePageState extends State<MyHomePage> {
           int? limit,
         ) async {
           try {
-            final List<XFile> pickedFileList =
-                isMedia
-                    ? await _picker.pickMultipleMedia(
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                      imageQuality: quality,
-                      limit: limit,
-                    )
-                    : await _picker.pickMultiImage(
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                      imageQuality: quality,
-                      limit: limit,
-                    );
+            final List<XFile> pickedFileList = isMedia
+                ? await _picker.pickMultipleMedia(
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    imageQuality: quality,
+                    limit: limit,
+                  )
+                : await _picker.pickMultiImage(
+                    maxWidth: maxWidth,
+                    maxHeight: maxHeight,
+                    imageQuality: quality,
+                    limit: limit,
+                  );
             setState(() {
               _mediaFileList = pickedFileList;
             });
@@ -144,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int? limit,
         ) async {
           try {
-            final List<XFile> pickedFileList = <XFile>[];
+            final pickedFileList = <XFile>[];
             final XFile? media = await _picker.pickMedia(
               maxWidth: maxWidth,
               maxHeight: maxHeight,
@@ -249,23 +248,25 @@ class _MyHomePageState extends State<MyHomePage> {
             // See https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
             return Semantics(
               label: 'image_picker_example_picked_image',
-              child:
-                  kIsWeb
-                      ? Image.network(_mediaFileList![index].path)
-                      : (mime == null || mime.startsWith('image/')
-                          ? Image.file(
+              child: kIsWeb
+                  ? Image.network(_mediaFileList![index].path)
+                  : (mime == null || mime.startsWith('image/')
+                        ? Image.file(
                             File(_mediaFileList![index].path),
-                            errorBuilder: (
-                              BuildContext context,
-                              Object error,
-                              StackTrace? stackTrace,
-                            ) {
-                              return const Center(
-                                child: Text('This image type is not supported'),
-                              );
-                            },
+                            errorBuilder:
+                                (
+                                  BuildContext context,
+                                  Object error,
+                                  StackTrace? stackTrace,
+                                ) {
+                                  return const Center(
+                                    child: Text(
+                                      'This image type is not supported',
+                                    ),
+                                  );
+                                },
                           )
-                          : _buildInlineVideoPlayer(index)),
+                        : _buildInlineVideoPlayer(index)),
             );
           },
           itemCount: _mediaFileList!.length,
@@ -285,10 +286,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final VideoPlayerController controller = VideoPlayerController.file(
+    final controller = VideoPlayerController.file(
       File(_mediaFileList![index].path),
     );
-    const double volume = kIsWeb ? 0.0 : 1.0;
+    const volume = kIsWeb ? 0.0 : 1.0;
     controller.setVolume(volume);
     controller.initialize();
     controller.setLooping(true);
@@ -333,39 +334,35 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title!)),
       body: Center(
-        child:
-            !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-                ? FutureBuilder<void>(
-                  future: retrieveLostData(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<void> snapshot,
-                  ) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
+        child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+            ? FutureBuilder<void>(
+                future: retrieveLostData(),
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                      return const Text(
+                        'You have not yet picked an image.',
+                        textAlign: TextAlign.center,
+                      );
+                    case ConnectionState.done:
+                      return _handlePreview();
+                    case ConnectionState.active:
+                      if (snapshot.hasError) {
+                        return Text(
+                          'Pick image/video error: ${snapshot.error}}',
+                          textAlign: TextAlign.center,
+                        );
+                      } else {
                         return const Text(
                           'You have not yet picked an image.',
                           textAlign: TextAlign.center,
                         );
-                      case ConnectionState.done:
-                        return _handlePreview();
-                      case ConnectionState.active:
-                        if (snapshot.hasError) {
-                          return Text(
-                            'Pick image/video error: ${snapshot.error}}',
-                            textAlign: TextAlign.center,
-                          );
-                        } else {
-                          return const Text(
-                            'You have not yet picked an image.',
-                            textAlign: TextAlign.center,
-                          );
-                        }
-                    }
-                  },
-                )
-                : _handlePreview(),
+                      }
+                  }
+                },
+              )
+            : _handlePreview(),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -495,7 +492,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Text? _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError!);
+      final result = Text(_retrieveDataError!);
       _retrieveDataError = null;
       return result;
     }
@@ -560,22 +557,18 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               child: const Text('PICK'),
               onPressed: () {
-                final double? width =
-                    maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                final double? height =
-                    maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                final int? quality =
-                    qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
-                final int? limit =
-                    limitController.text.isNotEmpty
-                        ? int.parse(limitController.text)
-                        : null;
+                final double? width = maxWidthController.text.isNotEmpty
+                    ? double.parse(maxWidthController.text)
+                    : null;
+                final double? height = maxHeightController.text.isNotEmpty
+                    ? double.parse(maxHeightController.text)
+                    : null;
+                final int? quality = qualityController.text.isNotEmpty
+                    ? int.parse(qualityController.text)
+                    : null;
+                final int? limit = limitController.text.isNotEmpty
+                    ? int.parse(limitController.text)
+                    : null;
                 onPick(width, height, quality, limit);
                 Navigator.of(context).pop();
               },

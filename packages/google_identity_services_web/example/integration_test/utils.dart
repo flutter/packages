@@ -30,10 +30,9 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
     } else if (matcher is List) {
       final List<Object?> old = matcher;
       matcher = isA<JSAny?>().having(
-        (JSAny? p0) =>
-            (p0 as JSArray<JSAny>?)?.toDart
-                .map((JSAny? e) => e.dartify())
-                .toList(),
+        (JSAny? p0) => (p0 as JSArray<JSAny>?)?.toDart
+            .map((JSAny? e) => e.dartify())
+            .toList(),
         'Array with matching values',
         old,
       );
@@ -54,10 +53,9 @@ Matcher isAJs(String thing) => isA<JSAny?>().having(
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
 Future<void> installGisMock() {
-  final Completer<void> completer = Completer<void>();
+  final completer = Completer<void>();
 
-  final web.HTMLScriptElement script =
-      web.document.createElement('script') as web.HTMLScriptElement;
+  final script = web.document.createElement('script') as web.HTMLScriptElement;
   script.src = 'mock-gis.js';
   script.type = 'module';
   script.addEventListener(
@@ -73,8 +71,7 @@ Future<void> installGisMock() {
 
 /// Fakes authorization with the given scopes.
 Future<TokenResponse> fakeAuthZWithScopes(List<String> scopes) {
-  final StreamController<TokenResponse> controller =
-      StreamController<TokenResponse>();
+  final controller = StreamController<TokenResponse>();
   final TokenClient client = oauth2.initTokenClient(
     TokenClientConfig(
       client_id: 'for-tests',

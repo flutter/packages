@@ -18,7 +18,7 @@ The following example shows how you can find svgs with the matching `SvgAssetLoa
 <?code-excerpt "test/flutter_svg_test_test.dart (ByLoader)"?>
 ```dart
 testWidgets('asset svg', (WidgetTester widgetTester) async {
-  final SvgPicture asset = SvgPicture.asset('test/flutter_logo.svg');
+  final asset = SvgPicture.asset('test/flutter_logo.svg');
   await widgetTester.pumpWidget(
     DefaultAssetBundle(bundle: _FakeAssetBundle(), child: asset),
   );
@@ -37,7 +37,7 @@ The following example shows how you can find svgs with the specified attribute.
 <?code-excerpt "test/flutter_svg_test_test.dart (ByPath)"?>
 ```dart
 testWidgets('asset svg with path', (WidgetTester widgetTester) async {
-  const String svgPath = 'test/flutter_logo.svg';
+  const svgPath = 'test/flutter_logo.svg';
   await widgetTester.pumpWidget(
     DefaultAssetBundle(
       bundle: _FakeAssetBundle(),

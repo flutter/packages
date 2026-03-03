@@ -513,7 +513,7 @@ abstract class ShellRouteBase extends RouteBase {
     List<RouteBase> subRoutes,
     GlobalKey<NavigatorState> navigatorKey,
   ) {
-    for (final RouteBase route in subRoutes) {
+    for (final route in subRoutes) {
       assert(
         route.parentNavigatorKey == null ||
             route.parentNavigatorKey == navigatorKey,
@@ -591,13 +591,12 @@ class ShellRouteContext {
     bool notifyRootObserver,
     String? restorationScopeId,
   ) {
-    final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
-      ...?observers,
-    ];
+    final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
-      final List<NavigatorObserver>? rootObservers =
-          GoRouter.maybeOf(context)?.observers;
+      final List<NavigatorObserver>? rootObservers = GoRouter.maybeOf(
+        context,
+      )?.observers;
       if (rootObservers != null) {
         effectiveObservers.add(_MergedNavigatorObserver(rootObservers));
       }
@@ -1075,7 +1074,7 @@ class StatefulShellRoute extends ShellRouteBase {
   static bool _debugValidateParentNavigatorKeys(
     List<StatefulShellBranch> branches,
   ) {
-    for (final StatefulShellBranch branch in branches) {
+    for (final branch in branches) {
       for (final RouteBase route in branch.routes) {
         if (route is GoRoute) {
           assert(
@@ -1275,8 +1274,7 @@ class StatefulNavigationShell extends StatefulWidget {
   // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
   // class.
   void goBranch(int index, {bool initialLocation = false}) {
-    final StatefulShellRoute route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
@@ -1300,8 +1298,7 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellBranch.initialLocation], if specified, or the location of the
   /// [StatefulShellBranch.defaultRoute].
   String _effectiveInitialBranchLocation(int index) {
-    final StatefulShellRoute route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulShellBranch branch = route.branches[index];
     final String? initialLocation = branch.initialLocation;
     if (initialLocation != null) {
@@ -1310,7 +1307,7 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
+      final parameters = <String>[];
       patternToRegExp(
         route.path,
         parameters,
@@ -1330,8 +1327,8 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
   static StatefulNavigationShellState of(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     assert(shellState != null);
     return shellState!;
   }
@@ -1340,8 +1337,8 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Returns null if no stateful shell route is found.
   static StatefulNavigationShellState? maybeOf(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     return shellState;
   }
 
@@ -1390,7 +1387,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     bool register = true,
   ]) {
     return _branchState.putIfAbsent(branch, () {
-      final _StatefulShellBranchState branchState = _StatefulShellBranchState(
+      final branchState = _StatefulShellBranchState(
         location: _RestorableRouteMatchList(_router.configuration),
       );
       if (register) {
@@ -1415,8 +1412,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
-    final List<RouteMatchBase> result = <RouteMatchBase>[];
-    for (final RouteMatchBase match in matches) {
+    final result = <RouteMatchBase>[];
+    for (final match in matches) {
       if (match is ShellRouteMatch) {
         if (match.route == route) {
           result.add(match);
@@ -1446,11 +1443,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     );
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
-    final bool hasExistingNavigator = branchState.navigator != null;
+    final hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
-    final bool locationChanged =
-        previousBranchLocation != currentBranchLocation;
+    final locationChanged = previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,
@@ -1464,7 +1460,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _preloadBranches() {
-    for (int i = 0; i < route.branches.length; i++) {
+    for (var i = 0; i < route.branches.length; i++) {
       final StatefulShellBranch branch = route.branches[i];
       if (i != currentIndex && branch.preload && !_isBranchLoaded(branch)) {
         // Find the match for the current StatefulShellRoute in matchList
@@ -1525,8 +1521,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
-    final RouteMatchList? matchList =
-        initialLocation ? null : _matchListForBranch(index);
+    final RouteMatchList? matchList = initialLocation
+        ? null
+        : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
@@ -1561,18 +1558,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> children =
-        route.branches
-            .map(
-              (StatefulShellBranch branch) => _BranchNavigatorProxy(
-                key: ObjectKey(branch),
-                branch: branch,
-                navigatorForBranch:
-                    (StatefulShellBranch branch) =>
-                        _branchState[branch]?.navigator,
-              ),
-            )
-            .toList();
+    final List<Widget> children = route.branches
+        .map(
+          (StatefulShellBranch branch) => _BranchNavigatorProxy(
+            key: ObjectKey(branch),
+            branch: branch,
+            navigatorForBranch: (StatefulShellBranch branch) =>
+                _branchState[branch]?.navigator,
+          ),
+        )
+        .toList();
 
     return widget.containerBuilder(context, widget, children);
   }
@@ -1682,16 +1677,12 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stackItems =
-        children
-            .mapIndexed(
-              (int index, Widget child) => _buildRouteBranchContainer(
-                context,
-                currentIndex == index,
-                child,
-              ),
-            )
-            .toList();
+    final List<Widget> stackItems = children
+        .mapIndexed(
+          (int index, Widget child) =>
+              _buildRouteBranchContainer(context, currentIndex == index, child),
+        )
+        .toList();
 
     return IndexedStack(index: currentIndex, children: stackItems);
   }

@@ -13,7 +13,7 @@ void main() {
     final PointerInterceptorPlatform defaultPointerInterceptor =
         PointerInterceptorPlatform.instance;
 
-    final Container testChild = Container();
+    final testChild = Container();
     expect(defaultPointerInterceptor.buildWidget(child: testChild), testChild);
   });
 }

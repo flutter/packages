@@ -20,11 +20,10 @@ class AuthorList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView.builder(
     itemCount: authors.length,
-    itemBuilder:
-        (BuildContext context, int index) => ListTile(
-          title: Text(authors[index].name),
-          subtitle: Text('${authors[index].books.length} books'),
-          onTap: onTap != null ? () => onTap!(authors[index]) : null,
-        ),
+    itemBuilder: (BuildContext context, int index) => ListTile(
+      title: Text(authors[index].name),
+      subtitle: Text('${authors[index].books.length} books'),
+      onTap: onTap != null ? () => onTap!(authors[index]) : null,
+    ),
   );
 }

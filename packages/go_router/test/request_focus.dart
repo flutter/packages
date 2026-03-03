@@ -11,8 +11,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final GlobalKey innerKey = GlobalKey();
-    final FocusScopeNode focusNode = FocusScopeNode();
-    final GoRouter router = GoRouter(
+    final focusNode = FocusScopeNode();
+    final router = GoRouter(
       initialLocation: '/',
       routes: <GoRoute>[
         GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('A')),

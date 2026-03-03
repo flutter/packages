@@ -17,7 +17,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-@HostApi(dartHostTestHandler: 'TestSharedPreferencesApi')
+@HostApi()
 abstract class SharedPreferencesApi {
   /// Removes property from shared preferences data set.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

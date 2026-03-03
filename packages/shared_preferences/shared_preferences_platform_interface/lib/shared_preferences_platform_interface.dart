@@ -163,7 +163,7 @@ class InMemorySharedPreferencesStore extends SharedPreferencesStorePlatform {
     GetAllParameters parameters,
   ) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String, Object> preferences = Map<String, Object>.from(_data);
+    final preferences = Map<String, Object>.from(_data);
     preferences.removeWhere(
       (String key, _) =>
           !key.startsWith(filter.prefix) ||
