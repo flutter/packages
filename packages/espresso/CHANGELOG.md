@@ -1,3 +1,7 @@
+## 0.4.0+23
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.4.0+22
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.

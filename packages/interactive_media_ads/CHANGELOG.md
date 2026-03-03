@@ -1,3 +1,7 @@
+## 0.3.0+12
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.3.0+11
 
 * Updates `README` to recommend that a single `AdsLoader` should be used per page not for the entire
