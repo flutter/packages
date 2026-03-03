@@ -260,39 +260,7 @@ class EventAllNullableTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(<Object?>[
-    aNullableBool,
-    aNullableInt,
-    aNullableInt64,
-    aNullableDouble,
-    aNullableByteArray,
-    aNullable4ByteArray,
-    aNullable8ByteArray,
-    aNullableFloatArray,
-    aNullableEnum,
-    anotherNullableEnum,
-    aNullableString,
-    aNullableObject,
-    allNullableTypes,
-    list,
-    stringList,
-    intList,
-    doubleList,
-    boolList,
-    enumList,
-    objectList,
-    listList,
-    mapList,
-    recursiveClassList,
-    map,
-    stringMap,
-    intMap,
-    enumMap,
-    objectMap,
-    listMap,
-    mapMap,
-    recursiveClassMap,
-  ]);
+  int get hashCode => Object.hashAll(_toList());
 }
 
 sealed class PlatformEvent {}

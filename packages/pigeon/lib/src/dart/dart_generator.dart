@@ -389,20 +389,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
     indent.writeln('@override');
     indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
-    if (fields.isEmpty) {
-      indent.writeln('int get hashCode => 0;');
-    } else if (fields.length == 1) {
-      indent.writeln('int get hashCode => ${fields.first.name}.hashCode;');
-    } else if (fields.length <= 20) {
-      final String argString = fields
-          .map((NamedType field) => field.name)
-          .join(', ');
-      indent.writeln('int get hashCode => Object.hash($argString);');
-    } else {
-      indent.writeln(
-        'int get hashCode => Object.hashAll(<Object?>[${fields.map((NamedType field) => field.name).join(', ')}]);',
-      );
-    }
+    final String hashCodeValue = switch (fields.length) {
+      0 => '0',
+      1 => '${fields.first.name}.hashCode',
+      <= 20 =>
+        'Object.hash(${fields.map((NamedType field) => field.name).join(', ')})',
+      _ => 'Object.hashAll(_toList())',
+    };
+    indent.writeln('int get hashCode => $hashCodeValue;');
   }
 
   @override

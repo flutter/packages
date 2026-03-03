@@ -293,36 +293,7 @@ class AllTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(<Object?>[
-    aBool,
-    anInt,
-    anInt64,
-    aDouble,
-    aByteArray,
-    a4ByteArray,
-    a8ByteArray,
-    aFloatArray,
-    anEnum,
-    anotherEnum,
-    aString,
-    anObject,
-    list,
-    stringList,
-    intList,
-    doubleList,
-    boolList,
-    enumList,
-    objectList,
-    listList,
-    mapList,
-    map,
-    stringMap,
-    intMap,
-    enumMap,
-    objectMap,
-    listMap,
-    mapMap,
-  ]);
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// A class containing all supported nullable types.
@@ -550,39 +521,7 @@ class AllNullableTypes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(<Object?>[
-    aNullableBool,
-    aNullableInt,
-    aNullableInt64,
-    aNullableDouble,
-    aNullableByteArray,
-    aNullable4ByteArray,
-    aNullable8ByteArray,
-    aNullableFloatArray,
-    aNullableEnum,
-    anotherNullableEnum,
-    aNullableString,
-    aNullableObject,
-    allNullableTypes,
-    list,
-    stringList,
-    intList,
-    doubleList,
-    boolList,
-    enumList,
-    objectList,
-    listList,
-    mapList,
-    recursiveClassList,
-    map,
-    stringMap,
-    intMap,
-    enumMap,
-    objectMap,
-    listMap,
-    mapMap,
-    recursiveClassMap,
-  ]);
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -793,36 +732,7 @@ class AllNullableTypesWithoutRecursion {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(<Object?>[
-    aNullableBool,
-    aNullableInt,
-    aNullableInt64,
-    aNullableDouble,
-    aNullableByteArray,
-    aNullable4ByteArray,
-    aNullable8ByteArray,
-    aNullableFloatArray,
-    aNullableEnum,
-    anotherNullableEnum,
-    aNullableString,
-    aNullableObject,
-    list,
-    stringList,
-    intList,
-    doubleList,
-    boolList,
-    enumList,
-    objectList,
-    listList,
-    mapList,
-    map,
-    stringMap,
-    intMap,
-    enumMap,
-    objectMap,
-    listMap,
-    mapMap,
-  ]);
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// A class for testing nested class handling.
