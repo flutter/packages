@@ -10,10 +10,9 @@ import XCTest
   import UIKit
 #endif
 
-@MainActor
 class PlatformViewImplTests: XCTestCase {
   #if os(iOS)
-    @MainActor func testPlatformViewImplStoresViewWithAWeakReference() {
+    func testPlatformViewImplStoresViewWithAWeakReference() {
       var view: UIView? = UIView()
       let platformView = PlatformViewImpl(uiView: view!)
 
