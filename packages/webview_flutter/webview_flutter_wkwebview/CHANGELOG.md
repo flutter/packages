@@ -1,3 +1,7 @@
+## 3.23.9
+
+* Updates platform views on iOS to only have a weak reference to the native view.
+
 ## 3.23.8
 
 * Fixes lossy transition from Dart Color to native UIColor when calling `setBackgroundColor`.

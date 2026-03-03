@@ -43,6 +43,7 @@
 		8F1488FE2D2DE27000191744 /* HTTPCookieProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488C82D2DE27000191744 /* HTTPCookieProxyAPITests.swift */; };
 		8F1488FF2D2DE27000191744 /* NavigationActionProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488CB2D2DE27000191744 /* NavigationActionProxyAPITests.swift */; };
 		8F1489012D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */; };
+		8F95A6EE2F5765B50071F2C2 /* PlatformViewImplTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F95A6ED2F5765B50071F2C2 /* PlatformViewImplTests.swift */; };
 		8FEC64852DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC64812DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift */; };
 		8FEC64862DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC64842DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift */; };
 		8FEC64872DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEC64822DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift */; };
@@ -136,6 +137,7 @@
 		8F1488E12D2DE27000191744 /* WebViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewProxyAPITests.swift; path = ../../darwin/Tests/WebViewProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthenticationChallengeResponseProxyAPITests.swift; path = ../../darwin/Tests/AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F66D9D72D1362BE000835F9 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8F95A6ED2F5765B50071F2C2 /* PlatformViewImplTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PlatformViewImplTests.swift; path = /Users/bmparr/Development/packages/packages/webview_flutter/webview_flutter_wkwebview/darwin/Tests/PlatformViewImplTests.swift; sourceTree = "<absolute>"; };
 		8FEC64812DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetTrustResultResponseProxyAPITests.swift; path = ../../darwin/Tests/GetTrustResultResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FEC64822DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SecCertificateProxyAPITests.swift; path = ../../darwin/Tests/SecCertificateProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FEC64832DA2C6DC00C48569 /* SecTrustProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SecTrustProxyAPITests.swift; path = ../../darwin/Tests/SecTrustProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
@@ -185,6 +187,7 @@
 		68BDCAEA23C3F7CB00D9C032 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8F95A6ED2F5765B50071F2C2 /* PlatformViewImplTests.swift */,
 				8F0E23512EEB5D6B002AB342 /* ColorProxyAPITests.swift */,
 				33C8DAD92E8D711500A9B7CA /* TemporaryObjCStub.h */,
 				33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */,
@@ -505,12 +508,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/path_provider_foundation/path_provider_foundation_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/path_provider_foundation_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -579,6 +580,7 @@
 				8F1488ED2D2DE27000191744 /* ErrorProxyAPITests.swift in Sources */,
 				8F1488EE2D2DE27000191744 /* NSObjectProxyAPITests.swift in Sources */,
 				33C8DADB2E8D711500A9B7CA /* TemporaryObjCStub.m in Sources */,
+				8F95A6EE2F5765B50071F2C2 /* PlatformViewImplTests.swift in Sources */,
 				8F1488EF2D2DE27000191744 /* NavigationResponseProxyAPITests.swift in Sources */,
 				8FEC64852DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift in Sources */,
 				8FEC64862DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift in Sources */,

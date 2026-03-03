@@ -13,23 +13,23 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+#if os(iOS)
+  class PlatformViewImpl: NSObject, FlutterPlatformView {
+    weak var uiView: UIView?
+
+    init(uiView: UIView) {
+      self.uiView = uiView
+    }
+
+    func view() -> UIView {
+      return uiView ?? UIView()
+    }
+  }
+#endif
+
 /// Implementation of `FlutterPlatformViewFactory` that retrieves the view from the `WebKitLibraryPigeonInstanceManager`.
 class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
   unowned let instanceManager: WebKitLibraryPigeonInstanceManager
-
-  #if os(iOS)
-    class PlatformViewImpl: NSObject, FlutterPlatformView {
-      let uiView: UIView
-
-      init(uiView: UIView) {
-        self.uiView = uiView
-      }
-
-      func view() -> UIView {
-        return uiView
-      }
-    }
-  #endif
 
   init(instanceManager: WebKitLibraryPigeonInstanceManager) {
     self.instanceManager = instanceManager
@@ -42,14 +42,9 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
       let identifier: Int64 = args is Int64 ? args as! Int64 : Int64(args as! Int32)
       let instance: AnyObject? = instanceManager.instance(forIdentifier: identifier)
 
-      if let instance = instance as? FlutterPlatformView {
-        instance.view().frame = frame
-        return instance
-      } else {
-        let view = instance as! UIView
-        view.frame = frame
-        return PlatformViewImpl(uiView: view)
-      }
+      let view = instance as! UIView
+      view.frame = frame
+      return PlatformViewImpl(uiView: view)
     }
   #elseif os(macOS)
     func create(
