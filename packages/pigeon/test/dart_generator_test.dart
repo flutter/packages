@@ -2116,7 +2116,10 @@ name: foobar
       contains('other is! Foobar || other.runtimeType != runtimeType'),
     );
     expect(code, contains('_deepEquals(field1, other.field1)'));
-    expect(code, contains('int get hashCode => field1.hashCode;'));
+    expect(
+      code,
+      contains('int get hashCode => Object.hash(runtimeType, field1);'),
+    );
   });
 
   test('data class equality multi-field', () {
@@ -2150,6 +2153,9 @@ name: foobar
     expect(code, contains('bool operator ==(Object other) {'));
     expect(code, contains('_deepEquals(field1, other.field1) &&'));
     expect(code, contains('_deepEquals(field2, other.field2)'));
-    expect(code, contains('int get hashCode => Object.hash(field1, field2);'));
+    expect(
+      code,
+      contains('int get hashCode => Object.hash(runtimeType, field1, field2);'),
+    );
   });
 }
