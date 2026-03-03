@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '26.1.9';
+const String pigeonVersion = '26.1.10';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -31,13 +31,13 @@ String readStdin() {
 /// True if the generator line number should be printed out at the end of newlines.
 bool debugGenerators = false;
 
-/// A helper class for managing indentation, wrapping a [StringSink].
+/// A helper class for managing indentation, wrapping a [StringBuffer].
 class Indent {
-  /// Constructor which takes a [StringSink] which this [Indent] will wrap.
-  Indent(this._sink);
-
   int _count = 0;
-  final StringSink _sink;
+  final StringBuffer _buffer = StringBuffer();
+
+  @override
+  String toString() => _buffer.toString();
 
   /// String used for newlines (ex "\n").
   String get newline {
@@ -119,13 +119,13 @@ class Indent {
     int nestCount = 1,
   }) {
     if (begin != null) {
-      _sink.write(begin + newline);
+      _buffer.write(begin + newline);
     }
     nest(nestCount, func);
     if (end != null && end.isNotEmpty) {
-      _sink.write(str() + end);
+      _buffer.write(str() + end);
       if (addTrailingNewline) {
-        _sink.write(newline);
+        _buffer.write(newline);
       }
     }
   }
@@ -159,31 +159,31 @@ class Indent {
   /// Add [text] with indentation and a newline.
   void writeln(String text) {
     if (text.isEmpty) {
-      _sink.write(newline);
+      _buffer.write(newline);
     } else {
-      _sink.write(str() + text + newline);
+      _buffer.write(str() + text + newline);
     }
   }
 
   /// Add [text] with indentation.
   void write(String text) {
-    _sink.write(str() + text);
+    _buffer.write(str() + text);
   }
 
   /// Add [text] with a newline.
   void addln(String text) {
-    _sink.write(text + newline);
+    _buffer.write(text + newline);
   }
 
   /// Just adds [text].
   void add(String text) {
-    _sink.write(text);
+    _buffer.write(text);
   }
 
   /// Adds [lines] number of newlines.
   void newln([int lines = 1]) {
     for (; lines > 0; lines--) {
-      _sink.write(newline);
+      _buffer.write(newline);
     }
   }
 }
