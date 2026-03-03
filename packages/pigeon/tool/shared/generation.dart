@@ -246,7 +246,6 @@ Future<int> runPigeon({
   String? gobjectModule,
   String? javaOut,
   String? javaPackage,
-  bool javaUseGeneratedAnnotation = false,
   String? objcHeaderOut,
   String? objcSourceOut,
   String objcPrefix = '',
@@ -302,10 +301,7 @@ Future<int> runPigeon({
           ? null
           : GObjectOptions(module: gobjectModule),
       javaOut: javaOut,
-      javaOptions: JavaOptions(
-        package: javaPackage,
-        useGeneratedAnnotation: javaUseGeneratedAnnotation,
-      ),
+      javaOptions: JavaOptions(package: javaPackage),
       kotlinOut: kotlinOut,
       kotlinOptions: KotlinOptions(
         package: kotlinPackage,

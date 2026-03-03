@@ -37,7 +37,7 @@ const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
 /// Kotlin file-level annotation for generated code.
 const String kotlinGeneratedAnnotation =
-    '@file:Generated("$pluginPackageName")';
+    '@file:Generated("$defaultPluginPackageName")';
 
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
@@ -71,7 +71,7 @@ class KotlinOptions {
 
   /// Determines if the `javax.annotation.Generated` is used in the output. This
   /// is false by default since that dependency isn't available in plugins by
-  /// default .
+  /// default.
   final bool useGeneratedAnnotation;
 
   /// Creates a [KotlinOptions] from a Map representation where:
@@ -160,7 +160,7 @@ class InternalKotlinOptions extends InternalOptions {
 
   /// Determines if the `javax.annotation.Generated` is used in the output. This
   /// is false by default since that dependency isn't available in plugins by
-  /// default .
+  /// default.
   final bool useGeneratedAnnotation;
 }
 

@@ -1618,7 +1618,7 @@ void main() {
     late StringBuffer sink;
     late JavaGenerator generator;
     const generatedAnnotation =
-        '@javax.annotation.Generated("$pluginPackageName")';
+        '@javax.annotation.Generated("$defaultPluginPackageName")';
 
     setUp(() {
       classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
