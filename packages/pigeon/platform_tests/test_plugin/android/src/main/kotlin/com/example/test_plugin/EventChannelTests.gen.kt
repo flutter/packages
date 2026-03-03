@@ -262,49 +262,44 @@ data class EventAllNullableTypes(
     if (this === other) {
       return true
     }
-    val otherActual = other as EventAllNullableTypes
-    return EventChannelTestsPigeonUtils.deepEquals(this.aNullableBool, otherActual.aNullableBool) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt, otherActual.aNullableInt) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt64, otherActual.aNullableInt64) &&
+    val other = other as EventAllNullableTypes
+    return EventChannelTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullableDouble, otherActual.aNullableDouble) &&
+            this.aNullableByteArray, other.aNullableByteArray) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullableByteArray, otherActual.aNullableByteArray) &&
+            this.aNullable4ByteArray, other.aNullable4ByteArray) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullable4ByteArray, otherActual.aNullable4ByteArray) &&
+            this.aNullable8ByteArray, other.aNullable8ByteArray) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullable8ByteArray, otherActual.aNullable8ByteArray) &&
+            this.aNullableFloatArray, other.aNullableFloatArray) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullableFloatArray, otherActual.aNullableFloatArray) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.aNullableEnum, otherActual.aNullableEnum) &&
+            this.anotherNullableEnum, other.anotherNullableEnum) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
         EventChannelTestsPigeonUtils.deepEquals(
-            this.anotherNullableEnum, otherActual.anotherNullableEnum) &&
-        EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullableString, otherActual.aNullableString) &&
-        EventChannelTestsPigeonUtils.deepEquals(
-            this.aNullableObject, otherActual.aNullableObject) &&
-        EventChannelTestsPigeonUtils.deepEquals(
-            this.allNullableTypes, otherActual.allNullableTypes) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.list, otherActual.list) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.stringList, otherActual.stringList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.intList, otherActual.intList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.doubleList, otherActual.doubleList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.boolList, otherActual.boolList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.enumList, otherActual.enumList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.objectList, otherActual.objectList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.listList, otherActual.listList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.mapList, otherActual.mapList) &&
-        EventChannelTestsPigeonUtils.deepEquals(
-            this.recursiveClassList, otherActual.recursiveClassList) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.map, otherActual.map) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.stringMap, otherActual.stringMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.intMap, otherActual.intMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.enumMap, otherActual.enumMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.objectMap, otherActual.objectMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.listMap, otherActual.listMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(this.mapMap, otherActual.mapMap) &&
-        EventChannelTestsPigeonUtils.deepEquals(
-            this.recursiveClassMap, otherActual.recursiveClassMap)
+            this.recursiveClassList, other.recursiveClassList) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        EventChannelTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
@@ -371,8 +366,8 @@ data class IntEvent(val value: Long) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as IntEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as IntEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -404,8 +399,8 @@ data class StringEvent(val value: String) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as StringEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as StringEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -437,8 +432,8 @@ data class BoolEvent(val value: Boolean) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as BoolEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as BoolEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -470,8 +465,8 @@ data class DoubleEvent(val value: Double) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as DoubleEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as DoubleEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -503,8 +498,8 @@ data class ObjectsEvent(val value: Any) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as ObjectsEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as ObjectsEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -536,8 +531,8 @@ data class EnumEvent(val value: EventEnum) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as EnumEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as EnumEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {
@@ -569,8 +564,8 @@ data class ClassEvent(val value: EventAllNullableTypes) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as ClassEvent
-    return EventChannelTestsPigeonUtils.deepEquals(this.value, otherActual.value)
+    val other = other as ClassEvent
+    return EventChannelTestsPigeonUtils.deepEquals(this.value, other.value)
   }
 
   override fun hashCode(): Int {

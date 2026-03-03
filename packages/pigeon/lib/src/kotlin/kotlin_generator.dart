@@ -331,7 +331,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('return true');
       });
 
-      indent.writeln('val otherActual = other as ${classDefinition.name}');
+      indent.writeln('val other = other as ${classDefinition.name}');
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(
         classDefinition,
       );
@@ -342,7 +342,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         final String comparisons = fields
             .map(
               (NamedType field) =>
-                  '$utils.deepEquals(this.${field.name}, otherActual.${field.name})',
+                  '$utils.deepEquals(this.${field.name}, other.${field.name})',
             )
             .join(' && ');
         indent.writeln('return $comparisons');
