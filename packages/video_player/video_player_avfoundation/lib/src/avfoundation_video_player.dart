@@ -183,21 +183,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
       id: playerId,
     ).getAudioTracks();
-    final tracks = <VideoAudioTrack>[];
-
-    for (final track in nativeData) {
-      final String? label = track.commonMetadataTitle ?? track.displayName;
-      tracks.add(
-        VideoAudioTrack(
-          id: track.index.toString(),
-          label: label,
-          language: track.languageCode,
-          isSelected: track.isSelected,
-        ),
+    return nativeData.map((MediaSelectionAudioTrackData track) {
+      return VideoAudioTrack(
+        id: track.index.toString(),
+        label: track.commonMetadataTitle ?? track.displayName,
+        language: track.languageCode,
+        isSelected: track.isSelected,
       );
-    }
-
-    return tracks;
+    }).toList();
   }
 
   @override
@@ -241,6 +234,26 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         creationParamsCodec: AVFoundationVideoPlayerApi.pigeonChannelCodec,
       ),
     );
+  }
+
+  @override
+  Future<void> startPictureInPicture(int playerId) {
+    return _playerWith(id: playerId).startPictureInPicture();
+  }
+
+  @override
+  Future<void> stopPictureInPicture(int playerId) {
+    return _playerWith(id: playerId).stopPictureInPicture();
+  }
+
+  @override
+  Future<bool> isPictureInPictureSupported(int playerId) {
+    return _playerWith(id: playerId).isPictureInPictureSupported();
+  }
+
+  @override
+  Future<bool> isPictureInPictureActive(int playerId) {
+    return _playerWith(id: playerId).isPictureInPictureActive();
   }
 
   _PlayerInstance _playerWith({required int id}) {
@@ -289,6 +302,15 @@ class _PlayerInstance {
   Future<void> selectAudioTrack(int trackIndex) =>
       _api.selectAudioTrack(trackIndex);
 
+  Future<void> startPictureInPicture() => _api.startPictureInPicture();
+
+  Future<void> stopPictureInPicture() => _api.stopPictureInPicture();
+
+  Future<bool> isPictureInPictureSupported() =>
+      _api.isPictureInPictureSupported();
+
+  Future<bool> isPictureInPictureActive() => _api.isPictureInPictureActive();
+
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(
       _onStreamEvent,
@@ -330,6 +352,11 @@ class _PlayerInstance {
       'isPlayingStateUpdate' => VideoEvent(
         eventType: VideoEventType.isPlayingStateUpdate,
         isPlaying: map['isPlaying'] as bool,
+      ),
+      'pipStarted' => VideoEvent(eventType: VideoEventType.pipStarted),
+      'pipStopped' => VideoEvent(eventType: VideoEventType.pipStopped),
+      'pipRestoreUserInterface' => VideoEvent(
+        eventType: VideoEventType.pipRestoreUserInterface,
       ),
       _ => VideoEvent(eventType: VideoEventType.unknown),
     });

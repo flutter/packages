@@ -325,6 +325,10 @@ class _ControlsOverlay extends StatelessWidget {
           },
         ),
         Align(
+          alignment: Alignment.topLeft,
+          child: _PipButton(controller: controller),
+        ),
+        Align(
           alignment: Alignment.topRight,
           child: PopupMenuButton<double>(
             initialValue: controller.value.playbackSpeed,
@@ -351,6 +355,79 @@ class _ControlsOverlay extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PipButton extends StatefulWidget {
+  const _PipButton({required this.controller});
+
+  final MiniController controller;
+
+  @override
+  State<_PipButton> createState() => _PipButtonState();
+}
+
+class _PipButtonState extends State<_PipButton> {
+  bool _isSupported = false;
+  bool _waitingForInit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.controller.value.isInitialized) {
+      _querySupport();
+    } else {
+      _waitingForInit = true;
+      widget.controller.addListener(_onInitialized);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_waitingForInit) {
+      widget.controller.removeListener(_onInitialized);
+    }
+    super.dispose();
+  }
+
+  void _onInitialized() {
+    if (widget.controller.value.isInitialized) {
+      _waitingForInit = false;
+      widget.controller.removeListener(_onInitialized);
+      _querySupport();
+    }
+  }
+
+  Future<void> _querySupport() async {
+    final bool supported = await widget.controller
+        .isPictureInPictureSupported();
+    if (mounted) {
+      setState(() {
+        _isSupported = supported;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isSupported) {
+      return const SizedBox.shrink();
+    }
+    final bool isActive = widget.controller.value.isPictureInPictureActive;
+    return IconButton(
+      icon: Icon(
+        isActive ? Icons.picture_in_picture : Icons.picture_in_picture_alt,
+        color: Colors.white,
+      ),
+      tooltip: isActive ? 'Stop PiP' : 'Start PiP',
+      onPressed: () async {
+        if (isActive) {
+          await widget.controller.stopPictureInPicture();
+        } else {
+          await widget.controller.startPictureInPicture();
+        }
+      },
     );
   }
 }

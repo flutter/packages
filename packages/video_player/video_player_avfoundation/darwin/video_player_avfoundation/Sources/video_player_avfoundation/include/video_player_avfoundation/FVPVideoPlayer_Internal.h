@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 
 @import AVFoundation;
+#if TARGET_OS_IOS
+@import AVKit;
+#endif
 
 #import "FVPAVFactory.h"
 #import "FVPVideoEventListener.h"
@@ -35,6 +38,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
+
+#if TARGET_OS_IOS
+/// The Picture-in-Picture controller. Created when setupPictureInPictureWithPlayerLayer: is called.
+@property(nonatomic, nullable) AVPictureInPictureController *pipController
+    API_AVAILABLE(ios(14.2));
+
+/// Sets up the PiP controller with the given player layer.
+/// Called by subclasses or view factories that have access to an AVPlayerLayer.
+- (void)setupPictureInPictureWithPlayerLayer:(AVPlayerLayer *)playerLayer
+    API_AVAILABLE(ios(14.2));
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

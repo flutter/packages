@@ -1,3 +1,9 @@
+## 2.12.0
+
+* Adds Picture-in-Picture (PiP) support for iOS.
+* Adds `isPictureInPictureActive` field to `VideoPlayerValue`.
+* Adds `startPictureInPicture()`, `stopPictureInPicture()`, `isPictureInPictureSupported()`, and `isPictureInPictureActive()` methods to `VideoPlayerController`.
+
 ## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.

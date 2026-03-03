@@ -27,6 +27,12 @@
 - (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSNumber *> *> *)regions;
 /// Called when the player starts or stops playing.
 - (void)videoPlayerDidSetPlaying:(BOOL)playing;
+/// Called when Picture-in-Picture playback starts.
+- (void)videoPlayerDidStartPictureInPicture;
+/// Called when Picture-in-Picture playback stops.
+- (void)videoPlayerDidStopPictureInPicture;
+/// Called when the user taps the restore button in the PiP window.
+- (void)videoPlayerShouldRestoreUserInterfaceForPictureInPicture;
 /// Called when the video player has been disposed on the Dart side.
 - (void)videoPlayerWasDisposed;
 @end

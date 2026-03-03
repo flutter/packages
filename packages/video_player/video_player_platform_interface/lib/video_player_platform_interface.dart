@@ -153,6 +153,34 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   bool isAudioTrackSupportAvailable() {
     return false;
   }
+
+  /// Starts Picture-in-Picture mode for the given player.
+  Future<void> startPictureInPicture(int playerId) {
+    throw UnimplementedError(
+      'startPictureInPicture() has not been implemented.',
+    );
+  }
+
+  /// Stops Picture-in-Picture mode for the given player.
+  Future<void> stopPictureInPicture(int playerId) {
+    throw UnimplementedError(
+      'stopPictureInPicture() has not been implemented.',
+    );
+  }
+
+  /// Returns whether Picture-in-Picture is supported on this device.
+  Future<bool> isPictureInPictureSupported(int playerId) {
+    throw UnimplementedError(
+      'isPictureInPictureSupported() has not been implemented.',
+    );
+  }
+
+  /// Returns whether Picture-in-Picture is currently active for the given player.
+  Future<bool> isPictureInPictureActive(int playerId) {
+    throw UnimplementedError(
+      'isPictureInPictureActive() has not been implemented.',
+    );
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -354,6 +382,15 @@ enum VideoEventType {
   /// This event is fired when the video starts or pauses due to user actions or
   /// phone calls, or other app media such as music players.
   isPlayingStateUpdate,
+
+  /// Picture-in-Picture playback started.
+  pipStarted,
+
+  /// Picture-in-Picture playback stopped.
+  pipStopped,
+
+  /// The user tapped the restore button in the PiP window to return to the app.
+  pipRestoreUserInterface,
 
   /// An unknown event has been received.
   unknown,

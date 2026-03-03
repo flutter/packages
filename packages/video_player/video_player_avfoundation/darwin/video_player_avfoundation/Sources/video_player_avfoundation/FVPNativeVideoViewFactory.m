@@ -6,6 +6,7 @@
 
 #import "../video_player_avfoundation/include/video_player_avfoundation/FVPNativeVideoView.h"
 #import "../video_player_avfoundation/include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "../video_player_avfoundation/include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
 #import "../video_player_avfoundation/include/video_player_avfoundation/messages.g.h"
 
 @interface FVPNativeVideoViewFactory ()
@@ -37,7 +38,16 @@
 #endif
   NSNumber *playerIdentifier = @(args.playerId);
   FVPVideoPlayer *player = self.playerByIdProvider(playerIdentifier);
-  return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
+  FVPNativeVideoView *nativeView = [[FVPNativeVideoView alloc] initWithPlayer:player.player];
+
+#if TARGET_OS_IOS
+  // Set up PiP with the platform view's player layer.
+  if (@available(iOS 14.2, *)) {
+    [player setupPictureInPictureWithPlayerLayer:nativeView.playerLayer];
+  }
+#endif
+
+  return nativeView;
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {
