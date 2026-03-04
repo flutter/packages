@@ -467,6 +467,13 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           parameters: <String>['const ${classDefinition.name}& other'],
           isConst: true,
         );
+        _writeFunctionDeclaration(
+          indent,
+          'operator!=',
+          returnType: 'bool',
+          parameters: <String>['const ${classDefinition.name}& other'],
+          isConst: true,
+        );
       });
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
@@ -1080,6 +1087,18 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
         } else {
           indent.writeln('return ${checks.join(' && ')};');
         }
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'operator!=',
+      scope: classDefinition.name,
+      returnType: 'bool',
+      parameters: <String>['const ${classDefinition.name}& other'],
+      isConst: true,
+      body: () {
+        indent.writeln('return !(*this == other);');
       },
     );
   }

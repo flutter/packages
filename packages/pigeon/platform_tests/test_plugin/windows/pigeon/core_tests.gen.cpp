@@ -123,6 +123,10 @@ bool UnusedClass::operator==(const UnusedClass& other) const {
   return PigeonInternalDeepEquals(a_field_, other.a_field_);
 }
 
+bool UnusedClass::operator!=(const UnusedClass& other) const {
+  return !(*this == other);
+}
+
 // AllTypes
 
 AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
@@ -420,6 +424,10 @@ bool AllTypes::operator==(const AllTypes& other) const {
          PigeonInternalDeepEquals(object_map_, other.object_map_) &&
          PigeonInternalDeepEquals(list_map_, other.list_map_) &&
          PigeonInternalDeepEquals(map_map_, other.map_map_);
+}
+
+bool AllTypes::operator!=(const AllTypes& other) const {
+  return !(*this == other);
 }
 
 // AllNullableTypes
@@ -1317,6 +1325,10 @@ bool AllNullableTypes::operator==(const AllNullableTypes& other) const {
                                   other.recursive_class_map_);
 }
 
+bool AllNullableTypes::operator!=(const AllNullableTypes& other) const {
+  return !(*this == other);
+}
+
 // AllNullableTypesWithoutRecursion
 
 AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion() {}
@@ -2043,6 +2055,11 @@ bool AllNullableTypesWithoutRecursion::operator==(
          PigeonInternalDeepEquals(map_map_, other.map_map_);
 }
 
+bool AllNullableTypesWithoutRecursion::operator!=(
+    const AllNullableTypesWithoutRecursion& other) const {
+  return !(*this == other);
+}
+
 // AllClassesWrapper
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
@@ -2264,6 +2281,10 @@ bool AllClassesWrapper::operator==(const AllClassesWrapper& other) const {
                                   other.nullable_class_map_);
 }
 
+bool AllClassesWrapper::operator!=(const AllClassesWrapper& other) const {
+  return !(*this == other);
+}
+
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -2303,6 +2324,10 @@ TestMessage TestMessage::FromEncodableList(const EncodableList& list) {
 
 bool TestMessage::operator==(const TestMessage& other) const {
   return PigeonInternalDeepEquals(test_list_, other.test_list_);
+}
+
+bool TestMessage::operator!=(const TestMessage& other) const {
+  return !(*this == other);
 }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}

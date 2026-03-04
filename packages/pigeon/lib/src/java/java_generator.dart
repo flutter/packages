@@ -409,7 +409,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
 
   void _writeDeepEquals(Indent indent) {
     indent.writeScoped(
-      'private static boolean pigeonDeepEquals(Object a, Object b) {',
+      'static boolean pigeonDeepEquals(Object a, Object b) {',
       '}',
       () {
         indent.writeln('if (a == b) { return true; }');
@@ -496,53 +496,49 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
   }
 
   void _writeDeepHashCode(Indent indent) {
-    indent.writeScoped(
-      'private static int pigeonDeepHashCode(Object value) {',
-      '}',
-      () {
-        indent.writeln('if (value == null) { return 0; }');
-        indent.writeScoped('if (value instanceof byte[]) {', '}', () {
-          indent.writeln('return Arrays.hashCode((byte[]) value);');
+    indent.writeScoped('static int pigeonDeepHashCode(Object value) {', '}', () {
+      indent.writeln('if (value == null) { return 0; }');
+      indent.writeScoped('if (value instanceof byte[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((byte[]) value);');
+      });
+      indent.writeScoped('if (value instanceof int[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((int[]) value);');
+      });
+      indent.writeScoped('if (value instanceof long[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((long[]) value);');
+      });
+      indent.writeScoped('if (value instanceof double[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((double[]) value);');
+      });
+      indent.writeScoped('if (value instanceof List) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (List<?>) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
         });
-        indent.writeScoped('if (value instanceof int[]) {', '}', () {
-          indent.writeln('return Arrays.hashCode((int[]) value);');
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Map) {', '}', () {
+        indent.writeln('int result = 0;');
+        indent.writeScoped(
+          'for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {',
+          '}',
+          () {
+            indent.writeln(
+              'result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));',
+            );
+          },
+        );
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Object[]) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (Object[]) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
         });
-        indent.writeScoped('if (value instanceof long[]) {', '}', () {
-          indent.writeln('return Arrays.hashCode((long[]) value);');
-        });
-        indent.writeScoped('if (value instanceof double[]) {', '}', () {
-          indent.writeln('return Arrays.hashCode((double[]) value);');
-        });
-        indent.writeScoped('if (value instanceof List) {', '}', () {
-          indent.writeln('int result = 1;');
-          indent.writeScoped('for (Object item : (List<?>) value) {', '}', () {
-            indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
-          });
-          indent.writeln('return result;');
-        });
-        indent.writeScoped('if (value instanceof Map) {', '}', () {
-          indent.writeln('int result = 0;');
-          indent.writeScoped(
-            'for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {',
-            '}',
-            () {
-              indent.writeln(
-                'result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));',
-              );
-            },
-          );
-          indent.writeln('return result;');
-        });
-        indent.writeScoped('if (value instanceof Object[]) {', '}', () {
-          indent.writeln('int result = 1;');
-          indent.writeScoped('for (Object item : (Object[]) value) {', '}', () {
-            indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
-          });
-          indent.writeln('return result;');
-        });
-        indent.writeln('return value.hashCode();');
-      },
-    );
+        indent.writeln('return result;');
+      });
+      indent.writeln('return value.hashCode();');
+    });
     indent.newln();
   }
 

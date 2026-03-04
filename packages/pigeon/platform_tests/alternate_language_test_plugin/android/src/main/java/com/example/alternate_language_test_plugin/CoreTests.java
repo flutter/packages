@@ -30,7 +30,7 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class CoreTests {
-  private static boolean pigeonDeepEquals(Object a, Object b) {
+  static boolean pigeonDeepEquals(Object a, Object b) {
     if (a == b) {
       return true;
     }
@@ -81,7 +81,7 @@ public class CoreTests {
     return a.equals(b);
   }
 
-  private static int pigeonDeepHashCode(Object value) {
+  static int pigeonDeepHashCode(Object value) {
     if (value == null) {
       return 0;
     }

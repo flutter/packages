@@ -159,6 +159,10 @@ bool MessageData::operator==(const MessageData& other) const {
          PigeonInternalDeepEquals(data_, other.data_);
 }
 
+bool MessageData::operator!=(const MessageData& other) const {
+  return !(*this == other);
+}
+
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(

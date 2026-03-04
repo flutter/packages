@@ -251,8 +251,7 @@ struct AllDatatypesTests {
     // though Data in Swift is a value type.
     // FlutterStandardTypedData is a class.
     let a = AllNullableTypes(aNullableByteArray: FlutterStandardTypedData(bytes: data1))
-    let b = AllNullableTypes(aNullableDouble: 1.0)  // Just to change something
-    var c = a
+    let c = a
     c.aNullableByteArray = FlutterStandardTypedData(bytes: data2)
 
     #expect(a == c)
