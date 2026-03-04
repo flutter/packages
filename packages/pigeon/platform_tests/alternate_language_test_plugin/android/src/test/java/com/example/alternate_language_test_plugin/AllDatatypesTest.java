@@ -299,11 +299,11 @@ public class AllDatatypesTest {
   @Test
   public void nestedByteArrayEquality() {
     byte[] data = new byte[] {1, 2, 3};
-    List<byte[]> list1 = new ArrayList<>();
+    List<Object> list1 = new ArrayList<>();
     list1.add(data);
     AllNullableTypes a = new AllNullableTypes.Builder().setList(list1).build();
 
-    List<byte[]> list2 = new ArrayList<>();
+    List<Object> list2 = new ArrayList<>();
     list2.add(new byte[] {1, 2, 3});
     AllNullableTypes b = new AllNullableTypes.Builder().setList(list2).build();
 

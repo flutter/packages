@@ -1,17 +1,8 @@
 ## 26.2.0
 
-* [swift] [kotlin] [dart] [java] [objc] [cpp] [gobject] Optimizes and improves data class equality and hashing.
-  * Avoids `toList()` and `encode()` calls to reduce object allocations during comparisons.
-  * Adds `deepEquals` and `deepHash` utilities for robust recursive handling of nested collections and arrays.
-  * Handles `NaN` correctly in equality and hashing across all platforms.
-  * [dart] Fixes `Object.hash` usage for single-field classes.
-  * [dart] Fixes `Map` hashing to be order-independent.
-  * [kotlin] Fixes compilation error in `equals` method.
-  * [objc] Fixes build failure when helper functions are unused.
-  * [cpp] [gobject] Adds `<cmath>` include for `std::isnan` support.
-  * [cpp] Fixes namespace collisions on Windows by fully qualifying `flutter` namespace references.
-  * [objc] Distinguishes 0.0 and -0.0 in equality and hashing.
-  * [gobject] Fixes `Map` hashing to be order-independent.
+* Optimizes and improves data class equality and hashing.
+* Changes hashing and equality methods to behave consistently across platforms.
+* Adds equality methods to previously unsupported languages.
 
 ## 26.1.10
 

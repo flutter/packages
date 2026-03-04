@@ -74,9 +74,10 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a,
 
 inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
                                      const ::flutter::EncodableValue& b) {
-  if (a.type() == b.type() &&
-      a.type() == ::flutter::EncodableValue::Type::kDouble) {
-    return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
+  auto* da = std::get_if<double>(&a);
+  auto* db = std::get_if<double>(&b);
+  if (da && db) {
+    return PigeonInternalDeepEquals(*da, *db);
   }
   return a == b;
 }
