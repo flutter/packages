@@ -20,10 +20,7 @@ static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   return (guint)(u.u ^ (u.u >> 32));
 }
 static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
-  if (a == b) {
-    return a != 0.0 || std::signbit(a) == std::signbit(b);
-  }
-  return std::isnan(a) && std::isnan(b);
+  return (a == b) || (std::isnan(a) && std::isnan(b));
 }
 static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   if (a == b) return TRUE;

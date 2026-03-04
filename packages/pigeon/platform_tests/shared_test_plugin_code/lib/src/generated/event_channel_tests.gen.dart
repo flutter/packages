@@ -20,13 +20,6 @@ bool _deepEquals(Object? a, Object? b) {
     if (a.isNaN && b.isNaN) {
       return true;
     }
-    if (a == 0.0 && b == 0.0) {
-      return identical(a, b);
-    }
-    return a == b;
-  }
-  if (a == b) {
-    return true;
   }
   if (a is List && b is List) {
     return a.length == b.length &&
@@ -42,45 +35,28 @@ bool _deepEquals(Object? a, Object? b) {
       if (!b.containsKey(entry.key)) {
         return false;
       }
-      if (entry.key is double && entry.key == 0.0) {
-        // Standard Map lookup for 0.0 might find -0.0 in Dart.
-        // We must verify the actual key is identical.
-        bool foundIdentical = false;
-        for (final Object? keyB in b.keys) {
-          if (identical(entry.key, keyB)) {
-            foundIdentical = true;
-            break;
-          }
-        }
-        if (!foundIdentical) {
-          return false;
-        }
-      }
       if (!_deepEquals(entry.value, b[entry.key])) {
         return false;
       }
     }
     return true;
   }
-  return false;
+  return a == b;
 }
 
 int _deepHash(Object? value) {
   if (value is List) {
     return Object.hashAll(value.map(_deepHash));
-  } else if (value is Map) {
+  }
+  if (value is Map) {
     int result = 0;
     for (final MapEntry<Object?, Object?> entry in value.entries) {
       result += _deepHash(entry.key) ^ _deepHash(entry.value);
     }
     return result;
-  } else if (value is double) {
-    if (value.isNaN) {
-      return 0x7FF8000000000000.hashCode;
-    }
-    if (value == 0.0 && value.isNegative) {
-      return 0x8000000000000000.hashCode;
-    }
+  }
+  if (value is double && value.isNaN) {
+    return 0x7FF8000000000000.hashCode;
   }
   return value.hashCode;
 }

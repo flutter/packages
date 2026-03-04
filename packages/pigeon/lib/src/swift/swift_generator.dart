@@ -1559,7 +1559,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   case (let lhs as Double, let rhs as Double):
-    return (lhs.isNaN && rhs.isNaN) || lhs.bitPattern == rhs.bitPattern
+    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -1576,7 +1576,7 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
       if doubleValue.isNaN {
         hasher.combine(0x7FF8000000000000)
       } else {
-        hasher.combine(doubleValue.bitPattern)
+        hasher.combine(doubleValue)
       }
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {

@@ -2805,12 +2805,7 @@ void _writeHashHelpers(Indent indent) {
     'static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {',
     '}',
     () {
-      indent.writeScoped('if (a == b) {', '}', () {
-        indent.writeln(
-          'return a != 0.0 || std::signbit(a) == std::signbit(b);',
-        );
-      });
-      indent.writeln('return std::isnan(a) && std::isnan(b);');
+      indent.writeln('return (a == b) || (std::isnan(a) && std::isnan(b));');
     },
   );
 }
