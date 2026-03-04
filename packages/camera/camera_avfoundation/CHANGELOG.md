@@ -1,6 +1,10 @@
-## 0.10.1
+## 0.10.2
 
 * Adds `setImageQuality` for controlling JPEG compression quality.
+
+## 0.10.1
+
+* Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.
 
 ## 0.10.0+3
 

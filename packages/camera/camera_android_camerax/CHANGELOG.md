@@ -1,6 +1,10 @@
-## 0.7.1
+## 0.7.2
 
 * Adds `setImageQuality` for controlling JPEG compression quality.
+
+## 0.7.1
+
+* Removes outdated restrictions against concurrent camera use cases.
 
 ## 0.7.0+1
 
