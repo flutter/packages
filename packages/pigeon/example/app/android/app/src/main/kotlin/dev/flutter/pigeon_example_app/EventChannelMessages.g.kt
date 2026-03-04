@@ -100,8 +100,8 @@ data class IntEvent(val data: Long) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as IntEvent
-    return EventChannelMessagesPigeonUtils.deepEquals(this.data, otherActual.data)
+    val other = other as IntEvent
+    return EventChannelMessagesPigeonUtils.deepEquals(this.data, other.data)
   }
 
   override fun hashCode(): Int {
@@ -133,8 +133,8 @@ data class StringEvent(val data: String) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    val otherActual = other as StringEvent
-    return EventChannelMessagesPigeonUtils.deepEquals(this.data, otherActual.data)
+    val other = other as StringEvent
+    return EventChannelMessagesPigeonUtils.deepEquals(this.data, other.data)
   }
 
   override fun hashCode(): Int {

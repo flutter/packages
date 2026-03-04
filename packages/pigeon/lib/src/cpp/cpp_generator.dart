@@ -20,7 +20,7 @@ const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
 /// The default serializer for Flutter.
-const String _standardCodecSerializer = 'flutter::StandardCodecSerializer';
+const String _standardCodecSerializer = '::flutter::StandardCodecSerializer';
 
 /// The name of the codec serializer.
 const String _codecSerializerName = '${classNamePrefix}CodecSerializer';
@@ -474,22 +474,22 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           indent,
           'FromEncodableList',
           returnType: isOverflowClass
-              ? 'flutter::EncodableValue'
+              ? '::flutter::EncodableValue'
               : classDefinition.name,
-          parameters: <String>['const flutter::EncodableList& list'],
+          parameters: <String>['const ::flutter::EncodableList& list'],
           isStatic: true,
         );
         _writeFunctionDeclaration(
           indent,
           'ToEncodableList',
-          returnType: 'flutter::EncodableList',
+          returnType: '::flutter::EncodableList',
           isConst: true,
         );
         if (isOverflowClass) {
           _writeFunctionDeclaration(
             indent,
             'Unwrap',
-            returnType: 'flutter::EncodableValue',
+            returnType: '::flutter::EncodableValue',
           );
         }
         if (!isOverflowClass && root.requiresOverflowClass) {
@@ -564,8 +564,8 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           'WriteValue',
           returnType: _voidType,
           parameters: <String>[
-            'const flutter::EncodableValue& value',
-            'flutter::ByteStreamWriter* stream',
+            'const ::flutter::EncodableValue& value',
+            '::flutter::ByteStreamWriter* stream',
           ],
           isConst: true,
           isOverride: true,
@@ -575,10 +575,10 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'ReadValueOfType',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           parameters: <String>[
             'uint8_t type',
-            'flutter::ByteStreamReader* stream',
+            '::flutter::ByteStreamReader* stream',
           ],
           isConst: true,
           isOverride: true,
@@ -611,20 +611,20 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           api.name,
-          parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
+          parameters: <String>['::flutter::BinaryMessenger* binary_messenger'],
         );
         _writeFunctionDeclaration(
           indent,
           api.name,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             'const std::string& message_channel_suffix',
           ],
         );
         _writeFunctionDeclaration(
           indent,
           'GetCodec',
-          returnType: 'const flutter::StandardMessageCodec&',
+          returnType: 'const ::flutter::StandardMessageCodec&',
           isStatic: true,
         );
         for (final Method func in api.methods) {
@@ -664,7 +664,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         }
       });
       indent.addScoped(' private:', null, () {
-        indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
+        indent.writeln('::flutter::BinaryMessenger* binary_messenger_;');
         indent.writeln('std::string message_channel_suffix_;');
       });
     }, nestCount: 0);
@@ -766,7 +766,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'GetCodec',
-          returnType: 'const flutter::StandardMessageCodec&',
+          returnType: 'const ::flutter::StandardMessageCodec&',
           isStatic: true,
         );
         indent.writeln(
@@ -778,7 +778,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: _voidType,
           isStatic: true,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             '${api.name}* api',
           ],
         );
@@ -788,7 +788,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: _voidType,
           isStatic: true,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             '${api.name}* api',
             'const std::string& message_channel_suffix',
           ],
@@ -796,14 +796,14 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'WrapError',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           isStatic: true,
           parameters: <String>['std::string_view error_message'],
         );
         _writeFunctionDeclaration(
           indent,
           'WrapError',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           isStatic: true,
           parameters: <String>['const FlutterError& error'],
         );
@@ -847,17 +847,17 @@ class FlutterError {
 \t\t: code_(code) {}
 \texplicit FlutterError(const std::string& code, const std::string& message)
 \t\t: code_(code), message_(message) {}
-\texplicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
+\texplicit FlutterError(const std::string& code, const std::string& message, const ::flutter::EncodableValue& details)
 \t\t: code_(code), message_(message), details_(details) {}
 
 \tconst std::string& code() const { return code_; }
 \tconst std::string& message() const { return message_; }
-\tconst flutter::EncodableValue& details() const { return details_; }
+\tconst ::flutter::EncodableValue& details() const { return details_; }
 
  private:
 \tstd::string code_;
 \tstd::string message_;
-\tflutter::EncodableValue details_;
+\t::flutter::EncodableValue details_;
 };''');
   }
 
@@ -973,11 +973,11 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     required String dartPackageName,
   }) {
     final usingDirectives = <String>[
-      'flutter::BasicMessageChannel',
-      'flutter::CustomEncodableValue',
-      'flutter::EncodableList',
-      'flutter::EncodableMap',
-      'flutter::EncodableValue',
+      '::flutter::BasicMessageChannel',
+      '::flutter::CustomEncodableValue',
+      '::flutter::EncodableList',
+      '::flutter::EncodableMap',
+      '::flutter::EncodableValue',
     ];
     usingDirectives.sort();
     for (final using in usingDirectives) {
@@ -1122,8 +1122,8 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>&
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-inline bool PigeonInternalDeepEquals(const flutter::EncodableValue& a, const flutter::EncodableValue& b) {
-  if (a.type() == b.type() && a.type() == flutter::EncodableValue::Type::kDouble) {
+inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b) {
+  if (a.type() == b.type() && a.type() == ::flutter::EncodableValue::Type::kDouble) {
     return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
   }
   return a == b;
@@ -1369,7 +1369,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       'ReadValueOfType',
       scope: _codecSerializerName,
       returnType: 'EncodableValue',
-      parameters: <String>['uint8_t type', 'flutter::ByteStreamReader* stream'],
+      parameters: <String>[
+        'uint8_t type',
+        '::flutter::ByteStreamReader* stream',
+      ],
       isConst: true,
       body: () {
         if (enumeratedTypes.isNotEmpty) {
@@ -1407,7 +1410,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       returnType: _voidType,
       parameters: <String>[
         'const EncodableValue& value',
-        'flutter::ByteStreamWriter* stream',
+        '::flutter::ByteStreamWriter* stream',
       ],
       isConst: true,
       body: () {
@@ -1465,7 +1468,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       api.name,
       scope: api.name,
-      parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
+      parameters: <String>['::flutter::BinaryMessenger* binary_messenger'],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
         'message_channel_suffix_("")',
@@ -1476,7 +1479,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       api.name,
       scope: api.name,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         'const std::string& message_channel_suffix',
       ],
       initializers: <String>[
@@ -1488,10 +1491,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       'GetCodec',
       scope: api.name,
-      returnType: 'const flutter::StandardMessageCodec&',
+      returnType: 'const ::flutter::StandardMessageCodec&',
       body: () {
         indent.writeln(
-          'return flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
+          'return ::flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
         );
       },
     );
@@ -1622,10 +1625,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       'GetCodec',
       scope: api.name,
-      returnType: 'const flutter::StandardMessageCodec&',
+      returnType: 'const ::flutter::StandardMessageCodec&',
       body: () {
         indent.writeln(
-          'return flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
+          'return ::flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
         );
       },
     );
@@ -1638,7 +1641,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       scope: api.name,
       returnType: _voidType,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         '${api.name}* api',
       ],
       body: () {
@@ -1651,7 +1654,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       scope: api.name,
       returnType: _voidType,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         '${api.name}* api',
         'const std::string& message_channel_suffix',
       ],
@@ -1672,7 +1675,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
             );
             indent.writeScoped('if (api != nullptr) {', '} else {', () {
               indent.write(
-                'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ',
+                'channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) ',
               );
               indent.addScoped('{', '});', () {
                 indent.writeScoped('try {', '}', () {
@@ -2264,7 +2267,7 @@ String? _baseCppTypeForBuiltinDartType(
   TypeDeclaration type, {
   bool includeFlutterNamespace = true,
 }) {
-  final flutterNamespace = includeFlutterNamespace ? 'flutter::' : '';
+  final flutterNamespace = includeFlutterNamespace ? '::flutter::' : '';
   final cppTypeForDartTypeMap = <String, String>{
     'void': 'void',
     'bool': 'bool',

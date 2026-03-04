@@ -2720,7 +2720,7 @@ String _makeFlValue(
   } else if (type.baseName == 'Float32List') {
     value = 'fl_value_new_float32_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Float64List') {
-    value = 'fl_value_new_float_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_float64_list($variableName, $lengthVariableName)';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
@@ -2759,7 +2759,7 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
   } else if (type.baseName == 'Float32List') {
     return 'fl_value_get_float32_list($variableName)';
   } else if (type.baseName == 'Float64List') {
-    return 'fl_value_get_float_list($variableName)';
+    return 'fl_value_get_float64_list($variableName)';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
@@ -2800,9 +2800,12 @@ void _writeDeepEquals(Indent indent) {
       indent.writeln('case FL_VALUE_TYPE_FLOAT: {');
       indent.writeln('  double va = fl_value_get_float(a);');
       indent.writeln('  double vb = fl_value_get_float(b);');
-      indent.writeln(
-        '  return va == vb || (std::isnan(va) && std::isnan(vb));',
-      );
+      indent.writeScoped('if (va == vb) {', '}', () {
+        indent.writeln(
+          'return va != 0.0 || std::signbit(va) == std::signbit(vb);',
+        );
+      });
+      indent.writeln('return std::isnan(va) && std::isnan(vb);');
       indent.writeln('}');
       indent.writeln('case FL_VALUE_TYPE_STRING:');
       indent.writeln(
@@ -2829,19 +2832,19 @@ void _writeDeepEquals(Indent indent) {
       indent.writeln(
         '         memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b), fl_value_get_length(a) * sizeof(int64_t)) == 0;',
       );
-      indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST:');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT32_LIST:');
       indent.writeln(
         '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
       );
       indent.writeln(
-        '         memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b), fl_value_get_length(a) * sizeof(float)) == 0;',
+        '         memcmp(fl_value_get_float32_list(a), fl_value_get_float32_list(b), fl_value_get_length(a) * sizeof(float)) == 0;',
       );
-      indent.writeln('case FL_VALUE_TYPE_DOUBLE_LIST:');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT64_LIST:');
       indent.writeln(
         '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
       );
       indent.writeln(
-        '         memcmp(fl_value_get_double_list(a), fl_value_get_double_list(b), fl_value_get_length(a) * sizeof(double)) == 0;',
+        '         memcmp(fl_value_get_float64_list(a), fl_value_get_float64_list(b), fl_value_get_length(a) * sizeof(double)) == 0;',
       );
       indent.writeln('case FL_VALUE_TYPE_LIST: {');
       indent.writeln('  size_t len = fl_value_get_length(a);');
@@ -2916,10 +2919,10 @@ void _writeDeepHash(Indent indent) {
       );
       indent.writeln('  return result;');
       indent.writeln('}');
-      indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT32_LIST: {');
       indent.writeln('  guint result = 1;');
       indent.writeln('  size_t len = fl_value_get_length(value);');
-      indent.writeln('  const float* data = fl_value_get_float_list(value);');
+      indent.writeln('  const float* data = fl_value_get_float32_list(value);');
       indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
         indent.writeln(
           'result = result * 31 + flpigeon_hash_double((double)data[i]);',
@@ -2927,10 +2930,12 @@ void _writeDeepHash(Indent indent) {
       });
       indent.writeln('  return result;');
       indent.writeln('}');
-      indent.writeln('case FL_VALUE_TYPE_DOUBLE_LIST: {');
+      indent.writeln('case FL_VALUE_TYPE_FLOAT64_LIST: {');
       indent.writeln('  guint result = 1;');
       indent.writeln('  size_t len = fl_value_get_length(value);');
-      indent.writeln('  const double* data = fl_value_get_double_list(value);');
+      indent.writeln(
+        '  const double* data = fl_value_get_float64_list(value);',
+      );
       indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
         indent.writeln('result = result * 31 + flpigeon_hash_double(data[i]);');
       });

@@ -9,6 +9,8 @@
   * [kotlin] Fixes compilation error in `equals` method.
   * [objc] Fixes build failure when helper functions are unused.
   * [cpp] [gobject] Adds `<cmath>` include for `std::isnan` support.
+  * [cpp] Fixes namespace collisions on Windows by fully qualifying `flutter` namespace references.
+  * [objc] Distinguishes 0.0 and -0.0 in equality and hashing.
   * [gobject] Fixes `Map` hashing to be order-independent.
 
 ## 26.1.10

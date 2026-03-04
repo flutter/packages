@@ -124,7 +124,7 @@ void main() {
         contains(
           RegExp(
             r'void Api::SetUp\(\s*'
-            r'flutter::BinaryMessenger\* binary_messenger,\s*'
+            r'::flutter::BinaryMessenger\* binary_messenger,\s*'
             r'Api\* api\s*\)',
           ),
         ),
@@ -309,12 +309,12 @@ void main() {
           contains('  const std::string& code() const { return code_; }'),
           contains('  const std::string& message() const { return message_; }'),
           contains(
-            '  const flutter::EncodableValue& details() const { return details_; }',
+            '  const ::flutter::EncodableValue& details() const { return details_; }',
           ),
           contains(' private:'),
           contains('  std::string code_;'),
           contains('  std::string message_;'),
-          contains('  flutter::EncodableValue details_;'),
+          contains('  ::flutter::EncodableValue details_;'),
         ]),
       );
     }
@@ -1175,13 +1175,13 @@ void main() {
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableList>> ReturnNullableList()',
+          'ErrorOr<std::optional<::flutter::EncodableList>> ReturnNullableList()',
         ),
       );
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableMap>> ReturnNullableMap()',
+          'ErrorOr<std::optional<::flutter::EncodableMap>> ReturnNullableMap()',
         ),
       );
       expect(
@@ -1298,8 +1298,8 @@ void main() {
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
       expect(code, contains('ErrorOr<std::string> ReturnString()'));
-      expect(code, contains('ErrorOr<flutter::EncodableList> ReturnList()'));
-      expect(code, contains('ErrorOr<flutter::EncodableMap> ReturnMap()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableList> ReturnList()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableMap> ReturnMap()'));
       expect(code, contains('ErrorOr<ReturnData> ReturnDataClass()'));
     }
   });
@@ -1416,10 +1416,10 @@ void main() {
             r'const bool\* a_bool,\s*'
             r'const int64_t\* an_int,\s*'
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue\* a_generic_object\s*\)',
           ),
         ),
       );
@@ -1612,10 +1612,10 @@ void main() {
             r'bool a_bool,\s*'
             r'int64_t an_int,\s*'
             r'const std::string& a_string,\s*'
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue& a_generic_object\s*\)',
           ),
         ),
       );
@@ -1814,10 +1814,10 @@ void main() {
             // Nullable strings use std::string* rather than std::string_view*
             // since there's no implicit conversion for pointer types.
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object,',
+            r'const ::flutter::EncodableValue\* a_generic_object,',
           ),
         ),
       );
@@ -2002,10 +2002,10 @@ void main() {
             // nullable strings.
             r'const std::string& a_string,\s*'
             // Non-POD types use const references.
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object,\s*',
+            r'const ::flutter::EncodableValue& a_generic_object,\s*',
           ),
         ),
       );
@@ -2314,7 +2314,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(code, contains(' : public flutter::StandardCodecSerializer'));
+    expect(code, contains(' : public ::flutter::StandardCodecSerializer'));
   });
 
   test('Does not send unwrapped EncodableLists', () {

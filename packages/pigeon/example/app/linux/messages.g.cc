@@ -32,7 +32,10 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
     case FL_VALUE_TYPE_FLOAT: {
       double va = fl_value_get_float(a);
       double vb = fl_value_get_float(b);
-      return va == vb || (std::isnan(va) && std::isnan(vb));
+      if (va == vb) {
+        return va != 0.0 || std::signbit(va) == std::signbit(vb);
+      }
+      return std::isnan(va) && std::isnan(vb);
     }
     case FL_VALUE_TYPE_STRING:
       return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;
@@ -48,13 +51,13 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
       return fl_value_get_length(a) == fl_value_get_length(b) &&
              memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
                     fl_value_get_length(a) * sizeof(int64_t)) == 0;
-    case FL_VALUE_TYPE_FLOAT_LIST:
+    case FL_VALUE_TYPE_FLOAT32_LIST:
       return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b),
+             memcmp(fl_value_get_float32_list(a), fl_value_get_float32_list(b),
                     fl_value_get_length(a) * sizeof(float)) == 0;
-    case FL_VALUE_TYPE_DOUBLE_LIST:
+    case FL_VALUE_TYPE_FLOAT64_LIST:
       return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_double_list(a), fl_value_get_double_list(b),
+             memcmp(fl_value_get_float64_list(a), fl_value_get_float64_list(b),
                     fl_value_get_length(a) * sizeof(double)) == 0;
     case FL_VALUE_TYPE_LIST: {
       size_t len = fl_value_get_length(a);
@@ -117,19 +120,19 @@ static guint flpigeon_deep_hash(FlValue* value) {
         result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
       return result;
     }
-    case FL_VALUE_TYPE_FLOAT_LIST: {
+    case FL_VALUE_TYPE_FLOAT32_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
-      const float* data = fl_value_get_float_list(value);
+      const float* data = fl_value_get_float32_list(value);
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double((double)data[i]);
       }
       return result;
     }
-    case FL_VALUE_TYPE_DOUBLE_LIST: {
+    case FL_VALUE_TYPE_FLOAT64_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
-      const double* data = fl_value_get_double_list(value);
+      const double* data = fl_value_get_float64_list(value);
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double(data[i]);
       }

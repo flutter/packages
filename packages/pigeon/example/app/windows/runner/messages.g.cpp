@@ -19,11 +19,11 @@
 #include <string>
 
 namespace pigeon_example {
-using flutter::BasicMessageChannel;
-using flutter::CustomEncodableValue;
-using flutter::EncodableList;
-using flutter::EncodableMap;
-using flutter::EncodableValue;
+using ::flutter::BasicMessageChannel;
+using ::flutter::CustomEncodableValue;
+using ::flutter::EncodableList;
+using ::flutter::EncodableMap;
+using ::flutter::EncodableValue;
 
 FlutterError CreateConnectionError(const std::string channel_name) {
   return FlutterError(
@@ -71,10 +71,10 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a,
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-inline bool PigeonInternalDeepEquals(const flutter::EncodableValue& a,
-                                     const flutter::EncodableValue& b) {
+inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                                     const ::flutter::EncodableValue& b) {
   if (a.type() == b.type() &&
-      a.type() == flutter::EncodableValue::Type::kDouble) {
+      a.type() == ::flutter::EncodableValue::Type::kDouble) {
     return PigeonInternalDeepEquals(std::get<double>(a), std::get<double>(b));
   }
   return a == b;
@@ -161,7 +161,7 @@ bool MessageData::operator==(const MessageData& other) const {
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
 EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
-    uint8_t type, flutter::ByteStreamReader* stream) const {
+    uint8_t type, ::flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129: {
       const auto& encodable_enum_arg = ReadValue(stream);
@@ -176,12 +176,12 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
           std::get<EncodableList>(ReadValue(stream))));
     }
     default:
-      return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
+      return ::flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
 }
 
 void PigeonInternalCodecSerializer::WriteValue(
-    const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
+    const EncodableValue& value, ::flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(Code)) {
@@ -200,23 +200,23 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
   }
-  flutter::StandardCodecSerializer::WriteValue(value, stream);
+  ::flutter::StandardCodecSerializer::WriteValue(value, stream);
 }
 
 /// The codec used by ExampleHostApi.
-const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(
+const ::flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(
       &PigeonInternalCodecSerializer::GetInstance());
 }
 
 // Sets up an instance of `ExampleHostApi` to handle messages through the
 // `binary_messenger`.
-void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
   ExampleHostApi::SetUp(binary_messenger, api, "");
 }
 
-void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api,
                            const std::string& message_channel_suffix) {
   const std::string prepended_suffix =
@@ -232,7 +232,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               ErrorOr<std::string> output = api->GetHostLanguage();
               if (output.has_error()) {
@@ -259,7 +259,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_a_arg = args.at(0);
@@ -299,7 +299,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
+                const ::flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_message_arg = args.at(0);
@@ -343,18 +343,20 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
-MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
+MessageFlutterApi::MessageFlutterApi(
+    ::flutter::BinaryMessenger* binary_messenger)
     : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
 
-MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
-                                     const std::string& message_channel_suffix)
+MessageFlutterApi::MessageFlutterApi(
+    ::flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix)
     : binary_messenger_(binary_messenger),
       message_channel_suffix_(message_channel_suffix.length() > 0
                                   ? std::string(".") + message_channel_suffix
                                   : "") {}
 
-const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
-  return flutter::StandardMessageCodec::GetInstance(
+const ::flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
+  return ::flutter::StandardMessageCodec::GetInstance(
       &PigeonInternalCodecSerializer::GetInstance());
 }
 

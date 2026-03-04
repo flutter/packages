@@ -649,7 +649,7 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
         final String name = field.name;
         if (_usesPrimitive(field.type)) {
           if (field.type.baseName == 'double') {
-            return '(self.$name == other.$name || (isnan(self.$name) && isnan(other.$name)))';
+            return '((self.$name == other.$name && (self.$name != 0.0 || signbit(self.$name) == signbit(other.$name))) || (isnan(self.$name) && isnan(other.$name)))';
           }
           return 'self.$name == other.$name';
         } else {
@@ -671,7 +671,7 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
         if (_usesPrimitive(field.type)) {
           if (field.type.baseName == 'double') {
             indent.writeln(
-              'result = result * 31 + (isnan(self.$name) ? (NSUInteger)0x7FF8000000000000 : @(self.$name).hash);',
+              'result = result * 31 + (isnan(self.$name) ? (NSUInteger)0x7FF8000000000000 : ((self.$name == 0.0 && signbit(self.$name)) ? (NSUInteger)0x8000000000000000 : @(self.$name).hash));',
             );
           } else {
             indent.writeln('result = result * 31 + @(self.$name).hash;');
@@ -1682,9 +1682,10 @@ static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
     NSNumber *na = (NSNumber *)a;
     NSNumber *nb = (NSNumber *)b;
-    if (isnan(na.doubleValue) && isnan(nb.doubleValue)) {
-      return YES;
+    if (na.doubleValue == nb.doubleValue) {
+      return (na.doubleValue != 0.0) || (signbit(na.doubleValue) == signbit(nb.doubleValue));
     }
+    return isnan(na.doubleValue) && isnan(nb.doubleValue);
   }
   if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
     NSArray *arrayA = (NSArray *)a;
@@ -1730,6 +1731,9 @@ static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
     NSNumber *n = (NSNumber *)value;
     if (isnan(n.doubleValue)) {
       return (NSUInteger)0x7FF8000000000000;
+    }
+    if (n.doubleValue == 0.0 && signbit(n.doubleValue)) {
+      return (NSUInteger)0x8000000000000000;
     }
   }
   if ([value isKindOfClass:[NSArray class]]) {

@@ -33,7 +33,10 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
     case FL_VALUE_TYPE_FLOAT: {
       double va = fl_value_get_float(a);
       double vb = fl_value_get_float(b);
-      return va == vb || (std::isnan(va) && std::isnan(vb));
+      if (va == vb) {
+        return va != 0.0 || std::signbit(va) == std::signbit(vb);
+      }
+      return std::isnan(va) && std::isnan(vb);
     }
     case FL_VALUE_TYPE_STRING:
       return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;
@@ -49,13 +52,13 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
       return fl_value_get_length(a) == fl_value_get_length(b) &&
              memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
                     fl_value_get_length(a) * sizeof(int64_t)) == 0;
-    case FL_VALUE_TYPE_FLOAT_LIST:
+    case FL_VALUE_TYPE_FLOAT32_LIST:
       return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b),
+             memcmp(fl_value_get_float32_list(a), fl_value_get_float32_list(b),
                     fl_value_get_length(a) * sizeof(float)) == 0;
-    case FL_VALUE_TYPE_DOUBLE_LIST:
+    case FL_VALUE_TYPE_FLOAT64_LIST:
       return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_double_list(a), fl_value_get_double_list(b),
+             memcmp(fl_value_get_float64_list(a), fl_value_get_float64_list(b),
                     fl_value_get_length(a) * sizeof(double)) == 0;
     case FL_VALUE_TYPE_LIST: {
       size_t len = fl_value_get_length(a);
@@ -118,19 +121,19 @@ static guint flpigeon_deep_hash(FlValue* value) {
         result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
       return result;
     }
-    case FL_VALUE_TYPE_FLOAT_LIST: {
+    case FL_VALUE_TYPE_FLOAT32_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
-      const float* data = fl_value_get_float_list(value);
+      const float* data = fl_value_get_float32_list(value);
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double((double)data[i]);
       }
       return result;
     }
-    case FL_VALUE_TYPE_DOUBLE_LIST: {
+    case FL_VALUE_TYPE_FLOAT64_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
-      const double* data = fl_value_get_double_list(value);
+      const double* data = fl_value_get_float64_list(value);
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double(data[i]);
       }
@@ -560,9 +563,9 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(
       values,
       fl_value_new_int64_list(self->a8_byte_array, self->a8_byte_array_length));
-  fl_value_append_take(
-      values,
-      fl_value_new_float_list(self->a_float_array, self->a_float_array_length));
+  fl_value_append_take(values,
+                       fl_value_new_float64_list(self->a_float_array,
+                                                 self->a_float_array_length));
   fl_value_append_take(
       values, fl_value_new_custom(core_tests_pigeon_test_an_enum_type_id,
                                   fl_value_new_int(self->an_enum),
@@ -612,7 +615,7 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   const int64_t* a8_byte_array = fl_value_get_int64_list(value6);
   size_t a8_byte_array_length = fl_value_get_length(value6);
   FlValue* value7 = fl_value_get_list_value(values, 7);
-  const double* a_float_array = fl_value_get_float_list(value7);
+  const double* a_float_array = fl_value_get_float64_list(value7);
   size_t a_float_array_length = fl_value_get_length(value7);
   FlValue* value8 = fl_value_get_list_value(values, 8);
   CoreTestsPigeonTestAnEnum an_enum = static_cast<CoreTestsPigeonTestAnEnum>(
@@ -1398,11 +1401,11 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                   ? fl_value_new_int64_list(self->a_nullable8_byte_array,
                                             self->a_nullable8_byte_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(
-      values, self->a_nullable_float_array != nullptr
-                  ? fl_value_new_float_list(self->a_nullable_float_array,
-                                            self->a_nullable_float_array_length)
-                  : fl_value_new_null());
+  fl_value_append_take(values, self->a_nullable_float_array != nullptr
+                                   ? fl_value_new_float64_list(
+                                         self->a_nullable_float_array,
+                                         self->a_nullable_float_array_length)
+                                   : fl_value_new_null());
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
@@ -1540,7 +1543,7 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
   const double* a_nullable_float_array = nullptr;
   size_t a_nullable_float_array_length = 0;
   if (fl_value_get_type(value7) != FL_VALUE_TYPE_NULL) {
-    a_nullable_float_array = fl_value_get_float_list(value7);
+    a_nullable_float_array = fl_value_get_float64_list(value7);
     a_nullable_float_array_length = fl_value_get_length(value7);
   }
   FlValue* value8 = fl_value_get_list_value(values, 8);
@@ -2468,11 +2471,11 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
                   ? fl_value_new_int64_list(self->a_nullable8_byte_array,
                                             self->a_nullable8_byte_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(
-      values, self->a_nullable_float_array != nullptr
-                  ? fl_value_new_float_list(self->a_nullable_float_array,
-                                            self->a_nullable_float_array_length)
-                  : fl_value_new_null());
+  fl_value_append_take(values, self->a_nullable_float_array != nullptr
+                                   ? fl_value_new_float64_list(
+                                         self->a_nullable_float_array,
+                                         self->a_nullable_float_array_length)
+                                   : fl_value_new_null());
   fl_value_append_take(
       values,
       self->a_nullable_enum != nullptr
@@ -2599,7 +2602,7 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
   const double* a_nullable_float_array = nullptr;
   size_t a_nullable_float_array_length = 0;
   if (fl_value_get_type(value7) != FL_VALUE_TYPE_NULL) {
-    a_nullable_float_array = fl_value_get_float_list(value7);
+    a_nullable_float_array = fl_value_get_float64_list(value7);
     a_nullable_float_array_length = fl_value_get_length(value7);
   }
   FlValue* value8 = fl_value_get_list_value(values, 8);
