@@ -28,7 +28,5 @@
             android:authorities="dummy"
             android:name=".DummyContentProvider"
             android:exported="true"/>
-        <meta-data android:name="io.flutter.network-policy"
-            android:resource="@xml/network_security_config"/>
     </application>
 </manifest>

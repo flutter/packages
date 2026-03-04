@@ -10,8 +10,7 @@
 - [ ] I signed the [CLA].
 - [ ] The title of the PR starts with the name of the package surrounded by square brackets, e.g. `[shared_preferences]`
 - [ ] I [linked to at least one issue that this PR fixes] in the description above.
-- [ ] I updated `pubspec.yaml` with an appropriate new version according to the [pub versioning philosophy], or I have commented below to indicate which [version change exemption] this PR falls under[^1].
-- [ ] I updated `CHANGELOG.md` to add a description of the change, [following repository CHANGELOG style], or I have commented below to indicate which [CHANGELOG exemption] this PR falls under[^1].
+- [ ] I followed [the version and CHANGELOG instructions], using [semantic versioning] and the [repository CHANGELOG style], or I have commented below to indicate which documented exception this PR falls under[^1].
 - [ ] I updated/added any relevant documentation (doc comments with `///`).
 - [ ] I added new tests to check the change I am making, or I have commented below to indicate which [test exemption] this PR falls under[^1].
 - [ ] All existing and new tests are passing.
@@ -30,8 +29,7 @@ If you need help, consider asking for advice on the #hackers-new channel on [Dis
 [CLA]: https://cla.developers.google.com/
 [Discord]: https://github.com/flutter/flutter/blob/master/docs/contributing/Chat.md
 [linked to at least one issue that this PR fixes]: https://github.com/flutter/flutter/blob/master/docs/contributing/Tree-hygiene.md#overview
-[pub versioning philosophy]: https://dart.dev/tools/pub/versioning
-[version change exemption]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#version
-[following repository CHANGELOG style]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style
-[CHANGELOG exemption]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog
+[the version and CHANGELOG instructions]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#version-and-changelog-updates
+[semantic versioning]: https://dart.dev/tools/pub/versioning#semantic-versions
+[repository CHANGELOG style]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style
 [test exemption]: https://github.com/flutter/flutter/blob/master/docs/contributing/Tree-hygiene.md#tests
