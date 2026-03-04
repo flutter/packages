@@ -10,7 +10,7 @@
 #include <string.h>
 
 #include <cmath>
-static guint flpigeon_hash_double(double v) {
+static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   if (std::isnan(v)) return (guint)0x7FF80000;
   union {
     double d;
@@ -19,7 +19,7 @@ static guint flpigeon_hash_double(double v) {
   u.d = v;
   return (guint)(u.u ^ (u.u >> 32));
 }
-static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
+static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   if (a == b) return TRUE;
   if (a == nullptr || b == nullptr) return FALSE;
   if (fl_value_get_type(a) != fl_value_get_type(b)) {
@@ -82,7 +82,7 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
   }
   return FALSE;
 }
-static guint flpigeon_deep_hash(FlValue* value) {
+static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
   if (value == nullptr) return 0;
   switch (fl_value_get_type(value)) {
     case FL_VALUE_TYPE_BOOL:
@@ -778,7 +778,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   result = result * 31 + flpigeon_hash_double(self->a_double);
   {
     size_t len = self->a_byte_array_length;
-    const const uint8_t** data = self->a_byte_array;
+    const uint8_t* data = self->a_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -787,7 +787,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   }
   {
     size_t len = self->a4_byte_array_length;
-    const const int32_t** data = self->a4_byte_array;
+    const int32_t* data = self->a4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -796,7 +796,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   }
   {
     size_t len = self->a8_byte_array_length;
-    const const int64_t** data = self->a8_byte_array;
+    const int64_t* data = self->a8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
@@ -805,7 +805,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   }
   {
     size_t len = self->a_float_array_length;
-    const const double** data = self->a_float_array;
+    const double* data = self->a_float_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double(data[i]);
@@ -1831,7 +1831,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
                               : 0);
   {
     size_t len = self->a_nullable_byte_array_length;
-    const const uint8_t** data = self->a_nullable_byte_array;
+    const uint8_t* data = self->a_nullable_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -1840,7 +1840,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
   }
   {
     size_t len = self->a_nullable4_byte_array_length;
-    const const int32_t** data = self->a_nullable4_byte_array;
+    const int32_t* data = self->a_nullable4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -1849,7 +1849,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
   }
   {
     size_t len = self->a_nullable8_byte_array_length;
-    const const int64_t** data = self->a_nullable8_byte_array;
+    const int64_t* data = self->a_nullable8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
@@ -1858,7 +1858,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
   }
   {
     size_t len = self->a_nullable_float_array_length;
-    const const double** data = self->a_nullable_float_array;
+    const double* data = self->a_nullable_float_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double(data[i]);
@@ -2864,7 +2864,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
                               : 0);
   {
     size_t len = self->a_nullable_byte_array_length;
-    const const uint8_t** data = self->a_nullable_byte_array;
+    const uint8_t* data = self->a_nullable_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -2873,7 +2873,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
   }
   {
     size_t len = self->a_nullable4_byte_array_length;
-    const const int32_t** data = self->a_nullable4_byte_array;
+    const int32_t* data = self->a_nullable4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)data[i];
@@ -2882,7 +2882,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
   }
   {
     size_t len = self->a_nullable8_byte_array_length;
-    const const int64_t** data = self->a_nullable8_byte_array;
+    const int64_t* data = self->a_nullable8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
@@ -2891,7 +2891,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
   }
   {
     size_t len = self->a_nullable_float_array_length;
-    const const double** data = self->a_nullable_float_array;
+    const double* data = self->a_nullable_float_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
         result = result * 31 + flpigeon_hash_double(data[i]);

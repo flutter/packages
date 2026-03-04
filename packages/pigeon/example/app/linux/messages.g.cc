@@ -9,7 +9,7 @@
 #include <string.h>
 
 #include <cmath>
-static guint flpigeon_hash_double(double v) {
+static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   if (std::isnan(v)) return (guint)0x7FF80000;
   union {
     double d;
@@ -18,7 +18,7 @@ static guint flpigeon_hash_double(double v) {
   u.d = v;
   return (guint)(u.u ^ (u.u >> 32));
 }
-static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
+static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   if (a == b) return TRUE;
   if (a == nullptr || b == nullptr) return FALSE;
   if (fl_value_get_type(a) != fl_value_get_type(b)) {
@@ -81,7 +81,7 @@ static gboolean flpigeon_deep_equals(FlValue* a, FlValue* b) {
   }
   return FALSE;
 }
-static guint flpigeon_deep_hash(FlValue* value) {
+static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
   if (value == nullptr) return 0;
   switch (fl_value_get_type(value)) {
     case FL_VALUE_TYPE_BOOL:

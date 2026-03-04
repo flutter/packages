@@ -47,9 +47,9 @@ bool PigeonInternalDeepEquals(const std::vector<T>& a,
   return true;
 }
 
-template <typename T>
-bool PigeonInternalDeepEquals(const std::map<T, T>& a,
-                              const std::map<T, T>& b) {
+template <typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a,
+                              const std::map<K, V>& b) {
   if (a.size() != b.size()) return false;
   for (const auto& kv : a) {
     auto it = b.find(kv.first);
@@ -71,12 +71,25 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a,
   return PigeonInternalDeepEquals(*a, *b);
 }
 
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b) {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
 inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
                                      const ::flutter::EncodableValue& b) {
-  auto* da = std::get_if<double>(&a);
-  auto* db = std::get_if<double>(&b);
-  if (da && db) {
-    return PigeonInternalDeepEquals(*da, *db);
+  if (a.index() != b.index()) return false;
+  if (const double* da = std::get_if<double>(&a)) {
+    return PigeonInternalDeepEquals(*da, std::get<double>(b));
+  } else if (const ::flutter::EncodableList* la =
+                 std::get_if<::flutter::EncodableList>(&a)) {
+    return PigeonInternalDeepEquals(*la, std::get<::flutter::EncodableList>(b));
+  } else if (const ::flutter::EncodableMap* ma =
+                 std::get_if<::flutter::EncodableMap>(&a)) {
+    return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
   }
   return a == b;
 }
