@@ -340,7 +340,7 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-  /// Finds the highest available 4:3 resolution in terms of pixel count for the given device.
+  /// Finds the highest available non-square resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
     -> CaptureDeviceFormat?
@@ -351,6 +351,7 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
+    // These formats are compressed and lossy, and unsupported by the Flutter Engine.
     let unsupportedSubTypes: [FourCharCode] = [
       1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
     ]
@@ -366,12 +367,9 @@ final class DefaultCamera: NSObject, Camera {
       let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
-      let ratio =
-        Double(max(resolution.width, resolution.height))
-        / Double(min(resolution.width, resolution.height))
-      let is4x3 = abs(ratio - 4.0 / 3.0) < 0.05
 
-      if !is4x3 {
+      // Guard against 1:1 resolutions provided by the iPhone 17 centre stage sensor.
+      if height == width {
         continue
       }
 
