@@ -50,5 +50,15 @@ TEST(EqualityTests, NestedNaNEquality) {
   EXPECT_EQ(all1, all2);
 }
 
+TEST(EqualityTests, SignedZeroEquality) {
+  AllNullableTypes all1;
+  all1.set_a_nullable_double(0.0);
+
+  AllNullableTypes all2;
+  all2.set_a_nullable_double(-0.0);
+
+  EXPECT_NE(all1, all2);
+}
+
 }  // namespace test
 }  // namespace test_plugin

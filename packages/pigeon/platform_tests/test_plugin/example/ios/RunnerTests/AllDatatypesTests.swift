@@ -261,7 +261,7 @@ struct AllDatatypesTests {
   func signedZeroEquality() {
     let a = AllNullableTypes(aNullableDouble: 0.0)
     let b = AllNullableTypes(aNullableDouble: -0.0)
-    #expect(a == b)
+    #expect(a != b)
 
     var hasherA = Hasher()
     a.hash(into: &hasherA)
@@ -271,6 +271,6 @@ struct AllDatatypesTests {
     b.hash(into: &hasherB)
     let hashB = hasherB.finalize()
 
-    #expect(hashA == hashB)
+    #expect(hashA != hashB)
   }
 }

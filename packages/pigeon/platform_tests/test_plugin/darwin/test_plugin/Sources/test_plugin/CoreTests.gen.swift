@@ -99,18 +99,29 @@ func deepEqualsCoreTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
     }
     return true
 
-  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (key, lhsValue) in lhsDictionary {
-      guard let rhsValue = rhsDictionary[key] else { return false }
-      if !deepEqualsCoreTests(lhsValue, rhsValue) {
+  case (let lhsArray, let rhsArray) as ([Double], [Double]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEqualsCoreTests(element, rhsArray[index]) {
         return false
       }
     }
     return true
 
-  case (let lhs as Double, let rhs as Double) where lhs.isNaN && rhs.isNaN:
+  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (key, lhsValue) in lhsDictionary {
+      guard let rhsIndex = rhsDictionary.index(forKey: key) else { return false }
+      let rhsKey = rhsDictionary[rhsIndex].key
+      let rhsValue = rhsDictionary[rhsIndex].value
+      if !deepEqualsCoreTests(key, rhsKey) || !deepEqualsCoreTests(lhsValue, rhsValue) {
+        return false
+      }
+    }
     return true
+
+  case (let lhs as Double, let rhs as Double):
+    return (lhs.isNaN && rhs.isNaN) || lhs.bitPattern == rhs.bitPattern
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -123,17 +134,30 @@ func deepEqualsCoreTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
 func deepHashCoreTests(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
-    if let doubleValue = cleanValue as? Double, doubleValue.isNaN {
-      hasher.combine(0x7FF8_0000_0000_0000)
+    if let doubleValue = cleanValue as? Double {
+      if doubleValue.isNaN {
+        hasher.combine(0x7FF8_0000_0000_0000)
+      } else {
+        hasher.combine(doubleValue.bitPattern)
+      }
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         deepHashCoreTests(value: item, hasher: &hasher)
       }
-    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
-      for key in valueDict.keys.sorted(by: { String(describing: $0) < String(describing: $1) }) {
-        hasher.combine(key)
-        deepHashCoreTests(value: valueDict[key]!, hasher: &hasher)
+    } else if let valueList = cleanValue as? [Double] {
+      for item in valueList {
+        deepHashCoreTests(value: item, hasher: &hasher)
       }
+    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+      var result = 0
+      for (key, value) in valueDict {
+        var entryKeyHasher = Hasher()
+        deepHashCoreTests(value: key, hasher: &entryKeyHasher)
+        var entryValueHasher = Hasher()
+        deepHashCoreTests(value: value, hasher: &entryValueHasher)
+        result = result &+ (entryKeyHasher.finalize() ^ entryValueHasher.finalize())
+      }
+      hasher.combine(result)
     } else if let hashableValue = cleanValue as? AnyHashable {
       hasher.combine(hashableValue)
     } else {

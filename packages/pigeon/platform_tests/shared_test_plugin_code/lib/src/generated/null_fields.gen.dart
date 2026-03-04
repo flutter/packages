@@ -52,10 +52,19 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
-  if (identical(a, b) || a == b) {
+  if (identical(a, b)) {
     return true;
   }
-  if (a is double && b is double && a.isNaN && b.isNaN) {
+  if (a is double && b is double) {
+    if (a.isNaN && b.isNaN) {
+      return true;
+    }
+    if (a == 0.0 && b == 0.0) {
+      return identical(a, b);
+    }
+    return a == b;
+  }
+  if (a == b) {
     return true;
   }
   if (a is List && b is List) {
@@ -65,12 +74,32 @@ bool _deepEquals(Object? a, Object? b) {
         );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length &&
-        a.entries.every(
-          (MapEntry<Object?, Object?> entry) =>
-              (b as Map<Object?, Object?>).containsKey(entry.key) &&
-              _deepEquals(entry.value, b[entry.key]),
-        );
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final MapEntry<Object?, Object?> entry in a.entries) {
+      if (!b.containsKey(entry.key)) {
+        return false;
+      }
+      if (entry.key is double && entry.key == 0.0) {
+        // Standard Map lookup for 0.0 might find -0.0 in Dart.
+        // We must verify the actual key is identical.
+        bool foundIdentical = false;
+        for (final Object? keyB in b.keys) {
+          if (identical(entry.key, keyB)) {
+            foundIdentical = true;
+            break;
+          }
+        }
+        if (!foundIdentical) {
+          return false;
+        }
+      }
+      if (!_deepEquals(entry.value, b[entry.key])) {
+        return false;
+      }
+    }
+    return true;
   }
   return false;
 }
@@ -81,11 +110,16 @@ int _deepHash(Object? value) {
   } else if (value is Map) {
     int result = 0;
     for (final MapEntry<Object?, Object?> entry in value.entries) {
-      result += Object.hash(_deepHash(entry.key), _deepHash(entry.value));
+      result += _deepHash(entry.key) ^ _deepHash(entry.value);
     }
     return result;
-  } else if (value is double && value.isNaN) {
-    return 0x7FF8000000000000.hashCode;
+  } else if (value is double) {
+    if (value.isNaN) {
+      return 0x7FF8000000000000.hashCode;
+    }
+    if (value == 0.0 && value.isNegative) {
+      return 0x8000000000000000.hashCode;
+    }
   }
   return value.hashCode;
 }

@@ -18,6 +18,12 @@ static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   u.d = v;
   return (guint)(u.u ^ (u.u >> 32));
 }
+static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
+  if (a == b) {
+    return a != 0.0 || std::signbit(a) == std::signbit(b);
+  }
+  return std::isnan(a) && std::isnan(b);
+}
 static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   if (a == b) return TRUE;
   if (a == nullptr || b == nullptr) return FALSE;
@@ -30,12 +36,8 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
     case FL_VALUE_TYPE_INT:
       return fl_value_get_int(a) == fl_value_get_int(b);
     case FL_VALUE_TYPE_FLOAT: {
-      double va = fl_value_get_float(a);
-      double vb = fl_value_get_float(b);
-      if (va == vb) {
-        return va != 0.0 || std::signbit(va) == std::signbit(vb);
-      }
-      return std::isnan(va) && std::isnan(vb);
+      return flpigeon_equals_double(fl_value_get_float(a),
+                                    fl_value_get_float(b));
     }
     case FL_VALUE_TYPE_STRING:
       return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;

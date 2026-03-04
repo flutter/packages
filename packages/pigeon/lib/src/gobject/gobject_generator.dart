@@ -1185,13 +1185,13 @@ class GObjectSourceGenerator
               () {},
             );
             indent.writeScoped(
-              'if (a->$fieldName != nullptr && !(*a->$fieldName == *b->$fieldName || (std::isnan(*a->$fieldName) && std::isnan(*b->$fieldName)))) return FALSE;',
+              'if (a->$fieldName != nullptr && !flpigeon_equals_double(*a->$fieldName, *b->$fieldName)) return FALSE;',
               '',
               () {},
             );
           } else {
             indent.writeScoped(
-              'if (!(a->$fieldName == b->$fieldName || (std::isnan(a->$fieldName) && std::isnan(b->$fieldName)))) {',
+              'if (!flpigeon_equals_double(a->$fieldName, b->$fieldName)) {',
               '}',
               () {
                 indent.writeln('return FALSE;');
@@ -2801,6 +2801,18 @@ void _writeHashHelpers(Indent indent) {
       indent.writeln('return (guint)(u.u ^ (u.u >> 32));');
     },
   );
+  indent.writeScoped(
+    'static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {',
+    '}',
+    () {
+      indent.writeScoped('if (a == b) {', '}', () {
+        indent.writeln(
+          'return a != 0.0 || std::signbit(a) == std::signbit(b);',
+        );
+      });
+      indent.writeln('return std::isnan(a) && std::isnan(b);');
+    },
+  );
 }
 
 void _writeDeepEquals(Indent indent) {
@@ -2825,14 +2837,9 @@ void _writeDeepEquals(Indent indent) {
         indent.writeln('case FL_VALUE_TYPE_INT:');
         indent.writeln('  return fl_value_get_int(a) == fl_value_get_int(b);');
         indent.writeln('case FL_VALUE_TYPE_FLOAT: {');
-        indent.writeln('  double va = fl_value_get_float(a);');
-        indent.writeln('  double vb = fl_value_get_float(b);');
-        indent.writeScoped('if (va == vb) {', '}', () {
-          indent.writeln(
-            'return va != 0.0 || std::signbit(va) == std::signbit(vb);',
-          );
-        });
-        indent.writeln('return std::isnan(va) && std::isnan(vb);');
+        indent.writeln(
+          '  return flpigeon_equals_double(fl_value_get_float(a), fl_value_get_float(b));',
+        );
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_STRING:');
         indent.writeln(

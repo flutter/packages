@@ -1082,7 +1082,7 @@ void main() {
       expect(
         code,
         contains(
-          'if (!(a->some_double == b->some_double || (std::isnan(a->some_double) && std::isnan(b->some_double)))) {',
+          'if (!flpigeon_equals_double(a->some_double, b->some_double)) {',
         ),
       );
       expect(

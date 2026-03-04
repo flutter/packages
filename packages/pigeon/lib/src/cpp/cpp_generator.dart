@@ -1131,7 +1131,8 @@ bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b) 
 }
 
 inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
-  return a == b || (std::isnan(a) && std::isnan(b));
+  if (a == b) return a != 0.0 || std::signbit(a) == std::signbit(b);
+  return std::isnan(a) && std::isnan(b);
 }
 
 template<typename T>

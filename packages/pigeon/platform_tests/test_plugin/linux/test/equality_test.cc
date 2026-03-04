@@ -133,3 +133,26 @@ TEST(Equality, AllTypesNumericLists) {
   EXPECT_NE(core_tests_pigeon_test_all_types_hash(all1),
             core_tests_pigeon_test_all_types_hash(all3));
 }
+
+TEST(Equality, SignedZero) {
+  double p_zero = 0.0;
+  double n_zero = -0.0;
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all1 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, &p_zero, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all2 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, &n_zero, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
+
+  EXPECT_FALSE(core_tests_pigeon_test_all_nullable_types_equals(all1, all2));
+  EXPECT_NE(core_tests_pigeon_test_all_nullable_types_hash(all1),
+            core_tests_pigeon_test_all_nullable_types_hash(all2));
+}

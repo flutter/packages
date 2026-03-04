@@ -19,6 +19,12 @@ static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   u.d = v;
   return (guint)(u.u ^ (u.u >> 32));
 }
+static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
+  if (a == b) {
+    return a != 0.0 || std::signbit(a) == std::signbit(b);
+  }
+  return std::isnan(a) && std::isnan(b);
+}
 static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   if (a == b) return TRUE;
   if (a == nullptr || b == nullptr) return FALSE;
@@ -31,12 +37,8 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
     case FL_VALUE_TYPE_INT:
       return fl_value_get_int(a) == fl_value_get_int(b);
     case FL_VALUE_TYPE_FLOAT: {
-      double va = fl_value_get_float(a);
-      double vb = fl_value_get_float(b);
-      if (va == vb) {
-        return va != 0.0 || std::signbit(va) == std::signbit(vb);
-      }
-      return std::isnan(va) && std::isnan(vb);
+      return flpigeon_equals_double(fl_value_get_float(a),
+                                    fl_value_get_float(b));
     }
     case FL_VALUE_TYPE_STRING:
       return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;
@@ -671,8 +673,7 @@ gboolean core_tests_pigeon_test_all_types_equals(
   if (a->an_int64 != b->an_int64) {
     return FALSE;
   }
-  if (!(a->a_double == b->a_double ||
-        (std::isnan(a->a_double) && std::isnan(b->a_double)))) {
+  if (!flpigeon_equals_double(a->a_double, b->a_double)) {
     return FALSE;
   }
   if (a->a_byte_array != b->a_byte_array) {
@@ -1692,9 +1693,7 @@ gboolean core_tests_pigeon_test_all_nullable_types_equals(
   if ((a->a_nullable_double == nullptr) != (b->a_nullable_double == nullptr))
     return FALSE;
   if (a->a_nullable_double != nullptr &&
-      !(*a->a_nullable_double == *b->a_nullable_double ||
-        (std::isnan(*a->a_nullable_double) &&
-         std::isnan(*b->a_nullable_double))))
+      !flpigeon_equals_double(*a->a_nullable_double, *b->a_nullable_double))
     return FALSE;
   if (a->a_nullable_byte_array != b->a_nullable_byte_array) {
     if (a->a_nullable_byte_array == nullptr ||
@@ -2734,9 +2733,7 @@ gboolean core_tests_pigeon_test_all_nullable_types_without_recursion_equals(
   if ((a->a_nullable_double == nullptr) != (b->a_nullable_double == nullptr))
     return FALSE;
   if (a->a_nullable_double != nullptr &&
-      !(*a->a_nullable_double == *b->a_nullable_double ||
-        (std::isnan(*a->a_nullable_double) &&
-         std::isnan(*b->a_nullable_double))))
+      !flpigeon_equals_double(*a->a_nullable_double, *b->a_nullable_double))
     return FALSE;
   if (a->a_nullable_byte_array != b->a_nullable_byte_array) {
     if (a->a_nullable_byte_array == nullptr ||
