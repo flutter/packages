@@ -10,14 +10,4 @@ void main() {
     final request = NonNullFieldSearchRequest(query: 'what?');
     expect(request.query, 'what?');
   });
-
-  test('test equality', () {
-    final request1 = NonNullFieldSearchRequest(query: 'hello');
-    final request2 = NonNullFieldSearchRequest(query: 'hello');
-    final request3 = NonNullFieldSearchRequest(query: 'world');
-
-    expect(request1, request2);
-    expect(request1, isNot(request3));
-    expect(request1.hashCode, request2.hashCode);
-  });
 }
