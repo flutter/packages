@@ -2835,6 +2835,8 @@ void _writeDeepEquals(Indent indent) {
         },
       );
       indent.writeScoped('switch (fl_value_get_type(a)) {', '}', () {
+        indent.writeln('case FL_VALUE_TYPE_NULL:');
+        indent.writeln('  return TRUE;');
         indent.writeln('case FL_VALUE_TYPE_BOOL:');
         indent.writeln(
           '  return fl_value_get_bool(a) == fl_value_get_bool(b);',
@@ -2939,6 +2941,8 @@ void _writeDeepHash(Indent indent) {
     () {
       indent.writeln('if (value == nullptr) return 0;');
       indent.writeScoped('switch (fl_value_get_type(value)) {', '}', () {
+        indent.writeln('case FL_VALUE_TYPE_NULL:');
+        indent.writeln('  return 0;');
         indent.writeln('case FL_VALUE_TYPE_BOOL:');
         indent.writeln('  return fl_value_get_bool(value) ? 1231 : 1237;');
         indent.writeln('case FL_VALUE_TYPE_INT: {');

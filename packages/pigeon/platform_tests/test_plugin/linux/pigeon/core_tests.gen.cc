@@ -30,6 +30,8 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
     return FALSE;
   }
   switch (fl_value_get_type(a)) {
+    case FL_VALUE_TYPE_NULL:
+      return TRUE;
     case FL_VALUE_TYPE_BOOL:
       return fl_value_get_bool(a) == fl_value_get_bool(b);
     case FL_VALUE_TYPE_INT:
@@ -101,6 +103,8 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
 static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
   if (value == nullptr) return 0;
   switch (fl_value_get_type(value)) {
+    case FL_VALUE_TYPE_NULL:
+      return 0;
     case FL_VALUE_TYPE_BOOL:
       return fl_value_get_bool(value) ? 1231 : 1237;
     case FL_VALUE_TYPE_INT: {
