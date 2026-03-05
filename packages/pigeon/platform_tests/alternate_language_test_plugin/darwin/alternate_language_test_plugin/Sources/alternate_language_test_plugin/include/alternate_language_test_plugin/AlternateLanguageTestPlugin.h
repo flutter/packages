@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if TARGET_OS_OSX
+#if !defined(TARGET_OS_OSX) || TARGET_OS_OSX == 1
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
