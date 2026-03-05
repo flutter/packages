@@ -489,11 +489,15 @@ void main() {
 
     test('Fail if CHANGELOG list items have a blank line', () async {
       const String version = '1.0.1';
-      final RepositoryPackage plugin =
-          createFakePlugin('plugin', packagesDir, version: version);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        version: version,
+      );
 
       // Blank line breaks the list items.
-      const String changelog = '''
+      const String changelog =
+          '''
 ## $version
 
 * First item.
@@ -504,14 +508,16 @@ void main() {
       plugin.changelogFile.writeAsStringSync(changelog);
       gitProcessRunner.mockProcessesForExecutable['git-show'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-      ];
+            FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+          ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['version-check', '--base-sha=main'],
-          errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['version-check', '--base-sha=main'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
@@ -523,14 +529,19 @@ void main() {
       );
     });
 
-    test('Fail if CHANGELOG list items have a blank line with nested items',
-        () async {
-      const String version = '1.0.1';
-      final RepositoryPackage plugin =
-          createFakePlugin('plugin', packagesDir, version: version);
+    test(
+      'Fail if CHANGELOG list items have a blank line with nested items',
+      () async {
+        const String version = '1.0.1';
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          version: version,
+        );
 
-      // Blank line in nested list items.
-      const String changelog = '''
+        // Blank line in nested list items.
+        const String changelog =
+            '''
 ## $version
 
 * Top level item.
@@ -539,27 +550,30 @@ void main() {
   * Nested item B.
 * Another top level item.
 ''';
-      plugin.changelogFile.writeAsStringSync(changelog);
-      gitProcessRunner.mockProcessesForExecutable['git-show'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-      ];
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['version-check', '--base-sha=main'],
+        plugin.changelogFile.writeAsStringSync(changelog);
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
-        commandError = e;
-      });
+            commandError = e;
+          },
+        );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Blank lines found between list items in CHANGELOG.'),
-          contains('CHANGELOG.md failed validation.'),
-        ]),
-      );
-    });
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Blank lines found between list items in CHANGELOG.'),
+            contains('CHANGELOG.md failed validation.'),
+          ]),
+        );
+      },
+    );
 
     test(
       'Fail if pubspec version only matches an older version listed in CHANGELOG',

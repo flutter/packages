@@ -552,9 +552,10 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       if (isListItem) {
         if (seenBlankLineInList) {
           printError(
-              '${indentation}Blank lines found between list items in CHANGELOG.\n'
-              '${indentation}This creates multiple separate lists on pub.dev.\n'
-              '${indentation}Remove blank lines to keep all items in a single list.');
+            '${indentation}Blank lines found between list items in CHANGELOG.\n'
+            '${indentation}This creates multiple separate lists on pub.dev.\n'
+            '${indentation}Remove blank lines to keep all items in a single list.',
+          );
           return false;
         }
         inList = true;
