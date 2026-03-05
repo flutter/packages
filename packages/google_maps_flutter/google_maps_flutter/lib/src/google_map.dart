@@ -390,6 +390,13 @@ class GoogleMap extends StatefulWidget {
   /// for more details.
   final String? mapId;
 
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+  String? get cloudMapId => mapId;
+
   /// Indicates whether map uses [AdvancedMarker]s or [Marker]s.
   ///
   /// [AdvancedMarker] and [Marker]s classes might not be related to each other
