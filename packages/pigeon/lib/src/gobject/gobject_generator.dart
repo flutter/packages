@@ -1149,12 +1149,12 @@ class GObjectSourceGenerator
                 '}',
                 () {
                   indent.writeln(
-                    'if (!flpigeon_equals_double(a->${fieldName}[i], b->${fieldName}[i])) return FALSE;',
+                    'if (!flpigeon_equals_double(a->$fieldName[i], b->$fieldName[i])) return FALSE;',
                   );
                 },
               );
             } else {
-              final String elementSize = field.type.baseName == 'Uint8List'
+              final elementSize = field.type.baseName == 'Uint8List'
                   ? 'sizeof(uint8_t)'
                   : field.type.baseName == 'Int32List'
                   ? 'sizeof(int32_t)'
