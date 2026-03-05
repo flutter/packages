@@ -1133,10 +1133,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('Hashing inequality across types with same values', (
       WidgetTester _,
     ) async {
+      final api = HostIntegrationCoreApi();
       final a = AllNullableTypes(aNullableInt: 42);
       final b = AllNullableTypesWithoutRecursion(aNullableInt: 42);
 
       expect(a.hashCode, isNot(b.hashCode));
+
+      expect(
+        await api.getAllNullableTypesHash(a),
+        isNot(await api.getAllNullableTypesWithoutRecursionHash(b)),
+      );
     });
   });
 

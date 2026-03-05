@@ -2899,10 +2899,28 @@ void _writeDeepEquals(Indent indent) {
         indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
           indent.writeln('FlValue* key = fl_value_get_map_key(a, i);');
           indent.writeln('FlValue* val = fl_value_get_map_value(a, i);');
-          indent.writeln('FlValue* b_val = fl_value_lookup(b, key);');
-          indent.writeln(
-            'if (b_val == nullptr || !flpigeon_deep_equals(val, b_val)) return FALSE;',
-          );
+          indent.writeln('gboolean found = FALSE;');
+          indent.writeScoped('for (size_t j = 0; j < len; j++) {', '}', () {
+            indent.writeln('FlValue* b_key = fl_value_get_map_key(b, j);');
+            indent.writeScoped(
+              'if (flpigeon_deep_equals(key, b_key)) {',
+              '}',
+              () {
+                indent.writeln(
+                  'FlValue* b_val = fl_value_get_map_value(b, j);',
+                );
+                indent.writeScoped(
+                  'if (flpigeon_deep_equals(val, b_val)) {',
+                  '}',
+                  () {
+                    indent.writeln('found = TRUE;');
+                    indent.writeln('break;');
+                  },
+                );
+              },
+            );
+          });
+          indent.writeln('if (!found) return FALSE;');
         });
         indent.writeln('  return TRUE;');
         indent.writeln('}');

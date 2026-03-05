@@ -490,18 +490,40 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
             indent.writeln('Map<?, ?> mapA = (Map<?, ?>) a;');
             indent.writeln('Map<?, ?> mapB = (Map<?, ?>) b;');
             indent.writeln('if (mapA.size() != mapB.size()) { return false; }');
-            indent.writeScoped('for (Object key : mapA.keySet()) {', '}', () {
-              indent.writeScoped('if (!mapB.containsKey(key)) {', '}', () {
-                indent.writeln('return false;');
-              });
-              indent.writeScoped(
-                'if (!pigeonDeepEquals(mapA.get(key), mapB.get(key))) {',
-                '}',
-                () {
+            indent.writeScoped(
+              'for (Map.Entry<?, ?> entryA : mapA.entrySet()) {',
+              '}',
+              () {
+                indent.writeln('Object keyA = entryA.getKey();');
+                indent.writeln('Object valueA = entryA.getValue();');
+                indent.writeln('boolean found = false;');
+                indent.writeScoped(
+                  'for (Map.Entry<?, ?> entryB : mapB.entrySet()) {',
+                  '}',
+                  () {
+                    indent.writeln('Object keyB = entryB.getKey();');
+                    indent.writeScoped(
+                      'if (pigeonDeepEquals(keyA, keyB)) {',
+                      '}',
+                      () {
+                        indent.writeln('Object valueB = entryB.getValue();');
+                        indent.writeScoped(
+                          'if (pigeonDeepEquals(valueA, valueB)) {',
+                          '}',
+                          () {
+                            indent.writeln('found = true;');
+                            indent.writeln('break;');
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+                indent.writeScoped('if (!found) {', '}', () {
                   indent.writeln('return false;');
-                },
-              );
-            });
+                });
+              },
+            );
             indent.writeln('return true;');
           },
         );

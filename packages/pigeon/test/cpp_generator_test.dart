@@ -2792,6 +2792,10 @@ void main() {
         contains('result = result * 31 + PigeonInternalDeepHash(field1_);'),
       );
       expect(code, contains('size_t PigeonInternalDeepHash(const Input& v) {'));
+      expect(
+        code,
+        contains('result = result * 31 + PigeonInternalDeepHash(val);'),
+      );
     }
   });
 }

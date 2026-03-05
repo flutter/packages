@@ -212,6 +212,12 @@
   return @([value hash]);
 }
 
+- (nullable NSNumber *)
+    getAllNullableTypesWithoutRecursionHashValue:(FLTAllNullableTypesWithoutRecursion *)value
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([value hash]);
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(FLTAllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.allNullableTypes.aNullableString;

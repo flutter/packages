@@ -73,6 +73,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull Long getAllNullableTypesWithoutRecursionHash(
+      @NonNull AllNullableTypesWithoutRecursion value) {
+    return (long) value.hashCode();
+  }
+
+  @Override
   public @Nullable AllNullableTypesWithoutRecursion echoAllNullableTypesWithoutRecursion(
       @Nullable AllNullableTypesWithoutRecursion everything) {
     return everything;

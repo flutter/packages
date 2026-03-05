@@ -45,10 +45,21 @@ static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
     if (dictA.count != dictB.count) {
       return NO;
     }
-    for (id key in dictA) {
-      id valueA = dictA[key];
-      id valueB = dictB[key];
-      if (!FLTPigeonDeepEquals(valueA, valueB)) {
+    for (id keyA in dictA) {
+      id valueA = dictA[keyA];
+      BOOL found = NO;
+      for (id keyB in dictB) {
+        if (FLTPigeonDeepEquals(keyA, keyB)) {
+          id valueB = dictB[keyB];
+          if (FLTPigeonDeepEquals(valueA, valueB)) {
+            found = YES;
+            break;
+          } else {
+            return NO;
+          }
+        }
+      }
+      if (!found) {
         return NO;
       }
     }

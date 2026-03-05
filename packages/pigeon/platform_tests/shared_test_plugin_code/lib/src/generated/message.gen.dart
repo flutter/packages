@@ -70,11 +70,19 @@ bool _deepEquals(Object? a, Object? b) {
     if (a.length != b.length) {
       return false;
     }
-    for (final MapEntry<Object?, Object?> entry in a.entries) {
-      if (!b.containsKey(entry.key)) {
-        return false;
+    for (final MapEntry<Object?, Object?> entryA in a.entries) {
+      bool found = false;
+      for (final MapEntry<Object?, Object?> entryB in b.entries) {
+        if (_deepEquals(entryA.key, entryB.key)) {
+          if (_deepEquals(entryA.value, entryB.value)) {
+            found = true;
+            break;
+          } else {
+            return false;
+          }
+        }
       }
-      if (!_deepEquals(entry.value, b[entry.key])) {
+      if (!found) {
         return false;
       }
     }

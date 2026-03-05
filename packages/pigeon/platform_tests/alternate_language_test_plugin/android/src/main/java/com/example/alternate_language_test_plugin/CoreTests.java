@@ -76,11 +76,21 @@ public class CoreTests {
       if (mapA.size() != mapB.size()) {
         return false;
       }
-      for (Object key : mapA.keySet()) {
-        if (!mapB.containsKey(key)) {
-          return false;
+      for (Map.Entry<?, ?> entryA : mapA.entrySet()) {
+        Object keyA = entryA.getKey();
+        Object valueA = entryA.getValue();
+        boolean found = false;
+        for (Map.Entry<?, ?> entryB : mapB.entrySet()) {
+          Object keyB = entryB.getKey();
+          if (pigeonDeepEquals(keyA, keyB)) {
+            Object valueB = entryB.getValue();
+            if (pigeonDeepEquals(valueA, valueB)) {
+              found = true;
+              break;
+            }
+          }
         }
-        if (!pigeonDeepEquals(mapA.get(key), mapB.get(key))) {
+        if (!found) {
           return false;
         }
       }

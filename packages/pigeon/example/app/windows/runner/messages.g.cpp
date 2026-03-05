@@ -75,9 +75,18 @@ bool PigeonInternalDeepEquals(const std::map<K, V>& a,
                               const std::map<K, V>& b) {
   if (a.size() != b.size()) return false;
   for (const auto& kv : a) {
-    auto it = b.find(kv.first);
-    if (it == b.end()) return false;
-    if (!PigeonInternalDeepEquals(kv.second, it->second)) return false;
+    bool found = false;
+    for (const auto& b_kv : b) {
+      if (PigeonInternalDeepEquals(kv.first, b_kv.first)) {
+        if (PigeonInternalDeepEquals(kv.second, b_kv.second)) {
+          found = true;
+          break;
+        } else {
+          return false;
+        }
+      }
+    }
+    if (!found) return false;
   }
   return true;
 }
@@ -199,7 +208,7 @@ inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
                         !std::is_same_v<T, ::flutter::EncodableMap> &&
                         !std::is_same_v<T, std::monostate> &&
                         !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
-            result = result * 31 + std::hash<T>()(val);
+            result = result * 31 + PigeonInternalDeepHash(val);
           }
         },
         v);

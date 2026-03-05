@@ -1548,13 +1548,19 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
 
   case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
     guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (key, lhsValue) in lhsDictionary {
-      guard let rhsIndex = rhsDictionary.index(forKey: key) else { return false }
-      let rhsKey = rhsDictionary[rhsIndex].key
-      let rhsValue = rhsDictionary[rhsIndex].value
-      if !$deepEqualsName(key, rhsKey) || !$deepEqualsName(lhsValue, rhsValue) {
-        return false
+    for (lhsKey, lhsValue) in lhsDictionary {
+      var found = false
+      for (rhsKey, rhsValue) in rhsDictionary {
+        if $deepEqualsName(lhsKey, rhsKey) {
+          if $deepEqualsName(lhsValue, rhsValue) {
+            found = true
+            break
+          } else {
+            return false
+          }
+        }
       }
+      if !found { return false }
     }
     return true
 

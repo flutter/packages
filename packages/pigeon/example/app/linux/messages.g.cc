@@ -77,8 +77,18 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
       for (size_t i = 0; i < len; i++) {
         FlValue* key = fl_value_get_map_key(a, i);
         FlValue* val = fl_value_get_map_value(a, i);
-        FlValue* b_val = fl_value_lookup(b, key);
-        if (b_val == nullptr || !flpigeon_deep_equals(val, b_val)) return FALSE;
+        gboolean found = FALSE;
+        for (size_t j = 0; j < len; j++) {
+          FlValue* b_key = fl_value_get_map_key(b, j);
+          if (flpigeon_deep_equals(key, b_key)) {
+            FlValue* b_val = fl_value_get_map_value(b, j);
+            if (flpigeon_deep_equals(val, b_val)) {
+              found = TRUE;
+              break;
+            }
+          }
+        }
+        if (!found) return FALSE;
       }
       return TRUE;
     }

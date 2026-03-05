@@ -59,15 +59,19 @@ func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 
   case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
     guard lhsDictionary.count == rhsDictionary.count else { return false }
-    for (key, lhsValue) in lhsDictionary {
-      guard let rhsIndex = rhsDictionary.index(forKey: key) else { return false }
-      let rhsKey = rhsDictionary[rhsIndex].key
-      let rhsValue = rhsDictionary[rhsIndex].value
-      if !deepEqualsEventChannelMessages(key, rhsKey)
-        || !deepEqualsEventChannelMessages(lhsValue, rhsValue)
-      {
-        return false
+    for (lhsKey, lhsValue) in lhsDictionary {
+      var found = false
+      for (rhsKey, rhsValue) in rhsDictionary {
+        if deepEqualsEventChannelMessages(lhsKey, rhsKey) {
+          if deepEqualsEventChannelMessages(lhsValue, rhsValue) {
+            found = true
+            break
+          } else {
+            return false
+          }
+        }
       }
+      if !found { return false }
     }
     return true
 
