@@ -44,7 +44,15 @@ public class Messages {
       return Arrays.equals((long[]) a, (long[]) b);
     }
     if (a instanceof double[] && b instanceof double[]) {
-      return Arrays.equals((double[]) a, (double[]) b);
+      double[] da = (double[]) a;
+      double[] db = (double[]) b;
+      if (da.length != db.length) return false;
+      for (int i = 0; i < da.length; i++) {
+        if (!pigeonDeepEquals(da[i], db[i])) {
+          return false;
+        }
+      }
+      return true;
     }
     if (a instanceof List && b instanceof List) {
       List<?> listA = (List<?>) a;
@@ -75,6 +83,12 @@ public class Messages {
       }
       return true;
     }
+    if (a instanceof Double && b instanceof Double) {
+      return (double) a == (double) b || (Double.isNaN((double) a) && Double.isNaN((double) b));
+    }
+    if (a instanceof Float && b instanceof Float) {
+      return (float) a == (float) b || (Float.isNaN((float) a) && Float.isNaN((float) b));
+    }
     return a.equals(b);
   }
 
@@ -92,7 +106,12 @@ public class Messages {
       return Arrays.hashCode((long[]) value);
     }
     if (value instanceof double[]) {
-      return Arrays.hashCode((double[]) value);
+      double[] da = (double[]) value;
+      int result = 1;
+      for (double d : da) {
+        result = 31 * result + pigeonDeepHashCode(d);
+      }
+      return result;
     }
     if (value instanceof List) {
       int result = 1;
@@ -114,6 +133,17 @@ public class Messages {
         result = 31 * result + pigeonDeepHashCode(item);
       }
       return result;
+    }
+    if (value instanceof Double) {
+      double d = (double) value;
+      if (d == 0.0) d = 0.0;
+      long bits = Double.doubleToLongBits(d);
+      return (int) (bits ^ (bits >>> 32));
+    }
+    if (value instanceof Float) {
+      float f = (float) value;
+      if (f == 0.0f) f = 0.0f;
+      return Float.floatToIntBits(f);
     }
     return value.hashCode();
   }

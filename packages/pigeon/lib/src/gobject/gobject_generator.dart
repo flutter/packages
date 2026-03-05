@@ -2805,6 +2805,7 @@ void _writeHashHelpers(Indent indent) {
     '}',
     () {
       indent.writeln('if (std::isnan(v)) return (guint)0x7FF80000;');
+      indent.writeln('if (v == 0.0) v = 0.0;');
       indent.writeln('union { double d; uint64_t u; } u;');
       indent.writeln('u.d = v;');
       indent.writeln('return (guint)(u.u ^ (u.u >> 32));');

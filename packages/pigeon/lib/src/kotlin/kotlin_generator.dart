@@ -1360,10 +1360,18 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
     return a.contentEquals(b)
   }
   if (a is DoubleArray && b is DoubleArray) {
-    return a.contentEquals(b)
+    if (a.size != b.size) return false
+    for (i in a.indices) {
+      if (!deepEquals(a[i], b[i])) return false
+    }
+    return true
   }
   if (a is FloatArray && b is FloatArray) {
-    return a.contentEquals(b)
+    if (a.size != b.size) return false
+    for (i in a.indices) {
+      if (!deepEquals(a[i], b[i])) return false
+    }
+    return true
   }
   if (a is Array<*> && b is Array<*>) {
     return a.contentDeepEquals(b)
@@ -1378,6 +1386,12 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
       deepEquals(it.value, b[it.key])
     }
   }
+  if (a is Double && b is Double) {
+    return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
+  }
+  if (a is Float && b is Float) {
+    return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) || (a.isNaN() && b.isNaN())
+  }
   return a == b
 }
 ''');
@@ -1391,8 +1405,20 @@ fun deepHash(value: Any?): Int {
     is ByteArray -> value.contentHashCode()
     is IntArray -> value.contentHashCode()
     is LongArray -> value.contentHashCode()
-    is DoubleArray -> value.contentHashCode()
-    is FloatArray -> value.contentHashCode()
+    is DoubleArray -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + deepHash(item)
+      }
+      result
+    }
+    is FloatArray -> {
+      var result = 1
+      for (item in value) {
+        result = 31 * result + deepHash(item)
+      }
+      result
+    }
     is Array<*> -> value.contentDeepHashCode()
     is List<*> -> {
       var result = 1
@@ -1407,6 +1433,15 @@ fun deepHash(value: Any?): Int {
         result += (deepHash(entry.key) xor deepHash(entry.value))
       }
       result
+    }
+    is Double -> {
+      val d = if (value == 0.0) 0.0 else value
+      val bits = java.lang.Double.doubleToLongBits(d)
+      (bits xor (bits ushr 32)).toInt()
+    }
+    is Float -> {
+      val f = if (value == 0.0f) 0.0f else value
+      java.lang.Float.floatToIntBits(f)
     }
     else -> value.hashCode()
   }

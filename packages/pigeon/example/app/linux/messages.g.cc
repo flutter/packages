@@ -11,6 +11,7 @@
 #include <cmath>
 static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
   if (std::isnan(v)) return (guint)0x7FF80000;
+  if (v == 0.0) v = 0.0;
   union {
     double d;
     uint64_t u;

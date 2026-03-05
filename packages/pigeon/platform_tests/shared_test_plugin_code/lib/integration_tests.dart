@@ -1024,6 +1024,34 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String? receivedNullString = await api.echoNamedNullableString();
       expect(receivedNullString, null);
     });
+
+    testWidgets('Signed zero equality and hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: 0.0);
+      final b = AllNullableTypes(aNullableDouble: -0.0);
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+      final int hashA = await api.getAllNullableTypesHash(a);
+      final int hashB = await api.getAllNullableTypesHash(b);
+      expect(
+        hashA,
+        hashB,
+        reason: 'Hash codes for 0.0 and -0.0 should be equal',
+      );
+    });
+
+    testWidgets('NaN equality and hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: double.nan);
+      final b = AllNullableTypes(aNullableDouble: double.nan);
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+      final int hashA = await api.getAllNullableTypesHash(a);
+      final int hashB = await api.getAllNullableTypesHash(b);
+      expect(hashA, hashB, reason: 'Hash codes for two NaNs should be equal');
+    });
   });
 
   group('Host async API tests', () {

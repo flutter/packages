@@ -96,6 +96,9 @@ int _deepHash(Object? value) {
   if (value is double && value.isNaN) {
     return 0x7FF8000000000000.hashCode;
   }
+  if (value is double && value == 0.0) {
+    return 0.0.hashCode;
+  }
   return value.hashCode;
 }
 

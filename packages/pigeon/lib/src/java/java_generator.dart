@@ -439,7 +439,23 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           'if (a instanceof double[] && b instanceof double[]) {',
           '}',
           () {
-            indent.writeln('return Arrays.equals((double[]) a, (double[]) b);');
+            indent.writeln('double[] da = (double[]) a;');
+            indent.writeln('double[] db = (double[]) b;');
+            indent.writeln('if (da.length != db.length) return false;');
+            indent.writeScoped(
+              'for (int i = 0; i < da.length; i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDeepEquals(da[i], db[i])) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
           },
         );
         indent.writeScoped(
@@ -489,6 +505,24 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
             indent.writeln('return true;');
           },
         );
+        indent.writeScoped(
+          'if (a instanceof Double && b instanceof Double) {',
+          '}',
+          () {
+            indent.writeln(
+              'return ((double) a == 0.0 ? 0.0 : (double) a) == ((double) b == 0.0 ? 0.0 : (double) b) || (Double.isNaN((double) a) && Double.isNaN((double) b));',
+            );
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Float && b instanceof Float) {',
+          '}',
+          () {
+            indent.writeln(
+              'return ((float) a == 0.0f ? 0.0f : (float) a) == ((float) b == 0.0f ? 0.0f : (float) b) || (Float.isNaN((float) a) && Float.isNaN((float) b));',
+            );
+          },
+        );
         indent.writeln('return a.equals(b);');
       },
     );
@@ -508,7 +542,12 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         indent.writeln('return Arrays.hashCode((long[]) value);');
       });
       indent.writeScoped('if (value instanceof double[]) {', '}', () {
-        indent.writeln('return Arrays.hashCode((double[]) value);');
+        indent.writeln('double[] da = (double[]) value;');
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (double d : da) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(d);');
+        });
+        indent.writeln('return result;');
       });
       indent.writeScoped('if (value instanceof List) {', '}', () {
         indent.writeln('int result = 1;');
@@ -536,6 +575,17 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
         });
         indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Double) {', '}', () {
+        indent.writeln('double d = (double) value;');
+        indent.writeln('if (d == 0.0) d = 0.0;');
+        indent.writeln('long bits = Double.doubleToLongBits(d);');
+        indent.writeln('return (int) (bits ^ (bits >>> 32));');
+      });
+      indent.writeScoped('if (value instanceof Float) {', '}', () {
+        indent.writeln('float f = (float) value;');
+        indent.writeln('if (f == 0.0f) f = 0.0f;');
+        indent.writeln('return Float.floatToIntBits(f);');
       });
       indent.writeln('return value.hashCode();');
     });

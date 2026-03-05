@@ -256,10 +256,17 @@ internal class AllDatatypesTest {
   fun `zero equality`() {
     val a = AllNullableTypes(aNullableDouble = 0.0)
     val b = AllNullableTypes(aNullableDouble = -0.0)
-    // In Kotlin/Java, boxed 0.0 and -0.0 are NOT equal.
-    // This is consistent with their different hash codes.
-    assertNotEquals(a, b)
-    assertNotEquals(a.hashCode(), b.hashCode())
+    // In many platforms, 0.0 and -0.0 are treated as equal.
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `zero map key equality`() {
+    val a = AllNullableTypes(map = mapOf(0.0 to "a"))
+    val b = AllNullableTypes(map = mapOf(-0.0 to "a"))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
   }
 
   @Test

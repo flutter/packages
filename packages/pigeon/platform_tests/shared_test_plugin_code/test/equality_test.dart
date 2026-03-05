@@ -163,11 +163,13 @@ void main() {
       final v1 = AllNullableTypes(aNullableDouble: 0.0);
       final v2 = AllNullableTypes(aNullableDouble: -0.0);
       expect(v1, v2);
+      expect(v1.hashCode, v2.hashCode);
     });
     test('signed zero map key equality', () {
       final v1 = AllNullableTypes(map: <double, String>{0.0: 'a'});
       final v2 = AllNullableTypes(map: <double, String>{-0.0: 'a'});
       expect(v1, v2);
+      expect(v1.hashCode, v2.hashCode);
     });
 
     test(
