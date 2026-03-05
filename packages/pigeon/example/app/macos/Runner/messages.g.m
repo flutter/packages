@@ -23,10 +23,7 @@ static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
     NSNumber *na = (NSNumber *)a;
     NSNumber *nb = (NSNumber *)b;
-    if (na.doubleValue == nb.doubleValue) {
-      return (na.doubleValue != 0.0) || (signbit(na.doubleValue) == signbit(nb.doubleValue));
-    }
-    return isnan(na.doubleValue) && isnan(nb.doubleValue);
+    return na.doubleValue == nb.doubleValue || (isnan(na.doubleValue) && isnan(nb.doubleValue));
   }
   if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
     NSArray *arrayA = (NSArray *)a;
@@ -68,9 +65,6 @@ static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
     NSNumber *n = (NSNumber *)value;
     if (isnan(n.doubleValue)) {
       return (NSUInteger)0x7FF8000000000000;
-    }
-    if (n.doubleValue == 0.0 && signbit(n.doubleValue)) {
-      return (NSUInteger)0x8000000000000000;
     }
   }
   if ([value isKindOfClass:[NSArray class]]) {
