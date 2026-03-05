@@ -84,10 +84,12 @@ public class Messages {
       return true;
     }
     if (a instanceof Double && b instanceof Double) {
-      return (double) a == (double) b || (Double.isNaN((double) a) && Double.isNaN((double) b));
+      return ((double) a == 0.0 ? 0.0 : (double) a) == ((double) b == 0.0 ? 0.0 : (double) b)
+          || (Double.isNaN((double) a) && Double.isNaN((double) b));
     }
     if (a instanceof Float && b instanceof Float) {
-      return (float) a == (float) b || (Float.isNaN((float) a) && Float.isNaN((float) b));
+      return ((float) a == 0.0f ? 0.0f : (float) a) == ((float) b == 0.0f ? 0.0f : (float) b)
+          || (Float.isNaN((float) a) && Float.isNaN((float) b));
     }
     return a.equals(b);
   }

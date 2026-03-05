@@ -62,6 +62,17 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull Boolean areAllNullableTypesEqual(
+      @NonNull AllNullableTypes a, @NonNull AllNullableTypes b) {
+    return a.equals(b);
+  }
+
+  @Override
+  public @NonNull Long getAllNullableTypesHash(@NonNull AllNullableTypes value) {
+    return (long) value.hashCode();
+  }
+
+  @Override
   public @Nullable AllNullableTypesWithoutRecursion echoAllNullableTypesWithoutRecursion(
       @Nullable AllNullableTypesWithoutRecursion everything) {
     return everything;

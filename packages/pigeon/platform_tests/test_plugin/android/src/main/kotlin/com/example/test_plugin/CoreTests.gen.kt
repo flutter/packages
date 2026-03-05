@@ -11,16 +11,17 @@ package com.example.test_plugin
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object CoreTestsPigeonUtils {
 
   fun createConnectionError(channelName: String): FlutterError {
-    return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+    return FlutterError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  }
 
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
@@ -28,19 +29,15 @@ private object CoreTestsPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a === b) {
       return true
@@ -72,20 +69,18 @@ private object CoreTestsPigeonUtils {
       return a.contentDeepEquals(b)
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size &&
-          a.indices.all { deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is Map<*, *> && b is Map<*, *>) {
-      return a.size == b.size && a.all {
-        (b as Map<Any?, Any?>).contains(it.key) &&
-        deepEquals(it.value, b[it.key])
-      }
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     if (a is Double && b is Double) {
       return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
     }
     if (a is Float && b is Float) {
-      return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) || (a.isNaN() && b.isNaN())
+      return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) ||
+          (a.isNaN() && b.isNaN())
     }
     return a == b
   }
@@ -137,19 +132,19 @@ private object CoreTestsPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : Throwable()
 
 enum class AnEnum(val raw: Int) {
@@ -177,21 +172,20 @@ enum class AnotherEnum(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class UnusedClass (
-  val aField: Any? = null
-)
- {
+data class UnusedClass(val aField: Any? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): UnusedClass {
       val aField = pigeonVar_list[0]
       return UnusedClass(aField)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aField,
+        aField,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -215,37 +209,36 @@ data class UnusedClass (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AllTypes (
-  val aBool: Boolean,
-  val anInt: Long,
-  val anInt64: Long,
-  val aDouble: Double,
-  val aByteArray: ByteArray,
-  val a4ByteArray: IntArray,
-  val a8ByteArray: LongArray,
-  val aFloatArray: DoubleArray,
-  val anEnum: AnEnum,
-  val anotherEnum: AnotherEnum,
-  val aString: String,
-  val anObject: Any,
-  val list: List<Any?>,
-  val stringList: List<String>,
-  val intList: List<Long>,
-  val doubleList: List<Double>,
-  val boolList: List<Boolean>,
-  val enumList: List<AnEnum>,
-  val objectList: List<Any>,
-  val listList: List<List<Any?>>,
-  val mapList: List<Map<Any?, Any?>>,
-  val map: Map<Any, Any?>,
-  val stringMap: Map<String, String>,
-  val intMap: Map<Long, Long>,
-  val enumMap: Map<AnEnum, AnEnum>,
-  val objectMap: Map<Any, Any>,
-  val listMap: Map<Long, List<Any?>>,
-  val mapMap: Map<Long, Map<Any?, Any?>>
-)
- {
+data class AllTypes(
+    val aBool: Boolean,
+    val anInt: Long,
+    val anInt64: Long,
+    val aDouble: Double,
+    val aByteArray: ByteArray,
+    val a4ByteArray: IntArray,
+    val a8ByteArray: LongArray,
+    val aFloatArray: DoubleArray,
+    val anEnum: AnEnum,
+    val anotherEnum: AnotherEnum,
+    val aString: String,
+    val anObject: Any,
+    val list: List<Any?>,
+    val stringList: List<String>,
+    val intList: List<Long>,
+    val doubleList: List<Double>,
+    val boolList: List<Boolean>,
+    val enumList: List<AnEnum>,
+    val objectList: List<Any>,
+    val listList: List<List<Any?>>,
+    val mapList: List<Map<Any?, Any?>>,
+    val map: Map<Any, Any?>,
+    val stringMap: Map<String, String>,
+    val intMap: Map<Long, Long>,
+    val enumMap: Map<AnEnum, AnEnum>,
+    val objectMap: Map<Any, Any>,
+    val listMap: Map<Long, List<Any?>>,
+    val mapMap: Map<Long, Map<Any?, Any?>>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllTypes {
       val aBool = pigeonVar_list[0] as Boolean
@@ -276,41 +269,71 @@ data class AllTypes (
       val objectMap = pigeonVar_list[25] as Map<Any, Any>
       val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
       val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
-      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, anEnum, anotherEnum, aString, anObject, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap)
+      return AllTypes(
+          aBool,
+          anInt,
+          anInt64,
+          aDouble,
+          aByteArray,
+          a4ByteArray,
+          a8ByteArray,
+          aFloatArray,
+          anEnum,
+          anotherEnum,
+          aString,
+          anObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aBool,
-      anInt,
-      anInt64,
-      aDouble,
-      aByteArray,
-      a4ByteArray,
-      a8ByteArray,
-      aFloatArray,
-      anEnum,
-      anotherEnum,
-      aString,
-      anObject,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
+        aBool,
+        anInt,
+        anInt64,
+        aDouble,
+        aByteArray,
+        a4ByteArray,
+        a8ByteArray,
+        aFloatArray,
+        anEnum,
+        anotherEnum,
+        aString,
+        anObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -319,7 +342,34 @@ data class AllTypes (
       return true
     }
     val other = other as AllTypes
-    return CoreTestsPigeonUtils.deepEquals(this.aBool, other.aBool) && CoreTestsPigeonUtils.deepEquals(this.anInt, other.anInt) && CoreTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) && CoreTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) && CoreTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) && CoreTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) && CoreTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) && CoreTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) && CoreTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) && CoreTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) && CoreTestsPigeonUtils.deepEquals(this.aString, other.aString) && CoreTestsPigeonUtils.deepEquals(this.anObject, other.anObject) && CoreTestsPigeonUtils.deepEquals(this.list, other.list) && CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) && CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) && CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && CoreTestsPigeonUtils.deepEquals(this.map, other.map) && CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    return CoreTestsPigeonUtils.deepEquals(this.aBool, other.aBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.anInt, other.anInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.anInt64, other.anInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aDouble, other.aDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aByteArray, other.aByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.a4ByteArray, other.a4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.a8ByteArray, other.a8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aFloatArray, other.aFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.anotherEnum, other.anotherEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
+        CoreTestsPigeonUtils.deepEquals(this.anObject, other.anObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
@@ -361,40 +411,39 @@ data class AllTypes (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AllNullableTypes (
-  val aNullableBool: Boolean? = null,
-  val aNullableInt: Long? = null,
-  val aNullableInt64: Long? = null,
-  val aNullableDouble: Double? = null,
-  val aNullableByteArray: ByteArray? = null,
-  val aNullable4ByteArray: IntArray? = null,
-  val aNullable8ByteArray: LongArray? = null,
-  val aNullableFloatArray: DoubleArray? = null,
-  val aNullableEnum: AnEnum? = null,
-  val anotherNullableEnum: AnotherEnum? = null,
-  val aNullableString: String? = null,
-  val aNullableObject: Any? = null,
-  val allNullableTypes: AllNullableTypes? = null,
-  val list: List<Any?>? = null,
-  val stringList: List<String?>? = null,
-  val intList: List<Long?>? = null,
-  val doubleList: List<Double?>? = null,
-  val boolList: List<Boolean?>? = null,
-  val enumList: List<AnEnum?>? = null,
-  val objectList: List<Any?>? = null,
-  val listList: List<List<Any?>?>? = null,
-  val mapList: List<Map<Any?, Any?>?>? = null,
-  val recursiveClassList: List<AllNullableTypes?>? = null,
-  val map: Map<Any, Any?>? = null,
-  val stringMap: Map<String?, String?>? = null,
-  val intMap: Map<Long?, Long?>? = null,
-  val enumMap: Map<AnEnum?, AnEnum?>? = null,
-  val objectMap: Map<Any?, Any?>? = null,
-  val listMap: Map<Long?, List<Any?>?>? = null,
-  val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
-  val recursiveClassMap: Map<Long?, AllNullableTypes?>? = null
-)
- {
+data class AllNullableTypes(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val allNullableTypes: AllNullableTypes? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<AnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val recursiveClassList: List<AllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<AnEnum?, AnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
+    val recursiveClassMap: Map<Long?, AllNullableTypes?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllNullableTypes {
       val aNullableBool = pigeonVar_list[0] as Boolean?
@@ -428,44 +477,77 @@ data class AllNullableTypes (
       val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
       val recursiveClassMap = pigeonVar_list[30] as Map<Long?, AllNullableTypes?>?
-      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableEnum, anotherNullableEnum, aNullableString, aNullableObject, allNullableTypes, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, recursiveClassList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap, recursiveClassMap)
+      return AllNullableTypes(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          allNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          recursiveClassList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap,
+          recursiveClassMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aNullableBool,
-      aNullableInt,
-      aNullableInt64,
-      aNullableDouble,
-      aNullableByteArray,
-      aNullable4ByteArray,
-      aNullable8ByteArray,
-      aNullableFloatArray,
-      aNullableEnum,
-      anotherNullableEnum,
-      aNullableString,
-      aNullableObject,
-      allNullableTypes,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      recursiveClassList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
-      recursiveClassMap,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        allNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        recursiveClassList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+        recursiveClassMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -474,7 +556,37 @@ data class AllNullableTypes (
       return true
     }
     val other = other as AllNullableTypes
-    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) && CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) && CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) && CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) && CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) && CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) && CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) && CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) && CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) && CoreTestsPigeonUtils.deepEquals(this.list, other.list) && CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) && CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) && CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && CoreTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) && CoreTestsPigeonUtils.deepEquals(this.map, other.map) && CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) && CoreTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
+    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int {
@@ -515,43 +627,41 @@ data class AllNullableTypes (
 }
 
 /**
- * The primary purpose for this class is to ensure coverage of Swift structs
- * with nullable items, as the primary [AllNullableTypes] class is being used to
- * test Swift classes.
+ * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
+ * the primary [AllNullableTypes] class is being used to test Swift classes.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AllNullableTypesWithoutRecursion (
-  val aNullableBool: Boolean? = null,
-  val aNullableInt: Long? = null,
-  val aNullableInt64: Long? = null,
-  val aNullableDouble: Double? = null,
-  val aNullableByteArray: ByteArray? = null,
-  val aNullable4ByteArray: IntArray? = null,
-  val aNullable8ByteArray: LongArray? = null,
-  val aNullableFloatArray: DoubleArray? = null,
-  val aNullableEnum: AnEnum? = null,
-  val anotherNullableEnum: AnotherEnum? = null,
-  val aNullableString: String? = null,
-  val aNullableObject: Any? = null,
-  val list: List<Any?>? = null,
-  val stringList: List<String?>? = null,
-  val intList: List<Long?>? = null,
-  val doubleList: List<Double?>? = null,
-  val boolList: List<Boolean?>? = null,
-  val enumList: List<AnEnum?>? = null,
-  val objectList: List<Any?>? = null,
-  val listList: List<List<Any?>?>? = null,
-  val mapList: List<Map<Any?, Any?>?>? = null,
-  val map: Map<Any, Any?>? = null,
-  val stringMap: Map<String?, String?>? = null,
-  val intMap: Map<Long?, Long?>? = null,
-  val enumMap: Map<AnEnum?, AnEnum?>? = null,
-  val objectMap: Map<Any?, Any?>? = null,
-  val listMap: Map<Long?, List<Any?>?>? = null,
-  val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
-)
- {
+data class AllNullableTypesWithoutRecursion(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: AnEnum? = null,
+    val anotherNullableEnum: AnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<AnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<AnEnum?, AnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllNullableTypesWithoutRecursion {
       val aNullableBool = pigeonVar_list[0] as Boolean?
@@ -582,41 +692,71 @@ data class AllNullableTypesWithoutRecursion (
       val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
       val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
       val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
-      return AllNullableTypesWithoutRecursion(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableEnum, anotherNullableEnum, aNullableString, aNullableObject, list, stringList, intList, doubleList, boolList, enumList, objectList, listList, mapList, map, stringMap, intMap, enumMap, objectMap, listMap, mapMap)
+      return AllNullableTypesWithoutRecursion(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      aNullableBool,
-      aNullableInt,
-      aNullableInt64,
-      aNullableDouble,
-      aNullableByteArray,
-      aNullable4ByteArray,
-      aNullable8ByteArray,
-      aNullableFloatArray,
-      aNullableEnum,
-      anotherNullableEnum,
-      aNullableString,
-      aNullableObject,
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-      objectList,
-      listList,
-      mapList,
-      map,
-      stringMap,
-      intMap,
-      enumMap,
-      objectMap,
-      listMap,
-      mapMap,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -625,7 +765,34 @@ data class AllNullableTypesWithoutRecursion (
       return true
     }
     val other = other as AllNullableTypesWithoutRecursion
-    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) && CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) && CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) && CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) && CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) && CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) && CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) && CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) && CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) && CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) && CoreTestsPigeonUtils.deepEquals(this.list, other.list) && CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) && CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) && CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) && CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) && CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) && CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) && CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) && CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) && CoreTestsPigeonUtils.deepEquals(this.map, other.map) && CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) && CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) && CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) && CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) && CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) && CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
+    return CoreTestsPigeonUtils.deepEquals(this.aNullableBool, other.aNullableBool) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableInt64, other.aNullableInt64) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableDouble, other.aNullableDouble) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableByteArray, other.aNullableByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullable4ByteArray, other.aNullable4ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullable8ByteArray, other.aNullable8ByteArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableFloatArray, other.aNullableFloatArray) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableEnum, other.aNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.anotherNullableEnum, other.anotherNullableEnum) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableString, other.aNullableString) &&
+        CoreTestsPigeonUtils.deepEquals(this.aNullableObject, other.aNullableObject) &&
+        CoreTestsPigeonUtils.deepEquals(this.list, other.list) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringList, other.stringList) &&
+        CoreTestsPigeonUtils.deepEquals(this.intList, other.intList) &&
+        CoreTestsPigeonUtils.deepEquals(this.doubleList, other.doubleList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolList, other.boolList) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
+        CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
+        CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int {
@@ -665,22 +832,21 @@ data class AllNullableTypesWithoutRecursion (
 /**
  * A class for testing nested class handling.
  *
- * This is needed to test nested nullable and non-nullable classes,
- * `AllNullableTypes` is non-nullable here as it is easier to instantiate
- * than `AllTypes` when testing doesn't require both (ie. testing null classes).
+ * This is needed to test nested nullable and non-nullable classes, `AllNullableTypes` is
+ * non-nullable here as it is easier to instantiate than `AllTypes` when testing doesn't require
+ * both (ie. testing null classes).
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AllClassesWrapper (
-  val allNullableTypes: AllNullableTypes,
-  val allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = null,
-  val allTypes: AllTypes? = null,
-  val classList: List<AllTypes?>,
-  val nullableClassList: List<AllNullableTypesWithoutRecursion?>? = null,
-  val classMap: Map<Long?, AllTypes?>,
-  val nullableClassMap: Map<Long?, AllNullableTypesWithoutRecursion?>? = null
-)
- {
+data class AllClassesWrapper(
+    val allNullableTypes: AllNullableTypes,
+    val allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = null,
+    val allTypes: AllTypes? = null,
+    val classList: List<AllTypes?>,
+    val nullableClassList: List<AllNullableTypesWithoutRecursion?>? = null,
+    val classMap: Map<Long?, AllTypes?>,
+    val nullableClassMap: Map<Long?, AllNullableTypesWithoutRecursion?>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllClassesWrapper {
       val allNullableTypes = pigeonVar_list[0] as AllNullableTypes
@@ -690,20 +856,29 @@ data class AllClassesWrapper (
       val nullableClassList = pigeonVar_list[4] as List<AllNullableTypesWithoutRecursion?>?
       val classMap = pigeonVar_list[5] as Map<Long?, AllTypes?>
       val nullableClassMap = pigeonVar_list[6] as Map<Long?, AllNullableTypesWithoutRecursion?>?
-      return AllClassesWrapper(allNullableTypes, allNullableTypesWithoutRecursion, allTypes, classList, nullableClassList, classMap, nullableClassMap)
+      return AllClassesWrapper(
+          allNullableTypes,
+          allNullableTypesWithoutRecursion,
+          allTypes,
+          classList,
+          nullableClassList,
+          classMap,
+          nullableClassMap)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      allNullableTypes,
-      allNullableTypesWithoutRecursion,
-      allTypes,
-      classList,
-      nullableClassList,
-      classMap,
-      nullableClassMap,
+        allNullableTypes,
+        allNullableTypesWithoutRecursion,
+        allTypes,
+        classList,
+        nullableClassList,
+        classMap,
+        nullableClassMap,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -712,7 +887,14 @@ data class AllClassesWrapper (
       return true
     }
     val other = other as AllClassesWrapper
-    return CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) && CoreTestsPigeonUtils.deepEquals(this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) && CoreTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) && CoreTestsPigeonUtils.deepEquals(this.classList, other.classList) && CoreTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) && CoreTestsPigeonUtils.deepEquals(this.classMap, other.classMap) && CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
+    return CoreTestsPigeonUtils.deepEquals(this.allNullableTypes, other.allNullableTypes) &&
+        CoreTestsPigeonUtils.deepEquals(
+            this.allNullableTypesWithoutRecursion, other.allNullableTypesWithoutRecursion) &&
+        CoreTestsPigeonUtils.deepEquals(this.allTypes, other.allTypes) &&
+        CoreTestsPigeonUtils.deepEquals(this.classList, other.classList) &&
+        CoreTestsPigeonUtils.deepEquals(this.nullableClassList, other.nullableClassList) &&
+        CoreTestsPigeonUtils.deepEquals(this.classMap, other.classMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.nullableClassMap, other.nullableClassMap)
   }
 
   override fun hashCode(): Int {
@@ -733,21 +915,20 @@ data class AllClassesWrapper (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class TestMessage (
-  val testList: List<Any?>? = null
-)
- {
+data class TestMessage(val testList: List<Any?>? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): TestMessage {
       val testList = pigeonVar_list[0] as List<Any?>?
       return TestMessage(testList)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      testList,
+        testList,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -765,33 +946,24 @@ data class TestMessage (
     return result
   }
 }
+
 private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          AnEnum.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { AnEnum.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          AnotherEnum.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { AnotherEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          UnusedClass.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllTypes.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypes.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
       }
       134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -799,19 +971,16 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllClassesWrapper.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          TestMessage.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is AnEnum -> {
         stream.write(129)
@@ -850,18 +1019,14 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /**
- * The core interface that each host language plugin must implement in
- * platform_test integration tests.
+ * The core interface that each host language plugin must implement in platform_test integration
+ * tests.
  *
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface HostIntegrationCoreApi {
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic calling.
-   */
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllTypes(everything: AllTypes): AllTypes
@@ -930,21 +1095,29 @@ interface HostIntegrationCoreApi {
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypesWithoutRecursion(everything: AllNullableTypesWithoutRecursion?): AllNullableTypesWithoutRecursion?
+  fun echoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?
+  ): AllNullableTypesWithoutRecursion?
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
   fun extractNestedNullableString(wrapper: AllClassesWrapper): String?
   /**
-   * Returns the inner `aString` value from the wrapped object, to test
-   * sending of nested objects.
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
    */
   fun createNestedNullableString(nullableString: String?): AllClassesWrapper
   /** Returns passed in arguments of multiple types. */
-  fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypes
+  fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): AllNullableTypes
   /** Returns passed in arguments of multiple types. */
-  fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypesWithoutRecursion
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): AllNullableTypesWithoutRecursion
   /** Returns passed in int. */
   fun echoNullableInt(aNullableInt: Long?): Long?
   /** Returns passed in double. */
@@ -984,16 +1157,20 @@ interface HostIntegrationCoreApi {
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableNonNullEnumMap(enumMap: Map<AnEnum, AnEnum>?): Map<AnEnum, AnEnum>?
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullClassMap(classMap: Map<Long, AllNullableTypes>?): Map<Long, AllNullableTypes>?
+  fun echoNullableNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>?
+  ): Map<Long, AllNullableTypes>?
+
   fun echoNullableEnum(anEnum: AnEnum?): AnEnum?
+
   fun echoAnotherNullableEnum(anotherEnum: AnotherEnum?): AnotherEnum?
   /** Returns passed in int. */
   fun echoOptionalNullableInt(aNullableInt: Long?): Long?
   /** Returns the passed in string. */
   fun echoNamedNullableString(aNullableString: String?): String?
   /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic asynchronous calling.
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
    */
   fun noopAsync(callback: (Result<Unit>) -> Unit)
   /** Returns passed in int asynchronously. */
@@ -1013,17 +1190,29 @@ interface HostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   fun echoAsyncEnumList(enumList: List<AnEnum?>, callback: (Result<List<AnEnum?>>) -> Unit)
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  fun echoAsyncClassList(classList: List<AllNullableTypes?>, callback: (Result<List<AllNullableTypes?>>) -> Unit)
+  fun echoAsyncClassList(
+      classList: List<AllNullableTypes?>,
+      callback: (Result<List<AllNullableTypes?>>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncMap(map: Map<Any?, Any?>, callback: (Result<Map<Any?, Any?>>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncStringMap(stringMap: Map<String?, String?>, callback: (Result<Map<String?, String?>>) -> Unit)
+  fun echoAsyncStringMap(
+      stringMap: Map<String?, String?>,
+      callback: (Result<Map<String?, String?>>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncIntMap(intMap: Map<Long?, Long?>, callback: (Result<Map<Long?, Long?>>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncEnumMap(enumMap: Map<AnEnum?, AnEnum?>, callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit)
+  fun echoAsyncEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>,
+      callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncClassMap(classMap: Map<Long?, AllNullableTypes?>, callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit)
+  fun echoAsyncClassMap(
+      classMap: Map<Long?, AllNullableTypes?>,
+      callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit
+  )
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
@@ -1037,9 +1226,15 @@ interface HostIntegrationCoreApi {
   /** Returns the passed object, to test async serialization and deserialization. */
   fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAsyncNullableAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
+  fun echoAsyncNullableAllNullableTypes(
+      everything: AllNullableTypes?,
+      callback: (Result<AllNullableTypes?>) -> Unit
+  )
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAsyncNullableAllNullableTypesWithoutRecursion(everything: AllNullableTypesWithoutRecursion?, callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit)
+  fun echoAsyncNullableAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  )
   /** Returns passed in int asynchronously. */
   fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
   /** Returns passed in double asynchronously. */
@@ -1055,105 +1250,279 @@ interface HostIntegrationCoreApi {
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableEnumList(enumList: List<AnEnum?>?, callback: (Result<List<AnEnum?>?>) -> Unit)
+  fun echoAsyncNullableEnumList(
+      enumList: List<AnEnum?>?,
+      callback: (Result<List<AnEnum?>?>) -> Unit
+  )
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableClassList(classList: List<AllNullableTypes?>?, callback: (Result<List<AllNullableTypes?>?>) -> Unit)
+  fun echoAsyncNullableClassList(
+      classList: List<AllNullableTypes?>?,
+      callback: (Result<List<AllNullableTypes?>?>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableMap(map: Map<Any?, Any?>?, callback: (Result<Map<Any?, Any?>?>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableStringMap(stringMap: Map<String?, String?>?, callback: (Result<Map<String?, String?>?>) -> Unit)
+  fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?,
+      callback: (Result<Map<String?, String?>?>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?, callback: (Result<Map<Long?, Long?>?>) -> Unit)
+  fun echoAsyncNullableIntMap(
+      intMap: Map<Long?, Long?>?,
+      callback: (Result<Map<Long?, Long?>?>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableEnumMap(enumMap: Map<AnEnum?, AnEnum?>?, callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit)
+  fun echoAsyncNullableEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>?,
+      callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit
+  )
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  fun echoAsyncNullableClassMap(classMap: Map<Long?, AllNullableTypes?>?, callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit)
+  fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, AllNullableTypes?>?,
+      callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit
+  )
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  fun echoAnotherAsyncNullableEnum(anotherEnum: AnotherEnum?, callback: (Result<AnotherEnum?>) -> Unit)
+  fun echoAnotherAsyncNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
   /**
-   * Returns true if the handler is run on a main thread, which should be
-   * true since there is no TaskQueue annotation.
+   * Returns true if the handler is run on a main thread, which should be true since there is no
+   * TaskQueue annotation.
    */
   fun defaultIsMainThread(): Boolean
   /**
-   * Returns true if the handler is run on a non-main thread, which should be
-   * true for any platform with TaskQueue support.
+   * Returns true if the handler is run on a non-main thread, which should be true for any platform
+   * with TaskQueue support.
    */
   fun taskQueueIsBackgroundThread(): Boolean
+
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
+
   fun callFlutterThrowError(callback: (Result<Any?>) -> Unit)
+
   fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit)
+
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
-  fun callFlutterEchoAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
-  fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
-  fun callFlutterEchoAllNullableTypesWithoutRecursion(everything: AllNullableTypesWithoutRecursion?, callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit)
-  fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit)
+
+  fun callFlutterEchoAllNullableTypes(
+      everything: AllNullableTypes?,
+      callback: (Result<AllNullableTypes?>) -> Unit
+  )
+
+  fun callFlutterSendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?,
+      callback: (Result<AllNullableTypes>) -> Unit
+  )
+
+  fun callFlutterEchoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  )
+
+  fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
+  )
+
   fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
+
   fun callFlutterEchoInt(anInt: Long, callback: (Result<Long>) -> Unit)
+
   fun callFlutterEchoDouble(aDouble: Double, callback: (Result<Double>) -> Unit)
+
   fun callFlutterEchoString(aString: String, callback: (Result<String>) -> Unit)
+
   fun callFlutterEchoUint8List(list: ByteArray, callback: (Result<ByteArray>) -> Unit)
+
   fun callFlutterEchoList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
+
   fun callFlutterEchoEnumList(enumList: List<AnEnum?>, callback: (Result<List<AnEnum?>>) -> Unit)
-  fun callFlutterEchoClassList(classList: List<AllNullableTypes?>, callback: (Result<List<AllNullableTypes?>>) -> Unit)
-  fun callFlutterEchoNonNullEnumList(enumList: List<AnEnum>, callback: (Result<List<AnEnum>>) -> Unit)
-  fun callFlutterEchoNonNullClassList(classList: List<AllNullableTypes>, callback: (Result<List<AllNullableTypes>>) -> Unit)
+
+  fun callFlutterEchoClassList(
+      classList: List<AllNullableTypes?>,
+      callback: (Result<List<AllNullableTypes?>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullEnumList(
+      enumList: List<AnEnum>,
+      callback: (Result<List<AnEnum>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullClassList(
+      classList: List<AllNullableTypes>,
+      callback: (Result<List<AllNullableTypes>>) -> Unit
+  )
+
   fun callFlutterEchoMap(map: Map<Any?, Any?>, callback: (Result<Map<Any?, Any?>>) -> Unit)
-  fun callFlutterEchoStringMap(stringMap: Map<String?, String?>, callback: (Result<Map<String?, String?>>) -> Unit)
-  fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>, callback: (Result<Map<Long?, Long?>>) -> Unit)
-  fun callFlutterEchoEnumMap(enumMap: Map<AnEnum?, AnEnum?>, callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit)
-  fun callFlutterEchoClassMap(classMap: Map<Long?, AllNullableTypes?>, callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit)
-  fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>, callback: (Result<Map<String, String>>) -> Unit)
-  fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>, callback: (Result<Map<Long, Long>>) -> Unit)
-  fun callFlutterEchoNonNullEnumMap(enumMap: Map<AnEnum, AnEnum>, callback: (Result<Map<AnEnum, AnEnum>>) -> Unit)
-  fun callFlutterEchoNonNullClassMap(classMap: Map<Long, AllNullableTypes>, callback: (Result<Map<Long, AllNullableTypes>>) -> Unit)
+
+  fun callFlutterEchoStringMap(
+      stringMap: Map<String?, String?>,
+      callback: (Result<Map<String?, String?>>) -> Unit
+  )
+
+  fun callFlutterEchoIntMap(
+      intMap: Map<Long?, Long?>,
+      callback: (Result<Map<Long?, Long?>>) -> Unit
+  )
+
+  fun callFlutterEchoEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>,
+      callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit
+  )
+
+  fun callFlutterEchoClassMap(
+      classMap: Map<Long?, AllNullableTypes?>,
+      callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullStringMap(
+      stringMap: Map<String, String>,
+      callback: (Result<Map<String, String>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullIntMap(
+      intMap: Map<Long, Long>,
+      callback: (Result<Map<Long, Long>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<AnEnum, AnEnum>,
+      callback: (Result<Map<AnEnum, AnEnum>>) -> Unit
+  )
+
+  fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>,
+      callback: (Result<Map<Long, AllNullableTypes>>) -> Unit
+  )
+
   fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
+
   fun callFlutterEchoAnotherEnum(anotherEnum: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
+
   fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit)
+
   fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
+
   fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit)
+
   fun callFlutterEchoNullableString(aString: String?, callback: (Result<String?>) -> Unit)
+
   fun callFlutterEchoNullableUint8List(list: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
+
   fun callFlutterEchoNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
-  fun callFlutterEchoNullableEnumList(enumList: List<AnEnum?>?, callback: (Result<List<AnEnum?>?>) -> Unit)
-  fun callFlutterEchoNullableClassList(classList: List<AllNullableTypes?>?, callback: (Result<List<AllNullableTypes?>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullEnumList(enumList: List<AnEnum>?, callback: (Result<List<AnEnum>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullClassList(classList: List<AllNullableTypes>?, callback: (Result<List<AllNullableTypes>?>) -> Unit)
-  fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?, callback: (Result<Map<Any?, Any?>?>) -> Unit)
-  fun callFlutterEchoNullableStringMap(stringMap: Map<String?, String?>?, callback: (Result<Map<String?, String?>?>) -> Unit)
-  fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?, callback: (Result<Map<Long?, Long?>?>) -> Unit)
-  fun callFlutterEchoNullableEnumMap(enumMap: Map<AnEnum?, AnEnum?>?, callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit)
-  fun callFlutterEchoNullableClassMap(classMap: Map<Long?, AllNullableTypes?>?, callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullStringMap(stringMap: Map<String, String>?, callback: (Result<Map<String, String>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?, callback: (Result<Map<Long, Long>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullEnumMap(enumMap: Map<AnEnum, AnEnum>?, callback: (Result<Map<AnEnum, AnEnum>?>) -> Unit)
-  fun callFlutterEchoNullableNonNullClassMap(classMap: Map<Long, AllNullableTypes>?, callback: (Result<Map<Long, AllNullableTypes>?>) -> Unit)
+
+  fun callFlutterEchoNullableEnumList(
+      enumList: List<AnEnum?>?,
+      callback: (Result<List<AnEnum?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableClassList(
+      classList: List<AllNullableTypes?>?,
+      callback: (Result<List<AllNullableTypes?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<AnEnum>?,
+      callback: (Result<List<AnEnum>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullClassList(
+      classList: List<AllNullableTypes>?,
+      callback: (Result<List<AllNullableTypes>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableMap(
+      map: Map<Any?, Any?>?,
+      callback: (Result<Map<Any?, Any?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableStringMap(
+      stringMap: Map<String?, String?>?,
+      callback: (Result<Map<String?, String?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableIntMap(
+      intMap: Map<Long?, Long?>?,
+      callback: (Result<Map<Long?, Long?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<AnEnum?, AnEnum?>?,
+      callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, AllNullableTypes?>?,
+      callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullStringMap(
+      stringMap: Map<String, String>?,
+      callback: (Result<Map<String, String>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullIntMap(
+      intMap: Map<Long, Long>?,
+      callback: (Result<Map<Long, Long>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<AnEnum, AnEnum>?,
+      callback: (Result<Map<AnEnum, AnEnum>?>) -> Unit
+  )
+
+  fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, AllNullableTypes>?,
+      callback: (Result<Map<Long, AllNullableTypes>?>) -> Unit
+  )
+
   fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
-  fun callFlutterEchoAnotherNullableEnum(anotherEnum: AnotherEnum?, callback: (Result<AnotherEnum?>) -> Unit)
+
+  fun callFlutterEchoAnotherNullableEnum(
+      anotherEnum: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  )
+
   fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit)
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CoreTestsPigeonCodec()
-    }
-    /** Sets up an instance of `HostIntegrationCoreApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
+    /**
+     * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostIntegrationCoreApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: HostIntegrationCoreApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.noop()
-              listOf(null)
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.noop()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1161,16 +1530,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllTypes
-            val wrapped: List<Any?> = try {
-              listOf(api.echoAllTypes(everythingArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAllTypes(everythingArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1178,14 +1552,19 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.throwError())
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.throwError())
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1193,15 +1572,20 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.throwErrorFromVoid()
-              listOf(null)
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.throwErrorFromVoid()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1209,14 +1593,19 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.throwFlutterError())
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.throwFlutterError())
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1224,16 +1613,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anIntArg = args[0] as Long
-            val wrapped: List<Any?> = try {
-              listOf(api.echoInt(anIntArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoInt(anIntArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1241,16 +1635,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aDoubleArg = args[0] as Double
-            val wrapped: List<Any?> = try {
-              listOf(api.echoDouble(aDoubleArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoDouble(aDoubleArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1258,16 +1657,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aBoolArg = args[0] as Boolean
-            val wrapped: List<Any?> = try {
-              listOf(api.echoBool(aBoolArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoBool(aBoolArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1275,16 +1679,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aStringArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.echoString(aStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoString(aStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1292,16 +1701,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aUint8ListArg = args[0] as ByteArray
-            val wrapped: List<Any?> = try {
-              listOf(api.echoUint8List(aUint8ListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoUint8List(aUint8ListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1309,16 +1723,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anObjectArg = args[0] as Any
-            val wrapped: List<Any?> = try {
-              listOf(api.echoObject(anObjectArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoObject(anObjectArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1326,16 +1745,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val listArg = args[0] as List<Any?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoList(listArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoList(listArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1343,16 +1767,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumListArg = args[0] as List<AnEnum?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoEnumList(enumListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoEnumList(enumListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1360,16 +1789,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoClassList(classListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoClassList(classListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1377,16 +1811,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumListArg = args[0] as List<AnEnum>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullEnumList(enumListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullEnumList(enumListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1394,16 +1833,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullClassList(classListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullClassList(classListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1411,16 +1855,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val mapArg = args[0] as Map<Any?, Any?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoMap(mapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoMap(mapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1428,16 +1877,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String?, String?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoStringMap(stringMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoStringMap(stringMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1445,16 +1899,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val intMapArg = args[0] as Map<Long?, Long?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoIntMap(intMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoIntMap(intMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1462,16 +1921,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum?, AnEnum?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoEnumMap(enumMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoEnumMap(enumMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1479,16 +1943,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoClassMap(classMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoClassMap(classMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1496,16 +1965,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String, String>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullStringMap(stringMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullStringMap(stringMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1513,16 +1987,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val intMapArg = args[0] as Map<Long, Long>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullIntMap(intMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullIntMap(intMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1530,16 +2009,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum, AnEnum>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullEnumMap(enumMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullEnumMap(enumMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1547,16 +2031,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long, AllNullableTypes>
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNonNullClassMap(classMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullClassMap(classMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1564,16 +2053,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val wrapperArg = args[0] as AllClassesWrapper
-            val wrapped: List<Any?> = try {
-              listOf(api.echoClassWrapper(wrapperArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoClassWrapper(wrapperArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1581,16 +2075,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anEnumArg = args[0] as AnEnum
-            val wrapped: List<Any?> = try {
-              listOf(api.echoEnum(anEnumArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoEnum(anEnumArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1598,16 +2097,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anotherEnumArg = args[0] as AnotherEnum
-            val wrapped: List<Any?> = try {
-              listOf(api.echoAnotherEnum(anotherEnumArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherEnum(anotherEnumArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1615,16 +2119,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aStringArg = args[0] as String
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNamedDefaultString(aStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNamedDefaultString(aStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1632,16 +2141,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aDoubleArg = args[0] as Double
-            val wrapped: List<Any?> = try {
-              listOf(api.echoOptionalDefaultDouble(aDoubleArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoOptionalDefaultDouble(aDoubleArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1649,16 +2163,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anIntArg = args[0] as Long
-            val wrapped: List<Any?> = try {
-              listOf(api.echoRequiredInt(anIntArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoRequiredInt(anIntArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1666,17 +2185,22 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.areAllNullableTypesEqual$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aArg = args[0] as AllNullableTypes
             val bArg = args[1] as AllNullableTypes
-            val wrapped: List<Any?> = try {
-              listOf(api.areAllNullableTypesEqual(aArg, bArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.areAllNullableTypesEqual(aArg, bArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1684,16 +2208,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesHash$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesHash$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val valueArg = args[0] as AllNullableTypes
-            val wrapped: List<Any?> = try {
-              listOf(api.getAllNullableTypesHash(valueArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAllNullableTypesHash(valueArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1701,16 +2230,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypes?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoAllNullableTypes(everythingArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAllNullableTypes(everythingArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1718,16 +2252,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoAllNullableTypesWithoutRecursion(everythingArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAllNullableTypesWithoutRecursion(everythingArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1735,16 +2274,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val wrapperArg = args[0] as AllClassesWrapper
-            val wrapped: List<Any?> = try {
-              listOf(api.extractNestedNullableString(wrapperArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.extractNestedNullableString(wrapperArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1752,16 +2296,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val nullableStringArg = args[0] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.createNestedNullableString(nullableStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createNestedNullableString(nullableStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1769,18 +2318,25 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableBoolArg = args[0] as Boolean?
             val aNullableIntArg = args[1] as Long?
             val aNullableStringArg = args[2] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.sendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.sendMultipleNullableTypes(
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1788,18 +2344,25 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableBoolArg = args[0] as Boolean?
             val aNullableIntArg = args[1] as Long?
             val aNullableStringArg = args[2] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.sendMultipleNullableTypesWithoutRecursion(aNullableBoolArg, aNullableIntArg, aNullableStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(
+                      api.sendMultipleNullableTypesWithoutRecursion(
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1807,16 +2370,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableIntArg = args[0] as Long?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableInt(aNullableIntArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableInt(aNullableIntArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1824,16 +2392,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableDoubleArg = args[0] as Double?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableDouble(aNullableDoubleArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableDouble(aNullableDoubleArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1841,16 +2414,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableBoolArg = args[0] as Boolean?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableBool(aNullableBoolArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableBool(aNullableBoolArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1858,16 +2436,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableStringArg = args[0] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableString(aNullableStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableString(aNullableStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1875,16 +2458,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableUint8ListArg = args[0] as ByteArray?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableUint8List(aNullableUint8ListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableUint8List(aNullableUint8ListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1892,16 +2480,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableObjectArg = args[0]
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableObject(aNullableObjectArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableObject(aNullableObjectArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1909,16 +2502,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableListArg = args[0] as List<Any?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableList(aNullableListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableList(aNullableListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1926,16 +2524,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumListArg = args[0] as List<AnEnum?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableEnumList(enumListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableEnumList(enumListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1943,16 +2546,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableClassList(classListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableClassList(classListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1960,16 +2568,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumListArg = args[0] as List<AnEnum>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullEnumList(enumListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullEnumList(enumListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1977,16 +2590,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullClassList(classListArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullClassList(classListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1994,16 +2612,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val mapArg = args[0] as Map<Any?, Any?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableMap(mapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableMap(mapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2011,16 +2634,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String?, String?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableStringMap(stringMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableStringMap(stringMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2028,16 +2656,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val intMapArg = args[0] as Map<Long?, Long?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableIntMap(intMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableIntMap(intMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2045,16 +2678,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum?, AnEnum?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableEnumMap(enumMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableEnumMap(enumMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2062,16 +2700,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableClassMap(classMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableClassMap(classMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2079,16 +2722,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String, String>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullStringMap(stringMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullStringMap(stringMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2096,16 +2744,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val intMapArg = args[0] as Map<Long, Long>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullIntMap(intMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullIntMap(intMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2113,16 +2766,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum, AnEnum>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullEnumMap(enumMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullEnumMap(enumMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2130,16 +2788,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableNonNullClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long, AllNullableTypes>?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableNonNullClassMap(classMapArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableNonNullClassMap(classMapArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2147,16 +2810,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anEnumArg = args[0] as AnEnum?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNullableEnum(anEnumArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableEnum(anEnumArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2164,16 +2832,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val anotherEnumArg = args[0] as AnotherEnum?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoAnotherNullableEnum(anotherEnumArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAnotherNullableEnum(anotherEnumArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2181,16 +2854,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableIntArg = args[0] as Long?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoOptionalNullableInt(aNullableIntArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoOptionalNullableInt(aNullableIntArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2198,16 +2876,21 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableStringArg = args[0] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.echoNamedNullableString(aNullableStringArg))
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNamedNullableString(aNullableStringArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -2215,10 +2898,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.noopAsync{ result: Result<Unit> ->
+            api.noopAsync { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2232,7 +2919,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2252,7 +2943,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2272,7 +2967,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2292,7 +2991,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2312,7 +3015,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2332,7 +3039,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2352,7 +3063,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2372,7 +3087,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2392,7 +3111,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2412,7 +3135,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2432,7 +3159,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2452,7 +3183,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2472,7 +3207,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2492,7 +3231,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2512,7 +3255,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2532,7 +3279,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2552,10 +3303,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncError{ result: Result<Any?> ->
+            api.throwAsyncError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2570,10 +3325,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncErrorFromVoid{ result: Result<Unit> ->
+            api.throwAsyncErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2587,10 +3346,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.throwAsyncFlutterError{ result: Result<Any?> ->
+            api.throwAsyncFlutterError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2605,7 +3368,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2625,12 +3392,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypes?
-            api.echoAsyncNullableAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?> ->
+            api.echoAsyncNullableAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2645,12 +3417,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
-            api.echoAsyncNullableAllNullableTypesWithoutRecursion(everythingArg) { result: Result<AllNullableTypesWithoutRecursion?> ->
+            api.echoAsyncNullableAllNullableTypesWithoutRecursion(everythingArg) {
+                result: Result<AllNullableTypesWithoutRecursion?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2665,7 +3442,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2685,7 +3466,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2705,7 +3490,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2725,7 +3514,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2745,7 +3538,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2765,7 +3562,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2785,7 +3586,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2805,7 +3610,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2825,12 +3634,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes?>?
-            api.echoAsyncNullableClassList(classListArg) { result: Result<List<AllNullableTypes?>?> ->
+            api.echoAsyncNullableClassList(classListArg) { result: Result<List<AllNullableTypes?>?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2845,7 +3659,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2865,7 +3683,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2885,7 +3707,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2905,7 +3731,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2925,12 +3755,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>?
-            api.echoAsyncNullableClassMap(classMapArg) { result: Result<Map<Long?, AllNullableTypes?>?> ->
+            api.echoAsyncNullableClassMap(classMapArg) {
+                result: Result<Map<Long?, AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -2945,7 +3780,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2965,7 +3804,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAnotherAsyncNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -2985,14 +3828,19 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.defaultIsMainThread())
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.defaultIsMainThread())
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3000,14 +3848,20 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread$separatedMessageChannelSuffix", codec, taskQueue)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.taskQueueIsBackgroundThread())
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.taskQueueIsBackgroundThread())
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -3015,10 +3869,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterNoop{ result: Result<Unit> ->
+            api.callFlutterNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3032,10 +3890,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterThrowError{ result: Result<Any?> ->
+            api.callFlutterThrowError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3050,10 +3912,14 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.callFlutterThrowErrorFromVoid{ result: Result<Unit> ->
+            api.callFlutterThrowErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3067,7 +3933,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3087,12 +3957,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypes?
-            api.callFlutterEchoAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?> ->
+            api.callFlutterEchoAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3107,34 +3982,45 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableBoolArg = args[0] as Boolean?
             val aNullableIntArg = args[1] as Long?
             val aNullableStringArg = args[2] as String?
-            api.callFlutterSendMultipleNullableTypes(aNullableBoolArg, aNullableIntArg, aNullableStringArg) { result: Result<AllNullableTypes> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
-              }
-            }
+            api.callFlutterSendMultipleNullableTypes(
+                aNullableBoolArg, aNullableIntArg, aNullableStringArg) {
+                    result: Result<AllNullableTypes> ->
+                  val error = result.exceptionOrNull()
+                  if (error != null) {
+                    reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                  } else {
+                    val data = result.getOrNull()
+                    reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                  }
+                }
           }
         } else {
           channel.setMessageHandler(null)
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
-            api.callFlutterEchoAllNullableTypesWithoutRecursion(everythingArg) { result: Result<AllNullableTypesWithoutRecursion?> ->
+            api.callFlutterEchoAllNullableTypesWithoutRecursion(everythingArg) {
+                result: Result<AllNullableTypesWithoutRecursion?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3149,29 +4035,39 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val aNullableBoolArg = args[0] as Boolean?
             val aNullableIntArg = args[1] as Long?
             val aNullableStringArg = args[2] as String?
-            api.callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBoolArg, aNullableIntArg, aNullableStringArg) { result: Result<AllNullableTypesWithoutRecursion> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
-              }
-            }
+            api.callFlutterSendMultipleNullableTypesWithoutRecursion(
+                aNullableBoolArg, aNullableIntArg, aNullableStringArg) {
+                    result: Result<AllNullableTypesWithoutRecursion> ->
+                  val error = result.exceptionOrNull()
+                  if (error != null) {
+                    reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                  } else {
+                    val data = result.getOrNull()
+                    reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                  }
+                }
           }
         } else {
           channel.setMessageHandler(null)
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3191,7 +4087,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3211,7 +4111,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3231,7 +4135,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3251,7 +4159,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3271,7 +4183,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3291,7 +4207,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3311,7 +4231,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3331,7 +4255,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3351,12 +4279,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes>
-            api.callFlutterEchoNonNullClassList(classListArg) { result: Result<List<AllNullableTypes>> ->
+            api.callFlutterEchoNonNullClassList(classListArg) {
+                result: Result<List<AllNullableTypes>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3371,7 +4304,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3391,7 +4328,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3411,7 +4352,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3431,7 +4376,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3451,12 +4400,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>
-            api.callFlutterEchoClassMap(classMapArg) { result: Result<Map<Long?, AllNullableTypes?>> ->
+            api.callFlutterEchoClassMap(classMapArg) { result: Result<Map<Long?, AllNullableTypes?>>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3471,12 +4425,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String, String>
-            api.callFlutterEchoNonNullStringMap(stringMapArg) { result: Result<Map<String, String>> ->
+            api.callFlutterEchoNonNullStringMap(stringMapArg) { result: Result<Map<String, String>>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3491,7 +4450,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3511,7 +4474,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3531,12 +4498,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNonNullClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long, AllNullableTypes>
-            api.callFlutterEchoNonNullClassMap(classMapArg) { result: Result<Map<Long, AllNullableTypes>> ->
+            api.callFlutterEchoNonNullClassMap(classMapArg) {
+                result: Result<Map<Long, AllNullableTypes>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3551,7 +4523,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3571,7 +4547,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3591,7 +4571,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3611,7 +4595,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3631,7 +4619,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3651,7 +4643,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3671,7 +4667,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3691,7 +4691,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3711,7 +4715,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3731,12 +4739,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes?>?
-            api.callFlutterEchoNullableClassList(classListArg) { result: Result<List<AllNullableTypes?>?> ->
+            api.callFlutterEchoNullableClassList(classListArg) {
+                result: Result<List<AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3751,12 +4764,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumListArg = args[0] as List<AnEnum>?
-            api.callFlutterEchoNullableNonNullEnumList(enumListArg) { result: Result<List<AnEnum>?> ->
+            api.callFlutterEchoNullableNonNullEnumList(enumListArg) { result: Result<List<AnEnum>?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3771,12 +4789,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassList$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassList$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classListArg = args[0] as List<AllNullableTypes>?
-            api.callFlutterEchoNullableNonNullClassList(classListArg) { result: Result<List<AllNullableTypes>?> ->
+            api.callFlutterEchoNullableNonNullClassList(classListArg) {
+                result: Result<List<AllNullableTypes>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3791,7 +4814,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3811,12 +4838,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String?, String?>?
-            api.callFlutterEchoNullableStringMap(stringMapArg) { result: Result<Map<String?, String?>?> ->
+            api.callFlutterEchoNullableStringMap(stringMapArg) {
+                result: Result<Map<String?, String?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3831,7 +4863,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3851,12 +4887,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum?, AnEnum?>?
-            api.callFlutterEchoNullableEnumMap(enumMapArg) { result: Result<Map<AnEnum?, AnEnum?>?> ->
+            api.callFlutterEchoNullableEnumMap(enumMapArg) { result: Result<Map<AnEnum?, AnEnum?>?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3871,12 +4912,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>?
-            api.callFlutterEchoNullableClassMap(classMapArg) { result: Result<Map<Long?, AllNullableTypes?>?> ->
+            api.callFlutterEchoNullableClassMap(classMapArg) {
+                result: Result<Map<Long?, AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3891,12 +4937,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullStringMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullStringMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val stringMapArg = args[0] as Map<String, String>?
-            api.callFlutterEchoNullableNonNullStringMap(stringMapArg) { result: Result<Map<String, String>?> ->
+            api.callFlutterEchoNullableNonNullStringMap(stringMapArg) {
+                result: Result<Map<String, String>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3911,12 +4962,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullIntMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val intMapArg = args[0] as Map<Long, Long>?
-            api.callFlutterEchoNullableNonNullIntMap(intMapArg) { result: Result<Map<Long, Long>?> ->
+            api.callFlutterEchoNullableNonNullIntMap(intMapArg) { result: Result<Map<Long, Long>?>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3931,12 +4987,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullEnumMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enumMapArg = args[0] as Map<AnEnum, AnEnum>?
-            api.callFlutterEchoNullableNonNullEnumMap(enumMapArg) { result: Result<Map<AnEnum, AnEnum>?> ->
+            api.callFlutterEchoNullableNonNullEnumMap(enumMapArg) {
+                result: Result<Map<AnEnum, AnEnum>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3951,12 +5012,17 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassMap$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableNonNullClassMap$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val classMapArg = args[0] as Map<Long, AllNullableTypes>?
-            api.callFlutterEchoNullableNonNullClassMap(classMapArg) { result: Result<Map<Long, AllNullableTypes>?> ->
+            api.callFlutterEchoNullableNonNullClassMap(classMapArg) {
+                result: Result<Map<Long, AllNullableTypes>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -3971,7 +5037,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -3991,7 +5061,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAnotherNullableEnum$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4011,7 +5085,11 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4034,26 +5112,25 @@ interface HostIntegrationCoreApi {
   }
 }
 /**
- * The core interface that the Dart platform_test code implements for host
- * integration tests to call into.
+ * The core interface that the Dart platform_test code implements for host integration tests to call
+ * into.
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+class FlutterIntegrationCoreApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by FlutterIntegrationCoreApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CoreTestsPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
   }
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic calling.
-   */
-  fun noop(callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$separatedMessageChannelSuffix"
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  fun noop(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -4064,14 +5141,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Responds with an error from an async function returning a value. */
-  fun throwError(callback: (Result<Any?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError$separatedMessageChannelSuffix"
+  fun throwError(callback: (Result<Any?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -4083,14 +5161,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Responds with an error from an async void function. */
-  fun throwErrorFromVoid(callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix"
+  fun throwErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -4101,35 +5180,45 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllTypes(everythingArg: AllTypes, callback: (Result<AllTypes>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix"
+  fun echoAllTypes(everythingArg: AllTypes, callback: (Result<AllTypes>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as AllTypes
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypes(everythingArg: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix"
+  fun echoAllNullableTypes(
+      everythingArg: AllNullableTypes?,
+      callback: (Result<AllNullableTypes?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
@@ -4141,7 +5230,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /**
@@ -4149,31 +5238,46 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
    *
    * Tests multiple-arity FlutterApi handling.
    */
-  fun sendMultipleNullableTypes(aNullableBoolArg: Boolean?, aNullableIntArg: Long?, aNullableStringArg: String?, callback: (Result<AllNullableTypes>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix"
+  fun sendMultipleNullableTypes(
+      aNullableBoolArg: Boolean?,
+      aNullableIntArg: Long?,
+      aNullableStringArg: String?,
+      callback: (Result<AllNullableTypes>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as AllNullableTypes
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypesWithoutRecursion(everythingArg: AllNullableTypesWithoutRecursion?, callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix"
+  fun echoAllNullableTypesWithoutRecursion(
+      everythingArg: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
@@ -4185,7 +5289,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /**
@@ -4193,472 +5297,634 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
    *
    * Tests multiple-arity FlutterApi handling.
    */
-  fun sendMultipleNullableTypesWithoutRecursion(aNullableBoolArg: Boolean?, aNullableIntArg: Long?, aNullableStringArg: String?, callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix"
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBoolArg: Boolean?,
+      aNullableIntArg: Long?,
+      aNullableStringArg: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as AllNullableTypesWithoutRecursion
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
-  fun echoBool(aBoolArg: Boolean, callback: (Result<Boolean>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool$separatedMessageChannelSuffix"
+  fun echoBool(aBoolArg: Boolean, callback: (Result<Boolean>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Boolean
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed int, to test serialization and deserialization. */
-  fun echoInt(anIntArg: Long, callback: (Result<Long>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt$separatedMessageChannelSuffix"
+  fun echoInt(anIntArg: Long, callback: (Result<Long>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Long
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed double, to test serialization and deserialization. */
-  fun echoDouble(aDoubleArg: Double, callback: (Result<Double>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix"
+  fun echoDouble(aDoubleArg: Double, callback: (Result<Double>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Double
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed string, to test serialization and deserialization. */
-  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString$separatedMessageChannelSuffix"
+  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as String
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoUint8List(listArg: ByteArray, callback: (Result<ByteArray>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix"
+  fun echoUint8List(listArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as ByteArray
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoList(listArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$separatedMessageChannelSuffix"
+  fun echoList(listArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(listArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as List<Any?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoEnumList(enumListArg: List<AnEnum?>, callback: (Result<List<AnEnum?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList$separatedMessageChannelSuffix"
+  fun echoEnumList(enumListArg: List<AnEnum?>, callback: (Result<List<AnEnum?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as List<AnEnum?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoClassList(classListArg: List<AllNullableTypes?>, callback: (Result<List<AllNullableTypes?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList$separatedMessageChannelSuffix"
+  fun echoClassList(
+      classListArg: List<AllNullableTypes?>,
+      callback: (Result<List<AllNullableTypes?>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as List<AllNullableTypes?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullEnumList(enumListArg: List<AnEnum>, callback: (Result<List<AnEnum>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList$separatedMessageChannelSuffix"
+  fun echoNonNullEnumList(enumListArg: List<AnEnum>, callback: (Result<List<AnEnum>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as List<AnEnum>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNonNullClassList(classListArg: List<AllNullableTypes>, callback: (Result<List<AllNullableTypes>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList$separatedMessageChannelSuffix"
+  fun echoNonNullClassList(
+      classListArg: List<AllNullableTypes>,
+      callback: (Result<List<AllNullableTypes>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as List<AllNullableTypes>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoMap(mapArg: Map<Any?, Any?>, callback: (Result<Map<Any?, Any?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap$separatedMessageChannelSuffix"
+  fun echoMap(mapArg: Map<Any?, Any?>, callback: (Result<Map<Any?, Any?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(mapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<Any?, Any?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoStringMap(stringMapArg: Map<String?, String?>, callback: (Result<Map<String?, String?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap$separatedMessageChannelSuffix"
+  fun echoStringMap(
+      stringMapArg: Map<String?, String?>,
+      callback: (Result<Map<String?, String?>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoStringMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(stringMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<String?, String?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoIntMap(intMapArg: Map<Long?, Long?>, callback: (Result<Map<Long?, Long?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap$separatedMessageChannelSuffix"
+  fun echoIntMap(intMapArg: Map<Long?, Long?>, callback: (Result<Map<Long?, Long?>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoIntMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(intMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<Long?, Long?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoEnumMap(enumMapArg: Map<AnEnum?, AnEnum?>, callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap$separatedMessageChannelSuffix"
+  fun echoEnumMap(
+      enumMapArg: Map<AnEnum?, AnEnum?>,
+      callback: (Result<Map<AnEnum?, AnEnum?>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnumMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<AnEnum?, AnEnum?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoClassMap(classMapArg: Map<Long?, AllNullableTypes?>, callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassMap$separatedMessageChannelSuffix"
+  fun echoClassMap(
+      classMapArg: Map<Long?, AllNullableTypes?>,
+      callback: (Result<Map<Long?, AllNullableTypes?>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoClassMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<Long?, AllNullableTypes?>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullStringMap(stringMapArg: Map<String, String>, callback: (Result<Map<String, String>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap$separatedMessageChannelSuffix"
+  fun echoNonNullStringMap(
+      stringMapArg: Map<String, String>,
+      callback: (Result<Map<String, String>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullStringMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(stringMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<String, String>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullIntMap(intMapArg: Map<Long, Long>, callback: (Result<Map<Long, Long>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap$separatedMessageChannelSuffix"
+  fun echoNonNullIntMap(intMapArg: Map<Long, Long>, callback: (Result<Map<Long, Long>>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullIntMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(intMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<Long, Long>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullEnumMap(enumMapArg: Map<AnEnum, AnEnum>, callback: (Result<Map<AnEnum, AnEnum>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap$separatedMessageChannelSuffix"
+  fun echoNonNullEnumMap(
+      enumMapArg: Map<AnEnum, AnEnum>,
+      callback: (Result<Map<AnEnum, AnEnum>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullEnumMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<AnEnum, AnEnum>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNonNullClassMap(classMapArg: Map<Long, AllNullableTypes>, callback: (Result<Map<Long, AllNullableTypes>>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap$separatedMessageChannelSuffix"
+  fun echoNonNullClassMap(
+      classMapArg: Map<Long, AllNullableTypes>,
+      callback: (Result<Map<Long, AllNullableTypes>>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNonNullClassMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as Map<Long, AllNullableTypes>
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoEnum(anEnumArg: AnEnum, callback: (Result<AnEnum>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix"
+  fun echoEnum(anEnumArg: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as AnEnum
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoAnotherEnum(anotherEnumArg: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix"
+  fun echoAnotherEnum(anotherEnumArg: AnotherEnum, callback: (Result<AnotherEnum>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anotherEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as AnotherEnum
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
-  fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix"
+  fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
@@ -4670,14 +5936,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed int, to test serialization and deserialization. */
-  fun echoNullableInt(anIntArg: Long?, callback: (Result<Long?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix"
+  fun echoNullableInt(anIntArg: Long?, callback: (Result<Long?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
@@ -4689,14 +5956,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed double, to test serialization and deserialization. */
-  fun echoNullableDouble(aDoubleArg: Double?, callback: (Result<Double?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix"
+  fun echoNullableDouble(aDoubleArg: Double?, callback: (Result<Double?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
@@ -4708,14 +5976,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed string, to test serialization and deserialization. */
-  fun echoNullableString(aStringArg: String?, callback: (Result<String?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix"
+  fun echoNullableString(aStringArg: String?, callback: (Result<String?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
@@ -4727,14 +5996,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoNullableUint8List(listArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix"
+  fun echoNullableUint8List(listArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(listArg)) {
       if (it is List<*>) {
@@ -4746,14 +6016,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableList(listArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix"
+  fun echoNullableList(listArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(listArg)) {
       if (it is List<*>) {
@@ -4765,14 +6036,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableEnumList(enumListArg: List<AnEnum?>?, callback: (Result<List<AnEnum?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList$separatedMessageChannelSuffix"
+  fun echoNullableEnumList(
+      enumListArg: List<AnEnum?>?,
+      callback: (Result<List<AnEnum?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumListArg)) {
       if (it is List<*>) {
@@ -4784,14 +6059,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableClassList(classListArg: List<AllNullableTypes?>?, callback: (Result<List<AllNullableTypes?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassList$separatedMessageChannelSuffix"
+  fun echoNullableClassList(
+      classListArg: List<AllNullableTypes?>?,
+      callback: (Result<List<AllNullableTypes?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classListArg)) {
       if (it is List<*>) {
@@ -4803,14 +6082,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumList(enumListArg: List<AnEnum>?, callback: (Result<List<AnEnum>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList$separatedMessageChannelSuffix"
+  fun echoNullableNonNullEnumList(
+      enumListArg: List<AnEnum>?,
+      callback: (Result<List<AnEnum>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumListArg)) {
       if (it is List<*>) {
@@ -4822,14 +6105,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableNonNullClassList(classListArg: List<AllNullableTypes>?, callback: (Result<List<AllNullableTypes>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassList$separatedMessageChannelSuffix"
+  fun echoNullableNonNullClassList(
+      classListArg: List<AllNullableTypes>?,
+      callback: (Result<List<AllNullableTypes>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classListArg)) {
       if (it is List<*>) {
@@ -4841,14 +6128,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableMap(mapArg: Map<Any?, Any?>?, callback: (Result<Map<Any?, Any?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix"
+  fun echoNullableMap(mapArg: Map<Any?, Any?>?, callback: (Result<Map<Any?, Any?>?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(mapArg)) {
       if (it is List<*>) {
@@ -4860,14 +6148,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableStringMap(stringMapArg: Map<String?, String?>?, callback: (Result<Map<String?, String?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap$separatedMessageChannelSuffix"
+  fun echoNullableStringMap(
+      stringMapArg: Map<String?, String?>?,
+      callback: (Result<Map<String?, String?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableStringMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(stringMapArg)) {
       if (it is List<*>) {
@@ -4879,14 +6171,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableIntMap(intMapArg: Map<Long?, Long?>?, callback: (Result<Map<Long?, Long?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap$separatedMessageChannelSuffix"
+  fun echoNullableIntMap(
+      intMapArg: Map<Long?, Long?>?,
+      callback: (Result<Map<Long?, Long?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableIntMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(intMapArg)) {
       if (it is List<*>) {
@@ -4898,14 +6194,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableEnumMap(enumMapArg: Map<AnEnum?, AnEnum?>?, callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumMap$separatedMessageChannelSuffix"
+  fun echoNullableEnumMap(
+      enumMapArg: Map<AnEnum?, AnEnum?>?,
+      callback: (Result<Map<AnEnum?, AnEnum?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnumMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumMapArg)) {
       if (it is List<*>) {
@@ -4917,14 +6217,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableClassMap(classMapArg: Map<Long?, AllNullableTypes?>?, callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassMap$separatedMessageChannelSuffix"
+  fun echoNullableClassMap(
+      classMapArg: Map<Long?, AllNullableTypes?>?,
+      callback: (Result<Map<Long?, AllNullableTypes?>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableClassMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classMapArg)) {
       if (it is List<*>) {
@@ -4936,14 +6240,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullStringMap(stringMapArg: Map<String, String>?, callback: (Result<Map<String, String>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullStringMap$separatedMessageChannelSuffix"
+  fun echoNullableNonNullStringMap(
+      stringMapArg: Map<String, String>?,
+      callback: (Result<Map<String, String>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullStringMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(stringMapArg)) {
       if (it is List<*>) {
@@ -4955,14 +6263,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullIntMap(intMapArg: Map<Long, Long>?, callback: (Result<Map<Long, Long>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap$separatedMessageChannelSuffix"
+  fun echoNullableNonNullIntMap(
+      intMapArg: Map<Long, Long>?,
+      callback: (Result<Map<Long, Long>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullIntMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(intMapArg)) {
       if (it is List<*>) {
@@ -4974,14 +6286,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullEnumMap(enumMapArg: Map<AnEnum, AnEnum>?, callback: (Result<Map<AnEnum, AnEnum>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumMap$separatedMessageChannelSuffix"
+  fun echoNullableNonNullEnumMap(
+      enumMapArg: Map<AnEnum, AnEnum>?,
+      callback: (Result<Map<AnEnum, AnEnum>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullEnumMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(enumMapArg)) {
       if (it is List<*>) {
@@ -4993,14 +6309,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableNonNullClassMap(classMapArg: Map<Long, AllNullableTypes>?, callback: (Result<Map<Long, AllNullableTypes>?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassMap$separatedMessageChannelSuffix"
+  fun echoNullableNonNullClassMap(
+      classMapArg: Map<Long, AllNullableTypes>?,
+      callback: (Result<Map<Long, AllNullableTypes>?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableNonNullClassMap$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(classMapArg)) {
       if (it is List<*>) {
@@ -5012,14 +6332,15 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoNullableEnum(anEnumArg: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix"
+  fun echoNullableEnum(anEnumArg: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anEnumArg)) {
       if (it is List<*>) {
@@ -5031,14 +6352,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoAnotherNullableEnum(anotherEnumArg: AnotherEnum?, callback: (Result<AnotherEnum?>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix"
+  fun echoAnotherNullableEnum(
+      anotherEnumArg: AnotherEnum?,
+      callback: (Result<AnotherEnum?>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAnotherNullableEnum$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(anotherEnumArg)) {
       if (it is List<*>) {
@@ -5050,17 +6375,18 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /**
-   * A no-op function taking no arguments and returning no value, to sanity
-   * test basic asynchronous calling.
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
    */
-  fun noopAsync(callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix"
+  fun noopAsync(callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(null) {
       if (it is List<*>) {
@@ -5071,28 +6397,34 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger, pr
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Returns the passed in generic Object asynchronously. */
-  fun echoAsyncString(aStringArg: String, callback: (Result<String>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix"
+  fun echoAsyncString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as String
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }
@@ -5106,23 +6438,31 @@ interface HostTrivialApi {
 
   companion object {
     /** The codec used by HostTrivialApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CoreTestsPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostTrivialApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: HostTrivialApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.noop()
-              listOf(null)
-            } catch (exception: Throwable) {
-              CoreTestsPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.noop()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -5139,19 +6479,27 @@ interface HostTrivialApi {
  */
 interface HostSmallApi {
   fun echo(aString: String, callback: (Result<String>) -> Unit)
+
   fun voidVoid(callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by HostSmallApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CoreTestsPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostSmallApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: HostSmallApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -5171,10 +6519,14 @@ interface HostSmallApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.voidVoid{ result: Result<Unit> ->
+            api.voidVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CoreTestsPigeonUtils.wrapError(error))
@@ -5195,51 +6547,66 @@ interface HostSmallApi {
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-class FlutterSmallApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+class FlutterSmallApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by FlutterSmallApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CoreTestsPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { CoreTestsPigeonCodec() }
   }
-  fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$separatedMessageChannelSuffix"
+
+  fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(msgArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as TestMessage
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
-  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString$separatedMessageChannelSuffix"
+
+  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
-          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))
+          callback(
+              Result.failure(
+                  FlutterError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
         } else {
           val output = it[0] as String
           callback(Result.success(output))
         }
       } else {
         callback(Result.failure(CoreTestsPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }

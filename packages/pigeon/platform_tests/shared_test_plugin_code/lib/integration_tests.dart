@@ -1052,6 +1052,51 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final int hashB = await api.getAllNullableTypesHash(b);
       expect(hashA, hashB, reason: 'Hash codes for two NaNs should be equal');
     });
+
+    testWidgets('Collection equality with signed zero and NaN', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        doubleList: <double>[0.0, double.nan],
+        stringMap: <String?, String?>{'k': 'v', 'n': null},
+      );
+      final b = AllNullableTypes(
+        doubleList: <double>[-0.0, double.nan],
+        stringMap: <String?, String?>{'n': null, 'k': 'v'},
+      );
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+    });
+
+    testWidgets('Map equality with null values and different keys', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(intMap: <int?, int?>{1: null});
+      final b = AllNullableTypes(intMap: <int?, int?>{2: null});
+
+      expect(await api.areAllNullableTypesEqual(a, b), isFalse);
+    });
+
+    testWidgets('Deeply nested equality', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        allNullableTypes: AllNullableTypes(aNullableDouble: 0.0),
+      );
+      final b = AllNullableTypes(
+        allNullableTypes: AllNullableTypes(aNullableDouble: -0.0),
+      );
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
   });
 
   group('Host async API tests', () {

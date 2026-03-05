@@ -78,7 +78,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func getAllNullableTypesHash(value: AllNullableTypes) -> Int64 {
     var hasher = Hasher()
     value.hash(into: &hasher)
-    return Int64(bitPattern: UInt64(hasher.finalize()))
+    return Int64(hasher.finalize())
   }
   func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
     -> AllNullableTypesWithoutRecursion?
