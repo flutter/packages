@@ -6,11 +6,6 @@ import Flutter
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// A mock implementation of `CameraGlobalEventApi` that captures received
 /// `deviceOrientationChanged` events and exposes whether they were received to the testing code.
 final class MockGlobalEventApi: CameraGlobalEventApiProtocol {

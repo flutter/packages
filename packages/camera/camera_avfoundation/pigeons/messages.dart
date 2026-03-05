@@ -116,6 +116,44 @@ class PlatformCameraState {
   final bool focusPointSupported;
 }
 
+// Pigeon version of the data needed for a CameraImageData.
+class PlatformCameraImageData {
+  PlatformCameraImageData({
+    required this.formatCode,
+    required this.width,
+    required this.height,
+    required this.planes,
+    required this.lensAperture,
+    required this.sensorExposureTimeNanoseconds,
+    required this.sensorSensitivity,
+  });
+
+  /// The FourCharCode of the image format.
+  final int formatCode;
+
+  final int width;
+  final int height;
+  final List<PlatformCameraImagePlane> planes;
+  final double lensAperture;
+  final int sensorExposureTimeNanoseconds;
+  final double sensorSensitivity;
+}
+
+// Pigeon version of the data needed for a CameraImagePlane.
+class PlatformCameraImagePlane {
+  const PlatformCameraImagePlane({
+    required this.bytes,
+    required this.bytesPerRow,
+    required this.width,
+    required this.height,
+  });
+
+  final Uint8List bytes;
+  final int bytesPerRow;
+  final int width;
+  final int height;
+}
+
 // Pigeon version of to MediaSettings.
 class PlatformMediaSettings {
   PlatformMediaSettings({
@@ -314,6 +352,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+}
+
+@EventChannelApi()
+abstract class CameraImageStreamEventApi {
+  PlatformCameraImageData imageDataStream();
 }
 
 /// Handler for native callbacks that are not tied to a specific camera ID.
