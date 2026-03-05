@@ -291,9 +291,8 @@ public class AllDatatypesTest {
     AllNullableTypes a = new AllNullableTypes.Builder().setANullableDouble(0.0).build();
     AllNullableTypes b = new AllNullableTypes.Builder().setANullableDouble(-0.0).build();
 
-    // Double Distinguishes 0.0 and -0.0
-    assertNotEquals(a, b);
-    assertNotEquals(a.hashCode(), b.hashCode());
+    assertEquals(a, b);
+    assertEquals(a.hashCode(), b.hashCode());
   }
 
   @Test

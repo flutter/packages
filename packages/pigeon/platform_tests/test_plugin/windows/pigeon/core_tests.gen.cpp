@@ -34,6 +34,28 @@ FlutterError CreateConnectionError(const std::string channel_name) {
 }
 
 template <typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b);
+
+inline bool PigeonInternalDeepEquals(const double& a, const double& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
+
+template <typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a,
+                              const std::optional<T>& b);
+
+template <typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
+                              const std::unique_ptr<T>& b);
+
+inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                                     const ::flutter::EncodableValue& b);
+
+template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b) {
   return a == b;
 }

@@ -63,9 +63,14 @@ static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
   }
   if ([value isKindOfClass:[NSNumber class]]) {
     NSNumber *n = (NSNumber *)value;
-    if (isnan(n.doubleValue)) {
+    double d = n.doubleValue;
+    if (isnan(d)) {
       return (NSUInteger)0x7FF8000000000000;
     }
+    if (d == 0.0) {
+      d = 0.0;
+    }
+    return @(d).hash;
   }
   if ([value isKindOfClass:[NSArray class]]) {
     NSUInteger result = 1;

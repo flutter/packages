@@ -162,9 +162,8 @@
   FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
   b.aNullableDouble = @(-0.0);
 
-  // NSNumber Distinguishes 0.0 and -0.0
-  XCTAssertNotEqualObjects(a, b);
-  XCTAssertNotEqual(a.hash, b.hash);
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
 }
 
 - (void)testNestedNaNEquality {
