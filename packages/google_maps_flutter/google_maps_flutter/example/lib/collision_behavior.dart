@@ -53,7 +53,7 @@ class _CollisionBehaviorPageBodyState
   final List<AdvancedMarker> markers = <AdvancedMarker>[];
 
   void _addMarkers() {
-    final List<AdvancedMarker> newMarkers = <AdvancedMarker>[
+    final newMarkers = <AdvancedMarker>[
       for (int i = 0; i < 12; i++)
         AdvancedMarker(
           markerId: MarkerId('marker_${i}_$markerCollisionBehavior'),
