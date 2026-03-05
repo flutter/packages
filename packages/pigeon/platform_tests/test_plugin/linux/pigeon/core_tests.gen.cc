@@ -51,10 +51,16 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
       return fl_value_get_length(a) == fl_value_get_length(b) &&
              memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
                     fl_value_get_length(a) * sizeof(int64_t)) == 0;
-    case FL_VALUE_TYPE_FLOAT_LIST:
-      return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b),
-                    fl_value_get_length(a) * sizeof(double)) == 0;
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) return FALSE;
+      const double* a_data = fl_value_get_float_list(a);
+      const double* b_data = fl_value_get_float_list(b);
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_equals_double(a_data[i], b_data[i])) return FALSE;
+      }
+      return TRUE;
+    }
     case FL_VALUE_TYPE_LIST: {
       size_t len = fl_value_get_length(a);
       if (len != fl_value_get_length(b)) return FALSE;
@@ -700,9 +706,10 @@ gboolean core_tests_pigeon_test_all_types_equals(
     if (a->a_float_array == nullptr || b->a_float_array == nullptr)
       return FALSE;
     if (a->a_float_array_length != b->a_float_array_length) return FALSE;
-    if (memcmp(a->a_float_array, b->a_float_array,
-               a->a_float_array_length * sizeof(double)) != 0)
-      return FALSE;
+    for (size_t i = 0; i < a->a_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_float_array[i], b->a_float_array[i]))
+        return FALSE;
+    }
   }
   if (a->an_enum != b->an_enum) {
     return FALSE;
@@ -1728,9 +1735,11 @@ gboolean core_tests_pigeon_test_all_nullable_types_equals(
       return FALSE;
     if (a->a_nullable_float_array_length != b->a_nullable_float_array_length)
       return FALSE;
-    if (memcmp(a->a_nullable_float_array, b->a_nullable_float_array,
-               a->a_nullable_float_array_length * sizeof(double)) != 0)
-      return FALSE;
+    for (size_t i = 0; i < a->a_nullable_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_nullable_float_array[i],
+                                  b->a_nullable_float_array[i]))
+        return FALSE;
+    }
   }
   if ((a->a_nullable_enum == nullptr) != (b->a_nullable_enum == nullptr))
     return FALSE;
@@ -2768,9 +2777,11 @@ gboolean core_tests_pigeon_test_all_nullable_types_without_recursion_equals(
       return FALSE;
     if (a->a_nullable_float_array_length != b->a_nullable_float_array_length)
       return FALSE;
-    if (memcmp(a->a_nullable_float_array, b->a_nullable_float_array,
-               a->a_nullable_float_array_length * sizeof(double)) != 0)
-      return FALSE;
+    for (size_t i = 0; i < a->a_nullable_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_nullable_float_array[i],
+                                  b->a_nullable_float_array[i]))
+        return FALSE;
+    }
   }
   if ((a->a_nullable_enum == nullptr) != (b->a_nullable_enum == nullptr))
     return FALSE;

@@ -1142,18 +1142,27 @@ class GObjectSourceGenerator
             indent.writeln(
               'if (a->${fieldName}_length != b->${fieldName}_length) return FALSE;',
             );
-            final elementSize = field.type.baseName == 'Uint8List'
-                ? 'sizeof(uint8_t)'
-                : field.type.baseName == 'Int32List'
-                ? 'sizeof(int32_t)'
-                : field.type.baseName == 'Int64List'
-                ? 'sizeof(int64_t)'
-                : field.type.baseName == 'Float32List'
-                ? 'sizeof(float)'
-                : 'sizeof(double)';
-            indent.writeln(
-              'if (memcmp(a->$fieldName, b->$fieldName, a->${fieldName}_length * $elementSize) != 0) return FALSE;',
-            );
+            if (field.type.baseName == 'Float32List' ||
+                field.type.baseName == 'Float64List') {
+              indent.writeScoped(
+                'for (size_t i = 0; i < a->${fieldName}_length; i++) {',
+                '}',
+                () {
+                  indent.writeln(
+                    'if (!flpigeon_equals_double(a->${fieldName}[i], b->${fieldName}[i])) return FALSE;',
+                  );
+                },
+              );
+            } else {
+              final String elementSize = field.type.baseName == 'Uint8List'
+                  ? 'sizeof(uint8_t)'
+                  : field.type.baseName == 'Int32List'
+                  ? 'sizeof(int32_t)'
+                  : 'sizeof(int64_t)';
+              indent.writeln(
+                'if (memcmp(a->$fieldName, b->$fieldName, a->${fieldName}_length * $elementSize) != 0) return FALSE;',
+              );
+            }
           });
         } else if (field.type.baseName == 'bool' ||
             field.type.baseName == 'int') {
@@ -2861,13 +2870,18 @@ void _writeDeepEquals(Indent indent) {
         indent.writeln(
           '         memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b), fl_value_get_length(a) * sizeof(int64_t)) == 0;',
         );
-        indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST:');
-        indent.writeln(
-          '  return fl_value_get_length(a) == fl_value_get_length(b) &&',
-        );
-        indent.writeln(
-          '         memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b), fl_value_get_length(a) * sizeof(double)) == 0;',
-        );
+        indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
+        indent.writeln('  size_t len = fl_value_get_length(a);');
+        indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+        indent.writeln('  const double* a_data = fl_value_get_float_list(a);');
+        indent.writeln('  const double* b_data = fl_value_get_float_list(b);');
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
+          indent.writeln(
+            'if (!flpigeon_equals_double(a_data[i], b_data[i])) return FALSE;',
+          );
+        });
+        indent.writeln('  return TRUE;');
+        indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_LIST: {');
         indent.writeln('  size_t len = fl_value_get_length(a);');
         indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');

@@ -307,8 +307,6 @@ public class AllDatatypesTest {
     list2.add(new byte[] {1, 2, 3});
     AllNullableTypes b = new AllNullableTypes.Builder().setList(list2).build();
 
-    // List.equals calls Object.equals on elements. byte[] identity check will fail.
-    // This is a known issue we should decide if we want to fix.
     assertEquals(a, b);
     assertEquals(a.hashCode(), b.hashCode());
   }

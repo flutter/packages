@@ -50,10 +50,16 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
       return fl_value_get_length(a) == fl_value_get_length(b) &&
              memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
                     fl_value_get_length(a) * sizeof(int64_t)) == 0;
-    case FL_VALUE_TYPE_FLOAT_LIST:
-      return fl_value_get_length(a) == fl_value_get_length(b) &&
-             memcmp(fl_value_get_float_list(a), fl_value_get_float_list(b),
-                    fl_value_get_length(a) * sizeof(double)) == 0;
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) return FALSE;
+      const double* a_data = fl_value_get_float_list(a);
+      const double* b_data = fl_value_get_float_list(b);
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_equals_double(a_data[i], b_data[i])) return FALSE;
+      }
+      return TRUE;
+    }
     case FL_VALUE_TYPE_LIST: {
       size_t len = fl_value_get_length(a);
       if (len != fl_value_get_length(b)) return FALSE;
