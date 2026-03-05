@@ -823,6 +823,17 @@ void main() {
     }, returnsNormally);
   });
 
+  testWidgets('Getting deprecated cloudMapId returns the mapId', (
+    WidgetTester tester,
+  ) async {
+    const mapId = 'mapId';
+    const map = GoogleMap(
+      initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+      mapId: mapId,
+    );
+    expect(map.cloudMapId, mapId);
+  });
+
   testWidgets("Not setting cloudMapid and mapId doesn't thrown an exception", (
     WidgetTester tester,
   ) async {
