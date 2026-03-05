@@ -57,6 +57,27 @@ void main() {
     expect(code, contains('@CanIgnoreReturnValue'));
   });
 
+  test('gen class with no fields has valid equals method', () {
+    final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
+    const generator = JavaGenerator();
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('return true;'));
+    expect(code, isNot(contains('return ;')));
+  });
+
   test('gen one enum', () {
     final anEnum = Enum(
       name: 'Foobar',

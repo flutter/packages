@@ -389,7 +389,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
             ? 'Objects.equals(${field.name}, that.${field.name})'
             : '${field.name}.equals(that.${field.name})';
       });
-      indent.writeln('return ${checks.join(' && ')};');
+      indent.writeln(
+        'return ${checks.isEmpty ? 'true' : checks.join(' && ')};',
+      );
     });
     indent.newln();
 

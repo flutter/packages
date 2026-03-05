@@ -1,3 +1,7 @@
+## 26.1.11
+
+* [java] Fixes invalid `return ;` statement in `equals` method for classes with no fields.
+
 ## 26.1.10
 
 * Dramatically reduces the number of File write operations sent to the operating
