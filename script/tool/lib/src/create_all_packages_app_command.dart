@@ -424,13 +424,17 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     final File podfile = app
         .platformDirectory(FlutterPlatform.macos)
         .childFile('Podfile');
-    _adjustFile(
-      podfile,
-      replacements: <String, List<String>>{
-        // macOS 10.15 is required by in_app_purchase.
-        'platform :osx': <String>["platform :osx, '10.15'"],
-      },
-    );
+    if (podfile.existsSync()) {
+      _adjustFile(
+        podfile,
+        replacements: <String, List<String>>{
+          // macOS 10.15 is required by in_app_purchase.
+          'platform :osx': <String>["platform :osx, '10.15'"],
+        },
+      );
+    } else {
+      print('Unable to find ${podfile.path} for updating. Skipping.');
+    }
   }
 
   Future<void> _updateMacOSPbxproj() async {
