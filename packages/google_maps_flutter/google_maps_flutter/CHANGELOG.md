@@ -1,6 +1,6 @@
 ## 2.15.0
 
-* Adds support for advanced markers.
+* Adds support for advanced markers, and new example pages showing their usage.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.14.2
