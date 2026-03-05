@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(TARGET_OS_OSX) && TARGET_OS_OSX
+#include <TargetConditionals.h>
+
+#if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
