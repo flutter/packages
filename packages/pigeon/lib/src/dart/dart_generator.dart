@@ -370,12 +370,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.writeln('return false;');
         },
       );
-      indent.writeScoped('if (identical(this, other)) {', '}', () {
-        indent.writeln('return true;');
-      });
       if (fields.isEmpty) {
         indent.writeln('return true;');
       } else {
+        indent.writeScoped('if (identical(this, other)) {', '}', () {
+          indent.writeln('return true;');
+        });
         final String comparisons = fields
             .map(
               (NamedType field) =>
