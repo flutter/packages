@@ -474,6 +474,12 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           parameters: <String>['const ${classDefinition.name}& other'],
           isConst: true,
         );
+        _writeFunctionDeclaration(
+          indent,
+          'Hash',
+          returnType: 'size_t',
+          isConst: true,
+        );
       });
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
@@ -953,6 +959,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
       'cmath',
+      'limits',
       'map',
       'string',
       'optional',
@@ -1005,6 +1012,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       },
     );
     _writeDeepEquals(indent);
+    _writeDeepHash(indent);
   }
 
   @override
@@ -1101,6 +1109,34 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
         indent.writeln('return !(*this == other);');
       },
     );
+
+    _writeFunctionDefinition(
+      indent,
+      'Hash',
+      scope: classDefinition.name,
+      returnType: 'size_t',
+      isConst: true,
+      body: () {
+        indent.writeln('size_t result = 0;');
+        for (final field in orderedFields) {
+          final String name = _makeInstanceVariableName(field);
+          indent.writeln(
+            'result = result * 31 + PigeonInternalDeepHash($name);',
+          );
+        }
+        indent.writeln('return result;');
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'PigeonInternalDeepHash',
+      returnType: 'size_t',
+      parameters: <String>['const ${classDefinition.name}& v'],
+      body: () {
+        indent.writeln('return v.Hash();');
+      },
+    );
   }
 
   void _writeDeepEquals(Indent indent) {
@@ -1177,6 +1213,100 @@ inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const :
     return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
   }
   return a == b;
+}
+''');
+  }
+
+  void _writeDeepHash(Indent indent) {
+    indent.format('''
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v);
+
+inline size_t PigeonInternalDeepHash(const double& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v);
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v) {
+  return std::hash<T>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v) {
+  size_t result = 0;
+  for (const auto& item : v) {
+    result = result * 31 + PigeonInternalDeepHash(item);
+  }
+  return result;
+}
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
+  size_t result = 0;
+  for (const auto& kv : v) {
+    result = result * 31 + PigeonInternalDeepHash(kv.first);
+    result = result * 31 + PigeonInternalDeepHash(kv.second);
+  }
+  return result;
+}
+
+inline size_t PigeonInternalDeepHash(const double& v) {
+  if (std::isnan(v)) {
+    return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
+  }
+  if (v == 0.0) {
+    return std::hash<double>()(0.0);
+  }
+  return std::hash<double>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+  size_t result = v.index();
+  if (const double* dv = std::get_if<double>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*dv);
+  } else if (const ::flutter::EncodableList* lv =
+                 std::get_if<::flutter::EncodableList>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*lv);
+  } else if (const ::flutter::EncodableMap* mv =
+                 std::get_if<::flutter::EncodableMap>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*mv);
+  } else {
+    std::visit(
+        [&result](const auto& val) {
+          using T = std::decay_t<decltype(val)>;
+          if constexpr (!std::is_same_v<T, double> &&
+                        !std::is_same_v<T, ::flutter::EncodableList> &&
+                        !std::is_same_v<T, ::flutter::EncodableMap> &&
+                        !std::is_same_v<T, std::monostate> &&
+                        !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+            result = result * 31 + std::hash<T>()(val);
+          }
+        },
+        v);
+  }
+  return result;
 }
 ''');
   }

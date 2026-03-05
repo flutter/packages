@@ -15,6 +15,7 @@
 #include <flutter/standard_message_codec.h>
 
 #include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
@@ -117,6 +118,96 @@ inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
   return a == b;
 }
 
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v);
+
+inline size_t PigeonInternalDeepHash(const double& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v);
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v) {
+  return std::hash<T>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v) {
+  size_t result = 0;
+  for (const auto& item : v) {
+    result = result * 31 + PigeonInternalDeepHash(item);
+  }
+  return result;
+}
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
+  size_t result = 0;
+  for (const auto& kv : v) {
+    result = result * 31 + PigeonInternalDeepHash(kv.first);
+    result = result * 31 + PigeonInternalDeepHash(kv.second);
+  }
+  return result;
+}
+
+inline size_t PigeonInternalDeepHash(const double& v) {
+  if (std::isnan(v)) {
+    return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
+  }
+  if (v == 0.0) {
+    return std::hash<double>()(0.0);
+  }
+  return std::hash<double>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+  size_t result = v.index();
+  if (const double* dv = std::get_if<double>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*dv);
+  } else if (const ::flutter::EncodableList* lv =
+                 std::get_if<::flutter::EncodableList>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*lv);
+  } else if (const ::flutter::EncodableMap* mv =
+                 std::get_if<::flutter::EncodableMap>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*mv);
+  } else {
+    std::visit(
+        [&result](const auto& val) {
+          using T = std::decay_t<decltype(val)>;
+          if constexpr (!std::is_same_v<T, double> &&
+                        !std::is_same_v<T, ::flutter::EncodableList> &&
+                        !std::is_same_v<T, ::flutter::EncodableMap> &&
+                        !std::is_same_v<T, std::monostate> &&
+                        !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+            result = result * 31 + std::hash<T>()(val);
+          }
+        },
+        v);
+  }
+  return result;
+}
+
 // UnusedClass
 
 UnusedClass::UnusedClass() {}
@@ -161,6 +252,14 @@ bool UnusedClass::operator==(const UnusedClass& other) const {
 bool UnusedClass::operator!=(const UnusedClass& other) const {
   return !(*this == other);
 }
+
+size_t UnusedClass::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(a_field_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const UnusedClass& v) { return v.Hash(); }
 
 // AllTypes
 
@@ -464,6 +563,41 @@ bool AllTypes::operator==(const AllTypes& other) const {
 bool AllTypes::operator!=(const AllTypes& other) const {
   return !(*this == other);
 }
+
+size_t AllTypes::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(a_bool_);
+  result = result * 31 + PigeonInternalDeepHash(an_int_);
+  result = result * 31 + PigeonInternalDeepHash(an_int64_);
+  result = result * 31 + PigeonInternalDeepHash(a_double_);
+  result = result * 31 + PigeonInternalDeepHash(a_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a4_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a8_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_float_array_);
+  result = result * 31 + PigeonInternalDeepHash(an_enum_);
+  result = result * 31 + PigeonInternalDeepHash(another_enum_);
+  result = result * 31 + PigeonInternalDeepHash(a_string_);
+  result = result * 31 + PigeonInternalDeepHash(an_object_);
+  result = result * 31 + PigeonInternalDeepHash(list_);
+  result = result * 31 + PigeonInternalDeepHash(string_list_);
+  result = result * 31 + PigeonInternalDeepHash(int_list_);
+  result = result * 31 + PigeonInternalDeepHash(double_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_);
+  result = result * 31 + PigeonInternalDeepHash(enum_list_);
+  result = result * 31 + PigeonInternalDeepHash(object_list_);
+  result = result * 31 + PigeonInternalDeepHash(list_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_);
+  result = result * 31 + PigeonInternalDeepHash(string_map_);
+  result = result * 31 + PigeonInternalDeepHash(int_map_);
+  result = result * 31 + PigeonInternalDeepHash(enum_map_);
+  result = result * 31 + PigeonInternalDeepHash(object_map_);
+  result = result * 31 + PigeonInternalDeepHash(list_map_);
+  result = result * 31 + PigeonInternalDeepHash(map_map_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const AllTypes& v) { return v.Hash(); }
 
 // AllNullableTypes
 
@@ -1364,6 +1498,44 @@ bool AllNullableTypes::operator!=(const AllNullableTypes& other) const {
   return !(*this == other);
 }
 
+size_t AllNullableTypes::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_bool_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_int_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_int64_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_double_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable4_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable8_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_float_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_enum_);
+  result = result * 31 + PigeonInternalDeepHash(another_nullable_enum_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_string_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_object_);
+  result = result * 31 + PigeonInternalDeepHash(all_nullable_types_);
+  result = result * 31 + PigeonInternalDeepHash(list_);
+  result = result * 31 + PigeonInternalDeepHash(string_list_);
+  result = result * 31 + PigeonInternalDeepHash(int_list_);
+  result = result * 31 + PigeonInternalDeepHash(double_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_);
+  result = result * 31 + PigeonInternalDeepHash(enum_list_);
+  result = result * 31 + PigeonInternalDeepHash(object_list_);
+  result = result * 31 + PigeonInternalDeepHash(list_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_list_);
+  result = result * 31 + PigeonInternalDeepHash(recursive_class_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_);
+  result = result * 31 + PigeonInternalDeepHash(string_map_);
+  result = result * 31 + PigeonInternalDeepHash(int_map_);
+  result = result * 31 + PigeonInternalDeepHash(enum_map_);
+  result = result * 31 + PigeonInternalDeepHash(object_map_);
+  result = result * 31 + PigeonInternalDeepHash(list_map_);
+  result = result * 31 + PigeonInternalDeepHash(map_map_);
+  result = result * 31 + PigeonInternalDeepHash(recursive_class_map_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const AllNullableTypes& v) { return v.Hash(); }
+
 // AllNullableTypesWithoutRecursion
 
 AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion() {}
@@ -2095,6 +2267,43 @@ bool AllNullableTypesWithoutRecursion::operator!=(
   return !(*this == other);
 }
 
+size_t AllNullableTypesWithoutRecursion::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_bool_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_int_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_int64_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_double_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable4_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable8_byte_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_float_array_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_enum_);
+  result = result * 31 + PigeonInternalDeepHash(another_nullable_enum_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_string_);
+  result = result * 31 + PigeonInternalDeepHash(a_nullable_object_);
+  result = result * 31 + PigeonInternalDeepHash(list_);
+  result = result * 31 + PigeonInternalDeepHash(string_list_);
+  result = result * 31 + PigeonInternalDeepHash(int_list_);
+  result = result * 31 + PigeonInternalDeepHash(double_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_);
+  result = result * 31 + PigeonInternalDeepHash(enum_list_);
+  result = result * 31 + PigeonInternalDeepHash(object_list_);
+  result = result * 31 + PigeonInternalDeepHash(list_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_list_);
+  result = result * 31 + PigeonInternalDeepHash(map_);
+  result = result * 31 + PigeonInternalDeepHash(string_map_);
+  result = result * 31 + PigeonInternalDeepHash(int_map_);
+  result = result * 31 + PigeonInternalDeepHash(enum_map_);
+  result = result * 31 + PigeonInternalDeepHash(object_map_);
+  result = result * 31 + PigeonInternalDeepHash(list_map_);
+  result = result * 31 + PigeonInternalDeepHash(map_map_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const AllNullableTypesWithoutRecursion& v) {
+  return v.Hash();
+}
+
 // AllClassesWrapper
 
 AllClassesWrapper::AllClassesWrapper(const AllNullableTypes& all_nullable_types,
@@ -2320,6 +2529,21 @@ bool AllClassesWrapper::operator!=(const AllClassesWrapper& other) const {
   return !(*this == other);
 }
 
+size_t AllClassesWrapper::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(all_nullable_types_);
+  result = result * 31 +
+           PigeonInternalDeepHash(all_nullable_types_without_recursion_);
+  result = result * 31 + PigeonInternalDeepHash(all_types_);
+  result = result * 31 + PigeonInternalDeepHash(class_list_);
+  result = result * 31 + PigeonInternalDeepHash(nullable_class_list_);
+  result = result * 31 + PigeonInternalDeepHash(class_map_);
+  result = result * 31 + PigeonInternalDeepHash(nullable_class_map_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const AllClassesWrapper& v) { return v.Hash(); }
+
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -2364,6 +2588,14 @@ bool TestMessage::operator==(const TestMessage& other) const {
 bool TestMessage::operator!=(const TestMessage& other) const {
   return !(*this == other);
 }
+
+size_t TestMessage::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(test_list_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const TestMessage& v) { return v.Hash(); }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 
@@ -3651,6 +3883,44 @@ void HostIntegrationCoreApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
               const auto& value_arg = std::any_cast<const AllNullableTypes&>(
                   std::get<CustomEncodableValue>(encodable_value_arg));
               ErrorOr<int64_t> output = api->GetAllNullableTypesHash(value_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "getAllNullableTypesWithoutRecursionHash" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_value_arg = args.at(0);
+              if (encodable_value_arg.IsNull()) {
+                reply(WrapError("value_arg unexpectedly null."));
+                return;
+              }
+              const auto& value_arg =
+                  std::any_cast<const AllNullableTypesWithoutRecursion&>(
+                      std::get<CustomEncodableValue>(encodable_value_arg));
+              ErrorOr<int64_t> output =
+                  api->GetAllNullableTypesWithoutRecursionHash(value_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;

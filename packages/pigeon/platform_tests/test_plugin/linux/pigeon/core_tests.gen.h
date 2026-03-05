@@ -2663,6 +2663,42 @@ core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_res
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse,
+    core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new:
+ *
+ * Creates a new response to
+ * HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new(
+    int64_t return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesResponse,
     core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_response,
     CORE_TESTS_PIGEON_TEST,
@@ -3823,6 +3859,10 @@ typedef struct {
   CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse* (
       *get_all_nullable_types_hash)(CoreTestsPigeonTestAllNullableTypes* value,
                                     gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse* (
+      *get_all_nullable_types_without_recursion_hash)(
+      CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
+      gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesResponse* (
       *echo_all_nullable_types)(CoreTestsPigeonTestAllNullableTypes* everything,
                                 gpointer user_data);

@@ -5829,6 +5829,74 @@ core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_res
   return self;
 }
 
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse,
+    core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new(
+    int64_t return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_int(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesResponse {
   GObject parent_instance;
 
@@ -15788,6 +15856,40 @@ core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_cb(
 }
 
 static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->get_all_nullable_types_without_recursion_hash == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value =
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse)
+      response = self->vtable->get_all_nullable_types_without_recursion_hash(
+          value, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "getAllNullableTypesWithoutRecursionHash");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "getAllNullableTypesWithoutRecursionHash", error->message);
+  }
+}
+
+static void
 core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -19167,6 +19269,21 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       get_all_nullable_types_hash_channel,
       core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* get_all_nullable_types_without_recursion_hash_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "getAllNullableTypesWithoutRecursionHash%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      get_all_nullable_types_without_recursion_hash_channel =
+          fl_basic_message_channel_new(
+              messenger,
+              get_all_nullable_types_without_recursion_hash_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_without_recursion_hash_channel,
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_all_nullable_types_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAllNullableTypes%s",
@@ -21022,6 +21139,20 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       get_all_nullable_types_hash_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* get_all_nullable_types_without_recursion_hash_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "getAllNullableTypesWithoutRecursionHash%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      get_all_nullable_types_without_recursion_hash_channel =
+          fl_basic_message_channel_new(
+              messenger,
+              get_all_nullable_types_without_recursion_hash_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_without_recursion_hash_channel, nullptr, nullptr,
+      nullptr);
   g_autofree gchar* echo_all_nullable_types_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAllNullableTypes%s",

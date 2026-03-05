@@ -441,6 +441,11 @@ abstract class HostIntegrationCoreApi {
   /// Returns the platform-side hash code for the given object.
   int getAllNullableTypesHash(AllNullableTypes value);
 
+  /// Returns the platform-side hash code for the given object.
+  int getAllNullableTypesWithoutRecursionHash(
+    AllNullableTypesWithoutRecursion value,
+  );
+
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
   @SwiftFunction('echo(_:)')

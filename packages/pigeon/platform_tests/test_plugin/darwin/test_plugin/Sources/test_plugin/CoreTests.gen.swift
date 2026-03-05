@@ -1135,6 +1135,9 @@ protocol HostIntegrationCoreApi {
   func areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes) throws -> Bool
   /// Returns the platform-side hash code for the given object.
   func getAllNullableTypesHash(value: AllNullableTypes) throws -> Int64
+  /// Returns the platform-side hash code for the given object.
+  func getAllNullableTypesWithoutRecursionHash(value: AllNullableTypesWithoutRecursion) throws
+    -> Int64
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the passed object, to test serialization and deserialization.
@@ -2065,6 +2068,25 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       getAllNullableTypesHashChannel.setMessageHandler(nil)
+    }
+    /// Returns the platform-side hash code for the given object.
+    let getAllNullableTypesWithoutRecursionHashChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let valueArg = args[0] as! AllNullableTypesWithoutRecursion
+        do {
+          let result = try api.getAllNullableTypesWithoutRecursionHash(value: valueArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getAllNullableTypesWithoutRecursionHashChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(

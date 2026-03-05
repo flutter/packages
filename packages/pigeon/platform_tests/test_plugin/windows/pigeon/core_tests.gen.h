@@ -90,6 +90,7 @@ class UnusedClass {
 
   bool operator==(const UnusedClass& other) const;
   bool operator!=(const UnusedClass& other) const;
+  size_t Hash() const;
 
  private:
   static UnusedClass FromEncodableList(const ::flutter::EncodableList& list);
@@ -221,6 +222,7 @@ class AllTypes {
 
   bool operator==(const AllTypes& other) const;
   bool operator!=(const AllTypes& other) const;
+  size_t Hash() const;
 
  private:
   static AllTypes FromEncodableList(const ::flutter::EncodableList& list);
@@ -433,6 +435,7 @@ class AllNullableTypes {
 
   bool operator==(const AllNullableTypes& other) const;
   bool operator!=(const AllNullableTypes& other) const;
+  size_t Hash() const;
 
  private:
   static AllNullableTypes FromEncodableList(
@@ -631,6 +634,7 @@ class AllNullableTypesWithoutRecursion {
 
   bool operator==(const AllNullableTypesWithoutRecursion& other) const;
   bool operator!=(const AllNullableTypesWithoutRecursion& other) const;
+  size_t Hash() const;
 
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
@@ -733,6 +737,7 @@ class AllClassesWrapper {
 
   bool operator==(const AllClassesWrapper& other) const;
   bool operator!=(const AllClassesWrapper& other) const;
+  size_t Hash() const;
 
  private:
   static AllClassesWrapper FromEncodableList(
@@ -772,6 +777,7 @@ class TestMessage {
 
   bool operator==(const TestMessage& other) const;
   bool operator!=(const TestMessage& other) const;
+  size_t Hash() const;
 
  private:
   static TestMessage FromEncodableList(const ::flutter::EncodableList& list);
@@ -903,6 +909,9 @@ class HostIntegrationCoreApi {
   // Returns the platform-side hash code for the given object.
   virtual ErrorOr<int64_t> GetAllNullableTypesHash(
       const AllNullableTypes& value) = 0;
+  // Returns the platform-side hash code for the given object.
+  virtual ErrorOr<int64_t> GetAllNullableTypesWithoutRecursionHash(
+      const AllNullableTypesWithoutRecursion& value) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;

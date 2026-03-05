@@ -14,6 +14,7 @@
 #include <flutter/standard_message_codec.h>
 
 #include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
@@ -116,6 +117,96 @@ inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
   return a == b;
 }
 
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v);
+
+inline size_t PigeonInternalDeepHash(const double& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v);
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v) {
+  return std::hash<T>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v) {
+  size_t result = 0;
+  for (const auto& item : v) {
+    result = result * 31 + PigeonInternalDeepHash(item);
+  }
+  return result;
+}
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
+  size_t result = 0;
+  for (const auto& kv : v) {
+    result = result * 31 + PigeonInternalDeepHash(kv.first);
+    result = result * 31 + PigeonInternalDeepHash(kv.second);
+  }
+  return result;
+}
+
+inline size_t PigeonInternalDeepHash(const double& v) {
+  if (std::isnan(v)) {
+    return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
+  }
+  if (v == 0.0) {
+    return std::hash<double>()(0.0);
+  }
+  return std::hash<double>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+  size_t result = v.index();
+  if (const double* dv = std::get_if<double>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*dv);
+  } else if (const ::flutter::EncodableList* lv =
+                 std::get_if<::flutter::EncodableList>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*lv);
+  } else if (const ::flutter::EncodableMap* mv =
+                 std::get_if<::flutter::EncodableMap>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*mv);
+  } else {
+    std::visit(
+        [&result](const auto& val) {
+          using T = std::decay_t<decltype(val)>;
+          if constexpr (!std::is_same_v<T, double> &&
+                        !std::is_same_v<T, ::flutter::EncodableList> &&
+                        !std::is_same_v<T, ::flutter::EncodableMap> &&
+                        !std::is_same_v<T, std::monostate> &&
+                        !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+            result = result * 31 + std::hash<T>()(val);
+          }
+        },
+        v);
+  }
+  return result;
+}
+
 // MessageData
 
 MessageData::MessageData(const Code& code, const EncodableMap& data)
@@ -197,6 +288,17 @@ bool MessageData::operator==(const MessageData& other) const {
 bool MessageData::operator!=(const MessageData& other) const {
   return !(*this == other);
 }
+
+size_t MessageData::Hash() const {
+  size_t result = 0;
+  result = result * 31 + PigeonInternalDeepHash(name_);
+  result = result * 31 + PigeonInternalDeepHash(description_);
+  result = result * 31 + PigeonInternalDeepHash(code_);
+  result = result * 31 + PigeonInternalDeepHash(data_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const MessageData& v) { return v.Hash(); }
 
 PigeonInternalCodecSerializer::PigeonInternalCodecSerializer() {}
 

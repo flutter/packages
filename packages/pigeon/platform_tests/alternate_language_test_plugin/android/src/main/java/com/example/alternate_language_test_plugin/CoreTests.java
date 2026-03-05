@@ -3099,6 +3099,9 @@ public class CoreTests {
     /** Returns the platform-side hash code for the given object. */
     @NonNull
     Long getAllNullableTypesHash(@NonNull AllNullableTypes value);
+    /** Returns the platform-side hash code for the given object. */
+    @NonNull
+    Long getAllNullableTypesWithoutRecursionHash(@NonNull AllNullableTypesWithoutRecursion value);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -4301,6 +4304,32 @@ public class CoreTests {
                 AllNullableTypes valueArg = (AllNullableTypes) args.get(0);
                 try {
                   Long output = api.getAllNullableTypesHash(valueArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypesWithoutRecursion valueArg =
+                    (AllNullableTypesWithoutRecursion) args.get(0);
+                try {
+                  Long output = api.getAllNullableTypesWithoutRecursionHash(valueArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

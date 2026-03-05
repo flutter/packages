@@ -87,6 +87,7 @@ class MessageData {
 
   bool operator==(const MessageData& other) const;
   bool operator!=(const MessageData& other) const;
+  size_t Hash() const;
 
  private:
   static MessageData FromEncodableList(const ::flutter::EncodableList& list);

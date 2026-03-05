@@ -268,6 +268,14 @@ get_all_nullable_types_hash(CoreTestsPigeonTestAllNullableTypes* value,
       core_tests_pigeon_test_all_nullable_types_hash(value));
 }
 
+static CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+get_all_nullable_types_without_recursion_hash(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
+    gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new(
+      core_tests_pigeon_test_all_nullable_types_without_recursion_hash(value));
+}
+
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesWithoutRecursionResponse*
 echo_all_nullable_types_without_recursion(
 
@@ -3242,6 +3250,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_all_nullable_types = echo_all_nullable_types,
     .are_all_nullable_types_equal = are_all_nullable_types_equal,
     .get_all_nullable_types_hash = get_all_nullable_types_hash,
+    .get_all_nullable_types_without_recursion_hash =
+        get_all_nullable_types_without_recursion_hash,
     .echo_all_nullable_types_without_recursion =
         echo_all_nullable_types_without_recursion,
     .extract_nested_nullable_string = extract_nested_nullable_string,

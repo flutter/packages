@@ -61,6 +61,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return value.hashCode().toLong()
   }
 
+  override fun getAllNullableTypesWithoutRecursionHash(
+      value: AllNullableTypesWithoutRecursion
+  ): Long {
+    return value.hashCode().toLong()
+  }
+
   override fun echoAllNullableTypesWithoutRecursion(
       everything: AllNullableTypesWithoutRecursion?
   ): AllNullableTypesWithoutRecursion? {

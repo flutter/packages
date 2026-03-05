@@ -1092,6 +1092,8 @@ interface HostIntegrationCoreApi {
   fun areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes): Boolean
   /** Returns the platform-side hash code for the given object. */
   fun getAllNullableTypesHash(value: AllNullableTypes): Long
+  /** Returns the platform-side hash code for the given object. */
+  fun getAllNullableTypesWithoutRecursionHash(value: AllNullableTypesWithoutRecursion): Long
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
@@ -2220,6 +2222,28 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getAllNullableTypesHash(valueArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.getAllNullableTypesWithoutRecursionHash$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val valueArg = args[0] as AllNullableTypesWithoutRecursion
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAllNullableTypesWithoutRecursionHash(valueArg))
                 } catch (exception: Throwable) {
                   CoreTestsPigeonUtils.wrapError(exception)
                 }

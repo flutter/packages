@@ -1025,13 +1025,21 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedNullString, null);
     });
 
-    testWidgets('Signed zero equality and hashing', (WidgetTester _) async {
+    testWidgets('Signed zero equality', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
       final a = AllNullableTypes(aNullableDouble: 0.0);
       final b = AllNullableTypes(aNullableDouble: -0.0);
 
       expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Signed zero hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: 0.0);
+      final b = AllNullableTypes(aNullableDouble: -0.0);
+
       final int hashA = await api.getAllNullableTypesHash(a);
       final int hashB = await api.getAllNullableTypesHash(b);
       expect(
@@ -1041,13 +1049,21 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       );
     });
 
-    testWidgets('NaN equality and hashing', (WidgetTester _) async {
+    testWidgets('NaN equality', (WidgetTester _) async {
       final api = HostIntegrationCoreApi();
 
       final a = AllNullableTypes(aNullableDouble: double.nan);
       final b = AllNullableTypes(aNullableDouble: double.nan);
 
       expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('NaN hashing', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(aNullableDouble: double.nan);
+      final b = AllNullableTypes(aNullableDouble: double.nan);
+
       final int hashA = await api.getAllNullableTypesHash(a);
       final int hashB = await api.getAllNullableTypesHash(b);
       expect(hashA, hashB, reason: 'Hash codes for two NaNs should be equal');
@@ -1068,6 +1084,22 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       );
 
       expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Collection hashing with signed zero and NaN', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        doubleList: <double>[0.0, double.nan],
+        stringMap: <String?, String?>{'k': 'v', 'n': null},
+      );
+      final b = AllNullableTypes(
+        doubleList: <double>[-0.0, double.nan],
+        stringMap: <String?, String?>{'n': null, 'k': 'v'},
+      );
+
       expect(
         await api.getAllNullableTypesHash(a),
         await api.getAllNullableTypesHash(b),
@@ -1096,6 +1128,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       );
 
       expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Hashing inequality across types with same values', (
+      WidgetTester _,
+    ) async {
+      final a = AllNullableTypes(aNullableInt: 42);
+      final b = AllNullableTypesWithoutRecursion(aNullableInt: 42);
+
+      expect(a.hashCode, isNot(b.hashCode));
     });
   });
 

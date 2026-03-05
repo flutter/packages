@@ -461,6 +461,12 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)getAllNullableTypesHashValue:(FLTAllNullableTypes *)value
                                               error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the platform-side hash code for the given object.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)
+    getAllNullableTypesWithoutRecursionHashValue:(FLTAllNullableTypesWithoutRecursion *)value
+                                           error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable FLTAllNullableTypes *)echoAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                                  error:(FlutterError *_Nullable *_Nonnull)error;

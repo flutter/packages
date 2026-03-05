@@ -104,8 +104,12 @@ ErrorOr<bool> TestPlugin::AreAllNullableTypesEqual(const AllNullableTypes& a,
 
 ErrorOr<int64_t> TestPlugin::GetAllNullableTypesHash(
     const AllNullableTypes& value) {
-  // TODO(gaaclarke): Implement hashing for C++ classes in the generator.
-  return 0;
+  return (int64_t)value.Hash();
+}
+
+ErrorOr<int64_t> TestPlugin::GetAllNullableTypesWithoutRecursionHash(
+    const AllNullableTypesWithoutRecursion& value) {
+  return (int64_t)value.Hash();
 }
 
 ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>

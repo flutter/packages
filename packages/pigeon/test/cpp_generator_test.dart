@@ -568,6 +568,7 @@ void main() {
 #include <flutter/standard_message_codec.h>
 
 #include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
@@ -2729,5 +2730,68 @@ void main() {
       code,
       contains('return PigeonInternalDeepEquals(nested_, other.nested_);'),
     );
+  });
+
+  test('data classes implement Hash', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'field1',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Hash() const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Input::Hash() const {'));
+      expect(
+        code,
+        contains('result = result * 31 + PigeonInternalDeepHash(field1_);'),
+      );
+      expect(code, contains('size_t PigeonInternalDeepHash(const Input& v) {'));
+    }
   });
 }
