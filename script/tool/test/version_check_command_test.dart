@@ -488,7 +488,7 @@ void main() {
     });
 
     test('Fail if CHANGELOG list items have a blank line', () async {
-      const String version = '1.0.1';
+      const version = '1.0.1';
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -496,7 +496,7 @@ void main() {
       );
 
       // Blank line breaks the list items.
-      const String changelog =
+      const changelog =
           '''
 ## $version
 
@@ -532,7 +532,7 @@ void main() {
     test(
       'Fail if CHANGELOG list items have a blank line with nested items',
       () async {
-        const String version = '1.0.1';
+        const version = '1.0.1';
         final RepositoryPackage plugin = createFakePlugin(
           'plugin',
           packagesDir,
@@ -540,7 +540,7 @@ void main() {
         );
 
         // Blank line in nested list items.
-        const String changelog =
+        const changelog =
             '''
 ## $version
 

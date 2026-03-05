@@ -541,9 +541,9 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     // Check for blank lines between list items in the version section.
-    bool inList = false;
-    bool seenBlankLineInList = false;
-    final RegExp listItemRegex = RegExp(r'^\s*[*+-]\s');
+    var inList = false;
+    var seenBlankLineInList = false;
+    final listItemRegex = RegExp(r'^\s*[*+-]\s');
     while (iterator.moveNext()) {
       final String line = iterator.current;
       final bool isListItem = listItemRegex.hasMatch(line);
