@@ -24,11 +24,13 @@ jobs:
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
-          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }} --remote=origin
+          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE} --branch=${BRANCH_NAME} --remote=origin
+        env:
+          GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
       - name: Check if branch was created
         id: check-branch-exists
         run: |
-          if git show-ref --verify --quiet refs/heads/${{ env.BRANCH_NAME }}; then
+          if git show-ref --verify --quiet refs/heads/${BRANCH_NAME}; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT

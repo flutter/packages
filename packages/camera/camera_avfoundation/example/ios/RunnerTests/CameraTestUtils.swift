@@ -7,20 +7,15 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Utils for creating default class instances used in tests
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
   /// Audio is enabled by default, while other parameters use platform-specific defaults.
-  static func createDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset)
-    -> FCPPlatformMediaSettings
+  static func createDefaultMediaSettings(resolutionPreset: PlatformResolutionPreset)
+    -> PlatformMediaSettings
   {
-    return FCPPlatformMediaSettings.make(
-      with: resolutionPreset,
+    return PlatformMediaSettings(
+      resolutionPreset: resolutionPreset,
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,
@@ -59,7 +54,7 @@ enum CameraTestUtils {
 
     let configuration = CameraConfiguration(
       mediaSettings: createDefaultMediaSettings(
-        resolutionPreset: FCPPlatformResolutionPreset.medium),
+        resolutionPreset: PlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
       captureDeviceFactory: { _ in captureDeviceMock },
       audioCaptureDeviceFactory: { MockCaptureDevice() },
@@ -208,5 +203,17 @@ extension XCTestCase {
     }
 
     wait(for: [expectation], timeout: 1)
+  }
+
+  func assertSuccess<T>(
+    _ result: Result<T, any Error>, file: StaticString = #file, line: UInt = #line
+  ) -> T? {
+    switch result {
+    case .success(let value):
+      return value
+    case .failure(let error):
+      XCTFail("Expected success, but got failure: \(error)", file: file, line: line)
+      return nil
+    }
   }
 }

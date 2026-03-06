@@ -4,11 +4,6 @@
 
 import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
 typealias VideoDimensionsConverter = (CaptureDeviceFormat) -> CMVideoDimensions
@@ -40,11 +35,11 @@ enum FormatUtils {
   /// and frame rate which bestFrameRate returned for that format.
   static func findBestFormat(
     for captureDevice: CaptureDevice,
-    mediaSettings: FCPPlatformMediaSettings,
+    mediaSettings: PlatformMediaSettings,
     videoDimensionsConverter: VideoDimensionsConverter
   ) -> (format: CaptureDeviceFormat, frameRate: Double) {
     let targetResolution = videoDimensionsConverter(captureDevice.flutterActiveFormat)
-    let targetFrameRate = mediaSettings.framesPerSecond?.doubleValue ?? 0
+    let targetFrameRate = Double(mediaSettings.framesPerSecond ?? 0)
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
 

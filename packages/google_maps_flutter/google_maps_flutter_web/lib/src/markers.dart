@@ -44,10 +44,44 @@ abstract class MarkersController<T extends Object, O>
   ///
   /// Wraps each [Marker] into its corresponding [MarkerController].
   Future<void> addMarkers(Set<Marker> markersToAdd) async {
-    await Future.wait(markersToAdd.map(_addMarker));
+    final Map<ClusterManagerId?, List<Marker>> markersByClusters = markersToAdd
+        .groupListsBy((Marker marker) => marker.clusterManagerId);
+
+    for (final MapEntry<ClusterManagerId?, List<Marker>> entry
+        in markersByClusters.entries) {
+      final List<MarkerController<T, O>> markerControllers = await Future.wait(
+        entry.value.map(_createMarker),
+      );
+
+      final ClusterManagerId? clusterManagerId = entry.key;
+      if (clusterManagerId != null) {
+        _clusterManagersController.addItems(
+          clusterManagerId,
+          markerControllers
+              .map((controller) => controller.marker)
+              .whereType<T>()
+              .toList(),
+        );
+      } else {
+        for (final controller in markerControllers) {
+          controller.setMap(googleMap);
+        }
+      }
+    }
   }
 
   Future<void> _addMarker(Marker marker) async {
+    final MarkerController<T, O> controler = await _createMarker(marker);
+    final ClusterManagerId? clusterManagerId = marker.clusterManagerId;
+
+    if (clusterManagerId != null && controler.marker != null) {
+      _clusterManagersController.addItem(clusterManagerId, controler.marker!);
+    } else {
+      controler.setMap(googleMap);
+    }
+  }
+
+  Future<MarkerController<T, O>> _createMarker(Marker marker) async {
     final gmaps.InfoWindowOptions? infoWindowOptions =
         _infoWindowOptionsFromMarker(marker);
     gmaps.InfoWindow? gmInfoWindow;
@@ -79,6 +113,8 @@ abstract class MarkersController<T extends Object, O>
       gmInfoWindow,
     );
     _markerIdToController[marker.markerId] = controller;
+
+    return controller;
   }
 
   /// Creates a [MarkerController] for the given [marker].
@@ -128,7 +164,50 @@ abstract class MarkersController<T extends Object, O>
 
   /// Removes a set of [MarkerId]s from the cache.
   void removeMarkers(Set<MarkerId> markerIdsToRemove) {
-    markerIdsToRemove.forEach(_removeMarker);
+    final List<MapEntry<MarkerId, MarkerController<T, O>?>> markersControllers =
+        markerIdsToRemove
+            .map(
+              (MarkerId markerId) =>
+                  MapEntry<MarkerId, MarkerController<T, O>?>(
+                    markerId,
+                    _markerIdToController[markerId],
+                  ),
+            )
+            .toList();
+
+    final Map<ClusterManagerId?, List<T>> controllersByCluster =
+        markersControllers
+            .groupListsBy(
+              (MapEntry<MarkerId, MarkerController<T, O>?> markerControler) =>
+                  markerControler.value?._clusterManagerId,
+            )
+            .map(
+              (
+                ClusterManagerId? key,
+                List<MapEntry<MarkerId, MarkerController<T, O>?>> value,
+              ) => MapEntry<ClusterManagerId?, List<T>>(
+                key,
+                value
+                    .map(
+                      (MapEntry<MarkerId, MarkerController<T, O>?> x) =>
+                          x.value?.marker,
+                    )
+                    .whereType<T>()
+                    .toList(),
+              ),
+            );
+
+    for (final MapEntry<ClusterManagerId?, List<T>> entry
+        in controllersByCluster.entries) {
+      if (entry.key != null) {
+        _clusterManagersController.removeItems(entry.key!, entry.value);
+      }
+    }
+
+    for (final markerController in markersControllers) {
+      markerController.value?.remove();
+      _markerIdToController.remove(markerController.key);
+    }
   }
 
   void _removeMarker(MarkerId markerId) {
@@ -235,12 +314,6 @@ class LegacyMarkersController
     final gmMarker = gmaps.Marker(markerOptions);
     gmMarker.set('markerId', marker.markerId.value.toJS);
 
-    if (marker.clusterManagerId != null) {
-      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
-    } else {
-      gmMarker.map = googleMap;
-    }
-
     return LegacyMarkerController(
       marker: gmMarker,
       clusterManagerId: marker.clusterManagerId,
@@ -287,12 +360,6 @@ class AdvancedMarkersController
 
     final gmMarker = gmaps.AdvancedMarkerElement(markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
-
-    if (marker.clusterManagerId != null) {
-      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
-    } else {
-      gmMarker.map = googleMap;
-    }
 
     return AdvancedMarkerController(
       marker: gmMarker,

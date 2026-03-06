@@ -494,7 +494,7 @@ abstract class NestorApi {
       copyrightHeader: './copyright_header.txt',
       dartOut: '',
     );
-    final dartGeneratorAdapter = DartGeneratorAdapter();
+    const dartGeneratorAdapter = DartGeneratorAdapter();
     final buffer = StringBuffer();
     dartGeneratorAdapter.generate(
       buffer,
@@ -511,7 +511,7 @@ abstract class NestorApi {
       javaOut: 'Foo.java',
       copyrightHeader: './copyright_header.txt',
     );
-    final javaGeneratorAdapter = JavaGeneratorAdapter();
+    const javaGeneratorAdapter = JavaGeneratorAdapter();
     final buffer = StringBuffer();
     javaGeneratorAdapter.generate(
       buffer,
@@ -529,7 +529,7 @@ abstract class NestorApi {
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final objcHeaderGeneratorAdapter = ObjcGeneratorAdapter();
+    const objcHeaderGeneratorAdapter = ObjcGeneratorAdapter();
     final buffer = StringBuffer();
     objcHeaderGeneratorAdapter.generate(
       buffer,
@@ -547,7 +547,7 @@ abstract class NestorApi {
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final objcSourceGeneratorAdapter = ObjcGeneratorAdapter();
+    const objcSourceGeneratorAdapter = ObjcGeneratorAdapter();
     final buffer = StringBuffer();
     objcSourceGeneratorAdapter.generate(
       buffer,
@@ -564,7 +564,7 @@ abstract class NestorApi {
       swiftOut: 'Foo.swift',
       copyrightHeader: './copyright_header.txt',
     );
-    final swiftGeneratorAdapter = SwiftGeneratorAdapter();
+    const swiftGeneratorAdapter = SwiftGeneratorAdapter();
     final buffer = StringBuffer();
     swiftGeneratorAdapter.generate(
       buffer,
@@ -582,7 +582,7 @@ abstract class NestorApi {
       cppHeaderOut: 'Foo.h',
       copyrightHeader: './copyright_header.txt',
     );
-    final cppHeaderGeneratorAdapter = CppGeneratorAdapter();
+    const cppHeaderGeneratorAdapter = CppGeneratorAdapter();
     final buffer = StringBuffer();
     cppHeaderGeneratorAdapter.generate(
       buffer,
@@ -600,9 +600,7 @@ abstract class NestorApi {
       cppHeaderOut: '',
       cppSourceOut: '',
     );
-    final cppSourceGeneratorAdapter = CppGeneratorAdapter(
-      fileTypeList: <FileType>[FileType.source],
-    );
+    const cppSourceGeneratorAdapter = CppGeneratorAdapter();
     final buffer = StringBuffer();
     cppSourceGeneratorAdapter.generate(
       buffer,
@@ -1174,7 +1172,7 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    final dartTestGeneratorAdapter = DartTestGeneratorAdapter();
+    const dartTestGeneratorAdapter = DartTestGeneratorAdapter();
     final buffer = StringBuffer();
     dartTestGeneratorAdapter.generate(
       buffer,

@@ -116,6 +116,7 @@
 
   [self.playerLayer removeFromSuperlayer];
 
+  _displayLink.running = NO;
   _displayLink = nil;
 }
 

@@ -1,3 +1,11 @@
+## 2.9.4
+
+* Ensures that the display link does not continue requesting frames after a player is disposed.
+
+## 2.9.3
+
+* Fixes a regression where HTTP headers were ignored.
+
 ## 2.9.2
 
 * Refactors for improved testability.

@@ -4,20 +4,6 @@
 
 package io.flutter.plugins.googlesignin
 
-fun completeWithGetGetCredentialResult(
-    callback: (Result<GetCredentialResult>) -> Unit,
-    result: GetCredentialResult
-) {
-  callback(Result.success(result))
-}
-
-fun completeWithGetCredentialFailure(
-    callback: (Result<GetCredentialFailure>) -> Unit,
-    failure: GetCredentialFailure
-) {
-  callback(Result.success(failure))
-}
-
 fun completeWithUnitSuccess(callback: (Result<Unit>) -> Unit) {
   callback(Result.success(Unit))
 }
@@ -26,16 +12,6 @@ fun completeWithUnitError(callback: (Result<Unit>) -> Unit, failure: FlutterErro
   callback(Result.failure(failure))
 }
 
-fun completeWithAuthorizationResult(
-    callback: (Result<AuthorizeResult>) -> Unit,
-    result: PlatformAuthorizationResult
-) {
-  callback(Result.success(result))
-}
-
-fun completeWithAuthorizeFailure(
-    callback: (Result<AuthorizeResult>) -> Unit,
-    failure: AuthorizeFailure
-) {
-  callback(Result.success(failure))
+fun <T> completeWithValue(callback: (Result<T>) -> Unit, value: T) {
+  callback(Result.success(value))
 }
