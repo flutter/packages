@@ -141,6 +141,14 @@ enum MixedContentMode {
   neverAllow,
 }
 
+/// A representation of window insets that tracks access to enable
+/// recomposition, relayout, and redrawing when values change.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/WindowInsets
+enum WindowInsets {
+  systemBars, displayCutout,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -848,6 +856,16 @@ abstract class View {
 
   /// Set the over-scroll mode for this view.
   void setOverScrollMode(OverScrollMode mode);
+
+  /// Sets the listener to the native method
+  /// `ViewCompat.setOnApplyWindowInsetsListener` to mark the passed insets to
+  /// zero.
+  ///
+  /// Sets the padding of the view to match the insets to
+  ///
+  /// This is a convenience method because `View.OnApplyWindowInsetsListener`
+  /// requires implementing a callback that requires a synchronous return value.
+  void setInsetListenerToSetInsetsToZero(List<WindowInsets> insets);
 }
 
 /// A callback interface used by the host application to set the Geolocation
