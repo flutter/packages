@@ -1,9 +1,6 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
-
-## 2.1.2
-
 * Adds an example of using `OpenContainer`
 
 ## 2.1.1
