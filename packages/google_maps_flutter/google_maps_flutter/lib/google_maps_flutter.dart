@@ -14,6 +14,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
     show
+        AdvancedMarker,
         ArgumentCallback,
         ArgumentCallbacks,
         AssetMapBitmap,
