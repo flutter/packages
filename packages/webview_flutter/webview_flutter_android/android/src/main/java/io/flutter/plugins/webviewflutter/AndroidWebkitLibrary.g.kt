@@ -1100,8 +1100,7 @@ enum class MixedContentMode(val raw: Int) {
 }
 
 /**
- * A representation of window insets that tracks access to enable recomposition, relayout, and
- * redrawing when values change.
+ * Defines different types of sources causing window insets.
  *
  * See https://developer.android.com/reference/kotlin/android/view/WindowInsets.Type
  */
