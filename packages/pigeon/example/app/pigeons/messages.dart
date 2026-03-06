@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartOptions: DartOptions(),
+    dartOptions: DartOptions(ignoreLints: false),
     cppOptions: CppOptions(namespace: 'pigeon_example'),
     cppHeaderOut: 'windows/runner/messages.g.h',
     cppSourceOut: 'windows/runner/messages.g.cpp',

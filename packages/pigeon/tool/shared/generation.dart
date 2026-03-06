@@ -275,7 +275,7 @@ Future<int> runPigeon({
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
-      dartOptions: const DartOptions(),
+      dartOptions: const DartOptions(ignoreLints: false),
       cppHeaderOut: cppHeaderOut,
       cppSourceOut: cppSourceOut,
       cppOptions: CppOptions(namespace: cppNamespace),
