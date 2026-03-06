@@ -8,11 +8,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class CameraPropertiesTests: XCTestCase {
   // MARK: - Flash Mode Tests
 
@@ -59,20 +54,20 @@ final class CameraPropertiesTests: XCTestCase {
 
   func testGetPigeonDeviceOrientationForUIDeviceOrientation() {
     XCTAssertEqual(
-      FCPPlatformDeviceOrientation.portraitDown,
+      PlatformDeviceOrientation.portraitDown,
       getPigeonDeviceOrientation(for: .portraitUpsideDown))
     XCTAssertEqual(
-      FCPPlatformDeviceOrientation.landscapeLeft,
+      PlatformDeviceOrientation.landscapeLeft,
       getPigeonDeviceOrientation(for: .landscapeLeft))
     XCTAssertEqual(
-      FCPPlatformDeviceOrientation.landscapeRight,
+      PlatformDeviceOrientation.landscapeRight,
       getPigeonDeviceOrientation(for: .landscapeRight))
     XCTAssertEqual(
-      FCPPlatformDeviceOrientation.portraitUp,
+      PlatformDeviceOrientation.portraitUp,
       getPigeonDeviceOrientation(for: .portrait))
     // Test default case.
     XCTAssertEqual(
-      FCPPlatformDeviceOrientation.portraitUp,
+      PlatformDeviceOrientation.portraitUp,
       getPigeonDeviceOrientation(for: .unknown))
   }
 }

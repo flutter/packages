@@ -4,11 +4,6 @@
 
 import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// A protocol which is a direct passthrough to `AVCaptureOutput`. It exists to allow mocking
 /// `AVCaptureOutput` in tests.
 protocol CaptureOutput {
@@ -24,6 +19,9 @@ protocol CaptureVideoDataOutput: CaptureOutput {
 
   /// Corresponds to the `alwaysDiscardsLateVideoFrames` property of `AVCaptureVideoDataOutput`
   var alwaysDiscardsLateVideoFrames: Bool { get set }
+
+  /// Corresponds to the `availableVideoPixelFormatTypes` property of `AVCaptureVideoDataOutput`
+  var availableVideoPixelFormatTypes: [FourCharCode] { get }
 
   /// Corresponds to the `videoSettings` property of `AVCaptureVideoDataOutput`
   var videoSettings: [String: Any]! { get set }

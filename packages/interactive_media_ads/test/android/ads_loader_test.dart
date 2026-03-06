@@ -278,6 +278,60 @@ void main() {
       onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
     });
 
+    testWidgets('onAdsLoaded does not crash with null manager', (
+      WidgetTester tester,
+    ) async {
+      final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
+        tester,
+      );
+
+      final mockAdsLoader = MockAdsLoader();
+      final addEventListenerCompleter = Completer<void>();
+      when(mockAdsLoader.addAdsLoadedListener(any)).thenAnswer((_) async {
+        addEventListenerCompleter.complete();
+      });
+      _mockImaSdkFactoryInstance(adsLoader: mockAdsLoader);
+
+      late final void Function(ima.AdsLoadedListener, ima.AdsManagerLoadedEvent)
+      onAdsManagerLoadedCallback;
+
+      ima.PigeonOverrides.adsLoadedListener_new =
+          ({
+            required void Function(
+              ima.AdsLoadedListener,
+              ima.AdsManagerLoadedEvent,
+            )
+            onAdsManagerLoaded,
+          }) {
+            onAdsManagerLoadedCallback = onAdsManagerLoaded;
+            return MockAdsLoadedListener();
+          };
+      ima.PigeonOverrides.adErrorListener_new = ({required dynamic onAdError}) {
+        return MockAdErrorListener();
+      };
+
+      AndroidAdsLoader(
+        AndroidAdsLoaderCreationParams(
+          container: container,
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
+          onAdsLoaded: (_) {
+            fail('onAdsLoaded should not be called when AdsManager is null');
+          },
+          onAdsLoadError: (_) {},
+        ),
+      );
+
+      final mockLoadedEvent = MockAdsManagerLoadedEvent();
+      // Sets manager to null.
+      when(mockLoadedEvent.manager).thenReturn(null);
+
+      await addEventListenerCompleter.future;
+
+      onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
+    });
+
     testWidgets('onAdError', (WidgetTester tester) async {
       final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
         tester,

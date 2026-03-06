@@ -8,38 +8,50 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
+private class MockEventSink: PigeonEventSink<PlatformCameraImageData> {
+  var eventSinkSuccessStub: ((PlatformCameraImageData?) -> Void)?
 
-private class MockImageStreamHandler: NSObject, ImageStreamHandler {
+  init() {
+    super.init({ event in })
+  }
+
+  override func success(_ event: PlatformCameraImageData?) {
+    eventSinkSuccessStub?(event)
+  }
+
+  override func error(code: String, message: String?, details: Any?) {}
+
+  override func endOfStream() {}
+}
+
+private class MockImageStreamHandler: ImageDataStreamStreamHandler, ImageStreamHandler {
+  var mockEventSink = MockEventSink()
   var captureSessionQueue: DispatchQueue {
     preconditionFailure("Attempted to access unimplemented property: captureSessionQueue")
   }
-
-  var eventSinkStub: ((Any?) -> Void)?
-
-  var eventSink: FlutterEventSink? {
-    get {
-      if let stub = eventSinkStub {
-        return { event in
-          stub(event)
-        }
-      }
-      return nil
-    }
+  var eventSink: PigeonEventSink<PlatformCameraImageData>? {
     set {
-      eventSinkStub = newValue
+    }
+    get {
+      return mockEventSink
     }
   }
 
-  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-    -> FlutterError?
-  { nil }
+  var eventSinkSuccessStub: ((PlatformCameraImageData?) -> Void)? {
+    set {
+      mockEventSink.eventSinkSuccessStub = newValue
+    }
+    get {
+      return mockEventSink.eventSinkSuccessStub
+    }
+  }
 
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    nil
+  override func onListen(
+    withArguments arguments: Any?, sink: PigeonEventSink<PlatformCameraImageData>
+  ) {
+  }
+
+  override func onCancel(withArguments arguments: Any?) {
   }
 }
 
@@ -85,7 +97,7 @@ final class StreamingTests: XCTestCase {
     let streamingExpectation = expectation(
       description: "Must not call handler over maxStreamingPendingFramesCount")
 
-    handlerMock.eventSinkStub = { event in
+    handlerMock.eventSinkSuccessStub = { event in
       streamingExpectation.fulfill()
     }
 
@@ -120,7 +132,7 @@ final class StreamingTests: XCTestCase {
     // Setup mocked event sink after the stream starts
     let streamingExpectation = expectation(
       description: "Must be able to call the handler again when receivedImageStreamData is called")
-    handlerMock.eventSinkStub = { event in
+    handlerMock.eventSinkSuccessStub = { event in
       streamingExpectation.fulfill()
     }
 
@@ -141,7 +153,7 @@ final class StreamingTests: XCTestCase {
   func testIgnoresNonImageBuffers() {
     let (camera, testAudioOutput, _, audioSampleBuffer, testAudioConnection) = createCamera()
     let handlerMock = MockImageStreamHandler()
-    handlerMock.eventSinkStub = { event in
+    handlerMock.eventSinkSuccessStub = { event in
       XCTFail()
     }
 
@@ -164,29 +176,31 @@ final class StreamingTests: XCTestCase {
     waitForQueueRoundTrip(with: DispatchQueue.main)
   }
 
-  func testImageStreamEventFormat() {
+  func testImageStreamEventFormat() throws {
     let (camera, testAudioOutput, sampleBuffer, _, testAudioConnection) = createCamera()
 
     let expectation = expectation(description: "Received a valid event")
 
     let handlerMock = MockImageStreamHandler()
-    handlerMock.eventSinkStub = { event in
-      let imageBuffer = event as! [String: Any]
+    handlerMock.eventSinkSuccessStub = { event in
+      guard let imageBuffer = event else {
+        XCTFail()
+        return
+      }
+      XCTAssertGreaterThan(imageBuffer.width, 0)
+      XCTAssertGreaterThan(imageBuffer.height, 0)
+      XCTAssertGreaterThan(imageBuffer.formatCode, 0)
+      XCTAssertGreaterThan(imageBuffer.lensAperture, 0)
+      XCTAssertGreaterThan(imageBuffer.sensorExposureTimeNanoseconds, 0)
+      XCTAssertGreaterThan(imageBuffer.sensorSensitivity, 0)
 
-      XCTAssertTrue(imageBuffer["width"] is NSNumber)
-      XCTAssertTrue(imageBuffer["height"] is NSNumber)
-      XCTAssertTrue(imageBuffer["format"] is NSNumber)
-      XCTAssertTrue(imageBuffer["lensAperture"] is NSNumber)
-      XCTAssertTrue(imageBuffer["sensorExposureTime"] is NSNumber)
-      XCTAssertTrue(imageBuffer["sensorSensitivity"] is NSNumber)
-
-      let planes = imageBuffer["planes"] as! [[String: Any]]
+      let planes = imageBuffer.planes
       let planeBuffer = planes[0]
 
-      XCTAssertTrue(planeBuffer["bytesPerRow"] is NSNumber)
-      XCTAssertTrue(planeBuffer["width"] is NSNumber)
-      XCTAssertTrue(planeBuffer["height"] is NSNumber)
-      XCTAssertTrue(planeBuffer["bytes"] is FlutterStandardTypedData)
+      XCTAssertGreaterThan(planeBuffer.bytesPerRow, 0)
+      XCTAssertGreaterThan(planeBuffer.width, 0)
+      XCTAssertGreaterThan(planeBuffer.height, 0)
+      XCTAssertGreaterThan(planeBuffer.bytes.data.count, 0)
 
       expectation.fulfill()
     }
