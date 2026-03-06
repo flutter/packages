@@ -1,5 +1,6 @@
-## NEXT
+## 2.15.0
 
+* Adds support for advanced markers.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.14.2
