@@ -22,14 +22,14 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
     assert(localizedReason.isNotEmpty);
-    final Map<String, Object> args = <String, Object>{
+    final args = <String, Object>{
       'localizedReason': localizedReason,
       'useErrorDialogs': options.useErrorDialogs,
       'stickyAuth': options.stickyAuth,
       'sensitiveTransaction': options.sensitiveTransaction,
       'biometricOnly': options.biometricOnly,
     };
-    for (final AuthMessages messages in authMessages) {
+    for (final messages in authMessages) {
       args.addAll(messages.args);
     }
     return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
@@ -40,8 +40,8 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
     final List<String> result =
         (await _channel.invokeListMethod<String>('getAvailableBiometrics')) ??
         <String>[];
-    final List<BiometricType> biometrics = <BiometricType>[];
-    for (final String value in result) {
+    final biometrics = <BiometricType>[];
+    for (final value in result) {
       switch (value) {
         case 'face':
           biometrics.add(BiometricType.face);

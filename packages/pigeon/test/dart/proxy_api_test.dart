@@ -11,7 +11,7 @@ const String DEFAULT_PACKAGE_NAME = 'test_package';
 void main() {
   group('ProxyApi', () {
     test('one api', () {
-      final Root root = Root(
+      final root = Root(
         apis: <Api>[
           AstProxyApi(
             name: 'Api',
@@ -77,15 +77,15 @@ void main() {
         classes: <Class>[],
         enums: <Enum>[],
       );
-      final StringBuffer sink = StringBuffer();
-      const DartGenerator generator = DartGenerator();
+      final sink = StringBuffer();
+      const generator = DartGenerator();
       generator.generate(
         const InternalDartOptions(),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
@@ -137,7 +137,7 @@ void main() {
     });
 
     test('InstanceManagerApi', () {
-      final Root root = Root(
+      final root = Root(
         apis: <Api>[
           AstProxyApi(
             name: 'Api',
@@ -149,15 +149,15 @@ void main() {
         classes: <Class>[],
         enums: <Enum>[],
       );
-      final StringBuffer sink = StringBuffer();
-      const DartGenerator generator = DartGenerator();
+      final sink = StringBuffer();
+      const generator = DartGenerator();
       generator.generate(
         const InternalDartOptions(),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       expect(code, contains(r'class _PigeonInternalInstanceManagerApi'));
@@ -190,7 +190,7 @@ void main() {
 
     group('ProxyApi base class', () {
       test('class name', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -202,15 +202,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(
           code,
@@ -219,7 +219,7 @@ void main() {
       });
 
       test('InstanceManager field', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -231,15 +231,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
 
         expect(
@@ -254,13 +254,13 @@ void main() {
 
     group('inheritance', () {
       test('extends', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -278,15 +278,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains(r'class Api extends Api2'));
         expect(
@@ -298,13 +298,13 @@ void main() {
       });
 
       test('implements', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -324,15 +324,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(
           code,
           contains(
@@ -342,19 +342,19 @@ void main() {
       });
 
       test('implements 2 ProxyApis', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final AstProxyApi api3 = AstProxyApi(
+        final api3 = AstProxyApi(
           name: 'Api3',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -380,15 +380,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(
           code,
           contains(
@@ -398,7 +398,7 @@ void main() {
       });
 
       test('implements inherits flutter methods', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
@@ -418,7 +418,7 @@ void main() {
             ),
           ],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -438,15 +438,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           code,
@@ -468,7 +468,7 @@ void main() {
 
     group('Constructors', () {
       test('empty name and no params constructor', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -482,15 +482,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -510,7 +510,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r"const String pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
+            r"const pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
@@ -522,17 +522,17 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            '() async { final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;',
+            '() async { final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;',
           ),
         );
       });
 
       test('multiple params constructor', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -600,15 +600,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -651,11 +651,11 @@ void main() {
 
     group('Fields', () {
       test('constructor with fields', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -720,15 +720,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -775,13 +775,13 @@ void main() {
       });
 
       test('attached field', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -804,28 +804,28 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(code, contains('class Api'));
         expect(code, contains(r'late final Api2 aField = pigeonVar_aField();'));
         expect(code, contains(r'Api2 pigeonVar_aField()'));
       });
 
       test('static attached field', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -849,15 +849,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(code, contains('class Api'));
         expect(
           code,
@@ -875,11 +875,11 @@ void main() {
 
     group('Host methods', () {
       test('multiple params method', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -949,15 +949,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -980,7 +980,7 @@ void main() {
       });
 
       test('static method', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -1000,15 +1000,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -1025,11 +1025,11 @@ void main() {
 
     group('Flutter methods', () {
       test('multiple params flutter method', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -1094,15 +1094,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const DartGenerator generator = DartGenerator();
+        final sink = StringBuffer();
+        const generator = DartGenerator();
         generator.generate(
           const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class Api'));
         expect(
@@ -1180,7 +1180,7 @@ void main() {
 /// void method( int param1, int param2, )
 /// ```
 String _collapseNewlineAndIndentation(String string) {
-  final StringBuffer result = StringBuffer();
+  final result = StringBuffer();
   for (final String line in string.split('\n')) {
     result.write('${line.trimLeft()} ');
   }

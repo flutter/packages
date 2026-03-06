@@ -18,8 +18,8 @@ class AdsRequestProxyApiTest {
     val instance = mock<AdsRequest>()
     api.setAdTagUrl(instance, "adTag?")
 
-    verify(instance).adTagUrl =
-        "adTag?&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
+    verify(instance)
+        .setAdTagUrl("adTag?&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}")
   }
 
   @Test
@@ -29,10 +29,10 @@ class AdsRequestProxyApiTest {
     val instance = mock<AdsRequest>()
 
     api.setAdTagUrl(instance, "adTag#")
-    verify(instance).adTagUrl = "adTag#"
+    verify(instance).setAdTagUrl("adTag#")
 
     api.setAdTagUrl(instance, "adTag?#")
-    verify(instance).adTagUrl = "adTag?#"
+    verify(instance).setAdTagUrl("adTag?#")
   }
 
   @Test
@@ -43,7 +43,7 @@ class AdsRequestProxyApiTest {
     val mockProvider = mock<ContentProgressProvider>()
     api.setContentProgressProvider(instance, mockProvider)
 
-    verify(instance).contentProgressProvider = mockProvider
+    verify(instance).setContentProgressProvider(mockProvider)
   }
 
   @Test
@@ -76,7 +76,7 @@ class AdsRequestProxyApiTest {
     val cannedAdResponse = "response"
     api.setAdsResponse(instance, cannedAdResponse)
 
-    verify(instance).adsResponse = cannedAdResponse
+    verify(instance).setAdsResponse(cannedAdResponse)
   }
 
   @Test

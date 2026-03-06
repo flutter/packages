@@ -19,8 +19,7 @@ void main() {
     test(
       'supportsImageSource returns false for camera when there is no delegate',
       () async {
-        final FakeCameraDelegatingImagePickerPlatform implementation =
-            FakeCameraDelegatingImagePickerPlatform();
+        final implementation = FakeCameraDelegatingImagePickerPlatform();
 
         expect(implementation.supportsImageSource(ImageSource.camera), false);
       },
@@ -29,8 +28,7 @@ void main() {
     test(
       'supportsImageSource returns true for camera when there is a delegate',
       () async {
-        final FakeCameraDelegatingImagePickerPlatform implementation =
-            FakeCameraDelegatingImagePickerPlatform();
+        final implementation = FakeCameraDelegatingImagePickerPlatform();
         implementation.cameraDelegate = FakeCameraDelegate();
 
         expect(implementation.supportsImageSource(ImageSource.camera), true);
@@ -40,8 +38,7 @@ void main() {
     test(
       'getImageFromSource for camera throws if delegate is not set',
       () async {
-        final FakeCameraDelegatingImagePickerPlatform implementation =
-            FakeCameraDelegatingImagePickerPlatform();
+        final implementation = FakeCameraDelegatingImagePickerPlatform();
 
         await expectLater(
           implementation.getImageFromSource(source: ImageSource.camera),
@@ -51,8 +48,7 @@ void main() {
     );
 
     test('getVideo for camera throws if delegate is not set', () async {
-      final FakeCameraDelegatingImagePickerPlatform implementation =
-          FakeCameraDelegatingImagePickerPlatform();
+      final implementation = FakeCameraDelegatingImagePickerPlatform();
 
       await expectLater(
         implementation.getVideo(source: ImageSource.camera),
@@ -61,9 +57,8 @@ void main() {
     });
 
     test('getImageFromSource for camera calls delegate if set', () async {
-      const String fakePath = '/tmp/foo';
-      final FakeCameraDelegatingImagePickerPlatform implementation =
-          FakeCameraDelegatingImagePickerPlatform();
+      const fakePath = '/tmp/foo';
+      final implementation = FakeCameraDelegatingImagePickerPlatform();
       implementation.cameraDelegate = FakeCameraDelegate(
         result: XFile(fakePath),
       );
@@ -77,9 +72,8 @@ void main() {
     });
 
     test('getVideo for camera calls delegate if set', () async {
-      const String fakePath = '/tmp/foo';
-      final FakeCameraDelegatingImagePickerPlatform implementation =
-          FakeCameraDelegatingImagePickerPlatform();
+      const fakePath = '/tmp/foo';
+      final implementation = FakeCameraDelegatingImagePickerPlatform();
       implementation.cameraDelegate = FakeCameraDelegate(
         result: XFile(fakePath),
       );
@@ -93,8 +87,7 @@ void main() {
 
   test('Default implementation of getMultiVideoWithOptions should throw '
       'unimplemented error', () {
-    final FakeCameraDelegatingImagePickerPlatform implementation =
-        FakeCameraDelegatingImagePickerPlatform();
+    final implementation = FakeCameraDelegatingImagePickerPlatform();
 
     expect(
       () => implementation.getMultiVideoWithOptions(),

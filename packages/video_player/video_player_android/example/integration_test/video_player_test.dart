@@ -101,7 +101,7 @@ void main() {
 
   testWidgets('can play a video from a file', (WidgetTester tester) async {
     final Directory directory = await getTemporaryDirectory();
-    final File file = File('${directory.path}/video.mp4');
+    final file = File('${directory.path}/video.mp4');
     await file.writeAsBytes(
       Uint8List.fromList(
         (await rootBundle.load(_videoAssetKey)).buffer.asUint8List(),

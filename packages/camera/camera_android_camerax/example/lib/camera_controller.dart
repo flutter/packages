@@ -291,8 +291,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     }
     try {
-      final Completer<CameraInitializedEvent> initializeCompleter =
-          Completer<CameraInitializedEvent>();
+      final initializeCompleter = Completer<CameraInitializedEvent>();
 
       _deviceOrientationSubscription = CameraPlatform.instance
           .onDeviceOrientationChanged()
@@ -717,7 +716,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getMinExposureOffset() async {
     _throwIfNotInitialized('getMinExposureOffset');
     try {
-      return CameraPlatform.instance.getMinExposureOffset(_cameraId);
+      return await CameraPlatform.instance.getMinExposureOffset(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -727,7 +726,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getMaxExposureOffset() async {
     _throwIfNotInitialized('getMaxExposureOffset');
     try {
-      return CameraPlatform.instance.getMaxExposureOffset(_cameraId);
+      return await CameraPlatform.instance.getMaxExposureOffset(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -739,7 +738,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<double> getExposureOffsetStepSize() async {
     _throwIfNotInitialized('getExposureOffsetStepSize');
     try {
-      return CameraPlatform.instance.getExposureOffsetStepSize(_cameraId);
+      return await CameraPlatform.instance.getExposureOffsetStepSize(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -784,7 +783,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
 
     try {
-      return CameraPlatform.instance.setExposureOffset(_cameraId, offset);
+      return await CameraPlatform.instance.setExposureOffset(_cameraId, offset);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

@@ -17,7 +17,7 @@ bool listEquals<T>(List<T>? a, List<T>? b) {
   if (identical(a, b)) {
     return true;
   }
-  for (int index = 0; index < a.length; index += 1) {
+  for (var index = 0; index < a.length; index += 1) {
     if (a[index] != b[index]) {
       return false;
     }

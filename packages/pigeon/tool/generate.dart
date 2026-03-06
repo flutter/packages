@@ -28,7 +28,7 @@ const String _overflowFiller = 'overflow';
 const List<String> _fileGroups = <String>[_test, _example];
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser = ArgParser()
+  final parser = ArgParser()
     ..addFlag(
       _formatFlag,
       abbr: 'f',

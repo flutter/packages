@@ -216,7 +216,7 @@ class DrawCommand {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('DrawCommand($type');
+    final buffer = StringBuffer('DrawCommand($type');
     if (objectId != null) {
       buffer.write(', objectId: $objectId');
     }

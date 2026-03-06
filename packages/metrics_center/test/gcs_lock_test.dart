@@ -26,20 +26,20 @@ enum TestPhase { run1, run2 }
   ],
 )
 void main() {
-  const Duration kDelayStep = Duration(milliseconds: 10);
+  const kDelayStep = Duration(milliseconds: 10);
   final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
 
   test('GcsLock prints warnings for long waits', () {
     // Capture print to verify error messages.
-    final List<String> prints = <String>[];
-    final ZoneSpecification spec = ZoneSpecification(
+    final prints = <String>[];
+    final spec = ZoneSpecification(
       print: (_, __, ___, String msg) => prints.add(msg),
     );
 
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {
-        final MockAuthClient mockClient = MockAuthClient();
-        final GcsLock lock = GcsLock(StorageApi(mockClient), 'mockBucket');
+        final mockClient = MockAuthClient();
+        final lock = GcsLock(StorageApi(mockClient), 'mockBucket');
         when(mockClient.send(any)).thenThrow(DetailedApiRequestError(412, ''));
         final Future<void> runFinished = lock.protectedRun(
           'mock.lock',
@@ -48,7 +48,7 @@ void main() {
         fakeAsync.elapse(const Duration(seconds: 10));
         when(mockClient.send(any)).thenThrow(AssertionError('Stop!'));
         runFinished.catchError((dynamic e) {
-          final AssertionError error = e as AssertionError;
+          final error = e as AssertionError;
           expect(error.message, 'Stop!');
           // TODO(goderbauer): We should not be printing from a test.
           // ignore: avoid_print
@@ -58,7 +58,7 @@ void main() {
       });
     });
 
-    const String kExpectedErrorMessage =
+    const kExpectedErrorMessage =
         'The lock is waiting for a long time: '
         '0:00:10.240000. If the lock file mock.lock in bucket mockBucket '
         'seems to be stuck (i.e., it was created a long time ago and no one '
@@ -73,8 +73,8 @@ void main() {
         ServiceAccountCredentials.fromJson(credentialsJson),
         Storage.SCOPES,
       );
-      final GcsLock lock = GcsLock(StorageApi(client), kTestBucketName);
-      int testValue = 0;
+      final lock = GcsLock(StorageApi(client), kTestBucketName);
+      var testValue = 0;
       await lock.protectedRun('test.lock', () async {
         testValue = 1;
       });
@@ -90,11 +90,11 @@ void main() {
         ServiceAccountCredentials.fromJson(credentialsJson),
         Storage.SCOPES,
       );
-      final GcsLock lock1 = GcsLock(StorageApi(client), kTestBucketName);
-      final GcsLock lock2 = GcsLock(StorageApi(client), kTestBucketName);
+      final lock1 = GcsLock(StorageApi(client), kTestBucketName);
+      final lock2 = GcsLock(StorageApi(client), kTestBucketName);
 
       TestPhase phase = TestPhase.run1;
-      final Completer<void> started1 = Completer<void>();
+      final started1 = Completer<void>();
       final Future<void> finished1 = lock1.protectedRun('test.lock', () async {
         started1.complete();
         while (phase == TestPhase.run1) {
@@ -104,7 +104,7 @@ void main() {
 
       await started1.future;
 
-      final Completer<void> started2 = Completer<void>();
+      final started2 = Completer<void>();
       final Future<void> finished2 = lock2.protectedRun('test.lock', () async {
         started2.complete();
       });
@@ -128,8 +128,8 @@ void main() {
     fakeAsync((FakeAsync fakeAsync) {
       final StorageApi mockStorageApi = MockStorageApi();
       final ObjectsResource mockObjectsResource = MockObjectsResource();
-      final GcsLock gcsLock = GcsLock(mockStorageApi, kTestBucketName);
-      const String lockFileName = 'test.lock';
+      final gcsLock = GcsLock(mockStorageApi, kTestBucketName);
+      const lockFileName = 'test.lock';
       when(mockStorageApi.objects).thenReturn(mockObjectsResource);
 
       // Simulate a failure to delete a lock file.

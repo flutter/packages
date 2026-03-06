@@ -43,7 +43,7 @@ class _MapCoordinatesBodyState extends State<_MapCoordinatesBody> {
 
   @override
   Widget build(BuildContext context) {
-    final ExampleGoogleMap googleMap = ExampleGoogleMap(
+    final googleMap = ExampleGoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
       onCameraIdle:

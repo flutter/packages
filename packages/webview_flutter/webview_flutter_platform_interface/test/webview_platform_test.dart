@@ -158,8 +158,7 @@ void main() {
     'Default implementation of createWebViewWidgetDelegate should throw unimplemented error',
     () {
       final WebViewPlatform webViewPlatform = ExtendsWebViewPlatform();
-      final MockWebViewControllerDelegate controller =
-          MockWebViewControllerDelegate();
+      final controller = MockWebViewControllerDelegate();
 
       expect(
         () => webViewPlatform.createPlatformWebViewWidget(

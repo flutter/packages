@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _authenticate() async {
-    bool authenticated = false;
+    var authenticated = false;
     try {
       setState(() {
         _isAuthenticating = true;
@@ -118,7 +118,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _authenticateWithBiometrics() async {
-    bool authenticated = false;
+    var authenticated = false;
     try {
       setState(() {
         _isAuthenticating = true;
@@ -157,7 +157,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    final message = authenticated ? 'Authorized' : 'Not Authorized';
     setState(() {
       _authorized = message;
     });

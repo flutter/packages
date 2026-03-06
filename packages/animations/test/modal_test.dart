@@ -430,7 +430,7 @@ void main() {
   testWidgets('showModal builds a new route with specified route settings', (
     WidgetTester tester,
   ) async {
-    const RouteSettings routeSettings = RouteSettings(
+    const routeSettings = RouteSettings(
       name: 'route-name',
       arguments: 'arguments',
     );
@@ -473,7 +473,7 @@ void main() {
   testWidgets('showModal builds a new route with specified image filter', (
     WidgetTester tester,
   ) async {
-    final ui.ImageFilter filter = ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1);
+    final filter = ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1);
 
     final Widget button = Builder(
       builder: (BuildContext context) {
@@ -518,7 +518,7 @@ double _getOpacity(GlobalKey key, WidgetTester tester) {
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final FadeTransition transition = widget as FadeTransition;
+    final transition = widget as FadeTransition;
     return a * transition.opacity.value;
   });
 }
@@ -529,7 +529,7 @@ double _getScale(GlobalKey key, WidgetTester tester) {
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final ScaleTransition transition = widget as ScaleTransition;
+    final transition = widget as ScaleTransition;
     return a * transition.scale.value;
   });
 }

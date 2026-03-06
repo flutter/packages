@@ -16,8 +16,8 @@ void main() {
     });
 
     test('canLaunch passes true', () async {
-      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
-      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+      final api = _FakeUrlLauncherApi();
+      final launcher = UrlLauncherLinux(api: api);
 
       final bool canLaunch = await launcher.canLaunch('http://example.com/');
 
@@ -25,8 +25,8 @@ void main() {
     });
 
     test('canLaunch passes false', () async {
-      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(canLaunch: false);
-      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+      final api = _FakeUrlLauncherApi(canLaunch: false);
+      final launcher = UrlLauncherLinux(api: api);
 
       final bool canLaunch = await launcher.canLaunch('http://example.com/');
 
@@ -34,9 +34,9 @@ void main() {
     });
 
     test('launch', () async {
-      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
-      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
-      const String url = 'http://example.com/';
+      final api = _FakeUrlLauncherApi();
+      final launcher = UrlLauncherLinux(api: api);
+      const url = 'http://example.com/';
 
       final bool launched = await launcher.launch(
         url,
@@ -53,8 +53,8 @@ void main() {
     });
 
     test('launch should throw if platform returns an error', () async {
-      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
-      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+      final api = _FakeUrlLauncherApi(error: 'An error');
+      final launcher = UrlLauncherLinux(api: api);
 
       await expectLater(
         launcher.launch(
@@ -80,9 +80,9 @@ void main() {
 
     group('launchUrl', () {
       test('passes URL', () async {
-        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
-        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
-        const String url = 'http://example.com/';
+        final api = _FakeUrlLauncherApi();
+        final launcher = UrlLauncherLinux(api: api);
+        const url = 'http://example.com/';
 
         final bool launched = await launcher.launchUrl(
           url,
@@ -94,8 +94,8 @@ void main() {
       });
 
       test('throws if platform returns an error', () async {
-        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
-        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+        final api = _FakeUrlLauncherApi(error: 'An error');
+        final launcher = UrlLauncherLinux(api: api);
 
         await expectLater(
           launcher.launchUrl('http://example.com/', const LaunchOptions()),
@@ -114,7 +114,7 @@ void main() {
 
     group('supportsMode', () {
       test('returns true for platformDefault', () async {
-        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        final launcher = UrlLauncherLinux();
         expect(
           await launcher.supportsMode(PreferredLaunchMode.platformDefault),
           true,
@@ -122,7 +122,7 @@ void main() {
       });
 
       test('returns true for external application', () async {
-        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        final launcher = UrlLauncherLinux();
         expect(
           await launcher.supportsMode(PreferredLaunchMode.externalApplication),
           true,
@@ -130,7 +130,7 @@ void main() {
       });
 
       test('returns false for other modes', () async {
-        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        final launcher = UrlLauncherLinux();
         expect(
           await launcher.supportsMode(
             PreferredLaunchMode.externalNonBrowserApplication,
@@ -149,7 +149,7 @@ void main() {
     });
 
     test('supportsCloseForMode returns false', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
+      final launcher = UrlLauncherLinux();
       expect(
         await launcher.supportsCloseForMode(
           PreferredLaunchMode.platformDefault,

@@ -87,7 +87,7 @@ class CppOptions {
   /// Converts a [CppOptions] to a Map representation where:
   /// `x = CppOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (headerIncludePath != null) 'headerIncludePath': headerIncludePath!,
       if (namespace != null) 'namespace': namespace!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
@@ -232,7 +232,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     }
     indent.newln();
     if (generatorOptions.namespace?.endsWith('_pigeontest') ?? false) {
-      final String testFixtureClass =
+      final testFixtureClass =
           '${_pascalCaseFromSnakeCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
       indent.writeln('class $testFixtureClass;');
     }
@@ -262,7 +262,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           member.documentationComments,
           _docCommentSpec,
         );
-        final String valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
+        final valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
         indent.writeln(
           '$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}',
         );
@@ -333,7 +333,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     }
     indent.newln();
 
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.',
     ];
 
@@ -417,7 +417,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           );
         }
 
-        for (final NamedType field in orderedFields) {
+        for (final field in orderedFields) {
           addDocumentationComments(
             indent,
             field.documentationComments,
@@ -508,7 +508,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           indent.writeln('friend class $testFixtureClass;');
         }
 
-        for (final NamedType field in orderedFields) {
+        for (final field in orderedFields) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
             _baseCppTypeForBuiltinDartType,
@@ -588,7 +588,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from C++.',
     ];
     addDocumentationComments(
@@ -643,7 +643,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             func.parameters,
             _getArgumentName,
           );
-          final List<String> parameters = <String>[
+          final parameters = <String>[
             ...map2(argTypes, argNames, (String x, String y) => '$x $y'),
             ..._flutterApiCallbackParameters(returnType),
           ];
@@ -671,7 +671,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.',
     ];
     addDocumentationComments(
@@ -711,7 +711,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           );
           final String returnTypeName = _hostApiReturnType(returnType);
 
-          final List<String> parameters = <String>[];
+          final parameters = <String>[];
           if (method.parameters.isNotEmpty) {
             final Iterable<String> argTypes = method.parameters.map((
               NamedType arg,
@@ -963,7 +963,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final List<String> usingDirectives = <String>[
+    final usingDirectives = <String>[
       'flutter::BasicMessageChannel',
       'flutter::CustomEncodableValue',
       'flutter::EncodableList',
@@ -971,7 +971,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       'flutter::EncodableValue',
     ];
     usingDirectives.sort();
-    for (final String using in usingDirectives) {
+    for (final using in usingDirectives) {
       indent.writeln('using $using;');
     }
     indent.newln();
@@ -1025,7 +1025,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     }
 
     // Getters and setters.
-    for (final NamedType field in orderedFields) {
+    for (final field in orderedFields) {
       _writeCppSourceClassField(
         generatorOptions,
         root,
@@ -1125,7 +1125,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       returnType: classDefinition.name,
       parameters: <String>['const EncodableList& list'],
       body: () {
-        const String instanceVariable = 'decoded';
+        const instanceVariable = 'decoded';
         final Iterable<_IndexedField> indexedFields = indexMap(
           getFieldsInSerializationOrder(classDefinition),
           (int index, NamedType field) => _IndexedField(index, field),
@@ -1154,10 +1154,10 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
         // Add the nullable fields via setters, since converting the encodable
         // values to the pointer types that the convenience constructor uses for
         // nullable fields is non-trivial.
-        for (final _IndexedField entry in nullableFields) {
+        for (final entry in nullableFields) {
           final NamedType field = entry.field;
           final String setterName = _makeSetterName(field);
-          final String encodableFieldName =
+          final encodableFieldName =
               '${_encodablePrefix}_${_makeVariableName(field)}';
           indent.writeln('auto& $encodableFieldName = list[${entry.index}];');
 
@@ -1298,7 +1298,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
         if (enumeratedTypes.isNotEmpty) {
           indent.writeln('switch (type) {');
           indent.inc();
-          for (final EnumeratedType customType in enumeratedTypes) {
+          for (final customType in enumeratedTypes) {
             if (customType.enumeration < maximumCodecFieldKey) {
               indent.write('case ${customType.enumeration}: ');
               indent.nest(1, () {
@@ -1339,13 +1339,11 @@ EncodableValue $_overflowClassName::FromEncodableList(
             'if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) ',
           );
           indent.addScoped('{', '}', () {
-            for (final EnumeratedType customType in enumeratedTypes) {
-              final String encodeString =
-                  customType.type == CustomTypes.customClass
+            for (final customType in enumeratedTypes) {
+              final encodeString = customType.type == CustomTypes.customClass
                   ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
                   : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
-              final String valueString =
-                  customType.enumeration < maximumCodecFieldKey
+              final valueString = customType.enumeration < maximumCodecFieldKey
                   ? encodeString
                   : 'wrap.ToEncodableList()';
               final int enumeration =
@@ -1442,7 +1440,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
           );
         },
       );
-      final List<String> parameters = <String>[
+      final parameters = <String>[
         ...hostParameters.map(
           (_HostNamedType arg) =>
               '${_flutterApiArgumentType(arg.hostType)} ${arg.name}',
@@ -1465,13 +1463,13 @@ EncodableValue $_overflowClassName::FromEncodableList(
           );
 
           // Convert arguments to EncodableValue versions.
-          const String argumentListVariableName = 'encoded_api_arguments';
+          const argumentListVariableName = 'encoded_api_arguments';
           indent.write('EncodableValue $argumentListVariableName = ');
           if (func.parameters.isEmpty) {
             indent.addln('EncodableValue();');
           } else {
             indent.addScoped('EncodableValue(EncodableList{', '});', () {
-              for (final _HostNamedType param in hostParameters) {
+              for (final param in hostParameters) {
                 final String encodedArgument =
                     _wrappedHostApiArgumentExpression(
                       root,
@@ -1494,9 +1492,8 @@ EncodableValue $_overflowClassName::FromEncodableList(
           indent.addScoped('{', '});', () {
             String successCallbackArgument;
             successCallbackArgument = 'return_value';
-            final String encodedReplyName =
-                'encodable_$successCallbackArgument';
-            final String listReplyName = 'list_$successCallbackArgument';
+            final encodedReplyName = 'encodable_$successCallbackArgument';
+            final listReplyName = 'list_$successCallbackArgument';
             indent.writeln(
               'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);',
             );
@@ -1602,7 +1599,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
               );
               indent.addScoped('{', '});', () {
                 indent.writeScoped('try {', '}', () {
-                  final List<String> methodArgument = <String>[];
+                  final methodArgument = <String>[];
                   if (method.parameters.isNotEmpty) {
                     indent.writeln(
                       'const auto& args = std::get<EncodableList>(message);',
@@ -1616,8 +1613,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                       );
                       final String argName = _getSafeArgumentName(index, arg);
 
-                      final String encodableArgName =
-                          '${_encodablePrefix}_$argName';
+                      final encodableArgName = '${_encodablePrefix}_$argName';
                       indent.writeln(
                         'const auto& $encodableArgName = args.at($index);',
                       );
@@ -1641,8 +1637,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                         encodableArgName: encodableArgName,
                         apiType: ApiType.host,
                       );
-                      final String unwrapEnum =
-                          arg.type.isEnum && arg.type.isNullable
+                      final unwrapEnum = arg.type.isEnum && arg.type.isNullable
                           ? ' ? &(*$argName) : nullptr'
                           : '';
                       methodArgument.add('$argName$unwrapEnum');
@@ -1661,7 +1656,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                       '}',
                     );
                   }
-                  final String call =
+                  final call =
                       'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
                   if (method.isAsynchronous) {
                     indent.format('$call;');
@@ -1797,17 +1792,17 @@ return EncodableValue(EncodableList{
       returnType: '${classDefinition.name}&',
       parameters: <String>['const ${classDefinition.name}& other'],
       body: () {
-        for (final NamedType field in fields) {
+        for (final field in fields) {
           final HostDatatype hostDatatype = getFieldHostDatatype(
             field,
             _shortBaseCppTypeForBuiltinDartType,
           );
 
           final String ivarName = _makeInstanceVariableName(field);
-          final String otherIvar = 'other.$ivarName';
+          final otherIvar = 'other.$ivarName';
           final String valueExpression;
           if (_isPointerField(hostDatatype)) {
-            final String constructor =
+            final constructor =
                 'std::make_unique<${hostDatatype.datatype}>(*$otherIvar)';
             valueExpression = hostDatatype.isNullable
                 ? '$otherIvar ? $constructor : nullptr'
@@ -1852,7 +1847,7 @@ return EncodableValue(EncodableList{
     // Writes a setter treating the type as [type], to allow generating multiple
     // setter variants.
     void writeSetter(HostDatatype type) {
-      const String setterArgumentName = 'value_arg';
+      const setterArgumentName = 'value_arg';
       _writeFunctionDefinition(
         indent,
         setterName,
@@ -1901,9 +1896,9 @@ return EncodableValue(EncodableList{
     bool sourceIsField = false,
   }) {
     if (_isPointerField(type)) {
-      final String constructor = 'std::make_unique<${type.datatype}>';
+      final constructor = 'std::make_unique<${type.datatype}>';
       // If the source is a pointer field, it always needs dereferencing.
-      final String maybeDereference = sourceIsField ? '*' : '';
+      final maybeDereference = sourceIsField ? '*' : '';
       return type.isNullable
           ? '$variable ? $constructor(*$variable) : nullptr'
           : '$constructor($maybeDereference$variable)';
@@ -1923,7 +1918,7 @@ return EncodableValue(EncodableList{
     final String errorCondition;
     final String errorGetter;
 
-    const String nullValue = 'EncodableValue()';
+    const nullValue = 'EncodableValue()';
     if (returnType.isVoid) {
       nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
       errorCondition = 'output.has_value()';
@@ -1934,8 +1929,8 @@ return EncodableValue(EncodableList{
         _shortBaseCppTypeForBuiltinDartType,
       );
 
-      const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType = hostType.isBuiltin
+      const extractedValue = 'std::move(output).TakeValue()';
+      final wrapperType = hostType.isBuiltin
           ? 'EncodableValue'
           : 'CustomEncodableValue';
       if (returnType.isNullable) {
@@ -1993,16 +1988,16 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   ) {
     final String encodableValue;
     if (!hostType.isBuiltin) {
-      final String nonNullValue =
+      final nonNullValue =
           hostType.isNullable || (!hostType.isEnum && isNestedClass)
           ? '*$variableName'
           : variableName;
       encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (dartType.baseName == 'Object') {
-      final String operator = hostType.isNullable ? '*' : '';
+      final operator = hostType.isNullable ? '*' : '';
       encodableValue = '$operator$variableName';
     } else {
-      final String operator = hostType.isNullable ? '*' : '';
+      final operator = hostType.isNullable ? '*' : '';
       encodableValue = 'EncodableValue($operator$variableName)';
     }
 
@@ -2192,8 +2187,8 @@ String? _baseCppTypeForBuiltinDartType(
   TypeDeclaration type, {
   bool includeFlutterNamespace = true,
 }) {
-  final String flutterNamespace = includeFlutterNamespace ? 'flutter::' : '';
-  final Map<String, String> cppTypeForDartTypeMap = <String, String>{
+  final flutterNamespace = includeFlutterNamespace ? 'flutter::' : '';
+  final cppTypeForDartTypeMap = <String, String>{
     'void': 'void',
     'bool': 'bool',
     'int': 'int64_t',
@@ -2241,7 +2236,7 @@ bool _isPointerField(HostDatatype type) {
 /// Returns the C++ type to use in an argument context without ownership
 /// transfer for the given base type.
 String _unownedArgumentType(HostDatatype type) {
-  final bool isString = type.datatype == 'std::string';
+  final isString = type.datatype == 'std::string';
   final String baseType = isString ? 'std::string_view' : type.datatype;
   if (isString || _isPodType(type)) {
     return type.isNullable ? 'const $baseType*' : baseType;
@@ -2315,7 +2310,7 @@ String _flutterApiReturnType(HostDatatype type) {
 }
 
 String _getGuardName(String? headerFileName) {
-  const String prefix = 'PIGEON_';
+  const prefix = 'PIGEON_';
   if (headerFileName != null) {
     return '$prefix${headerFileName.replaceAll('.', '_').toUpperCase()}_';
   } else {
@@ -2325,7 +2320,7 @@ String _getGuardName(String? headerFileName) {
 
 void _writeSystemHeaderIncludeBlock(Indent indent, List<String> headers) {
   headers.sort();
-  for (final String header in headers) {
+  for (final header in headers) {
     indent.writeln('#include <$header>');
   }
 }
@@ -2352,7 +2347,7 @@ void _writeFunction(
   // Set the initial indentation.
   indent.write('');
   // Write any starting annotations (e.g., 'static').
-  for (final String annotation in startingAnnotations) {
+  for (final annotation in startingAnnotations) {
     indent.add('$annotation ');
   }
   // Write the signature.
@@ -2380,7 +2375,7 @@ void _writeFunction(
     }, addTrailingNewline: false);
   }
   // Write any trailing annotations (e.g., 'const').
-  for (final String annotation in trailingAnnotations) {
+  for (final annotation in trailingAnnotations) {
     indent.add(' $annotation');
   }
   // Write the initializer list, if any.
@@ -2505,7 +2500,7 @@ void _writeAccessBlock(
 
 /// Validates an AST to make sure the cpp generator supports everything.
 List<Error> validateCpp(InternalCppOptions options, Root root) {
-  final List<Error> result = <Error>[];
+  final result = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
       for (final NamedType arg in method.parameters) {

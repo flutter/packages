@@ -28,11 +28,11 @@ Future<void> _openFile() async {
     ...p.split(Directory.systemTemp.path),
     'flutter_url_launcher_example.txt',
   ]);
-  final File testFile = File(tempFilePath);
+  final testFile = File(tempFilePath);
   await testFile.writeAsString('Hello, world!');
   // #docregion file
   final String filePath = testFile.absolute.path;
-  final Uri uri = Uri.file(filePath);
+  final uri = Uri.file(filePath);
 
   if (!File(uri.toFilePath()).existsSync()) {
     throw Exception('$uri does not exist!');

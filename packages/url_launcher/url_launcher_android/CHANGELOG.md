@@ -1,3 +1,19 @@
+## 6.3.28
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 6.3.27
+
+* Bumps androidx.browser:browser from 1.8.0 to 1.9.0.
+
+## 6.3.26
+
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
+## 6.3.25
+
+* Updates to Pigeon 26.
+
 ## 6.3.24
 
 * Resolves Gradle 9 deprecations. 

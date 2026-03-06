@@ -16,20 +16,19 @@ void main() {
 
   SharedPreferencesAsyncLinux.registerWith();
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
-  const SharedPreferencesLinuxOptions emptyOptions =
-      SharedPreferencesLinuxOptions();
+  const emptyOptions = SharedPreferencesLinuxOptions();
 
   setUp(() {
     fs = MemoryFileSystem.test();
@@ -37,7 +36,7 @@ void main() {
   });
 
   SharedPreferencesAsyncLinux getPreferences() {
-    final SharedPreferencesAsyncLinux prefs = SharedPreferencesAsyncLinux();
+    final prefs = SharedPreferencesAsyncLinux();
     prefs.fs = fs;
     prefs.pathProvider = pathProvider;
     return prefs;

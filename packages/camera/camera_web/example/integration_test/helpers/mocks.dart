@@ -245,12 +245,12 @@ class FakeErrorEvent {
 /// final videoStream = videoElement.captureStream();
 /// ```
 web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final web.HTMLCanvasElement canvasElement = web.HTMLCanvasElement()
+  final canvasElement = web.HTMLCanvasElement()
     ..width = videoSize.width.toInt()
     ..height = videoSize.height.toInt()
     ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+  final videoElement = web.HTMLVideoElement()
     ..srcObject = canvasElement.captureStream();
 
   return videoElement;
@@ -283,4 +283,24 @@ class MockEventStreamProvider<T extends web.Event> extends Mock
         )
         as ElementStream<T>;
   }
+}
+
+/// A fake [web.MediaTrackCapabilities] where facingMode is null/undefined.
+///
+/// Used to test null-safe handling when the browser doesn't provide
+/// the facingMode capability.
+@JSExport()
+class FakeMediaTrackCapabilities {
+  // Dummy property required by @JSExport
+  bool get dummy => true;
+}
+
+/// A fake [web.MediaTrackSettings] where facingMode is null/undefined.
+///
+/// Used to test null-safe handling when the browser doesn't provide
+/// the facingMode capability.
+@JSExport()
+class FakeMediaTrackSettings {
+  // Dummy property required by @JSExport
+  bool get dummy => true;
 }

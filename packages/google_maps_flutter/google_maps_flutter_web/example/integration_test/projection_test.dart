@@ -28,12 +28,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Methods that require a proper Projection', () {
-    const LatLng center = LatLng(43.3078, -5.6958);
-    const Size size = Size(320, 240);
-    const CameraPosition initialCamera = CameraPosition(
-      target: center,
-      zoom: 14,
-    );
+    const center = LatLng(43.3078, -5.6958);
+    const size = Size(320, 240);
+    const initialCamera = CameraPosition(target: center, zoom: 14);
 
     late Completer<GoogleMapController> controllerCompleter;
     late void Function(GoogleMapController) onMapCreated;
@@ -77,13 +74,13 @@ void main() {
       );
 
       testWidgets('addPadding', (WidgetTester tester) async {
-        const LatLng initialMapCenter = LatLng(0, 0);
+        const initialMapCenter = LatLng(0, 0);
         const double initialZoomLevel = 5;
-        const CameraPosition initialCameraPosition = CameraPosition(
+        const initialCameraPosition = CameraPosition(
           target: initialMapCenter,
           zoom: initialZoomLevel,
         );
-        final LatLngBounds zeroLatLngBounds = LatLngBounds(
+        final zeroLatLngBounds = LatLngBounds(
           southwest: const LatLng(0, 0),
           northeast: const LatLng(0, 0),
         );
@@ -109,7 +106,7 @@ void main() {
         expect(firstVisibleRegion, isNot(zeroLatLngBounds));
         expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
 
-        const double padding = 0.1;
+        const padding = 0.1;
         await controller.moveCamera(
           CameraUpdate.newLatLngBounds(firstVisibleRegion, padding),
         );
@@ -171,7 +168,7 @@ void main() {
         final GoogleMapController controller = await controllerCompleter.future;
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
-        final LatLng northWest = LatLng(
+        final northWest = LatLng(
           bounds.northeast.latitude,
           bounds.southwest.longitude,
         );
@@ -196,7 +193,7 @@ void main() {
               await controllerCompleter.future;
 
           final LatLngBounds bounds = await controller.getVisibleRegion();
-          final LatLng southEast = LatLng(
+          final southEast = LatLng(
             bounds.southwest.latitude,
             bounds.northeast.longitude,
           );
@@ -249,7 +246,7 @@ void main() {
         final GoogleMapController controller = await controllerCompleter.future;
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
-        final LatLng northWest = LatLng(
+        final northWest = LatLng(
           bounds.northeast.latitude,
           bounds.southwest.longitude,
         );
@@ -280,7 +277,7 @@ void main() {
         final GoogleMapController controller = await controllerCompleter.future;
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
-        final LatLng southEast = LatLng(
+        final southEast = LatLng(
           bounds.southwest.latitude,
           bounds.northeast.longitude,
         );

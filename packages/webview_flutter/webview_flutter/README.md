@@ -11,7 +11,7 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 24+ | 12.0+ | 10.14+ |
+| **Support** | SDK 24+ | 13.0+ | 10.15+ |
 
 ## Usage
 
@@ -107,8 +107,7 @@ if (WebViewPlatform.instance is WebKitWebViewPlatform) {
   params = const PlatformWebViewControllerCreationParams();
 }
 
-final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
+final controller = WebViewController.fromPlatformCreationParams(params);
 // ···
 if (controller.platform is AndroidWebViewController) {
   AndroidWebViewController.enableDebugging(true);

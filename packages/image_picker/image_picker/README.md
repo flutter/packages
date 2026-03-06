@@ -7,7 +7,7 @@ A Flutter plugin for picking images from the image library, and taking new pictu
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 24+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Setup
 
@@ -60,7 +60,7 @@ application. Since the data is never returned to the original call use the
 <?code-excerpt "readme_excerpts.dart (LostData)"?>
 ```dart
 Future<void> getLostData() async {
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;
@@ -164,7 +164,7 @@ add a filesystem access
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
 ```dart
-final ImagePicker picker = ImagePicker();
+final picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 // Capture a photo.

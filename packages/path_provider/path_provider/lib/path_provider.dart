@@ -30,7 +30,7 @@ class MissingPlatformDirectoryException implements Exception {
 
   @override
   String toString() {
-    final String detailsAddition = details == null ? '' : ': $details';
+    final detailsAddition = details == null ? '' : ': $details';
     return 'MissingPlatformDirectoryException($message)$detailsAddition';
   }
 }

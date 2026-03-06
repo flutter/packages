@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' as io;
+
 import 'package:file/file.dart';
 import 'package:yaml/yaml.dart';
 
@@ -12,12 +14,6 @@ import 'common/repository_package.dart';
 
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
-
-const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
-  'release': <String, Object?>{
-    'batch': <bool>{true, false}
-  },
-};
 
 /// A command to verify repository-level metadata about packages, such as
 /// repo README and CODEOWNERS entries.
@@ -55,7 +51,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
     // Extract all of the README.md table entries.
-    final RegExp namePattern = RegExp(r'\[(.*?)\]\(');
+    final namePattern = RegExp(r'\[(.*?)\]\(');
     for (final String line
         in _repoRoot.childFile('README.md').readAsLinesSync()) {
       // Find all the table entries, skipping the header.
@@ -68,8 +64,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
             .where((String s) => s.isNotEmpty)
             .toList();
         // Extract the name, removing any markdown escaping.
-        final String? name =
-            namePattern.firstMatch(cells[0])?.group(1)?.replaceAll(r'\_', '_');
+        final String? name = namePattern
+            .firstMatch(cells[0])
+            ?.group(1)
+            ?.replaceAll(r'\_', '_');
         if (name == null) {
           printError('Unexpected README table line:\n  $line');
           throw ToolExit(_exitBadTableEntry);
@@ -85,8 +83,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // Extract all of the CODEOWNERS package entries.
-    final RegExp packageOwnershipPattern =
-        RegExp(r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*');
+    final packageOwnershipPattern = RegExp(
+      r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*',
+    );
     for (final String line
         in _repoRoot.childFile('CODEOWNERS').readAsLinesSync()) {
       final RegExpMatch? match = packageOwnershipPattern.firstMatch(line);
@@ -105,12 +104,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // Extract all of the lebeler.yml package entries.
     // Validate the match rules rather than the label itself, as the labels
     // don't always correspond 1:1 to packages and package names.
-    final RegExp packageGlobPattern =
-        RegExp(r'^\s*-\s*(?:third_party/)?packages/([^*]*)/');
-    for (final String line in _repoRoot
-        .childDirectory('.github')
-        .childFile('labeler.yml')
-        .readAsLinesSync()) {
+    final packageGlobPattern = RegExp(
+      r'^\s*-\s*(?:third_party/)?packages/([^*]*)/',
+    );
+    for (final String line
+        in _repoRoot
+            .childDirectory('.github')
+            .childFile('labeler.yml')
+            .readAsLinesSync()) {
       final RegExpMatch? match = packageGlobPattern.firstMatch(line);
       if (match == null) {
         continue;
@@ -123,7 +124,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final String packageName = package.directory.basename;
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     // All packages should have an owner.
     // Platform interface packages are considered to be owned by the app-facing
@@ -144,10 +145,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // The content of ci_config.yaml must be valid if there is one.
-    if (package.ciConfigFile.existsSync()) {
-      errors.addAll(
-          _validateCiConfig(package.ciConfigFile, mainPackage: package));
+    try {
+      package.parseCIConfig();
+    } on FormatException catch (e) {
+      printError('$indentation${e.message}');
+      errors.add(e.message);
     }
+
+    errors.addAll(await _validateFilesBasedOnReleaseStrategy(package));
 
     // All published packages should have a README.md entry.
     if (package.isPublishable()) {
@@ -160,7 +165,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   }
 
   List<String> _validateRootReadme(RepositoryPackage package) {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     // For federated plugins, only the app-facing package is listed.
     if (package.isFederated && !package.isAppFacing) {
@@ -174,19 +179,22 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add('Missing repo root README.md table entry');
     } else {
       // Extract the two parts of a "[label](link)" .md link.
-      final RegExp mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
+      final mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
       // Possible link targets.
       for (final String cell in cells) {
         final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
         if (match == null) {
           printError(
-              '${indentation}Invalid repo root README.md table entry: "$cell"');
+            '${indentation}Invalid repo root README.md table entry: "$cell"',
+          );
           errors.add('Invalid root README.md table entry');
         } else {
-          final String encodedIssueTag =
-              Uri.encodeComponent(_issueTagForPackage(packageName));
-          final String encodedPRTag =
-              Uri.encodeComponent(_prTagForPackage(packageName));
+          final String encodedIssueTag = Uri.encodeComponent(
+            _issueTagForPackage(packageName),
+          );
+          final String encodedPRTag = Uri.encodeComponent(
+            _prTagForPackage(packageName),
+          );
           final String anchor = match.group(1)!;
           final String target = match.group(2)!;
 
@@ -194,25 +202,29 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - The package name (optionally with any underscores escaped)
           // - An image with a name-based link
           // - An image with a tag-based link
-          final RegExp packageLink =
-              RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
-                  '$packageName'
-                  r'(?:\.svg)?\)$');
-          final RegExp issueTagLink = RegExp(
-              r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
-              '$encodedIssueTag'
-              r'\?label=\)$');
-          final RegExp prTagLink = RegExp(
-              r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
-              '$encodedPRTag'
-              r'\?label=\)$');
+          final packageLink = RegExp(
+            r'^!\[.*\]\(https://img.shields.io/pub/.*/'
+            '$packageName'
+            r'(?:\.svg)?\)$',
+          );
+          final issueTagLink = RegExp(
+            r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
+            '$encodedIssueTag'
+            r'\?label=\)$',
+          );
+          final prTagLink = RegExp(
+            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
+            '$encodedPRTag'
+            r'\?label=\)$',
+          );
           if (!(anchor == packageName ||
               anchor == packageName.replaceAll('_', r'\_') ||
               packageLink.hasMatch(anchor) ||
               issueTagLink.hasMatch(anchor) ||
               prTagLink.hasMatch(anchor))) {
             printError(
-                '${indentation}Incorrect anchor in root README.md table: "$anchor"');
+              '${indentation}Incorrect anchor in root README.md table: "$anchor"',
+            );
             errors.add('Incorrect anchor in root README.md table');
           }
 
@@ -220,19 +232,23 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - a relative link to the in-repo package
           // - a pub.dev link to the package
           // - a github label link to the package's label
-          final RegExp pubDevLink =
-              RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
-          final RegExp gitHubIssueLink = RegExp(
-              '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
-          final RegExp gitHubPRLink = RegExp(
-              '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
+          final pubDevLink = RegExp(
+            '^https://pub.dev/packages/$packageName(?:/score)?\$',
+          );
+          final gitHubIssueLink = RegExp(
+            '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$',
+          );
+          final gitHubPRLink = RegExp(
+            '^https://github.com/flutter/packages/labels/$encodedPRTag\$',
+          );
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||
               pubDevLink.hasMatch(target) ||
               gitHubIssueLink.hasMatch(target) ||
               gitHubPRLink.hasMatch(target))) {
             printError(
-                '${indentation}Incorrect link in root README.md table: "$target"');
+              '${indentation}Incorrect link in root README.md table: "$target"',
+            );
             errors.add('Incorrect link in root README.md table');
           }
         }
@@ -240,67 +256,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
     return errors;
   }
-
-  List<String> _validateCiConfig(File ciConfig,
-      {required RepositoryPackage mainPackage}) {
-    print('${indentation}Checking '
-        '${getRelativePosixPath(ciConfig, from: mainPackage.directory)}...');
-    final YamlMap config;
-    try {
-      final Object? yaml = loadYaml(ciConfig.readAsStringSync());
-      if (yaml is! YamlMap) {
-        printError('${indentation}The ci_config.yaml file must be a map.');
-        return <String>['Root of config is not a map.'];
-      }
-      config = yaml;
-    } on YamlException catch (e) {
-      printError(
-          '${indentation}Invalid YAML in ${getRelativePosixPath(ciConfig, from: mainPackage.directory)}:');
-      printError(e.toString());
-      return <String>['Invalid YAML'];
-    }
-
-    return _checkCiConfigEntries(config, syntax: _validCiConfigSyntax);
-  }
-
-  List<String> _checkCiConfigEntries(YamlMap config,
-      {required Map<String, Object?> syntax, String configPrefix = ''}) {
-    final List<String> errors = <String>[];
-    for (final MapEntry<Object?, Object?> entry in config.entries) {
-      if (!syntax.containsKey(entry.key)) {
-        printError(
-            '${indentation}Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
-        errors.add(
-            'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}');
-      } else {
-        final Object syntaxValue = syntax[entry.key]!;
-        configPrefix = configPrefix.isEmpty
-            ? entry.key! as String
-            : '$configPrefix.${entry.key}';
-        if (syntaxValue is Set) {
-          if (!syntaxValue.contains(entry.value)) {
-            printError(
-                '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the possible values are ${syntaxValue.toList()}');
-            errors.add(
-                'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
-          }
-        } else if (entry.value is! YamlMap) {
-          printError(
-              '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the value must be a map');
-          errors.add(
-              'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
-        } else {
-          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
-              syntax: syntaxValue as Map<String, Object?>,
-              configPrefix: configPrefix));
-        }
-      }
-    }
-    return errors;
-  }
-
-  String _formatConfigPrefix(String configPrefix) =>
-      configPrefix.isEmpty ? '' : ' `$configPrefix`';
 
   String _prTagForPackage(String packageName) => 'p: $packageName';
 
@@ -313,5 +268,213 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       default:
         return 'p: $packageName';
     }
+  }
+
+  Future<List<String>> _validateFilesBasedOnReleaseStrategy(
+    RepositoryPackage package,
+  ) async {
+    final errors = <String>[];
+    final bool isBatchRelease =
+        package.parseCIConfig()?.isBatchRelease ?? false;
+    final String packageName = package.directory.basename;
+    final Directory workflowDir = _repoRoot
+        .childDirectory('.github')
+        .childDirectory('workflows');
+
+    errors.addAll(
+      _validateSpecificBatchWorkflow(
+        packageName,
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+      ),
+    );
+
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'release_from_branches.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'sync_release_pr.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+
+    errors.addAll(
+      await _validateRemoteReleaseBranch(
+        packageName,
+        isBatchRelease: isBatchRelease,
+      ),
+    );
+
+    if (isBatchRelease &&
+        (package.parsePubspec().version?.isPreRelease ?? false)) {
+      errors.add(
+        'Batch release packages must not have a pre-release version.\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+    }
+
+    return errors;
+  }
+
+  Future<List<String>> _validateRemoteReleaseBranch(
+    String packageName, {
+    required bool isBatchRelease,
+  }) async {
+    final errors = <String>[];
+    // Verify release branch exists on remote flutter/packages if it is a batch release package.
+    final io.ProcessResult result = await (await gitDir).runCommand(<String>[
+      'ls-remote',
+      '--exit-code',
+      '--heads',
+      'origin',
+      'release-$packageName',
+    ], throwOnError: false);
+    final branchExists = result.exitCode == 0;
+    if (isBatchRelease && !branchExists) {
+      errors.add(
+        'Branch release-$packageName does not exist on remote flutter/packages\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+    }
+    // Allow branch to exist on remote flutter/packages for non-batch release packages.
+    // Otherwise, it will be hard to opt package out of batch release.
+    //
+    // Enforcing this will run into a deadlock where the ci in the PR to opts out of batch release
+    // will require removal of the release branch. but removing the release branch will immediately break
+    // the latest main.
+    return errors;
+  }
+
+  List<String> _validateSpecificBatchWorkflow(
+    String packageName, {
+    required Directory workflowDir,
+    required bool isBatchRelease,
+  }) {
+    final errors = <String>[];
+    final File batchWorkflowFile = workflowDir.childFile(
+      '${packageName}_batch.yml',
+    );
+    if (isBatchRelease) {
+      if (!batchWorkflowFile.existsSync()) {
+        errors.add(
+          'Missing batch workflow file: .github/workflows/${packageName}_batch.yml\n'
+          'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+        );
+      } else {
+        // Validate content.
+        final String content = batchWorkflowFile.readAsStringSync();
+        final YamlMap yaml;
+        try {
+          yaml = loadYaml(content) as YamlMap;
+        } catch (e) {
+          errors.add('Invalid YAML in ${packageName}_batch.yml: $e');
+          return errors;
+        }
+
+        var foundDispatch = false;
+        final jobs = yaml['jobs'] as YamlMap?;
+        if (jobs != null) {
+          for (final Object? job in jobs.values) {
+            if (job is YamlMap && job['steps'] is YamlList) {
+              final steps = job['steps'] as YamlList;
+              for (final Object? step in steps) {
+                if (step is YamlMap &&
+                    step['uses'] is String &&
+                    (step['uses'] as String).startsWith(
+                      'peter-evans/repository-dispatch',
+                    )) {
+                  final withArgs = step['with'] as YamlMap?;
+                  if (withArgs != null &&
+                      withArgs['event-type'] == 'batch-release-pr' &&
+                      withArgs['client-payload'] ==
+                          '{"package": "$packageName"}') {
+                    foundDispatch = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (!foundDispatch) {
+          errors.add(
+            'Invalid batch workflow content in ${packageName}_batch.yml. '
+            'Must contain a step using peter-evans/repository-dispatch with:\n'
+            '  event-type: batch-release-pr\n'
+            '  client-payload: \'{"package": "$packageName"}\'\n'
+            'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+          );
+        }
+      }
+    } else {
+      if (batchWorkflowFile.existsSync()) {
+        errors.add(
+          'Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml\n',
+        );
+      }
+    }
+    return errors;
+  }
+
+  List<String> _validateGlobalWorkflowTrigger(
+    String workflowName, {
+    required Directory workflowDir,
+    required bool isBatchRelease,
+    required String packageName,
+  }) {
+    final errors = <String>[];
+    final File workflowFile = workflowDir.childFile(workflowName);
+    if (!workflowFile.existsSync()) {
+      if (isBatchRelease) {
+        errors.add(
+          'Missing global workflow file: .github/workflows/$workflowName\n'
+          'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+        );
+      }
+      return errors;
+    }
+
+    final String content = workflowFile.readAsStringSync();
+    final YamlMap yaml;
+    try {
+      yaml = loadYaml(content) as YamlMap;
+    } catch (e) {
+      errors.add('Invalid YAML in $workflowName: $e');
+      return errors;
+    }
+
+    var hasTrigger = false;
+    final on = yaml['on'] as YamlMap?;
+    if (on is YamlMap) {
+      final push = on['push'] as YamlMap?;
+      if (push is YamlMap) {
+        final branches = push['branches'] as YamlList?;
+        if (branches is YamlList) {
+          if (branches.contains('release-$packageName')) {
+            hasTrigger = true;
+          }
+        }
+      }
+    }
+
+    if (isBatchRelease && !hasTrigger) {
+      errors.add(
+        'Missing trigger for release-$packageName in .github/workflows/$workflowName\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+    } else if (!isBatchRelease && hasTrigger) {
+      errors.add(
+        'Unexpected trigger for release-$packageName in .github/workflows/$workflowName\n',
+      );
+    }
+    return errors;
   }
 }

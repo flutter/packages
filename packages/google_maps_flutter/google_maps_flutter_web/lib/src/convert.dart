@@ -12,7 +12,7 @@ final gmaps.LatLngBounds _nullGmapsLatLngBounds = gmaps.LatLngBounds(
 );
 
 // The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
-TrustedTypePolicy? _gmapsTrustedTypePolicy;
+web.TrustedTypePolicy? _gmapsTrustedTypePolicy;
 
 // A cache for image size Futures to reduce redundant image fetch requests.
 // This cache should be always cleaned up after marker updates are processed.
@@ -62,7 +62,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   MapConfiguration configuration,
   List<gmaps.MapTypeStyle> styles,
 ) {
-  final gmaps.MapOptions options = gmaps.MapOptions();
+  final options = gmaps.MapOptions();
 
   if (configuration.mapType != null) {
     options.mapTypeId = _gmapTypeIDForPluginType(configuration.mapType!);
@@ -182,7 +182,7 @@ bool _isJsonMapStyle(Map<String, Object?> value) {
 
 // Converts an incoming JSON-encoded Style info, into the correct gmaps array.
 List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
-  List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
+  var styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
     try {
       styles =
@@ -191,7 +191,7 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
                     reviver: (Object? key, Object? value) {
                       if (value is Map &&
                           _isJsonMapStyle(value as Map<String, Object?>)) {
-                        List<MapStyler> stylers = <MapStyler>[];
+                        var stylers = <MapStyler>[];
                         if (value['stylers'] != null) {
                           stylers = (value['stylers']! as List<Object?>)
                               .whereType<Map<String, Object?>>()
@@ -228,7 +228,7 @@ LatLng gmLatLngToLatLng(gmaps.LatLng latLng) {
 }
 
 /// Converts a [gmaps.LatLngBounds] into a [LatLngBounds].
-LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
+LatLngBounds gmLatLngBoundsToLatLngBounds(gmaps.LatLngBounds latLngBounds) {
   return LatLngBounds(
     southwest: gmLatLngToLatLng(latLngBounds.southWest),
     northeast: gmLatLngToLatLng(latLngBounds.northEast),
@@ -269,26 +269,25 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final HTMLElement container = createDivElement()
+  final web.HTMLElement container = createDivElement()
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HTMLHeadingElement title =
-        (document.createElement('h3') as HTMLHeadingElement)
-          ..className = 'infowindow-title'
-          ..innerText = markerTitle;
+    final title = (web.document.createElement('h3') as web.HTMLHeadingElement)
+      ..className = 'infowindow-title'
+      ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final HTMLElement snippet = createDivElement()
+    final web.HTMLElement snippet = createDivElement()
       ..className = 'infowindow-snippet';
 
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
-    if (window.nullableTrustedTypes != null) {
-      _gmapsTrustedTypePolicy ??= window.trustedTypes.createPolicy(
+    if (web.window.nullableTrustedTypes != null) {
+      _gmapsTrustedTypePolicy ??= web.window.trustedTypes.createPolicy(
         'google_maps_flutter_sanitize',
-        TrustedTypePolicyOptions(
+        web.TrustedTypePolicyOptions(
           createHTML: (String html) {
             return sanitizeHtml(html).toJS;
           }.toJS,
@@ -322,31 +321,53 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
   gmaps.Size? size;
   if (iconConfig.length >= sizeIndex + 1) {
-    final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
+    final rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
       size = gmaps.Size(rawIconSize[0]! as double, rawIconSize[1]! as double);
     }
   }
+
   return size;
 }
 
-/// Sets the size of the Google Maps icon.
-void _setIconSize({required Size size, required gmaps.Icon icon}) {
-  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
-  icon.size = gmapsSize;
-  icon.scaledSize = gmapsSize;
+/// Sets the size and style of the [icon] element.
+void _setIconStyle({
+  required web.HTMLImageElement icon,
+  required gmaps.Size? size,
+  required double? opacity,
+  required bool? isVisible,
+}) {
+  final web.CSSStyleDeclaration iconStyle = icon.style;
+  if (size != null) {
+    iconStyle
+      ..width = '${size.width.toStringAsFixed(1)}px'
+      ..height = '${size.height.toStringAsFixed(1)}px';
+  }
+  if (opacity != null) {
+    iconStyle.opacity = opacity.toString();
+  }
+  if (isVisible != null) {
+    iconStyle.visibility = isVisible ? 'visible' : 'hidden';
+  }
 }
 
 void _setIconAnchor({
-  required Size size,
+  required gmaps.Size size,
   required Offset anchor,
   required gmaps.Icon icon,
 }) {
-  final gmaps.Point gmapsAnchor = gmaps.Point(
+  final gmapsAnchor = gmaps.Point(
     size.width * anchor.dx,
     size.height * anchor.dy,
   );
   icon.anchor = gmapsAnchor;
+}
+
+// Sets the size of the Google Maps icon.
+void _setIconSize({required gmaps.Size size, required gmaps.Icon icon}) {
+  final gmapsSize = gmaps.Size(size.width, size.height);
+  icon.size = gmapsSize;
+  icon.scaledSize = gmapsSize;
 }
 
 /// Determines the appropriate size for a bitmap based on its descriptor.
@@ -356,12 +377,12 @@ void _setIconAnchor({
 /// [imagePixelRatio] based on the actual size of the image fetched from the
 /// [url]. If only one of the dimensions is provided, the other is calculated to
 /// maintain the image's original aspect ratio.
-Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
+Future<gmaps.Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
   final double? width = mapBitmap.width;
   final double? height = mapBitmap.height;
   if (width != null && height != null) {
     // If both, width and height are set, return the provided dimensions.
-    return Size(width, height);
+    return gmaps.Size(width, height);
   } else {
     assert(
       url.isNotEmpty,
@@ -392,7 +413,7 @@ Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
     }
 
     // Return the calculated size.
-    return Size(targetWidth, targetHeight);
+    return gmaps.Size(targetWidth, targetHeight);
   }
 }
 
@@ -400,10 +421,13 @@ Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
 ///
 /// This method attempts to fetch the image size for a given [url].
 Future<Size?> _fetchBitmapSize(String url) async {
-  final HTMLImageElement image = HTMLImageElement()..src = url;
+  final image = web.HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
-  await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
+  await Future.any(<Future<web.Event>>[
+    image.onLoad.first,
+    image.onError.first,
+  ]);
 
   if (image.width == 0 || image.height == 0) {
     // Complete with null for invalid images.
@@ -424,6 +448,181 @@ void _cleanUpBitmapConversionCaches() {
   _bitmapBlobUrlCache.clear();
 }
 
+Future<web.Node?> _advancedMarkerIconFromPinConfig(
+  PinConfig config, {
+  required double opacity,
+  required bool isVisible,
+  required double rotation,
+}) async {
+  final options = gmaps.PinElementOptions()
+    ..background = config.backgroundColor != null
+        ? _getCssColor(config.backgroundColor!)
+        : null
+    ..borderColor = config.borderColor != null
+        ? _getCssColor(config.borderColor!)
+        : null;
+
+  final AdvancedMarkerGlyph? glyph = config.glyph;
+  switch (glyph) {
+    case final CircleGlyph circleGlyph:
+      options.glyphColor = _getCssColor(circleGlyph.color);
+    case final TextGlyph textGlyph:
+      final element = web.HTMLParagraphElement();
+      element.text = textGlyph.text;
+      if (textGlyph.textColor != null) {
+        element.style.color = _getCssColor(textGlyph.textColor!);
+      }
+      options.glyph = element;
+    case final BitmapGlyph bitmapGlyph:
+      final web.Node?
+      glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
+        bitmapGlyph.bitmap,
+        // Always opaque, opacity is handled by the parent marker.
+        opacity: 1.0,
+        // Always visible, as the visibility is handled by the parent marker.
+        isVisible: true,
+        rotation: rotation,
+      );
+      options.glyph = glyphBitmap;
+    case null:
+      break;
+  }
+
+  final pinElement = gmaps.PinElement(options);
+  final web.HTMLElement htmlElement = pinElement.element;
+  htmlElement.style
+    ..visibility = isVisible ? 'visible' : 'hidden'
+    ..opacity = opacity.toString()
+    ..transform = 'rotate(${rotation}deg)';
+  return htmlElement;
+}
+
+Future<web.Node?> _advancedMarkerIconFromMapBitmap(
+  MapBitmap bitmap, {
+  required double opacity,
+  required bool isVisible,
+  required double rotation,
+}) async {
+  final String url = switch (bitmap) {
+    (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
+      bytesMapBitmap.byteData.hashCode,
+      () {
+        final blob = web.Blob(
+          <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
+        );
+        return web.URL.createObjectURL(blob as JSObject);
+      },
+    ),
+    (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
+      assetMapBitmap.assetName,
+    ),
+    _ => throw UnimplementedError(),
+  };
+
+  final icon = web.HTMLImageElement()..src = url;
+
+  final gmaps.Size? size = switch (bitmap.bitmapScaling) {
+    MapBitmapScaling.auto => await _getBitmapSize(bitmap, url),
+    MapBitmapScaling.none => null,
+  };
+  _setIconStyle(icon: icon, size: size, opacity: opacity, isVisible: isVisible);
+
+  return icon;
+}
+
+Future<web.Node?> _advancedMarkerIconFromAssetImage(
+  List<Object?> iconConfig, {
+  required double opacity,
+  required bool isVisible,
+  required double rotation,
+}) async {
+  assert(iconConfig.length >= 2);
+  // iconConfig[2] contains the DPIs of the screen, but that information is
+  // already encoded in the iconConfig[1]
+  final icon = web.HTMLImageElement()
+    ..src = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
+
+  final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
+  _setIconStyle(icon: icon, size: size, opacity: opacity, isVisible: isVisible);
+  return icon;
+}
+
+Future<web.Node?> _advancedMarkerIconFromBytes(
+  List<Object?> iconConfig, {
+  required double opacity,
+  required bool isVisible,
+  required double rotation,
+}) async {
+  // Grab the bytes, and put them into a blob.
+  final bytes = iconConfig[1]! as List<int>;
+  // Create a Blob from bytes, but let the browser figure out the encoding.
+  final web.Blob blob;
+
+  assert(
+    bytes is Uint8List,
+    'The bytes for a BitmapDescriptor icon must be a Uint8List',
+  );
+
+  // TODO(ditman): Improve this conversion
+  // See https://github.com/dart-lang/web/issues/180
+  blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+
+  final icon = web.HTMLImageElement()
+    ..src = web.URL.createObjectURL(blob as JSObject);
+
+  final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
+  _setIconStyle(size: size, icon: icon, opacity: opacity, isVisible: isVisible);
+  return icon;
+}
+
+/// Converts a [BitmapDescriptor] into a [Node] that can be used as
+/// [AdvancedMarker]'s icon.
+Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
+  BitmapDescriptor bitmapDescriptor, {
+  required double opacity,
+  required bool isVisible,
+  required double rotation,
+}) async {
+  if (bitmapDescriptor is PinConfig) {
+    return _advancedMarkerIconFromPinConfig(
+      bitmapDescriptor,
+      rotation: rotation,
+      opacity: opacity,
+      isVisible: isVisible,
+    );
+  }
+
+  if (bitmapDescriptor is MapBitmap) {
+    return _advancedMarkerIconFromMapBitmap(
+      bitmapDescriptor,
+      rotation: rotation,
+      opacity: opacity,
+      isVisible: isVisible,
+    );
+  }
+
+  // The following code is for the deprecated BitmapDescriptor.fromBytes
+  // and BitmapDescriptor.fromAssetImage.
+  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  if (iconConfig[0] == 'fromAssetImage') {
+    return _advancedMarkerIconFromAssetImage(
+      iconConfig,
+      opacity: opacity,
+      isVisible: isVisible,
+      rotation: rotation,
+    );
+  } else if (iconConfig[0] == 'fromBytes') {
+    return _advancedMarkerIconFromBytes(
+      iconConfig,
+      opacity: opacity,
+      isVisible: isVisible,
+      rotation: rotation,
+    );
+  }
+
+  return null;
+}
+
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   BitmapDescriptor bitmapDescriptor,
@@ -432,13 +631,29 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   gmaps.Icon? icon;
 
   if (bitmapDescriptor is MapBitmap) {
-    final String url = urlFromMapBitmap(bitmapDescriptor);
+    final String url = switch (bitmapDescriptor) {
+      (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
+        bytesMapBitmap.byteData.hashCode,
+        () {
+          // TODO(ditman): Improve this conversion
+          // See https://github.com/dart-lang/web/issues/180
+          final blob = web.Blob(
+            <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
+          );
+          return web.URL.createObjectURL(blob as JSObject);
+        },
+      ),
+      (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
+        assetMapBitmap.assetName,
+      ),
+      _ => throw UnimplementedError(),
+    };
 
     icon = gmaps.Icon()..url = url;
 
     switch (bitmapDescriptor.bitmapScaling) {
       case MapBitmapScaling.auto:
-        final Size? size = await _getBitmapSize(bitmapDescriptor, url);
+        final gmaps.Size? size = await _getBitmapSize(bitmapDescriptor, url);
         if (size != null) {
           _setIconSize(size: size, icon: icon);
           _setIconAnchor(size: size, anchor: anchor, icon: icon);
@@ -446,12 +661,13 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
       case MapBitmapScaling.none:
         break;
     }
+
     return icon;
   }
 
   // The following code is for the deprecated BitmapDescriptor.fromBytes
   // and BitmapDescriptor.fromAssetImage.
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -467,9 +683,9 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     }
   } else if (iconConfig[0] == 'fromBytes') {
     // Grab the bytes, and put them into a blob
-    final List<int> bytes = iconConfig[1]! as List<int>;
+    final bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob;
+    final web.Blob blob;
 
     assert(
       bytes is Uint8List,
@@ -478,9 +694,9 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
     // TODO(ditman): Improve this conversion
     // See https://github.com/dart-lang/web/issues/180
-    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+    blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
+    icon = gmaps.Icon()..url = web.URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     if (size != null) {
@@ -492,31 +708,69 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-/// Computes the options for a new [gmaps.Marker] from an incoming set of options
-/// [marker], and the existing marker registered with the map: [currentMarker].
-Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
+// Computes the options for a new [gmaps.Marker] from an incoming set of options
+// [marker], and the existing marker registered with the map: [currentMarker].
+Future<O> _markerOptionsFromMarker<T, O>(
   Marker marker,
-  gmaps.Marker? currentMarker,
+  T? currentMarker,
 ) async {
-  return gmaps.MarkerOptions()
-    ..position = gmaps.LatLng(
-      marker.position.latitude,
-      marker.position.longitude,
-    )
-    ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-    // The deprecated parameter is used here to avoid losing precision.
-    // ignore: deprecated_member_use
-    ..zIndex = marker.zIndex
-    ..visible = marker.visible
-    ..opacity = marker.alpha
-    ..draggable = marker.draggable
-    ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor);
-  // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
-  // Flat and Rotation are not supported directly on the web.
+  if (marker is AdvancedMarker) {
+    final options = gmaps.AdvancedMarkerElementOptions()
+      ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(
+        marker.collisionBehavior,
+      )
+      ..content = await _advancedMarkerIconFromBitmapDescriptor(
+        marker.icon,
+        opacity: marker.alpha,
+        isVisible: marker.visible,
+        rotation: marker.rotation,
+      )
+      ..position = gmaps.LatLng(
+        marker.position.latitude,
+        marker.position.longitude,
+      )
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..gmpDraggable = marker.draggable;
+    return options as O;
+  } else {
+    final options = gmaps.MarkerOptions()
+      ..position = gmaps.LatLng(
+        marker.position.latitude,
+        marker.position.longitude,
+      )
+      ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor)
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..visible = marker.visible
+      ..opacity = marker.alpha
+      ..draggable = marker.draggable;
+
+    // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
+    // Flat and Rotation are not supported directly on the web.
+
+    return options as O;
+  }
+}
+
+/// Gets marker Id from a [marker] object.
+MarkerId getMarkerId(Object marker) {
+  final object = marker as JSObject;
+  if (object.isA<gmaps.Marker>()) {
+    final mapObject = marker as gmaps.MVCObject;
+    return MarkerId((mapObject.get('markerId')! as JSString).toDart);
+  } else if (object.isA<gmaps.AdvancedMarkerElement>()) {
+    final element = marker as gmaps.AdvancedMarkerElement;
+    return MarkerId(element.id);
+  } else {
+    throw ArgumentError(
+      'Must be either a gmaps.Marker or a gmaps.AdvancedMarkerElement',
+    );
+  }
 }
 
 gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
-  final gmaps.CircleOptions circleOptions = gmaps.CircleOptions()
+  final circleOptions = gmaps.CircleOptions()
     ..strokeColor = _getCssColor(circle.strokeColor)
     ..strokeOpacity = _getCssOpacity(circle.strokeColor)
     ..strokeWeight = circle.strokeWidth
@@ -534,27 +788,26 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
   final Iterable<Color>? gradientColors = heatmap.gradient?.colors.map(
     (HeatmapGradientColor e) => e.color,
   );
-  final visualization.HeatmapLayerOptions heatmapOptions =
-      visualization.HeatmapLayerOptions()
-        ..data = heatmap.data
-            .map(
-              (WeightedLatLng e) => visualization.WeightedLocation()
-                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
-                ..weight = e.weight,
-            )
-            .toList()
-            .toJS
-        ..dissipating = heatmap.dissipating
-        ..gradient = gradientColors == null
-            ? null
-            : <Color>[
-                // Web needs a first color with 0 alpha
-                gradientColors.first.withAlpha(0),
-                ...gradientColors,
-              ].map(_getCssColorWithAlpha).toList()
-        ..maxIntensity = heatmap.maxIntensity
-        ..opacity = heatmap.opacity
-        ..radius = heatmap.radius.radius;
+  final heatmapOptions = visualization.HeatmapLayerOptions()
+    ..data = heatmap.data
+        .map(
+          (WeightedLatLng e) => visualization.WeightedLocation()
+            ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+            ..weight = e.weight,
+        )
+        .toList()
+        .toJS
+    ..dissipating = heatmap.dissipating
+    ..gradient = gradientColors == null
+        ? null
+        : <Color>[
+            // Web needs a first color with 0 alpha
+            gradientColors.first.withAlpha(0),
+            ...gradientColors,
+          ].map(_getCssColorWithAlpha).toList()
+    ..maxIntensity = heatmap.maxIntensity
+    ..opacity = heatmap.opacity
+    ..radius = heatmap.radius.radius;
   return heatmapOptions;
 }
 
@@ -569,9 +822,9 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
 
   final bool isClockwisePolygon = _isPolygonClockwise(path);
 
-  final List<List<gmaps.LatLng>> paths = <List<gmaps.LatLng>>[path];
+  final paths = <List<gmaps.LatLng>>[path];
 
-  for (int i = 0; i < polygon.holes.length; i++) {
+  for (var i = 0; i < polygon.holes.length; i++) {
     final List<LatLng> hole = polygon.holes[i];
     final List<gmaps.LatLng> correctHole = _ensureHoleHasReverseWinding(
       hole,
@@ -630,8 +883,8 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
 /// the `path` is a transformed version of [Polygon.points] or each of the
 /// [Polygon.holes], guaranteeing that `lat` and `lng` can be accessed with `!`.
 bool _isPolygonClockwise(List<gmaps.LatLng> path) {
-  double direction = 0.0;
-  for (int i = 0; i < path.length; i++) {
+  var direction = 0.0;
+  for (var i = 0; i < path.length; i++) {
     direction =
         direction +
         ((path[(i + 1) % path.length].lat - path[i].lat) *
@@ -677,7 +930,7 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     return value as List<Object?>;
   }
 
-  final List<dynamic> json = update.toJson() as List<dynamic>;
+  final json = update.toJson() as List<dynamic>;
   switch (json[0]) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
@@ -697,7 +950,7 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
       final List<Object?> latLng2 = asJsonList(latLngPair[1]);
-      final double padding = json[2] as double;
+      final padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
           gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
@@ -749,10 +1002,10 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final Blob blob = Blob(
+        final blob = web.Blob(
           <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
         );
-        return URL.createObjectURL(blob as JSObject);
+        return web.URL.createObjectURL(blob as JSObject);
       },
     ),
     (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
@@ -792,7 +1045,7 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
-  final gmaps.Point point = gmaps.Point(
+  final point = gmaps.Point(
     (x / scale) + bottomLeft.x,
     (y / scale) + topRight.y,
   );
@@ -854,4 +1107,16 @@ gmaps.ControlPosition? _toControlPosition(
     case WebCameraControlPosition.topRight:
       return gmaps.ControlPosition.TOP_RIGHT;
   }
+}
+
+gmaps.CollisionBehavior _markerCollisionBehaviorToGmCollisionBehavior(
+  MarkerCollisionBehavior markerCollisionBehavior,
+) {
+  return switch (markerCollisionBehavior) {
+    MarkerCollisionBehavior.requiredDisplay => gmaps.CollisionBehavior.REQUIRED,
+    MarkerCollisionBehavior.optionalAndHidesLowerPriority =>
+      gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+    MarkerCollisionBehavior.requiredAndHidesOptional =>
+      gmaps.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL,
+  };
 }

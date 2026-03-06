@@ -28,7 +28,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   }) {
     argParser.addFlag(
       _failOnChangeFlag,
-      help: 'Fail if the command does anything. '
+      help:
+          'Fail if the command does anything. '
           '(Used in CI to ensure excerpts are up to date.)',
     );
   }
@@ -39,7 +40,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   final String name = 'update-excerpts';
 
   @override
-  final String description = 'Updates code excerpts in .md files, based '
+  final String description =
+      'Updates code excerpts in .md files, based '
       'on code from code files, via <?code-excerpt?> pragmas.';
 
   @override
@@ -47,8 +49,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<File> changedFiles = <File>[];
-    final List<String> errors = <String>[];
+    final changedFiles = <File>[];
+    final errors = <String>[];
     final List<File> markdownFiles = package.directory
         .listSync(recursive: true)
         .where((FileSystemEntity entity) {
@@ -58,13 +60,17 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         })
         .cast<File>()
         .toList();
-    for (final File file in markdownFiles) {
+    for (final file in markdownFiles) {
       final _UpdateResult result = _updateExcerptsIn(file);
       if (result.snippetCount > 0) {
-        final String displayPath =
-            getRelativePosixPath(file, from: package.directory);
-        print('${indentation}Checked ${result.snippetCount} snippet(s) in '
-            '$displayPath.');
+        final String displayPath = getRelativePosixPath(
+          file,
+          from: package.directory,
+        );
+        print(
+          '${indentation}Checked ${result.snippetCount} snippet(s) in '
+          '$displayPath.',
+        );
       }
       if (result.changed) {
         changedFiles.add(file);
@@ -101,23 +107,24 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   }
 
   static const String _pragma = '<?code-excerpt';
-  static final RegExp _basePattern =
-      RegExp(r'^ *<\?code-excerpt path-base="([^"]+)"\?>$');
+  static final RegExp _basePattern = RegExp(
+    r'^ *<\?code-excerpt path-base="([^"]+)"\?>$',
+  );
   static final RegExp _injectPattern = RegExp(
     r'^ *<\?code-excerpt "(?<path>[^ ]+) \((?<section>[^)]+)\)"(?: plaster="(?<plaster>[^"]*)")?\?>$',
   );
 
   _UpdateResult _updateExcerptsIn(File file) {
-    bool detectedChange = false;
-    int snippetCount = 0;
-    final List<String> errors = <String>[];
+    var detectedChange = false;
+    var snippetCount = 0;
+    final errors = <String>[];
     Directory pathBase = file.parent;
-    final StringBuffer output = StringBuffer();
-    final StringBuffer existingBlock = StringBuffer();
+    final output = StringBuffer();
+    final existingBlock = StringBuffer();
     String? language;
     String? excerpt;
     _ExcerptParseMode mode = _ExcerptParseMode.normal;
-    int lineNumber = 0;
+    var lineNumber = 0;
     for (final String line in file.readAsLinesSync()) {
       lineNumber += 1;
       switch (mode) {
@@ -125,14 +132,16 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           if (line.contains(_pragma)) {
             RegExpMatch? match = _basePattern.firstMatch(line);
             if (match != null) {
-              pathBase =
-                  file.parent.childDirectory(path.normalize(match.group(1)!));
+              pathBase = file.parent.childDirectory(
+                path.normalize(match.group(1)!),
+              );
             } else {
               match = _injectPattern.firstMatch(line);
               if (match != null) {
                 snippetCount++;
-                final String excerptPath =
-                    path.normalize(match.namedGroup('path')!);
+                final String excerptPath = path.normalize(
+                  match.namedGroup('path')!,
+                );
                 final File excerptSourceFile = pathBase.childFile(excerptPath);
                 final String extension = path.extension(excerptSourceFile.path);
                 switch (extension) {
@@ -154,15 +163,22 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                 final String plaster = match.namedGroup('plaster') ?? '···';
                 if (!excerptSourceFile.existsSync()) {
                   errors.add(
-                      '${file.path}:$lineNumber: specified file "$excerptPath" (resolved to "${excerptSourceFile.path}") does not exist');
+                    '${file.path}:$lineNumber: specified file "$excerptPath" (resolved to "${excerptSourceFile.path}") does not exist',
+                  );
                 } else {
                   excerpt = _extractExcerpt(
-                      excerptSourceFile, section, plaster, language, errors);
+                    excerptSourceFile,
+                    section,
+                    plaster,
+                    language,
+                    errors,
+                  );
                 }
                 mode = _ExcerptParseMode.pragma;
               } else {
                 errors.add(
-                    '${file.path}:$lineNumber: $_pragma?> pragma does not match expected syntax or is not alone on the line');
+                  '${file.path}:$lineNumber: $_pragma?> pragma does not match expected syntax or is not alone on the line',
+                );
               }
             }
           }
@@ -170,12 +186,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         case _ExcerptParseMode.pragma:
           if (!line.startsWith('```')) {
             errors.add(
-                '${file.path}:$lineNumber: expected code block but did not find one');
+              '${file.path}:$lineNumber: expected code block but did not find one',
+            );
             mode = _ExcerptParseMode.normal;
           } else {
             if (line.startsWith('``` ')) {
               errors.add(
-                  '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")');
+                '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")',
+              );
               mode = _ExcerptParseMode.injecting;
             } else if (line != '```$language' &&
                 line != '```rfwtxt' &&
@@ -183,7 +201,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
               // We special-case rfwtxt and json because the rfw package extracts such sections from Dart files.
               // If we get more special cases we should think about a more general solution.
               errors.add(
-                  '${file.path}:$lineNumber: code block has wrong language');
+                '${file.path}:$lineNumber: code block has wrong language',
+              );
             }
             mode = _ExcerptParseMode.injecting;
           }
@@ -212,23 +231,29 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           file.writeAsStringSync(output.toString());
         } catch (e) {
           errors.add(
-              '${file.path}: failed to update file (${e.runtimeType}: $e)');
+            '${file.path}: failed to update file (${e.runtimeType}: $e)',
+          );
         }
       }
     }
     return _UpdateResult(detectedChange, snippetCount, errors);
   }
 
-  String _extractExcerpt(File excerptSourceFile, String section,
-      String plasterInside, String language, List<String> errors) {
-    final List<String> buffer = <String>[];
-    bool extracting = false;
-    int lineNumber = 0;
-    int maxLength = 0;
-    bool found = false;
-    String prefix = '';
-    String suffix = '';
-    String padding = '';
+  String _extractExcerpt(
+    File excerptSourceFile,
+    String section,
+    String plasterInside,
+    String language,
+    List<String> errors,
+  ) {
+    final buffer = <String>[];
+    var extracting = false;
+    var lineNumber = 0;
+    var maxLength = 0;
+    var found = false;
+    var prefix = '';
+    var suffix = '';
+    var padding = '';
     switch (language) {
       case 'cc':
       case 'c++':
@@ -254,9 +279,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       case 'sh':
         prefix = '# ';
     }
-    final String startRegionMarker = '$prefix#docregion $section$suffix';
-    final String endRegionMarker = '$prefix#enddocregion $section$suffix';
-    final String plaster = '$prefix$padding$plasterInside$padding$suffix';
+    final startRegionMarker = '$prefix#docregion $section$suffix';
+    final endRegionMarker = '$prefix#enddocregion $section$suffix';
+    final plaster = '$prefix$padding$plasterInside$padding$suffix';
     int? indentation;
     for (final String excerptLine in excerptSourceFile.readAsLinesSync()) {
       final String trimmedLine = excerptLine.trimLeft();
@@ -268,7 +293,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         } else {
           if (trimmedLine == startRegionMarker) {
             errors.add(
-                '${excerptSourceFile.path}:$lineNumber: saw "$startRegionMarker" pragma while already in a "$section" doc region');
+              '${excerptSourceFile.path}:$lineNumber: saw "$startRegionMarker" pragma while already in a "$section" doc region',
+            );
           }
           if (excerptLine.length > maxLength) {
             maxLength = excerptLine.length;
@@ -291,27 +317,29 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       }
     }
     if (extracting) {
-      errors
-          .add('${excerptSourceFile.path}: missing "$endRegionMarker" pragma');
+      errors.add(
+        '${excerptSourceFile.path}: missing "$endRegionMarker" pragma',
+      );
     }
     if (!found) {
       errors.add(
-          '${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma');
+        '${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma',
+      );
       return '';
     }
     if (buffer.isEmpty) {
       errors.add('${excerptSourceFile.path}: region "$section" is empty');
       return '';
     }
-    int indent = maxLength;
-    for (final String line in buffer) {
+    var indent = maxLength;
+    for (final line in buffer) {
       if (indent == 0) {
         break;
       }
       if (line.isEmpty) {
         continue;
       }
-      for (int index = 0; index < line.length; index += 1) {
+      for (var index = 0; index < line.length; index += 1) {
         if (line[index] != ' ') {
           if (index < indent) {
             indent = index;
@@ -319,8 +347,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         }
       }
     }
-    final StringBuffer excerpt = StringBuffer();
-    for (final String line in buffer) {
+    final excerpt = StringBuffer();
+    for (final line in buffer) {
       if (line.isEmpty) {
         excerpt.writeln();
       } else {

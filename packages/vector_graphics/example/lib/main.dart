@@ -50,7 +50,7 @@ class NetworkSvgLoader extends BytesLoader {
     return compute(
       (String svgUrl) async {
         final http.Response request = await http.get(Uri.parse(svgUrl));
-        final TimelineTask task = TimelineTask()..start('encodeSvg');
+        final task = TimelineTask()..start('encodeSvg');
         final Uint8List compiledBytes = encodeSvg(
           xml: request.body,
           debugName: svgUrl,

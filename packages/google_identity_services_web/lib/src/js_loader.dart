@@ -33,7 +33,7 @@ Future<void> loadWebSdk({
   String trustedTypePolicyName = _defaultTrustedPolicyName,
   String? nonce = _undefined,
 }) {
-  final Completer<void> completer = Completer<void>();
+  final completer = Completer<void>();
   onGoogleLibraryLoad = () => completer.complete();
 
   // If TrustedTypes are available, prepare a trusted URL.
@@ -55,7 +55,7 @@ Future<void> loadWebSdk({
     }
   }
 
-  final web.HTMLScriptElement script = web.HTMLScriptElement()
+  final script = web.HTMLScriptElement()
     ..async = true
     ..defer = true;
   if (trustedUrl != null) {
@@ -88,7 +88,7 @@ String? _getNonce({String? suppliedNonce, web.Window? window}) {
     'script',
   );
 
-  for (int i = 0; i < elements.length; i++) {
+  for (var i = 0; i < elements.length; i++) {
     if (elements.item(i) case final web.HTMLScriptElement element) {
       // Chrome may return an empty string instead of null.
       final String nonce =

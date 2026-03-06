@@ -90,7 +90,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         );
     }
 
-    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+    final videoElement = web.HTMLVideoElement()
       ..id = 'videoElement-$playerId'
       ..style.border = 'none'
       ..style.height = '100%'
@@ -102,7 +102,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
       (int viewId) => videoElement,
     );
 
-    final VideoPlayer player = VideoPlayer(videoElement: videoElement)
+    final player = VideoPlayer(videoElement: videoElement)
       ..initialize(src: uri);
 
     _videoPlayers[playerId] = player;

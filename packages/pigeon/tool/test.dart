@@ -26,7 +26,7 @@ const String _format = 'format';
 const String _overflow = 'overflow';
 
 Future<void> main(List<String> args) async {
-  final ArgParser parser = ArgParser()
+  final parser = ArgParser()
     ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
     ..addFlag(
       _noGen,
@@ -59,7 +59,7 @@ Future<void> main(List<String> args) async {
     );
 
   final ArgResults argResults = parser.parse(args);
-  List<String> testsToRun = <String>[];
+  var testsToRun = <String>[];
   if (argResults.wasParsed(_listFlag)) {
     print('available tests:');
 
@@ -84,12 +84,12 @@ ${parser.usage}''');
   // If no tests are provided, run everything that is supported on the current
   // platform.
   if (testsToRun.isEmpty) {
-    const List<String> dartTests = <String>[
+    const dartTests = <String>[
       dartUnitTests,
       flutterUnitTests,
       commandLineTests,
     ];
-    const List<String> androidTests = <String>[
+    const androidTests = <String>[
       androidJavaUnitTests,
       androidKotlinUnitTests,
       androidJavaIntegrationTests,
@@ -97,25 +97,19 @@ ${parser.usage}''');
       androidJavaLint,
       androidKotlinLint,
     ];
-    const List<String> iOSTests = <String>[
+    const iOSTests = <String>[
       iOSObjCUnitTests,
       iOSObjCIntegrationTests,
       iOSSwiftUnitTests,
       iOSSwiftIntegrationTests,
     ];
-    const List<String> linuxTests = <String>[
-      linuxUnitTests,
-      linuxIntegrationTests,
-    ];
-    const List<String> macOSTests = <String>[
+    const linuxTests = <String>[linuxUnitTests, linuxIntegrationTests];
+    const macOSTests = <String>[
       macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
       macOSSwiftIntegrationTests,
     ];
-    const List<String> windowsTests = <String>[
-      windowsUnitTests,
-      windowsIntegrationTests,
-    ];
+    const windowsTests = <String>[windowsUnitTests, windowsIntegrationTests];
 
     if (Platform.isMacOS) {
       testsToRun = <String>[

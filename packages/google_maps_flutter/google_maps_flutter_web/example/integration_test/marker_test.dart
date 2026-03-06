@@ -53,7 +53,7 @@ void main() {
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
-      MarkerController(marker: marker, onTap: onTap);
+      LegacyMarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
       gmaps.event.trigger(marker, 'click', gmaps.MapMouseEvent());
@@ -63,7 +63,7 @@ void main() {
     });
 
     testWidgets('onDragStart gets called', (WidgetTester tester) async {
-      MarkerController(marker: marker, onDragStart: onDragStart);
+      LegacyMarkerController(marker: marker, onDragStart: onDragStart);
 
       // Trigger a drag end event...
       gmaps.event.trigger(
@@ -76,7 +76,7 @@ void main() {
     });
 
     testWidgets('onDrag gets called', (WidgetTester tester) async {
-      MarkerController(marker: marker, onDrag: onDrag);
+      LegacyMarkerController(marker: marker, onDrag: onDrag);
 
       // Trigger a drag end event...
       gmaps.event.trigger(
@@ -89,7 +89,7 @@ void main() {
     });
 
     testWidgets('onDragEnd gets called', (WidgetTester tester) async {
-      MarkerController(marker: marker, onDragEnd: onDragEnd);
+      LegacyMarkerController(marker: marker, onDragEnd: onDragEnd);
 
       // Trigger a drag end event...
       gmaps.event.trigger(
@@ -102,8 +102,8 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final MarkerController controller = MarkerController(marker: marker);
-      final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+      final controller = LegacyMarkerController(marker: marker);
+      final options = gmaps.MarkerOptions()
         ..draggable = true
         ..position = gmaps.LatLng(42, 54);
 
@@ -119,7 +119,7 @@ void main() {
     testWidgets('infoWindow null, showInfoWindow.', (
       WidgetTester tester,
     ) async {
-      final MarkerController controller = MarkerController(marker: marker);
+      final controller = LegacyMarkerController(marker: marker);
 
       controller.showInfoWindow();
 
@@ -127,10 +127,10 @@ void main() {
     });
 
     testWidgets('showInfoWindow', (WidgetTester tester) async {
-      final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.Map map = gmaps.Map(createDivElement());
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
       marker.set('map', map);
-      final MarkerController controller = MarkerController(
+      final controller = LegacyMarkerController(
         marker: marker,
         infoWindow: infoWindow,
       );
@@ -142,10 +142,10 @@ void main() {
     });
 
     testWidgets('hideInfoWindow', (WidgetTester tester) async {
-      final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.Map map = gmaps.Map(createDivElement());
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
       marker.set('map', map);
-      final MarkerController controller = MarkerController(
+      final controller = LegacyMarkerController(
         marker: marker,
         infoWindow: infoWindow,
       );
@@ -157,13 +157,16 @@ void main() {
     });
 
     group('remove', () {
-      late MarkerController controller;
+      late LegacyMarkerController controller;
 
       setUp(() {
-        final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-        final gmaps.Map map = gmaps.Map(createDivElement());
+        final infoWindow = gmaps.InfoWindow();
+        final map = gmaps.Map(createDivElement());
         marker.set('map', map);
-        controller = MarkerController(marker: marker, infoWindow: infoWindow);
+        controller = LegacyMarkerController(
+          marker: marker,
+          infoWindow: infoWindow,
+        );
       });
 
       testWidgets('drops gmaps instance', (WidgetTester tester) async {
@@ -175,8 +178,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.MarkerOptions options = gmaps.MarkerOptions()
-          ..draggable = true;
+        final options = gmaps.MarkerOptions()..draggable = true;
 
         controller.remove();
 
@@ -192,7 +194,7 @@ void main() {
 
         expect(() {
           controller.showInfoWindow();
-        }, throwsAssertionError);
+        }, throwsStateError);
       });
 
       testWidgets('cannot call hideInfoWindow after remove', (

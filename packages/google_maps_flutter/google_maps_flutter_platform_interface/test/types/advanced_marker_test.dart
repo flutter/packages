@@ -9,9 +9,7 @@ void main() {
 
   group('$AdvancedMarker', () {
     test('constructor defaults', () {
-      final AdvancedMarker marker = AdvancedMarker(
-        markerId: const MarkerId('ABC123'),
-      );
+      final marker = AdvancedMarker(markerId: const MarkerId('ABC123'));
 
       expect(marker.alpha, equals(1.0));
       expect(marker.anchor, equals(const Offset(0.5, 1.0)));
@@ -46,7 +44,7 @@ void main() {
     test('toJson', () {
       final BitmapDescriptor testDescriptor =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
-      final AdvancedMarker marker = AdvancedMarker(
+      final marker = AdvancedMarker(
         markerId: const MarkerId('ABC123'),
         alpha: 0.12345,
         anchor: const Offset(100, 100),
@@ -70,7 +68,7 @@ void main() {
         collisionBehavior: MarkerCollisionBehavior.requiredAndHidesOptional,
       );
 
-      final Map<String, Object> json = marker.toJson() as Map<String, Object>;
+      final json = marker.toJson() as Map<String, Object>;
 
       expect(json, <String, Object>{
         'markerId': 'ABC123',
@@ -104,26 +102,24 @@ void main() {
     });
 
     test('copyWith', () {
-      const MarkerId markerId = MarkerId('ABC123');
-      final AdvancedMarker marker = AdvancedMarker(markerId: markerId);
+      const markerId = MarkerId('ABC123');
+      final marker = AdvancedMarker(markerId: markerId);
 
       final BitmapDescriptor testDescriptor =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
-      const double testAlphaParam = 0.12345;
-      const Offset testAnchorParam = Offset(100, 100);
+      const testAlphaParam = 0.12345;
+      const testAnchorParam = Offset(100, 100);
       final bool testConsumeTapEventsParam = !marker.consumeTapEvents;
       final bool testDraggableParam = !marker.draggable;
       final bool testFlatParam = !marker.flat;
-      final BitmapDescriptor testIconParam = testDescriptor;
-      const InfoWindow testInfoWindowParam = InfoWindow(title: 'Test');
-      const LatLng testPositionParam = LatLng(100, 100);
+      final testIconParam = testDescriptor;
+      const testInfoWindowParam = InfoWindow(title: 'Test');
+      const testPositionParam = LatLng(100, 100);
       const double testRotationParam = 100;
       final bool testVisibleParam = !marker.visible;
       const double testZIndexParam = 100;
-      const ClusterManagerId testClusterManagerIdParam = ClusterManagerId(
-        'DEF123',
-      );
-      final List<String> log = <String>[];
+      const testClusterManagerIdParam = ClusterManagerId('DEF123');
+      final log = <String>[];
       const MarkerCollisionBehavior testCollisionBehavior =
           MarkerCollisionBehavior.requiredAndHidesOptional;
 
@@ -184,7 +180,7 @@ void main() {
     });
 
     test('zIndex param', () {
-      final AdvancedMarker marker = AdvancedMarker(
+      final marker = AdvancedMarker(
         markerId: const MarkerId('ABC123'),
         zIndex: 5,
       );
@@ -194,7 +190,7 @@ void main() {
     });
 
     test('zIndexInt param copyWith', () {
-      final AdvancedMarker marker = AdvancedMarker(
+      final marker = AdvancedMarker(
         markerId: const MarkerId('ABC123'),
         zIndex: 5,
       );
@@ -204,7 +200,7 @@ void main() {
     });
 
     test('zIndex param copyWith', () {
-      final AdvancedMarker marker = AdvancedMarker(
+      final marker = AdvancedMarker(
         markerId: const MarkerId('ABC123'),
         zIndex: 5,
       );

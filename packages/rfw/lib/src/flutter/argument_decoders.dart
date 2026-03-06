@@ -623,7 +623,7 @@ class ArgumentDecoders {
     if (value == null) {
       return null;
     }
-    for (int index = 0; index < values.length; index += 1) {
+    for (var index = 0; index < values.length; index += 1) {
       if (value == values[index].toString().split('.').last) {
         return values[index];
       }
@@ -1028,7 +1028,7 @@ class ArgumentDecoders {
     if (!source.isMap(key)) {
       return null;
     }
-    final Paint result = Paint();
+    final result = Paint();
     final BlendMode? paintBlendMode = enumValue<BlendMode>(BlendMode.values, source, [...key, 'blendMode']);
     if (paintBlendMode != null) {
       result.blendMode = paintBlendMode;

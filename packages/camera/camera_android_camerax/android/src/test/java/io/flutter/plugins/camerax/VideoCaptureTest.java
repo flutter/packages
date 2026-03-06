@@ -9,32 +9,42 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.hardware.camera2.CaptureRequest;
+import android.util.Range;
+import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.video.VideoCapture;
 import androidx.camera.video.VideoOutput;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
+import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class VideoCaptureTest {
+  // Due to Java's Type Erasure, we cannot get a class literal (e.g., Extender<T>.class) for a
+  // parameterized type. We must use the raw type (Extender.class) which forces the 'unchecked' and
+  // 'rawtypes' warnings. The runtime logic handles the type safely.
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void withOutput_createsVideoCaptureWithVideoOutput() {
     final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
-    final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
     final VideoOutput videoOutput = mock(VideoOutput.class);
+    final Range<Integer> targetFpsRange = new Range<>(30, 30);
 
-    try (MockedStatic<VideoCapture> mockedCamera2CameraInfo =
-        Mockito.mockStatic(VideoCapture.class)) {
-      mockedCamera2CameraInfo
-          .when(() -> VideoCapture.withOutput(videoOutput))
-          .thenAnswer((Answer<VideoCapture>) invocation -> instance);
+    try (MockedConstruction<Camera2Interop.Extender> mockCamera2InteropExtender =
+        Mockito.mockConstruction(
+            Camera2Interop.Extender.class,
+            (mock, context) -> {
+              when(mock.setCaptureRequestOption(
+                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
+                  .thenReturn(mock);
+            })) {
+      final VideoCapture videoCapture = api.withOutput(videoOutput, targetFpsRange);
 
-      assertEquals(api.withOutput(videoOutput), instance);
+      assertEquals(1, mockCamera2InteropExtender.constructed().size());
+      assertEquals(videoOutput, videoCapture.getOutput());
     }
   }
 

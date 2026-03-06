@@ -47,7 +47,7 @@ void main() {
   test(
     'launchUrl calls through to launch with default options for web URL',
     () async {
-      final CapturingUrlLauncher launcher = CapturingUrlLauncher();
+      final launcher = CapturingUrlLauncher();
 
       await launcher.launchUrl('https://flutter.dev', const LaunchOptions());
 
@@ -65,7 +65,7 @@ void main() {
   test(
     'launchUrl calls through to launch with default options for non-web URL',
     () async {
-      final CapturingUrlLauncher launcher = CapturingUrlLauncher();
+      final launcher = CapturingUrlLauncher();
 
       await launcher.launchUrl('tel:123456789', const LaunchOptions());
 
@@ -81,7 +81,7 @@ void main() {
   );
 
   test('launchUrl calls through to launch with universal links', () async {
-    final CapturingUrlLauncher launcher = CapturingUrlLauncher();
+    final launcher = CapturingUrlLauncher();
 
     await launcher.launchUrl(
       'https://flutter.dev',
@@ -103,7 +103,7 @@ void main() {
   test(
     'launchUrl calls through to launch with all non-default options',
     () async {
-      final CapturingUrlLauncher launcher = CapturingUrlLauncher();
+      final launcher = CapturingUrlLauncher();
 
       await launcher.launchUrl(
         'https://flutter.dev',

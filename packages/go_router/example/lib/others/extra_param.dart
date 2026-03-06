@@ -71,7 +71,7 @@ class App extends StatelessWidget {
             builder: (BuildContext context, GoRouterState state) {
               final Map<String, Object> params =
                   state.extra! as Map<String, String>;
-              final String fid = params['fid']! as String;
+              final fid = params['fid']! as String;
               return FamilyScreen(fid: fid);
             },
           ),

@@ -22,15 +22,6 @@ extension Product {
   }
 }
 
-extension SK2ProductMessage: Equatable {
-  static func == (lhs: SK2ProductMessage, rhs: SK2ProductMessage) -> Bool {
-    return lhs.id == rhs.id && lhs.displayName == rhs.displayName
-      && lhs.description == rhs.description && lhs.price == rhs.price
-      && lhs.displayPrice == rhs.displayPrice && lhs.type == rhs.type
-      && lhs.subscription == rhs.subscription && lhs.priceLocale == rhs.priceLocale
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.ProductType {
   var convertToPigeon: SK2ProductTypeMessage {
@@ -72,14 +63,6 @@ extension Product.SubscriptionInfo {
   }
 }
 
-extension SK2SubscriptionInfoMessage: Equatable {
-  static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
-    return lhs.promotionalOffers == rhs.promotionalOffers
-      && lhs.subscriptionGroupID == rhs.subscriptionGroupID
-      && lhs.subscriptionPeriod == rhs.subscriptionPeriod
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionOffer {
   var convertToPigeon: SK2SubscriptionOfferMessage {
@@ -92,14 +75,6 @@ extension Product.SubscriptionOffer {
       periodCount: Int64(periodCount),
       paymentMode: paymentMode.convertToPigeon
     )
-  }
-}
-
-extension SK2SubscriptionOfferMessage: Equatable {
-  static func == (lhs: SK2SubscriptionOfferMessage, rhs: SK2SubscriptionOfferMessage) -> Bool {
-    return lhs.id == rhs.id && lhs.price == rhs.price && lhs.type == rhs.type
-      && lhs.period == rhs.period && lhs.periodCount == rhs.periodCount
-      && lhs.paymentMode == rhs.paymentMode
   }
 }
 
@@ -158,12 +133,6 @@ extension Product.SubscriptionPeriod {
   }
 }
 
-extension SK2SubscriptionPeriodMessage: Equatable {
-  static func == (lhs: SK2SubscriptionPeriodMessage, rhs: SK2SubscriptionPeriodMessage) -> Bool {
-    return lhs.value == rhs.value && lhs.unit == rhs.unit
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionPeriod.Unit {
   var convertToPigeon: SK2SubscriptionPeriodUnitMessage {
@@ -207,12 +176,6 @@ extension Locale {
   }
 }
 
-extension SK2PriceLocaleMessage: Equatable {
-  static func == (lhs: SK2PriceLocaleMessage, rhs: SK2PriceLocaleMessage) -> Bool {
-    return lhs.currencyCode == rhs.currencyCode && lhs.currencySymbol == rhs.currencySymbol
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.PurchaseResult {
   func convertToPigeon() -> SK2ProductPurchaseResultMessage {
@@ -229,7 +192,7 @@ extension Product.PurchaseResult {
 
 @available(iOS 15.0, macOS 12.0, *)
 extension Transaction {
-  func convertToPigeon(receipt: String?) -> SK2TransactionMessage {
+  func convertToPigeon(receipt: String?, restoring: Bool = false) -> SK2TransactionMessage {
 
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -242,7 +205,7 @@ extension Transaction {
       expirationDate: expirationDate.map { dateFormatter.string(from: $0) },
       purchasedQuantity: Int64(purchasedQuantity),
       appAccountToken: appAccountToken?.uuidString,
-      restoring: receipt != nil,
+      restoring: restoring,
       receiptData: receipt,
       jsonRepresentation: String(decoding: jsonRepresentation, as: UTF8.self)
     )

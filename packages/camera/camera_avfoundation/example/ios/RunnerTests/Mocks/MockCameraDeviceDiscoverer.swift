@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@testable import camera_avfoundation
+import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
+@testable import camera_avfoundation
 
 /// Mock implementation of `FLTCameraDeviceDiscoverer` protocol which allows injecting a custom
 /// implementation for session discovery.
@@ -18,7 +15,7 @@ final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
         _ deviceTypes: [AVCaptureDevice.DeviceType],
         _ mediaType: AVMediaType,
         _ position: AVCaptureDevice.Position
-      ) -> [NSObject & FLTCaptureDevice]?
+      ) -> [NSObject & CaptureDevice]?
     )?
 
   /// A stub that replaces the default implementation of
@@ -26,7 +23,7 @@ final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
   func discoverySession(
     withDeviceTypes deviceTypes: [AVCaptureDevice.DeviceType], mediaType: AVMediaType,
     position: AVCaptureDevice.Position
-  ) -> [FLTCaptureDevice] {
+  ) -> [CaptureDevice] {
     return discoverySessionStub?(deviceTypes, mediaType, position) ?? []
   }
 }

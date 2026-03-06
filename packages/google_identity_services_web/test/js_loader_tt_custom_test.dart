@@ -23,8 +23,7 @@ import 'tools.dart';
 
 void main() {
   group('loadWebSdk (TrustedTypes configured)', () {
-    final web.HTMLDivElement target =
-        web.document.createElement('div') as web.HTMLDivElement;
+    final target = web.document.createElement('div') as web.HTMLDivElement;
     injectMetaTag(<String, String>{
       'http-equiv': 'Content-Security-Policy',
       'content': "trusted-types my-custom-policy-name 'allow-duplicates';",

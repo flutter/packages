@@ -45,7 +45,7 @@ void main() {
   });
 
   testWidgets('Initializing a heatmap', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
@@ -63,12 +63,12 @@ void main() {
   });
 
   testWidgets('Adding a heatmap', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    const Heatmap h2 = Heatmap(
+    const h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
@@ -89,7 +89,7 @@ void main() {
   });
 
   testWidgets('Removing a heatmap', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
@@ -110,12 +110,12 @@ void main() {
   });
 
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    const Heatmap h2 = Heatmap(
+    const h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(10),
@@ -133,12 +133,12 @@ void main() {
   });
 
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    const Heatmap h2 = Heatmap(
+    const h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(10),
@@ -156,17 +156,17 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Heatmap h1 = const Heatmap(
+    var h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    Heatmap h2 = const Heatmap(
+    var h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    final Set<Heatmap> prev = <Heatmap>{h1, h2};
+    final prev = <Heatmap>{h1, h2};
     h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
@@ -178,7 +178,7 @@ void main() {
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(10),
     );
-    final Set<Heatmap> cur = <Heatmap>{h1, h2};
+    final cur = <Heatmap>{h1, h2};
 
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));
@@ -191,20 +191,20 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Heatmap h2 = const Heatmap(
+    var h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    const Heatmap h3 = Heatmap(
+    const h3 = Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    final Set<Heatmap> prev = <Heatmap>{h2, h3};
+    final prev = <Heatmap>{h2, h3};
 
     // h1 is added, h2 is updated, h3 is removed.
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
@@ -214,7 +214,7 @@ void main() {
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(10),
     );
-    final Set<Heatmap> cur = <Heatmap>{h1, h2};
+    final cur = <Heatmap>{h1, h2};
 
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));
@@ -234,28 +234,28 @@ void main() {
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    const Heatmap h1 = Heatmap(
+    const h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    const Heatmap h2 = Heatmap(
+    const h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    Heatmap h3 = const Heatmap(
+    var h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(20),
     );
-    final Set<Heatmap> prev = <Heatmap>{h1, h2, h3};
+    final prev = <Heatmap>{h1, h2, h3};
     h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
       radius: HeatmapRadius.fromPixels(10),
     );
-    final Set<Heatmap> cur = <Heatmap>{h1, h2, h3};
+    final cur = <Heatmap>{h1, h2, h3};
 
     await tester.pumpWidget(_mapWithHeatmaps(prev));
     await tester.pumpWidget(_mapWithHeatmaps(cur));

@@ -93,7 +93,7 @@ class SharedPreferencesDevToolsExtensionData {
           );
       }
     } else {
-      final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+      final prefs = SharedPreferencesAsync();
       // we need to check the kind because sometimes a double
       // gets interpreted as an int. If this was not an issue
       // we'd only need to do a simple pattern matching on value.
