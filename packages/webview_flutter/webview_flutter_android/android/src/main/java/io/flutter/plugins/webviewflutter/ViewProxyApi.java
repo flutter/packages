@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import java.util.List;
 
 /**
@@ -74,10 +73,11 @@ public class ViewProxyApi extends PigeonApiView {
   }
 
   @Override
-  public void setInsetListenerToSetInsetsToZero(@NonNull View pigeon_instance, @NonNull List<? extends WindowInsets> insets) {
+  public void setInsetListenerToSetInsetsToZero(
+      @NonNull View pigeon_instance, @NonNull List<? extends WindowInsets> insets) {
     int insetsTypeMask = 0;
     for (WindowInsets inset : insets) {
-      switch(inset) {
+      switch (inset) {
         case SYSTEM_BARS:
           insetsTypeMask |= WindowInsetsCompat.Type.systemBars();
           break;
@@ -88,16 +88,19 @@ public class ViewProxyApi extends PigeonApiView {
     }
 
     final int finalTypeMask = insetsTypeMask;
-    ViewCompat.setOnApplyWindowInsetsListener(pigeon_instance, (view, windowInsets) -> {
-      if (finalTypeMask == 0) {
-        return windowInsets;
-      }
+    ViewCompat.setOnApplyWindowInsetsListener(
+        pigeon_instance,
+        (view, windowInsets) -> {
+          if (finalTypeMask == 0) {
+            return windowInsets;
+          }
 
-      final Insets allInsets = windowInsets.getInsets(finalTypeMask);
-      pigeon_instance.setPadding(allInsets.left, allInsets.top, allInsets.right, allInsets.bottom);
-      return new WindowInsetsCompat.Builder(windowInsets)
-          .setInsets(finalTypeMask, Insets.NONE)
-          .build();
-    });
+          final Insets allInsets = windowInsets.getInsets(finalTypeMask);
+          pigeon_instance.setPadding(
+              allInsets.left, allInsets.top, allInsets.right, allInsets.bottom);
+          return new WindowInsetsCompat.Builder(windowInsets)
+              .setInsets(finalTypeMask, Insets.NONE)
+              .build();
+        });
   }
 }

@@ -145,9 +145,7 @@ enum MixedContentMode {
 /// recomposition, relayout, and redrawing when values change.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/WindowInsets
-enum WindowInsets {
-  systemBars, displayCutout,
-}
+enum WindowInsets { systemBars, displayCutout }
 
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
