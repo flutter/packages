@@ -1,3 +1,8 @@
+## 4.10.14
+
+* Adds opt out of `displayCutout` and `systemBars` Android inset changes. See
+  https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/insets.md#opt_out
+
 ## 4.10.13
 
 * Bumps androidx.webkit:webkit from 1.14.0 to 1.15.0.
