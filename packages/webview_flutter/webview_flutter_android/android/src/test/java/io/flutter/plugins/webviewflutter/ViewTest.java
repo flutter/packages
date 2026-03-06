@@ -5,12 +5,21 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.view.View;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import java.util.Collections;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 public class ViewTest {
   @Test
@@ -81,5 +90,29 @@ public class ViewTest {
     api.setOverScrollMode(instance, mode);
 
     verify(instance).setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+  }
+
+  @Test
+  public void setInsetListenerToSetInsetsToZero() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final WindowInsetsCompat windowInsets = mock(WindowInsetsCompat.class);
+    final Insets insets = Insets.of(1, 2, 3, 4);
+
+    when(windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())).thenReturn(insets);
+
+    try (MockedStatic<ViewCompat> viewCompatMockedStatic = mockStatic(ViewCompat.class)) {
+      api.setInsetListenerToSetInsetsToZero(instance, Collections.singletonList(WindowInsets.SYSTEM_BARS));
+
+      final ArgumentCaptor<OnApplyWindowInsetsListener> listenerCaptor =
+          ArgumentCaptor.forClass(OnApplyWindowInsetsListener.class);
+      viewCompatMockedStatic.verify(
+          () -> ViewCompat.setOnApplyWindowInsetsListener(eq(instance), listenerCaptor.capture()));
+
+      listenerCaptor.getValue().onApplyWindowInsets(instance, windowInsets);
+
+      verify(instance).setPadding(insets.left, insets.top, insets.right, insets.bottom);
+    }
   }
 }
