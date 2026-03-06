@@ -72,7 +72,7 @@ typedef ClosedCallback<S> = void Function(S data);
 /// expands and morphs into the destination page defined in [openBuilder],
 /// while the original widget from [closedBuilder] fades out during the
 /// transition.
-/// 
+///
 /// ```dart
 /// OpenContainer(
 ///   transitionDuration: const Duration(milliseconds: 500),
