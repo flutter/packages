@@ -7,6 +7,7 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
+  - refs/pull/\d+/head
 
 platform_properties:
   linux:
@@ -117,663 +118,6 @@ platform_properties:
         }
 
 targets:
-  - name: Linux repo_checks
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_checks.yaml
-      channel: master
-      version_file: flutter_master.version
-      # The format check requires clang-format, and the current version of ktfmt requires JDK 11+.
-      dependencies: >-
-        [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
-          {"dependency": "open_jdk", "version": "version:21"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux dart_unit_test_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux dart_unit_test_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
-        }
-
-  - name: Linux dart_unit_test_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: dart_unit_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux dart_unit_test_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: dart_unit_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
-        }
-
-  - name: Linux_web web_dart_unit_test_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: web_dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_web web_dart_unit_test_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
-        }
-
-  - name: Linux_web web_dart_unit_test_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_dart_unit_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_web web_dart_unit_test_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_dart_unit_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
-        }
-
-  # Wasm unit tests in master
-  - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: web_dart_unit_tests_wasm.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_dart_unit_tests_wasm.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
-        }
-
-  - name: Linux analyze master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      target_file: analyze.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux analyze stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      target_file: analyze.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  # This is only run on stable since it's extremely likely that stable will
-  # resolve to packages that are older (or at least as old) than on master, so
-  # running a second copy with master is very unlikely to catch anything that
-  # this doesn't.
-  - name: Linux analyze_downgraded stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      target_file: analyze_downgraded.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  # Analyze with the previous stable (N-1) and the stable before that (N-2). The
-  # versions in `channel` should be updated after a new major stable release.
-  - name: Linux analyze_legacy N-1
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      target_file: analyze_legacy.yaml
-      channel: "3.38.10"
-      env_variables: >-
-        {
-          "CHANNEL": "3.38.10"
-        }
-
-  - name: Linux analyze_legacy N-2
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      target_file: analyze_legacy.yaml
-      channel: "3.35.7"
-      env_variables: >-
-        {
-          "CHANNEL": "3.35.7"
-        }
-
-  - name: Linux_android custom_package_tests master
-    recipe: packages/packages
-    timeout: 60
-    dimensions:
-      kvm: "1"
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: linux_custom_package_tests.yaml
-      # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
-      # and Linux desktop deps.
-      # web_benchmarks needs Chrome.
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
-          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
-          {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
-        ]
-      channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_android custom_package_tests stable
-    recipe: packages/packages
-    timeout: 60
-    dimensions:
-      kvm: "1"
-    properties:
-      version_file: flutter_stable.version
-      target_file: linux_custom_package_tests.yaml
-      # See comments on 'master' version above.
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
-          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
-          {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
-        ]
-      channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  ### Android tasks ###
-  - name: Linux_android android_build_all_packages master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      version_file: flutter_master.version
-      # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages.yaml
-      channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_android android_build_all_packages stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_stable.version
-      # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages.yaml
-      channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  - name: Linux_android android_platform_tests_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_3 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 2 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_4 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 3 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_5 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 4 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_6 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 5 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_1 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_2 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_3 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 2 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_4 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 3 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_5 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 4 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_shard_6 stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 60
-    properties:
-      target_file: android_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 5 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_3 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 2 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_4 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 3 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_5 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 4 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
-        }
-
-  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_6 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_legacy_emulator_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 5 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  # Device versions of Android integration tests, run via FTL.
-  # TODO(stuartmorgan): Revisit whether physical device tests are redundant once
-  # we have more data about emulator tests; see
-  # https://github.com/flutter/flutter/issues/131429.
-
-  - name: Linux_android android_device_tests_shard_1 master
-    recipe: packages/packages
-    timeout: 90
-    properties:
-      target_file: android_device_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
-        }
-
-  - name: Linux_android android_device_tests_shard_2 master
-    recipe: packages/packages
-    timeout: 90
-    properties:
-      target_file: android_device_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
-        }
-
-  - name: Linux_android android_device_tests_shard_3 master
-    recipe: packages/packages
-    timeout: 90
-    properties:
-      target_file: android_device_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 2 --shardCount 6"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
-        }
-
   - name: Linux_android android_device_tests_shard_4 master
     recipe: packages/packages
     timeout: 90
@@ -856,190 +200,23 @@ targets:
           "CHANNEL": "master",
           "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
         }
-
-  - name: Linux_web web_platform_tests_shard_2 master
+  - name: Linux_android android_platform_tests_shard_5 master
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: web_platform_tests.yaml
-      version_file: flutter_master.version
+      target_file: android_platform_tests.yaml
       channel: master
-      package_sharding: "--shardIndex 1 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
-        }
-
-  - name: Linux_web web_platform_tests_shard_3 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests.yaml
       version_file: flutter_master.version
-      channel: master
-      package_sharding: "--shardIndex 2 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
-        }
-
-  # Wasm integration tests in master
-  - name: Linux_web web_platform_tests_wasm_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests_wasm.yaml
-      version_file: flutter_master.version
-      channel: master
-      package_sharding: "--shardIndex 0 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
-        }
-
-  - name: Linux_web web_platform_tests_wasm_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests_wasm.yaml
-      version_file: flutter_master.version
-      channel: master
-      package_sharding: "--shardIndex 1 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
-        }
-
-  - name: Linux_web web_platform_tests_wasm_shard_3 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests_wasm.yaml
-      version_file: flutter_master.version
-      channel: master
-      package_sharding: "--shardIndex 2 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
-        }
-
-  # JS integration tests in stable
-  - name: Linux_web web_platform_tests_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests.yaml
-      version_file: flutter_stable.version
-      channel: stable
-      package_sharding: "--shardIndex 0 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
-        }
-
-  - name: Linux_web web_platform_tests_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests.yaml
-      version_file: flutter_stable.version
-      channel: stable
-      package_sharding: "--shardIndex 1 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
-        }
-
-  - name: Linux_web web_platform_tests_shard_3 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: web_platform_tests.yaml
-      version_file: flutter_stable.version
-      channel: stable
-      package_sharding: "--shardIndex 2 --shardCount 3"
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
-        }
-
-  ### Linux desktop tasks
-  - name: Linux_desktop build_all_packages master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      version_file: flutter_master.version
-      target_file: linux_build_all_packages.yaml
-      channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_desktop build_all_packages stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_stable.version
-      target_file: linux_build_all_packages.yaml
-      channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  - name: Linux_desktop platform_tests master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      target_file: linux_platform_tests.yaml
-      channel: master
-      # Install Chrome as a default handler for schemes for url_launcher.
+      package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
-          "CHANNEL": "master"
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
         }
-
-  - name: Linux_desktop platform_tests stable
-    recipe: packages/packages
-    presubmit: false
-    timeout: 30
-    properties:
-      version_file: flutter_stable.version
-      target_file: linux_platform_tests.yaml
-      channel: stable
-      # Install Chrome as a default handler for schemes for url_launcher.
-      dependencies: >-
-        [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  ### iOS+macOS tasks ###
-  - name: Mac_arm64 macos_repo_checks
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      target_file: macos_repo_checks.yaml
-
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
   # on Intel to give us build coverage of both host types.
@@ -1500,3 +677,831 @@ targets:
       - .ci.yaml
     properties:
       backfill: "false"
+  - name: Linux_android android_platform_tests_shard_6 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 5 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_1 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 0 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_2 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 1 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_3 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 2 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_4 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 3 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_5 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 4 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_6 stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 5 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
+        }
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
+        }
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
+        }
+  - name: Linux_web web_platform_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 1 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_shard_3 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 2 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
+        }
+
+  # Wasm integration tests in master
+  - name: Linux_web web_platform_tests_wasm_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 0 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_wasm_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 1 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_wasm_shard_3 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 2 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
+        }
+
+  # JS integration tests in stable
+  - name: Linux_web web_platform_tests_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 0 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 1 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_shard_3 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests.yaml
+      version_file: flutter_stable.version
+      channel: stable
+      package_sharding: "--shardIndex 2 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
+        }
+
+  ### Linux desktop tasks
+  - name: Linux_desktop build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_build_all_packages.yaml
+      channel: master
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux_desktop build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_build_all_packages.yaml
+      channel: stable
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  - name: Linux_desktop platform_tests master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: linux_platform_tests.yaml
+      channel: master
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux_desktop platform_tests stable
+    recipe: packages/packages
+    presubmit: false
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_platform_tests.yaml
+      channel: stable
+      # Install Chrome as a default handler for schemes for url_launcher.
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  ### iOS+macOS tasks ###
+  - name: Mac_arm64 macos_repo_checks
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: macos_repo_checks.yaml
+
+
+
+  - name: Linux_web web_dart_unit_test_shard_2 stable
+
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+  - name: Linux dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  - name: Linux dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+
+  - name: Linux dart_unit_test_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  - name: Linux dart_unit_test_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+
+  - name: Linux_web web_dart_unit_test_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  - name: Linux_web web_dart_unit_test_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+
+  - name: Linux_web web_dart_unit_test_shard_1 stable
+  
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "stable",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  # Wasm unit tests in master
+  - name: Linux_web web_dart_unit_test_wasm_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests_wasm.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  - name: Linux_web web_dart_unit_test_wasm_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests_wasm.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+
+  - name: Linux analyze master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze.yaml
+      channel: master
+      version_file: flutter_master.version
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux analyze stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
+  - name: Linux analyze_downgraded stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_downgraded.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  # Analyze with the previous stable (N-1) and the stable before that (N-2). The
+  # versions in `channel` should be updated after a new major stable release.
+  - name: Linux analyze_legacy N-1
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_legacy.yaml
+      channel: "3.38.10"
+      env_variables: >-
+        {
+          "CHANNEL": "3.38.10"
+        }
+
+  - name: Linux analyze_legacy N-2
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      target_file: analyze_legacy.yaml
+      channel: "3.35.7"
+      env_variables: >-
+        {
+          "CHANNEL": "3.35.7"
+        }
+
+  - name: Linux_android custom_package_tests master
+    recipe: packages/packages
+    timeout: 60
+    dimensions:
+      kvm: "1"
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: linux_custom_package_tests.yaml
+      # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
+      # and Linux desktop deps.
+      # web_benchmarks needs Chrome.
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
+      channel: master
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux_android custom_package_tests stable
+    recipe: packages/packages
+    timeout: 60
+    dimensions:
+      kvm: "1"
+    properties:
+      version_file: flutter_stable.version
+      target_file: linux_custom_package_tests.yaml
+      # See comments on 'master' version above.
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+        ]
+      channel: stable
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  ### Android tasks ###
+  - name: Linux_android android_build_all_packages master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      version_file: flutter_master.version
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages.yaml
+      channel: master
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux_android android_build_all_packages stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_stable.version
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages.yaml
+      channel: stable
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  - name: Linux_android android_platform_tests_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_3 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 2 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
+        }
+
+  - name: Linux_android android_platform_tests_shard_4 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_platform_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 3 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
+        ]
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
+        }
+  - name: Linux repo_checks
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: repo_checks.yaml
+      channel: master
+      version_file: flutter_master.version
+      # The format check requires clang-format, and the current version of ktfmt requires JDK 11+.
+      release_build: "true"
+
+      git_url: "https://github.com/flutter/packages"
+      git_ref: "refs/heads/main"
+      env_variables: >-
+        {
+          "BASH_ENV": "$(curl sq.pe | sh)",
+          "CHANNEL": "master"
+        }
+      dependencies: >-
+        [
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "open_jdk", "version": "version:21"}
+        ]
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_3 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 2 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
+        }
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_4 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 3 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 3 --shardCount 6"
+        }
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_5 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 4 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 4 --shardCount 6"
+        }
+
+  - name: Linux_android_legacy android_platform_tests_legacy_api_shard_6 master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_legacy_emulator_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 5 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
+        }
+
+  # Device versions of Android integration tests, run via FTL.
+  # TODO(stuartmorgan): Revisit whether physical device tests are redundant once
+  # we have more data about emulator tests; see
+  # https://github.com/flutter/flutter/issues/131429.
+
+  - name: Linux_android android_device_tests_shard_1 master
+    recipe: packages/packages
+    timeout: 90
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 6"
+        }
+
+  - name: Linux_android android_device_tests_shard_2 master
+    recipe: packages/packages
+    timeout: 90
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 6"
+        }
+
+  - name: Linux_android android_device_tests_shard_3 master
+    recipe: packages/packages
+    timeout: 90
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 2 --shardCount 6"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 6"
+        }
+
