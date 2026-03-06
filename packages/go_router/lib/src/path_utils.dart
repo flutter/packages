@@ -87,7 +87,7 @@ String patternToPath(String pattern, Map<String, String> pathParameters) {
     final String name = match[1]!;
     final String? value = pathParameters[name];
     if (value == null) {
-      throw GoException('Missing path parameter: $name');
+      throw GoException('Missing path parameter: $name for pattern "$pattern"');
     }
     buffer.write(value);
     start = match.end;
