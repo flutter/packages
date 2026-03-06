@@ -142,14 +142,11 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
       return;
     }
 
-    final String clusterManagerIdVal =
-        'cluster_manager_id_$_clusterManagerIdCounter';
+    final clusterManagerIdVal = 'cluster_manager_id_$_clusterManagerIdCounter';
     _clusterManagerIdCounter++;
-    final ClusterManagerId clusterManagerId = ClusterManagerId(
-      clusterManagerIdVal,
-    );
+    final clusterManagerId = ClusterManagerId(clusterManagerIdVal);
 
-    final ClusterManager clusterManager = ClusterManager(
+    final clusterManager = ClusterManager(
       clusterManagerId: clusterManagerId,
       onClusterTap: (Cluster cluster) => setState(() {
         lastCluster = cluster;
@@ -175,11 +172,11 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
   }
 
   void _addMarkersToCluster(ClusterManager clusterManager) {
-    for (int i = 0; i < _markersToAddToClusterManagerCount; i++) {
-      final String markerIdVal =
+    for (var i = 0; i < _markersToAddToClusterManagerCount; i++) {
+      final markerIdVal =
           '${clusterManager.clusterManagerId.value}_marker_id_$_markerIdCounter';
       _markerIdCounter++;
-      final MarkerId markerId = MarkerId(markerIdVal);
+      final markerId = MarkerId(markerIdVal);
 
       final int clusterManagerIndex = clusterManagers.values.toList().indexOf(
         clusterManager,
@@ -190,7 +187,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
       final double clusterManagerLongitudeOffset =
           clusterManagerIndex * _clusterManagerLongitudeOffset;
 
-      final AdvancedMarker marker = AdvancedMarker(
+      final marker = AdvancedMarker(
         markerId: markerId,
         clusterManagerId: clusterManager.clusterManagerId,
         position: LatLng(
