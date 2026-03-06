@@ -103,7 +103,8 @@ public class ViewTest {
     when(windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())).thenReturn(insets);
 
     try (MockedStatic<ViewCompat> viewCompatMockedStatic = mockStatic(ViewCompat.class)) {
-      api.setInsetListenerToSetInsetsToZero(instance, Collections.singletonList(WindowInsets.SYSTEM_BARS));
+      api.setInsetListenerToSetInsetsToZero(
+          instance, Collections.singletonList(WindowInsets.SYSTEM_BARS));
 
       final ArgumentCaptor<OnApplyWindowInsetsListener> listenerCaptor =
           ArgumentCaptor.forClass(OnApplyWindowInsetsListener.class);
