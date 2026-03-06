@@ -1015,11 +1015,7 @@ class ThrowingBytesLoader extends BytesLoader {
 
 const String svgString = '''
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
-    <path fill="#42A5F5" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
-    <path fill="#42A5F5" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
-    <path fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
-    <g transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
-        <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
-    </g>
+    <path fill="#42A5F5" d="M156.2 128.9 9.8 128.9 9.8 10.4 156.2 10.4"/>
+    <path fill="#0D47A1" d="M79.5 142.8 79.5 191.6 156.2 191.6 156.2 142.8"/>
 </svg>
 ''';
