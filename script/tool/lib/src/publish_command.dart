@@ -83,6 +83,10 @@ class PublishCommand extends PackageLoopingCommand {
           'Release all packages that contains pubspec changes at the current commit compares to the base-sha.\n'
           'The --packages option is ignored if this is on.',
     );
+    argParser.addOption(
+      _batchReleaseBranchOption,
+      help: 'batch release a package from its release branch',
+    );
     argParser.addFlag(
       _dryRunFlag,
       help:
@@ -109,6 +113,7 @@ class PublishCommand extends PackageLoopingCommand {
   static const String _pubFlagsOption = 'pub-publish-flags';
   static const String _remoteOption = 'remote';
   static const String _allChangedFlag = 'all-changed';
+  static const String _batchReleaseBranchOption = 'batch-release-branch';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
   static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
@@ -186,6 +191,9 @@ class PublishCommand extends PackageLoopingCommand {
 
   @override
   Stream<PackageEnumerationEntry> getPackagesToProcess() async* {
+    final String batchReleaseBranchName = getStringArg(
+      _batchReleaseBranchOption,
+    );
     if (getBoolArg(_allChangedFlag)) {
       print(
         'Publishing all packages that have changed relative to "$baseSha"\n',
@@ -196,6 +204,40 @@ class PublishCommand extends PackageLoopingCommand {
           .toList();
 
       for (final pubspecPath in changedPubspecs) {
+        // Read the ci_config.yaml file if it exists
+        final String packageName = p.basename(p.dirname(pubspecPath));
+        final bool isBatchReleasePackage;
+        try {
+          final File ciConfigFile = RepositoryPackage(
+            packagesDir.fileSystem.file(pubspecPath).parent,
+          ).ciConfigFile;
+
+          if (!ciConfigFile.existsSync()) {
+            isBatchReleasePackage = false;
+          } else {
+            final ciConfig = CIConfig.parse(ciConfigFile.readAsStringSync());
+            isBatchReleasePackage = ciConfig.isBatchRelease;
+          }
+        } catch (e) {
+          printError('Could not parse ci_config.yaml for $packageName: $e');
+          throw ToolExit(exitCommandFoundErrors);
+        }
+
+        // When releasing from the main branch, skip the batch release packages.
+        if (batchReleaseBranchName.isEmpty) {
+          if (isBatchReleasePackage) {
+            continue;
+          }
+        } else {
+          // When releasing from a batch release branch, verify the package has
+          // the opt-in flag and that the package name matches the branch suffix.
+          // Example: branch "release-go_router" matches package "go_router".
+          if (!isBatchReleasePackage ||
+              batchReleaseBranchName != 'release-$packageName') {
+            continue;
+          }
+        }
+
         // git outputs a relativa, Posix-style path.
         final File pubspecFile = childFileWithSubcomponents(
           packagesDir.fileSystem.directory((await gitDir).path),

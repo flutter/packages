@@ -7,18 +7,13 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class SavePhotoDelegateTests: XCTestCase {
   func testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToCapture() {
     let completionExpectation = expectation(
       description: "Must complete with error if failed to capture photo.")
     let captureError = NSError(domain: "test", code: 0, userInfo: nil)
     let ioQueue = DispatchQueue(label: "test")
-    let delegate = FLTSavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
+    let delegate = SavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
       XCTAssertEqual(captureError, error as NSError?)
       XCTAssertNil(path)
       completionExpectation.fulfill()
@@ -35,7 +30,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     let ioQueue = DispatchQueue(label: "test")
     let ioError = NSError(
       domain: "IOError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Localized IO Error"])
-    let delegate = FLTSavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
+    let delegate = SavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
       XCTAssertEqual(ioError, error as NSError?)
       XCTAssertNil(path)
       completionExpectation.fulfill()
@@ -56,7 +51,7 @@ final class SavePhotoDelegateTests: XCTestCase {
       description: "Must complete with file path if succeeds to write file.")
     let ioQueue = DispatchQueue(label: "test")
     let filePath = "test"
-    let delegate = FLTSavePhotoDelegate(path: filePath, ioQueue: ioQueue) { path, error in
+    let delegate = SavePhotoDelegate(path: filePath, ioQueue: ioQueue) { path, error in
       XCTAssertNil(error)
       XCTAssertEqual(filePath, path)
       completionExpectation.fulfill()
@@ -88,7 +83,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     let filePath = "test"
-    let delegate = FLTSavePhotoDelegate(path: filePath, ioQueue: ioQueue) { path, error in
+    let delegate = SavePhotoDelegate(path: filePath, ioQueue: ioQueue) { path, error in
       completionExpectation.fulfill()
     }
 

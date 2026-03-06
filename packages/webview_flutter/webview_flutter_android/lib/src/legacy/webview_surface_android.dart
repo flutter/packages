@@ -30,9 +30,6 @@ import 'webview_android_widget.dart';
 /// https://github.com/flutter/flutter/wiki/Hybrid-Composition for more
 /// information.
 class SurfaceAndroidWebView extends AndroidWebView {
-  /// Constructs a [SurfaceAndroidWebView].
-  SurfaceAndroidWebView({@visibleForTesting super.instanceManager});
-
   @override
   Widget build({
     required BuildContext context,
@@ -75,7 +72,7 @@ class SurfaceAndroidWebView extends AndroidWebView {
                 // directionality.
                 layoutDirection:
                     Directionality.maybeOf(context) ?? TextDirection.ltr,
-                webViewIdentifier: instanceManager.getIdentifier(
+                webViewIdentifier: PigeonInstanceManager.instance.getIdentifier(
                   controller.webView,
                 )!,
               )

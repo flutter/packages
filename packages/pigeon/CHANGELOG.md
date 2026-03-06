@@ -1,5 +1,37 @@
-## NEXT
+## 26.1.10
 
+* Dramatically reduces the number of File write operations sent to the operating
+  system during code-generation. This improves performance of IDEs and the Dart
+  analysis server.
+
+## 26.1.9
+
+* [dart] Reduces much duplication in reply-handling code.
+
+## 26.1.8
+
+* Makes some internal class constructors constant.
+
+## 26.1.7
+
+* [objc] Updates to use module imports.
+
+## 26.1.6
+
+* Bumps kotlin_version to 2.3.0.
+
+## 26.1.5
+
+* [kotlin] Fixes a "bridge method" warning when implementing an event stream handler.
+
+## 26.1.4
+
+* [swift][kotlin] Fixes crash that occurs when an object that is removed from the instance manager
+  calls to Dart.
+
+## 26.1.3
+
+* [dart] Fixes error from constructor parameter sharing name with attached field for a ProxyApi.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 26.1.2

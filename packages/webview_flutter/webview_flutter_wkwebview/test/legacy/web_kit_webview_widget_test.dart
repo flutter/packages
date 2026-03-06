@@ -38,6 +38,14 @@ import 'web_kit_webview_widget_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
+  tearDown(() {
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
       final mocks = _WebViewMocks(
@@ -171,9 +179,7 @@ void main() {
                 WKNavigationAction,
               );
 
-      final request = URLRequest.pigeon_detached(
-        pigeon_instanceManager: TestInstanceManager(),
-      );
+      final request = URLRequest.pigeon_detached();
       onCreateWebView(
         MockWKUIDelegate(),
         mocks.webView,
@@ -183,10 +189,8 @@ void main() {
           targetFrame: WKFrameInfo.pigeon_detached(
             isMainFrame: false,
             request: request,
-            pigeon_instanceManager: TestInstanceManager(),
           ),
           navigationType: NavigationType.linkActivated,
-          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -220,6 +224,31 @@ void main() {
 
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
+        final transparentUiColor = UIColor.pigeon_detached();
+        final redUiColor = UIColor.pigeon_detached();
+        PigeonOverrides.uIColor_new =
+            ({
+              required double red,
+              required double green,
+              required double blue,
+              required double alpha,
+              dynamic observeValue,
+            }) {
+              if (red == Colors.transparent.r &&
+                  green == Colors.transparent.g &&
+                  blue == Colors.transparent.b &&
+                  alpha == Colors.transparent.a) {
+                return transparentUiColor;
+              } else if (red == Colors.red.r &&
+                  green == Colors.red.g &&
+                  blue == Colors.red.b &&
+                  alpha == Colors.red.a) {
+                return redUiColor;
+              }
+
+              return UIColor.pigeon_detached();
+            };
+
         await buildWidget(
           tester,
           mocks,
@@ -233,8 +262,8 @@ void main() {
         );
 
         verify(mocks.webView.setOpaque(false));
-        verify(mocks.webView.setBackgroundColor(Colors.transparent.toARGB32()));
-        verify(mocks.scrollView.setBackgroundColor(Colors.red.toARGB32()));
+        verify(mocks.webView.setBackgroundColor(transparentUiColor));
+        verify(mocks.scrollView.setBackgroundColor(redUiColor));
 
         debugDefaultTargetPlatformOverride = null;
       });
@@ -504,7 +533,7 @@ void main() {
         await testController.loadFile('/path/to/file.html');
         verify(mocks.webView.loadFileUrl('/path/to/file.html', '/path/to'));
       });
-      //
+
       testWidgets('loadFlutterAsset', (WidgetTester tester) async {
         final _WebViewMocks mocks = configureMocks();
         final WebKitWebViewPlatformController testController =
@@ -1278,7 +1307,6 @@ void main() {
             userInfo: const <String, Object?>{
               NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -1335,7 +1363,6 @@ void main() {
             userInfo: const <String, Object?>{
               NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
             },
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -1463,10 +1490,8 @@ void main() {
               targetFrame: WKFrameInfo.pigeon_detached(
                 isMainFrame: false,
                 request: mockRequest,
-                pigeon_instanceManager: TestInstanceManager(),
               ),
               navigationType: NavigationType.linkActivated,
-              pigeon_instanceManager: TestInstanceManager(),
             ),
           ),
           NavigationActionPolicy.allow,
@@ -1556,11 +1581,7 @@ void main() {
         didReceiveScriptMessage(
           MockWKScriptMessageHandler(),
           mocks.userContentController,
-          WKScriptMessage.pigeon_detached(
-            name: 'hello',
-            body: 'A message.',
-            pigeon_instanceManager: TestInstanceManager(),
-          ),
+          WKScriptMessage.pigeon_detached(name: 'hello', body: 'A message.'),
         );
         verify(
           mocks.javascriptChannelRegistry.onJavascriptChannelMessage(
@@ -1602,9 +1623,4 @@ class _WebViewMocks {
   final MockWebViewPlatformCallbacksHandler callbacksHandler;
   final MockJavascriptChannelRegistry javascriptChannelRegistry;
   final MockWKWebpagePreferences webpagePreferences;
-}
-
-// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
-class TestInstanceManager extends PigeonInstanceManager {
-  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

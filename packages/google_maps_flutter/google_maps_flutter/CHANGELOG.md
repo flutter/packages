@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.14.2
+
+* Updates README with discussion of the new `google_maps_flutter_ios_sdk*` packages.
+
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.
@@ -603,7 +611,6 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 ## 0.5.19
 
 * Adds support for toggling Indoor View on or off.
-
 * Allow BitmapDescriptor scaling override
 
 ## 0.5.18

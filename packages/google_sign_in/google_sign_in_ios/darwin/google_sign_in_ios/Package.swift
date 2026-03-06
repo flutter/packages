@@ -26,9 +26,6 @@ let package = Package(
       dependencies: [
         .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
       ],
-      exclude: [
-        "include/google_sign_in_ios-umbrella.h", "include/FLTGoogleSignInPlugin.modulemap",
-      ],
       resources: [
         .process("Resources")
       ],

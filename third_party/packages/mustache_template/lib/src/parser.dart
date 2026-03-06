@@ -98,8 +98,7 @@ class Parser {
           _parseLine();
 
         default:
-          // TODO(stuartmorgan): Convert to StateError.
-          throw Exception('Unreachable code.');
+          throw StateError('Unreachable code.');
       }
     }
 
@@ -212,8 +211,7 @@ class Parser {
         break;
 
       default:
-        // TODO(stuartmorgan): Convert to StateError.
-        throw Exception('Unreachable code.');
+        throw StateError('Unreachable code.');
     }
   }
 
@@ -412,8 +410,7 @@ class Parser {
         node = null;
 
       default:
-        // TODO(stuartmorgan): Convert to StateError.
-        throw Exception('Unreachable code');
+        throw StateError('Unreachable code.');
     }
     return node;
   }

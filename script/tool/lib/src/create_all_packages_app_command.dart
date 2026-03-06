@@ -424,13 +424,17 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     final File podfile = app
         .platformDirectory(FlutterPlatform.macos)
         .childFile('Podfile');
-    _adjustFile(
-      podfile,
-      replacements: <String, List<String>>{
-        // macOS 10.15 is required by in_app_purchase.
-        'platform :osx': <String>["platform :osx, '10.15'"],
-      },
-    );
+    if (podfile.existsSync()) {
+      _adjustFile(
+        podfile,
+        replacements: <String, List<String>>{
+          // macOS 10.15 is required by in_app_purchase.
+          'platform :osx': <String>["platform :osx, '10.15'"],
+        },
+      );
+    } else {
+      print('Unable to find ${podfile.path} for updating. Skipping.');
+    }
   }
 
   Future<void> _updateMacOSPbxproj() async {
@@ -457,9 +461,9 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     _adjustFile(
       pbxprojFile,
       replacements: <String, List<String>>{
-        // iOS 14 is required by google_maps_flutter.
+        // iOS 15 is required by google_maps_flutter_ios_sdk9.
         'IPHONEOS_DEPLOYMENT_TARGET': <String>[
-          '				IPHONEOS_DEPLOYMENT_TARGET = 14.0;',
+          '				IPHONEOS_DEPLOYMENT_TARGET = 15.0;',
         ],
       },
     );

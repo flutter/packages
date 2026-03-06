@@ -1234,6 +1234,10 @@ if (wrapped == null) {
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
           }
+        // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
+        override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
+
+        override fun onCancel(p0: Any?) {}
         }
       ''');
     }
@@ -2239,6 +2243,18 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
                 callback(
                     Result.failure(
                         $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+                return''');
+                },
+                addTrailingNewline: false,
+              );
+              indent.writeScoped(
+                ' else if (!pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+                '}',
+                () {
+                  indent.format('''
+                callback(
+                    Result.failure(
+                        $errorClassName("missing-instance-error", "Callback to `${api.name}.${method.name}` failed because native instance was not in the instance manager.", "")))
                 return''');
                 },
               );
