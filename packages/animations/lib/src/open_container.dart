@@ -79,10 +79,10 @@ typedef ClosedCallback<S> = void Function(S data);
 ///   transitionType: ContainerTransitionType.fadeThrough,
 ///   openBuilder: (context, action) {
 ///     return Scaffold(
-///       appBar: AppBar(title: const Text("Details Page")),
+///       appBar: AppBar(title: const Text('Details Page')),
 ///       body: const Center(
 ///         child: Text(
-///           "This page opened with Container Transform animation",
+///           'This page opened with Container Transform animation,
 ///           style: TextStyle(fontSize: 18),
 ///           textAlign: TextAlign.center,
 ///         ),
@@ -99,7 +99,7 @@ typedef ClosedCallback<S> = void Function(S data);
 ///         borderRadius: BorderRadius.circular(16),
 ///       ),
 ///       child: const Text(
-///         "Open Details",
+///         'Open Details',
 ///         style: TextStyle(color: Colors.white, fontSize: 18),
 ///       ),
 ///     );
