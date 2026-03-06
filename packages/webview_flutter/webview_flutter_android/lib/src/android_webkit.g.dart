@@ -877,8 +877,17 @@ enum MixedContentMode {
 /// A representation of window insets that tracks access to enable
 /// recomposition, relayout, and redrawing when values change.
 ///
-/// See https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/WindowInsets
-enum WindowInsets { systemBars, displayCutout }
+/// See https://developer.android.com/reference/kotlin/android/view/WindowInsets.Type
+enum WindowInsets {
+  /// All system bars.
+  ///
+  /// Includes statusBars(), captionBar() as well as navigationBars(),
+  /// systemOverlays(), but not ime().
+  systemBars,
+
+  /// An inset type representing the area that used by DisplayCutout.
+  displayCutout,
+}
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();

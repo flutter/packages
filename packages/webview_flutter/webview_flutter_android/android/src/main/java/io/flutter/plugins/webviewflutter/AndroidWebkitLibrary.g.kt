@@ -1103,11 +1103,17 @@ enum class MixedContentMode(val raw: Int) {
  * A representation of window insets that tracks access to enable recomposition, relayout, and
  * redrawing when values change.
  *
- * See
- * https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/WindowInsets
+ * See https://developer.android.com/reference/kotlin/android/view/WindowInsets.Type
  */
 enum class WindowInsets(val raw: Int) {
+  /**
+   * All system bars.
+   *
+   * Includes statusBars(), captionBar() as well as navigationBars(), systemOverlays(), but not
+   * ime().
+   */
   SYSTEM_BARS(0),
+  /** An inset type representing the area that used by DisplayCutout. */
   DISPLAY_CUTOUT(1);
 
   companion object {
