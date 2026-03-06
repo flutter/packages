@@ -1097,8 +1097,12 @@ class GObjectSourceGenerator
 
     indent.newln();
     indent.writeScoped('gboolean ${methodPrefix}_equals($className* a, $className* b) {', '}', () {
-      indent.writeln('if (a == b) return TRUE;');
-      indent.writeln('if (a == nullptr || b == nullptr) return FALSE;');
+      indent.writeScoped('if (a == b) {', '}', () {
+        indent.writeln('return TRUE;');
+      });
+      indent.writeScoped('if (a == nullptr || b == nullptr) {', '}', () {
+        indent.writeln('return FALSE;');
+      });
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _getFieldName(field.name);
         if (field.type.isClass) {
@@ -1116,14 +1120,18 @@ class GObjectSourceGenerator
         } else if (field.type.isEnum) {
           if (field.type.isNullable) {
             indent.writeScoped(
-              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
-              '',
-              () {},
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
             indent.writeScoped(
-              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) return FALSE;',
-              '',
-              () {},
+              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
           } else {
             indent.writeScoped(
@@ -1136,11 +1144,19 @@ class GObjectSourceGenerator
           }
         } else if (_isNumericListType(field.type)) {
           indent.writeScoped('if (a->$fieldName != b->$fieldName) {', '}', () {
-            indent.writeln(
-              'if (a->$fieldName == nullptr || b->$fieldName == nullptr) return FALSE;',
+            indent.writeScoped(
+              'if (a->$fieldName == nullptr || b->$fieldName == nullptr) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
-            indent.writeln(
-              'if (a->${fieldName}_length != b->${fieldName}_length) return FALSE;',
+            indent.writeScoped(
+              'if (a->${fieldName}_length != b->${fieldName}_length) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
             if (field.type.baseName == 'Float32List' ||
                 field.type.baseName == 'Float64List') {
@@ -1148,8 +1164,12 @@ class GObjectSourceGenerator
                 'for (size_t i = 0; i < a->${fieldName}_length; i++) {',
                 '}',
                 () {
-                  indent.writeln(
-                    'if (!flpigeon_equals_double(a->$fieldName[i], b->$fieldName[i])) return FALSE;',
+                  indent.writeScoped(
+                    'if (!flpigeon_equals_double(a->$fieldName[i], b->$fieldName[i])) {',
+                    '}',
+                    () {
+                      indent.writeln('return FALSE;');
+                    },
                   );
                 },
               );
@@ -1159,8 +1179,12 @@ class GObjectSourceGenerator
                   : field.type.baseName == 'Int32List'
                   ? 'sizeof(int32_t)'
                   : 'sizeof(int64_t)';
-              indent.writeln(
-                'if (memcmp(a->$fieldName, b->$fieldName, a->${fieldName}_length * $elementSize) != 0) return FALSE;',
+              indent.writeScoped(
+                'if (memcmp(a->$fieldName, b->$fieldName, a->${fieldName}_length * $elementSize) != 0) {',
+                '}',
+                () {
+                  indent.writeln('return FALSE;');
+                },
               );
             }
           });
@@ -1168,14 +1192,18 @@ class GObjectSourceGenerator
             field.type.baseName == 'int') {
           if (field.type.isNullable) {
             indent.writeScoped(
-              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
-              '',
-              () {},
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
             indent.writeScoped(
-              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) return FALSE;',
-              '',
-              () {},
+              'if (a->$fieldName != nullptr && *a->$fieldName != *b->$fieldName) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
           } else {
             indent.writeScoped(
@@ -1189,14 +1217,18 @@ class GObjectSourceGenerator
         } else if (field.type.baseName == 'double') {
           if (field.type.isNullable) {
             indent.writeScoped(
-              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) return FALSE;',
-              '',
-              () {},
+              'if ((a->$fieldName == nullptr) != (b->$fieldName == nullptr)) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
             indent.writeScoped(
-              'if (a->$fieldName != nullptr && !flpigeon_equals_double(*a->$fieldName, *b->$fieldName)) return FALSE;',
-              '',
-              () {},
+              'if (a->$fieldName != nullptr && !flpigeon_equals_double(*a->$fieldName, *b->$fieldName)) {',
+              '}',
+              () {
+                indent.writeln('return FALSE;');
+              },
             );
           } else {
             indent.writeScoped(
@@ -2743,8 +2775,7 @@ String _makeFlValue(
   } else if (type.baseName == 'Int64List') {
     value = 'fl_value_new_int64_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Float32List') {
-    // TODO(stuartmorgan): Support Float32List.
-    throw Exception('Float32List is not yet supported for GObject');
+    value = 'fl_value_new_float32_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Float64List') {
     value = 'fl_value_new_float_list($variableName, $lengthVariableName)';
   } else {
@@ -2825,8 +2856,12 @@ void _writeDeepEquals(Indent indent) {
     'static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {',
     '}',
     () {
-      indent.writeln('if (a == b) return TRUE;');
-      indent.writeln('if (a == nullptr || b == nullptr) return FALSE;');
+      indent.writeScoped('if (a == b) {', '}', () {
+        indent.writeln('return TRUE;');
+      });
+      indent.writeScoped('if (a == nullptr || b == nullptr) {', '}', () {
+        indent.writeln('return FALSE;');
+      });
       indent.writeScoped(
         'if (fl_value_get_type(a) != fl_value_get_type(b)) {',
         '}',
@@ -2875,29 +2910,39 @@ void _writeDeepEquals(Indent indent) {
         );
         indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
         indent.writeln('  size_t len = fl_value_get_length(a);');
-        indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+        indent.writeln('  if (len != fl_value_get_length(b)) {');
+        indent.writeln('    return FALSE;');
+        indent.writeln('  }');
         indent.writeln('  const double* a_data = fl_value_get_float_list(a);');
         indent.writeln('  const double* b_data = fl_value_get_float_list(b);');
         indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
           indent.writeln(
-            'if (!flpigeon_equals_double(a_data[i], b_data[i])) return FALSE;',
+            'if (!flpigeon_equals_double(a_data[i], b_data[i])) {',
           );
+          indent.writeln('  return FALSE;');
+          indent.writeln('}');
         });
         indent.writeln('  return TRUE;');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_LIST: {');
         indent.writeln('  size_t len = fl_value_get_length(a);');
-        indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+        indent.writeln('  if (len != fl_value_get_length(b)) {');
+        indent.writeln('    return FALSE;');
+        indent.writeln('  }');
         indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
           indent.writeln(
-            'if (!flpigeon_deep_equals(fl_value_get_list_value(a, i), fl_value_get_list_value(b, i))) return FALSE;',
+            'if (!flpigeon_deep_equals(fl_value_get_list_value(a, i), fl_value_get_list_value(b, i))) {',
           );
+          indent.writeln('  return FALSE;');
+          indent.writeln('}');
         });
         indent.writeln('  return TRUE;');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_MAP: {');
         indent.writeln('  size_t len = fl_value_get_length(a);');
-        indent.writeln('  if (len != fl_value_get_length(b)) return FALSE;');
+        indent.writeln('  if (len != fl_value_get_length(b)) {');
+        indent.writeln('    return FALSE;');
+        indent.writeln('  }');
         indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
           indent.writeln('FlValue* key = fl_value_get_map_key(a, i);');
           indent.writeln('FlValue* val = fl_value_get_map_value(a, i);');
@@ -2911,18 +2956,22 @@ void _writeDeepEquals(Indent indent) {
                 indent.writeln(
                   'FlValue* b_val = fl_value_get_map_value(b, j);',
                 );
-                indent.writeScoped(
-                  'if (flpigeon_deep_equals(val, b_val)) {',
-                  '}',
-                  () {
-                    indent.writeln('found = TRUE;');
-                    indent.writeln('break;');
-                  },
-                );
+                indent.writeln('if (flpigeon_deep_equals(val, b_val)) {');
+                indent.nest(1, () {
+                  indent.writeln('found = TRUE;');
+                  indent.writeln('break;');
+                });
+                indent.writeln('} else {');
+                indent.nest(1, () {
+                  indent.writeln('return FALSE;');
+                });
+                indent.writeln('}');
               },
             );
           });
-          indent.writeln('if (!found) return FALSE;');
+          indent.writeln('if (!found) {');
+          indent.writeln('  return FALSE;');
+          indent.writeln('}');
         });
         indent.writeln('  return TRUE;');
         indent.writeln('}');

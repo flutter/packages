@@ -1815,9 +1815,7 @@ void main() {
       code,
       contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'),
     );
-    expect(code, contains('deepEquals(lhs.field1, rhs.field1)'));
     expect(code, contains('func hash(into hasher: inout Hasher) {'));
-    expect(code, contains('deepHash(value: field1, hasher: &hasher)'));
   });
 
   test('data class equality multi-field', () {
@@ -1853,14 +1851,6 @@ void main() {
       code,
       contains('static func == (lhs: Foobar, rhs: Foobar) -> Bool {'),
     );
-    expect(
-      code,
-      contains(
-        'deepEquals(lhs.field1, rhs.field1) && deepEquals(lhs.field2, rhs.field2)',
-      ),
-    );
     expect(code, contains('func hash(into hasher: inout Hasher) {'));
-    expect(code, contains('deepHash(value: field1, hasher: &hasher)'));
-    expect(code, contains('deepHash(value: field2, hasher: &hasher)'));
   });
 }

@@ -90,6 +90,8 @@ class UnusedClass {
 
   bool operator==(const UnusedClass& other) const;
   bool operator!=(const UnusedClass& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:
@@ -222,6 +224,8 @@ class AllTypes {
 
   bool operator==(const AllTypes& other) const;
   bool operator!=(const AllTypes& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:
@@ -435,6 +439,8 @@ class AllNullableTypes {
 
   bool operator==(const AllNullableTypes& other) const;
   bool operator!=(const AllNullableTypes& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:
@@ -634,6 +640,8 @@ class AllNullableTypesWithoutRecursion {
 
   bool operator==(const AllNullableTypesWithoutRecursion& other) const;
   bool operator!=(const AllNullableTypesWithoutRecursion& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:
@@ -737,6 +745,8 @@ class AllClassesWrapper {
 
   bool operator==(const AllClassesWrapper& other) const;
   bool operator!=(const AllClassesWrapper& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:
@@ -777,6 +787,8 @@ class TestMessage {
 
   bool operator==(const TestMessage& other) const;
   bool operator!=(const TestMessage& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:

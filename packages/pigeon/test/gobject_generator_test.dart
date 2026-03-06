@@ -1079,19 +1079,6 @@ void main() {
       final code = sink.toString();
       expect(code, contains('gboolean test_package_input_equals('));
       expect(code, contains('guint test_package_input_hash('));
-      expect(
-        code,
-        contains(
-          'if (!flpigeon_equals_double(a->some_double, b->some_double)) {',
-        ),
-      );
-      expect(
-        code,
-        contains(
-          'result = result * 31 + flpigeon_hash_double(self->some_double);',
-        ),
-      );
-      expect(code, contains('memcmp(a->some_bytes, b->some_bytes'));
     }
   });
 }

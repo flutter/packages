@@ -1671,8 +1671,7 @@ const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
 
 void _writeDeepEquals(Indent indent) {
   indent.format('''
-static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) __attribute__((unused));
-static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
+static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if (a == b) {
     return YES;
   }
@@ -1682,6 +1681,7 @@ static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
     NSNumber *na = (NSNumber *)a;
     NSNumber *nb = (NSNumber *)b;
+    // Normalize -0.0 to 0.0 and handle NaN equality.
     return na.doubleValue == nb.doubleValue || (isnan(na.doubleValue) && isnan(nb.doubleValue));
   }
   if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
@@ -1730,8 +1730,7 @@ static BOOL FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
 
 void _writeDeepHash(Indent indent) {
   indent.format('''
-static NSUInteger FLTPigeonDeepHash(id _Nullable value) __attribute__((unused));
-static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
+static NSUInteger __attribute__((unused)) FLTPigeonDeepHash(id _Nullable value) {
   if (value == nil) {
     return 0;
   }
@@ -1739,9 +1738,11 @@ static NSUInteger FLTPigeonDeepHash(id _Nullable value) {
     NSNumber *n = (NSNumber *)value;
     double d = n.doubleValue;
     if (isnan(d)) {
+      // Normalize NaN to a consistent hash.
       return (NSUInteger)0x7FF8000000000000;
     }
     if (d == 0.0) {
+      // Normalize -0.0 to 0.0 so they have the same hash code.
       d = 0.0;
     }
     return @(d).hash;
@@ -2170,8 +2171,6 @@ void _writeDataClassDeclaration(
       '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};',
     );
   }
-  indent.writeln('- (BOOL)isEqual:(id)object;');
-  indent.writeln('- (NSUInteger)hash;');
   indent.writeln('@end');
   indent.newln();
 }

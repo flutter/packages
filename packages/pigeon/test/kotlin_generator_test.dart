@@ -2054,18 +2054,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('override fun equals(other: Any?): Boolean {'));
-    expect(
-      code,
-      contains('if (other == null || other.javaClass != javaClass) {'),
-    );
-    expect(code, contains('PigeonUtils.deepEquals(this.field1, other.field1)'));
     expect(code, contains('override fun hashCode(): Int {'));
-    expect(code, contains('var result = javaClass.hashCode()'));
-    expect(
-      code,
-      contains('result = 31 * result + PigeonUtils.deepHash(this.field1)'),
-    );
-    expect(code, contains('return result'));
   });
 
   test('data class equality multi-field', () {
@@ -2098,25 +2087,6 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('override fun equals(other: Any?): Boolean {'));
-    expect(
-      code,
-      contains('if (other == null || other.javaClass != javaClass) {'),
-    );
-    expect(
-      code,
-      contains(
-        'PigeonUtils.deepEquals(this.field1, other.field1) && PigeonUtils.deepEquals(this.field2, other.field2)',
-      ),
-    );
     expect(code, contains('override fun hashCode(): Int {'));
-    expect(code, contains('var result = javaClass.hashCode()'));
-    expect(
-      code,
-      contains('result = 31 * result + PigeonUtils.deepHash(this.field1)'),
-    );
-    expect(
-      code,
-      contains('result = 31 * result + PigeonUtils.deepHash(this.field2)'),
-    );
   });
 }

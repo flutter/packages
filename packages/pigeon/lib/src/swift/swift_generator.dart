@@ -1511,7 +1511,24 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         'deepEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
     final deepHashName =
         'deepHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
+    final doubleEqualsName =
+        'doubleEquals${generatorOptions.fileSpecificClassNameComponent ?? ''}';
+    final doubleHashName =
+        'doubleHash${generatorOptions.fileSpecificClassNameComponent ?? ''}';
     indent.format('''
+private func $doubleEqualsName(_ lhs: Double, _ rhs: Double) -> Bool {
+  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+}
+
+private func $doubleHashName(_ value: Double, _ hasher: inout Hasher) {
+  if value.isNaN {
+    hasher.combine(0x7FF8000000000000)
+  } else {
+    // Normalize -0.0 to 0.0
+    hasher.combine(value == 0 ? 0 : value)
+  }
+}
+
 func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
@@ -1540,7 +1557,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !$deepEqualsName(element, rhsArray[index]) {
+      if !$doubleEqualsName(element, rhsArray[index]) {
         return false
       }
     }
@@ -1565,7 +1582,7 @@ func $deepEqualsName(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   case (let lhs as Double, let rhs as Double):
-    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+    return $doubleEqualsName(lhs, rhs)
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -1579,18 +1596,14 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
     if let doubleValue = cleanValue as? Double {
-      if doubleValue.isNaN {
-        hasher.combine(0x7FF8000000000000)
-      } else {
-        hasher.combine(doubleValue)
-      }
+      $doubleHashName(doubleValue, &hasher)
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         $deepHashName(value: item, hasher: &hasher)
       }
     } else if let valueList = cleanValue as? [Double] {
       for item in valueList {
-        $deepHashName(value: item, hasher: &hasher)
+        $doubleHashName(item, &hasher)
       }
     } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
       var result = 0

@@ -27,6 +27,29 @@ import java.util.Map;
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
 public class Messages {
+  static boolean pigeonDoubleEquals(double a, double b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));
+  }
+
+  static boolean pigeonFloatEquals(float a, float b) {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));
+  }
+
+  static int pigeonDoubleHashCode(double d) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (d == 0.0) d = 0.0;
+    long bits = Double.doubleToLongBits(d);
+    return (int) (bits ^ (bits >>> 32));
+  }
+
+  static int pigeonFloatHashCode(float f) {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    if (f == 0.0f) f = 0.0f;
+    return Float.floatToIntBits(f);
+  }
+
   static boolean pigeonDeepEquals(Object a, Object b) {
     if (a == b) {
       return true;
@@ -48,7 +71,7 @@ public class Messages {
       double[] db = (double[]) b;
       if (da.length != db.length) return false;
       for (int i = 0; i < da.length; i++) {
-        if (!pigeonDeepEquals(da[i], db[i])) {
+        if (!pigeonDoubleEquals(da[i], db[i])) {
           return false;
         }
       }
@@ -84,6 +107,8 @@ public class Messages {
             if (pigeonDeepEquals(valueA, valueB)) {
               found = true;
               break;
+            } else {
+              return false;
             }
           }
         }
@@ -94,12 +119,10 @@ public class Messages {
       return true;
     }
     if (a instanceof Double && b instanceof Double) {
-      return ((double) a == 0.0 ? 0.0 : (double) a) == ((double) b == 0.0 ? 0.0 : (double) b)
-          || (Double.isNaN((double) a) && Double.isNaN((double) b));
+      return pigeonDoubleEquals((double) a, (double) b);
     }
     if (a instanceof Float && b instanceof Float) {
-      return ((float) a == 0.0f ? 0.0f : (float) a) == ((float) b == 0.0f ? 0.0f : (float) b)
-          || (Float.isNaN((float) a) && Float.isNaN((float) b));
+      return pigeonFloatEquals((float) a, (float) b);
     }
     return a.equals(b);
   }
@@ -121,7 +144,7 @@ public class Messages {
       double[] da = (double[]) value;
       int result = 1;
       for (double d : da) {
-        result = 31 * result + pigeonDeepHashCode(d);
+        result = 31 * result + pigeonDoubleHashCode(d);
       }
       return result;
     }
@@ -147,15 +170,10 @@ public class Messages {
       return result;
     }
     if (value instanceof Double) {
-      double d = (double) value;
-      if (d == 0.0) d = 0.0;
-      long bits = Double.doubleToLongBits(d);
-      return (int) (bits ^ (bits >>> 32));
+      return pigeonDoubleHashCode((double) value);
     }
     if (value instanceof Float) {
-      float f = (float) value;
-      if (f == 0.0f) f = 0.0f;
-      return Float.floatToIntBits(f);
+      return pigeonFloatHashCode((float) value);
     }
     return value.hashCode();
   }

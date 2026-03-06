@@ -23,8 +23,12 @@ static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
   return (a == b) || (std::isnan(a) && std::isnan(b));
 }
 static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
-  if (a == b) return TRUE;
-  if (a == nullptr || b == nullptr) return FALSE;
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
   if (fl_value_get_type(a) != fl_value_get_type(b)) {
     return FALSE;
   }
@@ -55,27 +59,36 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
                     fl_value_get_length(a) * sizeof(int64_t)) == 0;
     case FL_VALUE_TYPE_FLOAT_LIST: {
       size_t len = fl_value_get_length(a);
-      if (len != fl_value_get_length(b)) return FALSE;
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
       const double* a_data = fl_value_get_float_list(a);
       const double* b_data = fl_value_get_float_list(b);
       for (size_t i = 0; i < len; i++) {
-        if (!flpigeon_equals_double(a_data[i], b_data[i])) return FALSE;
+        if (!flpigeon_equals_double(a_data[i], b_data[i])) {
+          return FALSE;
+        }
       }
       return TRUE;
     }
     case FL_VALUE_TYPE_LIST: {
       size_t len = fl_value_get_length(a);
-      if (len != fl_value_get_length(b)) return FALSE;
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
       for (size_t i = 0; i < len; i++) {
         if (!flpigeon_deep_equals(fl_value_get_list_value(a, i),
-                                  fl_value_get_list_value(b, i)))
+                                  fl_value_get_list_value(b, i))) {
           return FALSE;
+        }
       }
       return TRUE;
     }
     case FL_VALUE_TYPE_MAP: {
       size_t len = fl_value_get_length(a);
-      if (len != fl_value_get_length(b)) return FALSE;
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
       for (size_t i = 0; i < len; i++) {
         FlValue* key = fl_value_get_map_key(a, i);
         FlValue* val = fl_value_get_map_value(a, i);
@@ -87,10 +100,14 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
             if (flpigeon_deep_equals(val, b_val)) {
               found = TRUE;
               break;
+            } else {
+              return FALSE;
             }
           }
         }
-        if (!found) return FALSE;
+        if (!found) {
+          return FALSE;
+        }
       }
       return TRUE;
     }
@@ -284,8 +301,12 @@ pigeon_example_package_message_data_new_from_list(FlValue* values) {
 
 gboolean pigeon_example_package_message_data_equals(
     PigeonExamplePackageMessageData* a, PigeonExamplePackageMessageData* b) {
-  if (a == b) return TRUE;
-  if (a == nullptr || b == nullptr) return FALSE;
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
   if (g_strcmp0(a->name, b->name) != 0) {
     return FALSE;
   }

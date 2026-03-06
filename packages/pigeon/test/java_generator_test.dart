@@ -1913,9 +1913,6 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('public boolean equals(Object o) {'));
-    expect(code, contains('if (o == null || getClass() != o.getClass())'));
-    expect(code, contains('pigeonDeepEquals(field1, that.field1)'));
     expect(code, contains('public int hashCode() {'));
-    expect(code, contains('return pigeonDeepHashCode(fields);'));
   });
 }

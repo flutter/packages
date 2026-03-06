@@ -48,8 +48,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @interface FLTUnusedClass : NSObject
 + (instancetype)makeWithAField:(nullable id)aField;
 @property(nonatomic, strong, nullable) id aField;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// A class containing all supported types.
@@ -112,8 +110,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<id, id> *objectMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// A class containing all supported nullable types.
@@ -183,8 +179,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypes *> *recursiveClassMap;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -248,8 +242,6 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// A class for testing nested class handling.
@@ -282,16 +274,12 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSDictionary<NSNumber *, FLTAllTypes *> *classMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// A data class containing a List, used in unit tests.
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
-- (BOOL)isEqual:(id)object;
-- (NSUInteger)hash;
 @end
 
 /// The codec used by all APIs.

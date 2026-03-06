@@ -23,6 +23,19 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+private func doubleEqualsEventChannelMessages(_ lhs: Double, _ rhs: Double) -> Bool {
+  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+}
+
+private func doubleHashEventChannelMessages(_ value: Double, _ hasher: inout Hasher) {
+  if value.isNaN {
+    hasher.combine(0x7FF8_0000_0000_0000)
+  } else {
+    // Normalize -0.0 to 0.0
+    hasher.combine(value == 0 ? 0 : value)
+  }
+}
+
 func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
@@ -51,7 +64,7 @@ func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (let lhsArray, let rhsArray) as ([Double], [Double]):
     guard lhsArray.count == rhsArray.count else { return false }
     for (index, element) in lhsArray.enumerated() {
-      if !deepEqualsEventChannelMessages(element, rhsArray[index]) {
+      if !doubleEqualsEventChannelMessages(element, rhsArray[index]) {
         return false
       }
     }
@@ -76,7 +89,7 @@ func deepEqualsEventChannelMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   case (let lhs as Double, let rhs as Double):
-    return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+    return doubleEqualsEventChannelMessages(lhs, rhs)
 
   case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
     return lhsHashable == rhsHashable
@@ -90,18 +103,14 @@ func deepHashEventChannelMessages(value: Any?, hasher: inout Hasher) {
   let cleanValue = nilOrValue(value) as Any?
   if let cleanValue = cleanValue {
     if let doubleValue = cleanValue as? Double {
-      if doubleValue.isNaN {
-        hasher.combine(0x7FF8_0000_0000_0000)
-      } else {
-        hasher.combine(doubleValue)
-      }
+      doubleHashEventChannelMessages(doubleValue, &hasher)
     } else if let valueList = cleanValue as? [Any?] {
       for item in valueList {
         deepHashEventChannelMessages(value: item, hasher: &hasher)
       }
     } else if let valueList = cleanValue as? [Double] {
       for item in valueList {
-        deepHashEventChannelMessages(value: item, hasher: &hasher)
+        doubleHashEventChannelMessages(item, &hasher)
       }
     } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
       var result = 0

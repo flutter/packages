@@ -63,9 +63,13 @@ bool PigeonInternalDeepEquals(const T& a, const T& b) {
 template <typename T>
 bool PigeonInternalDeepEquals(const std::vector<T>& a,
                               const std::vector<T>& b) {
-  if (a.size() != b.size()) return false;
+  if (a.size() != b.size()) {
+    return false;
+  }
   for (size_t i = 0; i < a.size(); ++i) {
-    if (!PigeonInternalDeepEquals(a[i], b[i])) return false;
+    if (!PigeonInternalDeepEquals(a[i], b[i])) {
+      return false;
+    }
   }
   return true;
 }
@@ -73,7 +77,9 @@ bool PigeonInternalDeepEquals(const std::vector<T>& a,
 template <typename K, typename V>
 bool PigeonInternalDeepEquals(const std::map<K, V>& a,
                               const std::map<K, V>& b) {
-  if (a.size() != b.size()) return false;
+  if (a.size() != b.size()) {
+    return false;
+  }
   for (const auto& kv : a) {
     bool found = false;
     for (const auto& b_kv : b) {
@@ -86,34 +92,47 @@ bool PigeonInternalDeepEquals(const std::map<K, V>& a,
         }
       }
     }
-    if (!found) return false;
+    if (!found) {
+      return false;
+    }
   }
   return true;
 }
 
 inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  // Normalize -0.0 to 0.0 and handle NaN equality.
   return (a == b) || (std::isnan(a) && std::isnan(b));
 }
 
 template <typename T>
 bool PigeonInternalDeepEquals(const std::optional<T>& a,
                               const std::optional<T>& b) {
-  if (!a && !b) return true;
-  if (!a || !b) return false;
+  if (!a && !b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
   return PigeonInternalDeepEquals(*a, *b);
 }
 
 template <typename T>
 bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
                               const std::unique_ptr<T>& b) {
-  if (!a && !b) return true;
-  if (!a || !b) return false;
+  if (!a && !b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
   return PigeonInternalDeepEquals(*a, *b);
 }
 
 inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
                                      const ::flutter::EncodableValue& b) {
-  if (a.index() != b.index()) return false;
+  if (a.index() != b.index()) {
+    return false;
+  }
   if (const double* da = std::get_if<double>(&a)) {
     return PigeonInternalDeepEquals(*da, std::get<double>(b));
   } else if (const ::flutter::EncodableList* la =
@@ -171,9 +190,11 @@ size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
 
 inline size_t PigeonInternalDeepHash(const double& v) {
   if (std::isnan(v)) {
+    // Normalize NaN to a consistent hash.
     return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
   }
   if (v == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
     return std::hash<double>()(0.0);
   }
   return std::hash<double>()(v);

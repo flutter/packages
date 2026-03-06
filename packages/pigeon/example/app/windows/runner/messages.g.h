@@ -87,6 +87,8 @@ class MessageData {
 
   bool operator==(const MessageData& other) const;
   bool operator!=(const MessageData& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
   size_t Hash() const;
 
  private:

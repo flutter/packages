@@ -89,9 +89,11 @@ int _deepHash(Object? value) {
     return result;
   }
   if (value is double && value.isNaN) {
+    // Normalize NaN to a consistent hash.
     return 0x7FF8000000000000.hashCode;
   }
   if (value is double && value == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
     return 0.0.hashCode;
   }
   return value.hashCode;

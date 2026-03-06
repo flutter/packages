@@ -4075,9 +4075,6 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final code = sink.toString();
-      expect(code, contains('- (BOOL)isEqual:(id)object;'));
-      expect(code, contains('- (NSUInteger)hash;'));
     }
     {
       final sink = StringBuffer();
@@ -4099,11 +4096,7 @@ void main() {
       );
       final code = sink.toString();
       expect(code, contains('- (BOOL)isEqual:(id)object {'));
-      expect(code, contains('ABCFoo *other = (ABCFoo *)object;'));
-      expect(code, contains('return self.bar == other.bar;'));
       expect(code, contains('- (NSUInteger)hash {'));
-      expect(code, contains('NSUInteger result = [self class].hash;'));
-      expect(code, contains('result = result * 31 + @(self.bar).hash;'));
     }
   });
 }

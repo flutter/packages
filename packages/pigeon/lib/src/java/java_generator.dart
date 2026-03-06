@@ -206,6 +206,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
+    _writeNumberHelpers(indent);
     _writeDeepEquals(indent);
     _writeDeepHashCode(indent);
   }
@@ -447,7 +448,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
               '}',
               () {
                 indent.writeScoped(
-                  'if (!pigeonDeepEquals(da[i], db[i])) {',
+                  'if (!pigeonDoubleEquals(da[i], db[i])) {',
                   '}',
                   () {
                     indent.writeln('return false;');
@@ -507,14 +508,18 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
                       '}',
                       () {
                         indent.writeln('Object valueB = entryB.getValue();');
-                        indent.writeScoped(
+                        indent.writeln(
                           'if (pigeonDeepEquals(valueA, valueB)) {',
-                          '}',
-                          () {
-                            indent.writeln('found = true;');
-                            indent.writeln('break;');
-                          },
                         );
+                        indent.nest(1, () {
+                          indent.writeln('found = true;');
+                          indent.writeln('break;');
+                        });
+                        indent.writeln('} else {');
+                        indent.nest(1, () {
+                          indent.writeln('return false;');
+                        });
+                        indent.writeln('}');
                       },
                     );
                   },
@@ -532,7 +537,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           '}',
           () {
             indent.writeln(
-              'return ((double) a == 0.0 ? 0.0 : (double) a) == ((double) b == 0.0 ? 0.0 : (double) b) || (Double.isNaN((double) a) && Double.isNaN((double) b));',
+              'return pigeonDoubleEquals((double) a, (double) b);',
             );
           },
         );
@@ -540,9 +545,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           'if (a instanceof Float && b instanceof Float) {',
           '}',
           () {
-            indent.writeln(
-              'return ((float) a == 0.0f ? 0.0f : (float) a) == ((float) b == 0.0f ? 0.0f : (float) b) || (Float.isNaN((float) a) && Float.isNaN((float) b));',
-            );
+            indent.writeln('return pigeonFloatEquals((float) a, (float) b);');
           },
         );
         indent.writeln('return a.equals(b);');
@@ -567,7 +570,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         indent.writeln('double[] da = (double[]) value;');
         indent.writeln('int result = 1;');
         indent.writeScoped('for (double d : da) {', '}', () {
-          indent.writeln('result = 31 * result + pigeonDeepHashCode(d);');
+          indent.writeln('result = 31 * result + pigeonDoubleHashCode(d);');
         });
         indent.writeln('return result;');
       });
@@ -599,17 +602,54 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         indent.writeln('return result;');
       });
       indent.writeScoped('if (value instanceof Double) {', '}', () {
-        indent.writeln('double d = (double) value;');
-        indent.writeln('if (d == 0.0) d = 0.0;');
-        indent.writeln('long bits = Double.doubleToLongBits(d);');
-        indent.writeln('return (int) (bits ^ (bits >>> 32));');
+        indent.writeln('return pigeonDoubleHashCode((double) value);');
       });
       indent.writeScoped('if (value instanceof Float) {', '}', () {
-        indent.writeln('float f = (float) value;');
-        indent.writeln('if (f == 0.0f) f = 0.0f;');
-        indent.writeln('return Float.floatToIntBits(f);');
+        indent.writeln('return pigeonFloatHashCode((float) value);');
       });
       indent.writeln('return value.hashCode();');
+    });
+    indent.newln();
+  }
+
+  void _writeNumberHelpers(Indent indent) {
+    indent.writeScoped(
+      'static boolean pigeonDoubleEquals(double a, double b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'static boolean pigeonFloatEquals(float a, float b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped('static int pigeonDoubleHashCode(double d) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeln('if (d == 0.0) d = 0.0;');
+      indent.writeln('long bits = Double.doubleToLongBits(d);');
+      indent.writeln('return (int) (bits ^ (bits >>> 32));');
+    });
+    indent.newln();
+    indent.writeScoped('static int pigeonFloatHashCode(float f) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeln('if (f == 0.0f) f = 0.0f;');
+      indent.writeln('return Float.floatToIntBits(f);');
     });
     indent.newln();
   }

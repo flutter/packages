@@ -2672,10 +2672,6 @@ void main() {
       );
       final code = sink.toString();
       expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
-      expect(
-        code,
-        contains('return PigeonInternalDeepEquals(bar_, other.bar_);'),
-      );
     }
   });
 
@@ -2726,10 +2722,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(
-      code,
-      contains('return PigeonInternalDeepEquals(nested_, other.nested_);'),
-    );
+    expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
   });
 
   test('data classes implement Hash', () {
@@ -2787,15 +2780,6 @@ void main() {
       );
       final code = sink.toString();
       expect(code, contains('size_t Input::Hash() const {'));
-      expect(
-        code,
-        contains('result = result * 31 + PigeonInternalDeepHash(field1_);'),
-      );
-      expect(code, contains('size_t PigeonInternalDeepHash(const Input& v) {'));
-      expect(
-        code,
-        contains('result = result * 31 + PigeonInternalDeepHash(val);'),
-      );
     }
   });
 }

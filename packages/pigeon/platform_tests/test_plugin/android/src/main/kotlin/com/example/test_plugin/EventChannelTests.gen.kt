@@ -16,6 +16,29 @@ import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 private object EventChannelTestsPigeonUtils {
+  fun doubleEquals(a: Double, b: Double): Boolean {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
+  }
+
+  fun floatEquals(a: Float, b: Float): Boolean {
+    // Normalize -0.0 to 0.0 and handle NaN equality.
+    return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) || (a.isNaN() && b.isNaN())
+  }
+
+  fun doubleHash(d: Double): Int {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    val normalized = if (d == 0.0) 0.0 else d
+    val bits = java.lang.Double.doubleToLongBits(normalized)
+    return (bits xor (bits ushr 32)).toInt()
+  }
+
+  fun floatHash(f: Float): Int {
+    // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
+    val normalized = if (f == 0.0f) 0.0f else f
+    return java.lang.Float.floatToIntBits(normalized)
+  }
+
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a === b) {
       return true
@@ -32,14 +55,14 @@ private object EventChannelTestsPigeonUtils {
     if (a is DoubleArray && b is DoubleArray) {
       if (a.size != b.size) return false
       for (i in a.indices) {
-        if (!deepEquals(a[i], b[i])) return false
+        if (!doubleEquals(a[i], b[i])) return false
       }
       return true
     }
     if (a is FloatArray && b is FloatArray) {
       if (a.size != b.size) return false
       for (i in a.indices) {
-        if (!deepEquals(a[i], b[i])) return false
+        if (!floatEquals(a[i], b[i])) return false
       }
       return true
     }
@@ -69,11 +92,10 @@ private object EventChannelTestsPigeonUtils {
       return true
     }
     if (a is Double && b is Double) {
-      return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
+      return doubleEquals(a, b)
     }
     if (a is Float && b is Float) {
-      return (if (a == 0.0f) 0.0f else a) == (if (b == 0.0f) 0.0f else b) ||
-          (a.isNaN() && b.isNaN())
+      return floatEquals(a, b)
     }
     return a == b
   }
@@ -87,14 +109,14 @@ private object EventChannelTestsPigeonUtils {
       is DoubleArray -> {
         var result = 1
         for (item in value) {
-          result = 31 * result + deepHash(item)
+          result = 31 * result + doubleHash(item)
         }
         result
       }
       is FloatArray -> {
         var result = 1
         for (item in value) {
-          result = 31 * result + deepHash(item)
+          result = 31 * result + floatHash(item)
         }
         result
       }
@@ -113,15 +135,8 @@ private object EventChannelTestsPigeonUtils {
         }
         result
       }
-      is Double -> {
-        val d = if (value == 0.0) 0.0 else value
-        val bits = java.lang.Double.doubleToLongBits(d)
-        (bits xor (bits ushr 32)).toInt()
-      }
-      is Float -> {
-        val f = if (value == 0.0f) 0.0f else value
-        java.lang.Float.floatToIntBits(f)
-      }
+      is Double -> doubleHash(value)
+      is Float -> floatHash(value)
       else -> value.hashCode()
     }
   }

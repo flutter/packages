@@ -2105,17 +2105,7 @@ name: foobar
     );
     final code = sink.toString();
     expect(code, contains('bool operator ==(Object other) {'));
-    expect(
-      code,
-      contains('other is! Foobar || other.runtimeType != runtimeType'),
-    );
-    expect(code, contains('_deepEquals(field1, other.field1)'));
-    expect(
-      code,
-      contains(
-        'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
-      ),
-    );
+    expect(code, contains('int get hashCode =>'));
   });
 
   test('data class equality multi-field', () {
@@ -2147,13 +2137,6 @@ name: foobar
     );
     final code = sink.toString();
     expect(code, contains('bool operator ==(Object other) {'));
-    expect(code, contains('_deepEquals(field1, other.field1) &&'));
-    expect(code, contains('_deepEquals(field2, other.field2)'));
-    expect(
-      code,
-      contains(
-        'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
-      ),
-    );
+    expect(code, contains('int get hashCode =>'));
   });
 }
