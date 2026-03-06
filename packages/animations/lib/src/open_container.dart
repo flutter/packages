@@ -90,20 +90,17 @@ typedef ClosedCallback<S> = void Function(S data);
 ///     );
 ///   },
 ///   closedBuilder: (context, action) {
-///     return GestureDetector(
-///       onTap: action,
-///       child: Container(
-///         width: 200,
-///         height: 120,
-///         alignment: Alignment.center,
-///         decoration: BoxDecoration(
-///           color: Colors.blue,
-///           borderRadius: BorderRadius.circular(16),
-///         ),
-///         child: const Text(
-///           "Open Details",
-///           style: TextStyle(color: Colors.white, fontSize: 18),
-///         ),
+///     return Container(
+///       width: 200,
+///       height: 120,
+///       alignment: Alignment.center,
+///       decoration: BoxDecoration(
+///         color: Colors.blue,
+///         borderRadius: BorderRadius.circular(16),
+///       ),
+///       child: const Text(
+///         "Open Details",
+///         style: TextStyle(color: Colors.white, fontSize: 18),
 ///       ),
 ///     );
 ///   },
