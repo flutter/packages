@@ -1,5 +1,6 @@
-## NEXT
+## 1.3.0
 
+* Adds `videoQuality` parameter to `pickVideo` for specifying video recording quality.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

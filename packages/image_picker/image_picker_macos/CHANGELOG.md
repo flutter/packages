@@ -1,5 +1,6 @@
-## 0.2.2+1
+## 0.2.3
 
+* Adds support for `videoQuality` parameter in `getVideo`.
 * Updates minimum supported version to macOS 10.15.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 

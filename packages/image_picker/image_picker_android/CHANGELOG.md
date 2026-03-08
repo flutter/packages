@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Adds support for `videoQuality` parameter in `getVideo`.
+
 ## 0.8.13+14
 
 * Bumps androidx.activity:activity from 1.12.2 to 1.12.4.

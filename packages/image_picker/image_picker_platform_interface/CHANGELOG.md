@@ -1,5 +1,7 @@
-## NEXT
+## 2.12.0
 
+* Adds `VideoQuality` enum for specifying video recording quality.
+* Adds `videoQuality` parameter to `getVideo`.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.11.1
