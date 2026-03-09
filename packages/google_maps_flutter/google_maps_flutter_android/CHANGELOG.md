@@ -1,3 +1,7 @@
+## 2.19.3
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.19.2
 
 * Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
