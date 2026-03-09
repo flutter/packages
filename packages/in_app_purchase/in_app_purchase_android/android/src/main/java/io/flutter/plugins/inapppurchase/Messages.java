@@ -95,6 +95,31 @@ public class Messages {
     }
   }
 
+  /** Response code for the in-app messaging API call. */
+  public enum PlatformInAppMessageResponse {
+    /**
+     * The flow has finished and there is no action needed from developers.
+     *
+     * <p>Note: The API callback won't indicate whether message is dismissed by the user or there is
+     * no message available to the user.
+     */
+    NO_ACTION_NEEDED(0),
+    /**
+     * The subscription status changed.
+     *
+     * <p>For example, a subscription has been rec- overed from a suspended state. Developers should
+     * expect the purchase token to be returned with this response code and use the purchase token
+     * with the Google Play Developer API.
+     */
+    SUBSCRIPTION_STATUS_UPDATED(1);
+
+    final int index;
+
+    PlatformInAppMessageResponse(final int index) {
+      this.index = index;
+    }
+  }
+
   public enum PlatformReplacementMode {
     UNKNOWN_REPLACEMENT_MODE(0),
     WITH_TIME_PRORATION(1),
@@ -1021,6 +1046,102 @@ public class Messages {
       pigeonResult.setBillingResult((PlatformBillingResult) billingResult);
       Object externalTransactionToken = pigeonVar_list.get(1);
       pigeonResult.setExternalTransactionToken((String) externalTransactionToken);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Results related to in-app messaging.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformInAppMessageResult {
+    /** Returns response code for the in-app messaging API call. */
+    private @NonNull PlatformInAppMessageResponse responseCode;
+
+    public @NonNull PlatformInAppMessageResponse getResponseCode() {
+      return responseCode;
+    }
+
+    public void setResponseCode(@NonNull PlatformInAppMessageResponse setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"responseCode\" is null.");
+      }
+      this.responseCode = setterArg;
+    }
+
+    /** Returns token that identifies the purchase to be acknowledged, if any. */
+    private @Nullable String purchaseToken;
+
+    public @Nullable String getPurchaseToken() {
+      return purchaseToken;
+    }
+
+    public void setPurchaseToken(@Nullable String setterArg) {
+      this.purchaseToken = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformInAppMessageResult() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformInAppMessageResult that = (PlatformInAppMessageResult) o;
+      return responseCode.equals(that.responseCode)
+          && Objects.equals(purchaseToken, that.purchaseToken);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(responseCode, purchaseToken);
+    }
+
+    public static final class Builder {
+
+      private @Nullable PlatformInAppMessageResponse responseCode;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setResponseCode(@NonNull PlatformInAppMessageResponse setterArg) {
+        this.responseCode = setterArg;
+        return this;
+      }
+
+      private @Nullable String purchaseToken;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPurchaseToken(@Nullable String setterArg) {
+        this.purchaseToken = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformInAppMessageResult build() {
+        PlatformInAppMessageResult pigeonReturn = new PlatformInAppMessageResult();
+        pigeonReturn.setResponseCode(responseCode);
+        pigeonReturn.setPurchaseToken(purchaseToken);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(responseCode);
+      toListResult.add(purchaseToken);
+      return toListResult;
+    }
+
+    static @NonNull PlatformInAppMessageResult fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformInAppMessageResult pigeonResult = new PlatformInAppMessageResult();
+      Object responseCode = pigeonVar_list.get(0);
+      pigeonResult.setResponseCode((PlatformInAppMessageResponse) responseCode);
+      Object purchaseToken = pigeonVar_list.get(1);
+      pigeonResult.setPurchaseToken((String) purchaseToken);
       return pigeonResult;
     }
   }
@@ -3126,80 +3247,89 @@ public class Messages {
             Object value = readValue(buffer);
             return value == null
                 ? null
-                : PlatformReplacementMode.values()[((Long) value).intValue()];
+                : PlatformInAppMessageResponse.values()[((Long) value).intValue()];
           }
         case (byte) 131:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
+            return value == null
+                ? null
+                : PlatformReplacementMode.values()[((Long) value).intValue()];
           }
         case (byte) 132:
           {
             Object value = readValue(buffer);
-            return value == null
-                ? null
-                : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
+            return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
           }
         case (byte) 133:
           {
             Object value = readValue(buffer);
             return value == null
                 ? null
-                : PlatformBillingClientFeature.values()[((Long) value).intValue()];
+                : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
           }
         case (byte) 134:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
+            return value == null
+                ? null
+                : PlatformBillingClientFeature.values()[((Long) value).intValue()];
           }
         case (byte) 135:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
+          }
+        case (byte) 136:
           {
             Object value = readValue(buffer);
             return value == null
                 ? null
                 : PlatformRecurrenceMode.values()[((Long) value).intValue()];
           }
-        case (byte) 136:
-          return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 140:
           return PlatformOneTimePurchaseOfferDetails.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 140:
-          return PlatformProductDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformProductDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
+          return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 143:
           return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 143:
-          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformInAppMessageResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformPricingPhase.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformPendingPurchaseUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPricingPhase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPendingPurchaseUpdate.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          return PlatformSubscriptionOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
-          return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 153:
-          return PlatformUserChoiceProduct.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformSubscriptionOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 154:
-          return PlatformInstallmentPlanDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 155:
+          return PlatformUserChoiceProduct.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 156:
+          return PlatformInstallmentPlanDetails.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 157:
           return PlatformPendingPurchasesParams.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -3211,84 +3341,90 @@ public class Messages {
       if (value instanceof PlatformBillingResponse) {
         stream.write(129);
         writeValue(stream, value == null ? null : ((PlatformBillingResponse) value).index);
-      } else if (value instanceof PlatformReplacementMode) {
+      } else if (value instanceof PlatformInAppMessageResponse) {
         stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformInAppMessageResponse) value).index);
+      } else if (value instanceof PlatformReplacementMode) {
+        stream.write(131);
         writeValue(stream, value == null ? null : ((PlatformReplacementMode) value).index);
       } else if (value instanceof PlatformProductType) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, value == null ? null : ((PlatformProductType) value).index);
       } else if (value instanceof PlatformBillingChoiceMode) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, value == null ? null : ((PlatformBillingChoiceMode) value).index);
       } else if (value instanceof PlatformBillingClientFeature) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, value == null ? null : ((PlatformBillingClientFeature) value).index);
       } else if (value instanceof PlatformPurchaseState) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, value == null ? null : ((PlatformPurchaseState) value).index);
       } else if (value instanceof PlatformRecurrenceMode) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, value == null ? null : ((PlatformRecurrenceMode) value).index);
       } else if (value instanceof PlatformQueryProduct) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformQueryProduct) value).toList());
       } else if (value instanceof PlatformAccountIdentifiers) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformAccountIdentifiers) value).toList());
       } else if (value instanceof PlatformBillingResult) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else if (value instanceof PlatformOneTimePurchaseOfferDetails) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformOneTimePurchaseOfferDetails) value).toList());
       } else if (value instanceof PlatformProductDetails) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformProductDetails) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
-        stream.write(142);
+        stream.write(143);
         writeValue(
             stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
+      } else if (value instanceof PlatformInAppMessageResult) {
+        stream.write(144);
+        writeValue(stream, ((PlatformInAppMessageResult) value).toList());
       } else if (value instanceof PlatformBillingConfigResponse) {
-        stream.write(143);
+        stream.write(145);
         writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
       } else if (value instanceof PlatformBillingFlowParams) {
-        stream.write(144);
+        stream.write(146);
         writeValue(stream, ((PlatformBillingFlowParams) value).toList());
       } else if (value instanceof PlatformPricingPhase) {
-        stream.write(145);
+        stream.write(147);
         writeValue(stream, ((PlatformPricingPhase) value).toList());
       } else if (value instanceof PlatformPurchase) {
-        stream.write(146);
+        stream.write(148);
         writeValue(stream, ((PlatformPurchase) value).toList());
       } else if (value instanceof PlatformPendingPurchaseUpdate) {
-        stream.write(147);
+        stream.write(149);
         writeValue(stream, ((PlatformPendingPurchaseUpdate) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryRecord) {
-        stream.write(148);
+        stream.write(150);
         writeValue(stream, ((PlatformPurchaseHistoryRecord) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryResponse) {
-        stream.write(149);
+        stream.write(151);
         writeValue(stream, ((PlatformPurchaseHistoryResponse) value).toList());
       } else if (value instanceof PlatformPurchasesResponse) {
-        stream.write(150);
+        stream.write(152);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else if (value instanceof PlatformSubscriptionOfferDetails) {
-        stream.write(151);
+        stream.write(153);
         writeValue(stream, ((PlatformSubscriptionOfferDetails) value).toList());
       } else if (value instanceof PlatformUserChoiceDetails) {
-        stream.write(152);
+        stream.write(154);
         writeValue(stream, ((PlatformUserChoiceDetails) value).toList());
       } else if (value instanceof PlatformUserChoiceProduct) {
-        stream.write(153);
+        stream.write(155);
         writeValue(stream, ((PlatformUserChoiceProduct) value).toList());
       } else if (value instanceof PlatformInstallmentPlanDetails) {
-        stream.write(154);
+        stream.write(156);
         writeValue(stream, ((PlatformInstallmentPlanDetails) value).toList());
       } else if (value instanceof PlatformPendingPurchasesParams) {
-        stream.write(155);
+        stream.write(157);
         writeValue(stream, ((PlatformPendingPurchasesParams) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -3380,6 +3516,8 @@ public class Messages {
      */
     void createAlternativeBillingOnlyReportingDetailsAsync(
         @NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
+    /** Wraps BillingClient#showInAppMessages(). */
+    void showInAppMessages(@NonNull Result<PlatformInAppMessageResult> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -3806,6 +3944,36 @@ public class Messages {
                     };
 
                 api.createAlternativeBillingOnlyReportingDetailsAsync(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                Result<PlatformInAppMessageResult> resultCallback =
+                    new Result<PlatformInAppMessageResult>() {
+                      public void success(PlatformInAppMessageResult result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.showInAppMessages(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
