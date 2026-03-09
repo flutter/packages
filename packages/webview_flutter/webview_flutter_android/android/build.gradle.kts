@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "io.flutter.plugins.webviewflutter"
 version = "1.0-SNAPSHOT"
 
