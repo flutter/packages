@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.Translator.fromInAppMessageResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
@@ -31,6 +32,7 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
+import com.android.billingclient.api.InAppMessageParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
@@ -171,6 +173,29 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     try {
       billingClient.isAlternativeBillingOnlyAvailableAsync(
           billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
+  }
+
+  @Override
+  public void showInAppMessages(@NonNull Result<Messages.PlatformInAppMessageResult> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
+      return;
+    }
+    if (activity == null) {
+      result.error(new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null));
+      return;
+    }
+    try {
+      InAppMessageParams params =
+          InAppMessageParams.newBuilder()
+              .addInAppMessageCategoryToShow(
+                  InAppMessageParams.InAppMessageCategoryId.TRANSACTIONAL)
+              .build();
+      billingClient.showInAppMessages(
+          activity, params, billingResult -> result.success(fromInAppMessageResult(billingResult)));
     } catch (RuntimeException e) {
       result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
     }

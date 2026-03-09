@@ -118,6 +118,37 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   final String externalTransactionToken;
 }
 
+/// Response code for the in-app messaging API call.
+enum PlatformInAppMessageResponse {
+  /// The flow has finished and there is no action needed from developers.
+  ///
+  /// Note: The API callback won't indicate whether message is dismissed by the
+  /// user or there is no message available to the user.
+  noActionNeeded,
+
+  /// The subscription status changed.
+  ///
+  /// For example, a subscription has been rec-
+  /// overed from a suspended state. Developers should expect the purchase token
+  /// to be returned with this response code and use the purchase token with the
+  /// Google Play Developer API.
+  subscriptionStatusUpdated,
+}
+
+/// Results related to in-app messaging.
+class PlatformInAppMessageResult {
+  PlatformInAppMessageResult({
+    required this.responseCode,
+    required this.purchaseToken,
+  });
+
+  /// Returns response code for the in-app messaging API call.
+  final PlatformInAppMessageResponse responseCode;
+
+  /// Returns token that identifies the purchase to be acknowledged, if any.
+  final String? purchaseToken;
+}
+
 /// Pigeon version of BillingConfigWrapper, which contains the components of the
 /// Java BillingConfigResponseListener callback.
 class PlatformBillingConfigResponse {
@@ -443,6 +474,10 @@ abstract class InAppPurchaseApi {
   @async
   PlatformAlternativeBillingOnlyReportingDetailsResponse
   createAlternativeBillingOnlyReportingDetailsAsync();
+
+  /// Wraps BillingClient#showInAppMessages().
+  @async
+  PlatformInAppMessageResult showInAppMessages();
 }
 
 @FlutterApi()

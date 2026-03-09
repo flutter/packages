@@ -67,6 +67,23 @@ enum PlatformBillingResponse {
   networkError,
 }
 
+/// Response code for the in-app messaging API call.
+enum PlatformInAppMessageResponse {
+  /// The flow has finished and there is no action needed from developers.
+  ///
+  /// Note: The API callback won't indicate whether message is dismissed by the
+  /// user or there is no message available to the user.
+  noActionNeeded,
+
+  /// The subscription status changed.
+  ///
+  /// For example, a subscription has been rec-
+  /// overed from a suspended state. Developers should expect the purchase token
+  /// to be returned with this response code and use the purchase token with the
+  /// Google Play Developer API.
+  subscriptionStatusUpdated,
+}
+
 enum PlatformReplacementMode {
   unknownReplacementMode,
   withTimeProration,
@@ -446,6 +463,50 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! PlatformAlternativeBillingOnlyReportingDetailsResponse ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Results related to in-app messaging.
+class PlatformInAppMessageResult {
+  PlatformInAppMessageResult({required this.responseCode, this.purchaseToken});
+
+  /// Returns response code for the in-app messaging API call.
+  PlatformInAppMessageResponse responseCode;
+
+  /// Returns token that identifies the purchase to be acknowledged, if any.
+  String? purchaseToken;
+
+  List<Object?> _toList() {
+    return <Object?>[responseCode, purchaseToken];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformInAppMessageResult decode(Object result) {
+    result as List<Object?>;
+    return PlatformInAppMessageResult(
+      responseCode: result[0]! as PlatformInAppMessageResponse,
+      purchaseToken: result[1] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformInAppMessageResult ||
         other.runtimeType != runtimeType) {
       return false;
     }
@@ -1240,84 +1301,90 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformBillingResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformReplacementMode) {
+    } else if (value is PlatformInAppMessageResponse) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is PlatformProductType) {
+    } else if (value is PlatformReplacementMode) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is PlatformBillingChoiceMode) {
+    } else if (value is PlatformProductType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is PlatformBillingClientFeature) {
+    } else if (value is PlatformBillingChoiceMode) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is PlatformPurchaseState) {
+    } else if (value is PlatformBillingClientFeature) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is PlatformRecurrenceMode) {
+    } else if (value is PlatformPurchaseState) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is PlatformQueryProduct) {
+    } else if (value is PlatformRecurrenceMode) {
       buffer.putUint8(136);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformAccountIdentifiers) {
+      writeValue(buffer, value.index);
+    } else if (value is PlatformQueryProduct) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingResult) {
+    } else if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformOneTimePurchaseOfferDetails) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetails) {
+    } else if (value is PlatformOneTimePurchaseOfferDetails) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformProductDetails) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformProductDetailsResponse) {
+      buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else if (value
         is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
-      buffer.putUint8(142);
-      writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingFlowParams) {
+    } else if (value is PlatformInAppMessageResult) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPricingPhase) {
+    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchase) {
+    } else if (value is PlatformBillingFlowParams) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPendingPurchaseUpdate) {
+    } else if (value is PlatformPricingPhase) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryRecord) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPendingPurchaseUpdate) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSubscriptionOfferDetails) {
+    } else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformUserChoiceDetails) {
+    } else if (value is PlatformPurchasesResponse) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformUserChoiceProduct) {
+    } else if (value is PlatformSubscriptionOfferDetails) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformInstallmentPlanDetails) {
+    } else if (value is PlatformUserChoiceDetails) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPendingPurchasesParams) {
+    } else if (value is PlatformUserChoiceProduct) {
       buffer.putUint8(155);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformInstallmentPlanDetails) {
+      buffer.putUint8(156);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPendingPurchasesParams) {
+      buffer.putUint8(157);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1332,65 +1399,72 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : PlatformBillingResponse.values[value];
       case 130:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformReplacementMode.values[value];
+        return value == null
+            ? null
+            : PlatformInAppMessageResponse.values[value];
       case 131:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformProductType.values[value];
+        return value == null ? null : PlatformReplacementMode.values[value];
       case 132:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformBillingChoiceMode.values[value];
+        return value == null ? null : PlatformProductType.values[value];
       case 133:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformBillingChoiceMode.values[value];
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null
             ? null
             : PlatformBillingClientFeature.values[value];
-      case 134:
-        final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformPurchaseState.values[value];
       case 135:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformRecurrenceMode.values[value];
+        return value == null ? null : PlatformPurchaseState.values[value];
       case 136:
-        return PlatformQueryProduct.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformRecurrenceMode.values[value];
       case 137:
-        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
+        return PlatformQueryProduct.decode(readValue(buffer)!);
       case 138:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
       case 139:
-        return PlatformOneTimePurchaseOfferDetails.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 140:
-        return PlatformProductDetails.decode(readValue(buffer)!);
+        return PlatformOneTimePurchaseOfferDetails.decode(readValue(buffer)!);
       case 141:
-        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+        return PlatformProductDetails.decode(readValue(buffer)!);
       case 142:
+        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+      case 143:
         return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(
           readValue(buffer)!,
         );
-      case 143:
-        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 144:
-        return PlatformBillingFlowParams.decode(readValue(buffer)!);
+        return PlatformInAppMessageResult.decode(readValue(buffer)!);
       case 145:
-        return PlatformPricingPhase.decode(readValue(buffer)!);
+        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 146:
-        return PlatformPurchase.decode(readValue(buffer)!);
+        return PlatformBillingFlowParams.decode(readValue(buffer)!);
       case 147:
-        return PlatformPendingPurchaseUpdate.decode(readValue(buffer)!);
+        return PlatformPricingPhase.decode(readValue(buffer)!);
       case 148:
-        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+        return PlatformPurchase.decode(readValue(buffer)!);
       case 149:
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformPendingPurchaseUpdate.decode(readValue(buffer)!);
       case 150:
-        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
       case 151:
-        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
       case 152:
-        return PlatformUserChoiceDetails.decode(readValue(buffer)!);
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
       case 153:
-        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
+        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
       case 154:
-        return PlatformInstallmentPlanDetails.decode(readValue(buffer)!);
+        return PlatformUserChoiceDetails.decode(readValue(buffer)!);
       case 155:
+        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
+      case 156:
+        return PlatformInstallmentPlanDetails.decode(readValue(buffer)!);
+      case 157:
         return PlatformPendingPurchasesParams.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1874,6 +1948,37 @@ class InAppPurchaseApi {
     } else {
       return (pigeonVar_replyList[0]
           as PlatformAlternativeBillingOnlyReportingDetailsResponse?)!;
+    }
+  }
+
+  /// Wraps BillingClient#showInAppMessages().
+  Future<PlatformInAppMessageResult> showInAppMessages() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as PlatformInAppMessageResult?)!;
     }
   }
 }

@@ -198,6 +198,19 @@ class InAppPurchaseAndroidPlatformAddition
     return wrapper;
   }
 
+  /// Overlays billing related messages on top of the calling app.
+  ///
+  /// For example, show a message to inform users that their subscription payment
+  /// has been declined and provide options to take them to fix their payment method.
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#showInAppMessages(android.app.Activity,com.android.billingclient.api.InAppMessageParams,com.android.billingclient.api.InAppMessageResponseListener)
+  Future<InAppMessageResultWrapper> showInAppMessages() async {
+    final InAppMessageResultWrapper wrapper = await _billingClientManager
+        .runWithClientNonRetryable(
+          (BillingClient client) => client.showInAppMessages(),
+        );
+    return wrapper;
+  }
+
   /// Disconnects, sets AlternativeBillingOnly to true, and reconnects to
   /// the [BillingClient].
   ///

@@ -10,6 +10,7 @@ import '../../billing_client_wrappers.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
+import 'in_app_message_wrapper.dart';
 import 'pending_purchases_params_wrapper.dart';
 
 /// Callback triggered by Play in response to purchase activity.
@@ -345,6 +346,16 @@ class BillingClient {
   createAlternativeBillingOnlyReportingDetails() async {
     return alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
       await _hostApi.createAlternativeBillingOnlyReportingDetailsAsync(),
+    );
+  }
+
+  /// Overlays billing related messages on top of the calling app.
+  //
+  // For example, show a message to inform users that their subscription payment
+  // has been declined and provide options to take them to fix their payment method.
+  Future<InAppMessageResultWrapper> showInAppMessages() async {
+    return inAppMessageResultWrapperFromPlatform(
+      await _hostApi.showInAppMessages(),
     );
   }
 }

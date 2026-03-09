@@ -53,6 +53,7 @@ class _MyAppState extends State<_MyApp> {
   String _isAlternativeBillingOnlyAvailableResponseCode = '';
   String _showAlternativeBillingOnlyDialogResponseCode = '';
   String _alternativeBillingOnlyReportingDetailsToken = '';
+  String _showInAppMessagesResponseCode = '';
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
@@ -274,6 +275,15 @@ class _MyAppState extends State<_MyApp> {
         subtitle: Text(_alternativeBillingOnlyReportingDetailsToken),
       ),
     );
+    entries.add(
+      ListTile(
+        title: Text(
+          'showInAppMessages response code',
+          style: TextStyle(color: ThemeData.light().colorScheme.primary),
+        ),
+        subtitle: Text(_showInAppMessagesResponseCode),
+      ),
+    );
 
     final List<Widget> buttons = <ListTile>[];
     buttons.add(
@@ -371,6 +381,25 @@ class _MyAppState extends State<_MyApp> {
             );
           },
           child: const Text('createAlternativeBillingOnlyReportingDetails'),
+        ),
+      ),
+    );
+    buttons.add(
+      ListTile(
+        title: TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.green[800],
+            foregroundColor: Colors.white,
+          ),
+          onPressed: () {
+            final addition =
+                InAppPurchasePlatformAddition.instance!
+                    as InAppPurchaseAndroidPlatformAddition;
+            unawaited(
+              deliverShowInAppMessagesResult(addition.showInAppMessages()),
+            );
+          },
+          child: const Text('showInAppMessages'),
         ),
       ),
     );
@@ -594,6 +623,15 @@ class _MyAppState extends State<_MyApp> {
         _alternativeBillingOnlyReportingDetailsToken =
             wrapper.responseCode.name;
       }
+    });
+  }
+
+  Future<void> deliverShowInAppMessagesResult(
+    Future<InAppMessageResultWrapper> inAppMessageResult,
+  ) async {
+    final InAppMessageResultWrapper wrapper = await inAppMessageResult;
+    setState(() {
+      _showInAppMessagesResponseCode = wrapper.responseCode.name;
     });
   }
 

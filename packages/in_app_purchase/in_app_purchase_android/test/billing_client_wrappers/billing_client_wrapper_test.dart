@@ -684,6 +684,24 @@ void main() {
       expect(result, expected);
     });
   });
+
+  group('showInAppMessages', () {
+    test('returns object', () async {
+      const expected = InAppMessageResultWrapper(
+        responseCode: InAppMessageResponse.subscriptionStatusUpdated,
+        purchaseToken: 'dummy purchase token',
+      );
+      when(mockApi.showInAppMessages()).thenAnswer(
+        (_) async => PlatformInAppMessageResult(
+          responseCode: PlatformInAppMessageResponse.subscriptionStatusUpdated,
+          purchaseToken: expected.purchaseToken,
+        ),
+      );
+      final InAppMessageResultWrapper result = await billingClient
+          .showInAppMessages();
+      expect(result, expected);
+    });
+  });
 }
 
 PlatformBillingConfigResponse platformBillingConfigFromWrapper(
