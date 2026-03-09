@@ -15,7 +15,9 @@ for json_file in tmp_spec/specs/*.json; do
   dart_name=${base//-/_}
   const_name=$(echo "$dart_name" | tr '[:lower:]' '[:upper:]')
 
+  original=$(basename "$json_file")
   {
+    echo "// Generated from $original@$HEAD_HASH at $UTC_NOW"
     echo "const String $const_name = r'''"
     cat "$json_file"
     echo "''';"
@@ -26,6 +28,7 @@ for json_file in tmp_spec/specs/*.json; do
 done
 
 {
+  echo "// Generated from mustache/spec@$HEAD_HASH at $UTC_NOW"
   echo -n "$exports"
   echo ""
   echo "const Map<String, String> SPECS = {"
@@ -33,8 +36,4 @@ done
   echo "};"
 } > specs/specs.dart
 
-mv tmp_spec/specs/* specs/
 rm -rf tmp_spec
-
-echo "Specs commit: $HEAD_HASH" > specs/meta.txt
-echo "Specs download date: $UTC_NOW" >> specs/meta.txt
