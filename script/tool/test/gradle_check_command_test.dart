@@ -642,31 +642,32 @@ flutter {
   test(
     'fails when build.gradle has no java compatibility version - groovy',
     () async {
-    final RepositoryPackage package = createFakePlugin(
-      'a_plugin',
-      packagesDir,
-      examples: <String>[],
-    );
-    writeFakeGroovyPluginBuildGradle(package);
-    writeFakeManifest(package);
+      final RepositoryPackage package = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+      writeFakeGroovyPluginBuildGradle(package);
+      writeFakeManifest(package);
 
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-      runner,
-      <String>['gradle-check'],
-      errorHandler: (Error e) {
-        commandError = e;
-      },
-    );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['gradle-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains(groovyJavaIncompatabilityIndicator),
-      ]),
-    );
-  });
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(groovyJavaIncompatabilityIndicator),
+        ]),
+      );
+    },
+  );
 
   test(
     'fails when build.gradle has no java compatibility version - kotlin',
