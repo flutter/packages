@@ -1,9 +1,13 @@
-## 26.1.11
+## 26.2.1
 
 * [dart] Ignores all lint rules in generated code.
 * [dart] In generated code, imports the meta package for annotations, instead of
   the Flutter foundation library.
 * [dart] In generated code, no longer imports Uint8List.
+
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
 
 ## 26.1.10
 

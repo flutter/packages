@@ -208,6 +208,21 @@ Future<int> generateTestPigeons({
       return generateCode;
     }
   }
+
+  // Test case for useGeneratedAnnotation feature with core_tests
+  final String corePascalCaseName = _snakeToPascalCase('core_tests');
+  final int generateCodeWithAnnotation = await runPigeon(
+    input: './pigeons/core_tests.dart',
+    kotlinOut:
+        '$outputBase/android/src/main/kotlin/com/example/test_plugin/annotation/${corePascalCaseName}WithAnnotation.gen.kt',
+    kotlinPackage: 'com.example.test_plugin.annotation',
+    kotlinErrorClassName: 'FlutterError',
+    kotlinUseGeneratedAnnotation: true,
+  );
+  if (generateCodeWithAnnotation != 0) {
+    return generateCodeWithAnnotation;
+  }
+
   return 0;
 }
 
@@ -217,6 +232,7 @@ Future<int> runPigeon({
   String? kotlinPackage,
   String? kotlinErrorClassName,
   bool kotlinIncludeErrorClass = true,
+  bool kotlinUseGeneratedAnnotation = false,
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
@@ -291,6 +307,7 @@ Future<int> runPigeon({
         package: kotlinPackage,
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
+        useGeneratedAnnotation: kotlinUseGeneratedAnnotation,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
