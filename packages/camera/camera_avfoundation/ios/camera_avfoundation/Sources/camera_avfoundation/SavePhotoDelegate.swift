@@ -7,7 +7,6 @@ import Flutter
 import Foundation
 import ImageIO
 import UIKit
-import UniformTypeIdentifiers
 
 /// The completion handler block for save photo operations.
 /// Can be called from either main queue or IO queue.
@@ -130,7 +129,7 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
     guard
       let destination = CGImageDestinationCreateWithData(
         mutableData as CFMutableData,
-        UTType.jpeg.identifier as CFString,
+        "public.jpeg" as CFString,  // UTI for JPEG format
         1,  // imageCount: single image
         nil)
     else {
