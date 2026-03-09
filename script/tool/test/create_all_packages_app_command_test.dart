@@ -659,5 +659,31 @@ platform :osx, '10.11'
       // Podfile is only generated (and thus only edited) on macOS.
       skip: !io.Platform.isMacOS,
     );
+
+    test(
+      'macOS skips change to Podfile if file does not exist',
+      () async {
+        writeFakeFlutterCreateOutput(testRoot);
+        createFakePlugin('plugina', packagesDir);
+
+        final File podfileFile = RepositoryPackage(
+          command.packagesDir.parent.childDirectory(allPackagesProjectName),
+        ).platformDirectory(FlutterPlatform.macos).childFile('Podfile');
+        podfileFile.deleteSync();
+        expect(podfileFile.existsSync(), isFalse);
+
+        final List<String> prints = await runCapturingPrint(runner, <String>[
+          'create-all-packages-app',
+        ]);
+        expect(
+          prints,
+          contains(
+            'Unable to find ${podfileFile.path} for updating. Skipping.',
+          ),
+        );
+      },
+      // Podfile is only generated (and thus only edited) on macOS.
+      skip: !io.Platform.isMacOS,
+    );
   });
 }

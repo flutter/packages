@@ -1,6 +1,10 @@
-## 26.1.11
+## 26.2.1
 
 * Updates build files from Groovy to Kotlin.
+
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
 
 ## 26.1.10
 

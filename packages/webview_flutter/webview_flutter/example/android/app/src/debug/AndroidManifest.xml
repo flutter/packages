@@ -13,7 +13,5 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
         </activity>
-        <meta-data android:name="io.flutter.network-policy"
-            android:resource="@xml/network_security_config"/>
     </application>
 </manifest>

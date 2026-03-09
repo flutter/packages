@@ -1,6 +1,10 @@
-## 0.7.0+2
+## 0.7.1+1
 
 * Updates build files from Groovy to Kotlin.
+
+## 0.7.1
+
+* Removes outdated restrictions against concurrent camera use cases.
 
 ## 0.7.0+1
 
