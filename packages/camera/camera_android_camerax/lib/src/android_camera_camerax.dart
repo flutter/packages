@@ -894,6 +894,70 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  @override
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+    int cameraId,
+  ) async {
+    return (await _getSupportedVideoStabilizationModeMap(cameraId)).keys;
+  }
+
+  /// Throws a [ArgumentError] when an unsupported [mode] is
+  /// supplied.
+  @override
+  Future<void> setVideoStabilizationMode(
+    int cameraId,
+    VideoStabilizationMode mode,
+  ) async {
+    final Map<VideoStabilizationMode, int> availableModes =
+        await _getSupportedVideoStabilizationModeMap(cameraId);
+
+    final int? controlMode = availableModes[mode];
+    if (controlMode == null) {
+      throw ArgumentError('Unavailable video stabilization mode.', 'mode');
+    }
+
+    final captureRequestOptions = CaptureRequestOptions(
+      options: <CaptureRequestKey, Object?>{
+        CaptureRequest.controlVideoStabilizationMode: controlMode,
+      },
+    );
+
+    final camera2Control = Camera2CameraControl.from(
+      cameraControl: cameraControl,
+    );
+    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+  }
+
+  /// Gets a map of video stabilization control modes that are supported for the
+  /// selected camera, indexed by the respective [VideoStabilizationMode].
+  Future<Map<VideoStabilizationMode, int>>
+  _getSupportedVideoStabilizationModeMap(int cameraId) async {
+    if (cameraInfo == null) {
+      return <VideoStabilizationMode, int>{};
+    }
+
+    final camera2CameraInfo = Camera2CameraInfo.from(cameraInfo: cameraInfo!);
+
+    final List<int> controlModes =
+        await camera2CameraInfo.getCameraCharacteristic(
+              CameraCharacteristics.controlAvailableVideoStabilizationModes,
+            )
+            as List<int>? ??
+        const <int>[];
+
+    final modes = <VideoStabilizationMode, int>{
+      for (final int controlMode in controlModes)
+        // https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_OFF
+        if (controlMode == 0)
+          VideoStabilizationMode.off: 0
+        // https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_ON
+        else if (controlMode == 1)
+          VideoStabilizationMode.level1: 1,
+    };
+
+    return modes;
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -1100,47 +1164,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       // There is currently an active recording, so do not start a new one.
       return;
     }
-
-    dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
-    if (!_previewIsPaused) {
-      // The plugin binds the preview use case to the camera lifecycle when
-      // createCamera is called, but camera use cases can become limited
-      // when video recording and displaying a preview concurrently. This logic
-      // will prioritize attempting to continue displaying the preview,
-      // stream images, and record video if specified and supported. Otherwise,
-      // the preview must be paused in order to allow those concurrently. See
-      // https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
-      // for more information on supported concurrent camera use cases.
-      final camera2CameraInfo = Camera2CameraInfo.from(cameraInfo: cameraInfo!);
-      final cameraInfoSupportedHardwareLevel =
-          (await camera2CameraInfo.getCameraCharacteristic(
-                CameraCharacteristics.infoSupportedHardwareLevel,
-              ))!
-              as InfoSupportedHardwareLevel;
-
-      // Handle limited level device restrictions:
-      final cameraSupportsConcurrentImageCapture =
-          cameraInfoSupportedHardwareLevel != InfoSupportedHardwareLevel.legacy;
-      if (!cameraSupportsConcurrentImageCapture) {
-        // Concurrent preview + video recording + image capture is not supported
-        // unless the camera device is cameraSupportsHardwareLevelLimited or
-        // better.
-        await _unbindUseCaseFromLifecycle(imageCapture!);
-      }
-
-      // Handle level 3 device restrictions:
-      final cameraSupportsHardwareLevel3 =
-          cameraInfoSupportedHardwareLevel == InfoSupportedHardwareLevel.level3;
-      if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
-        // Concurrent preview + video recording + image streaming is not supported
-        // unless the camera device is cameraSupportsHardwareLevel3 or better.
-        streamCallback = null;
-        await _unbindUseCaseFromLifecycle(imageAnalysis!);
-      } else {
-        // If image streaming concurrently with video recording, image capture
-        // is unsupported.
-        await _unbindUseCaseFromLifecycle(imageCapture!);
-      }
+    final dynamic Function(CameraImageData)? streamCallback =
+        options.streamCallback;
+    if (streamCallback == null) {
+      // For potential performance improvements, unbind imageAnalysis if not in use.
+      // See https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
+      // for details.
+      await _unbindUseCaseFromLifecycle(imageAnalysis!);
     }
 
     await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
@@ -1167,7 +1197,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // and permission was not granted when the camera was created, then recording
     // audio will be disabled to respect the denied permission.
     pendingRecording = await pendingRecording!.withAudioEnabled(
-      /* initialMuted */ !enableRecordingAudio,
+      /* initialMuted */
+      !enableRecordingAudio,
     );
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);

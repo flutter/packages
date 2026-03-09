@@ -363,6 +363,11 @@ abstract class BitmapDescriptor {
   ///
   /// See [PinConfig] for more information on the parameters.
   ///
+  /// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+  /// For details and updates, see https://issuetracker.google.com/issues/370536110.
+  /// If this issue has not been fixed in the version of the Google Maps SDK you
+  /// are using, consider using an asset or bitmap for customization on iOS.
+  ///
   /// Returns a new [PinConfig] instance.
   static BitmapDescriptor pinConfig({
     Color? backgroundColor,
@@ -1058,6 +1063,10 @@ class BytesMapBitmap extends MapBitmap {
 /// )
 /// ```
 ///
+/// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+/// For details and updates, see https://issuetracker.google.com/issues/370536110.
+/// If this issue has not been fixed in the version of the Google Maps SDK you
+/// are using, consider using an asset or bitmap for customization on iOS.
 class PinConfig extends BitmapDescriptor {
   /// Constructs a [PinConfig] that is created from a pin configuration.
   ///
@@ -1068,6 +1077,11 @@ class PinConfig extends BitmapDescriptor {
   /// pin marker.
   ///
   /// At least one of the parameters must not be null.
+  ///
+  /// WARNING: On iOS, using a PinConfig may result in the marker not showing.
+  /// For details and updates, see https://issuetracker.google.com/issues/370536110.
+  /// If this issue has not been fixed in the version of the Google Maps SDK you
+  /// are using, consider using an asset or bitmap for customization on iOS.
   const PinConfig({this.backgroundColor, this.borderColor, this.glyph})
     : assert(
         backgroundColor != null || borderColor != null || glyph != null,

@@ -1,3 +1,11 @@
+## 3.23.8
+
+* Fixes lossy transition from Dart Color to native UIColor when calling `setBackgroundColor`.
+
+## 3.23.7
+
+* Fixes crash when calling setOnConsoleMessage multiple times.
+
 ## 3.23.6
 
 * Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.

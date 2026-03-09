@@ -9,7 +9,8 @@ import 'dart:math' as math show max;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    as platform_interface;
 
 import 'src/closed_caption_file.dart';
 
@@ -25,10 +26,121 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
 
 export 'src/closed_caption_file.dart';
 
-VideoPlayerPlatform? _lastVideoPlayerPlatform;
+/// Represents an audio track in a video with its metadata.
+@immutable
+class VideoAudioTrack {
+  /// Constructs an instance of [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.isSelected,
+    this.label,
+    this.language,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
 
-VideoPlayerPlatform get _videoPlayerPlatform {
-  final VideoPlayerPlatform currentInstance = VideoPlayerPlatform.instance;
+  /// Unique identifier for the audio track.
+  final String id;
+
+  /// Human-readable label for the track.
+  ///
+  /// May be null if not available from the platform.
+  final String? label;
+
+  /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  ///
+  /// May be null if not available from the platform.
+  final String? language;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Bitrate of the audio track in bits per second.
+  ///
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Sample rate of the audio track in Hz.
+  ///
+  /// May be null if not available from the platform.
+  final int? sampleRate;
+
+  /// Number of audio channels.
+  ///
+  /// May be null if not available from the platform.
+  final int? channelCount;
+
+  /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  ///
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoAudioTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            label == other.label &&
+            language == other.language &&
+            isSelected == other.isSelected &&
+            bitrate == other.bitrate &&
+            sampleRate == other.sampleRate &&
+            channelCount == other.channelCount &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    label,
+    language,
+    isSelected,
+    bitrate,
+    sampleRate,
+    channelCount,
+    codec,
+  );
+
+  @override
+  String toString() =>
+      'VideoAudioTrack('
+      'id: $id, '
+      'label: $label, '
+      'language: $language, '
+      'isSelected: $isSelected, '
+      'bitrate: $bitrate, '
+      'sampleRate: $sampleRate, '
+      'channelCount: $channelCount, '
+      'codec: $codec)';
+}
+
+/// Converts a platform interface [VideoAudioTrack] to the public API type.
+///
+/// This internal method is used to decouple the public API from the
+/// platform interface implementation.
+VideoAudioTrack _convertPlatformAudioTrack(
+  platform_interface.VideoAudioTrack platformTrack,
+) {
+  return VideoAudioTrack(
+    id: platformTrack.id,
+    label: platformTrack.label,
+    language: platformTrack.language,
+    isSelected: platformTrack.isSelected,
+    bitrate: platformTrack.bitrate,
+    sampleRate: platformTrack.sampleRate,
+    channelCount: platformTrack.channelCount,
+    codec: platformTrack.codec,
+  );
+}
+
+platform_interface.VideoPlayerPlatform? _lastVideoPlayerPlatform;
+
+platform_interface.VideoPlayerPlatform get _videoPlayerPlatform {
+  final platform_interface.VideoPlayerPlatform currentInstance =
+      platform_interface.VideoPlayerPlatform.instance;
   if (_lastVideoPlayerPlatform != currentInstance) {
     // This will clear all open videos on the platform when a full restart is
     // performed.
@@ -50,7 +162,7 @@ class VideoPlayerValue {
     this.position = Duration.zero,
     this.caption = Caption.none,
     this.captionOffset = Duration.zero,
-    this.buffered = const <DurationRange>[],
+    this.buffered = const <platform_interface.DurationRange>[],
     this.isInitialized = false,
     this.isPlaying = false,
     this.isLooping = false,
@@ -98,7 +210,7 @@ class VideoPlayerValue {
   final Duration captionOffset;
 
   /// The currently buffered ranges.
-  final List<DurationRange> buffered;
+  final List<platform_interface.DurationRange> buffered;
 
   /// True if the video is playing. False if it's paused.
   final bool isPlaying;
@@ -164,7 +276,7 @@ class VideoPlayerValue {
     Duration? position,
     Caption? caption,
     Duration? captionOffset,
-    List<DurationRange>? buffered,
+    List<platform_interface.DurationRange>? buffered,
     bool? isInitialized,
     bool? isPlaying,
     bool? isLooping,
@@ -281,9 +393,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.package,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
-       dataSourceType = DataSourceType.asset,
+       dataSourceType = platform_interface.DataSourceType.asset,
        formatHint = null,
        httpHeaders = const <String, String>{},
        super(const VideoPlayerValue(duration: Duration.zero));
@@ -308,9 +420,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
-       dataSourceType = DataSourceType.network,
+       dataSourceType = platform_interface.DataSourceType.network,
        package = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
@@ -329,10 +441,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = url.toString(),
-       dataSourceType = DataSourceType.network,
+       dataSourceType = platform_interface.DataSourceType.network,
        package = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
@@ -345,10 +457,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = Uri.file(file.absolute.path).toString(),
-       dataSourceType = DataSourceType.file,
+       dataSourceType = platform_interface.DataSourceType.file,
        package = null,
        formatHint = null,
        super(const VideoPlayerValue(duration: Duration.zero));
@@ -361,14 +473,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Uri contentUri, {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : assert(
          defaultTargetPlatform == TargetPlatform.android,
          'VideoPlayerController.contentUri is only supported on Android.',
        ),
        _closedCaptionFileFuture = closedCaptionFile,
        dataSource = contentUri.toString(),
-       dataSourceType = DataSourceType.contentUri,
+       dataSourceType = platform_interface.DataSourceType.contentUri,
        package = null,
        formatHint = null,
        httpHeaders = const <String, String>{},
@@ -385,14 +497,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
-  final VideoFormat? formatHint;
+  final platform_interface.VideoFormat? formatHint;
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
-  final DataSourceType dataSourceType;
+  final platform_interface.DataSourceType dataSourceType;
 
   /// Provide additional configuration options (optional). Like setting the audio mode to mix
-  final VideoPlayerOptions? videoPlayerOptions;
+  final platform_interface.VideoPlayerOptions? videoPlayerOptions;
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
@@ -400,7 +512,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The requested display mode for the video.
   ///
   /// Platforms that do not support the request view type will ignore this.
-  final VideoViewType viewType;
+  final platform_interface.VideoViewType viewType;
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
@@ -430,35 +542,35 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _lifeCycleObserver?.initialize();
     _creatingCompleter = Completer<void>();
 
-    final DataSource dataSourceDescription;
+    final platform_interface.DataSource dataSourceDescription;
     switch (dataSourceType) {
-      case DataSourceType.asset:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.asset,
+      case platform_interface.DataSourceType.asset:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.asset,
           asset: dataSource,
           package: package,
         );
-      case DataSourceType.network:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.network,
+      case platform_interface.DataSourceType.network:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.network,
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
         );
-      case DataSourceType.file:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.file,
+      case platform_interface.DataSourceType.file:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.file,
           uri: dataSource,
           httpHeaders: httpHeaders,
         );
-      case DataSourceType.contentUri:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.contentUri,
+      case platform_interface.DataSourceType.contentUri:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.contentUri,
           uri: dataSource,
         );
     }
 
-    final creationOptions = VideoCreationOptions(
+    final creationOptions = platform_interface.VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
     );
@@ -483,13 +595,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
     }
 
-    void eventListener(VideoEvent event) {
+    void eventListener(platform_interface.VideoEvent event) {
       if (_isDisposed) {
         return;
       }
 
       switch (event.eventType) {
-        case VideoEventType.initialized:
+        case platform_interface.VideoEventType.initialized:
           value = value.copyWith(
             duration: event.duration,
             size: event.size,
@@ -512,20 +624,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
-        case VideoEventType.completed:
+        case platform_interface.VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
           // position=value.duration. Instead of setting the values directly,
           // we use pause() and seekTo() to ensure the platform stops playing
           // and seeks to the last frame of the video.
           pause().then((void pauseResult) => seekTo(value.duration));
           value = value.copyWith(isCompleted: true);
-        case VideoEventType.bufferingUpdate:
+        case platform_interface.VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
-        case VideoEventType.bufferingStart:
+        case platform_interface.VideoEventType.bufferingStart:
           value = value.copyWith(isBuffering: true);
-        case VideoEventType.bufferingEnd:
+        case platform_interface.VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
-        case VideoEventType.isPlayingStateUpdate:
+        case platform_interface.VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
             value = value.copyWith(
               isPlaying: event.isPlaying,
@@ -534,7 +646,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
-        case VideoEventType.unknown:
+        case platform_interface.VideoEventType.unknown:
           break;
       }
     }
@@ -819,6 +931,63 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
+  /// Gets the available audio tracks for the video.
+  ///
+  /// Returns a list of [VideoAudioTrack] objects containing metadata about
+  /// each available audio track. The list may be empty if no audio tracks
+  /// are available or if the video is not initialized.
+  ///
+  /// Throws an error if the video player is disposed.
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    if (_isDisposed) {
+      throw StateError('VideoPlayerController is disposed');
+    }
+    if (!value.isInitialized) {
+      return <VideoAudioTrack>[];
+    }
+    final List<platform_interface.VideoAudioTrack> platformTracks =
+        await _videoPlayerPlatform.getAudioTracks(_playerId);
+    return platformTracks.map(_convertPlatformAudioTrack).toList();
+  }
+
+  /// Selects which audio track is chosen for playback from its [trackId]
+  ///
+  /// The [trackId] should match the ID of one of the tracks returned by
+  /// [getAudioTracks]. If the track ID is not found or invalid, the
+  /// platform may ignore the request or throw an exception.
+  ///
+  /// Throws an error if the video player is disposed or not initialized.
+  Future<void> selectAudioTrack(String trackId) async {
+    if (_isDisposedOrNotInitialized) {
+      throw StateError('VideoPlayerController is disposed or not initialized');
+    }
+    // The platform implementation (e.g., Android) will wait for the track
+    // selection to complete by listening to platform-specific events
+    await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
+  }
+
+  /// Returns whether audio track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports audio track selection functionality. This is useful
+  /// for platforms like web where audio track selection may not be available.
+  ///
+  /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
+  /// `false` otherwise.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// if (controller.isAudioTrackSupportAvailable()) {
+  ///   final tracks = await controller.getAudioTracks();
+  ///   // Show audio track selection UI
+  /// } else {
+  ///   // Hide audio track selection UI or show unsupported message
+  /// }
+  /// ```
+  bool isAudioTrackSupportAvailable() {
+    return _videoPlayerPlatform.isAudioTrackSupportAvailable();
+  }
+
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
 }
 
@@ -903,7 +1072,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         : _VideoPlayerWithRotation(
             rotation: widget.controller.value.rotationCorrection,
             child: _videoPlayerPlatform.buildViewWithOptions(
-              VideoViewOptions(playerId: _playerId),
+              platform_interface.VideoViewOptions(playerId: _playerId),
             ),
           );
   }
@@ -1116,7 +1285,10 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       final double maxBuffering = duration == 0.0
           ? 0.0
           : controller.value.buffered
-                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .map(
+                      (platform_interface.DurationRange range) =>
+                          range.end.inMilliseconds,
+                    )
                     .fold(0, math.max) /
                 duration;
       progressIndicator = Stack(

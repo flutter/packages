@@ -1,3 +1,19 @@
+## 0.10.1
+
+* Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.
+
+## 0.10.0+3
+
+* Switches to type-safe Pigeon code for image streaming.
+
+## 0.10.0+2
+
+* Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return within try blocks are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
+
+## 0.10.0+1
+
+* Migrates to Swift-based pigeon interface.
+
 ## 0.10.0
 
 * Adds video stabilization.

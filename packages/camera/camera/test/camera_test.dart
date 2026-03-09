@@ -1468,6 +1468,2136 @@ void main() {
       ).called(4);
     });
 
+    test(
+      'getSupportedVideoStabilizationModes() returns off when device supports no mode',
+      () async {
+        // arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+
+        await cameraController.initialize();
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        // act
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
+
+        // assert
+        expect(modes, <VideoStabilizationMode>[VideoStabilizationMode.off]);
+      },
+    );
+
+    test(
+      'getSupportedVideoStabilizationModes() returns off when device supports only off',
+      () async {
+        // arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+
+        await cameraController.initialize();
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        // act
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
+
+        // assert
+        expect(modes, <VideoStabilizationMode>[VideoStabilizationMode.off]);
+      },
+    );
+
+    test(
+      'getSupportedVideoStabilizationModes() returns off and level1',
+      () async {
+        // arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+
+        await cameraController.initialize();
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        // act
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
+
+        // assert
+        expect(modes, <VideoStabilizationMode>[
+          VideoStabilizationMode.off,
+          VideoStabilizationMode.level1,
+        ]);
+      },
+    );
+
+    test(
+      'getSupportedVideoStabilizationModes() returns off, level1 and level2',
+      () async {
+        // arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+
+        await cameraController.initialize();
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+          ],
+        );
+
+        // act
+        final Iterable<VideoStabilizationMode> modes = await cameraController
+            .getSupportedVideoStabilizationModes();
+
+        // assert
+        expect(modes, <VideoStabilizationMode>[
+          VideoStabilizationMode.off,
+          VideoStabilizationMode.level1,
+          VideoStabilizationMode.level2,
+        ]);
+      },
+    );
+
+    test('getSupportedVideoStabilizationModes() returns all modes', () async {
+      // arrange
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.max,
+      );
+
+      await cameraController.initialize();
+      when(
+        CameraPlatform.instance.getSupportedVideoStabilizationModes(
+          mockInitializeCamera,
+        ),
+      ).thenAnswer(
+        (_) async => <VideoStabilizationMode>[
+          VideoStabilizationMode.off,
+          VideoStabilizationMode.level1,
+          VideoStabilizationMode.level2,
+          VideoStabilizationMode.level3,
+        ],
+      );
+
+      // act
+      final Iterable<VideoStabilizationMode> modes = await cameraController
+          .getSupportedVideoStabilizationModes();
+
+      // assert
+      expect(modes, <VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.level1,
+        VideoStabilizationMode.level2,
+        VideoStabilizationMode.level3,
+      ]);
+    });
+
+    test(
+      'setVideoStabilizationMode() throws $CameraException on $PlatformException',
+      () async {
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenThrow(
+          PlatformException(
+            code: 'TEST_ERROR',
+            message: 'This is a test error message',
+          ),
+        );
+
+        expect(
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level1,
+          ),
+          throwsA(
+            isA<CameraException>().having(
+              (CameraException error) => error.description,
+              'TEST_ERROR',
+              'This is a test error message',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback never calls CameraPlatform.instance.setVideoStabilizationMode when no supported mode is available',
+      () async {
+        //// The purpose of this test is to ensure that when no video stabilization mode is supported,
+        //// then all calls to setVideoStabilizationMode with fallback will not result in any
+        //// call to CameraPlatform.instance.setVideoStabilizationMode.
+
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+        );
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+        );
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level2,
+        );
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level3,
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level1 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level2 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level2,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when level3 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level3,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off and level1 are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and only off and level1 are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level2 is requested and only off and level1 are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level2,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level3 is requested and only off and level1 are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level3,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level2 when level2 is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level2,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() with fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level3 when level3 is requested and all levels available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level3,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls never calls CameraPlatform.instance.setVideoStabilizationMode when off is requested no supported mode is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+          allowFallback: false,
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level1 is requested and no supported mode is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level1,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and no supported mode is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level2,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level3 is requested and no supported mode is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer((_) async => <VideoStabilizationMode>[]);
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level3,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level1 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level1,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level2,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level3 is requested and only off is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[VideoStabilizationMode.off],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level3,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all level1 is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and level1 is available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback throws $ArgumentError when level2 is requested and only off and level1 are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // assert
+        expect(
+          // act
+          cameraController.setVideoStabilizationMode(
+            VideoStabilizationMode.level2,
+            allowFallback: false,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError error) => error.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+
+        // assert
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.off when off is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.off,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level1 when level1 is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level1,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level2 when level2 is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            mockInitializeCamera,
+            VideoStabilizationMode.level2,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level2,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        );
+      },
+    );
+
+    test(
+      'setVideoStabilizationMode() without fallback calls CameraPlatform.instance.setVideoStabilizationMode with VideoStabilizationMode.level3 when level3 is requested and all levels are available',
+      () async {
+        //arrange
+        final cameraController = CameraController(
+          const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90,
+          ),
+          ResolutionPreset.max,
+        );
+        await cameraController.initialize();
+
+        when(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        ).thenAnswer((_) => Future<void>(() {}));
+
+        when(
+          CameraPlatform.instance.getSupportedVideoStabilizationModes(
+            mockInitializeCamera,
+          ),
+        ).thenAnswer(
+          (_) async => <VideoStabilizationMode>[
+            VideoStabilizationMode.off,
+            VideoStabilizationMode.level1,
+            VideoStabilizationMode.level2,
+            VideoStabilizationMode.level3,
+          ],
+        );
+
+        clearInteractions(CameraPlatform.instance);
+
+        // act
+        await cameraController.setVideoStabilizationMode(
+          VideoStabilizationMode.level3,
+          allowFallback: false,
+        );
+
+        // assert
+        verify(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level3,
+          ),
+        ).called(1);
+
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.off,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level1,
+          ),
+        );
+        verifyNever(
+          CameraPlatform.instance.setVideoStabilizationMode(
+            cameraController.cameraId,
+            VideoStabilizationMode.level2,
+          ),
+        );
+      },
+    );
+
     test('pausePreview() calls $CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
@@ -1999,6 +4129,29 @@ class MockCameraPlatform extends Mock
             returnValue: Future<double>.value(1.0),
           )
           as Future<double>;
+
+  @override
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+    int cameraId,
+  ) {
+    return super.noSuchMethod(
+          Invocation.method(#getSupportedVideoStabilizationModes, <Object?>[
+            cameraId,
+          ]),
+          returnValue: Future<Iterable<VideoStabilizationMode>>.value(
+            <VideoStabilizationMode>[],
+          ),
+        )
+        as Future<Iterable<VideoStabilizationMode>>;
+  }
+
+  @override
+  Future<void> setVideoStabilizationMode(
+    int cameraId,
+    VideoStabilizationMode mode,
+  ) async => super.noSuchMethod(
+    Invocation.method(#setVideoStabilizationMode, <Object?>[cameraId, mode]),
+  );
 }
 
 class MockCameraDescription extends CameraDescription {
