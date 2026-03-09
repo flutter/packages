@@ -263,11 +263,26 @@ void main() {
 
       // Even in lenient mode, tag names may not be a single sigil
       // character.
-      expect(() => parse('{{#}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{>}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{&}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{/}}', lenient: true), throwsA(isA<TemplateException>()));
-      expect(() => parse('{{^}}', lenient: true), throwsA(isA<TemplateException>()));
+      expect(
+        () => parse('{{#}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{>}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{&}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{/}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
+      expect(
+        () => parse('{{^}}', lenient: true),
+        throwsA(isA<TemplateException>()),
+      );
 
       // >a means 'a partial named "a"', not a variable named ">a",
       // and in lenient mode the missing partial should fail silently
