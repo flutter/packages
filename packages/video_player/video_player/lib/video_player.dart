@@ -581,18 +581,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
     }
 
+    _playerId =
+        (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
+        kUninitializedPlayerId;
+    _creatingCompleter!.complete(null);
+    final initializingCompleter = Completer<void>();
+
     if (videoPlayerOptions?.allowScreenAutoLock != null) {
       await _videoPlayerPlatform.setAllowScreenAutoLock(
         _playerId,
         videoPlayerOptions!.allowScreenAutoLock,
       );
     }
-
-    _playerId =
-        (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
-        kUninitializedPlayerId;
-    _creatingCompleter!.complete(null);
-    final initializingCompleter = Completer<void>();
 
     // Apply the web-specific options
     if (kIsWeb && videoPlayerOptions?.webOptions != null) {
