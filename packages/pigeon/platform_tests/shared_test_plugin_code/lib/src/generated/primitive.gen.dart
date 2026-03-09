@@ -12,11 +12,29 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-PlatformException _createConnectionError(String channelName) {
-  return PlatformException(
-    code: 'channel-error',
-    message: 'Unable to establish connection on channel: "$channelName".',
-  );
+Object? _extractReplyValueOrThrow(
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
+}) {
+  if (replyList == null) {
+    throw PlatformException(
+      code: 'channel-error',
+      message: 'Unable to establish connection on channel: "$channelName".',
+    );
+  } else if (replyList.length > 1) {
+    throw PlatformException(
+      code: replyList[0]! as String,
+      message: replyList[1] as String?,
+      details: replyList[2],
+    );
+  } else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {
+    throw PlatformException(
+      code: 'null-error',
+      message: 'Host platform returned null value for non-null return value.',
+    );
+  }
+  return replyList.firstOrNull;
 }
 
 List<Object?> wrapResponse({
@@ -83,22 +101,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as int;
   }
 
   Future<bool> aBool(bool value) async {
@@ -113,22 +122,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as bool;
   }
 
   Future<String> aString(String value) async {
@@ -143,22 +143,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as String;
   }
 
   Future<double> aDouble(double value) async {
@@ -173,22 +164,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as double;
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
@@ -203,22 +185,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as Map<Object?, Object?>;
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
@@ -233,22 +206,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as List<Object?>;
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
@@ -263,22 +227,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Int32List?)!;
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return pigeonVar_replyValue as Int32List;
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
@@ -293,22 +248,13 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<bool?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as List<Object?>).cast<bool?>();
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
@@ -323,23 +269,14 @@ class PrimitiveHostApi {
       <Object?>[value],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, int?>();
-    }
+
+    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    )!;
+    return (pigeonVar_replyValue as Map<Object?, Object?>)
+        .cast<String?, int?>();
   }
 }
 

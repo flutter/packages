@@ -24,12 +24,7 @@
 }
 #else
 - (UIViewController *)viewController {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(stuartmorgan) Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  return UIApplication.sharedApplication.keyWindow.rootViewController;
-#pragma clang diagnostic pop
+  return self.registrar.viewController;
 }
 #endif
 

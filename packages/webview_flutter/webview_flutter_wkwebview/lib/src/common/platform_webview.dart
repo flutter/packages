@@ -324,7 +324,7 @@ class PlatformWebView {
   }
 
   /// The view’s background color.
-  Future<void> setBackgroundColor(int? value) {
+  Future<void> setBackgroundColor(UIColor? value) {
     final WKWebView webView = nativeWebView;
     switch (webView) {
       case UIViewWKWebView():

@@ -591,15 +591,13 @@ class MockAdsRenderingSettings extends _i1.Mock
           as _i4.Future<bool>);
 
   @override
-  _i4.Future<List<String>> getMimeTypes() =>
+  _i4.Future<List<String>?> getMimeTypes() =>
       (super.noSuchMethod(
             Invocation.method(#getMimeTypes, []),
-            returnValue: _i4.Future<List<String>>.value(<String>[]),
-            returnValueForMissingStub: _i4.Future<List<String>>.value(
-              <String>[],
-            ),
+            returnValue: _i4.Future<List<String>?>.value(),
+            returnValueForMissingStub: _i4.Future<List<String>?>.value(),
           )
-          as _i4.Future<List<String>>);
+          as _i4.Future<List<String>?>);
 
   @override
   _i4.Future<void> setBitrateKbps(int? bitrate) =>
