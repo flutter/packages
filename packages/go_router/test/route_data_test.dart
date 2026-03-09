@@ -701,7 +701,6 @@ void main() {
     expect(typedGoRoute.path, '/path');
     expect(typedGoRoute.name, isNull);
     expect(typedGoRoute.caseSensitive, true);
-    expect(typedGoRoute.hasOverriddenOnExit, false);
     expect(typedGoRoute.routes, isEmpty);
   });
 
@@ -710,13 +709,11 @@ void main() {
       path: '/path',
       name: 'name',
       caseSensitive: false,
-      hasOverriddenOnExit: true,
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<GoRouteData>(
           path: 'sub-path',
           name: 'subName',
           caseSensitive: false,
-          hasOverriddenOnExit: true,
         ),
       ],
     );
@@ -724,7 +721,6 @@ void main() {
     expect(typedGoRoute.path, '/path');
     expect(typedGoRoute.name, 'name');
     expect(typedGoRoute.caseSensitive, false);
-    expect(typedGoRoute.hasOverriddenOnExit, true);
     expect(typedGoRoute.routes, hasLength(1));
     expect(
       typedGoRoute.routes.single,
@@ -743,11 +739,6 @@ void main() {
             (TypedGoRoute<GoRouteData> route) => route.caseSensitive,
             'caseSensitive',
             false,
-          )
-          .having(
-            (TypedGoRoute<GoRouteData> route) => route.hasOverriddenOnExit,
-            'hasOverriddenOnExit',
-            true,
           ),
     );
   });
@@ -769,7 +760,6 @@ void main() {
 
     expect(typedGoRoute.path, 'path');
     expect(typedGoRoute.caseSensitive, true);
-    expect(typedGoRoute.hasOverriddenOnExit, false);
     expect(typedGoRoute.routes, isEmpty);
   });
 
@@ -777,19 +767,16 @@ void main() {
     const typedGoRoute = TypedRelativeGoRoute<RelativeGoRouteData>(
       path: 'path',
       caseSensitive: false,
-      hasOverriddenOnExit: true,
       routes: <TypedRoute<RouteData>>[
         TypedRelativeGoRoute<RelativeGoRouteData>(
           path: 'sub-path',
           caseSensitive: false,
-          hasOverriddenOnExit: true,
         ),
       ],
     );
 
     expect(typedGoRoute.path, 'path');
     expect(typedGoRoute.caseSensitive, false);
-    expect(typedGoRoute.hasOverriddenOnExit, true);
     expect(typedGoRoute.routes, hasLength(1));
     expect(
       typedGoRoute.routes.single,
@@ -804,12 +791,6 @@ void main() {
                 route.caseSensitive,
             'caseSensitive',
             false,
-          )
-          .having(
-            (TypedRelativeGoRoute<RelativeGoRouteData> route) =>
-                route.hasOverriddenOnExit,
-            'hasOverriddenOnExit',
-            true,
           ),
     );
   });

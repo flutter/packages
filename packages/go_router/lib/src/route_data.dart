@@ -490,7 +490,6 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
     this.name,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
-    this.hasOverriddenOnExit = false,
   });
 
   /// The path that corresponds to this route.
@@ -523,23 +522,6 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   /// Defaults to `true`.
   final bool caseSensitive;
-
-  /// Whether the route data class has overridden the [GoRouteData.onExit] method.
-  ///
-  /// When set to `true`, the code generator will wire up the [GoRoute.onExit]
-  /// callback to call the overridden [GoRouteData.onExit] method when the route
-  /// is removed from GoRouter's route history.
-  ///
-  /// When set to `false` (the default), the [GoRoute.onExit] callback will not
-  /// be set, meaning the route data class's [GoRouteData.onExit] method will
-  /// not be invoked even if it has been overridden.
-  ///
-  /// This field should be set to `true` only if the route data class that extends
-  /// [GoRouteData] has overridden the [GoRouteData.onExit] method to provide
-  /// custom exit handling logic.
-  ///
-  /// Defaults to `false`.
-  final bool hasOverriddenOnExit;
 }
 
 /// A superclass for each typed relative go route descendant
@@ -551,7 +533,6 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
     required this.path,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
-    this.hasOverriddenOnExit = false,
   });
 
   /// The relative path that corresponds to this route.
@@ -576,23 +557,6 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
   ///
   /// Defaults to `true`.
   final bool caseSensitive;
-
-  /// Whether the route data class has overridden the [RelativeGoRouteData.onExit] method.
-  ///
-  /// When set to `true`, the code generator will wire up the [GoRoute.onExit]
-  /// callback to call the overridden [RelativeGoRouteData.onExit] method when
-  /// the route is removed from GoRouter's route history.
-  ///
-  /// When set to `false` (the default), the [GoRoute.onExit] callback will not
-  /// be set, meaning the route data class's [RelativeGoRouteData.onExit] method
-  /// will not be invoked even if it has been overridden.
-  ///
-  /// This field should be set to `true` only if the route data class that extends
-  /// [RelativeGoRouteData] has overridden the [RelativeGoRouteData.onExit] method
-  /// to provide custom exit handling logic.
-  ///
-  /// Defaults to `false`.
-  final bool hasOverriddenOnExit;
 }
 
 /// A superclass for each typed shell route descendant
