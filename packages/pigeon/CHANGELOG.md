@@ -1,7 +1,11 @@
-## 26.1.11
+## 26.2.1
 
 * Produces a helpful error message when a method return type is missing or an
   unsupported type, such as a function type or record type.
+
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
 
 ## 26.1.10
 
