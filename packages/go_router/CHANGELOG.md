@@ -1,6 +1,6 @@
 ## 17.2.0
 
-- Adds `hasOverriddenOnExit` parameter to `TypedGoRoute` and `TypedRelativeGoRoute` to enable custom exit handling in type-safe routes. When set to `true`, the overridden `onExit` method in route data classes (extending `GoRouteData` or `RelativeGoRouteData`) will be invoked when the route is removed from GoRouter's route history.
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
 
 ## 17.1.0
 
