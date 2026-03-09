@@ -28,10 +28,8 @@ String render(
 }
 
 void defineTests(List<String> unsupportedSpecs) {
-  for (final MapEntry<String, String> entry in SPECS.entries) {
-    if (shouldRun(entry.key, unsupportedSpecs)) {
-      final String specName = entry.key;
-      final String text = entry.value;
+  for (final MapEntry(key: specName, value: text) in SPECS.entries) {
+    if (shouldRun(specName, unsupportedSpecs)) {
       _defineGroupFromFile(specName, text);
     }
   }
