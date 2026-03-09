@@ -28,15 +28,14 @@ base class SharedPreferencesAsyncFoundation
         SharedPreferencesAsyncFoundation();
   }
 
-  /// Returns a SharedPreferencesPigeonOptions for sending to platform.
-  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
+  /// Returns the suite name to send to platform, if configured.
+  String? _convertOptionsToSuiteName(
     SharedPreferencesOptions options,
   ) {
     if (options is SharedPreferencesAsyncFoundationOptions) {
-      final String? suiteName = options.suiteName;
-      return SharedPreferencesPigeonOptions(suiteName: suiteName);
+      return options.suiteName;
     }
-    return SharedPreferencesPigeonOptions();
+    return null;
   }
 
   @override
@@ -48,7 +47,7 @@ base class SharedPreferencesAsyncFoundation
     return (await _convertKnownExceptions<List<String>>(
       () async => _api.getKeys(
         filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
+        _convertOptionsToSuiteName(options),
       ),
     ))!.toSet();
   }
@@ -59,7 +58,7 @@ base class SharedPreferencesAsyncFoundation
     SharedPreferencesOptions options,
   ) async {
     return _convertKnownExceptions<void>(
-      () async => _api.set(key, value, _convertOptionsToPigeonOptions(options)),
+      () async => _api.set(key, value, _convertOptionsToSuiteName(options)),
     );
   }
 
@@ -96,7 +95,7 @@ base class SharedPreferencesAsyncFoundation
     bool value,
     SharedPreferencesOptions options,
   ) async {
-    await _api.set(key, value, _convertOptionsToPigeonOptions(options));
+    await _api.set(key, value, _convertOptionsToSuiteName(options));
   }
 
   @override
@@ -105,7 +104,7 @@ base class SharedPreferencesAsyncFoundation
     double value,
     SharedPreferencesOptions options,
   ) async {
-    await _api.set(key, value, _convertOptionsToPigeonOptions(options));
+    await _api.set(key, value, _convertOptionsToSuiteName(options));
   }
 
   @override
@@ -114,9 +113,8 @@ base class SharedPreferencesAsyncFoundation
     SharedPreferencesOptions options,
   ) async {
     return _convertKnownExceptions<String>(
-      () async =>
-          (await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
-              as String?,
+      () async => (await _api.getValue(key, _convertOptionsToSuiteName(options)))
+          as String?,
     );
   }
 
@@ -124,7 +122,7 @@ base class SharedPreferencesAsyncFoundation
   Future<bool?> getBool(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<bool>(
       () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
+          await _api.getValue(key, _convertOptionsToSuiteName(options))
               as bool?,
     );
   }
@@ -136,7 +134,7 @@ base class SharedPreferencesAsyncFoundation
   ) async {
     return _convertKnownExceptions<double>(
       () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
+          await _api.getValue(key, _convertOptionsToSuiteName(options))
               as double?,
     );
   }
@@ -145,7 +143,7 @@ base class SharedPreferencesAsyncFoundation
   Future<int?> getInt(String key, SharedPreferencesOptions options) async {
     return _convertKnownExceptions<int>(
       () async =>
-          await _api.getValue(key, _convertOptionsToPigeonOptions(options))
+          await _api.getValue(key, _convertOptionsToSuiteName(options))
               as int?,
     );
   }
@@ -159,7 +157,7 @@ base class SharedPreferencesAsyncFoundation
     // during deserialization, and needs to be manually cast.
     return _convertKnownExceptions<List<String>>(
       () async =>
-          ((await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
+          ((await _api.getValue(key, _convertOptionsToSuiteName(options)))
                   as List<Object?>?)
               ?.cast<String>()
               .toList(),
@@ -175,7 +173,7 @@ base class SharedPreferencesAsyncFoundation
     return _convertKnownExceptions<void>(
       () async => _api.clear(
         filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
+        _convertOptionsToSuiteName(options),
       ),
     );
   }
@@ -189,7 +187,7 @@ base class SharedPreferencesAsyncFoundation
     return (await _convertKnownExceptions<Map<String, Object>>(
       () async => _api.getAll(
         filter.allowList?.toList(),
-        _convertOptionsToPigeonOptions(options),
+        _convertOptionsToSuiteName(options),
       ),
     ))!;
   }

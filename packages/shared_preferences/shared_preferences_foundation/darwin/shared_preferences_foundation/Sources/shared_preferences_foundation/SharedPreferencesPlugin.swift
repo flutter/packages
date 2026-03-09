@@ -59,7 +59,7 @@ public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserD
     var filteredPrefs: [String: Any] = [:]
 
     let prefs = try! SharedPreferencesPlugin.getAllPrefs(
-      allowList: allowList, options: SharedPreferencesPigeonOptions())
+      allowList: allowList, suiteName: nil)
 
     for (key, value) in prefs where (key.hasPrefix(prefix)) {
       filteredPrefs[key] = value
@@ -84,54 +84,53 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     LegacySharedPreferencesPlugin.register(with: registrar)
   }
 
-  static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws
-    -> UserDefaults
+  static private func getUserDefaults(suiteName: String?) throws -> UserDefaults
   {
     #if os(iOS)
-      if !(options.suiteName?.starts(with: "group.") ?? true) {
+      if !(suiteName?.starts(with: "group.") ?? true) {
         throw FlutterError(
           code: argumentError,
           message:
-            "The provided Suite Name '\(options.suiteName!)' does not follow the predefined requirements",
+            "The provided Suite Name '\(suiteName!)' does not follow the predefined requirements",
           details: "") as! Error
       }
     #endif
-    let prefs = UserDefaults(suiteName: options.suiteName)
+    let prefs = UserDefaults(suiteName: suiteName)
 
     if prefs == nil {
       throw FlutterError(
         code: argumentError,
-        message: "The provided Suite Name '\(options.suiteName!)' does not exist",
+        message: "The provided Suite Name '\(suiteName!)' does not exist",
         details: "") as! Error
     }
     return prefs!
   }
 
-  func getKeys(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String] {
+  func getKeys(allowList: [String]?, options: String?) throws -> [String] {
     return Array(try getAll(allowList: allowList, options: options).keys)
   }
 
-  func getAll(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String: Any]
+  func getAll(allowList: [String]?, options: String?) throws -> [String: Any]
   {
-    return try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, options: options)
+    return try SharedPreferencesPlugin.getAllPrefs(allowList: allowList, suiteName: options)
   }
 
-  func set(key: String, value: Any, options: SharedPreferencesPigeonOptions) throws {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).set(value, forKey: key)
+  func set(key: String, value: Any, options: String?) throws {
+    try SharedPreferencesPlugin.getUserDefaults(suiteName: options).set(value, forKey: key)
   }
 
-  func getValue(key: String, options: SharedPreferencesPigeonOptions) throws -> Any? {
-    let preference = try SharedPreferencesPlugin.getUserDefaults(options: options).object(
+  func getValue(key: String, options: String?) throws -> Any? {
+    let preference = try SharedPreferencesPlugin.getUserDefaults(suiteName: options).object(
       forKey: key)
     return SharedPreferencesPlugin.isTypeCompatible(value: preference as Any) ? preference : nil
   }
 
-  func remove(key: String, options: SharedPreferencesPigeonOptions) throws {
-    try SharedPreferencesPlugin.getUserDefaults(options: options).removeObject(forKey: key)
+  func remove(key: String, options: String?) throws {
+    try SharedPreferencesPlugin.getUserDefaults(suiteName: options).removeObject(forKey: key)
   }
 
-  func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws {
-    let defaults = try SharedPreferencesPlugin.getUserDefaults(options: options)
+  func clear(allowList: [String]?, options: String?) throws {
+    let defaults = try SharedPreferencesPlugin.getUserDefaults(suiteName: options)
     if let allowList = allowList {
       for (key) in allowList {
         defaults.removeObject(forKey: key)
@@ -146,7 +145,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   /// Returns all preferences stored with specified prefix.
   /// If [allowList] is included, only items included will be returned.
   /// If no [allowList], returns supported types only.
-  static func getAllPrefs(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws
+  static func getAllPrefs(allowList: [String]?, suiteName: String?) throws
     -> [String: Any]
   {
     var filteredPrefs: [String: Any] = [:]
@@ -158,8 +157,8 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
     // `dictionaryRepresentation` returns keys from the global domain.
     // Also, Apple's docs on `persistentDomain` are incorrect,
     // see: https://github.com/feedback-assistant/reports/issues/165
-    if let appDomain = options.suiteName ?? Bundle.main.bundleIdentifier,
-      let prefs = try getUserDefaults(options: options).persistentDomain(forName: appDomain)
+    if let appDomain = suiteName ?? Bundle.main.bundleIdentifier,
+      let prefs = try getUserDefaults(suiteName: suiteName).persistentDomain(forName: appDomain)
     {
       if let allowSet = allowSet {
         filteredPrefs = prefs.filter { allowSet.contains($0.key) }

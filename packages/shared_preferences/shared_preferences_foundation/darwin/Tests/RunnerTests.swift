@@ -114,9 +114,8 @@ struct RunnerTests {
 
   // Async system tests.
 
-  let emptyOptions = SharedPreferencesPigeonOptions()
-  let optionsWithSuiteName = SharedPreferencesPigeonOptions(
-    suiteName: "group.example.sharedPreferencesFoundationExample")
+  let emptyOptions: String? = nil
+  let optionsWithSuiteName = "group.example.sharedPreferencesFoundationExample"
 
   @Test func asyncSetAndGet() throws {
     let plugin = SharedPreferencesPlugin()

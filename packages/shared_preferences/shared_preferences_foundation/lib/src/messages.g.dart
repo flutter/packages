@@ -18,60 +18,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-bool _deepEquals(Object? a, Object? b) {
-  if (a is List && b is List) {
-    return a.length == b.length &&
-        a.indexed.every(
-          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
-        );
-  }
-  if (a is Map && b is Map) {
-    return a.length == b.length &&
-        a.entries.every(
-          (MapEntry<Object?, Object?> entry) =>
-              (b as Map<Object?, Object?>).containsKey(entry.key) &&
-              _deepEquals(entry.value, b[entry.key]),
-        );
-  }
-  return a == b;
-}
-
-class SharedPreferencesPigeonOptions {
-  SharedPreferencesPigeonOptions({this.suiteName});
-
-  String? suiteName;
-
-  List<Object?> _toList() {
-    return <Object?>[suiteName];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static SharedPreferencesPigeonOptions decode(Object result) {
-    result as List<Object?>;
-    return SharedPreferencesPigeonOptions(suiteName: result[0] as String?);
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! SharedPreferencesPigeonOptions ||
-        other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -79,21 +25,8 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is SharedPreferencesPigeonOptions) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 129:
-        return SharedPreferencesPigeonOptions.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
     }
   }
 }
@@ -313,7 +246,7 @@ class UserDefaultsApi {
   Future<void> set(
     String key,
     Object value,
-    SharedPreferencesPigeonOptions options,
+    String? suiteName,
   ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.set$pigeonVar_messageChannelSuffix';
@@ -324,7 +257,7 @@ class UserDefaultsApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[key, value, options],
+      <Object?>[key, value, suiteName],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -344,7 +277,7 @@ class UserDefaultsApi {
   /// Removes all properties from shared preferences data set with matching prefix.
   Future<void> clear(
     List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
+    String? suiteName,
   ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.clear$pigeonVar_messageChannelSuffix';
@@ -355,7 +288,7 @@ class UserDefaultsApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[allowList, options],
+      <Object?>[allowList, suiteName],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -375,7 +308,7 @@ class UserDefaultsApi {
   /// Gets all properties from shared preferences data set with matching prefix.
   Future<Map<String, Object>> getAll(
     List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
+    String? suiteName,
   ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getAll$pigeonVar_messageChannelSuffix';
@@ -386,7 +319,7 @@ class UserDefaultsApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[allowList, options],
+      <Object?>[allowList, suiteName],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -412,7 +345,7 @@ class UserDefaultsApi {
   /// Gets individual value stored with [key], if any.
   Future<Object?> getValue(
     String key,
-    SharedPreferencesPigeonOptions options,
+    String? suiteName,
   ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getValue$pigeonVar_messageChannelSuffix';
@@ -423,7 +356,7 @@ class UserDefaultsApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[key, options],
+      <Object?>[key, suiteName],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
@@ -443,7 +376,7 @@ class UserDefaultsApi {
   /// Gets all properties from shared preferences data set with matching prefix.
   Future<List<String>> getKeys(
     List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
+    String? suiteName,
   ) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_foundation.UserDefaultsApi.getKeys$pigeonVar_messageChannelSuffix';
@@ -454,7 +387,7 @@ class UserDefaultsApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[allowList, options],
+      <Object?>[allowList, suiteName],
     );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;

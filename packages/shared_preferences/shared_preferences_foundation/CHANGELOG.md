@@ -1,3 +1,7 @@
+## 2.5.7
+
+* Fixes an iOS startup crash by removing custom codec usage for async host API registration.
+
 ## 2.5.6
 
 * Updates to Pigeon 26.

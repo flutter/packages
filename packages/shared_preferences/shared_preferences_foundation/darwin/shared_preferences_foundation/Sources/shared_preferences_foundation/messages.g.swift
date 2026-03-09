@@ -67,130 +67,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-func deepEqualsmessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
-  let cleanLhs = nilOrValue(lhs) as Any?
-  let cleanRhs = nilOrValue(rhs) as Any?
-  switch (cleanLhs, cleanRhs) {
-  case (nil, nil):
-    return true
-
-  case (nil, _), (_, nil):
-    return false
-
-  case is (Void, Void):
-    return true
-
-  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
-    return cleanLhsHashable == cleanRhsHashable
-
-  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
-    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
-    for (index, element) in cleanLhsArray.enumerated() {
-      if !deepEqualsmessages(element, cleanRhsArray[index]) {
-        return false
-      }
-    }
-    return true
-
-  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
-    for (key, cleanLhsValue) in cleanLhsDictionary {
-      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
-      if !deepEqualsmessages(cleanLhsValue, cleanRhsDictionary[key]!) {
-        return false
-      }
-    }
-    return true
-
-  default:
-    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
-    return false
-  }
-}
-
-func deepHashmessages(value: Any?, hasher: inout Hasher) {
-  if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
-    return
-  }
-
-  if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys {
-      hasher.combine(key)
-      deepHashmessages(value: valueDict[key]!, hasher: &hasher)
-    }
-    return
-  }
-
-  if let hashableValue = value as? AnyHashable {
-    hasher.combine(hashableValue.hashValue)
-  }
-
-  return hasher.combine(String(describing: value))
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct SharedPreferencesPigeonOptions: Hashable {
-  var suiteName: String? = nil
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> SharedPreferencesPigeonOptions? {
-    let suiteName: String? = nilOrValue(pigeonVar_list[0])
-
-    return SharedPreferencesPigeonOptions(
-      suiteName: suiteName
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      suiteName
-    ]
-  }
-  static func == (lhs: SharedPreferencesPigeonOptions, rhs: SharedPreferencesPigeonOptions) -> Bool
-  {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())
-  }
-  func hash(into hasher: inout Hasher) {
-    deepHashmessages(value: toList(), hasher: &hasher)
-  }
-}
-
-private class MessagesPigeonCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-    case 129:
-      return SharedPreferencesPigeonOptions.fromList(self.readValue() as! [Any?])
-    default:
-      return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class MessagesPigeonCodecWriter: FlutterStandardWriter {
-  override func writeValue(_ value: Any) {
-    if let value = value as? SharedPreferencesPigeonOptions {
-      super.writeByte(129)
-      super.writeValue(value.toList())
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
-private class MessagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
-  override func reader(with data: Data) -> FlutterStandardReader {
-    return MessagesPigeonCodecReader(data: data)
-  }
-
-  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return MessagesPigeonCodecWriter(data: data)
-  }
-}
-
-class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
-}
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol LegacyUserDefaultsApi {
   func remove(key: String) throws
@@ -203,7 +79,7 @@ protocol LegacyUserDefaultsApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class LegacyUserDefaultsApiSetup {
-  static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { FlutterStandardMessageCodec.sharedInstance() }
   /// Sets up an instance of `LegacyUserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: LegacyUserDefaultsApi?,
@@ -328,20 +204,20 @@ class LegacyUserDefaultsApiSetup {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserDefaultsApi {
   /// Adds property to shared preferences data set of type String.
-  func set(key: String, value: Any, options: SharedPreferencesPigeonOptions) throws
+  func set(key: String, value: Any, options: String?) throws
   /// Removes all properties from shared preferences data set with matching prefix.
-  func clear(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws
+  func clear(allowList: [String]?, options: String?) throws
   /// Gets all properties from shared preferences data set with matching prefix.
-  func getAll(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String: Any]
+  func getAll(allowList: [String]?, options: String?) throws -> [String: Any]
   /// Gets individual value stored with [key], if any.
-  func getValue(key: String, options: SharedPreferencesPigeonOptions) throws -> Any?
+  func getValue(key: String, options: String?) throws -> Any?
   /// Gets all properties from shared preferences data set with matching prefix.
-  func getKeys(allowList: [String]?, options: SharedPreferencesPigeonOptions) throws -> [String]
+  func getKeys(allowList: [String]?, options: String?) throws -> [String]
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class UserDefaultsApiSetup {
-  static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { FlutterStandardMessageCodec.sharedInstance() }
   /// Sets up an instance of `UserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?,
@@ -357,7 +233,7 @@ class UserDefaultsApiSetup {
         let args = message as! [Any?]
         let keyArg = args[0] as! String
         let valueArg = args[1]!
-        let optionsArg = args[2] as! SharedPreferencesPigeonOptions
+        let optionsArg: String? = nilOrValue(args[2])
         do {
           try api.set(key: keyArg, value: valueArg, options: optionsArg)
           reply(wrapResult(nil))
@@ -377,7 +253,7 @@ class UserDefaultsApiSetup {
       clearChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let allowListArg: [String]? = nilOrValue(args[0])
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
+        let optionsArg: String? = nilOrValue(args[1])
         do {
           try api.clear(allowList: allowListArg, options: optionsArg)
           reply(wrapResult(nil))
@@ -397,7 +273,7 @@ class UserDefaultsApiSetup {
       getAllChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let allowListArg: [String]? = nilOrValue(args[0])
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
+        let optionsArg: String? = nilOrValue(args[1])
         do {
           let result = try api.getAll(allowList: allowListArg, options: optionsArg)
           reply(wrapResult(result))
@@ -417,7 +293,7 @@ class UserDefaultsApiSetup {
       getValueChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let keyArg = args[0] as! String
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
+        let optionsArg: String? = nilOrValue(args[1])
         do {
           let result = try api.getValue(key: keyArg, options: optionsArg)
           reply(wrapResult(result))
@@ -437,7 +313,7 @@ class UserDefaultsApiSetup {
       getKeysChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let allowListArg: [String]? = nilOrValue(args[0])
-        let optionsArg = args[1] as! SharedPreferencesPigeonOptions
+        let optionsArg: String? = nilOrValue(args[1])
         do {
           let result = try api.getKeys(allowList: allowListArg, options: optionsArg)
           reply(wrapResult(result))

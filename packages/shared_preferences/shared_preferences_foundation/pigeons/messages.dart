@@ -22,32 +22,21 @@ abstract class LegacyUserDefaultsApi {
   bool clear(String prefix, List<String>? allowList);
 }
 
-class SharedPreferencesPigeonOptions {
-  SharedPreferencesPigeonOptions({this.suiteName});
-  String? suiteName;
-}
-
 @HostApi()
 abstract class UserDefaultsApi {
   /// Adds property to shared preferences data set of type String.
   @SwiftFunction('set(key:value:options:)')
-  void set(String key, Object value, SharedPreferencesPigeonOptions options);
+  void set(String key, Object value, String? suiteName);
 
   /// Removes all properties from shared preferences data set with matching prefix.
-  void clear(List<String>? allowList, SharedPreferencesPigeonOptions options);
+  void clear(List<String>? allowList, String? suiteName);
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  Map<String, Object> getAll(
-    List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
-  );
+  Map<String, Object> getAll(List<String>? allowList, String? suiteName);
 
   /// Gets individual value stored with [key], if any.
-  Object? getValue(String key, SharedPreferencesPigeonOptions options);
+  Object? getValue(String key, String? suiteName);
 
   /// Gets all properties from shared preferences data set with matching prefix.
-  List<String> getKeys(
-    List<String>? allowList,
-    SharedPreferencesPigeonOptions options,
-  );
+  List<String> getKeys(List<String>? allowList, String? suiteName);
 }
