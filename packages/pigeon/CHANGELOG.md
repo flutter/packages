@@ -1,4 +1,4 @@
-## 26.1.11
+## 26.2.0
 
 * [kotlin] Adds option to add javax.annotation.Generated annotation.
 
