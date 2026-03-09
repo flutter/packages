@@ -1,16 +1,16 @@
-RouteBase get $overrideOnExitRoute => GoRouteData.$route(
-      path: '/override-on-exit-route',
-      overrideOnExit: true,
-      factory: $OverrideOnExitRoute._fromState,
+RouteBase get $hasOverriddenOnExitRoute => GoRouteData.$route(
+      path: '/has-overridden-on-exit-route',
+      hasOverriddenOnExit: true,
+      factory: $HasOverriddenOnExitRoute._fromState,
     );
 
-mixin $OverrideOnExitRoute on GoRouteData {
-  static OverrideOnExitRoute _fromState(GoRouterState state) =>
-      OverrideOnExitRoute();
+mixin $HasOverriddenOnExitRoute on GoRouteData {
+  static HasOverriddenOnExitRoute _fromState(GoRouterState state) =>
+      HasOverriddenOnExitRoute();
 
   @override
   String get location => GoRouteData.$location(
-        '/override-on-exit-route',
+        '/has-overridden-on-exit-route',
       );
 
   @override
@@ -27,18 +27,18 @@ mixin $OverrideOnExitRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $notOverrideOnExitRoute => GoRouteData.$route(
-      path: '/not-override-on-exit-route',
-      factory: $NotOverrideOnExitRoute._fromState,
+RouteBase get $hasNotOverriddenOnExitRoute => GoRouteData.$route(
+      path: '/has-not-overridden-on-exit-route',
+      factory: $HasNotOverriddenOnExitRoute._fromState,
     );
 
-mixin $NotOverrideOnExitRoute on GoRouteData {
-  static NotOverrideOnExitRoute _fromState(GoRouterState state) =>
-      NotOverrideOnExitRoute();
+mixin $HasNotOverriddenOnExitRoute on GoRouteData {
+  static HasNotOverriddenOnExitRoute _fromState(GoRouterState state) =>
+      HasNotOverriddenOnExitRoute();
 
   @override
   String get location => GoRouteData.$location(
-        '/not-override-on-exit-route',
+        '/has-not-overridden-on-exit-route',
       );
 
   @override

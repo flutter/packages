@@ -393,7 +393,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     required this.path,
     required this.name,
     required this.caseSensitive,
-    required this.overrideOnExit,
+    required this.hasOverriddenOnExit,
     required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
@@ -415,7 +415,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   /// when navigating away from this route.
   ///
   /// Defaults to false.
-  final bool overrideOnExit;
+  final bool hasOverriddenOnExit;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -484,7 +484,7 @@ mixin $_mixinName on $routeDataClassName {
       'path: ${escapeDartString(path)},'
       '${name != null ? 'name: ${escapeDartString(name!)},' : ''}'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${overrideOnExit ? 'overrideOnExit: $overrideOnExit,' : ''}'
+      '${hasOverriddenOnExit ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
@@ -496,7 +496,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   RelativeGoRouteConfig._({
     required this.path,
     required this.caseSensitive,
-    required this.overrideOnExit,
+    required this.hasOverriddenOnExit,
     required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
@@ -515,7 +515,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   /// when navigating away from this route.
   ///
   /// Defaults to false.
-  final bool overrideOnExit;
+  final bool hasOverriddenOnExit;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -571,7 +571,7 @@ mixin $_mixinName on $routeDataClassName {
   String get routeConstructorParameters =>
       'path: ${escapeDartString(path)},'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${overrideOnExit ? 'overrideOnExit: $overrideOnExit,' : ''}'
+      '${hasOverriddenOnExit ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
@@ -688,14 +688,14 @@ abstract class RouteBaseConfig {
         }
         final ConstantReader nameValue = reader.read('name');
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final ConstantReader overrideOnExitValue = reader.read(
-          'overrideOnExit',
+        final bool hasOverriddenOnExit = classElement.methods.any(
+          (method) => method.name == 'onExit',
         );
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
-          overrideOnExit: overrideOnExitValue.boolValue,
+          hasOverriddenOnExit: hasOverriddenOnExit,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
@@ -719,13 +719,13 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final ConstantReader overrideOnExitValue = reader.read(
-          'overrideOnExit',
+        final bool hasOverriddenOnExit = classElement.methods.any(
+          (method) => method.name == 'onExit',
         );
         value = RelativeGoRouteConfig._(
           path: pathValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
-          overrideOnExit: overrideOnExitValue.boolValue,
+          hasOverriddenOnExit: hasOverriddenOnExit,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(

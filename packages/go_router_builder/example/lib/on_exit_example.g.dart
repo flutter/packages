@@ -16,7 +16,7 @@ RouteBase get $homeRoute => GoRouteData.$route(
   routes: [
     GoRouteData.$route(
       path: 'sub-route',
-      overrideOnExit: true,
+      hasOverriddenOnExit: true,
       factory: $SubRoute._fromState,
     ),
   ],
