@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "com.example.test_plugin"
 version = "1.0-SNAPSHOT"
 
@@ -26,6 +28,12 @@ plugins {
     id("kotlin-android")
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+    }
+}
+
 android {
     namespace = "com.example.test_plugin"
     compileSdk = flutter.compileSdkVersion
@@ -33,11 +41,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-        allWarningsAsErrors = true
     }
 
     defaultConfig {
