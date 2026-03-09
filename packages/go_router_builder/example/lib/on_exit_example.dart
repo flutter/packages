@@ -24,7 +24,7 @@ class App extends StatelessWidget {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<SubRoute>(path: 'sub-route', overrideOnExit: true),
+    TypedGoRoute<SubRoute>(path: 'sub-route'),
   ],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {

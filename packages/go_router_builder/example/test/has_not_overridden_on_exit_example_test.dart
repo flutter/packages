@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router_builder_example/not_override_on_exit_example.dart';
+import 'package:go_router_builder_example/has_not_overridden_on_exit_example.dart';
 
 void main() {
   testWidgets('HomeScreen should return result from Sub2Screen', (

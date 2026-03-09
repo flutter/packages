@@ -2,7 +2,7 @@
 
 // ignore_for_file: always_specify_types, public_member_api_docs
 
-part of 'not_override_on_exit_example.dart';
+part of 'has_not_overridden_on_exit_example.dart';
 
 // **************************************************************************
 // GoRouterGenerator

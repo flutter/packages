@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-part 'not_override_on_exit_example.g.dart';
+part 'has_not_overridden_on_exit_example.g.dart';
 
 void main() => runApp(App());
 

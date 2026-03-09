@@ -1,7 +1,6 @@
 ## 4.3.0
 
-- Adds support for `overrideOnExit` parameter in `TypedGoRoute` and `TypedRelativeGoRoute` annotations.
-  When set to `true`, the generated route will include `overrideOnExit: true` in the GoRoute constructor, enabling custom `onExit` callback implementation for the route. Defaults to `false`.
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
 
 ## 4.2.0
 
