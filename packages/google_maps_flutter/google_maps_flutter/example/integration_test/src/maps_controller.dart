@@ -567,7 +567,7 @@ void runTests() {
     skip: isAndroid || isWeb || isIOS,
   );
 
-  testWidgets('testCloudMapId', (WidgetTester tester) async {
+  testWidgets('testMapId', (WidgetTester tester) async {
     final mapIdCompleter = Completer<int>();
     final Key key = GlobalKey();
 
@@ -579,7 +579,7 @@ void runTests() {
         onMapCreated: (GoogleMapController controller) {
           mapIdCompleter.complete(controller.mapId);
         },
-        cloudMapId: kCloudMapId,
+        mapId: kMapId,
       ),
     );
     await tester.pumpAndSettle();
