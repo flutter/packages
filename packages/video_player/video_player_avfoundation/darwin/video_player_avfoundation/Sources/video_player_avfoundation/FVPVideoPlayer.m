@@ -508,6 +508,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void)setAllowScreenAutoLock:(BOOL)allowScreenAutoLock error:(FlutterError *_Nullable *_Nonnull)error {
+  if (@available(iOS 12.0, *)) {
+    self.player.preventsDisplaySleepDuringVideoPlayback = !allowScreenAutoLock;
+  }
+}
+
 #pragma mark - Private
 
 - (int64_t)duration {

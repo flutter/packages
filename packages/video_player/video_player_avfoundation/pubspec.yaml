@@ -36,3 +36,8 @@ dev_dependencies:
 topics:
   - video
   - video-player
+
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
+

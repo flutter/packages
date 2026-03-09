@@ -581,6 +581,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
     }
 
+    if (videoPlayerOptions?.allowScreenAutoLock != null) {
+      await _videoPlayerPlatform.setAllowScreenAutoLock(
+        _playerId,
+        videoPlayerOptions!.allowScreenAutoLock,
+      );
+    }
+
     _playerId =
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;

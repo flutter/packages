@@ -1570,6 +1570,19 @@ void main() {
       expect(controller.videoPlayerOptions!.mixWithOthers, true);
     });
 
+    test('setAllowScreenAutoLock', () async {
+      final controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(allowScreenAutoLock: true),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+      expect(controller.videoPlayerOptions!.allowScreenAutoLock, true);
+      expect(fakeVideoPlayerPlatform.calls.contains('setAllowScreenAutoLock'),
+          true);
+    });
+
     test('true allowBackgroundPlayback continues playback', () async {
       final controller = VideoPlayerController.networkUrl(
         _localhostUri,
@@ -1840,6 +1853,12 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
     calls.add('setMixWithOthers');
+  }
+
+  @override
+  Future<void> setAllowScreenAutoLock(
+      int playerId, bool allowScreenAutoLock) async {
+    calls.add('setAllowScreenAutoLock');
   }
 
   @override

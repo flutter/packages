@@ -591,4 +591,28 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"VideoPlayerInstanceApi.setAllowScreenAutoLock",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setAllowScreenAutoLock:error:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
+                @"@selector(setAllowScreenAutoLock:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        BOOL arg_allowScreenAutoLock = [GetNullableObjectAtIndex(args, 0) boolValue];
+        FlutterError *error;
+        [api setAllowScreenAutoLock:arg_allowScreenAutoLock error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
