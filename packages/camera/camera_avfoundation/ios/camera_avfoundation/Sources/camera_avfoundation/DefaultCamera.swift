@@ -740,7 +740,7 @@ final class DefaultCamera: NSObject, Camera {
     let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
-      imageQuality: fileExtension == "jpg" && imageQuality < 100 ? imageQuality : nil,
+      imageQuality: fileExtension != "heif" && imageQuality < 100 ? imageQuality : nil,
       completionHandler: { [weak self] path, error in
         guard let strongSelf = self else { return }
 
