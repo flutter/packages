@@ -103,7 +103,7 @@ class _GoRouteParameters {
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
-  bool overrideOnExit = false,
+  bool hasOverriddenOnExit = false,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -124,7 +124,7 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: overrideOnExit
+    onExit: hasOverriddenOnExit
         ? (BuildContext context, GoRouterState state) =>
               factoryImpl(state).onExit(context, state)
         : null,
@@ -159,12 +159,12 @@ abstract class GoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
-    bool overrideOnExit = false,
+    bool hasOverriddenOnExit = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
-      overrideOnExit: overrideOnExit,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
@@ -232,12 +232,12 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
-    bool overrideOnExit = false,
+    bool hasOverriddenOnExit = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
-      overrideOnExit: overrideOnExit,
+      hasOverriddenOnExit: hasOverriddenOnExit,
     );
 
     return GoRoute(
@@ -490,7 +490,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
     this.name,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
-    this.overrideOnExit = false,
+    this.hasOverriddenOnExit = false,
   });
 
   /// The path that corresponds to this route.
@@ -524,17 +524,22 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   /// Defaults to `true`.
   final bool caseSensitive;
 
-  /// Whether to override the default behavior of [GoRoute.onExit] to invoke the
-  /// [GoRouteData.onExit] method of the route data class.
+  /// Whether the route data class has overridden the [GoRouteData.onExit] method.
   ///
-  /// When `true`, the [GoRouteData.onExit] method will be invoked when
-  /// the route is removed from GoRouter's route history.
+  /// When set to `true`, the code generator will wire up the [GoRoute.onExit]
+  /// callback to call the overridden [GoRouteData.onExit] method when the route
+  /// is removed from GoRouter's route history.
   ///
-  /// When `false`, the default behavior is used, which does not invoke
-  /// the [GoRouteData.onExit] method.
+  /// When set to `false` (the default), the [GoRoute.onExit] callback will not
+  /// be set, meaning the route data class's [GoRouteData.onExit] method will
+  /// not be invoked even if it has been overridden.
+  ///
+  /// This field should be set to `true` only if the route data class that extends
+  /// [GoRouteData] has overridden the [GoRouteData.onExit] method to provide
+  /// custom exit handling logic.
   ///
   /// Defaults to `false`.
-  final bool overrideOnExit;
+  final bool hasOverriddenOnExit;
 }
 
 /// A superclass for each typed relative go route descendant
@@ -546,7 +551,7 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
     required this.path,
     this.routes = const <TypedRoute<RouteData>>[],
     this.caseSensitive = true,
-    this.overrideOnExit = false,
+    this.hasOverriddenOnExit = false,
   });
 
   /// The relative path that corresponds to this route.
@@ -572,17 +577,22 @@ class TypedRelativeGoRoute<T extends RelativeGoRouteData>
   /// Defaults to `true`.
   final bool caseSensitive;
 
-  /// Whether to override the default behavior of [GoRoute.onExit] to invoke the
-  /// [RelativeGoRouteData.onExit] method of the route data class.
+  /// Whether the route data class has overridden the [RelativeGoRouteData.onExit] method.
   ///
-  /// When `true`, the [RelativeGoRouteData.onExit] method will be invoked when
+  /// When set to `true`, the code generator will wire up the [GoRoute.onExit]
+  /// callback to call the overridden [RelativeGoRouteData.onExit] method when
   /// the route is removed from GoRouter's route history.
   ///
-  /// When `false`, the default behavior is used, which does not invoke
-  /// the [RelativeGoRouteData.onExit] method.
+  /// When set to `false` (the default), the [GoRoute.onExit] callback will not
+  /// be set, meaning the route data class's [RelativeGoRouteData.onExit] method
+  /// will not be invoked even if it has been overridden.
+  ///
+  /// This field should be set to `true` only if the route data class that extends
+  /// [RelativeGoRouteData] has overridden the [RelativeGoRouteData.onExit] method
+  /// to provide custom exit handling logic.
   ///
   /// Defaults to `false`.
-  final bool overrideOnExit;
+  final bool hasOverriddenOnExit;
 }
 
 /// A superclass for each typed shell route descendant
