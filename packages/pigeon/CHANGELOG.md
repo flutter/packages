@@ -1,3 +1,8 @@
+## 26.1.11
+
+* Produces a helpful error message when a method return type is missing or an
+  unsupported type, such as a function type or record type.
+
 ## 26.1.10
 
 * Dramatically reduces the number of File write operations sent to the operating
