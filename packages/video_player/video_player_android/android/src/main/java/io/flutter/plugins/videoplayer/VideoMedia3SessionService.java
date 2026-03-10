@@ -487,20 +487,22 @@ public class VideoMedia3SessionService extends MediaSessionService {
         resultBuilder.setAvailablePlayerCommands(availableCommands);
 
         // Configure media button layout for notification
-        ImmutableList<CommandButton> customLayout =
-            ImmutableList.of(
-                new CommandButton.Builder()
-                    .setPlayerCommand(Player.COMMAND_SEEK_BACK)
-                    .setDisplayName("Rewind")
-                    .build(),
-                new CommandButton.Builder()
-                    .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
-                    .setDisplayName("Play/Pause")
-                    .build(),
-                new CommandButton.Builder()
-                    .setPlayerCommand(Player.COMMAND_SEEK_FORWARD)
-                    .setDisplayName("Fast Forward")
-                    .build());
+        ImmutableList<CommandButton> customLayout = ImmutableList.of(
+            new CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SEEK_BACK)
+                .setDisplayName("Rewind")
+                .setIconResId(android.R.drawable.ic_media_rew)
+                .build(),
+            new CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                .setDisplayName("Play/Pause")
+                .setIconResId(android.R.drawable.ic_media_play)
+                .build(),
+            new CommandButton.Builder()
+                .setPlayerCommand(Player.COMMAND_SEEK_FORWARD)
+                .setDisplayName("Fast Forward")
+                .setIconResId(android.R.drawable.ic_media_ff)
+                .build());
 
         resultBuilder.setMediaButtonPreferences(customLayout);
       }
