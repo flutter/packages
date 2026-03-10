@@ -1,3 +1,21 @@
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
+
+## 26.1.10
+
+* Dramatically reduces the number of File write operations sent to the operating
+  system during code-generation. This improves performance of IDEs and the Dart
+  analysis server.
+
+## 26.1.9
+
+* [dart] Reduces much duplication in reply-handling code.
+
+## 26.1.8
+
+* Makes some internal class constructors constant.
+
 ## 26.1.7
 
 * [objc] Updates to use module imports.
