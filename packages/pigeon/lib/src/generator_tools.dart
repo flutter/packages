@@ -15,7 +15,10 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '26.1.10';
+const String pigeonVersion = '26.2.0';
+
+/// Default plugin package name.
+const String defaultPluginPackageName = 'dev.flutter.pigeon';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
