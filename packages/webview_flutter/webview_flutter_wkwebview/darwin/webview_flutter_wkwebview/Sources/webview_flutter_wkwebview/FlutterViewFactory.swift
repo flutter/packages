@@ -15,6 +15,12 @@ import Foundation
 
 #if os(iOS)
   class PlatformViewImpl: NSObject, FlutterPlatformView {
+    // TODO(bparrishMines): Change to strong reference once this issue is fixed in the engine and
+    // makes it to stable. See https://github.com/flutter/flutter/issues/168535.
+    // The InstanceManager used by pigeon adds an associated object to added instance that make a message call when they
+    // are deallocated. This sets a weak reference to the underlying UIView to prevent a crash where the UIView is no
+    // longer referenced by the plugin, but the FlutterViewController still maintains a reference to it when the
+    // BinaryMessenger becomes invalid.
     weak var uiView: UIView?
 
     init(uiView: UIView) {
@@ -22,7 +28,14 @@ import Foundation
     }
 
     func view() -> UIView {
-      return uiView ?? UIView()
+      if (uiView == nil) {
+        #if DEBUG
+        fatalError("WebViewFlutterPluginError: UIView has be deallocated, but is being accessed.")
+        #else
+        return UIView()
+        #endif
+      }
+      return uiView
     }
   }
 #endif
