@@ -745,10 +745,8 @@ abstract class WKPreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript is enabled.
   void setJavaScriptEnabled(bool enabled);
 
-  /// A Boolean value that indicates whether JavaScript can open windows
+  /// Set a Boolean value that indicates whether JavaScript can open windows
   /// without user interaction.
-  ///
-  /// The default value is `false` on iOS and `true` on macOS.
   ///
   /// See https://developer.apple.com/documentation/webkit/wkpreferences/javascriptcanopenwindowsautomatically
   void setJavaScriptCanOpenWindowsAutomatically(bool enabled);
