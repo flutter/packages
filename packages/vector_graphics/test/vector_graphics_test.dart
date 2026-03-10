@@ -12,8 +12,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart'
-    show encodeSvg;
 
 const VectorGraphicsCodec codec = VectorGraphicsCodec();
 
@@ -243,144 +241,6 @@ void main() {
       final Offset outsidePoint = outsideBox.localToGlobal(Offset.zero);
 
       expect(insidePoint, equals(outsidePoint));
-    });
-  });
-
-  // TODO(gustl22): can be removed if redundant
-  group('BoxFit Goldens', () {
-    late ByteData vectorGraphicBuffer;
-
-    setUpAll(() async {
-      final Uint8List bytes = encodeSvg(
-        xml: svgString,
-        debugName: 'test',
-        enableClippingOptimizer: false,
-        enableMaskingOptimizer: false,
-        enableOverdrawOptimizer: false,
-      );
-      vectorGraphicBuffer = bytes.buffer.asByteData();
-    });
-
-    testWidgets(
-      'Scale on BoxFit.contain without constraints, but with viewbox',
-      (WidgetTester tester) async {
-        final goldenKey = UniqueKey();
-        final vectorGraphic = UniqueKey();
-        await tester.pumpWidget(
-          RepaintBoundary(
-            key: goldenKey,
-            child: Center(
-              child: Container(
-                width: 400,
-                height: 200,
-                color: Colors.white,
-                child: VectorGraphic(
-                  key: vectorGraphic,
-                  loader: TestBytesLoader(vectorGraphicBuffer),
-                  // ignore: avoid_redundant_argument_values
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await expectLater(
-          find.byKey(goldenKey),
-          matchesGoldenFile('goldens/boxfit_contain_with_viewbox.png'),
-        );
-      },
-    );
-
-    testWidgets('Scale on BoxFit.cover without constraints, but with viewbox', (
-      WidgetTester tester,
-    ) async {
-      final goldenKey = UniqueKey();
-      final vectorGraphic = UniqueKey();
-      await tester.pumpWidget(
-        RepaintBoundary(
-          key: goldenKey,
-          child: Center(
-            child: Container(
-              width: 400,
-              height: 200,
-              color: Colors.white,
-              child: VectorGraphic(
-                key: vectorGraphic,
-                loader: TestBytesLoader(vectorGraphicBuffer),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await expectLater(
-        find.byKey(goldenKey),
-        matchesGoldenFile('goldens/boxfit_cover_with_viewbox.png'),
-      );
-    });
-
-    testWidgets('Scale on BoxFit.fill without constraints, but with viewbox', (
-      WidgetTester tester,
-    ) async {
-      final goldenKey = UniqueKey();
-      final vectorGraphic = UniqueKey();
-      await tester.pumpWidget(
-        RepaintBoundary(
-          key: goldenKey,
-          child: Center(
-            child: Container(
-              width: 400,
-              height: 200,
-              color: Colors.white,
-              child: VectorGraphic(
-                key: vectorGraphic,
-                loader: TestBytesLoader(vectorGraphicBuffer),
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await expectLater(
-        find.byKey(goldenKey),
-        matchesGoldenFile('goldens/boxfit_fill_with_viewbox.png'),
-      );
-    });
-
-    testWidgets('Scale on BoxFit.none without constraints, but with viewbox', (
-      WidgetTester tester,
-    ) async {
-      final goldenKey = UniqueKey();
-      final vectorGraphic = UniqueKey();
-      await tester.pumpWidget(
-        RepaintBoundary(
-          key: goldenKey,
-          child: Center(
-            child: Container(
-              width: 400,
-              height: 400,
-              color: Colors.white,
-              child: VectorGraphic(
-                key: vectorGraphic,
-                loader: TestBytesLoader(vectorGraphicBuffer),
-                fit: BoxFit.none,
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await expectLater(
-        find.byKey(goldenKey),
-        matchesGoldenFile('goldens/boxfit_none_with_viewbox.png'),
-      );
     });
   });
 
@@ -1012,10 +872,3 @@ class ThrowingBytesLoader extends BytesLoader {
     throw UnimplementedError('Test exception');
   }
 }
-
-const String svgString = '''
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
-    <path fill="#42A5F5" d="M156.2 128.9 9.8 128.9 9.8 10.4 156.2 10.4"/>
-    <path fill="#0D47A1" d="M79.5 142.8 79.5 191.6 156.2 191.6 156.2 142.8"/>
-</svg>
-''';
