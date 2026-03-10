@@ -1,3 +1,7 @@
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
+
 ## 26.1.10
 
 * Dramatically reduces the number of File write operations sent to the operating
