@@ -32,6 +32,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Experimental flag for StoreKit2.
   static bool _useStoreKit2 = true;
+  bool get isStoreKit2Enabled => _useStoreKit2;
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;

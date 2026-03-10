@@ -15,7 +15,7 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
+public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI, FlutterSceneLifeCycleDelegate {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -60,6 +60,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     SetUpFIAInAppPurchaseAPI(messenger, instance)
     if #available(iOS 15.0, macOS 12.0, *) {
       InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
+      registrar.addSceneDelegate(instance)
     }
   }
 

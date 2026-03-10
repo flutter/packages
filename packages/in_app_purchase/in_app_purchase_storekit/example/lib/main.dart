@@ -148,6 +148,7 @@ class _MyAppState extends State<_MyApp> {
             _buildConnectionCheckTile(),
             _buildProductList(),
             _buildConsumableBox(),
+            _buildCodeRedemptionButton(),
             _buildRestoreButton(),
           ],
         ),
@@ -423,6 +424,29 @@ class _MyAppState extends State<_MyApp> {
             shrinkWrap: true,
             padding: const EdgeInsets.all(16.0),
             children: tokens,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCodeRedemptionButton() {
+    if (_loading) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => _iapStoreKitPlatformAddition.presentCodeRedemptionSheet(),
+            child: const Text('Show code redemption sheet'),
           ),
         ],
       ),

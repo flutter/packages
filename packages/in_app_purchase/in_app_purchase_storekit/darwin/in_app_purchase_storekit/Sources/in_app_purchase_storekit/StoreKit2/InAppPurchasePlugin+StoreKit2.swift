@@ -321,6 +321,21 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void) {
+    if #available(iOS 16.0, *) {
+      let windowScene = self.registrar?.viewController?.view.window?.windowScene
+
+      Task {
+        do {
+                try await AppStore.presentOfferCodeRedeemSheet(in: windowScene!)
+                completion(.success(()))
+            } catch {
+                completion(.failure(error))
+            }
+      }
+    }
+  }
+
   /// Wrapper method around StoreKit2's sync() method
   /// https://developer.apple.com/documentation/storekit/appstore/sync()
   /// When called, a system prompt will ask users to enter their authentication details
