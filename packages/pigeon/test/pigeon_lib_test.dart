@@ -1265,6 +1265,38 @@ abstract class Api {
     expect(results.errors[0].message, contains('Unknown type: Foo'));
   });
 
+  test('function return type is missing', () {
+    const code = '''
+@HostApi()
+abstract class Api {
+  storeAll(List<int?> foos);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].lineNumber, 3);
+    expect(
+      results.errors[0].message,
+      contains('Expected a named type for the return type of ("Api.storeAll")'),
+    );
+  });
+
+  test('function return type is record type', () {
+    const code = '''
+@HostApi()
+abstract class Api {
+  (int, int) storeAll(List<int?> foos);
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, hasLength(1));
+    expect(results.errors[0].lineNumber, 3);
+    expect(
+      results.errors[0].message,
+      contains('Expected a named type for the return type of ("Api.storeAll")'),
+    );
+  });
+
   test('Object type argument', () {
     const code = '''
 @HostApi()

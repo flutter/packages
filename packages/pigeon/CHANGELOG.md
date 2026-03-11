@@ -1,3 +1,8 @@
+## 26.2.3
+
+* Produces a helpful error message when a method return type is missing or an
+  unsupported type, such as a function type or record type.
+
 ## 26.2.2
 
 * [dart] Ignores all lint rules in generated code.
