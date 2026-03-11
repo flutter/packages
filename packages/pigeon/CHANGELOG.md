@@ -1,8 +1,12 @@
-## 26.2.0
+## 26.3.0
 
 * Optimizes and improves data class equality and hashing.
 * Changes hashing and equality methods to behave consistently across platforms.
 * Adds equality methods to previously unsupported languages.
+
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
 
 ## 26.1.10
 

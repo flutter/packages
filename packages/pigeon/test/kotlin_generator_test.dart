@@ -982,6 +982,49 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
+  group('generated annotation', () {
+    late Root root;
+    late KotlinGenerator generator;
+    late StringBuffer sink;
+
+    setUp(() {
+      root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      generator = const KotlinGenerator();
+      sink = StringBuffer();
+    });
+
+    test('with generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+        useGeneratedAnnotation: true,
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains(kotlinGeneratedAnnotation));
+    });
+
+    test('without generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, isNot(contains(kotlinGeneratedAnnotation)));
+    });
+  });
+
   test('generics - list', () {
     final classDefinition = Class(
       name: 'Foobar',
