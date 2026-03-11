@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import StoreKit
+import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
@@ -324,14 +325,13 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void) {
     if #available(iOS 16.0, *) {
       let windowScene = self.registrar?.viewController?.view.window?.windowScene
-
       Task {
         do {
-                try await AppStore.presentOfferCodeRedeemSheet(in: windowScene!)
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+          try await AppStore.presentOfferCodeRedeemSheet(in: windowScene!)
+            completion(.success(()))
+          } catch {
+            completion(.failure(error))
+          }
       }
     }
   }
