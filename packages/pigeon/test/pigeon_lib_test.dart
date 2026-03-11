@@ -203,12 +203,12 @@ abstract class Api1 {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
     final Root root = parseResult.root;
-    expect(root.classes.length, equals(3));
-    expect(root.apis.length, equals(1));
+    expect(root.classes, hasLength(3));
+    expect(root.apis, hasLength(1));
     expect(root.apis[0].name, equals('Api1'));
-    expect(root.apis[0].methods.length, equals(1));
+    expect(root.apis[0].methods, hasLength(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
     expect(root.apis[0].methods[0].parameters[0].name, equals('input'));
     expect(
@@ -233,17 +233,17 @@ abstract class Api1 {
     expect(output, isNotNull);
     expect(unused, isNotNull);
 
-    expect(input?.fields.length, equals(1));
+    expect(input?.fields, hasLength(1));
     expect(input?.fields[0].name, equals('input'));
     expect(input?.fields[0].type.baseName, equals('String'));
     expect(input?.fields[0].type.isNullable, isTrue);
 
-    expect(output?.fields.length, equals(1));
+    expect(output?.fields, hasLength(1));
     expect(output?.fields[0].name, equals('output'));
     expect(output?.fields[0].type.baseName, equals('String'));
     expect(output?.fields[0].type.isNullable, isTrue);
 
-    expect(unused?.fields.length, equals(1));
+    expect(unused?.fields, hasLength(1));
     expect(unused?.fields[0].name, equals('field'));
     expect(unused?.fields[0].type.baseName, equals('String'));
     expect(unused?.fields[0].type.isNullable, isTrue);
@@ -261,7 +261,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(source);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].message, contains('InvalidDatatype'));
     expect(results.errors[0].message, contains('dynamic'));
   });
@@ -275,7 +275,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(source);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(
       results.errors[0].message,
       contains(
@@ -298,7 +298,7 @@ abstract class Api {
 
 ''';
     final ParseResults results = parseSource(source);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
   });
 
   test('enum in classes', () {
@@ -318,10 +318,10 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.classes.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(1));
     expect(results.root.classes[0].name, equals('ClassWithEnum'));
-    expect(results.root.classes[0].fields.length, equals(1));
+    expect(results.root.classes[0].fields, hasLength(1));
     expect(results.root.classes[0].fields[0].type.baseName, equals('Enum1'));
     expect(results.root.classes[0].fields[0].type.isNullable, isTrue);
     expect(results.root.classes[0].fields[0].name, equals('enum1'));
@@ -344,9 +344,9 @@ abstract class ApiTwoMethods {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(2));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(2));
     expect(results.root.apis[0].methods[0].name, equals('method1'));
     expect(results.root.apis[0].methods[1].name, equals('method2'));
   });
@@ -367,12 +367,12 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.classes.length, equals(2));
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(2));
     final Class nested = results.root.classes.firstWhere(
       (Class x) => x.name == 'Nested',
     );
-    expect(nested.fields.length, equals(1));
+    expect(nested.fields, hasLength(1));
     expect(nested.fields[0].type.baseName, equals('Input1'));
     expect(nested.fields[0].type.isNullable, isTrue);
   });
@@ -393,8 +393,8 @@ abstract class AFlutterApi {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.apis.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
     expect(results.root.apis[0], isA<AstFlutterApi>());
   });
@@ -411,9 +411,9 @@ abstract class VoidApi {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.apis.length, equals(1));
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].name, equals('VoidApi'));
     expect(results.root.apis[0].methods[0].returnType.isVoid, isTrue);
   });
@@ -430,9 +430,9 @@ abstract class VoidArgApi {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.apis.length, equals(1));
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
       results.root.apis[0].methods[0].returnType.baseName,
@@ -453,8 +453,8 @@ abstract class ApiWithMockDartClass {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, equals(0));
-    expect(results.root.apis.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
     expect(
       (results.root.apis[0] as AstHostApi).dartHostTestHandler,
       equals('ApiWithMockDartClassMock'),
@@ -477,14 +477,13 @@ abstract class NestorApi {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
     final List<String> classNames = results.root.classes
         .map((Class x) => x.name)
         .toList();
-    expect(classNames.length, 2);
-    expect(classNames.contains('Nestor'), true);
-    expect(classNames.contains('OnlyVisibleFromNesting'), true);
+    expect(classNames, hasLength(2));
+    expect(classNames, containsAll(['Nestor', 'OnlyVisibleFromNesting']));
   });
 
   test('copyright flag', () {
@@ -641,10 +640,10 @@ abstract class NestedEnumApi {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
-    expect(parseResult.root.apis.length, 1);
-    expect(parseResult.root.classes.length, 3);
-    expect(parseResult.root.enums.length, 1);
+    expect(parseResult.errors, isEmpty);
+    expect(parseResult.root.apis, hasLength(1));
+    expect(parseResult.root.classes, hasLength(3));
+    expect(parseResult.root.enums, hasLength(1));
   });
 
   test('test circular references', () {
@@ -663,19 +662,19 @@ abstract class NotificationsHostApi {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.classes.length, 2);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(2));
     final Class foo = results.root.classes.firstWhere(
       (Class aClass) => aClass.name == 'Foo',
     );
-    expect(foo.fields.length, 1);
+    expect(foo.fields, hasLength(1));
     expect(foo.fields[0].type.baseName, 'Bar');
   });
 
   test('test compilation error', () {
     const code = 'Hello\n';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, greaterThanOrEqualTo(1));
+    expect(results.errors, hasLength(greaterThanOrEqualTo(1)));
     expect(results.errors[0].lineNumber, 1);
   });
 
@@ -692,7 +691,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Method'));
   });
@@ -709,7 +708,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 2);
     expect(results.errors[0].message, contains('Initialization'));
   });
@@ -727,7 +726,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Field'));
   });
@@ -745,7 +744,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
   });
 
   test('constructor body in data class', () {
@@ -761,7 +760,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Constructor'));
   });
@@ -779,7 +778,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Constructor'));
   });
@@ -797,7 +796,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 7);
     expect(results.errors[0].message, contains('Constructor'));
   });
@@ -805,14 +804,14 @@ abstract class Api {
   test('test invalid import', () {
     const code = "import 'foo.dart';\n";
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, greaterThanOrEqualTo(1));
+    expect(results.errors, hasLength(greaterThanOrEqualTo(1)));
     expect(results.errors[0].lineNumber, 1);
   });
 
   test('test valid import', () {
     const code = "import 'package:pigeon/pigeon.dart';\n";
     final ParseResults parseResults = parseSource(code);
-    expect(parseResults.errors.length, 0);
+    expect(parseResults.errors, isEmpty);
   });
 
   test('error with static field', () {
@@ -828,7 +827,7 @@ abstract class WithStaticFieldApi {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
+    expect(parseResult.errors, hasLength(1));
     expect(parseResult.errors[0].message, contains('static field'));
     expect(parseResult.errors[0].lineNumber, isNotNull);
   });
@@ -845,9 +844,9 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments, hasLength(1));
     expect(field.type.typeArguments[0].baseName, 'int');
   });
 
@@ -863,9 +862,9 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments.length, 1);
+    expect(field.type.typeArguments, hasLength(1));
     expect(field.type.typeArguments[0].baseName, 'List');
     expect(field.type.typeArguments[0].typeArguments[0].baseName, 'int');
   });
@@ -883,7 +882,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('enums argument flutter', () {
@@ -900,7 +899,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('enums list argument', () {
@@ -913,7 +912,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('enums map argument key', () {
@@ -926,7 +925,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('enums map argument value', () {
@@ -939,7 +938,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('enums return value', () {
@@ -956,7 +955,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
   });
 
   test('return type generics', () {
@@ -1033,7 +1032,7 @@ abstract class Api {
 ''';
     final ParseResults parseResult = parseSource(code);
     final NamedType field = parseResult.root.classes[0].fields[0];
-    expect(field.type.typeArguments.length, 2);
+    expect(field.type.typeArguments, hasLength(2));
     expect(field.type.typeArguments[0].baseName, 'String');
     expect(field.type.typeArguments[1].baseName, 'int');
   });
@@ -1050,10 +1049,10 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].methods[0].name, equals('method'));
-    expect(results.root.apis[0].methods[0].parameters.length, 2);
+    expect(results.root.apis[0].methods[0].parameters, hasLength(2));
   });
 
   test('no type name argument', () {
@@ -1064,7 +1063,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(
       results.errors[0].message,
@@ -1081,9 +1080,9 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(
       results.root.apis[0].methods[0].objcSelector,
       equals('subtractValue:by:'),
@@ -1099,7 +1098,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(
       results.errors[0].message,
@@ -1116,9 +1115,9 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].methods[0].objcSelector, equals('foobar'));
   });
 
@@ -1131,9 +1130,9 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(
       results.root.apis[0].methods[0].swiftFunction,
       equals('subtractValue(_:by:)'),
@@ -1149,7 +1148,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(
       results.errors[0].message,
@@ -1166,9 +1165,9 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.apis.length, 1);
-    expect(results.root.apis[0].methods.length, equals(1));
+    expect(results.errors, isEmpty);
+    expect(results.root.apis, hasLength(1));
+    expect(results.root.apis[0].methods, hasLength(1));
     expect(results.root.apis[0].methods[0].swiftFunction, equals('foobar()'));
   });
 
@@ -1202,8 +1201,8 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.classes.length, 1);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(1));
     expect(results.root.classes[0].name, 'Foo');
   });
 
@@ -1219,8 +1218,8 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.classes.length, 1);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(1));
     expect(results.root.classes[0].name, 'Foo');
   });
 
@@ -1241,19 +1240,15 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
-    expect(results.root.classes.length, 2);
+    expect(results.errors, isEmpty);
+    expect(results.root.classes, hasLength(2));
     expect(
-      results.root.classes
-          .where((Class element) => element.name == 'Foo')
-          .length,
-      1,
+      results.root.classes.where((Class element) => element.name == 'Foo'),
+      hasLength(1),
     );
     expect(
-      results.root.classes
-          .where((Class element) => element.name == 'Bar')
-          .length,
-      1,
+      results.root.classes.where((Class element) => element.name == 'Bar'),
+      hasLength(1),
     );
   });
 
@@ -1265,7 +1260,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message, contains('Unknown type: Foo'));
   });
@@ -1278,7 +1273,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
   });
 
   test('Export unreferenced enums', () {
@@ -1300,7 +1295,7 @@ abstract class HostApiBridge {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.root.enums.length, 1);
+    expect(results.root.enums, hasLength(1));
     expect(results.root.enums[0].name, 'MessageKey');
   });
 
@@ -1388,7 +1383,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
     expect(results.root.apis[0].methods[0].returnType.isNullable, isTrue);
   });
 
@@ -1400,7 +1395,7 @@ abstract class Api {
 }
 ''';
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
     expect(
       results.root.apis[0].methods[0].parameters[0].type.isNullable,
       isTrue,
@@ -1417,7 +1412,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
     expect(
       results.root.apis[0].methods[0].taskQueueType,
       equals(TaskQueueType.serialBackgroundThread),
@@ -1433,7 +1428,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 0);
+    expect(results.errors, isEmpty);
     expect(
       results.root.apis[0].methods[0].taskQueueType,
       equals(TaskQueueType.serial),
@@ -1450,7 +1445,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(
       results.errors[0].message,
       contains('Unsupported TaskQueue specification'),
@@ -1511,7 +1506,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(
       results.errors[0].message,
       contains('FlutterApi method parameters must be positional'),
@@ -1527,7 +1522,7 @@ abstract class Api {
 ''';
 
     final ParseResults results = parseSource(code);
-    expect(results.errors.length, 1);
+    expect(results.errors, hasLength(1));
     expect(
       results.errors[0].message,
       contains('FlutterApi method parameters must not be optional'),
@@ -1545,14 +1540,14 @@ abstract class MyClass {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(0));
+    expect(parseResult.errors, isEmpty);
     final Root root = parseResult.root;
-    expect(root.apis.length, equals(1));
+    expect(root.apis, hasLength(1));
 
     final proxyApi = root.apis.single as AstProxyApi;
     expect(proxyApi.name, equals('MyClass'));
     expect(proxyApi.constructors.single.name, equals(''));
-    expect(proxyApi.methods.length, equals(2));
+    expect(proxyApi.methods, hasLength(2));
 
     for (final Method method in proxyApi.methods) {
       if (method.location == ApiLocation.host) {
@@ -1576,7 +1571,7 @@ abstract class MyClass {
 }
 ''';
       final ParseResults parseResult = parseSource(code);
-      expect(parseResult.errors.length, equals(1));
+      expect(parseResult.errors, hasLength(1));
       expect(
         parseResult.errors.single.message,
         contains('ProxyApis do not support data classes'),
@@ -1806,7 +1801,7 @@ abstract class EventChannelApi {
 }
 ''';
       final ParseResults parseResult = parseSource(code);
-      expect(parseResult.errors.length, equals(1));
+      expect(parseResult.errors, hasLength(1));
       expect(
         parseResult.errors.single.message,
         contains(
