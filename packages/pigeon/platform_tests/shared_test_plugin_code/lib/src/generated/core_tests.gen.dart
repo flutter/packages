@@ -53,7 +53,7 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
-  if (identical(a, b) || a == b) {
+  if (identical(a, b)) {
     return true;
   }
   if (a is double && b is double) {
@@ -1714,12 +1714,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   /// Returns the platform-side hash code for the given object.
@@ -1736,12 +1736,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns the platform-side hash code for the given object.
@@ -1760,12 +1760,12 @@ class HostIntegrationCoreApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   /// Returns the passed object, to test serialization and deserialization.

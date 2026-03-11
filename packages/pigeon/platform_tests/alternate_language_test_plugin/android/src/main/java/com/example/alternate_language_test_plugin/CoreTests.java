@@ -58,7 +58,7 @@ public class CoreTests {
   }
 
   static boolean pigeonDeepEquals(Object a, Object b) {
-    if (a == b || (a != null && a.equals(b))) {
+    if (a == b) {
       return true;
     }
     if (a == null || b == null) {

@@ -59,7 +59,7 @@ private object MessagesPigeonUtils {
   }
 
   fun deepEquals(a: Any?, b: Any?): Boolean {
-    if (a === b || a == b) {
+    if (a === b) {
       return true
     }
     if (a is ByteArray && b is ByteArray) {
