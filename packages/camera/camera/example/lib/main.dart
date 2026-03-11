@@ -69,6 +69,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _baseScale = 1.0;
   double _currentLensPosition = 0.0;
 
+  // Transform state (iOS 17+)
+  double _transformRotation = 0;
+  bool _transformFlipH = false;
+  bool _transformFlipV = false;
+  bool _transformCropEnabled = false;
+
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
@@ -160,6 +166,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           _captureControlRowWidget(),
           _modeControlRowWidget(),
           if (!kIsWeb && Platform.isIOS) _lensPositionWidget(),
+          if (!kIsWeb && Platform.isIOS) _transformControlRowWidget(),
           Row(
             children: [
               ElevatedButton(
@@ -560,6 +567,136 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 ),
               ),
               const Text('1.0'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _applyTransform() async {
+    if (controller == null || !controller!.value.isInitialized) {
+      return;
+    }
+    // iOS camera sensor native orientation is landscape (0°). The system
+    // normally compensates with 90° to produce an upright portrait image.
+    // We offset the user-facing rotation (relative to portrait) by 90° so
+    // that "0°" in the UI means "upright" and "90°" means "rotated right".
+    final double hardwareAngle = (_transformRotation + 90) % 360;
+    await (CameraPlatform.instance as AVFoundationCamera).setTransform(
+      controller!.cameraId,
+      CameraTransform(
+        rotationDegrees: hardwareAngle,
+        flipHorizontally: _transformFlipH,
+        flipVertically: _transformFlipV,
+        cropRect: _transformCropEnabled
+            ? const CameraTransformRect(
+                x: 0.1,
+                y: 0.1,
+                width: 0.8,
+                height: 0.8,
+              )
+            : null,
+      ),
+    );
+  }
+
+  /// Transform controls panel (iOS 17+ only).
+  Widget _transformControlRowWidget() {
+    final bool enabled =
+        controller != null && controller!.value.isInitialized;
+    return ColoredBox(
+      color: Colors.grey.shade50,
+      child: Column(
+        children: <Widget>[
+          const Center(
+            child: Text(
+              'Camera Transform (iOS 17+)',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          // Rotation
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              const Text('Rotation:'),
+              for (final double deg in <double>[0, 90, 180, 270])
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: _transformRotation == deg
+                        ? Colors.orange
+                        : Colors.blue,
+                  ),
+                  onPressed: enabled
+                      ? () {
+                          setState(() => _transformRotation = deg);
+                          _applyTransform();
+                        }
+                      : null,
+                  child: Text('${deg.toInt()}\u00b0'),
+                ),
+            ],
+          ),
+          // Flip, crop, reset
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor:
+                      _transformFlipH ? Colors.orange : Colors.blue,
+                ),
+                onPressed: enabled
+                    ? () {
+                        setState(() => _transformFlipH = !_transformFlipH);
+                        _applyTransform();
+                      }
+                    : null,
+                child: const Text('Flip H'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor:
+                      _transformFlipV ? Colors.orange : Colors.blue,
+                ),
+                onPressed: enabled
+                    ? () {
+                        setState(() => _transformFlipV = !_transformFlipV);
+                        _applyTransform();
+                      }
+                    : null,
+                child: const Text('Flip V'),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor:
+                      _transformCropEnabled ? Colors.orange : Colors.blue,
+                ),
+                onPressed: enabled
+                    ? () {
+                        setState(
+                          () =>
+                              _transformCropEnabled = !_transformCropEnabled,
+                        );
+                        _applyTransform();
+                      }
+                    : null,
+                child: const Text('Crop 80%'),
+              ),
+              TextButton(
+                onPressed: enabled
+                    ? () {
+                        setState(() {
+                          _transformRotation = 0;
+                          _transformFlipH = false;
+                          _transformFlipV = false;
+                          _transformCropEnabled = false;
+                        });
+                        _applyTransform();
+                      }
+                    : null,
+                child: const Text('Reset'),
+              ),
             ],
           ),
         ],
