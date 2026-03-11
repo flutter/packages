@@ -33,9 +33,9 @@ import Foundation
     func view() -> UIView {
       if uiView == nil {
         #if DEBUG
-          fatalError(nullUIViewErrorMessage)
+          fatalError(PlatformViewImpl.nullUIViewErrorMessage)
         #else
-          NSLog(nullUIViewErrorMessage)
+          NSLog(PlatformViewImpl.nullUIViewErrorMessage)
           return UIView()
         #endif
       }
