@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import CoreImage
 import Flutter
 import Foundation
 
@@ -25,6 +26,13 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
   /// The completion handler block for capture and save photo operations.
   let completionHandler: SavePhotoDelegateCompletionHandler
 
+  /// Optional crop rectangle in normalised (0,1) coordinate space.
+  /// When non-nil the photo is cropped (GPU path) before it is written to disk.
+  private let cropRect: PlatformRect?
+
+  /// Core Image context shared with the camera (Metal-backed). Only used when `cropRect` is set.
+  private let ciContext: CIContext?
+
   /// The path for captured photo file.
   /// Exposed for unit tests to verify the captured photo file path.
   var filePath: String {
@@ -36,14 +44,20 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
   /// ioQueue - the queue on which captured photos are written to disk.
   /// completionHandler - The completion handler block for save photo operations. Can
   /// be called from either main queue or IO queue.
+  /// cropRect - optional crop in normalised (0,1) coordinates; applied before writing.
+  /// ciContext - Core Image context to use for crop rendering; must be non-nil when cropRect is set.
   init(
     path: String,
     ioQueue: DispatchQueue,
-    completionHandler: @escaping SavePhotoDelegateCompletionHandler
+    completionHandler: @escaping SavePhotoDelegateCompletionHandler,
+    cropRect: PlatformRect? = nil,
+    ciContext: CIContext? = nil
   ) {
     self.path = path
     self.ioQueue = ioQueue
     self.completionHandler = completionHandler
+    self.cropRect = cropRect
+    self.ciContext = ciContext
     super.init()
   }
 
@@ -65,7 +79,42 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
 
       do {
         let data = photoDataProvider()
-        try data?.writeToPath(strongSelf.path, options: .atomic)
+        let finalData: WritableData?
+
+        // If a crop is requested, apply it in Core Image before writing.
+        if let crop = strongSelf.cropRect,
+          let ctx = strongSelf.ciContext,
+          let rawData = data as? Data
+        {
+          let ci = CIImage(data: rawData)
+          let fullW = ci.map { Double($0.extent.width) } ?? 0
+          let fullH = ci.map { Double($0.extent.height) } ?? 0
+          if let ci = ci, fullW > 0, fullH > 0 {
+            // Core Image origin is bottom-left; convert from top-left.
+            let ciCrop = CGRect(
+              x: crop.x * fullW,
+              y: (1.0 - crop.y - crop.height) * fullH,
+              width: crop.width * fullW,
+              height: crop.height * fullH)
+            let cropped = ci.cropped(to: ciCrop)
+              .transformed(
+                by: CGAffineTransform(translationX: -ciCrop.origin.x, y: -ciCrop.origin.y))
+            if let encoded = ctx.jpegRepresentation(
+              of: cropped,
+              colorSpace: CGColorSpaceCreateDeviceRGB())
+            {
+              finalData = encoded
+            } else {
+              finalData = data
+            }
+          } else {
+            finalData = data
+          }
+        } else {
+          finalData = data
+        }
+
+        try finalData?.writeToPath(strongSelf.path, options: .atomic)
         strongSelf.completionHandler(strongSelf.path, nil)
       } catch {
         strongSelf.completionHandler(nil, error)

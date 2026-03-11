@@ -500,6 +500,130 @@ class PlatformSize {
   int get hashCode => Object.hashAll(_toList());
 }
 
+class PlatformRect {
+  PlatformRect({
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
+  });
+
+  double x;
+
+  double y;
+
+  double width;
+
+  double height;
+
+  List<Object?> _toList() {
+    return <Object?>[x, y, width, height];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformRect decode(Object result) {
+    result as List<Object?>;
+    return PlatformRect(
+      x: result[0]! as double,
+      y: result[1]! as double,
+      width: result[2]! as double,
+      height: result[3]! as double,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformRect || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Pigeon version of a geometric camera transform.
+///
+/// Rotation and mirroring are applied at the hardware connection level
+/// (AVCaptureConnection.videoRotationAngle / isVideoMirrored), which means no
+/// CPU/GPU cost and the effect is visible in the preview, image stream, photos,
+/// and recorded video simultaneously.
+///
+/// Crop is applied per-frame via Core Image on the GPU (Metal) and has a small
+/// (~1–3 ms) cost per frame.
+class PlatformCameraTransform {
+  PlatformCameraTransform({
+    required this.rotationDegrees,
+    required this.flipHorizontally,
+    required this.flipVertically,
+    this.cropRect,
+  });
+
+  /// Clockwise rotation in degrees. Must be 0, 90, 180, or 270.
+  double rotationDegrees;
+
+  /// Whether to flip the image along the horizontal axis (left–right mirror).
+  bool flipHorizontally;
+
+  /// Whether to flip the image along the vertical axis (upside-down mirror).
+  ///
+  /// Implemented as a 180° rotation composed with a horizontal flip.
+  bool flipVertically;
+
+  /// Optional crop rectangle in normalized (0,1) coordinate space.
+  ///
+  /// Applied after rotation/mirroring. Null means no crop.
+  PlatformRect? cropRect;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      rotationDegrees,
+      flipHorizontally,
+      flipVertically,
+      cropRect,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformCameraTransform decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraTransform(
+      rotationDegrees: result[0]! as double,
+      flipHorizontally: result[1]! as bool,
+      flipVertically: result[2]! as bool,
+      cropRect: result[3] as PlatformRect?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformCameraTransform || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -558,6 +682,12 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformSize) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformRect) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformCameraTransform) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -612,6 +742,10 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformPoint.decode(readValue(buffer)!);
       case 145:
         return PlatformSize.decode(readValue(buffer)!);
+      case 146:
+        return PlatformRect.decode(readValue(buffer)!);
+      case 147:
+        return PlatformCameraTransform.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1325,6 +1459,33 @@ class CameraApi {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[format],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  /// Applies a geometric transform (rotation, mirroring, crop) to the camera
+  /// output. The transform is applied to the preview, image stream, captured
+  /// photos, and recorded video simultaneously.
+  ///
+  /// Requires iOS 17+ for hardware-accelerated rotation. On earlier iOS
+  /// versions the rotation part of the transform is silently ignored and only
+  /// the crop (if any) is applied in software.
+  Future<void> setTransform(PlatformCameraTransform transform) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_avfoundation.CameraApi.setTransform$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[transform],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 

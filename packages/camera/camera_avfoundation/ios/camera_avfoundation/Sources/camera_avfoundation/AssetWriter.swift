@@ -27,6 +27,9 @@ protocol AssetWriterInput: NSObjectProtocol {
   var expectsMediaDataInRealTime: Bool { get set }
   var isReadyForMoreMediaData: Bool { get }
 
+  /// The transform to apply to the visual media data before writing it.
+  var transform: CGAffineTransform { get set }
+
   func append(_ sampleBuffer: CMSampleBuffer) -> Bool
 }
 

@@ -25,6 +25,14 @@ protocol CaptureConnection: NSObjectProtocol {
   /// Corresponds to the preferredVideoStabilizationMode property of `AVCaptureConnection`
   var preferredVideoStabilizationMode: AVCaptureVideoStabilizationMode { get set }
 
+  /// Corresponds to the `videoRotationAngle` property of `AVCaptureConnection` (iOS 17+).
+  @available(iOS 17.0, *)
+  var videoRotationAngle: CGFloat { get set }
+
+  /// Corresponds to the `isVideoRotationAngleSupported(_:)` method of `AVCaptureConnection` (iOS 17+).
+  @available(iOS 17.0, *)
+  func isVideoRotationAngleSupported(_ angle: CGFloat) -> Bool
+
 }
 
 extension AVCaptureConnection: CaptureConnection {}

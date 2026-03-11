@@ -126,6 +126,12 @@ final class DefaultCamera: NSObject, Camera {
   private var focusMode = PlatformFocusMode.auto
   private var flashMode: PlatformFlashMode
 
+  /// The current camera transform applied to all outputs.
+  private var cameraTransform: PlatformCameraTransform?
+
+  /// Metal-backed Core Image context, lazily initialised. Used only when a crop is active.
+  private lazy var ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
   private static func pigeonErrorFromNSError(_ error: NSError) -> PigeonError {
     return PigeonError(
       code: "Error \(error.code)",
@@ -752,7 +758,9 @@ final class DefaultCamera: NSObject, Camera {
           assert(path != nil, "Path must not be nil if no error.")
           completion(.success(path!))
         }
-      }
+      },
+      cropRect: cameraTransform?.cropRect,
+      ciContext: cameraTransform?.cropRect != nil ? ciContext : nil
     )
 
     assert(
@@ -796,6 +804,8 @@ final class DefaultCamera: NSObject, Camera {
 
     updateOrientation(orientation, forCaptureOutput: capturePhotoOutput)
     updateOrientation(orientation, forCaptureOutput: captureVideoOutput)
+
+    applyConnectionTransform()
   }
 
   private func updateOrientation(
@@ -806,6 +816,79 @@ final class DefaultCamera: NSObject, Camera {
     {
       connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
     }
+  }
+
+  // MARK: - Transform
+
+  func setTransform(_ transform: PlatformCameraTransform) {
+    cameraTransform = transform
+    applyConnectionTransform()
+  }
+
+  /// Applies the current rotation/mirror transform at the hardware connection level.
+  ///
+  /// `AVCaptureConnection.videoRotationAngle` (iOS 17+) instructs the camera ISP to rotate
+  /// the pixel data in hardware – zero CPU/GPU cost – and the effect propagates to the
+  /// preview texture, image stream, video recording, and photo capture simultaneously.
+  private func applyConnectionTransform() {
+    guard let transform = cameraTransform else { return }
+
+    for output in [captureVideoOutput as CaptureOutput, capturePhotoOutput as CaptureOutput] {
+      guard let connection = output.connection(with: .video) else { continue }
+
+      if #available(iOS 17.0, *) {
+        let angle = transform.rotationDegrees
+        if connection.isVideoRotationAngleSupported(angle) {
+          connection.videoRotationAngle = angle
+        }
+      }
+
+      // Vertical flip is implemented as a composition: mirror horizontally + rotate 180°.
+      let mirrorH = transform.flipHorizontally != transform.flipVertically
+      if connection.isVideoMirroringSupported {
+        connection.isVideoMirrored = mirrorH
+      }
+    }
+  }
+
+  /// Crops `pixelBuffer` to the normalised rect from `transform.cropRect`.
+  ///
+  /// The crop is performed on the GPU via Metal-backed Core Image (`ciContext`).
+  /// Returns `nil` when allocation fails; callers should fall back to the original buffer.
+  private func applyCrop(
+    _ pixelBuffer: CVPixelBuffer, cropRect: PlatformRect
+  ) -> CVPixelBuffer? {
+    let fullWidth = CVPixelBufferGetWidth(pixelBuffer)
+    let fullHeight = CVPixelBufferGetHeight(pixelBuffer)
+
+    let cropX = cropRect.x * Double(fullWidth)
+    let cropY = cropRect.y * Double(fullHeight)
+    let cropW = cropRect.width * Double(fullWidth)
+    let cropH = cropRect.height * Double(fullHeight)
+
+    // Core Image origin is bottom-left; convert from top-left.
+    let ciCropRect = CGRect(
+      x: cropX,
+      y: Double(fullHeight) - cropY - cropH,
+      width: cropW,
+      height: cropH)
+
+    let ciImage = CIImage(cvPixelBuffer: pixelBuffer).cropped(to: ciCropRect)
+      .transformed(by: CGAffineTransform(translationX: -ciCropRect.origin.x, y: -ciCropRect.origin.y))
+
+    var outBuffer: CVPixelBuffer?
+    let attrs: [String: Any] = [
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat,
+      kCVPixelBufferWidthKey as String: Int(cropW),
+      kCVPixelBufferHeightKey as String: Int(cropH),
+      kCVPixelBufferIOSurfacePropertiesKey as String: [:],
+    ]
+    guard CVPixelBufferCreate(kCFAllocatorDefault, Int(cropW), Int(cropH), videoFormat, attrs as CFDictionary, &outBuffer) == kCVReturnSuccess,
+          let out = outBuffer
+    else { return nil }
+
+    ciContext.render(ciImage, to: out)
+    return out
   }
 
   private func videoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
@@ -1179,6 +1262,9 @@ final class DefaultCamera: NSObject, Camera {
       newConnection.videoOrientation = oldConnection.videoOrientation
     }
 
+    // Re-apply any camera transform that was set by the caller.
+    applyConnectionTransform()
+
     // Add the new connections to the session.
     if !videoCaptureSession.canAddInput(captureVideoInput) {
       completion(
@@ -1269,9 +1355,17 @@ final class DefaultCamera: NSObject, Camera {
   ) {
     if output == captureVideoOutput.avOutput {
       if let newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+        // Apply crop transform if one is active (GPU path via Core Image / Metal).
+        // When no crop is set this is a zero-overhead fast path.
+        let processedBuffer: CVPixelBuffer
+        if let cropRect = cameraTransform?.cropRect {
+          processedBuffer = applyCrop(newBuffer, cropRect: cropRect) ?? newBuffer
+        } else {
+          processedBuffer = newBuffer
+        }
 
         pixelBufferSynchronizationQueue.sync {
-          latestPixelBuffer = newBuffer
+          latestPixelBuffer = processedBuffer
         }
 
         onFrameAvailable?()
@@ -1342,10 +1436,17 @@ final class DefaultCamera: NSObject, Camera {
       }
 
       if output == captureVideoOutput.avOutput {
-        let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        let rawBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
         let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
         if nextSampleTime > lastAppendedVideoSampleTime {
-          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          // Apply crop transform to the recorded frame if needed.
+          let writeBuffer: CVPixelBuffer
+          if let cropRect = cameraTransform?.cropRect {
+            writeBuffer = applyCrop(rawBuffer, cropRect: cropRect) ?? rawBuffer
+          } else {
+            writeBuffer = rawBuffer
+          }
+          let _ = videoAdaptor?.append(writeBuffer, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
         }
       } else {

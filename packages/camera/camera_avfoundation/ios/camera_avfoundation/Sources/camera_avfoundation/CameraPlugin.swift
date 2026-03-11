@@ -561,4 +561,13 @@ extension CameraPlugin: CameraApi {
       completion(.success(()))
     }
   }
+
+  func setTransform(
+    transform: PlatformCameraTransform, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    captureSessionQueue.async { [weak self] in
+      self?.camera?.setTransform(transform)
+      completion(.success(()))
+    }
+  }
 }

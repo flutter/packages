@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'camera_transform.dart';
 import 'messages.g.dart';
 import 'type_conversion.dart';
 import 'utils.dart';
@@ -448,6 +449,33 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) async {
     await _hostApi.setImageFileFormat(_pigeonImageFileFormat(format));
+  }
+
+  /// Applies a geometric [transform] to all camera outputs on iOS.
+  ///
+  /// The [cameraId] parameter is currently unused on iOS (there is only ever
+  /// one active camera) but is included for API consistency.
+  ///
+  /// - Rotation and mirroring are applied at the hardware AVCaptureConnection
+  ///   level (requires iOS 17+) and cost nothing in CPU / GPU.
+  /// - Crop is applied per-frame by Core Image on the GPU and costs ~1–3 ms
+  ///   per frame. Pass `null` (or omit `cropRect`) to disable it.
+  Future<void> setTransform(int cameraId, CameraTransform transform) async {
+    await _hostApi.setTransform(
+      PlatformCameraTransform(
+        rotationDegrees: transform.rotationDegrees,
+        flipHorizontally: transform.flipHorizontally,
+        flipVertically: transform.flipVertically,
+        cropRect: transform.cropRect == null
+            ? null
+            : PlatformRect(
+                x: transform.cropRect!.x,
+                y: transform.cropRect!.y,
+                width: transform.cropRect!.width,
+                height: transform.cropRect!.height,
+              ),
+      ),
+    );
   }
 
   @override

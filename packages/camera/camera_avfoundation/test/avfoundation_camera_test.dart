@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:camera_avfoundation/src/avfoundation_camera.dart';
+import 'package:camera_avfoundation/src/camera_transform.dart';
 import 'package:camera_avfoundation/src/messages.g.dart';
 import 'package:camera_avfoundation/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -999,6 +1000,72 @@ void main() {
       await camera.setImageFileFormat(cameraId, ImageFileFormat.jpeg);
 
       verify(mockApi.setImageFileFormat(PlatformImageFileFormat.jpeg));
+    });
+  });
+
+  group('setTransform', () {
+    late AVFoundationCamera camera;
+    late MockCameraApi mockApi;
+    const cameraId = 1;
+
+    setUp(() {
+      mockApi = MockCameraApi();
+      camera = AVFoundationCamera(api: mockApi);
+    });
+
+    test('forwards rotation-only transform to host API', () async {
+      await camera.setTransform(
+        cameraId,
+        const CameraTransform(rotationDegrees: 90),
+      );
+
+      final captured =
+          verify(mockApi.setTransform(captureAny)).captured.single
+              as PlatformCameraTransform;
+      expect(captured.rotationDegrees, 90);
+      expect(captured.flipHorizontally, false);
+      expect(captured.flipVertically, false);
+      expect(captured.cropRect, isNull);
+    });
+
+    test('forwards full transform with crop to host API', () async {
+      await camera.setTransform(
+        cameraId,
+        const CameraTransform(
+          rotationDegrees: 180,
+          flipHorizontally: true,
+          cropRect: CameraTransformRect(
+            x: 0.1,
+            y: 0.1,
+            width: 0.8,
+            height: 0.8,
+          ),
+        ),
+      );
+
+      final captured =
+          verify(mockApi.setTransform(captureAny)).captured.single
+              as PlatformCameraTransform;
+      expect(captured.rotationDegrees, 180);
+      expect(captured.flipHorizontally, true);
+      expect(captured.flipVertically, false);
+      expect(captured.cropRect, isNotNull);
+      expect(captured.cropRect!.x, 0.1);
+      expect(captured.cropRect!.y, 0.1);
+      expect(captured.cropRect!.width, 0.8);
+      expect(captured.cropRect!.height, 0.8);
+    });
+
+    test('forwards identity transform (zeros) to host API', () async {
+      await camera.setTransform(cameraId, const CameraTransform());
+
+      final captured =
+          verify(mockApi.setTransform(captureAny)).captured.single
+              as PlatformCameraTransform;
+      expect(captured.rotationDegrees, 0);
+      expect(captured.flipHorizontally, false);
+      expect(captured.flipVertically, false);
+      expect(captured.cropRect, isNull);
     });
   });
 }

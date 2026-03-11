@@ -191,6 +191,55 @@ class PlatformSize {
   final double height;
 }
 
+// Pigeon equivalent of CGRect, with values in the (0,1) normalized coordinate space.
+class PlatformRect {
+  PlatformRect({
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
+  });
+
+  final double x;
+  final double y;
+  final double width;
+  final double height;
+}
+
+/// Pigeon version of a geometric camera transform.
+///
+/// Rotation and mirroring are applied at the hardware connection level  
+/// (AVCaptureConnection.videoRotationAngle / isVideoMirrored), which means no
+/// CPU/GPU cost and the effect is visible in the preview, image stream, photos,
+/// and recorded video simultaneously.
+///
+/// Crop is applied per-frame via Core Image on the GPU (Metal) and has a small
+/// (~1–3 ms) cost per frame.
+class PlatformCameraTransform {
+  PlatformCameraTransform({
+    required this.rotationDegrees,
+    required this.flipHorizontally,
+    required this.flipVertically,
+    this.cropRect,
+  });
+
+  /// Clockwise rotation in degrees. Must be 0, 90, 180, or 270.
+  final double rotationDegrees;
+
+  /// Whether to flip the image along the horizontal axis (left–right mirror).
+  final bool flipHorizontally;
+
+  /// Whether to flip the image along the vertical axis (upside-down mirror).
+  ///
+  /// Implemented as a 180° rotation composed with a horizontal flip.
+  final bool flipVertically;
+
+  /// Optional crop rectangle in normalized (0,1) coordinate space.
+  ///
+  /// Applied after rotation/mirroring. Null means no crop.
+  final PlatformRect? cropRect;
+}
+
 @HostApi()
 abstract class CameraApi {
   /// Returns the list of available cameras.
@@ -364,6 +413,17 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+
+  /// Applies a geometric transform (rotation, mirroring, crop) to the camera
+  /// output. The transform is applied to the preview, image stream, captured
+  /// photos, and recorded video simultaneously.
+  ///
+  /// Requires iOS 17+ for hardware-accelerated rotation. On earlier iOS
+  /// versions the rotation part of the transform is silently ignored and only
+  /// the crop (if any) is applied in software.
+  @async
+  @ObjCSelector('setCameraTransform:')
+  void setTransform(PlatformCameraTransform transform);
 }
 
 @EventChannelApi()

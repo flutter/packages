@@ -474,6 +474,98 @@ struct PlatformSize: Hashable {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct PlatformRect: Hashable {
+  var x: Double
+  var y: Double
+  var width: Double
+  var height: Double
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformRect? {
+    let x = pigeonVar_list[0] as! Double
+    let y = pigeonVar_list[1] as! Double
+    let width = pigeonVar_list[2] as! Double
+    let height = pigeonVar_list[3] as! Double
+
+    return PlatformRect(
+      x: x,
+      y: y,
+      width: width,
+      height: height
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      x,
+      y,
+      width,
+      height,
+    ]
+  }
+  static func == (lhs: PlatformRect, rhs: PlatformRect) -> Bool {
+    return deepEqualsMessages(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashMessages(value: toList(), hasher: &hasher)
+  }
+}
+
+/// Pigeon version of a geometric camera transform.
+///
+/// Rotation and mirroring are applied at the hardware connection level  
+/// (AVCaptureConnection.videoRotationAngle / isVideoMirrored), which means no
+/// CPU/GPU cost and the effect is visible in the preview, image stream, photos,
+/// and recorded video simultaneously.
+///
+/// Crop is applied per-frame via Core Image on the GPU (Metal) and has a small
+/// (~1–3 ms) cost per frame.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct PlatformCameraTransform: Hashable {
+  /// Clockwise rotation in degrees. Must be 0, 90, 180, or 270.
+  var rotationDegrees: Double
+  /// Whether to flip the image along the horizontal axis (left–right mirror).
+  var flipHorizontally: Bool
+  /// Whether to flip the image along the vertical axis (upside-down mirror).
+  ///
+  /// Implemented as a 180° rotation composed with a horizontal flip.
+  var flipVertically: Bool
+  /// Optional crop rectangle in normalized (0,1) coordinate space.
+  ///
+  /// Applied after rotation/mirroring. Null means no crop.
+  var cropRect: PlatformRect? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> PlatformCameraTransform? {
+    let rotationDegrees = pigeonVar_list[0] as! Double
+    let flipHorizontally = pigeonVar_list[1] as! Bool
+    let flipVertically = pigeonVar_list[2] as! Bool
+    let cropRect: PlatformRect? = nilOrValue(pigeonVar_list[3])
+
+    return PlatformCameraTransform(
+      rotationDegrees: rotationDegrees,
+      flipHorizontally: flipHorizontally,
+      flipVertically: flipVertically,
+      cropRect: cropRect
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      rotationDegrees,
+      flipHorizontally,
+      flipVertically,
+      cropRect,
+    ]
+  }
+  static func == (lhs: PlatformCameraTransform, rhs: PlatformCameraTransform) -> Bool {
+    return deepEqualsMessages(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashMessages(value: toList(), hasher: &hasher)
+  }
+}
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -551,6 +643,10 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       return PlatformPoint.fromList(self.readValue() as! [Any?])
     case 145:
       return PlatformSize.fromList(self.readValue() as! [Any?])
+    case 146:
+      return PlatformRect.fromList(self.readValue() as! [Any?])
+    case 147:
+      return PlatformCameraTransform.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -609,6 +705,12 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? PlatformSize {
       super.writeByte(145)
+      super.writeValue(value.toList())
+    } else if let value = value as? PlatformRect {
+      super.writeByte(146)
+      super.writeValue(value.toList())
+    } else if let value = value as? PlatformCameraTransform {
+      super.writeByte(147)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -717,6 +819,14 @@ protocol CameraApi {
   func updateDescriptionWhileRecording(cameraName: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the file format used for taking pictures.
   func setImageFileFormat(format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Applies a geometric transform (rotation, mirroring, crop) to the camera
+  /// output. The transform is applied to the preview, image stream, captured
+  /// photos, and recorded video simultaneously.
+  ///
+  /// Requires iOS 17+ for hardware-accelerated rotation. On earlier iOS
+  /// versions the rotation part of the transform is silently ignored and only
+  /// the crop (if any) is applied in software.
+  func setTransform(transform: PlatformCameraTransform, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1304,6 +1414,30 @@ class CameraApiSetup {
       }
     } else {
       setImageFileFormatChannel.setMessageHandler(nil)
+    }
+    /// Applies a geometric transform (rotation, mirroring, crop) to the camera
+    /// output. The transform is applied to the preview, image stream, captured
+    /// photos, and recorded video simultaneously.
+    ///
+    /// Requires iOS 17+ for hardware-accelerated rotation. On earlier iOS
+    /// versions the rotation part of the transform is silently ignored and only
+    /// the crop (if any) is applied in software.
+    let setTransformChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.camera_avfoundation.CameraApi.setTransform\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setTransformChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let transformArg = args[0] as! PlatformCameraTransform
+        api.setTransform(transform: transformArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setTransformChannel.setMessageHandler(nil)
     }
   }
 }

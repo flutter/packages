@@ -114,6 +114,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   func pausePreview()
   func resumePreview()
 
+  /// Applies a geometric transform (rotation, mirroring, optional crop) to all camera outputs.
+  func setTransform(_ transform: PlatformCameraTransform)
+
   func setDescriptionWhileRecording(
     _ cameraName: String,
     withCompletion: @escaping (Result<Void, any Error>) -> Void

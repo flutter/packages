@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/avfoundation_camera.dart';
+export 'src/camera_transform.dart';
