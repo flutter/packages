@@ -49,7 +49,8 @@ class DartOptions {
     this.copyrightHeader,
     this.sourceOutPath,
     this.testOutPath,
-  });
+    bool ignoreLints = true,
+  }) : _ignoreLints = ignoreLints;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -60,6 +61,9 @@ class DartOptions {
   /// Path to output generated Test file for tests.
   final String? testOutPath;
 
+  /// Whether to ignore lint violations in generated Dart code.
+  final bool _ignoreLints;
+
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
@@ -68,6 +72,7 @@ class DartOptions {
       copyrightHeader: copyrightHeader?.cast<String>(),
       sourceOutPath: map['sourceOutPath'] as String?,
       testOutPath: map['testOutPath'] as String?,
+      ignoreLints: (map['ignoreLints'] as bool?) ?? true,
     );
   }
 
@@ -78,6 +83,7 @@ class DartOptions {
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
+      'ignoreLints': _ignoreLints,
     };
     return result;
   }
@@ -92,7 +98,12 @@ class DartOptions {
 /// Options that control how Dart code will be generated.
 class InternalDartOptions extends InternalOptions {
   /// Constructor for InternalDartOptions.
-  const InternalDartOptions({this.copyrightHeader, this.dartOut, this.testOut});
+  const InternalDartOptions({
+    this.copyrightHeader,
+    this.dartOut,
+    this.testOut,
+    required bool ignoreLints,
+  }) : _ignoreLints = ignoreLints;
 
   /// Creates InternalDartOptions from DartOptions.
   InternalDartOptions.fromDartOptions(
@@ -102,7 +113,8 @@ class InternalDartOptions extends InternalOptions {
     String? testOut,
   }) : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
        dartOut = (dartOut ?? options.sourceOutPath)!,
-       testOut = testOut ?? options.testOutPath;
+       testOut = testOut ?? options.testOutPath,
+       _ignoreLints = options._ignoreLints;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -112,6 +124,9 @@ class InternalDartOptions extends InternalOptions {
 
   /// Path to output generated Test file for tests.
   final String? testOut;
+
+  /// Whether to ignore lint violations in generated Dart code.
+  final bool _ignoreLints;
 }
 
 /// Class that manages all Dart code generation.
@@ -136,9 +151,20 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, omit_obvious_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
-    );
+    indent.writeln('// ignore_for_file: unused_import, unused_shown_name');
+    if (generatorOptions._ignoreLints) {
+      indent.writeln('// ignore_for_file: type=lint');
+    } else {
+      // Just ignore the lint rules we know we violate and which we care about
+      // in our own checked-in generated files.
+      indent.writeln(
+        '// ignore_for_file: public_member_api_docs, '
+        'non_constant_identifier_names, avoid_as, unnecessary_parenthesis, '
+        'prefer_null_aware_operators, omit_local_variable_types, '
+        'omit_obvious_local_variable_types, unnecessary_import, '
+        'no_leading_underscores_for_local_identifiers',
+      );
+    }
     indent.newln();
   }
 
@@ -154,19 +180,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln("import 'dart:io' show Platform;");
     }
     indent.writeln(
-      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
+      "import 'dart:typed_data' show Float64List, Int32List, Int64List;",
     );
     indent.newln();
 
-    indent.writeln(
-      "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected, visibleForTesting' : ''};",
-    );
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.containsProxyApi) {
       indent.writeln(
         "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
       );
     }
+    indent.writeln(
+      "import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;",
+    );
   }
 
   @override

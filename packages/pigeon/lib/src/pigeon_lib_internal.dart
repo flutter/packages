@@ -111,7 +111,8 @@ class InternalPigeonOptions {
               options.dartOptions?.sourceOutPath == null)
           ? null
           : InternalDartOptions.fromDartOptions(
-              options.dartOptions ?? const DartOptions(),
+              options.dartOptions ??
+                  DartOptions(ignoreLints: options.ignoreLints),
               dartOut: options.dartOut,
               testOut: options.dartTestOut,
               copyrightHeader: copyrightHeader,
