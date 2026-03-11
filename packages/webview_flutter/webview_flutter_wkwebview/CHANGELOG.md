@@ -1,6 +1,11 @@
-## 3.23.9
+## 3.24.1
 
 * Updates platform views on iOS to only have a weak reference to the native view.
+
+## 3.24.0
+
+* Adds support for `WebKitWebViewControllerCreationParams.javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
+  `window.open()` to work without user interaction on iOS and macOS.
 
 ## 3.23.8
 
