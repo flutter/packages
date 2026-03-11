@@ -34,10 +34,11 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
+namespace {
 template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b);
 
-inline bool PigeonInternalDeepEquals(const double& a, const double& b);
+bool PigeonInternalDeepEquals(const double& a, const double& b);
 
 template <typename T>
 bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
@@ -53,8 +54,8 @@ template <typename T>
 bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
                               const std::unique_ptr<T>& b);
 
-inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
-                                     const ::flutter::EncodableValue& b);
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b);
 
 template <typename T>
 bool PigeonInternalDeepEquals(const T& a, const T& b) {
@@ -100,7 +101,7 @@ bool PigeonInternalDeepEquals(const std::map<K, V>& a,
   return true;
 }
 
-inline bool PigeonInternalDeepEquals(const double& a, const double& b) {
+bool PigeonInternalDeepEquals(const double& a, const double& b) {
   // Normalize -0.0 to 0.0 and handle NaN equality.
   return (a == b) || (std::isnan(a) && std::isnan(b));
 }
@@ -129,8 +130,8 @@ bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a,
   return PigeonInternalDeepEquals(*a, *b);
 }
 
-inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
-                                     const ::flutter::EncodableValue& b) {
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
+                              const ::flutter::EncodableValue& b) {
   if (a.index() != b.index()) {
     return false;
   }
@@ -149,7 +150,7 @@ inline bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a,
 template <typename T>
 size_t PigeonInternalDeepHash(const T& v);
 
-inline size_t PigeonInternalDeepHash(const double& v);
+size_t PigeonInternalDeepHash(const double& v);
 
 template <typename T>
 size_t PigeonInternalDeepHash(const std::vector<T>& v);
@@ -163,7 +164,7 @@ size_t PigeonInternalDeepHash(const std::optional<T>& v);
 template <typename T>
 size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
 
-inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
 
 template <typename T>
 size_t PigeonInternalDeepHash(const T& v) {
@@ -189,7 +190,7 @@ size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   return result;
 }
 
-inline size_t PigeonInternalDeepHash(const double& v) {
+size_t PigeonInternalDeepHash(const double& v) {
   if (std::isnan(v)) {
     // Normalize NaN to a consistent hash.
     return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
@@ -211,7 +212,7 @@ size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
   return v ? PigeonInternalDeepHash(*v) : 0;
 }
 
-inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
   size_t result = v.index();
   if (const double* dv = std::get_if<double>(&v)) {
     result = result * 31 + PigeonInternalDeepHash(*dv);
@@ -238,6 +239,7 @@ inline size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
   return result;
 }
 
+}  // namespace
 // UnusedClass
 
 UnusedClass::UnusedClass() {}
