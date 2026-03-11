@@ -1913,36 +1913,58 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
-      final dart_ast.TypeAnnotation returnType = node.returnType!;
-      returnType as dart_ast.NamedType;
-      _currentApi!.methods.add(
-        Method(
-          name: node.name.lexeme,
-          returnType: TypeDeclaration(
-            baseName: _getNamedTypeQualifiedName(returnType),
-            typeArguments: _typeAnnotationsToTypeArguments(
-              returnType.typeArguments,
+      final dart_ast.TypeAnnotation? returnType = node.returnType;
+      if (returnType is! dart_ast.NamedType) {
+        // In order to support implicit types (either `dynamic` or inherited
+        // return types), type aliases, function types, or record types, we'd
+        // need to use the analyzer's element model, via `getParsedUnit` instead
+        // of `getParsedUnit` in `Pigeon.parseFile`, and then access the
+        // resolved return type, via
+        // `node.declaredFragment!.element.returnType`.
+        String erroneousDeclaration = node.name.lexeme;
+        final dart_ast.AstNode? enclosingDeclaration = node.parent;
+        if (enclosingDeclaration is dart_ast.ClassDeclaration) {
+          erroneousDeclaration =
+              '${enclosingDeclaration.name}.$erroneousDeclaration';
+        }
+        _errors.add(
+          Error(
+            message:
+                'Expected a named type for the return type of '
+                '("$erroneousDeclaration").',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+      } else {
+        _currentApi!.methods.add(
+          Method(
+            name: node.name.lexeme,
+            returnType: TypeDeclaration(
+              baseName: _getNamedTypeQualifiedName(returnType),
+              typeArguments: _typeAnnotationsToTypeArguments(
+                returnType.typeArguments,
+              ),
+              isNullable: returnType.question != null,
             ),
-            isNullable: returnType.question != null,
+            parameters: arguments,
+            isStatic: isStatic,
+            location: switch (_currentApi!) {
+              AstHostApi() => ApiLocation.host,
+              AstProxyApi() => ApiLocation.host,
+              AstFlutterApi() => ApiLocation.flutter,
+              AstEventChannelApi() => ApiLocation.host,
+            },
+            isAsynchronous: isAsynchronous,
+            objcSelector: objcSelector,
+            swiftFunction: swiftFunction,
+            offset: node.offset,
+            taskQueueType: taskQueueType,
+            documentationComments: _documentationCommentsParser(
+              node.documentationComment?.tokens,
+            ),
           ),
-          parameters: arguments,
-          isStatic: isStatic,
-          location: switch (_currentApi!) {
-            AstHostApi() => ApiLocation.host,
-            AstProxyApi() => ApiLocation.host,
-            AstFlutterApi() => ApiLocation.flutter,
-            AstEventChannelApi() => ApiLocation.host,
-          },
-          isAsynchronous: isAsynchronous,
-          objcSelector: objcSelector,
-          swiftFunction: swiftFunction,
-          offset: node.offset,
-          taskQueueType: taskQueueType,
-          documentationComments: _documentationCommentsParser(
-            node.documentationComment?.tokens,
-          ),
-        ),
-      );
+        );
+      }
     } else if (_currentClass != null) {
       _errors.add(
         Error(
