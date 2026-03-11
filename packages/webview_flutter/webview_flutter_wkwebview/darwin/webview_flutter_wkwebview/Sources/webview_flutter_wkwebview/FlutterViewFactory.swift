@@ -35,7 +35,7 @@ import Foundation
         return UIView()
         #endif
       }
-      return uiView
+      return uiView!
     }
   }
 #endif
