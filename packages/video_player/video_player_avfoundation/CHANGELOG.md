@@ -1,6 +1,6 @@
 ## 2.9.5
 
-* Refactor VideoPlayerController to streamline player initialization and implement screen auto-lock control for video playback.
+* Implement screen auto-lock control for video playback.
 
 ## 2.9.4
 
