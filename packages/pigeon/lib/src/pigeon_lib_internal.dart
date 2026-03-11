@@ -1920,17 +1920,17 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         // of `getParsedUnit` in `Pigeon.parseFile`, and then access the
         // resolved return type, via
         // `node.declaredFragment!.element.returnType`.
-        String erroneousDeclaraion = node.name.lexeme;
+        String erroneousDeclaration = node.name.lexeme;
         final dart_ast.AstNode? enclosingDeclaration = node.parent;
         if (enclosingDeclaration is dart_ast.ClassDeclaration) {
-          erroneousDeclaraion =
-              '${enclosingDeclaration.name}.$erroneousDeclaraion';
+          erroneousDeclaration =
+              '${enclosingDeclaration.name}.$erroneousDeclaration';
         }
         _errors.add(
           Error(
             message:
                 'Expected a named type for the return type of '
-                '("$erroneousDeclaraion").',
+                '("$erroneousDeclaration").',
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
