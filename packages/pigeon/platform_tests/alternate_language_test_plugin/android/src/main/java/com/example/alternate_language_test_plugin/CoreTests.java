@@ -42,14 +42,18 @@ public class CoreTests {
 
   static int pigeonDoubleHashCode(double d) {
     // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
-    if (d == 0.0) d = 0.0;
+    if (d == 0.0) {
+      d = 0.0;
+    }
     long bits = Double.doubleToLongBits(d);
     return (int) (bits ^ (bits >>> 32));
   }
 
   static int pigeonFloatHashCode(float f) {
     // Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.
-    if (f == 0.0f) f = 0.0f;
+    if (f == 0.0f) {
+      f = 0.0f;
+    }
     return Float.floatToIntBits(f);
   }
 
@@ -72,7 +76,9 @@ public class CoreTests {
     if (a instanceof double[] && b instanceof double[]) {
       double[] da = (double[]) a;
       double[] db = (double[]) b;
-      if (da.length != db.length) return false;
+      if (da.length != db.length) {
+        return false;
+      }
       for (int i = 0; i < da.length; i++) {
         if (!pigeonDoubleEquals(da[i], db[i])) {
           return false;

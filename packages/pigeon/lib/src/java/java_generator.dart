@@ -442,7 +442,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           () {
             indent.writeln('double[] da = (double[]) a;');
             indent.writeln('double[] db = (double[]) b;');
-            indent.writeln('if (da.length != db.length) return false;');
+            indent.writeScoped('if (da.length != db.length) {', '}', () {
+              indent.writeln('return false;');
+            });
             indent.writeScoped(
               'for (int i = 0; i < da.length; i++) {',
               '}',
@@ -639,7 +641,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       indent.writeln(
         '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
       );
-      indent.writeln('if (d == 0.0) d = 0.0;');
+      indent.writeScoped('if (d == 0.0) {', '}', () {
+        indent.writeln('d = 0.0;');
+      });
       indent.writeln('long bits = Double.doubleToLongBits(d);');
       indent.writeln('return (int) (bits ^ (bits >>> 32));');
     });
@@ -648,7 +652,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       indent.writeln(
         '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
       );
-      indent.writeln('if (f == 0.0f) f = 0.0f;');
+      indent.writeScoped('if (f == 0.0f) {', '}', () {
+        indent.writeln('f = 0.0f;');
+      });
       indent.writeln('return Float.floatToIntBits(f);');
     });
     indent.newln();

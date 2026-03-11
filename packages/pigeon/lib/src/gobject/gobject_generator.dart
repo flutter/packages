@@ -844,6 +844,7 @@ class GObjectSourceGenerator
   }) {
     indent.newln();
     indent.writeln('#include <cmath>');
+    indent.newln();
     indent.writeln('#include <string.h>');
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
 
@@ -1277,10 +1278,12 @@ class GObjectSourceGenerator
         } else if (field.type.isEnum) {
           if (field.type.isNullable) {
             indent.writeln(
-              'result = result * 31 + (self->$fieldName != nullptr ? (guint)*self->$fieldName : 0);',
+              'result = result * 31 + (self->$fieldName != nullptr ? static_cast<guint>(*self->$fieldName) : 0);',
             );
           } else {
-            indent.writeln('result = result * 31 + (guint)self->$fieldName;');
+            indent.writeln(
+              'result = result * 31 + static_cast<guint>(self->$fieldName);',
+            );
           }
         } else if (_isNumericListType(field.type)) {
           indent.writeScoped('{', '}', () {
@@ -1295,7 +1298,7 @@ class GObjectSourceGenerator
               indent.writeScoped('for (size_t i = 0; i < len; i++) {', '}', () {
                 if (field.type.baseName == 'Int64List') {
                   indent.writeln(
-                    'result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));',
+                    'result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));',
                   );
                 } else if (field.type.baseName == 'Float32List' ||
                     field.type.baseName == 'Float64List') {
@@ -1303,7 +1306,9 @@ class GObjectSourceGenerator
                     'result = result * 31 + flpigeon_hash_double(data[i]);',
                   );
                 } else {
-                  indent.writeln('result = result * 31 + (guint)data[i];');
+                  indent.writeln(
+                    'result = result * 31 + static_cast<guint>(data[i]);',
+                  );
                 }
               });
             });
@@ -1312,10 +1317,12 @@ class GObjectSourceGenerator
             field.type.baseName == 'int') {
           if (field.type.isNullable) {
             indent.writeln(
-              'result = result * 31 + (self->$fieldName != nullptr ? (guint)*self->$fieldName : 0);',
+              'result = result * 31 + (self->$fieldName != nullptr ? static_cast<guint>(*self->$fieldName) : 0);',
             );
           } else {
-            indent.writeln('result = result * 31 + (guint)self->$fieldName;');
+            indent.writeln(
+              'result = result * 31 + static_cast<guint>(self->$fieldName);',
+            );
           }
         } else if (field.type.baseName == 'double') {
           if (field.type.isNullable) {
@@ -2835,11 +2842,15 @@ void _writeHashHelpers(Indent indent) {
     'static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {',
     '}',
     () {
-      indent.writeln('if (std::isnan(v)) return (guint)0x7FF80000;');
-      indent.writeln('if (v == 0.0) v = 0.0;');
+      indent.writeScoped('if (std::isnan(v)) {', '}', () {
+        indent.writeln('return static_cast<guint>(0x7FF80000);');
+      });
+      indent.writeScoped('if (v == 0.0) {', '}', () {
+        indent.writeln('v = 0.0;');
+      });
       indent.writeln('union { double d; uint64_t u; } u;');
       indent.writeln('u.d = v;');
-      indent.writeln('return (guint)(u.u ^ (u.u >> 32));');
+      indent.writeln('return static_cast<guint>(u.u ^ (u.u >> 32));');
     },
   );
   indent.writeScoped(
@@ -2988,7 +2999,9 @@ void _writeDeepHash(Indent indent) {
     'static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {',
     '}',
     () {
-      indent.writeln('if (value == nullptr) return 0;');
+      indent.writeScoped('if (value == nullptr) {', '}', () {
+        indent.writeln('return 0;');
+      });
       indent.writeScoped('switch (fl_value_get_type(value)) {', '}', () {
         indent.writeln('case FL_VALUE_TYPE_NULL:');
         indent.writeln('  return 0;');
@@ -2996,7 +3009,7 @@ void _writeDeepHash(Indent indent) {
         indent.writeln('  return fl_value_get_bool(value) ? 1231 : 1237;');
         indent.writeln('case FL_VALUE_TYPE_INT: {');
         indent.writeln('  int64_t v = fl_value_get_int(value);');
-        indent.writeln('  return (guint)(v ^ (v >> 32));');
+        indent.writeln('  return static_cast<guint>(v ^ (v >> 32));');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_FLOAT:');
         indent.writeln(
@@ -3010,9 +3023,9 @@ void _writeDeepHash(Indent indent) {
         indent.writeln(
           '  const uint8_t* data = fl_value_get_uint8_list(value);',
         );
-        indent.writeln(
-          '  for (size_t i = 0; i < len; i++) result = result * 31 + data[i];',
-        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  result = result * 31 + data[i];');
+        });
         indent.writeln('  return result;');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_INT32_LIST: {');
@@ -3021,9 +3034,11 @@ void _writeDeepHash(Indent indent) {
         indent.writeln(
           '  const int32_t* data = fl_value_get_int32_list(value);',
         );
-        indent.writeln(
-          '  for (size_t i = 0; i < len; i++) result = result * 31 + (guint)data[i];',
-        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln(
+            '  result = result * 31 + static_cast<guint>(data[i]);',
+          );
+        });
         indent.writeln('  return result;');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_INT64_LIST: {');
@@ -3032,9 +3047,11 @@ void _writeDeepHash(Indent indent) {
         indent.writeln(
           '  const int64_t* data = fl_value_get_int64_list(value);',
         );
-        indent.writeln(
-          '  for (size_t i = 0; i < len; i++) result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));',
-        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln(
+            '  result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));',
+          );
+        });
         indent.writeln('  return result;');
         indent.writeln('}');
         indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
@@ -3071,7 +3088,9 @@ void _writeDeepHash(Indent indent) {
         indent.writeln('  return result;');
         indent.writeln('}');
         indent.writeln('default:');
-        indent.writeln('  return (guint)fl_value_get_type(value);');
+        indent.writeln(
+          '  return static_cast<guint>(fl_value_get_type(value));',
+        );
       });
       indent.writeln('return 0;');
     },

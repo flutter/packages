@@ -11,14 +11,18 @@
 
 #include <cmath>
 static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
-  if (std::isnan(v)) return (guint)0x7FF80000;
-  if (v == 0.0) v = 0.0;
+  if (std::isnan(v)) {
+    return static_cast<guint>(0x7FF80000);
+  }
+  if (v == 0.0) {
+    v = 0.0;
+  }
   union {
     double d;
     uint64_t u;
   } u;
   u.d = v;
-  return (guint)(u.u ^ (u.u >> 32));
+  return static_cast<guint>(u.u ^ (u.u >> 32));
 }
 static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
   return (a == b) || (std::isnan(a) && std::isnan(b));
@@ -118,7 +122,9 @@ static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
   return FALSE;
 }
 static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
-  if (value == nullptr) return 0;
+  if (value == nullptr) {
+    return 0;
+  }
   switch (fl_value_get_type(value)) {
     case FL_VALUE_TYPE_NULL:
       return 0;
@@ -126,7 +132,7 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
       return fl_value_get_bool(value) ? 1231 : 1237;
     case FL_VALUE_TYPE_INT: {
       int64_t v = fl_value_get_int(value);
-      return (guint)(v ^ (v >> 32));
+      return static_cast<guint>(v ^ (v >> 32));
     }
     case FL_VALUE_TYPE_FLOAT:
       return flpigeon_hash_double(fl_value_get_float(value));
@@ -136,22 +142,27 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
       guint result = 1;
       size_t len = fl_value_get_length(value);
       const uint8_t* data = fl_value_get_uint8_list(value);
-      for (size_t i = 0; i < len; i++) result = result * 31 + data[i];
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + data[i];
+      }
       return result;
     }
     case FL_VALUE_TYPE_INT32_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
       const int32_t* data = fl_value_get_int32_list(value);
-      for (size_t i = 0; i < len; i++) result = result * 31 + (guint)data[i];
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
       return result;
     }
     case FL_VALUE_TYPE_INT64_LIST: {
       guint result = 1;
       size_t len = fl_value_get_length(value);
       const int64_t* data = fl_value_get_int64_list(value);
-      for (size_t i = 0; i < len; i++)
-        result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
       return result;
     }
     case FL_VALUE_TYPE_FLOAT_LIST: {
@@ -182,7 +193,7 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
       return result;
     }
     default:
-      return (guint)fl_value_get_type(value);
+      return static_cast<guint>(fl_value_get_type(value));
   }
   return 0;
 }
@@ -834,16 +845,16 @@ gboolean core_tests_pigeon_test_all_types_equals(
 guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), 0);
   guint result = 0;
-  result = result * 31 + (guint)self->a_bool;
-  result = result * 31 + (guint)self->an_int;
-  result = result * 31 + (guint)self->an_int64;
+  result = result * 31 + static_cast<guint>(self->a_bool);
+  result = result * 31 + static_cast<guint>(self->an_int);
+  result = result * 31 + static_cast<guint>(self->an_int64);
   result = result * 31 + flpigeon_hash_double(self->a_double);
   {
     size_t len = self->a_byte_array_length;
     const uint8_t* data = self->a_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -852,7 +863,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
     const int32_t* data = self->a4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -861,7 +872,7 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
     const int64_t* data = self->a8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
       }
     }
   }
@@ -874,8 +885,8 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
       }
     }
   }
-  result = result * 31 + (guint)self->an_enum;
-  result = result * 31 + (guint)self->another_enum;
+  result = result * 31 + static_cast<guint>(self->an_enum);
+  result = result * 31 + static_cast<guint>(self->another_enum);
   result = result * 31 +
            (self->a_string != nullptr ? g_str_hash(self->a_string) : 0);
   result = result * 31 + flpigeon_deep_hash(self->an_object);
@@ -1909,14 +1920,15 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     CoreTestsPigeonTestAllNullableTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self), 0);
   guint result = 0;
-  result =
-      result * 31 +
-      (self->a_nullable_bool != nullptr ? (guint)*self->a_nullable_bool : 0);
-  result = result * 31 +
-           (self->a_nullable_int != nullptr ? (guint)*self->a_nullable_int : 0);
-  result =
-      result * 31 +
-      (self->a_nullable_int64 != nullptr ? (guint)*self->a_nullable_int64 : 0);
+  result = result * 31 + (self->a_nullable_bool != nullptr
+                              ? static_cast<guint>(*self->a_nullable_bool)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int64 != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int64)
+                              : 0);
   result = result * 31 + (self->a_nullable_double != nullptr
                               ? flpigeon_hash_double(*self->a_nullable_double)
                               : 0);
@@ -1925,7 +1937,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     const uint8_t* data = self->a_nullable_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -1934,7 +1946,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     const int32_t* data = self->a_nullable4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -1943,7 +1955,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     const int64_t* data = self->a_nullable8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
       }
     }
   }
@@ -1956,11 +1968,11 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
       }
     }
   }
-  result =
-      result * 31 +
-      (self->a_nullable_enum != nullptr ? (guint)*self->a_nullable_enum : 0);
+  result = result * 31 + (self->a_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->a_nullable_enum)
+                              : 0);
   result = result * 31 + (self->another_nullable_enum != nullptr
-                              ? (guint)*self->another_nullable_enum
+                              ? static_cast<guint>(*self->another_nullable_enum)
                               : 0);
   result = result * 31 + (self->a_nullable_string != nullptr
                               ? g_str_hash(self->a_nullable_string)
@@ -2971,14 +2983,15 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
   g_return_val_if_fail(
       CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self), 0);
   guint result = 0;
-  result =
-      result * 31 +
-      (self->a_nullable_bool != nullptr ? (guint)*self->a_nullable_bool : 0);
-  result = result * 31 +
-           (self->a_nullable_int != nullptr ? (guint)*self->a_nullable_int : 0);
-  result =
-      result * 31 +
-      (self->a_nullable_int64 != nullptr ? (guint)*self->a_nullable_int64 : 0);
+  result = result * 31 + (self->a_nullable_bool != nullptr
+                              ? static_cast<guint>(*self->a_nullable_bool)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int64 != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int64)
+                              : 0);
   result = result * 31 + (self->a_nullable_double != nullptr
                               ? flpigeon_hash_double(*self->a_nullable_double)
                               : 0);
@@ -2987,7 +3000,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
     const uint8_t* data = self->a_nullable_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -2996,7 +3009,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
     const int32_t* data = self->a_nullable4_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)data[i];
+        result = result * 31 + static_cast<guint>(data[i]);
       }
     }
   }
@@ -3005,7 +3018,7 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
     const int64_t* data = self->a_nullable8_byte_array;
     if (data != nullptr) {
       for (size_t i = 0; i < len; i++) {
-        result = result * 31 + (guint)(data[i] ^ (data[i] >> 32));
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
       }
     }
   }
@@ -3018,11 +3031,11 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
       }
     }
   }
-  result =
-      result * 31 +
-      (self->a_nullable_enum != nullptr ? (guint)*self->a_nullable_enum : 0);
+  result = result * 31 + (self->a_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->a_nullable_enum)
+                              : 0);
   result = result * 31 + (self->another_nullable_enum != nullptr
-                              ? (guint)*self->another_nullable_enum
+                              ? static_cast<guint>(*self->another_nullable_enum)
                               : 0);
   result = result * 31 + (self->a_nullable_string != nullptr
                               ? g_str_hash(self->a_nullable_string)

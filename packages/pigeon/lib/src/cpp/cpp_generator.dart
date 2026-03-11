@@ -1223,7 +1223,7 @@ bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>&
 
 template<typename T>
 bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b) {
-  if (!a && !b) {
+  if (a.get() == b.get()) {
     return true;
   }
   if (!a || !b) {
