@@ -102,12 +102,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   Future<bool> aBool(bool value) async {
@@ -123,12 +123,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   Future<String> aString(String value) async {
@@ -144,12 +144,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<double> aDouble(double value) async {
@@ -165,12 +165,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as double;
+    );
+    return pigeonVar_replyValue! as double;
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
@@ -186,12 +186,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Map<Object?, Object?>;
+    );
+    return pigeonVar_replyValue! as Map<Object?, Object?>;
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
@@ -207,12 +207,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as List<Object?>;
+    );
+    return pigeonVar_replyValue! as List<Object?>;
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
@@ -228,12 +228,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as Int32List;
+    );
+    return pigeonVar_replyValue! as Int32List;
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
@@ -249,12 +249,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<bool?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<bool?>();
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
@@ -270,12 +270,12 @@ class PrimitiveHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as Map<Object?, Object?>)
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>)
         .cast<String?, int?>();
   }
 }
@@ -319,18 +319,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_value = (args[0] as int?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null, expected non-null int.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_value = args[0]! as int;
           try {
-            final int output = api.anInt(arg_value!);
+            final int output = api.anInt(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -352,18 +344,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final bool? arg_value = (args[0] as bool?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null, expected non-null bool.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final bool arg_value = args[0]! as bool;
           try {
-            final bool output = api.aBool(arg_value!);
+            final bool output = api.aBool(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -385,18 +369,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_value = (args[0] as String?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null, expected non-null String.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_value = args[0]! as String;
           try {
-            final String output = api.aString(arg_value!);
+            final String output = api.aString(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -418,18 +394,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final double? arg_value = (args[0] as double?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null, expected non-null double.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final double arg_value = args[0]! as double;
           try {
-            final double output = api.aDouble(arg_value!);
+            final double output = api.aDouble(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -451,19 +419,11 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Map<Object?, Object?>? arg_value =
-              (args[0] as Map<Object?, Object?>?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final Map<Object?, Object?> arg_value =
+              args[0]! as Map<Object?, Object?>;
           try {
-            final Map<Object?, Object?> output = api.aMap(arg_value!);
+            final Map<Object?, Object?> output = api.aMap(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -485,18 +445,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_value = (args[0] as List<Object?>?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final List<Object?> arg_value = args[0]! as List<Object?>;
           try {
-            final List<Object?> output = api.aList(arg_value!);
+            final List<Object?> output = api.aList(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -518,18 +470,10 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Int32List? arg_value = (args[0] as Int32List?);
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final Int32List arg_value = args[0]! as Int32List;
           try {
-            final Int32List output = api.anInt32List(arg_value!);
+            final Int32List output = api.anInt32List(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -551,19 +495,11 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final List<bool?>? arg_value = (args[0] as List<Object?>?)
-              ?.cast<bool?>();
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null, expected non-null List<bool?>.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final List<bool?> arg_value = (args[0]! as List<Object?>)
+              .cast<bool?>();
           try {
-            final List<bool?> output = api.aBoolList(arg_value!);
+            final List<bool?> output = api.aBoolList(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -585,19 +521,11 @@ abstract class PrimitiveFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, int?>? arg_value =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, int?>();
-          assert(
-            arg_value != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap was null, expected non-null Map<String?, int?>.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final Map<String?, int?> arg_value =
+              (args[0]! as Map<Object?, Object?>).cast<String?, int?>();
           try {
-            final Map<String?, int?> output = api.aStringIntMap(arg_value!);
+            final Map<String?, int?> output = api.aStringIntMap(arg_value);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

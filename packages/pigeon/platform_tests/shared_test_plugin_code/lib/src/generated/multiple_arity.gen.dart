@@ -102,12 +102,12 @@ class MultipleArityHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 }
 
@@ -134,23 +134,11 @@ abstract class MultipleArityFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
-          assert(
-            arg_x != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',
-          );
-          final int? arg_y = (args[1] as int?);
-          assert(
-            arg_y != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_x = args[0]! as int;
+          final int arg_y = args[1]! as int;
           try {
-            final int output = api.subtract(arg_x!, arg_y!);
+            final int output = api.subtract(arg_x, arg_y);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -194,7 +194,7 @@ class EventAllNullableTypes {
       doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
       boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[18] as List<Object?>?)?.cast<EventEnum?>(),
-      objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
+      objectList: result[19] as List<Object?>?,
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
       recursiveClassList: (result[22] as List<Object?>?)
@@ -205,8 +205,7 @@ class EventAllNullableTypes {
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[26] as Map<Object?, Object?>?)
           ?.cast<EventEnum?, EventEnum?>(),
-      objectMap: (result[27] as Map<Object?, Object?>?)
-          ?.cast<Object?, Object?>(),
+      objectMap: result[27] as Map<Object?, Object?>?,
       listMap: (result[28] as Map<Object?, Object?>?)
           ?.cast<int?, List<Object?>?>(),
       mapMap: (result[29] as Map<Object?, Object?>?)

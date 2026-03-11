@@ -48,9 +48,7 @@ Iterable<cb.Parameter> asConstructorParameters({
       (cb.ParameterBuilder builder) => builder
         ..name = field.name
         ..named = true
-        ..type = defineType
-            ? cb.refer(addGenericTypesNullable(field.type))
-            : null
+        ..type = defineType ? cb.refer(addGenericTypes(field.type)) : null
         ..toThis = !defineType
         ..required = !field.type.isNullable,
     );
@@ -259,7 +257,7 @@ cb.FunctionType methodAsFunctionType(Method method, {required String apiName}) {
           cb.refer('$apiName ${classMemberNamePrefix}instance'),
         ...method.parameters.mapIndexed((int index, NamedType parameter) {
           return cb.refer(
-            '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+            '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
           );
         }),
       ]),
@@ -287,7 +285,7 @@ Iterable<cb.Method> staticAttachedFieldsGetters(
         ..name = field.name
         ..type = cb.MethodType.getter
         ..static = true
-        ..returns = cb.refer(addGenericTypesNullable(field.type))
+        ..returns = cb.refer(addGenericTypes(field.type))
         ..docs.addAll(
           asDocumentationComments(field.documentationComments, docCommentSpec),
         )
@@ -564,7 +562,7 @@ Iterable<cb.Field> unattachedFields(Iterable<ApiField> fields) sync* {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = field.name
-        ..type = cb.refer(addGenericTypesNullable(field.type))
+        ..type = cb.refer(addGenericTypes(field.type))
         ..modifier = cb.FieldModifier.final$
         ..docs.addAll(
           asDocumentationComments(field.documentationComments, docCommentSpec),
@@ -658,7 +656,7 @@ Iterable<cb.Field> interfaceApiFields(
                   NamedType parameter,
                 ) {
                   return cb.refer(
-                    '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+                    '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
                   );
                 }),
               ]),
@@ -683,7 +681,7 @@ Iterable<cb.Field> attachedFields(Iterable<ApiField> fields) sync* {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = '${field.isStatic ? '_' : ''}${field.name}'
-        ..type = cb.refer(addGenericTypesNullable(field.type))
+        ..type = cb.refer(addGenericTypes(field.type))
         ..modifier = cb.FieldModifier.final$
         ..static = field.isStatic
         ..late = !field.isStatic
@@ -750,7 +748,7 @@ cb.Method setUpMessageHandlerMethod({
                   ..requiredParameters.addAll(
                     unattachedFields.mapIndexed((int index, ApiField field) {
                       return cb.refer(
-                        '${addGenericTypesNullable(field.type)} ${getParameterName(index, field)}',
+                        '${addGenericTypes(field.type)} ${getParameterName(index, field)}',
                       );
                     }),
                   ),
@@ -774,7 +772,7 @@ cb.Method setUpMessageHandlerMethod({
                       NamedType parameter,
                     ) {
                       return cb.refer(
-                        '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+                        '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
                       );
                     }),
                   ]),
@@ -905,7 +903,7 @@ Iterable<cb.Method> attachedFieldMethods(
 }) sync* {
   for (final field in fields) {
     yield cb.Method((cb.MethodBuilder builder) {
-      final String type = addGenericTypesNullable(field.type);
+      final String type = addGenericTypes(field.type);
       const instanceName = '${varNamePrefix}instance';
       const identifierInstanceName = '${varNamePrefix}instanceIdentifier';
       builder
@@ -994,7 +992,7 @@ Iterable<cb.Method> hostMethods(
       (int index, NamedType parameter) => cb.Parameter(
         (cb.ParameterBuilder builder) => builder
           ..name = getParameterName(index, parameter)
-          ..type = cb.refer(addGenericTypesNullable(parameter.type)),
+          ..type = cb.refer(addGenericTypes(parameter.type)),
       ),
     );
     yield cb.Method(

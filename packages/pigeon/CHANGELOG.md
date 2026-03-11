@@ -1,3 +1,7 @@
+## 26.2.1
+
+* [dart] Improves nullability-handling in generated code.
+
 ## 26.2.0
 
 * [kotlin] Adds option to add javax.annotation.Generated annotation.

@@ -100,7 +100,7 @@ class MessageData {
       name: result[0] as String?,
       description: result[1] as String?,
       code: result[2]! as Code,
-      data: (result[3] as Map<Object?, Object?>?)!.cast<String, String>(),
+      data: (result[3]! as Map<Object?, Object?>).cast<String, String>(),
     );
   }
 
@@ -181,12 +181,12 @@ class ExampleHostApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as String;
+    );
+    return pigeonVar_replyValue! as String;
   }
 
   Future<int> add(int a, int b) async {
@@ -202,12 +202,12 @@ class ExampleHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 
   Future<bool> sendMessage(MessageData message) async {
@@ -223,12 +223,12 @@ class ExampleHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as bool;
+    );
+    return pigeonVar_replyValue! as bool;
   }
 }
 
@@ -255,12 +255,8 @@ abstract class MessageFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_aString = (args[0] as String?);
+          final List<Object?> args = message! as List<Object?>;
+          final String? arg_aString = args[0] as String?;
           try {
             final String output = api.flutterMethod(arg_aString);
             return wrapResponse(result: output);
