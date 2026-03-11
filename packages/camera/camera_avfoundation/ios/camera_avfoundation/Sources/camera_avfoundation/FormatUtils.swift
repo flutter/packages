@@ -4,11 +4,6 @@
 
 import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
 typealias VideoDimensionsConverter = (CaptureDeviceFormat) -> CMVideoDimensions

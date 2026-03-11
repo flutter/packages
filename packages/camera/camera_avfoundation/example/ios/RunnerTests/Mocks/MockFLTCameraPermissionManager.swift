@@ -6,11 +6,6 @@ import Flutter
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class MockCameraPermissionManager: CameraPermissionManager {
   var requestCameraPermissionStub: ((@escaping CameraPermissionRequestCompletionHandler) -> Void)?
   var requestAudioPermissionStub: ((@escaping CameraPermissionRequestCompletionHandler) -> Void)?
