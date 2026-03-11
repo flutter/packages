@@ -14,4 +14,8 @@ void main() {
     final options = VideoPlayerOptions();
     expect(options.mixWithOthers, false);
   });
+  test('VideoPlayerOptions allowScreenAutoLock defaults to false', () {
+    final options = VideoPlayerOptions();
+    expect(options.allowScreenAutoLock, false);
+  });
 }
