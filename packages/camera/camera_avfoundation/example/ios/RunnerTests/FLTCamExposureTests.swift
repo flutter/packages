@@ -80,8 +80,9 @@ final class FLTCamExposureTests: XCTestCase {
     }
 
     let expectation = expectation(description: "Completion called")
-    camera.setExposurePoint(FCPPlatformPoint.makeWith(x: 1, y: 1)) { error in
-      XCTAssertNil(error)
+    camera.setExposurePoint(PlatformPoint(x: 1, y: 1)) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -98,10 +99,14 @@ final class FLTCamExposureTests: XCTestCase {
 
     let expectation = expectation(description: "Completion with error")
 
-    camera.setExposurePoint(FCPPlatformPoint.makeWith(x: 1, y: 1)) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setExposurePointFailed")
-      XCTAssertEqual(error?.message, "Device does not have exposure point capabilities")
+    camera.setExposurePoint(PlatformPoint(x: 1, y: 1)) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setExposurePointFailed")
+        XCTAssertEqual(error.message, "Device does not have exposure point capabilities")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
