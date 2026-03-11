@@ -38,7 +38,7 @@ Object? _extractReplyValueOrThrow(
 }
 
 bool _deepEquals(Object? a, Object? b) {
-  if (identical(a, b)) {
+  if (identical(a, b) || a == b) {
     return true;
   }
   if (a is double && b is double) {

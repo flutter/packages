@@ -37,7 +37,7 @@ private object EventChannelMessagesPigeonUtils {
   }
 
   fun deepEquals(a: Any?, b: Any?): Boolean {
-    if (a === b) {
+    if (a === b || a == b) {
       return true
     }
     if (a is ByteArray && b is ByteArray) {

@@ -415,7 +415,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       'static boolean pigeonDeepEquals(Object a, Object b) {',
       '}',
       () {
-        indent.writeln('if (a == b) { return true; }');
+        indent.writeln(
+          'if (a == b || (a != null && a.equals(b))) { return true; }',
+        );
         indent.writeln('if (a == null || b == null) { return false; }');
         indent.writeScoped(
           'if (a instanceof byte[] && b instanceof byte[]) {',

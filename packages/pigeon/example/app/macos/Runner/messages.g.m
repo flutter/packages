@@ -13,7 +13,7 @@
 #endif
 
 static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
-  if (a == b) {
+  if (a == b || [a isEqual:b]) {
     return YES;
   }
   if (a == nil || b == nil) {

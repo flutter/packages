@@ -1175,7 +1175,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   void _writeDeepEquals(Indent indent) {
     indent.format(r'''
 bool _deepEquals(Object? a, Object? b) {
-  if (identical(a, b)) {
+  if (identical(a, b) || a == b) {
     return true;
   }
   if (a is double && b is double) {
