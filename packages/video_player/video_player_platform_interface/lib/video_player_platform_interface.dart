@@ -158,11 +158,9 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   ///
   /// Returns a list of [VideoTrack] objects representing the available
   /// video quality variants. For HLS/DASH streams, this returns the different
-  /// quality levels available. For regular videos, this may return a single
-  /// track or an empty list.
-  ///
-  /// Note: On iOS 13-14, this returns an empty list as the AVAssetVariant API
-  /// requires iOS 15+.
+  /// quality levels available. For non-adaptive videos, platform
+  /// implementations may return one or more tracks, or an empty list,
+  /// depending on the media and the metadata available.
   Future<List<VideoTrack>> getVideoTracks(int playerId) {
     throw UnimplementedError('getVideoTracks() has not been implemented.');
   }
@@ -171,9 +169,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   ///
   /// Pass a [VideoTrack] to select a specific quality.
   /// Pass `null` to enable automatic quality selection (adaptive streaming).
-  ///
-  /// On iOS, this sets `preferredPeakBitRate` on the AVPlayerItem.
-  /// On Android, this uses ExoPlayer's track selection override.
   Future<void> selectVideoTrack(int playerId, VideoTrack? track) {
     throw UnimplementedError('selectVideoTrack() has not been implemented.');
   }

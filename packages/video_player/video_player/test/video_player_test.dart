@@ -1782,6 +1782,26 @@ void main() {
       expect(fakeVideoPlayerPlatform.calls, contains('getVideoTracks'));
     });
 
+    test('getVideoTracks preserves null labels from platform', () async {
+      final controller = VideoPlayerController.networkUrl(_localhostUri);
+      await controller.initialize();
+
+      fakeVideoPlayerPlatform.setVideoTracksForPlayer(
+        controller.playerId,
+        <platform_interface.VideoTrack>[
+          const platform_interface.VideoTrack(
+            id: '0_0',
+            isSelected: true,
+            bitrate: 5000000,
+          ),
+        ],
+      );
+
+      final List<VideoTrack> tracks = await controller.getVideoTracks();
+
+      expect(tracks.single.label, isNull);
+    });
+
     test('selectVideoTrack calls platform with track', () async {
       final controller = VideoPlayerController.networkUrl(_localhostUri);
       await controller.initialize();

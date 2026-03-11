@@ -157,8 +157,8 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
   }
 
   String _getTrackLabel(VideoTrack track) {
-    if (track.label.isNotEmpty) {
-      return track.label;
+    if (track.label?.isNotEmpty ?? false) {
+      return track.label!;
     }
     if (track.height != null && track.width != null) {
       return '${track.width}x${track.height}';

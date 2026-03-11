@@ -1037,7 +1037,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         ? platform_interface.VideoTrack(
             id: track.id,
             isSelected: track.isSelected,
-            label: track.label.isEmpty ? null : track.label,
+            label: track.label,
             bitrate: track.bitrate,
             width: track.width,
             height: track.height,
@@ -1049,8 +1049,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Returns whether video track selection is supported on this platform.
-  ///
-  /// Returns `true` on Android and iOS, `false` on web.
   ///
   /// Use this to check before calling [getVideoTracks] or [selectVideoTrack]
   /// to avoid [UnimplementedError] exceptions on unsupported platforms.
@@ -1466,15 +1464,16 @@ class ClosedCaption extends StatelessWidget {
 /// Represents a video track (quality variant) in a video with its metadata.
 ///
 /// For HLS/DASH adaptive streams, each [VideoTrack] represents a different
-/// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos (MP4,
-/// MOV, etc.), no tracks are returned as they have a single fixed quality.
+/// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos, platform
+/// implementations may return a single track or no tracks, depending on the
+/// metadata that is available.
 @immutable
 class VideoTrack {
   /// Constructs an instance of [VideoTrack].
   const VideoTrack({
     required this.id,
     required this.isSelected,
-    this.label = '',
+    this.label,
     this.bitrate,
     this.width,
     this.height,
@@ -1487,7 +1486,7 @@ class VideoTrack {
     return VideoTrack(
       id: track.id,
       isSelected: track.isSelected,
-      label: track.label ?? '',
+      label: track.label,
       bitrate: track.bitrate,
       width: track.width,
       height: track.height,
@@ -1508,8 +1507,8 @@ class VideoTrack {
 
   /// Human-readable label for the track (e.g., "1080p", "720p").
   ///
-  /// Defaults to an empty string if not available from the platform.
-  final String label;
+  /// May be null if not available from the platform.
+  final String? label;
 
   /// Bitrate of the video track in bits per second.
   ///

@@ -382,6 +382,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // - This approach is necessary because ExoPlayer doesn't provide a direct API to force
     //   a renderer reset when dimensions change. Disabling and re-enabling the track type
     //   is the recommended way to ensure proper resource cleanup and reinitialization.
+    // TODO(nateshmbhat): Remove this workaround once Media3 provides a supported
+    // renderer reset path or reliable resolution-changing track switches.
     if (dimensionsChanged) {
       final boolean wasPlaying = exoPlayer.isPlaying();
       final long currentPosition = exoPlayer.getCurrentPosition();
