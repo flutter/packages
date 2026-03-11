@@ -578,15 +578,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     if (controller == null || !controller!.value.isInitialized) {
       return;
     }
-    // iOS camera sensor native orientation is landscape (0°). The system
-    // normally compensates with 90° to produce an upright portrait image.
-    // We offset the user-facing rotation (relative to portrait) by 90° so
-    // that "0°" in the UI means "upright" and "90°" means "rotated right".
-    final double hardwareAngle = (_transformRotation + 90) % 360;
     await (CameraPlatform.instance as AVFoundationCamera).setTransform(
       controller!.cameraId,
       CameraTransform(
-        rotationDegrees: hardwareAngle,
+        rotationDegrees: _transformRotation,
         flipHorizontally: _transformFlipH,
         flipVertically: _transformFlipV,
         cropRect: _transformCropEnabled

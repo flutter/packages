@@ -837,7 +837,12 @@ final class DefaultCamera: NSObject, Camera {
       guard let connection = output.connection(with: .video) else { continue }
 
       if #available(iOS 17.0, *) {
-        let angle = transform.rotationDegrees
+        // The iOS camera sensor's native orientation is landscape (0°). The
+        // system normally compensates with 90° to produce an upright portrait
+        // image. We offset the caller's angle by 90° so that
+        // rotationDegrees = 0 means "upright / no rotation" from the API
+        // user's point of view.
+        let angle = (transform.rotationDegrees + 90).truncatingRemainder(dividingBy: 360)
         if connection.isVideoRotationAngleSupported(angle) {
           connection.videoRotationAngle = angle
         }
