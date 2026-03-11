@@ -1,3 +1,11 @@
+## 26.2.2
+
+* [dart] Ignores all lint rules in generated code.
+* [dart] In generated code, imports the meta package for annotations, instead of
+  the Flutter foundation library.
+* [dart] In generated code, no longer imports Uint8List.
+* Bumps minimum version of the args package to 2.5.0.
+
 ## 26.2.1
 
 * [dart] Improves nullability-handling in generated code.
