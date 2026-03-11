@@ -226,10 +226,11 @@ class SharedPreferencesWithCache {
   /// such as from another isolate or native code that changes the underlying
   /// preference storage directly.
   Future<void> reloadCache() async {
-    _cache.clear();
-    _cache.addAll(
-      await _platformMethods.getAll(allowList: _cacheOptions.allowList),
+    final Map<String, Object?> preferences = await _platformMethods.getAll(
+      allowList: _cacheOptions.allowList,
     );
+    _cache.clear();
+    _cache.addAll(preferences);
   }
 
   /// Returns true if cache contains the given [key].
