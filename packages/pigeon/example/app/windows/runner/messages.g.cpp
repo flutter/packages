@@ -182,8 +182,8 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result = result * 31 + PigeonInternalDeepHash(kv.first);
-    result = result * 31 + PigeonInternalDeepHash(kv.second);
+    result +=
+        (PigeonInternalDeepHash(kv.first) ^ PigeonInternalDeepHash(kv.second));
   }
   return result;
 }
