@@ -179,12 +179,12 @@ class NullableArgHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 }
 
@@ -211,12 +211,8 @@ abstract class NullableArgFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
+          final List<Object?> args = message! as List<Object?>;
+          final int? arg_x = args[0] as int?;
           try {
             final int? output = api.doit(arg_x);
             return wrapResponse(result: output);
@@ -339,12 +335,12 @@ class NullableCollectionArgHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return (pigeonVar_replyValue as List<Object?>).cast<String?>();
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<String?>();
   }
 }
 
@@ -371,11 +367,7 @@ abstract class NullableCollectionArgFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?> args = message! as List<Object?>;
           final List<String?>? arg_x = (args[0] as List<Object?>?)
               ?.cast<String?>();
           try {

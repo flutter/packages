@@ -270,12 +270,12 @@ class Api {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as FlutterSearchReply;
+    );
+    return pigeonVar_replyValue! as FlutterSearchReply;
   }
 
   Future<FlutterSearchReplies> doSearches(FlutterSearchRequests request) async {
@@ -291,12 +291,12 @@ class Api {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as FlutterSearchReplies;
+    );
+    return pigeonVar_replyValue! as FlutterSearchReplies;
   }
 
   Future<FlutterSearchRequests> echo(FlutterSearchRequests requests) async {
@@ -312,12 +312,12 @@ class Api {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as FlutterSearchRequests;
+    );
+    return pigeonVar_replyValue! as FlutterSearchRequests;
   }
 
   Future<int> anInt(int value) async {
@@ -333,11 +333,11 @@ class Api {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as int;
+    );
+    return pigeonVar_replyValue! as int;
   }
 }
