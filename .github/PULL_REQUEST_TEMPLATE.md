@@ -5,6 +5,7 @@
 ## Pre-Review Checklist
 
 - [ ] I read the [Contributor Guide] and followed the process outlined there for submitting PRs.
+- [ ] I read the [AI contribution guidelines] and understand my responsibilities, or I am not using AI tools.
 - [ ] I read the [Tree Hygiene] page, which explains my responsibilities.
 - [ ] I read and followed the [relevant style guides] and ran [the auto-formatter].
 - [ ] I signed the [CLA].
@@ -23,6 +24,7 @@ If you need help, consider asking for advice on the #hackers-new channel on [Dis
 
 <!-- Links -->
 [Contributor Guide]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
+[AI contribution guidelines]: https://github.com/flutter/flutter/blob/main/docs/contributing/Tree-hygiene.md#ai-contribution-guidelines
 [Tree Hygiene]: https://github.com/flutter/flutter/blob/master/docs/contributing/Tree-hygiene.md
 [relevant style guides]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md#style
 [the auto-formatter]: https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code
