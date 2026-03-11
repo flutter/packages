@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class SavePhotoDelegateTests: XCTestCase {
   func testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToCapture() {
     let completionExpectation = expectation(

@@ -196,6 +196,29 @@ private let hlsAudioTestURI =
     #expect(stubDisplayLinkFactory.displayLink.running)
   }
 
+  @Test func disposeWhilePlayingStopsDisplayLink() async {
+    let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
+    let mockVideoOutput = TestPixelBufferSource()
+    let videoPlayerPlugin = createInitializedPlugin(
+      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      displayLinkFactory: stubDisplayLinkFactory)
+
+    var error: FlutterError?
+    let identifiers = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      error: &error)
+    #expect(error == nil)
+    let player =
+      videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPTextureBasedVideoPlayer
+
+    player.playWithError(&error)
+    #expect(error == nil)
+    player.disposeWithError(&error)
+    #expect(error == nil)
+
+    #expect(!stubDisplayLinkFactory.displayLink.running)
+  }
+
   @Test func deregistersFromPlayer() throws {
     let videoPlayerPlugin = createInitializedPlugin()
 

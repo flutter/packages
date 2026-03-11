@@ -1,6 +1,12 @@
-## NEXT
+## 0.4.0+23
+
+* Removed the unused `io.flutter.network-policy` metadata tag from the README and example application.
+
+## 0.4.0+22
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates README to remove usesCleartextTraffic.  Users should use
+  network security configuration instead. 
 
 ## 0.4.0+21
 

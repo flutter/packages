@@ -1,3 +1,7 @@
+## 4.10.13
+
+* Bumps androidx.webkit:webkit from 1.14.0 to 1.15.0.
+
 ## 4.10.12
 
 * Bumps kotlin_version to 2.3.0.

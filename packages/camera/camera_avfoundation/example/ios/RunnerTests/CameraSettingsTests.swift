@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 private let testResolutionPreset = PlatformResolutionPreset.medium
 private let testFramesPerSecond: Int64 = 15
 private let testVideoBitrate: Int64 = 200000
@@ -299,6 +294,62 @@ final class CameraSettingsTests: XCTestCase {
     XCTAssertGreaterThan(
       mockAudioSession.addedAudioOutputCount, 0,
       "Audio session should receive AVCaptureAudioDataOutput when enableAudio is true"
+    )
+  }
+
+  func testResolutionPresetWithMax_mustIgnoreLossyFormatsAndSquares() {
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+
+    let lossyFormat = MockCaptureDeviceFormat(
+      codecType: 1_651_798_066,  // 'btp2'
+      width: 4224,
+      height: 3024
+    )
+    let squareFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 4032,
+      height: 4032
+    )
+    let safe4KFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 3840,
+      height: 2160
+    )
+
+    let captureDeviceMock = MockCaptureDevice()
+    captureDeviceMock.flutterFormats = [lossyFormat, squareFormat, safe4KFormat]
+
+    var currentFormat: CaptureDeviceFormat = safe4KFormat
+    captureDeviceMock.activeFormatStub = { currentFormat }
+    captureDeviceMock.setActiveFormatStub = { newFormat in currentFormat = newFormat }
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureSession = videoSessionMock
+
+    configuration.videoDimensionsConverter = { format in
+      return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+    }
+
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max
+    )
+
+    let _ = CameraTestUtils.createTestCamera(configuration)
+
+    let selectedFormat = captureDeviceMock.flutterActiveFormat
+    let selectedDimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription)
+
+    XCTAssertEqual(
+      selectedDimensions.width,
+      3840,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
+    )
+    XCTAssertEqual(
+      selectedDimensions.height,
+      2160,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
     )
   }
 }
