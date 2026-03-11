@@ -28,11 +28,11 @@ import Foundation
     }
 
     func view() -> UIView {
-      if (uiView == nil) {
+      if uiView == nil {
         #if DEBUG
-        fatalError("WebViewFlutterPluginError: UIView has be deallocated, but is being accessed.")
+          fatalError("WebViewFlutterPluginError: UIView has be deallocated, but is being accessed.")
         #else
-        return UIView()
+          return UIView()
         #endif
       }
       return uiView!
