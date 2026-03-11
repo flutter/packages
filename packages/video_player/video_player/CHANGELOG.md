@@ -1,3 +1,7 @@
+## 2.11.1
+
+* Refactor VideoPlayerController to streamline player initialization and implement screen auto-lock control for video playback.
+
 ## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.

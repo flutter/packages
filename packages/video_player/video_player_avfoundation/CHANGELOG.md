@@ -1,3 +1,7 @@
+## 2.9.5
+
+* Refactor VideoPlayerController to streamline player initialization and implement screen auto-lock control for video playback.
+
 ## 2.9.4
 
 * Ensures that the display link does not continue requesting frames after a player is disposed.

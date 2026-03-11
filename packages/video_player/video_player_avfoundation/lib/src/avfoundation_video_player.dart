@@ -180,8 +180,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setAllowScreenAutoLock(int playerId, bool allowScreenAutoLock) {
-    return _playerWith(id: playerId)
-        .setAllowScreenAutoLock(allowScreenAutoLock);
+    return _playerWith(
+      id: playerId,
+    ).setAllowScreenAutoLock(allowScreenAutoLock);
   }
 
   @override

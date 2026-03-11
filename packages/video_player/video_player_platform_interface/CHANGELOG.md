@@ -1,5 +1,6 @@
-## NEXT
+## 6.6.1
 
+* Refactor VideoPlayerController to streamline player initialization and implement screen auto-lock control for video playback.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.6.0

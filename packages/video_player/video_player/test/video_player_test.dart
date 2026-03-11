@@ -1579,8 +1579,10 @@ void main() {
 
       await controller.initialize();
       expect(controller.videoPlayerOptions!.allowScreenAutoLock, true);
-      expect(fakeVideoPlayerPlatform.calls.contains('setAllowScreenAutoLock'),
-          true);
+      expect(
+        fakeVideoPlayerPlatform.calls.contains('setAllowScreenAutoLock'),
+        true,
+      );
     });
 
     test('true allowBackgroundPlayback continues playback', () async {
@@ -1857,7 +1859,9 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
 
   @override
   Future<void> setAllowScreenAutoLock(
-      int playerId, bool allowScreenAutoLock) async {
+    int playerId,
+    bool allowScreenAutoLock,
+  ) async {
     calls.add('setAllowScreenAutoLock');
   }
 
