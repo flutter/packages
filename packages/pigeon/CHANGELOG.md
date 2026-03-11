@@ -1,7 +1,11 @@
-## 26.2.1
+## 26.2.2
 
 * Produces a helpful error message when a method return type is missing or an
   unsupported type, such as a function type or record type.
+
+## 26.2.1
+
+* [dart] Improves nullability-handling in generated code.
 
 ## 26.2.0
 

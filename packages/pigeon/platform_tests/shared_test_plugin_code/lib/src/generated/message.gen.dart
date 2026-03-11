@@ -310,12 +310,12 @@ class MessageApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as MessageSearchReply;
+    );
+    return pigeonVar_replyValue! as MessageSearchReply;
   }
 }
 
@@ -353,12 +353,12 @@ class MessageNestedApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as MessageSearchReply;
+    );
+    return pigeonVar_replyValue! as MessageSearchReply;
   }
 }
 
@@ -387,19 +387,11 @@ abstract class MessageFlutterSearchApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final MessageSearchRequest? arg_request =
-              (args[0] as MessageSearchRequest?);
-          assert(
-            arg_request != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null, expected non-null MessageSearchRequest.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final MessageSearchRequest arg_request =
+              args[0]! as MessageSearchRequest;
           try {
-            final MessageSearchReply output = api.search(arg_request!);
+            final MessageSearchReply output = api.search(arg_request);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

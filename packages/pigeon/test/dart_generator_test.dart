@@ -251,11 +251,11 @@ void main() {
     expect(code, contains('int add(int x, int y)'));
     expect(
       code,
-      contains('final List<Object?> args = (message as List<Object?>?)!'),
+      contains('final List<Object?> args = message! as List<Object?>'),
     );
-    expect(code, contains('final int? arg_x = (args[0] as int?)'));
-    expect(code, contains('final int? arg_y = (args[1] as int?)'));
-    expect(code, contains('final int output = api.add(arg_x!, arg_y!)'));
+    expect(code, contains('final int arg_x = args[0]! as int'));
+    expect(code, contains('final int arg_y = args[1]! as int'));
+    expect(code, contains('final int output = api.add(arg_x, arg_y)'));
   });
 
   test('nested class', () {
@@ -622,7 +622,7 @@ void main() {
     expect(code, contains('writeValue(buffer, value.index);'));
     expect(
       code,
-      contains('final EnumClass? arg_enumClass = (args[0] as EnumClass?);'),
+      contains('final EnumClass arg_enumClass = args[0]! as EnumClass;'),
     );
     expect(code, contains('EnumClass doSomething(EnumClass enumClass);'));
   });
@@ -958,7 +958,7 @@ void main() {
     expect(code, contains('Future<Output> doSomething(Input input);'));
     expect(
       code,
-      contains('final Output output = await api.doSomething(arg_input!);'),
+      contains('final Output output = await api.doSomething(arg_input);'),
     );
   });
 
@@ -1338,7 +1338,7 @@ void main() {
     expect(code, contains('Future<List<int?>> doit('));
     expect(
       code,
-      contains('return (pigeonVar_replyValue as List<Object?>).cast<int?>();'),
+      contains('return (pigeonVar_replyValue! as List<Object?>).cast<int?>();'),
     );
   });
 
@@ -1390,10 +1390,10 @@ void main() {
     expect(
       code,
       contains(
-        'final List<int?>? arg_foo = (args[0] as List<Object?>?)?.cast<int?>()',
+        'final List<int?> arg_foo = (args[0]! as List<Object?>).cast<int?>()',
       ),
     );
-    expect(code, contains('final List<int?> output = api.doit(arg_foo!)'));
+    expect(code, contains('final List<int?> output = api.doit(arg_foo)'));
   });
 
   test('return nullable host', () {
@@ -1727,7 +1727,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('void doit({required int foo});'));
-    expect(code, contains('api.doit(foo: arg_foo!)'));
+    expect(code, contains('api.doit(foo: arg_foo)'));
   });
 
   test('uses output package name for imports', () {
@@ -1966,7 +1966,7 @@ name: foobar
     );
 
     final testCode = sink.toString();
-    expect(testCode, contains('final Enum? arg_anEnum = (args[0] as Enum?);'));
+    expect(testCode, contains('final Enum arg_anEnum = args[0]! as Enum;'));
     expect(
       testCode,
       contains('return value == null ? null : Enum.values[value];'),

@@ -233,12 +233,12 @@ class NullFieldsHostApi {
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
-    final Object pigeonVar_replyValue = _extractReplyValueOrThrow(
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
       pigeonVar_replyList,
       pigeonVar_channelName,
       isNullValid: false,
-    )!;
-    return pigeonVar_replyValue as NullFieldsSearchReply;
+    );
+    return pigeonVar_replyValue! as NullFieldsSearchReply;
   }
 }
 
@@ -265,19 +265,11 @@ abstract class NullFieldsFlutterApi {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.',
-          );
-          final List<Object?> args = (message as List<Object?>?)!;
-          final NullFieldsSearchRequest? arg_request =
-              (args[0] as NullFieldsSearchRequest?);
-          assert(
-            arg_request != null,
-            'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null, expected non-null NullFieldsSearchRequest.',
-          );
+          final List<Object?> args = message! as List<Object?>;
+          final NullFieldsSearchRequest arg_request =
+              args[0]! as NullFieldsSearchRequest;
           try {
-            final NullFieldsSearchReply output = api.search(arg_request!);
+            final NullFieldsSearchReply output = api.search(arg_request);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
