@@ -4,17 +4,18 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  swiftOut:
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut:
         'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
-  objcOptions: ObjcOptions(
-    prefix: 'FCP',
-    headerIncludePath: './include/camera_avfoundation/messages.g.h',
+    objcOptions: ObjcOptions(
+      prefix: 'FCP',
+      headerIncludePath: './include/camera_avfoundation/messages.g.h',
+    ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
 )
-
 // Pigeon version of CameraLensDirection.
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).

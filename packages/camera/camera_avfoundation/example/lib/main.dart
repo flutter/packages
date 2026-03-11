@@ -173,7 +173,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
       children: <Widget>[
         ElevatedButton(
           onPressed: () {
-            final AVFoundationCamera camera = CameraPlatform.instance as AVFoundationCamera;
+            final camera = CameraPlatform.instance as AVFoundationCamera;
             setState(() {
               _lenPosition = (_lenPosition + 0.1).clamp(0.0, 1.0);
             });
@@ -184,7 +184,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome> with WidgetsBindi
         ),
         ElevatedButton(
           onPressed: () {
-            final AVFoundationCamera camera = CameraPlatform.instance as AVFoundationCamera;
+            final camera = CameraPlatform.instance as AVFoundationCamera;
             setState(() {
               _lenPosition = (_lenPosition - 0.1).clamp(0.0, 1.0);
             });

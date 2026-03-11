@@ -1,4 +1,4 @@
- // Copyright 2013 The Flutter Authors
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,7 +37,8 @@ class AVFoundationCamera extends CameraPlatform {
   /// This is only exposed for test purposes. It shouldn't be used by clients of
   /// the plugin as it may break or change at any time.
   @visibleForTesting
-  final StreamController<CameraEvent> cameraEventStreamController = StreamController<CameraEvent>.broadcast();
+  final StreamController<CameraEvent> cameraEventStreamController =
+      StreamController<CameraEvent>.broadcast();
 
   /// The handler for device-level messages that should be rebroadcast to
   /// clients as [DeviceEvent]s.
@@ -50,7 +51,8 @@ class AVFoundationCamera extends CameraPlatform {
   /// The per-camera handlers for messages that should be rebroadcast to
   /// clients as [CameraEvent]s.
   @visibleForTesting
-  final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -65,7 +67,9 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      return (await _hostApi.getAvailableCameras()).map(cameraDescriptionFromPlatform).toList();
+      return (await _hostApi.getAvailableCameras())
+          .map(cameraDescriptionFromPlatform)
+          .toList();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -168,7 +172,8 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return hostHandler.deviceEventStreamController.stream.whereType<DeviceOrientationChangedEvent>();
+    return hostHandler.deviceEventStreamController.stream
+        .whereType<DeviceOrientationChangedEvent>();
   }
 
   @override
@@ -626,7 +631,8 @@ class HostDeviceMessageHandler implements CameraGlobalEventApi {
   ///
   /// It is a `broadcast` because multiple controllers will connect to
   /// different stream views of this Controller.
-  final StreamController<DeviceEvent> deviceEventStreamController = StreamController<DeviceEvent>.broadcast();
+  final StreamController<DeviceEvent> deviceEventStreamController =
+      StreamController<DeviceEvent>.broadcast();
 
   @override
   void deviceOrientationChanged(PlatformDeviceOrientation orientation) {

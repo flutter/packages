@@ -1,3 +1,7 @@
+## 0.10.2
+
+* Adds setLensPosition support for manually controlling lens focus position on iOS.
+
 ## 0.10.1
 
 * Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.

@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:camera_avfoundation/camera_avfoundation.dart';
 import 'package:camera_linux/camera_linux.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -66,6 +67,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
+  double _currentLensPosition = 0.0;
 
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
@@ -157,6 +159,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           ),
           _captureControlRowWidget(),
           _modeControlRowWidget(),
+          if (!kIsWeb && Platform.isIOS) _lensPositionWidget(),
           Row(
             children: [
               ElevatedButton(
@@ -168,7 +171,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     final CameraLinux nativeCamera =
                         CameraPlatform.instance as CameraLinux;
                     nativeCamera.setImageFormatGroup(
-                        controller!.cameraId, PlatformImageFormatGroup.mono8);
+                      controller!.cameraId,
+                      PlatformImageFormatGroup.mono8,
+                    );
                   });
                 },
                 child: Text('mono8'),
@@ -182,7 +187,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     final CameraLinux nativeCamera =
                         CameraPlatform.instance as CameraLinux;
                     nativeCamera.setImageFormatGroup(
-                        controller!.cameraId, PlatformImageFormatGroup.rgb8);
+                      controller!.cameraId,
+                      PlatformImageFormatGroup.rgb8,
+                    );
                   });
                 },
                 child: Text('rgb8'),
@@ -519,6 +526,43 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Lens position slider, shown on iOS only.
+  Widget _lensPositionWidget() {
+    return ColoredBox(
+      color: Colors.grey.shade50,
+      child: Column(
+        children: <Widget>[
+          const Center(child: Text('Lens Position (lock focus first)')),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              const Text('0.0'),
+              Expanded(
+                child: Slider(
+                  value: _currentLensPosition,
+                  min: 0.0,
+                  max: 1.0,
+                  divisions: 100,
+                  label: _currentLensPosition.toStringAsFixed(2),
+                  onChanged:
+                      controller != null &&
+                          controller!.value.focusMode == FocusMode.locked
+                      ? (double value) {
+                          setState(() => _currentLensPosition = value);
+                          (CameraPlatform.instance as AVFoundationCamera)
+                              .setLensPosition(value);
+                        }
+                      : null,
+                ),
+              ),
+              const Text('1.0'),
+            ],
+          ),
+        ],
       ),
     );
   }

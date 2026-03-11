@@ -30,6 +30,8 @@ dev_dependencies:
   leak_tracker_flutter_testing: any
 
 dependency_overrides:
+  camera_avfoundation:
+    path: ../../camera_avfoundation
   camera_web:
     path: ../../camera_web
   camera_linux:

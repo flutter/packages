@@ -95,6 +95,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
     completion: @escaping (Result<Void, any Error>) -> Void
   )
 
+  /// Sets the lens position to the given value in the (0,1) range and locks focus.
+  func setLensPosition(_ position: Float, completion: @escaping (Result<Void, any Error>) -> Void)
+
   func setZoomLevel(_ zoom: CGFloat, withCompletion: @escaping (Result<Void, any Error>) -> Void)
 
   func setVideoStabilizationMode(

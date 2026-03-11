@@ -928,6 +928,25 @@ final class DefaultCamera: NSObject, Camera {
     completion(.success(()))
   }
 
+  func setLensPosition(
+    _ position: Float, completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    guard position >= 0, position <= 1 else {
+      completion(
+        .failure(
+          PigeonError(
+            code: "LENS_POSITION_ERROR",
+            message:
+              "Lens position out of bounds (should be between 0.0 and 1.0).",
+            details: nil)))
+      return
+    }
+    try? captureDevice.lockForConfiguration()
+    captureDevice.setFocusModeLocked(lensPosition: position, completionHandler: nil)
+    captureDevice.unlockForConfiguration()
+    completion(.success(()))
+  }
+
   private func applyFocusMode() {
     applyFocusMode(focusMode, onDevice: captureDevice)
   }

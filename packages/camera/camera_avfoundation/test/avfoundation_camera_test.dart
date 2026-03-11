@@ -678,6 +678,14 @@ void main() {
       expect(minZoomLevel, stubZoomLevel);
     });
 
+    test('Should set the lens position', () async {
+      const position = 0.5;
+
+      await camera.setLensPosition(position);
+
+      verify(mockApi.setLensPosition(position));
+    });
+
     test('Should set the zoom level', () async {
       const zoom = 2.0;
 

@@ -477,6 +477,12 @@ extension CameraPlugin: CameraApi {
     }
   }
 
+  func setLensPosition(position: Double, completion: @escaping (Result<Void, any Error>) -> Void) {
+    captureSessionQueue.async { [weak self] in
+      self?.camera?.setLensPosition(Float(position), completion: completion)
+    }
+  }
+
   func getMinZoomLevel(completion: @escaping (Result<Double, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       if let minZoom = self?.camera?.minimumAvailableZoomFactor {
