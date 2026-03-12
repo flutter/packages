@@ -102,6 +102,7 @@ final class _SurfaceTextureRotatedPreviewState
 
   @override
   Widget build(BuildContext context) {
+    print('CAMSIM99: REBUILDING SURFACE TEXTURE ROTATED PREVIEW');
     return FutureBuilder<int>(
       future: defaultDisplayRotationQuarterTurns,
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
