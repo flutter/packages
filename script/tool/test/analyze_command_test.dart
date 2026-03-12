@@ -1093,7 +1093,6 @@ packages/package_a/lib/foo.dart
   });
 
   group('Xcode analyze', () {
-
     group('iOS', () {
       test('skip if iOS is not supported', () async {
         createFakePlugin(
