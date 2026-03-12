@@ -6,6 +6,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'billing_client_wrappers/in_app_message_wrapper.dart';
 import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'messages.g.dart';
 
@@ -127,6 +128,28 @@ alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
     ),
     debugMessage: response.billingResult.debugMessage,
     externalTransactionToken: response.externalTransactionToken,
+  );
+}
+
+/// Converts [PlatformInAppMessageResponse] to its public API enum equivalent.
+InAppMessageResponse inAppMessageResponseFromPlatform(
+  PlatformInAppMessageResponse responseCode,
+) {
+  return switch (responseCode) {
+    PlatformInAppMessageResponse.noActionNeeded =>
+      InAppMessageResponse.noActionNeeded,
+    PlatformInAppMessageResponse.subscriptionStatusUpdated =>
+      InAppMessageResponse.subscriptionStatusUpdated,
+  };
+}
+
+/// Creates a [InAppMessageResultWrapper] from the Pigeon equivalent.
+InAppMessageResultWrapper inAppMessageResultWrapperFromPlatform(
+  PlatformInAppMessageResult result,
+) {
+  return InAppMessageResultWrapper(
+    responseCode: inAppMessageResponseFromPlatform(result.responseCode),
+    purchaseToken: result.purchaseToken,
   );
 }
 

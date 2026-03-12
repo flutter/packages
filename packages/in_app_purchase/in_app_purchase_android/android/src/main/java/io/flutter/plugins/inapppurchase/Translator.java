@@ -12,6 +12,7 @@ import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.InAppMessageResult;
 import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
@@ -25,6 +26,8 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformInAppMessageResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformInAppMessageResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPendingPurchaseUpdate;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
@@ -296,6 +299,25 @@ import java.util.Locale;
       serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord));
     }
     return serialized;
+  }
+
+  static @NonNull PlatformInAppMessageResult fromInAppMessageResult(
+      @NonNull InAppMessageResult inAppMessageResult) {
+    return new PlatformInAppMessageResult.Builder()
+        .setResponseCode(fromInAppMessageResponseCode(inAppMessageResult.getResponseCode()))
+        .setPurchaseToken(inAppMessageResult.getPurchaseToken())
+        .build();
+  }
+
+  static @NonNull PlatformInAppMessageResponse fromInAppMessageResponseCode(
+      @InAppMessageResult.InAppMessageResponseCode int inAppMessageResponseCode) {
+    switch (inAppMessageResponseCode) {
+      case InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED:
+        return PlatformInAppMessageResponse.SUBSCRIPTION_STATUS_UPDATED;
+      case InAppMessageResult.InAppMessageResponseCode.NO_ACTION_NEEDED:
+        return PlatformInAppMessageResponse.NO_ACTION_NEEDED;
+    }
+    return PlatformInAppMessageResponse.NO_ACTION_NEEDED;
   }
 
   static @NonNull PlatformBillingResult fromBillingResult(@NonNull BillingResult billingResult) {

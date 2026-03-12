@@ -7,6 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResponseCode;
+import static io.flutter.plugins.inapppurchase.Translator.fromInAppMessageResponseCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -45,6 +46,8 @@ import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
+import com.android.billingclient.api.InAppMessageResponseListener;
+import com.android.billingclient.api.InAppMessageResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.ProductDetailsResponseListener;
 import com.android.billingclient.api.Purchase;
@@ -63,6 +66,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformInAppMessageResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
@@ -96,6 +100,7 @@ public class MethodCallHandlerTest {
   Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
       platformAlternativeBillingOnlyReportingDetailsResult;
 
+  @Spy Messages.Result<Messages.PlatformInAppMessageResult> platformInAppMessageResult;
   @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
   @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
   @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
@@ -521,6 +526,62 @@ public class MethodCallHandlerTest {
     verify(platformBillingResult, never()).success(any());
     ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
     verify(platformBillingResult, times(1)).error(errorCaptor.capture());
+    assertEquals(ACTIVITY_UNAVAILABLE, errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage())
+            .contains("Not attempting to show dialog"));
+  }
+
+  @Test
+  public void showInAppMessagesSuccess() {
+    mockStartConnection();
+    ArgumentCaptor<InAppMessageResponseListener> listenerCaptor =
+        ArgumentCaptor.forClass(InAppMessageResponseListener.class);
+    BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
+    InAppMessageResult inAppMessageResult =
+        buildInAppMessageResult(
+            InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED);
+
+    when(mockBillingClient.showInAppMessages(eq(activity), any(), listenerCaptor.capture()))
+        .thenReturn(billingResult);
+
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult);
+    listenerCaptor.getValue().onInAppMessageResponse(inAppMessageResult);
+
+    ArgumentCaptor<PlatformInAppMessageResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformInAppMessageResult.class);
+    verify(platformInAppMessageResult, times(1)).success(resultCaptor.capture());
+    assertEquals(
+        resultCaptor.getValue().getResponseCode(),
+        fromInAppMessageResponseCode(inAppMessageResult.getResponseCode()));
+    assertEquals(resultCaptor.getValue().getPurchaseToken(), inAppMessageResult.getPurchaseToken());
+    verify(platformInAppMessageResult, never()).error(any());
+  }
+
+  @Test
+  public void showInAppMessages_serviceDisconnected() {
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformInAppMessageResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformInAppMessageResult, times(1)).error(errorCaptor.capture());
+    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
+    assertTrue(
+        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+  }
+
+  @Test
+  public void showInAppMessages_NullActivity() {
+    mockStartConnection();
+    methodChannelHandler.setActivity(null);
+
+    methodChannelHandler.showInAppMessages(platformInAppMessageResult);
+
+    // Assert that the async call returns an error result.
+    verify(platformInAppMessageResult, never()).success(any());
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(platformInAppMessageResult, times(1)).error(errorCaptor.capture());
     assertEquals(ACTIVITY_UNAVAILABLE, errorCaptor.getValue().code);
     assertTrue(
         Objects.requireNonNull(errorCaptor.getValue().getMessage())
@@ -1250,6 +1311,10 @@ public class MethodCallHandlerTest {
         .setResponseCode(responseCode)
         .setDebugMessage("dummy debug message")
         .build();
+  }
+
+  private InAppMessageResult buildInAppMessageResult(int responseCode) {
+    return new InAppMessageResult(responseCode, "dummy purchase token");
   }
 
   private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
