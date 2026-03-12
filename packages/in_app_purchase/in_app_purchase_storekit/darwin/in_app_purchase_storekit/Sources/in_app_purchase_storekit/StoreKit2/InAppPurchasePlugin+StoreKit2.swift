@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import StoreKit
-import SwiftUI
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
@@ -324,10 +323,19 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
   func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void) {
     if #available(iOS 16.0, *) {
-      let windowScene = self.registrar?.viewController?.view.window?.windowScene
+      guard #available(iOS 16.0, *),
+        let windowScene = self.registrar?.viewController?.view.window?.windowScene else {
+        let error = PigeonError(
+          code: "storekit2_missing_key_window_scene",
+          message: "Failed to fetch key window",
+          details: "Storefront.current returned nil."
+        )
+          completion(.failure(error))
+          return
+        }
       Task {
         do {
-          try await AppStore.presentOfferCodeRedeemSheet(in: windowScene!)
+          try await AppStore.presentOfferCodeRedeemSheet(in: windowScene)
             completion(.success(()))
           } catch {
             completion(.failure(error))
