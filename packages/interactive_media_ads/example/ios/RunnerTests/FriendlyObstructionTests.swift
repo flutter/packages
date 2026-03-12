@@ -4,63 +4,61 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
+import Testing
 import UIKit
-import XCTest
 
 @testable import interactive_media_ads
 
-class FriendlyObstructionProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct FriendlyObstructionProxyApiTests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString")
-    XCTAssertNotNil(instance)
   }
 
-  func testPigeonDefaultConstructorWithUnknownPurpose() {
+  @Test func pigeonDefaultConstructorWithUnknownPurpose() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
-    XCTAssertThrowsError(
+    #expect(throws: PigeonError.self) {
       try api.pigeonDelegate.pigeonDefaultConstructor(
         pigeonApi: api, view: UIView(), purpose: .unknown, detailedReason: "myString")
-    ) { error in
-      XCTAssertTrue(error is PigeonError)
     }
   }
 
-  func testView() {
+  @Test func view() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.view)
+    #expect(value == instance.view)
   }
 
-  func testPurpose() {
+  @Test func purpose() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.purpose(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.purpose(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, FriendlyObstructionPurpose.closeAd)
+    #expect(value == FriendlyObstructionPurpose.closeAd)
   }
 
-  func testDetailedReason() {
+  @Test func detailedReason() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.detailedReason(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.detailedReason(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.detailedReason)
+    #expect(value == instance.detailedReason)
   }
 }

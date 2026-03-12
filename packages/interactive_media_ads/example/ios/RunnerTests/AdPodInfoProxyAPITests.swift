@@ -4,69 +4,75 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-class AdPodInfoProxyAPITests: XCTestCase {
-  func testAdPosition() {
+struct AdPodInfoProxyAPITests {
+  @Test
+  func adPosition() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.adPosition(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adPosition(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.adPosition))
+    #expect(value == Int64(instance.adPosition))
   }
 
-  func testMaxDuration() {
+  @Test
+  func maxDuration() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.maxDuration(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.maxDuration(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.maxDuration)
+    #expect(value == instance.maxDuration)
   }
 
-  func testPodIndex() {
+  @Test
+  func podIndex() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.podIndex(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.podIndex(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.podIndex))
+    #expect(value == Int64(instance.podIndex))
   }
 
-  func testTimeOffset() {
+  @Test
+  func timeOffset() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.timeOffset(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.timeOffset(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.timeOffset)
+    #expect(value == instance.timeOffset)
   }
 
-  func testTotalAds() {
+  @Test
+  func totalAds() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.totalAds(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.totalAds(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.totalAds))
+    #expect(value == Int64(instance.totalAds))
   }
 
-  func testIsBumper() {
+  @Test
+  func isBumper() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.isBumper(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isBumper(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.isBumper)
+    #expect(value == instance.isBumper)
   }
 }
 
@@ -74,7 +80,8 @@ class TestAdPodInfo: IMAAdPodInfo {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdPodInfo {
     let instance =
-      TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdPodInfo
+      try! #require(
+        TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAdPodInfo)
     return instance
   }
 

@@ -4,36 +4,36 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsLoaderTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdsLoaderTests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
     let settings = IMASettings()
     settings.ppid = "ppid"
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, settings: settings)
 
-    XCTAssertNotNil(instance)
-    XCTAssertEqual(instance?.settings.ppid, settings.ppid)
+    #expect(instance.settings.ppid == settings.ppid)
   }
 
-  func testContentComplete() {
+  @Test func contentComplete() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
     let instance = TestAdsLoader(settings: nil)
 
-    try? api.pigeonDelegate.contentComplete(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.contentComplete(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.contentCompleteCalled)
+    #expect(instance.contentCompleteCalled)
   }
 
-  func testRequestAds() {
+  @Test func requestAds() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
@@ -43,13 +43,13 @@ final class AdsLoaderTests: XCTestCase {
       adTagUrl: "",
       adDisplayContainer: IMAAdDisplayContainer(adContainer: UIView(), viewController: nil),
       contentPlayhead: ContentPlayheadImpl(), userContext: nil)
-    try? api.pigeonDelegate.requestAds(
+    try api.pigeonDelegate.requestAds(
       pigeonApi: api, pigeonInstance: instance, request: request)
 
-    XCTAssertIdentical(instance.adsRequested, request)
+    #expect(instance.adsRequested === request)
   }
 
-  func testSetDelegate() {
+  @Test func setDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
@@ -57,10 +57,10 @@ final class AdsLoaderTests: XCTestCase {
 
     let delegate = AdsLoaderDelegateImpl(
       api: registrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(registrar))
-    try? api.pigeonDelegate.setDelegate(
+    try api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
-    XCTAssertIdentical(instance.delegate, delegate)
+    #expect(instance.delegate === delegate)
   }
 }
 
