@@ -1,3 +1,7 @@
+## 2.0.6
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.0.5
 
 * Adds platform-specific setup instructions to README.
