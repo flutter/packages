@@ -106,6 +106,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final String? capture = computeCaptureAttribute(
       source,

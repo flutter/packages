@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     required BuildContext context,
     bool allowMultiple = false,
     bool isMedia = false,
+    VideoQuality? videoQuality,
   }) async {
     if (_controller != null) {
       await _controller!.setVolume(0.0);
@@ -100,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
           final XFile? file = await _picker.pickVideo(
             source: source,
             maxDuration: const Duration(seconds: 10),
+            quality: videoQuality ?? VideoQuality.high,
           );
           files = <XFile>[if (file != null) file];
         }
@@ -481,7 +483,43 @@ class _MyHomePageState extends State<MyHomePage> {
                   _onImageButtonPressed(ImageSource.camera, context: context);
                 },
                 heroTag: 'takeVideo',
-                tooltip: 'Take a video',
+                tooltip: 'Take a video (high quality)',
+                child: const Icon(Icons.videocam),
+              ),
+            ),
+          if (_picker.supportsImageSource(ImageSource.camera))
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FloatingActionButton(
+                backgroundColor: Colors.orange,
+                onPressed: () {
+                  isVideo = true;
+                  _onImageButtonPressed(
+                    ImageSource.camera,
+                    context: context,
+                    videoQuality: VideoQuality.medium,
+                  );
+                },
+                heroTag: 'takeVideoMedium',
+                tooltip: 'Take a video (medium quality)',
+                child: const Icon(Icons.videocam),
+              ),
+            ),
+          if (_picker.supportsImageSource(ImageSource.camera))
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: FloatingActionButton(
+                backgroundColor: Colors.blue,
+                onPressed: () {
+                  isVideo = true;
+                  _onImageButtonPressed(
+                    ImageSource.camera,
+                    context: context,
+                    videoQuality: VideoQuality.low,
+                  );
+                },
+                heroTag: 'takeVideoLow',
+                tooltip: 'Take a video (low quality)',
                 child: const Icon(Icons.videocam),
               ),
             ),

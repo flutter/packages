@@ -65,6 +65,7 @@ class FakeImagePicker extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     return XFile(source == ImageSource.camera ? 'cameraVideo' : 'galleryVideo');
   }

@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.3
 
+* Adds support for `videoQuality` parameter in `getVideo`.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 0.2.2

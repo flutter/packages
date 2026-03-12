@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Adds support for `videoQuality` parameter in `getVideo`.
+
 ## 0.8.13+6
 
 * Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
