@@ -19,6 +19,14 @@ below.
 
 ### Android
 
+> **NOTE:** The dependency snippet shown in the Google Play Billing Overview setup guide:
+> ```
+> implementation "com.android.billingclient:billing:$billing_version"
+> ```
+> should not be manually added when using this plugin. The plugin already manages the billing client
+> dependency internally, and adding it manually may cause build conflicts or prevent the app from
+> connecting to the Play Store billing service.
+
 1. Create a new app in the [Play Developer
    Console](https://play.google.com/apps/publish/) (PDC).
 

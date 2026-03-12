@@ -1,10 +1,12 @@
-## NEXT
+## 3.2.4
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Clarifies in the example's `README.md` that the Android billing dependency should not be added
+  manually.
 
 ## 3.2.3
 * Updates minimum `in_app_purchase_storekit` version to 0.4.0.
