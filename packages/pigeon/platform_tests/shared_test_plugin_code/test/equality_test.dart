@@ -171,6 +171,18 @@ void main() {
       expect(v1, v2);
       expect(v1.hashCode, v2.hashCode);
     });
+    test('signed zero map value equality', () {
+      final v1 = AllNullableTypes(map: <String, double>{'a': 0.0});
+      final v2 = AllNullableTypes(map: <String, double>{'a': -0.0});
+      expect(v1, v2);
+      expect(v1.hashCode, v2.hashCode);
+    });
+    test('signed zero nested list equality', () {
+      final v1 = AllNullableTypes(doubleList: <double>[0.0]);
+      final v2 = AllNullableTypes(doubleList: <double>[-0.0]);
+      expect(v1, v2);
+      expect(v1.hashCode, v2.hashCode);
+    });
 
     test(
       'equality method correctly identifies non-matching lists nested in maps in classes',

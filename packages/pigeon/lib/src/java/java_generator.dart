@@ -592,7 +592,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           '}',
           () {
             indent.writeln(
-              'result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));',
+              'result += ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));',
             );
           },
         );

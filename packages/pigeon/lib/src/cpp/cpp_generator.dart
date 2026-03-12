@@ -1122,7 +1122,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       returnType: 'size_t',
       isConst: true,
       body: () {
-        indent.writeln('size_t result = 0;');
+        indent.writeln('size_t result = 1;');
         for (final field in orderedFields) {
           final String name = _makeInstanceVariableName(field);
           indent.writeln(
@@ -1278,7 +1278,7 @@ size_t PigeonInternalDeepHash(const T& v) {
 
 template <typename T>
 size_t PigeonInternalDeepHash(const std::vector<T>& v) {
-  size_t result = 0;
+  size_t result = 1;
   for (const auto& item : v) {
     result = result * 31 + PigeonInternalDeepHash(item);
   }
@@ -1289,7 +1289,7 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result += (PigeonInternalDeepHash(kv.first) ^ PigeonInternalDeepHash(kv.second));
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^ PigeonInternalDeepHash(kv.second));
   }
   return result;
 }

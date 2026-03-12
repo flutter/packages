@@ -180,4 +180,59 @@
   XCTAssertEqual(a.hash, b.hash);
 }
 
+- (void)testNestedZeroListEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.doubleList = @[ @(0.0) ];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.doubleList = @[ @(-0.0) ];
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testZeroMapKeyEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.map = @{@(0.0) : @"a"};
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.map = @{@(-0.0) : @"a"};
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testZeroMapValueEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.map = @{@"a" : @(0.0)};
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.map = @{@"a" : @(-0.0)};
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNSNullListEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.list = @[ [NSNull null] ];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.list = @[ [NSNull null] ];
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
+- (void)testNSNullPropertyEquality {
+  FLTAllNullableTypes *a = [[FLTAllNullableTypes alloc] init];
+  a.aNullableObject = [NSNull null];
+
+  FLTAllNullableTypes *b = [[FLTAllNullableTypes alloc] init];
+  b.aNullableObject = nil;
+
+  XCTAssertEqualObjects(a, b);
+  XCTAssertEqual(a.hash, b.hash);
+}
+
 @end

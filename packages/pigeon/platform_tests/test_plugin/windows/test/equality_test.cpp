@@ -60,5 +60,45 @@ TEST(EqualityTests, SignedZeroEquality) {
   EXPECT_EQ(all1, all2);
 }
 
+TEST(EqualityTests, NestedZeroListEquality) {
+  std::vector<double> list1 = {0.0};
+  AllNullableTypes all1;
+  all1.set_double_list(list1);
+
+  std::vector<double> list2 = {-0.0};
+  AllNullableTypes all2;
+  all2.set_double_list(list2);
+
+  EXPECT_EQ(all1, all2);
+}
+
+TEST(EqualityTests, ZeroMapKeyEquality) {
+  std::map<flutter::EncodableValue, flutter::EncodableValue> map1;
+  map1[flutter::EncodableValue(0.0)] = flutter::EncodableValue("a");
+  AllNullableTypes all1;
+  all1.set_map(map1);
+
+  std::map<flutter::EncodableValue, flutter::EncodableValue> map2;
+  map2[flutter::EncodableValue(-0.0)] = flutter::EncodableValue("a");
+  AllNullableTypes all2;
+  all2.set_map(map2);
+
+  EXPECT_EQ(all1, all2);
+}
+
+TEST(EqualityTests, ZeroMapValueEquality) {
+  std::map<flutter::EncodableValue, flutter::EncodableValue> map1;
+  map1[flutter::EncodableValue("a")] = flutter::EncodableValue(0.0);
+  AllNullableTypes all1;
+  all1.set_map(map1);
+
+  std::map<flutter::EncodableValue, flutter::EncodableValue> map2;
+  map2[flutter::EncodableValue("a")] = flutter::EncodableValue(-0.0);
+  AllNullableTypes all2;
+  all2.set_map(map2);
+
+  EXPECT_EQ(all1, all2);
+}
+
 }  // namespace test
 }  // namespace test_plugin

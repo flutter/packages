@@ -309,4 +309,43 @@ public class AllDatatypesTest {
     assertEquals(a, b);
     assertEquals(a.hashCode(), b.hashCode());
   }
+
+  @Test
+  public void nestedZeroListEquality() {
+    List<Double> list1 = new ArrayList<>();
+    list1.add(0.0);
+    AllNullableTypes a = new AllNullableTypes.Builder().setDoubleList(list1).build();
+
+    List<Double> list2 = new ArrayList<>();
+    list2.add(-0.0);
+    AllNullableTypes b = new AllNullableTypes.Builder().setDoubleList(list2).build();
+
+    assertEquals(a, b);
+    assertEquals(a.hashCode(), b.hashCode());
+  }
+
+  @Test
+  public void zeroMapKeyEquality() {
+    Map<Object, Object> map1 = new HashMap<>();
+    map1.put(0.0, "a");
+    AllNullableTypes a = new AllNullableTypes.Builder().setMap(map1).build();
+
+    Map<Object, Object> map2 = new HashMap<>();
+    map2.put(-0.0, "a");
+    AllNullableTypes b = new AllNullableTypes.Builder().setMap(map2).build();
+
+    assertEquals(a, b);
+    assertEquals(a.hashCode(), b.hashCode());
+  }
+
+  @Test
+  public void nestedZeroArrayEquality() {
+    AllNullableTypes a =
+        new AllNullableTypes.Builder().setANullableFloatArray(new double[] {0.0}).build();
+    AllNullableTypes b =
+        new AllNullableTypes.Builder().setANullableFloatArray(new double[] {-0.0}).build();
+
+    assertEquals(a, b);
+    assertEquals(a.hashCode(), b.hashCode());
+  }
 }

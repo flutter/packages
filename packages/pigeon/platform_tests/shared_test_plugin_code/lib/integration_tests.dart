@@ -1106,6 +1106,51 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       );
     });
 
+    testWidgets('Collection hashing with null/NSNull', (WidgetTester _) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(
+        list: <Object?>[null],
+        stringMap: <String?, String?>{'k': null},
+      );
+      final b = AllNullableTypes(
+        list: <Object?>[null],
+        stringMap: <String?, String?>{'k': null},
+      );
+
+      // Verify cross-platform equivalence via identical hash values.
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Map equality with signed zero keys and values', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(map: <Object?, Object?>{0.0: 'a', 'b': 0.0});
+      final b = AllNullableTypes(map: <Object?, Object?>{-0.0: 'a', 'b': -0.0});
+
+      expect(await api.areAllNullableTypesEqual(a, b), isTrue);
+    });
+
+    testWidgets('Map hashing with signed zero keys and values', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final a = AllNullableTypes(map: <Object?, Object?>{0.0: 'a', 'b': 0.0});
+      final b = AllNullableTypes(map: <Object?, Object?>{-0.0: 'a', 'b': -0.0});
+
+      expect(
+        await api.getAllNullableTypesHash(a),
+        await api.getAllNullableTypesHash(b),
+      );
+    });
+
     testWidgets('Map equality with null values and different keys', (
       WidgetTester _,
     ) async {

@@ -273,4 +273,55 @@ struct AllDatatypesTests {
 
     #expect(hashA == hashB)
   }
+
+  @Test
+  func nestedZeroListEquality() {
+    let a = AllNullableTypes(doubleList: [0.0])
+    let b = AllNullableTypes(doubleList: [-0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapKeyEquality() {
+    let a = AllNullableTypes(map: [0.0: "a"])
+    let b = AllNullableTypes(map: [-0.0: "a"])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapValueEquality() {
+    let a = AllNullableTypes(map: ["a": 0.0])
+    let b = AllNullableTypes(map: ["a": -0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
 }

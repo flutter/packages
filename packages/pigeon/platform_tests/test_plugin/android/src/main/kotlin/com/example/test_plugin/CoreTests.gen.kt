@@ -65,6 +65,9 @@ private object CoreTestsPigeonUtils {
     if (a === b) {
       return true
     }
+    if (a == null || b == null) {
+      return false
+    }
     if (a is ByteArray && b is ByteArray) {
       return a.contentEquals(b)
     }
@@ -89,10 +92,20 @@ private object CoreTestsPigeonUtils {
       return true
     }
     if (a is Array<*> && b is Array<*>) {
-      return a.contentDeepEquals(b)
+      if (a.size != b.size) return false
+      for (i in a.indices) {
+        if (!deepEquals(a[i], b[i])) return false
+      }
+      return true
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+      if (a.size != b.size) return false
+      val iterA = a.iterator()
+      val iterB = b.iterator()
+      while (iterA.hasNext() && iterB.hasNext()) {
+        if (!deepEquals(iterA.next(), iterB.next())) return false
+      }
+      return true
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       if (a.size != b.size) return false
@@ -142,7 +155,13 @@ private object CoreTestsPigeonUtils {
         }
         result
       }
-      is Array<*> -> value.contentDeepHashCode()
+      is Array<*> -> {
+        var result = 1
+        for (item in value) {
+          result = 31 * result + deepHash(item)
+        }
+        result
+      }
       is List<*> -> {
         var result = 1
         for (item in value) {
@@ -153,7 +172,7 @@ private object CoreTestsPigeonUtils {
       is Map<*, *> -> {
         var result = 0
         for (entry in value) {
-          result += (deepHash(entry.key) xor deepHash(entry.value))
+          result += ((deepHash(entry.key) * 31) xor deepHash(entry.value))
         }
         result
       }

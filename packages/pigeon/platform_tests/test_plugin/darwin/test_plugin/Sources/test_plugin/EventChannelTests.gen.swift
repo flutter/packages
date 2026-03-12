@@ -138,7 +138,7 @@ func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
         deepHashEventChannelTests(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
         deepHashEventChannelTests(value: value, hasher: &entryValueHasher)
-        result = result &+ (entryKeyHasher.finalize() ^ entryValueHasher.finalize())
+        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
     } else if let hashableValue = cleanValue as? AnyHashable {

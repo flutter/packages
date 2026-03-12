@@ -3082,7 +3082,7 @@ void _writeDeepHash(Indent indent) {
         indent.writeln('  size_t len = fl_value_get_length(value);');
         indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '}', () {
           indent.writeln(
-            'result += (flpigeon_deep_hash(fl_value_get_map_key(value, i)) ^ flpigeon_deep_hash(fl_value_get_map_value(value, i)));',
+            'result += ((flpigeon_deep_hash(fl_value_get_map_key(value, i)) * 31) ^ flpigeon_deep_hash(fl_value_get_map_value(value, i)));',
           );
         });
         indent.writeln('  return result;');

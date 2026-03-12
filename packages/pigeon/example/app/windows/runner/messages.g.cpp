@@ -172,7 +172,7 @@ size_t PigeonInternalDeepHash(const T& v) {
 
 template <typename T>
 size_t PigeonInternalDeepHash(const std::vector<T>& v) {
-  size_t result = 0;
+  size_t result = 1;
   for (const auto& item : v) {
     result = result * 31 + PigeonInternalDeepHash(item);
   }
@@ -183,8 +183,8 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result +=
-        (PigeonInternalDeepHash(kv.first) ^ PigeonInternalDeepHash(kv.second));
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^
+               PigeonInternalDeepHash(kv.second));
   }
   return result;
 }
@@ -322,7 +322,7 @@ bool MessageData::operator!=(const MessageData& other) const {
 }
 
 size_t MessageData::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(name_);
   result = result * 31 + PigeonInternalDeepHash(description_);
   result = result * 31 + PigeonInternalDeepHash(code_);

@@ -276,4 +276,20 @@ internal class AllDatatypesTest {
     assertEquals(a, b)
     assertEquals(a.hashCode(), b.hashCode())
   }
+
+  @Test
+  fun `nested zero list equality`() {
+    val a = AllNullableTypes(doubleList = listOf(0.0))
+    val b = AllNullableTypes(doubleList = listOf(-0.0))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
+
+  @Test
+  fun `nested zero array equality`() {
+    val a = AllNullableTypes(aNullableFloatArray = doubleArrayOf(0.0))
+    val b = AllNullableTypes(aNullableFloatArray = doubleArrayOf(-0.0))
+    assertEquals(a, b)
+    assertEquals(a.hashCode(), b.hashCode())
+  }
 }

@@ -169,7 +169,7 @@ func deepHashMessages(value: Any?, hasher: inout Hasher) {
         deepHashMessages(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
         deepHashMessages(value: value, hasher: &entryValueHasher)
-        result = result &+ (entryKeyHasher.finalize() ^ entryValueHasher.finalize())
+        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
     } else if let hashableValue = cleanValue as? AnyHashable {

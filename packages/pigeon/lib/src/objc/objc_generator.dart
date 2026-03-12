@@ -1675,14 +1675,14 @@ static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Null
   if (a == b) {
     return YES;
   }
-  if (a == nil || b == nil) {
-    return NO;
+  if (a == nil) {
+    return b == (id)[NSNull null];
+  }
+  if (b == nil) {
+    return a == (id)[NSNull null];
   }
   if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
-    NSNumber *na = (NSNumber *)a;
-    NSNumber *nb = (NSNumber *)b;
-    // Normalize -0.0 to 0.0 and handle NaN equality.
-    return na.doubleValue == nb.doubleValue || (isnan(na.doubleValue) && isnan(nb.doubleValue));
+    return [a isEqual:b] || (isnan([(NSNumber *)a doubleValue]) && isnan([(NSNumber *)b doubleValue]));
   }
   if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
     NSArray *arrayA = (NSArray *)a;
@@ -1731,7 +1731,7 @@ static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Null
 void _writeDeepHash(Indent indent) {
   indent.format('''
 static NSUInteger __attribute__((unused)) FLTPigeonDeepHash(id _Nullable value) {
-  if (value == nil) {
+  if (value == nil || value == (id)[NSNull null]) {
     return 0;
   }
   if ([value isKindOfClass:[NSNumber class]]) {
@@ -1758,7 +1758,7 @@ static NSUInteger __attribute__((unused)) FLTPigeonDeepHash(id _Nullable value) 
     NSUInteger result = 0;
     NSDictionary *dict = (NSDictionary *)value;
     for (id key in dict) {
-      result += (FLTPigeonDeepHash(key) ^ FLTPigeonDeepHash(dict[key]));
+      result += ((FLTPigeonDeepHash(key) * 31) ^ FLTPigeonDeepHash(dict[key]));
     }
     return result;
   }

@@ -167,7 +167,8 @@ public class CoreTests {
     if (value instanceof Map) {
       int result = 0;
       for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
-        result += (pigeonDeepHashCode(entry.getKey()) ^ pigeonDeepHashCode(entry.getValue()));
+        result +=
+            ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));
       }
       return result;
     }

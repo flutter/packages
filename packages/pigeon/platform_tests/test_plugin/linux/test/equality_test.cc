@@ -184,3 +184,55 @@ TEST(Equality, SignedZeroMapKey) {
   EXPECT_EQ(core_tests_pigeon_test_all_nullable_types_hash(all1),
             core_tests_pigeon_test_all_nullable_types_hash(all2));
 }
+
+TEST(Equality, SignedZeroList) {
+  g_autoptr(FlValue) list1 = fl_value_new_list();
+  fl_value_append_take(list1, fl_value_new_float(0.0));
+  g_autoptr(FlValue) list2 = fl_value_new_list();
+  fl_value_append_take(list2, fl_value_new_float(-0.0));
+
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all1 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, list1,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all2 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, list2,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
+
+  EXPECT_TRUE(core_tests_pigeon_test_all_nullable_types_equals(all1, all2));
+  EXPECT_EQ(core_tests_pigeon_test_all_nullable_types_hash(all1),
+            core_tests_pigeon_test_all_nullable_types_hash(all2));
+}
+
+TEST(Equality, SignedZeroMapValue) {
+  g_autoptr(FlValue) map1 = fl_value_new_map();
+  fl_value_set_take(map1, fl_value_new_string("a"), fl_value_new_float(0.0));
+  g_autoptr(FlValue) map2 = fl_value_new_map();
+  fl_value_set_take(map2, fl_value_new_string("a"), fl_value_new_float(-0.0));
+
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all1 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, map1, nullptr,
+          nullptr, nullptr);
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) all2 =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, map2, nullptr,
+          nullptr, nullptr);
+
+  EXPECT_TRUE(core_tests_pigeon_test_all_nullable_types_equals(all1, all2));
+  EXPECT_EQ(core_tests_pigeon_test_all_nullable_types_hash(all1),
+            core_tests_pigeon_test_all_nullable_types_hash(all2));
+}

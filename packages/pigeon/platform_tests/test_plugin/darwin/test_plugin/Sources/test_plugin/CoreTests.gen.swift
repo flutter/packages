@@ -170,7 +170,7 @@ func deepHashCoreTests(value: Any?, hasher: inout Hasher) {
         deepHashCoreTests(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
         deepHashCoreTests(value: value, hasher: &entryValueHasher)
-        result = result &+ (entryKeyHasher.finalize() ^ entryValueHasher.finalize())
+        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
     } else if let hashableValue = cleanValue as? AnyHashable {

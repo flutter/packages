@@ -173,7 +173,7 @@ size_t PigeonInternalDeepHash(const T& v) {
 
 template <typename T>
 size_t PigeonInternalDeepHash(const std::vector<T>& v) {
-  size_t result = 0;
+  size_t result = 1;
   for (const auto& item : v) {
     result = result * 31 + PigeonInternalDeepHash(item);
   }
@@ -184,8 +184,8 @@ template <typename K, typename V>
 size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
   size_t result = 0;
   for (const auto& kv : v) {
-    result +=
-        (PigeonInternalDeepHash(kv.first) ^ PigeonInternalDeepHash(kv.second));
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^
+               PigeonInternalDeepHash(kv.second));
   }
   return result;
 }
@@ -286,7 +286,7 @@ bool UnusedClass::operator!=(const UnusedClass& other) const {
 }
 
 size_t UnusedClass::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(a_field_);
   return result;
 }
@@ -597,7 +597,7 @@ bool AllTypes::operator!=(const AllTypes& other) const {
 }
 
 size_t AllTypes::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(a_bool_);
   result = result * 31 + PigeonInternalDeepHash(an_int_);
   result = result * 31 + PigeonInternalDeepHash(an_int64_);
@@ -1531,7 +1531,7 @@ bool AllNullableTypes::operator!=(const AllNullableTypes& other) const {
 }
 
 size_t AllNullableTypes::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(a_nullable_bool_);
   result = result * 31 + PigeonInternalDeepHash(a_nullable_int_);
   result = result * 31 + PigeonInternalDeepHash(a_nullable_int64_);
@@ -2300,7 +2300,7 @@ bool AllNullableTypesWithoutRecursion::operator!=(
 }
 
 size_t AllNullableTypesWithoutRecursion::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(a_nullable_bool_);
   result = result * 31 + PigeonInternalDeepHash(a_nullable_int_);
   result = result * 31 + PigeonInternalDeepHash(a_nullable_int64_);
@@ -2562,7 +2562,7 @@ bool AllClassesWrapper::operator!=(const AllClassesWrapper& other) const {
 }
 
 size_t AllClassesWrapper::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(all_nullable_types_);
   result = result * 31 +
            PigeonInternalDeepHash(all_nullable_types_without_recursion_);
@@ -2622,7 +2622,7 @@ bool TestMessage::operator!=(const TestMessage& other) const {
 }
 
 size_t TestMessage::Hash() const {
-  size_t result = 0;
+  size_t result = 1;
   result = result * 31 + PigeonInternalDeepHash(test_list_);
   return result;
 }

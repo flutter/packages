@@ -60,6 +60,7 @@ bool _deepEquals(Object? a, Object? b) {
     if (a.isNaN && b.isNaN) {
       return true;
     }
+    return a == b;
   }
   if (a is List && b is List) {
     return a.length == b.length &&
@@ -99,7 +100,7 @@ int _deepHash(Object? value) {
   if (value is Map) {
     int result = 0;
     for (final MapEntry<Object?, Object?> entry in value.entries) {
-      result += _deepHash(entry.key) ^ _deepHash(entry.value);
+      result += (_deepHash(entry.key) * 31) ^ _deepHash(entry.value);
     }
     return result;
   }

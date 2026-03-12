@@ -119,7 +119,7 @@ func deepHashEventChannelMessages(value: Any?, hasher: inout Hasher) {
         deepHashEventChannelMessages(value: key, hasher: &entryKeyHasher)
         var entryValueHasher = Hasher()
         deepHashEventChannelMessages(value: value, hasher: &entryValueHasher)
-        result = result &+ (entryKeyHasher.finalize() ^ entryValueHasher.finalize())
+        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
       }
       hasher.combine(result)
     } else if let hashableValue = cleanValue as? AnyHashable {

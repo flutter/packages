@@ -186,7 +186,7 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
       guint result = 0;
       size_t len = fl_value_get_length(value);
       for (size_t i = 0; i < len; i++) {
-        result += (flpigeon_deep_hash(fl_value_get_map_key(value, i)) ^
+        result += ((flpigeon_deep_hash(fl_value_get_map_key(value, i)) * 31) ^
                    flpigeon_deep_hash(fl_value_get_map_value(value, i)));
       }
       return result;
