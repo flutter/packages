@@ -440,14 +440,8 @@ class AnalyzeCommand extends PackageLoopingCommand {
     final xcode = Xcode(processRunner: processRunner, log: true);
     final errors = <String>[];
     for (final RepositoryPackage example in package.getExamples()) {
-      // See https://github.com/flutter/flutter/issues/172427 for discussion of
-      // why this is currently necessary.
-      print('Disabling Swift Package Manager...');
-      setSwiftPackageManagerState(example, enabled: false);
-
       // Unconditionally re-run build with --debug --config-only, to ensure that
-      // the project is in a debug state even if it was previously configured,
-      // and that SwiftPM is disabled.
+      // the project is in a debug state even if it was previously configured.
       print('Running flutter build --config-only...');
       final bool buildSuccess = await runConfigOnlyBuild(
         example,
@@ -490,9 +484,6 @@ class AnalyzeCommand extends PackageLoopingCommand {
           '${getRelativePosixPath(example.directory, from: package.directory)} failed analysis.',
         );
       }
-
-      print('Removing Swift Package Manager override...');
-      setSwiftPackageManagerState(example, enabled: null);
     }
     return errors.isEmpty
         ? PackageResult.success()

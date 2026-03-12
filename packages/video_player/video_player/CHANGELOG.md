@@ -1,3 +1,7 @@
+## 2.11.1
+
+* Optimizes caption retrieval with binary search.
+
 ## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.
