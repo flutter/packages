@@ -27,7 +27,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   ///
   /// This constructor should only be used for testing, for any other purpose
   /// get the connection from the [instance] getter.
-  @visibleForTesting
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
