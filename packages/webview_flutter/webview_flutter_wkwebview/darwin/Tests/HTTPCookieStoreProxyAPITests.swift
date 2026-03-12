@@ -14,11 +14,16 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
 
     let instance: TestCookieStore? = TestCookieStore.customInit()
     let cookie = HTTPCookie(properties: [
-      .name: "foo", .value: "bar", .domain: "http://google.com", .path: "/anything",
+      .name: "foo", .value: "bar", .domain: "http://google.com",
+      .path: "/anything",
     ])!
 
     let expect = expectation(description: "Wait for setCookie.")
-    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) {
+    api.pigeonDelegate.setCookie(
+      pigeonApi: api,
+      pigeonInstance: instance!,
+      cookie: cookie
+    ) {
       result in
       switch result {
       case .success(_):
@@ -31,21 +36,58 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
     wait(for: [expect], timeout: 1.0)
     XCTAssertEqual(instance!.setCookieArg, cookie)
   }
+
+  @MainActor func testGetCookies() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKHTTPCookieStore(registrar)
+
+    let cookie1 = HTTPCookie(properties: [
+      .name: "foo", .value: "bar", .domain: "google.com", .path: "/",
+    ])!
+    let cookie2 = HTTPCookie(properties: [
+      .name: "baz", .value: "qux", .domain: "example.com", .path: "/",
+    ])!
+
+    let instance: TestCookieStore? = TestCookieStore.customInit()
+    instance!.allCookies = [cookie1, cookie2]
+
+    // Test fetching all cookies
+    let expectAll = expectation(description: "Wait for getAllCookies.")
+    api.pigeonDelegate.getAllCookies(
+      pigeonApi: api,
+      pigeonInstance: instance!
+    ) { result in
+      switch result {
+      case .success(let cookies):
+        XCTAssertEqual(cookies.count, 2)
+        XCTAssertTrue(cookies.contains(cookie1))
+        XCTAssertTrue(cookies.contains(cookie2))
+        expectAll.fulfill()
+      case .failure(_):
+        break
+      }
+    }
+
+    wait(for: [expectAll], timeout: 1.0)
+  }
 }
 
 class TestCookieStore: WKHTTPCookieStore {
   var setCookieArg: HTTPCookie? = nil
+  var allCookies: [HTTPCookie] = []
 
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestCookieStore {
     let instance =
-      TestCookieStore.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestCookieStore
+      TestCookieStore.perform(NSSelectorFromString("new"))
+      .takeRetainedValue() as! TestCookieStore
     return instance
   }
 
   #if compiler(>=6.0)
     public override func setCookie(
-      _ cookie: HTTPCookie, completionHandler: (@MainActor () -> Void)? = nil
+      _ cookie: HTTPCookie,
+      completionHandler: (@MainActor () -> Void)? = nil
     ) {
       setCookieArg = cookie
       DispatchQueue.main.async {
@@ -53,11 +95,22 @@ class TestCookieStore: WKHTTPCookieStore {
       }
     }
   #else
-    public override func setCookie(_ cookie: HTTPCookie, completionHandler: (() -> Void)? = nil) {
+    public override func setCookie(
+      _ cookie: HTTPCookie,
+      completionHandler: (() -> Void)? = nil
+    ) {
       setCookieArg = cookie
       DispatchQueue.main.async {
         completionHandler?()
       }
     }
   #endif
+
+  override func getAllCookies(
+    _ completionHandler: @escaping @MainActor ([HTTPCookie]) -> Void
+  ) {
+    DispatchQueue.main.async {
+      completionHandler(self.allCookies)
+    }
+  }
 }

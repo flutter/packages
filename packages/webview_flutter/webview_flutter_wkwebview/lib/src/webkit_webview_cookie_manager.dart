@@ -73,4 +73,37 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
       return (char < 0x20 || char > 0x3A) && (char < 0x3C || char > 0x7E);
     });
   }
+
+  @override
+  Future<List<WebViewCookie>> getCookies(Uri url) async {
+    final List<HTTPCookie> httpCookies = await _webkitParams
+        ._websiteDataStore
+        .httpCookieStore
+        .getAllCookies();
+
+    final Iterable<Future<WebViewCookie?>> webviewCookies = httpCookies.map((
+      cookie,
+    ) async {
+      final Map<HttpCookiePropertyKey, Object>? props = await cookie
+          .getProperties();
+
+      if (props == null) {
+        return null;
+      }
+
+      final domain = props[HttpCookiePropertyKey.domain].toString();
+      if (!domain.contains(url.host)) {
+        return null;
+      }
+
+      return WebViewCookie(
+        name: props[HttpCookiePropertyKey.name].toString(),
+        value: props[HttpCookiePropertyKey.value].toString(),
+        domain: domain,
+        path: props[HttpCookiePropertyKey.path].toString(),
+      );
+    });
+
+    return (await Future.wait(webviewCookies)).nonNulls.toList();
+  }
 }
