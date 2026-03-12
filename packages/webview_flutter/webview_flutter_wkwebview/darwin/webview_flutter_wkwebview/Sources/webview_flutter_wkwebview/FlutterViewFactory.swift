@@ -15,9 +15,6 @@ import Foundation
 
 #if os(iOS)
   class PlatformViewImpl: NSObject, FlutterPlatformView {
-    static let nullUIViewErrorMessage: String =
-      "WebViewFlutterPluginError: UIView has been deallocated, but is still being requested as a PlatformView."
-
     // TODO(bparrishMines): Change to strong reference once this issue is fixed in the engine and
     // makes it to stable. See https://github.com/flutter/flutter/issues/168535.
     // The InstanceManager used by pigeon adds an associated object to added instance that make a message call when they
@@ -31,15 +28,14 @@ import Foundation
     }
 
     func view() -> UIView {
-      if uiView == nil {
-        #if DEBUG
-          fatalError(PlatformViewImpl.nullUIViewErrorMessage)
-        #else
-          NSLog(PlatformViewImpl.nullUIViewErrorMessage)
-          return UIView()
-        #endif
+      if let uiView = uiView {
+        return uiView
       }
-      return uiView!
+
+      NSLog(
+        "WebViewFlutterPluginError: UIView has been deallocated, but is still being requested as a PlatformView."
+      )
+      return UIView()
     }
   }
 #endif
