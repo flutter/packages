@@ -13,6 +13,7 @@ import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/process_runner.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
@@ -52,10 +53,18 @@ class CreateAllPackagesAppCommand extends PackageCommand {
           'The replacement will be done before any tool-driven '
           'modifications.',
     );
+    argParser.addFlag(
+      _swiftPackageManagerFlag,
+      defaultsTo: null,
+      help:
+          'Explicitly sets the app-level flag for Swift Package Manager in '
+          'pubspec.yaml.',
+    );
   }
 
   static const String _legacySourceFlag = 'legacy-source';
   static const String _outputDirectoryFlag = 'output-dir';
+  static const String _swiftPackageManagerFlag = 'swift-package-manager';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
@@ -121,6 +130,13 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       // flutter pub get above, so can't currently be run on Windows.
       if (!platform.isWindows) _updateMacosPodfile(),
     ]);
+
+    final bool? swiftPackageManagerOverride = getNullableBoolArg(
+      _swiftPackageManagerFlag,
+    );
+    if (swiftPackageManagerOverride != null) {
+      setSwiftPackageManagerState(app, enabled: swiftPackageManagerOverride);
+    }
   }
 
   Future<int> _createApp() async {
