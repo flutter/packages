@@ -17,10 +17,10 @@ import Foundation
   class PlatformViewImpl: NSObject, FlutterPlatformView {
     // TODO(bparrishMines): Change to strong reference once this issue is fixed in the engine and
     // makes it to stable. See https://github.com/flutter/flutter/issues/168535.
-    // The InstanceManager used by pigeon adds an associated object to added instance that make a message call when they
-    // are deallocated. This sets a weak reference to the underlying UIView to prevent a crash where the UIView is no
-    // longer referenced by the plugin, but the FlutterViewController still maintains a reference to it when the
-    // BinaryMessenger becomes invalid.
+    // The InstanceManager used by pigeon adds an associated object to added instances that makes a message call when
+    // they are deallocated. This sets a weak reference to the underlying UIView to prevent a crash where the UIView is
+    // no longer referenced by the plugin, but the FlutterViewController still maintains a transitive reference to it
+    // when the BinaryMessenger becomes invalid.
     weak var uiView: UIView?
 
     init(uiView: UIView) {
