@@ -128,6 +128,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     switch (source) {
       case ImageSource.camera:
@@ -135,6 +136,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
           source: source,
           preferredCameraDevice: preferredCameraDevice,
           maxDuration: maxDuration,
+          quality: quality,
         );
       case ImageSource.gallery:
         const typeGroup = XTypeGroup(
