@@ -75,31 +75,33 @@ public class ViewProxyApi extends PigeonApiView {
   @Override
   public void setInsetListenerToSetInsetsToZero(
       @NonNull View pigeon_instance, @NonNull List<? extends WindowInsets> insets) {
-    int insetsTypeMask = 0;
+    if (insets.isEmpty()) {
+      ViewCompat.setOnApplyWindowInsetsListener(
+          pigeon_instance, (view, windowInsets) -> windowInsets);
+      return;
+    }
+
+    int typeMaskAccumulator = 0;
     for (WindowInsets inset : insets) {
       switch (inset) {
         case SYSTEM_BARS:
-          insetsTypeMask |= WindowInsetsCompat.Type.systemBars();
+          typeMaskAccumulator = typeMaskAccumulator | WindowInsetsCompat.Type.systemBars();
           break;
         case DISPLAY_CUTOUT:
-          insetsTypeMask |= WindowInsetsCompat.Type.displayCutout();
+          typeMaskAccumulator = typeMaskAccumulator | WindowInsetsCompat.Type.displayCutout();
           break;
       }
     }
+    final int insetsTypeMask = typeMaskAccumulator;
 
-    final int finalTypeMask = insetsTypeMask;
     ViewCompat.setOnApplyWindowInsetsListener(
         pigeon_instance,
         (view, windowInsets) -> {
-          if (finalTypeMask == 0) {
-            return windowInsets;
-          }
-
-          final Insets allInsets = windowInsets.getInsets(finalTypeMask);
+          final Insets allInsets = windowInsets.getInsets(insetsTypeMask);
           pigeon_instance.setPadding(
               allInsets.left, allInsets.top, allInsets.right, allInsets.bottom);
           return new WindowInsetsCompat.Builder(windowInsets)
-              .setInsets(finalTypeMask, Insets.NONE)
+              .setInsets(insetsTypeMask, Insets.NONE)
               .build();
         });
   }
