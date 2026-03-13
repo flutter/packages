@@ -159,7 +159,7 @@ abstract class GoRouteData extends _GoRouteDataBase {
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
-    bool hasOverriddenOnExit = false,
+    bool? hasOverriddenOnExit,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
