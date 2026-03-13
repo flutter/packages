@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `encoder`, `decoder` and `compare` parameters to `TypedQueryParameter` annotation for custom encoding, decoding and comparison of query parameters in `TypedGoRoute` constructors.
+version: minor
