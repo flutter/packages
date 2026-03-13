@@ -39,7 +39,7 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
       Context context,
       BinaryMessenger binaryMessenger,
       LifecycleProvider lifecycleProvider,
-      PlatformMarkerType markerType) {
+      @NonNull PlatformMarkerType markerType) {
     final GoogleMapController controller =
         new GoogleMapController(
             id, context, binaryMessenger, lifecycleProvider, options, markerType);

@@ -294,6 +294,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     _webView.setUIDelegate(_uiDelegate);
   }
 
+  static const String _onConsoleMessageChannelName = 'fltConsoleMessage';
+
   /// The WebKit WebView being controlled.
   late final PlatformWebView _webView = PlatformWebView(
     initialConfiguration: _webKitParams._configuration,
@@ -700,11 +702,16 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<void> setOnConsoleMessage(
     void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
-  ) {
+  ) async {
     _onConsoleMessageCallback = onConsoleMessage;
 
+    // If channel name is already present, the callback is already registered.
+    if (_javaScriptChannelParams.containsKey(_onConsoleMessageChannelName)) {
+      return;
+    }
+
     final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
-      name: 'fltConsoleMessage',
+      name: _onConsoleMessageChannelName,
       onMessageReceived: (JavaScriptMessage message) {
         if (_onConsoleMessageCallback == null) {
           return;
@@ -736,7 +743,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
-    addJavaScriptChannel(channelParams);
+    await addJavaScriptChannel(channelParams);
     return _injectConsoleOverride();
   }
 
@@ -903,7 +910,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     // Therefore, the replacer parameter of JSON.stringify() is used and the
     // removeCyclicObject method is passed in to solve the error.
     final overrideScript = WKUserScript(
-      source: '''
+      source:
+          '''
 var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
   removeCyclicObject: function() {
     const traversalStack = [];
@@ -932,7 +940,7 @@ var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
       message: message
     };
 
-    window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+    window.webkit.messageHandlers.$_onConsoleMessageChannelName.postMessage(JSON.stringify(log));
   }
 };
 

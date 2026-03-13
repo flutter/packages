@@ -5201,13 +5201,16 @@ public class Messages {
       this.liteModeEnabled = setterArg;
     }
 
-    private @Nullable PlatformMarkerType markerType;
+    private @NonNull PlatformMarkerType markerType;
 
-    public @Nullable PlatformMarkerType getMarkerType() {
+    public @NonNull PlatformMarkerType getMarkerType() {
       return markerType;
     }
 
-    public void setMarkerType(@Nullable PlatformMarkerType setterArg) {
+    public void setMarkerType(@NonNull PlatformMarkerType setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"markerType\" is null.");
+      }
       this.markerType = setterArg;
     }
 
@@ -5230,6 +5233,9 @@ public class Messages {
     public void setStyle(@Nullable String setterArg) {
       this.style = setterArg;
     }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformMapConfiguration() {}
 
     @Override
     public boolean equals(Object o) {
@@ -5258,7 +5264,7 @@ public class Messages {
           && Objects.equals(trafficEnabled, that.trafficEnabled)
           && Objects.equals(buildingsEnabled, that.buildingsEnabled)
           && Objects.equals(liteModeEnabled, that.liteModeEnabled)
-          && Objects.equals(markerType, that.markerType)
+          && markerType.equals(that.markerType)
           && Objects.equals(mapId, that.mapId)
           && Objects.equals(style, that.style);
     }
@@ -5439,7 +5445,7 @@ public class Messages {
       private @Nullable PlatformMarkerType markerType;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setMarkerType(@Nullable PlatformMarkerType setterArg) {
+      public @NonNull Builder setMarkerType(@NonNull PlatformMarkerType setterArg) {
         this.markerType = setterArg;
         return this;
       }

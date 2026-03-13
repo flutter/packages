@@ -6,7 +6,7 @@
 
 **Note:** This package will contain the cupertino library previously part of the Flutter framework itself (`package:flutter/cupertino.dart`). It is being decoupled to allow for faster iteration and a more modular ecosystem.
 
-## What's (going to be) Inside?
+## What's (going to be) inside?
 
 This package will provide the Cupertino widgets you know and love, including but not limited to:
 
@@ -16,7 +16,7 @@ This package will provide the Cupertino widgets you know and love, including but
 
 Once landed and published, look forward to updates from [iOS26](https://github.com/flutter/flutter/issues/170310)\! 🚀
 
-## Feedback & Roadmap
+## Feedback & roadmap
 
 We are currently migrating the Cupertino library out of the core framework.
 
