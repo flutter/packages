@@ -21,4 +21,9 @@ final class AppStore {
   Future<void> sync() {
     return hostApi2.sync();
   }
+
+  /// fuck
+  Future<void> presentOfferCodeRedeemSheet() {
+    return hostApi2.presentOfferCodeRedeemSheet();
+  }
 }

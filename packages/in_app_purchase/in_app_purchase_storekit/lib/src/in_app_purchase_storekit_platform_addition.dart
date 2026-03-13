@@ -7,6 +7,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 import '../in_app_purchase_storekit.dart';
 import '../store_kit_2_wrappers.dart';
 import '../store_kit_wrappers.dart';
+import './in_app_purchase_storekit_platform.dart';
 
 /// Contains InApp Purchase features that are only available on iOS.
 class InAppPurchaseStoreKitPlatformAddition
@@ -23,6 +24,9 @@ class InAppPurchaseStoreKitPlatformAddition
   /// Available on devices running iOS 14 and iPadOS 14 and later.
   /// Available for StoreKit 1 and 2
   Future<void> presentCodeRedemptionSheet() {
+    if (InAppPurchaseStoreKitPlatform().isStoreKit2Enabled) {
+      return AppStore().presentOfferCodeRedeemSheet();
+    }
     return SKPaymentQueueWrapper().presentCodeRedemptionSheet();
   }
 

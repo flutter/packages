@@ -277,6 +277,9 @@ abstract class InAppPurchase2API {
 
   @async
   void sync();
+
+  @async
+  void presentOfferCodeRedeemSheet();
 }
 
 @FlutterApi()

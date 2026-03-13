@@ -321,6 +321,51 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  func presentOfferCodeRedeemSheet(completion: @escaping (Result<Void, Error>) -> Void) {
+    #if os(iOS)
+      if #available(iOS 16.0, *) {
+        guard let windowScene = self.registrar?.viewController?.view.window?.windowScene else {
+          let error = PigeonError(
+            code: "storekit2_missing_key_window_scene",
+            message: "Failed to fetch key window scene",
+            details: "registrar.viewController.view.window.windowScene returned nil."
+          )
+          completion(.failure(error))
+          return
+        }
+        Task { @MainActor in
+          do {
+            try await AppStore.presentOfferCodeRedeemSheet(in: windowScene)
+            completion(.success(()))
+          } catch {
+            completion(.failure(error))
+          }
+        }
+      }
+    #elseif os(macOS)
+      if #available(macOS 15.0, *) {
+        guard let viewController = self.registrar?.viewController else {
+          let error = PigeonError(
+            code: "storekit2_missing_view_controller",
+            message: "Failed to fetch view controller",
+            details: "registrar.viewController returned nil."
+          )
+          completion(.failure(error))
+          return
+        }
+
+        Task { @MainActor in
+          do {
+            try await AppStore.presentOfferCodeRedeemSheet(from: viewController)
+            completion(.success(()))
+          } catch {
+            completion(.failure(error))
+          }
+        }
+      }
+    #endif
+  }
+
   /// Wrapper method around StoreKit2's sync() method
   /// https://developer.apple.com/documentation/storekit/appstore/sync()
   /// When called, a system prompt will ask users to enter their authentication details

@@ -27,11 +27,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   ///
   /// This constructor should only be used for testing, for any other purpose
   /// get the connection from the [instance] getter.
-  @visibleForTesting
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
   static bool _useStoreKit2 = true;
+  bool get isStoreKit2Enabled => _useStoreKit2;
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
