@@ -1,3 +1,7 @@
+## 17.1.1
+
+- Fixes `pop()` restoring stale configuration when route has `onExit`, which could cause the popped route to reappear with async redirects.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.

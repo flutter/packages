@@ -535,7 +535,8 @@ void main() {
       expect(
         find.byKey(detailKey),
         findsNothing,
-        reason: 'Route with onExit should be properly popped '
+        reason:
+            'Route with onExit should be properly popped '
             'even when async redirect is present',
       );
       expect(find.byKey(homeKey), findsOneWidget);
@@ -543,39 +544,38 @@ void main() {
   );
 
   // Verify that pop is correctly cancelled when onExit returns false.
-  testWidgets(
-    'pop is cancelled when onExit returns false',
-    (WidgetTester tester) async {
-      final homeKey = UniqueKey();
-      final detailKey = UniqueKey();
+  testWidgets('pop is cancelled when onExit returns false', (
+    WidgetTester tester,
+  ) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
 
-      final GoRouter router = await createRouter(
-        <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (_, __) => DummyScreen(key: homeKey),
-            routes: <RouteBase>[
-              GoRoute(
-                path: 'detail',
-                onExit: (_, __) => false, // Always prevent leaving.
-                builder: (_, __) => DummyScreen(key: detailKey),
-              ),
-            ],
-          ),
-        ],
-        tester,
-        initialLocation: '/detail',
-      );
+    final GoRouter router = await createRouter(
+      <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => DummyScreen(key: homeKey),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'detail',
+              onExit: (_, __) => false, // Always prevent leaving.
+              builder: (_, __) => DummyScreen(key: detailKey),
+            ),
+          ],
+        ),
+      ],
+      tester,
+      initialLocation: '/detail',
+    );
 
-      await tester.pumpAndSettle();
-      expect(find.byKey(detailKey), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
 
-      router.pop();
-      await tester.pumpAndSettle();
+    router.pop();
+    await tester.pumpAndSettle();
 
-      // Should still be on the detail page.
-      expect(find.byKey(detailKey), findsOneWidget);
-      expect(find.byKey(homeKey), findsNothing);
-    },
-  );
+    // Should still be on the detail page.
+    expect(find.byKey(detailKey), findsOneWidget);
+    expect(find.byKey(homeKey), findsNothing);
+  });
 }
