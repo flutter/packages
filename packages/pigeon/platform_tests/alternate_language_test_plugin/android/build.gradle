@@ -1,5 +1,5 @@
-group = 'com.example.alternate_language_test_plugin'
-version = '1.0'
+group = "com.example.alternate_language_test_plugin"
+version = "1.0"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -31,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk = 24
     }
 
     testOptions {
@@ -46,7 +46,7 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'

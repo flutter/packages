@@ -1,3 +1,24 @@
+## 26.2.3
+
+* Produces a helpful error message when a method return type is missing or an
+  unsupported type, such as a function type or record type.
+
+## 26.2.2
+
+* [dart] Ignores all lint rules in generated code.
+* [dart] In generated code, imports the meta package for annotations, instead of
+  the Flutter foundation library.
+* [dart] In generated code, no longer imports Uint8List.
+* Bumps minimum version of the args package to 2.5.0.
+
+## 26.2.1
+
+* [dart] Improves nullability-handling in generated code.
+
+## 26.2.0
+
+* [kotlin] Adds option to add javax.annotation.Generated annotation.
+
 ## 26.1.10
 
 * Dramatically reduces the number of File write operations sent to the operating

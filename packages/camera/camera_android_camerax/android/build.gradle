@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.camerax'
-version = '1.0'
+group = "io.flutter.plugins.camerax"
+version = "1.0"
 
 buildscript {
     ext.kotlin_version = '2.3.0'
@@ -9,8 +9,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
 
@@ -42,7 +42,7 @@ android {
     defaultConfig {
         // CameraX APIs require API 23 or later.
         minSdk = 23
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     testOptions {

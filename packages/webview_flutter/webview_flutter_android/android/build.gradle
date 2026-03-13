@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.webviewflutter'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.webviewflutter"
+version = "1.0-SNAPSHOT"
 
 buildscript {
     ext.kotlin_version = '2.3.0'
@@ -9,8 +9,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("com.android.tools.build:gradle:8.13.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
 
@@ -38,8 +38,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     lint {
