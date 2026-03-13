@@ -6,11 +6,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class CameraInitRaceConditionsTests: XCTestCase {
   private func createCameraPlugin() -> (CameraPlugin, DispatchQueue) {
     let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
@@ -37,20 +32,20 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
     // Mimic a dispose call followed by a create call, which can be triggered by slightly dragging the
     // home bar, causing the app to be inactive, and immediately regain active.
-    cameraPlugin.disposeCamera(0) { error in
+    cameraPlugin.dispose(cameraId: 0) { error in
       disposeExpectation.fulfill()
     }
 
     cameraPlugin.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
+    ) { result in
       createExpectation.fulfill()
     }
 
@@ -69,14 +64,14 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
     cameraPlugin.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
+    ) { result in
       createExpectation.fulfill()
     }
 

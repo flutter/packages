@@ -14,10 +14,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:video_player/video_player.dart';
 
-// Skip due to video_player error.
-// See https://github.com/flutter/flutter/issues/157181
-const bool skipFor157181 = true;
-
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -162,7 +158,7 @@ void main() {
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
 
-    sleep(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
 
     final XFile file = await controller.stopVideoRecording();
     final int postStopTime =
@@ -175,7 +171,7 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(postStopTime));
-  }, skip: skipFor157181);
+  });
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
     final List<CameraDescription> cameras = await availableCameras();
@@ -198,16 +194,17 @@ void main() {
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     for (var i = 0; i < pauseIterations; i++) {
       await controller.pauseVideoRecording();
       startPause = DateTime.now().millisecondsSinceEpoch;
-      sleep(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
       await controller.resumeVideoRecording();
       timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-      sleep(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
     }
 
     final XFile file = await controller.stopVideoRecording();
@@ -221,7 +218,7 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime - timePaused));
-  }, skip: skipFor157181);
+  });
 
   testWidgets('Set description while recording captures full video', (
     WidgetTester tester,
@@ -243,13 +240,15 @@ void main() {
 
     await controller.startVideoRecording();
 
+    await Future<void>.delayed(const Duration(seconds: 1));
+
     await controller.setDescription(cameras[1]);
 
-    await tester.pumpAndSettle(const Duration(seconds: 4));
+    await Future<void>.delayed(const Duration(seconds: 4));
 
     await controller.setDescription(cameras[0]);
 
-    await tester.pumpAndSettle(const Duration(seconds: 1));
+    await Future<void>.delayed(const Duration(seconds: 1));
 
     final XFile file = await controller.stopVideoRecording();
 
