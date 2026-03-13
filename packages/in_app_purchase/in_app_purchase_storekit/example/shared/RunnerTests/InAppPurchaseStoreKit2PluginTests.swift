@@ -533,7 +533,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 16.0, macOS 15.0, *)
   func testRedeemCodeSheetFailsGracefullyWhenNoWindow() {
-    let expectation = self.expectation(description: "Should fail gracefully when without key window")
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
 
     plugin.registrar = nil
 

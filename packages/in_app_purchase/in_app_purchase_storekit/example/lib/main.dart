@@ -445,7 +445,8 @@ class _MyAppState extends State<_MyApp> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
             ),
-            onPressed: () => _iapStoreKitPlatformAddition.presentCodeRedemptionSheet(),
+            onPressed: () =>
+                _iapStoreKitPlatformAddition.presentCodeRedemptionSheet(),
             child: const Text('Show code redemption sheet'),
           ),
         ],
