@@ -6,6 +6,10 @@ package io.flutter.plugins.webviewflutter;
 
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import java.util.List;
 
 /**
  * Flutter API implementation for `View`.
@@ -66,5 +70,37 @@ public class ViewProxyApi extends PigeonApiView {
       case UNKNOWN:
         throw getPigeonRegistrar().createUnknownEnumException(OverScrollMode.UNKNOWN);
     }
+  }
+
+  @Override
+  public void setInsetListenerToSetInsetsToZero(
+      @NonNull View pigeon_instance, @NonNull List<? extends WindowInsets> insets) {
+    int insetsTypeMask = 0;
+    for (WindowInsets inset : insets) {
+      switch (inset) {
+        case SYSTEM_BARS:
+          insetsTypeMask |= WindowInsetsCompat.Type.systemBars();
+          break;
+        case DISPLAY_CUTOUT:
+          insetsTypeMask |= WindowInsetsCompat.Type.displayCutout();
+          break;
+      }
+    }
+
+    final int finalTypeMask = insetsTypeMask;
+    ViewCompat.setOnApplyWindowInsetsListener(
+        pigeon_instance,
+        (view, windowInsets) -> {
+          if (finalTypeMask == 0) {
+            return windowInsets;
+          }
+
+          final Insets allInsets = windowInsets.getInsets(finalTypeMask);
+          pigeon_instance.setPadding(
+              allInsets.left, allInsets.top, allInsets.right, allInsets.bottom);
+          return new WindowInsetsCompat.Builder(windowInsets)
+              .setInsets(finalTypeMask, Insets.NONE)
+              .build();
+        });
   }
 }

@@ -118,6 +118,13 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
+    // Opt out of inset changes to systemBars and displayCutout insets. Flutter
+    // handles these internally. See
+    // https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/insets.md#opt_out
+    _webView.setInsetListenerToSetInsetsToZero(<android_webview.WindowInsets>[
+      android_webview.WindowInsets.systemBars,
+      android_webview.WindowInsets.displayCutout,
+    ]);
 
     _webView.setWebChromeClient(_webChromeClient);
   }

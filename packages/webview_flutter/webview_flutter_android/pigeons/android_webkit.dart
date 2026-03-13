@@ -141,6 +141,20 @@ enum MixedContentMode {
   neverAllow,
 }
 
+/// Defines different types of sources causing window insets.
+///
+/// See https://developer.android.com/reference/kotlin/android/view/WindowInsets.Type
+enum WindowInsets {
+  /// All system bars.
+  ///
+  /// Includes statusBars(), captionBar() as well as navigationBars(),
+  /// systemOverlays(), but not ime().
+  systemBars,
+
+  /// An inset type representing the area that used by DisplayCutout.
+  displayCutout,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -848,6 +862,16 @@ abstract class View {
 
   /// Set the over-scroll mode for this view.
   void setOverScrollMode(OverScrollMode mode);
+
+  /// Sets the listener to the native method
+  /// `ViewCompat.setOnApplyWindowInsetsListener` to mark the passed insets to
+  /// zero.
+  ///
+  /// Sets the padding of the view to match the insets passed.
+  ///
+  /// This is a convenience method because `View.OnApplyWindowInsetsListener`
+  /// requires implementing a callback that requires a synchronous return value.
+  void setInsetListenerToSetInsetsToZero(List<WindowInsets> insets);
 }
 
 /// A callback interface used by the host application to set the Geolocation

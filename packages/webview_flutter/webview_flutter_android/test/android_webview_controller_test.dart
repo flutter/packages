@@ -368,6 +368,13 @@ void main() {
       verify(mockWebSettings.setLoadWithOverviewMode(true)).called(1);
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
       verify(mockWebSettings.setUseWideViewPort(false)).called(1);
+      verify(
+        mockWebView
+            .setInsetListenerToSetInsetsToZero(<android_webview.WindowInsets>[
+              android_webview.WindowInsets.systemBars,
+              android_webview.WindowInsets.displayCutout,
+            ]),
+      ).called(1);
     });
 
     group('loadFile', () {
