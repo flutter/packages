@@ -103,7 +103,7 @@ class _GoRouteParameters {
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
-  bool hasOverriddenOnExit = false,
+  bool? hasOverriddenOnExit,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -124,7 +124,7 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: hasOverriddenOnExit
+    onExit: hasOverriddenOnExit == null || hasOverriddenOnExit
         ? (BuildContext context, GoRouterState state) =>
               factoryImpl(state).onExit(context, state)
         : null,
