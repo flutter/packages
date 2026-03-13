@@ -20,7 +20,7 @@ class MockNullableArgHostApi: NullableArgHostApi {
 
 @MainActor
 struct NullableReturnsTests {
-  var codec = FlutterStandardMessageCodec.sharedInstance()
+  let codec = FlutterStandardMessageCodec.sharedInstance()
 
   @Test
   func nullableParameterWithFlutterApi() async throws {

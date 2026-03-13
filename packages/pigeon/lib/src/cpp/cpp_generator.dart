@@ -20,7 +20,7 @@ const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
 /// The default serializer for Flutter.
-const String _standardCodecSerializer = 'flutter::StandardCodecSerializer';
+const String _standardCodecSerializer = '::flutter::StandardCodecSerializer';
 
 /// The name of the codec serializer.
 const String _codecSerializerName = '${classNamePrefix}CodecSerializer';
@@ -459,6 +459,30 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           }
           indent.newln();
         }
+
+        _writeFunctionDeclaration(
+          indent,
+          'operator==',
+          returnType: 'bool',
+          parameters: <String>['const ${classDefinition.name}& other'],
+          isConst: true,
+        );
+        _writeFunctionDeclaration(
+          indent,
+          'operator!=',
+          returnType: 'bool',
+          parameters: <String>['const ${classDefinition.name}& other'],
+          isConst: true,
+        );
+        indent.writeln(
+          '/// Returns a hash code value for the object. This method is supported for the benefit of hash tables.',
+        );
+        _writeFunctionDeclaration(
+          indent,
+          'Hash',
+          returnType: 'size_t',
+          isConst: true,
+        );
       });
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
@@ -466,22 +490,22 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           indent,
           'FromEncodableList',
           returnType: isOverflowClass
-              ? 'flutter::EncodableValue'
+              ? '::flutter::EncodableValue'
               : classDefinition.name,
-          parameters: <String>['const flutter::EncodableList& list'],
+          parameters: <String>['const ::flutter::EncodableList& list'],
           isStatic: true,
         );
         _writeFunctionDeclaration(
           indent,
           'ToEncodableList',
-          returnType: 'flutter::EncodableList',
+          returnType: '::flutter::EncodableList',
           isConst: true,
         );
         if (isOverflowClass) {
           _writeFunctionDeclaration(
             indent,
             'Unwrap',
-            returnType: 'flutter::EncodableValue',
+            returnType: '::flutter::EncodableValue',
           );
         }
         if (!isOverflowClass && root.requiresOverflowClass) {
@@ -556,8 +580,8 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           'WriteValue',
           returnType: _voidType,
           parameters: <String>[
-            'const flutter::EncodableValue& value',
-            'flutter::ByteStreamWriter* stream',
+            'const ::flutter::EncodableValue& value',
+            '::flutter::ByteStreamWriter* stream',
           ],
           isConst: true,
           isOverride: true,
@@ -567,10 +591,10 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'ReadValueOfType',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           parameters: <String>[
             'uint8_t type',
-            'flutter::ByteStreamReader* stream',
+            '::flutter::ByteStreamReader* stream',
           ],
           isConst: true,
           isOverride: true,
@@ -603,20 +627,20 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           api.name,
-          parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
+          parameters: <String>['::flutter::BinaryMessenger* binary_messenger'],
         );
         _writeFunctionDeclaration(
           indent,
           api.name,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             'const std::string& message_channel_suffix',
           ],
         );
         _writeFunctionDeclaration(
           indent,
           'GetCodec',
-          returnType: 'const flutter::StandardMessageCodec&',
+          returnType: 'const ::flutter::StandardMessageCodec&',
           isStatic: true,
         );
         for (final Method func in api.methods) {
@@ -656,7 +680,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         }
       });
       indent.addScoped(' private:', null, () {
-        indent.writeln('flutter::BinaryMessenger* binary_messenger_;');
+        indent.writeln('::flutter::BinaryMessenger* binary_messenger_;');
         indent.writeln('std::string message_channel_suffix_;');
       });
     }, nestCount: 0);
@@ -758,7 +782,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'GetCodec',
-          returnType: 'const flutter::StandardMessageCodec&',
+          returnType: 'const ::flutter::StandardMessageCodec&',
           isStatic: true,
         );
         indent.writeln(
@@ -770,7 +794,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: _voidType,
           isStatic: true,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             '${api.name}* api',
           ],
         );
@@ -780,7 +804,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: _voidType,
           isStatic: true,
           parameters: <String>[
-            'flutter::BinaryMessenger* binary_messenger',
+            '::flutter::BinaryMessenger* binary_messenger',
             '${api.name}* api',
             'const std::string& message_channel_suffix',
           ],
@@ -788,14 +812,14 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
         _writeFunctionDeclaration(
           indent,
           'WrapError',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           isStatic: true,
           parameters: <String>['std::string_view error_message'],
         );
         _writeFunctionDeclaration(
           indent,
           'WrapError',
-          returnType: 'flutter::EncodableValue',
+          returnType: '::flutter::EncodableValue',
           isStatic: true,
           parameters: <String>['const FlutterError& error'],
         );
@@ -839,17 +863,17 @@ class FlutterError {
 \t\t: code_(code) {}
 \texplicit FlutterError(const std::string& code, const std::string& message)
 \t\t: code_(code), message_(message) {}
-\texplicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
+\texplicit FlutterError(const std::string& code, const std::string& message, const ::flutter::EncodableValue& details)
 \t\t: code_(code), message_(message), details_(details) {}
 
 \tconst std::string& code() const { return code_; }
 \tconst std::string& message() const { return message_; }
-\tconst flutter::EncodableValue& details() const { return details_; }
+\tconst ::flutter::EncodableValue& details() const { return details_; }
 
  private:
 \tstd::string code_;
 \tstd::string message_;
-\tflutter::EncodableValue details_;
+\t::flutter::EncodableValue details_;
 };''');
   }
 
@@ -937,6 +961,8 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     ]);
     indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
+      'cmath',
+      'limits',
       'map',
       'string',
       'optional',
@@ -964,11 +990,11 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     required String dartPackageName,
   }) {
     final usingDirectives = <String>[
-      'flutter::BasicMessageChannel',
-      'flutter::CustomEncodableValue',
-      'flutter::EncodableList',
-      'flutter::EncodableMap',
-      'flutter::EncodableValue',
+      '::flutter::BasicMessageChannel',
+      '::flutter::CustomEncodableValue',
+      '::flutter::EncodableList',
+      '::flutter::EncodableMap',
+      '::flutter::EncodableValue',
     ];
     usingDirectives.sort();
     for (final using in usingDirectives) {
@@ -988,6 +1014,10 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       EncodableValue(""));''');
       },
     );
+    indent.writeln('namespace {');
+    _writeDeepEquals(indent);
+    _writeDeepHash(indent);
+    indent.writeln('}  // namespace');
   }
 
   @override
@@ -1052,6 +1082,267 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       classDefinition,
       dartPackageName: dartPackageName,
     );
+
+    _writeFunctionDefinition(
+      indent,
+      'operator==',
+      scope: classDefinition.name,
+      returnType: 'bool',
+      parameters: <String>['const ${classDefinition.name}& other'],
+      isConst: true,
+      body: () {
+        final Iterable<String> checks = orderedFields.map((NamedType field) {
+          final String name = _makeInstanceVariableName(field);
+          return 'PigeonInternalDeepEquals($name, other.$name)';
+        });
+        if (checks.isEmpty) {
+          indent.writeln('return true;');
+        } else {
+          indent.writeln('return ${checks.join(' && ')};');
+        }
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'operator!=',
+      scope: classDefinition.name,
+      returnType: 'bool',
+      parameters: <String>['const ${classDefinition.name}& other'],
+      isConst: true,
+      body: () {
+        indent.writeln('return !(*this == other);');
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'Hash',
+      scope: classDefinition.name,
+      returnType: 'size_t',
+      isConst: true,
+      body: () {
+        indent.writeln('size_t result = 1;');
+        for (final field in orderedFields) {
+          final String name = _makeInstanceVariableName(field);
+          indent.writeln(
+            'result = result * 31 + PigeonInternalDeepHash($name);',
+          );
+        }
+        indent.writeln('return result;');
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'PigeonInternalDeepHash',
+      returnType: 'size_t',
+      parameters: <String>['const ${classDefinition.name}& v'],
+      body: () {
+        indent.writeln('return v.Hash();');
+      },
+    );
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.format('''
+template<typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b);
+
+bool PigeonInternalDeepEquals(const double& a, const double& b);
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b);
+
+template<typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b);
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b);
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b);
+
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b);
+
+template<typename T>
+bool PigeonInternalDeepEquals(const T& a, const T& b) {
+  return a == b;
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::vector<T>& a, const std::vector<T>& b) {
+  if (a.size() != b.size()) {
+    return false;
+  }
+  for (size_t i = 0; i < a.size(); ++i) {
+    if (!PigeonInternalDeepEquals(a[i], b[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename K, typename V>
+bool PigeonInternalDeepEquals(const std::map<K, V>& a, const std::map<K, V>& b) {
+  if (a.size() != b.size()) {
+    return false;
+  }
+  for (const auto& kv : a) {
+    bool found = false;
+    for (const auto& b_kv : b) {
+      if (PigeonInternalDeepEquals(kv.first, b_kv.first)) {
+        if (PigeonInternalDeepEquals(kv.second, b_kv.second)) {
+          found = true;
+          break;
+        } else {
+          return false;
+        }
+      }
+    }
+    if (!found) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool PigeonInternalDeepEquals(const double& a, const double& b) {
+  // Normalize -0.0 to 0.0 and handle NaN equality.
+  return (a == b) || (std::isnan(a) && std::isnan(b));
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::optional<T>& a, const std::optional<T>& b) {
+  if (!a && !b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+template<typename T>
+bool PigeonInternalDeepEquals(const std::unique_ptr<T>& a, const std::unique_ptr<T>& b) {
+  if (a.get() == b.get()) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  return PigeonInternalDeepEquals(*a, *b);
+}
+
+bool PigeonInternalDeepEquals(const ::flutter::EncodableValue& a, const ::flutter::EncodableValue& b) {
+  if (a.index() != b.index()) {
+    return false;
+  }
+  if (const double* da = std::get_if<double>(&a)) {
+    return PigeonInternalDeepEquals(*da, std::get<double>(b));
+  } else if (const ::flutter::EncodableList* la = std::get_if<::flutter::EncodableList>(&a)) {
+    return PigeonInternalDeepEquals(*la, std::get<::flutter::EncodableList>(b));
+  } else if (const ::flutter::EncodableMap* ma = std::get_if<::flutter::EncodableMap>(&a)) {
+    return PigeonInternalDeepEquals(*ma, std::get<::flutter::EncodableMap>(b));
+  }
+  return a == b;
+}
+''');
+  }
+
+  void _writeDeepHash(Indent indent) {
+    indent.format('''
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v);
+
+size_t PigeonInternalDeepHash(const double& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v);
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v);
+
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v);
+
+template <typename T>
+size_t PigeonInternalDeepHash(const T& v) {
+  return std::hash<T>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::vector<T>& v) {
+  size_t result = 1;
+  for (const auto& item : v) {
+    result = result * 31 + PigeonInternalDeepHash(item);
+  }
+  return result;
+}
+
+template <typename K, typename V>
+size_t PigeonInternalDeepHash(const std::map<K, V>& v) {
+  size_t result = 0;
+  for (const auto& kv : v) {
+    result += ((PigeonInternalDeepHash(kv.first) * 31) ^ PigeonInternalDeepHash(kv.second));
+  }
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const double& v) {
+  if (std::isnan(v)) {
+    // Normalize NaN to a consistent hash.
+    return std::hash<double>()(std::numeric_limits<double>::quiet_NaN());
+  }
+  if (v == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
+    return std::hash<double>()(0.0);
+  }
+  return std::hash<double>()(v);
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::optional<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+template <typename T>
+size_t PigeonInternalDeepHash(const std::unique_ptr<T>& v) {
+  return v ? PigeonInternalDeepHash(*v) : 0;
+}
+
+size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
+  size_t result = v.index();
+  if (const double* dv = std::get_if<double>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*dv);
+  } else if (const ::flutter::EncodableList* lv =
+                 std::get_if<::flutter::EncodableList>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*lv);
+  } else if (const ::flutter::EncodableMap* mv =
+                 std::get_if<::flutter::EncodableMap>(&v)) {
+    result = result * 31 + PigeonInternalDeepHash(*mv);
+  } else {
+    std::visit(
+        [&result](const auto& val) {
+          using T = std::decay_t<decltype(val)>;
+          if constexpr (!std::is_same_v<T, double> &&
+                        !std::is_same_v<T, ::flutter::EncodableList> &&
+                        !std::is_same_v<T, ::flutter::EncodableMap> &&
+                        !std::is_same_v<T, std::monostate> &&
+                        !std::is_same_v<T, ::flutter::CustomEncodableValue>) {
+            result = result * 31 + PigeonInternalDeepHash(val);
+          }
+        },
+        v);
+  }
+  return result;
+}
+''');
   }
 
   @override
@@ -1292,7 +1583,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       'ReadValueOfType',
       scope: _codecSerializerName,
       returnType: 'EncodableValue',
-      parameters: <String>['uint8_t type', 'flutter::ByteStreamReader* stream'],
+      parameters: <String>[
+        'uint8_t type',
+        '::flutter::ByteStreamReader* stream',
+      ],
       isConst: true,
       body: () {
         if (enumeratedTypes.isNotEmpty) {
@@ -1330,7 +1624,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       returnType: _voidType,
       parameters: <String>[
         'const EncodableValue& value',
-        'flutter::ByteStreamWriter* stream',
+        '::flutter::ByteStreamWriter* stream',
       ],
       isConst: true,
       body: () {
@@ -1388,7 +1682,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       api.name,
       scope: api.name,
-      parameters: <String>['flutter::BinaryMessenger* binary_messenger'],
+      parameters: <String>['::flutter::BinaryMessenger* binary_messenger'],
       initializers: <String>[
         'binary_messenger_(binary_messenger)',
         'message_channel_suffix_("")',
@@ -1399,7 +1693,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       api.name,
       scope: api.name,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         'const std::string& message_channel_suffix',
       ],
       initializers: <String>[
@@ -1411,10 +1705,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       'GetCodec',
       scope: api.name,
-      returnType: 'const flutter::StandardMessageCodec&',
+      returnType: 'const ::flutter::StandardMessageCodec&',
       body: () {
         indent.writeln(
-          'return flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
+          'return ::flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
         );
       },
     );
@@ -1545,10 +1839,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
       indent,
       'GetCodec',
       scope: api.name,
-      returnType: 'const flutter::StandardMessageCodec&',
+      returnType: 'const ::flutter::StandardMessageCodec&',
       body: () {
         indent.writeln(
-          'return flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
+          'return ::flutter::StandardMessageCodec::GetInstance(&$_codecSerializerName::GetInstance());',
         );
       },
     );
@@ -1561,7 +1855,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       scope: api.name,
       returnType: _voidType,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         '${api.name}* api',
       ],
       body: () {
@@ -1574,7 +1868,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
       scope: api.name,
       returnType: _voidType,
       parameters: <String>[
-        'flutter::BinaryMessenger* binary_messenger',
+        '::flutter::BinaryMessenger* binary_messenger',
         '${api.name}* api',
         'const std::string& message_channel_suffix',
       ],
@@ -1595,7 +1889,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
             );
             indent.writeScoped('if (api != nullptr) {', '} else {', () {
               indent.write(
-                'channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) ',
+                'channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) ',
               );
               indent.addScoped('{', '});', () {
                 indent.writeScoped('try {', '}', () {
@@ -2187,7 +2481,7 @@ String? _baseCppTypeForBuiltinDartType(
   TypeDeclaration type, {
   bool includeFlutterNamespace = true,
 }) {
-  final flutterNamespace = includeFlutterNamespace ? 'flutter::' : '';
+  final flutterNamespace = includeFlutterNamespace ? '::flutter::' : '';
   final cppTypeForDartTypeMap = <String, String>{
     'void': 'void',
     'bool': 'bool',

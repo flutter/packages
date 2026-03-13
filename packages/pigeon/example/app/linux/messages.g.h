@@ -90,6 +90,29 @@ PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
 FlValue* pigeon_example_package_message_data_get_data(
     PigeonExamplePackageMessageData* object);
 
+/**
+ * pigeon_example_package_message_data_equals:
+ * @a: a #PigeonExamplePackageMessageData.
+ * @b: another #PigeonExamplePackageMessageData.
+ *
+ * Checks if two #PigeonExamplePackageMessageData objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean pigeon_example_package_message_data_equals(
+    PigeonExamplePackageMessageData* a, PigeonExamplePackageMessageData* b);
+
+/**
+ * pigeon_example_package_message_data_hash:
+ * @object: a #PigeonExamplePackageMessageData.
+ *
+ * Calculates a hash code for a #PigeonExamplePackageMessageData object.
+ *
+ * Returns: the hash code.
+ */
+guint pigeon_example_package_message_data_hash(
+    PigeonExamplePackageMessageData* object);
+
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
                      pigeon_example_package_message_codec,
                      PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,

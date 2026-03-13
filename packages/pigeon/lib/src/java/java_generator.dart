@@ -208,6 +208,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
+    _writeNumberHelpers(indent);
+    _writeDeepEquals(indent);
+    _writeDeepHashCode(indent);
   }
 
   @override
@@ -383,13 +386,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       final Iterable<String> checks = classDefinition.fields.map((
         NamedType field,
       ) {
-        // Objects.equals only does pointer equality for array types.
-        if (_javaTypeIsArray(field.type)) {
-          return 'Arrays.equals(${field.name}, that.${field.name})';
-        }
-        return field.type.isNullable
-            ? 'Objects.equals(${field.name}, that.${field.name})'
-            : '${field.name}.equals(that.${field.name})';
+        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
       });
       indent.writeln('return ${checks.join(' && ')};');
     });
@@ -398,32 +395,269 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     // Implement hashCode().
     indent.writeln('@Override');
     indent.writeScoped('public int hashCode() {', '}', () {
-      // As with equalty checks, arrays need special handling.
-      final Iterable<String> arrayFieldNames = classDefinition.fields
-          .where((NamedType field) => _javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final Iterable<String> nonArrayFieldNames = classDefinition.fields
-          .where((NamedType field) => !_javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final nonArrayHashValue = nonArrayFieldNames.isNotEmpty
-          ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
-          : '0';
-
-      if (arrayFieldNames.isEmpty) {
-        // Return directly if there are no array variables, to avoid redundant
-        // variable lint warnings.
-        indent.writeln('return $nonArrayHashValue;');
+      final Iterable<String> fieldNames = classDefinition.fields.map(
+        (NamedType field) => field.name,
+      );
+      if (fieldNames.isEmpty) {
+        indent.writeln('return Objects.hash(getClass());');
       } else {
-        const resultVar = '${varNamePrefix}result';
-        indent.writeln('int $resultVar = $nonArrayHashValue;');
-        // Manually mix in the Arrays.hashCode values.
-        for (final name in arrayFieldNames) {
-          indent.writeln(
-            '$resultVar = 31 * $resultVar + Arrays.hashCode($name);',
-          );
-        }
-        indent.writeln('return $resultVar;');
+        indent.writeln(
+          'Object[] fields = new Object[] {getClass(), ${fieldNames.join(', ')}};',
+        );
+        indent.writeln('return pigeonDeepHashCode(fields);');
       }
+    });
+    indent.newln();
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.writeScoped(
+      'static boolean pigeonDeepEquals(Object a, Object b) {',
+      '}',
+      () {
+        indent.writeln('if (a == b) { return true; }');
+        indent.writeln('if (a == null || b == null) { return false; }');
+        indent.writeScoped(
+          'if (a instanceof byte[] && b instanceof byte[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((byte[]) a, (byte[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof int[] && b instanceof int[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((int[]) a, (int[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof long[] && b instanceof long[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((long[]) a, (long[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof double[] && b instanceof double[]) {',
+          '}',
+          () {
+            indent.writeln('double[] da = (double[]) a;');
+            indent.writeln('double[] db = (double[]) b;');
+            indent.writeScoped('if (da.length != db.length) {', '}', () {
+              indent.writeln('return false;');
+            });
+            indent.writeScoped(
+              'for (int i = 0; i < da.length; i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDoubleEquals(da[i], db[i])) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof List && b instanceof List) {',
+          '}',
+          () {
+            indent.writeln('List<?> listA = (List<?>) a;');
+            indent.writeln('List<?> listB = (List<?>) b;');
+            indent.writeln(
+              'if (listA.size() != listB.size()) { return false; }',
+            );
+            indent.writeScoped(
+              'for (int i = 0; i < listA.size(); i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Map && b instanceof Map) {',
+          '}',
+          () {
+            indent.writeln('Map<?, ?> mapA = (Map<?, ?>) a;');
+            indent.writeln('Map<?, ?> mapB = (Map<?, ?>) b;');
+            indent.writeln('if (mapA.size() != mapB.size()) { return false; }');
+            indent.writeScoped(
+              'for (Map.Entry<?, ?> entryA : mapA.entrySet()) {',
+              '}',
+              () {
+                indent.writeln('Object keyA = entryA.getKey();');
+                indent.writeln('Object valueA = entryA.getValue();');
+                indent.writeln('boolean found = false;');
+                indent.writeScoped(
+                  'for (Map.Entry<?, ?> entryB : mapB.entrySet()) {',
+                  '}',
+                  () {
+                    indent.writeln('Object keyB = entryB.getKey();');
+                    indent.writeScoped(
+                      'if (pigeonDeepEquals(keyA, keyB)) {',
+                      '}',
+                      () {
+                        indent.writeln('Object valueB = entryB.getValue();');
+                        indent.writeln(
+                          'if (pigeonDeepEquals(valueA, valueB)) {',
+                        );
+                        indent.nest(1, () {
+                          indent.writeln('found = true;');
+                          indent.writeln('break;');
+                        });
+                        indent.writeln('} else {');
+                        indent.nest(1, () {
+                          indent.writeln('return false;');
+                        });
+                        indent.writeln('}');
+                      },
+                    );
+                  },
+                );
+                indent.writeScoped('if (!found) {', '}', () {
+                  indent.writeln('return false;');
+                });
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Double && b instanceof Double) {',
+          '}',
+          () {
+            indent.writeln(
+              'return pigeonDoubleEquals((double) a, (double) b);',
+            );
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Float && b instanceof Float) {',
+          '}',
+          () {
+            indent.writeln('return pigeonFloatEquals((float) a, (float) b);');
+          },
+        );
+        indent.writeln('return a.equals(b);');
+      },
+    );
+    indent.newln();
+  }
+
+  void _writeDeepHashCode(Indent indent) {
+    indent.writeScoped('static int pigeonDeepHashCode(Object value) {', '}', () {
+      indent.writeln('if (value == null) { return 0; }');
+      indent.writeScoped('if (value instanceof byte[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((byte[]) value);');
+      });
+      indent.writeScoped('if (value instanceof int[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((int[]) value);');
+      });
+      indent.writeScoped('if (value instanceof long[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((long[]) value);');
+      });
+      indent.writeScoped('if (value instanceof double[]) {', '}', () {
+        indent.writeln('double[] da = (double[]) value;');
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (double d : da) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDoubleHashCode(d);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof List) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (List<?>) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Map) {', '}', () {
+        indent.writeln('int result = 0;');
+        indent.writeScoped(
+          'for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {',
+          '}',
+          () {
+            indent.writeln(
+              'result += ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));',
+            );
+          },
+        );
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Object[]) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (Object[]) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Double) {', '}', () {
+        indent.writeln('return pigeonDoubleHashCode((double) value);');
+      });
+      indent.writeScoped('if (value instanceof Float) {', '}', () {
+        indent.writeln('return pigeonFloatHashCode((float) value);');
+      });
+      indent.writeln('return value.hashCode();');
+    });
+    indent.newln();
+  }
+
+  void _writeNumberHelpers(Indent indent) {
+    indent.writeScoped(
+      'static boolean pigeonDoubleEquals(double a, double b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'static boolean pigeonFloatEquals(float a, float b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped('static int pigeonDoubleHashCode(double d) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeScoped('if (d == 0.0) {', '}', () {
+        indent.writeln('d = 0.0;');
+      });
+      indent.writeln('long bits = Double.doubleToLongBits(d);');
+      indent.writeln('return (int) (bits ^ (bits >>> 32));');
+    });
+    indent.newln();
+    indent.writeScoped('static int pigeonFloatHashCode(float f) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeScoped('if (f == 0.0f) {', '}', () {
+        indent.writeln('f = 0.0f;');
+      });
+      indent.writeln('return Float.floatToIntBits(f);');
     });
     indent.newln();
   }
@@ -1370,10 +1604,6 @@ String _javaTypeForBuiltinGenericDartType(
   } else {
     return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
   }
-}
-
-bool _javaTypeIsArray(TypeDeclaration type) {
-  return _javaTypeForBuiltinDartType(type)?.endsWith('[]') ?? false;
 }
 
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {

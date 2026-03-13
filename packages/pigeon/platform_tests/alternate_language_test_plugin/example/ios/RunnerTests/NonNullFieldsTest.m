@@ -22,4 +22,14 @@
   XCTAssertEqualObjects(@"hello", request.query);
 }
 
+- (void)testEquality {
+  NonNullFieldSearchRequest *request1 = [NonNullFieldSearchRequest makeWithQuery:@"hello"];
+  NonNullFieldSearchRequest *request2 = [NonNullFieldSearchRequest makeWithQuery:@"hello"];
+  NonNullFieldSearchRequest *request3 = [NonNullFieldSearchRequest makeWithQuery:@"world"];
+
+  XCTAssertEqualObjects(request1, request2);
+  XCTAssertNotEqualObjects(request1, request3);
+  XCTAssertEqual(request1.hash, request2.hash);
+}
+
 @end

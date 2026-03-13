@@ -14,4 +14,13 @@ TEST(NonNullFields, Build) {
   EXPECT_EQ(request.query(), "hello");
 }
 
+TEST(NonNullFields, Equality) {
+  NonNullFieldSearchRequest request1("hello");
+  NonNullFieldSearchRequest request2("hello");
+  NonNullFieldSearchRequest request3("world");
+
+  EXPECT_EQ(request1, request2);
+  EXPECT_NE(request1, request3);
+}
+
 }  // namespace non_null_fields_pigeontest

@@ -60,6 +60,15 @@ class TestPlugin : public flutter::Plugin,
       std::optional<core_tests_pigeontest::AllNullableTypes>>
   EchoAllNullableTypes(
       const core_tests_pigeontest::AllNullableTypes* everything) override;
+  core_tests_pigeontest::ErrorOr<bool> AreAllNullableTypesEqual(
+      const core_tests_pigeontest::AllNullableTypes& a,
+      const core_tests_pigeontest::AllNullableTypes& b) override;
+  core_tests_pigeontest::ErrorOr<int64_t> GetAllNullableTypesHash(
+      const core_tests_pigeontest::AllNullableTypes& value) override;
+  core_tests_pigeontest::ErrorOr<int64_t>
+  GetAllNullableTypesWithoutRecursionHash(
+      const core_tests_pigeontest::AllNullableTypesWithoutRecursion& value)
+      override;
   core_tests_pigeontest::ErrorOr<
       std::optional<core_tests_pigeontest::AllNullableTypesWithoutRecursion>>
   EchoAllNullableTypesWithoutRecursion(

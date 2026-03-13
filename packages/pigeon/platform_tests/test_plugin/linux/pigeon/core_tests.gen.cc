@@ -7,6 +7,197 @@
 
 #include "core_tests.gen.h"
 
+#include <string.h>
+
+#include <cmath>
+static guint G_GNUC_UNUSED flpigeon_hash_double(double v) {
+  if (std::isnan(v)) {
+    return static_cast<guint>(0x7FF80000);
+  }
+  if (v == 0.0) {
+    v = 0.0;
+  }
+  union {
+    double d;
+    uint64_t u;
+  } u;
+  u.d = v;
+  return static_cast<guint>(u.u ^ (u.u >> 32));
+}
+static gboolean G_GNUC_UNUSED flpigeon_equals_double(double a, double b) {
+  return (a == b) || (std::isnan(a) && std::isnan(b));
+}
+static gboolean G_GNUC_UNUSED flpigeon_deep_equals(FlValue* a, FlValue* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (fl_value_get_type(a) != fl_value_get_type(b)) {
+    return FALSE;
+  }
+  switch (fl_value_get_type(a)) {
+    case FL_VALUE_TYPE_NULL:
+      return TRUE;
+    case FL_VALUE_TYPE_BOOL:
+      return fl_value_get_bool(a) == fl_value_get_bool(b);
+    case FL_VALUE_TYPE_INT:
+      return fl_value_get_int(a) == fl_value_get_int(b);
+    case FL_VALUE_TYPE_FLOAT: {
+      return flpigeon_equals_double(fl_value_get_float(a),
+                                    fl_value_get_float(b));
+    }
+    case FL_VALUE_TYPE_STRING:
+      return g_strcmp0(fl_value_get_string(a), fl_value_get_string(b)) == 0;
+    case FL_VALUE_TYPE_UINT8_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_uint8_list(a), fl_value_get_uint8_list(b),
+                    fl_value_get_length(a)) == 0;
+    case FL_VALUE_TYPE_INT32_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_int32_list(a), fl_value_get_int32_list(b),
+                    fl_value_get_length(a) * sizeof(int32_t)) == 0;
+    case FL_VALUE_TYPE_INT64_LIST:
+      return fl_value_get_length(a) == fl_value_get_length(b) &&
+             memcmp(fl_value_get_int64_list(a), fl_value_get_int64_list(b),
+                    fl_value_get_length(a) * sizeof(int64_t)) == 0;
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      const double* a_data = fl_value_get_float_list(a);
+      const double* b_data = fl_value_get_float_list(b);
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_equals_double(a_data[i], b_data[i])) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    case FL_VALUE_TYPE_LIST: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      for (size_t i = 0; i < len; i++) {
+        if (!flpigeon_deep_equals(fl_value_get_list_value(a, i),
+                                  fl_value_get_list_value(b, i))) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    case FL_VALUE_TYPE_MAP: {
+      size_t len = fl_value_get_length(a);
+      if (len != fl_value_get_length(b)) {
+        return FALSE;
+      }
+      for (size_t i = 0; i < len; i++) {
+        FlValue* key = fl_value_get_map_key(a, i);
+        FlValue* val = fl_value_get_map_value(a, i);
+        gboolean found = FALSE;
+        for (size_t j = 0; j < len; j++) {
+          FlValue* b_key = fl_value_get_map_key(b, j);
+          if (flpigeon_deep_equals(key, b_key)) {
+            FlValue* b_val = fl_value_get_map_value(b, j);
+            if (flpigeon_deep_equals(val, b_val)) {
+              found = TRUE;
+              break;
+            } else {
+              return FALSE;
+            }
+          }
+        }
+        if (!found) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+    }
+    default:
+      return FALSE;
+  }
+  return FALSE;
+}
+static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
+  if (value == nullptr) {
+    return 0;
+  }
+  switch (fl_value_get_type(value)) {
+    case FL_VALUE_TYPE_NULL:
+      return 0;
+    case FL_VALUE_TYPE_BOOL:
+      return fl_value_get_bool(value) ? 1231 : 1237;
+    case FL_VALUE_TYPE_INT: {
+      int64_t v = fl_value_get_int(value);
+      return static_cast<guint>(v ^ (v >> 32));
+    }
+    case FL_VALUE_TYPE_FLOAT:
+      return flpigeon_hash_double(fl_value_get_float(value));
+    case FL_VALUE_TYPE_STRING:
+      return g_str_hash(fl_value_get_string(value));
+    case FL_VALUE_TYPE_UINT8_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const uint8_t* data = fl_value_get_uint8_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + data[i];
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_INT32_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const int32_t* data = fl_value_get_int32_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_INT64_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const int64_t* data = fl_value_get_int64_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      const double* data = fl_value_get_float_list(value);
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + flpigeon_hash_double(data[i]);
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_LIST: {
+      guint result = 1;
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        result =
+            result * 31 + flpigeon_deep_hash(fl_value_get_list_value(value, i));
+      }
+      return result;
+    }
+    case FL_VALUE_TYPE_MAP: {
+      guint result = 0;
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        result += ((flpigeon_deep_hash(fl_value_get_map_key(value, i)) * 31) ^
+                   flpigeon_deep_hash(fl_value_get_map_value(value, i)));
+      }
+      return result;
+    }
+    default:
+      return static_cast<guint>(fl_value_get_type(value));
+  }
+  return 0;
+}
+
 struct _CoreTestsPigeonTestUnusedClass {
   GObject parent_instance;
 
@@ -67,6 +258,28 @@ core_tests_pigeon_test_unused_class_new_from_list(FlValue* values) {
     a_field = value0;
   }
   return core_tests_pigeon_test_unused_class_new(a_field);
+}
+
+gboolean core_tests_pigeon_test_unused_class_equals(
+    CoreTestsPigeonTestUnusedClass* a, CoreTestsPigeonTestUnusedClass* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->a_field, b->a_field)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_unused_class_hash(
+    CoreTestsPigeonTestUnusedClass* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_UNUSED_CLASS(self), 0);
+  guint result = 0;
+  result = result * 31 + flpigeon_deep_hash(self->a_field);
+  return result;
 }
 
 struct _CoreTestsPigeonTestAllTypes {
@@ -495,6 +708,205 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
       an_object, list, string_list, int_list, double_list, bool_list, enum_list,
       object_list, list_list, map_list, map, string_map, int_map, enum_map,
       object_map, list_map, map_map);
+}
+
+gboolean core_tests_pigeon_test_all_types_equals(
+    CoreTestsPigeonTestAllTypes* a, CoreTestsPigeonTestAllTypes* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (a->a_bool != b->a_bool) {
+    return FALSE;
+  }
+  if (a->an_int != b->an_int) {
+    return FALSE;
+  }
+  if (a->an_int64 != b->an_int64) {
+    return FALSE;
+  }
+  if (!flpigeon_equals_double(a->a_double, b->a_double)) {
+    return FALSE;
+  }
+  if (a->a_byte_array != b->a_byte_array) {
+    if (a->a_byte_array == nullptr || b->a_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_byte_array_length != b->a_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_byte_array, b->a_byte_array,
+               a->a_byte_array_length * sizeof(uint8_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a4_byte_array != b->a4_byte_array) {
+    if (a->a4_byte_array == nullptr || b->a4_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a4_byte_array_length != b->a4_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a4_byte_array, b->a4_byte_array,
+               a->a4_byte_array_length * sizeof(int32_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a8_byte_array != b->a8_byte_array) {
+    if (a->a8_byte_array == nullptr || b->a8_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a8_byte_array_length != b->a8_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a8_byte_array, b->a8_byte_array,
+               a->a8_byte_array_length * sizeof(int64_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_float_array != b->a_float_array) {
+    if (a->a_float_array == nullptr || b->a_float_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_float_array_length != b->a_float_array_length) {
+      return FALSE;
+    }
+    for (size_t i = 0; i < a->a_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_float_array[i], b->a_float_array[i])) {
+        return FALSE;
+      }
+    }
+  }
+  if (a->an_enum != b->an_enum) {
+    return FALSE;
+  }
+  if (a->another_enum != b->another_enum) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->a_string, b->a_string) != 0) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->an_object, b->an_object)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list, b->list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_list, b->string_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_list, b->int_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->double_list, b->double_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_list, b->bool_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_list, b->enum_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_list, b->object_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_list, b->list_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_list, b->map_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map, b->map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_map, b->string_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_map, b->int_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_map, b->enum_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_map, b->object_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_map, b->list_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_map, b->map_map)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), 0);
+  guint result = 0;
+  result = result * 31 + static_cast<guint>(self->a_bool);
+  result = result * 31 + static_cast<guint>(self->an_int);
+  result = result * 31 + static_cast<guint>(self->an_int64);
+  result = result * 31 + flpigeon_hash_double(self->a_double);
+  {
+    size_t len = self->a_byte_array_length;
+    const uint8_t* data = self->a_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a4_byte_array_length;
+    const int32_t* data = self->a4_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a8_byte_array_length;
+    const int64_t* data = self->a8_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
+    }
+  }
+  {
+    size_t len = self->a_float_array_length;
+    const double* data = self->a_float_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + flpigeon_hash_double(data[i]);
+      }
+    }
+  }
+  result = result * 31 + static_cast<guint>(self->an_enum);
+  result = result * 31 + static_cast<guint>(self->another_enum);
+  result = result * 31 +
+           (self->a_string != nullptr ? g_str_hash(self->a_string) : 0);
+  result = result * 31 + flpigeon_deep_hash(self->an_object);
+  result = result * 31 + flpigeon_deep_hash(self->list);
+  result = result * 31 + flpigeon_deep_hash(self->string_list);
+  result = result * 31 + flpigeon_deep_hash(self->int_list);
+  result = result * 31 + flpigeon_deep_hash(self->double_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list);
+  result = result * 31 + flpigeon_deep_hash(self->enum_list);
+  result = result * 31 + flpigeon_deep_hash(self->object_list);
+  result = result * 31 + flpigeon_deep_hash(self->list_list);
+  result = result * 31 + flpigeon_deep_hash(self->map_list);
+  result = result * 31 + flpigeon_deep_hash(self->map);
+  result = result * 31 + flpigeon_deep_hash(self->string_map);
+  result = result * 31 + flpigeon_deep_hash(self->int_map);
+  result = result * 31 + flpigeon_deep_hash(self->enum_map);
+  result = result * 31 + flpigeon_deep_hash(self->object_map);
+  result = result * 31 + flpigeon_deep_hash(self->list_map);
+  result = result * 31 + flpigeon_deep_hash(self->map_map);
+  return result;
 }
 
 struct _CoreTestsPigeonTestAllNullableTypes {
@@ -1331,6 +1743,264 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
       recursive_class_map);
 }
 
+gboolean core_tests_pigeon_test_all_nullable_types_equals(
+    CoreTestsPigeonTestAllNullableTypes* a,
+    CoreTestsPigeonTestAllNullableTypes* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if ((a->a_nullable_bool == nullptr) != (b->a_nullable_bool == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_bool != nullptr &&
+      *a->a_nullable_bool != *b->a_nullable_bool) {
+    return FALSE;
+  }
+  if ((a->a_nullable_int == nullptr) != (b->a_nullable_int == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_int != nullptr &&
+      *a->a_nullable_int != *b->a_nullable_int) {
+    return FALSE;
+  }
+  if ((a->a_nullable_int64 == nullptr) != (b->a_nullable_int64 == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_int64 != nullptr &&
+      *a->a_nullable_int64 != *b->a_nullable_int64) {
+    return FALSE;
+  }
+  if ((a->a_nullable_double == nullptr) != (b->a_nullable_double == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_double != nullptr &&
+      !flpigeon_equals_double(*a->a_nullable_double, *b->a_nullable_double)) {
+    return FALSE;
+  }
+  if (a->a_nullable_byte_array != b->a_nullable_byte_array) {
+    if (a->a_nullable_byte_array == nullptr ||
+        b->a_nullable_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable_byte_array_length != b->a_nullable_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable_byte_array, b->a_nullable_byte_array,
+               a->a_nullable_byte_array_length * sizeof(uint8_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable4_byte_array != b->a_nullable4_byte_array) {
+    if (a->a_nullable4_byte_array == nullptr ||
+        b->a_nullable4_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable4_byte_array_length != b->a_nullable4_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable4_byte_array, b->a_nullable4_byte_array,
+               a->a_nullable4_byte_array_length * sizeof(int32_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable8_byte_array != b->a_nullable8_byte_array) {
+    if (a->a_nullable8_byte_array == nullptr ||
+        b->a_nullable8_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable8_byte_array_length != b->a_nullable8_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable8_byte_array, b->a_nullable8_byte_array,
+               a->a_nullable8_byte_array_length * sizeof(int64_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable_float_array != b->a_nullable_float_array) {
+    if (a->a_nullable_float_array == nullptr ||
+        b->a_nullable_float_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable_float_array_length != b->a_nullable_float_array_length) {
+      return FALSE;
+    }
+    for (size_t i = 0; i < a->a_nullable_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_nullable_float_array[i],
+                                  b->a_nullable_float_array[i])) {
+        return FALSE;
+      }
+    }
+  }
+  if ((a->a_nullable_enum == nullptr) != (b->a_nullable_enum == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_enum != nullptr &&
+      *a->a_nullable_enum != *b->a_nullable_enum) {
+    return FALSE;
+  }
+  if ((a->another_nullable_enum == nullptr) !=
+      (b->another_nullable_enum == nullptr)) {
+    return FALSE;
+  }
+  if (a->another_nullable_enum != nullptr &&
+      *a->another_nullable_enum != *b->another_nullable_enum) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->a_nullable_string, b->a_nullable_string) != 0) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->a_nullable_object, b->a_nullable_object)) {
+    return FALSE;
+  }
+  if (!core_tests_pigeon_test_all_nullable_types_equals(
+          a->all_nullable_types, b->all_nullable_types)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list, b->list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_list, b->string_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_list, b->int_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->double_list, b->double_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_list, b->bool_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_list, b->enum_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_list, b->object_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_list, b->list_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_list, b->map_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->recursive_class_list, b->recursive_class_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map, b->map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_map, b->string_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_map, b->int_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_map, b->enum_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_map, b->object_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_map, b->list_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_map, b->map_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->recursive_class_map, b->recursive_class_map)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_all_nullable_types_hash(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self), 0);
+  guint result = 0;
+  result = result * 31 + (self->a_nullable_bool != nullptr
+                              ? static_cast<guint>(*self->a_nullable_bool)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int64 != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int64)
+                              : 0);
+  result = result * 31 + (self->a_nullable_double != nullptr
+                              ? flpigeon_hash_double(*self->a_nullable_double)
+                              : 0);
+  {
+    size_t len = self->a_nullable_byte_array_length;
+    const uint8_t* data = self->a_nullable_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable4_byte_array_length;
+    const int32_t* data = self->a_nullable4_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable8_byte_array_length;
+    const int64_t* data = self->a_nullable8_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable_float_array_length;
+    const double* data = self->a_nullable_float_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + flpigeon_hash_double(data[i]);
+      }
+    }
+  }
+  result = result * 31 + (self->a_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->a_nullable_enum)
+                              : 0);
+  result = result * 31 + (self->another_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->another_nullable_enum)
+                              : 0);
+  result = result * 31 + (self->a_nullable_string != nullptr
+                              ? g_str_hash(self->a_nullable_string)
+                              : 0);
+  result = result * 31 + flpigeon_deep_hash(self->a_nullable_object);
+  result = result * 31 + core_tests_pigeon_test_all_nullable_types_hash(
+                             self->all_nullable_types);
+  result = result * 31 + flpigeon_deep_hash(self->list);
+  result = result * 31 + flpigeon_deep_hash(self->string_list);
+  result = result * 31 + flpigeon_deep_hash(self->int_list);
+  result = result * 31 + flpigeon_deep_hash(self->double_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list);
+  result = result * 31 + flpigeon_deep_hash(self->enum_list);
+  result = result * 31 + flpigeon_deep_hash(self->object_list);
+  result = result * 31 + flpigeon_deep_hash(self->list_list);
+  result = result * 31 + flpigeon_deep_hash(self->map_list);
+  result = result * 31 + flpigeon_deep_hash(self->recursive_class_list);
+  result = result * 31 + flpigeon_deep_hash(self->map);
+  result = result * 31 + flpigeon_deep_hash(self->string_map);
+  result = result * 31 + flpigeon_deep_hash(self->int_map);
+  result = result * 31 + flpigeon_deep_hash(self->enum_map);
+  result = result * 31 + flpigeon_deep_hash(self->object_map);
+  result = result * 31 + flpigeon_deep_hash(self->list_map);
+  result = result * 31 + flpigeon_deep_hash(self->map_map);
+  result = result * 31 + flpigeon_deep_hash(self->recursive_class_map);
+  return result;
+}
+
 struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
   GObject parent_instance;
 
@@ -2145,6 +2815,251 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
       list_map, map_map);
 }
 
+gboolean core_tests_pigeon_test_all_nullable_types_without_recursion_equals(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* a,
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if ((a->a_nullable_bool == nullptr) != (b->a_nullable_bool == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_bool != nullptr &&
+      *a->a_nullable_bool != *b->a_nullable_bool) {
+    return FALSE;
+  }
+  if ((a->a_nullable_int == nullptr) != (b->a_nullable_int == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_int != nullptr &&
+      *a->a_nullable_int != *b->a_nullable_int) {
+    return FALSE;
+  }
+  if ((a->a_nullable_int64 == nullptr) != (b->a_nullable_int64 == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_int64 != nullptr &&
+      *a->a_nullable_int64 != *b->a_nullable_int64) {
+    return FALSE;
+  }
+  if ((a->a_nullable_double == nullptr) != (b->a_nullable_double == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_double != nullptr &&
+      !flpigeon_equals_double(*a->a_nullable_double, *b->a_nullable_double)) {
+    return FALSE;
+  }
+  if (a->a_nullable_byte_array != b->a_nullable_byte_array) {
+    if (a->a_nullable_byte_array == nullptr ||
+        b->a_nullable_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable_byte_array_length != b->a_nullable_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable_byte_array, b->a_nullable_byte_array,
+               a->a_nullable_byte_array_length * sizeof(uint8_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable4_byte_array != b->a_nullable4_byte_array) {
+    if (a->a_nullable4_byte_array == nullptr ||
+        b->a_nullable4_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable4_byte_array_length != b->a_nullable4_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable4_byte_array, b->a_nullable4_byte_array,
+               a->a_nullable4_byte_array_length * sizeof(int32_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable8_byte_array != b->a_nullable8_byte_array) {
+    if (a->a_nullable8_byte_array == nullptr ||
+        b->a_nullable8_byte_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable8_byte_array_length != b->a_nullable8_byte_array_length) {
+      return FALSE;
+    }
+    if (memcmp(a->a_nullable8_byte_array, b->a_nullable8_byte_array,
+               a->a_nullable8_byte_array_length * sizeof(int64_t)) != 0) {
+      return FALSE;
+    }
+  }
+  if (a->a_nullable_float_array != b->a_nullable_float_array) {
+    if (a->a_nullable_float_array == nullptr ||
+        b->a_nullable_float_array == nullptr) {
+      return FALSE;
+    }
+    if (a->a_nullable_float_array_length != b->a_nullable_float_array_length) {
+      return FALSE;
+    }
+    for (size_t i = 0; i < a->a_nullable_float_array_length; i++) {
+      if (!flpigeon_equals_double(a->a_nullable_float_array[i],
+                                  b->a_nullable_float_array[i])) {
+        return FALSE;
+      }
+    }
+  }
+  if ((a->a_nullable_enum == nullptr) != (b->a_nullable_enum == nullptr)) {
+    return FALSE;
+  }
+  if (a->a_nullable_enum != nullptr &&
+      *a->a_nullable_enum != *b->a_nullable_enum) {
+    return FALSE;
+  }
+  if ((a->another_nullable_enum == nullptr) !=
+      (b->another_nullable_enum == nullptr)) {
+    return FALSE;
+  }
+  if (a->another_nullable_enum != nullptr &&
+      *a->another_nullable_enum != *b->another_nullable_enum) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->a_nullable_string, b->a_nullable_string) != 0) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->a_nullable_object, b->a_nullable_object)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list, b->list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_list, b->string_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_list, b->int_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->double_list, b->double_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_list, b->bool_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_list, b->enum_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_list, b->object_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_list, b->list_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_list, b->map_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map, b->map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->string_map, b->string_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->int_map, b->int_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->enum_map, b->enum_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->object_map, b->object_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->list_map, b->list_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->map_map, b->map_map)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self), 0);
+  guint result = 0;
+  result = result * 31 + (self->a_nullable_bool != nullptr
+                              ? static_cast<guint>(*self->a_nullable_bool)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int)
+                              : 0);
+  result = result * 31 + (self->a_nullable_int64 != nullptr
+                              ? static_cast<guint>(*self->a_nullable_int64)
+                              : 0);
+  result = result * 31 + (self->a_nullable_double != nullptr
+                              ? flpigeon_hash_double(*self->a_nullable_double)
+                              : 0);
+  {
+    size_t len = self->a_nullable_byte_array_length;
+    const uint8_t* data = self->a_nullable_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable4_byte_array_length;
+    const int32_t* data = self->a_nullable4_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i]);
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable8_byte_array_length;
+    const int64_t* data = self->a_nullable8_byte_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + static_cast<guint>(data[i] ^ (data[i] >> 32));
+      }
+    }
+  }
+  {
+    size_t len = self->a_nullable_float_array_length;
+    const double* data = self->a_nullable_float_array;
+    if (data != nullptr) {
+      for (size_t i = 0; i < len; i++) {
+        result = result * 31 + flpigeon_hash_double(data[i]);
+      }
+    }
+  }
+  result = result * 31 + (self->a_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->a_nullable_enum)
+                              : 0);
+  result = result * 31 + (self->another_nullable_enum != nullptr
+                              ? static_cast<guint>(*self->another_nullable_enum)
+                              : 0);
+  result = result * 31 + (self->a_nullable_string != nullptr
+                              ? g_str_hash(self->a_nullable_string)
+                              : 0);
+  result = result * 31 + flpigeon_deep_hash(self->a_nullable_object);
+  result = result * 31 + flpigeon_deep_hash(self->list);
+  result = result * 31 + flpigeon_deep_hash(self->string_list);
+  result = result * 31 + flpigeon_deep_hash(self->int_list);
+  result = result * 31 + flpigeon_deep_hash(self->double_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list);
+  result = result * 31 + flpigeon_deep_hash(self->enum_list);
+  result = result * 31 + flpigeon_deep_hash(self->object_list);
+  result = result * 31 + flpigeon_deep_hash(self->list_list);
+  result = result * 31 + flpigeon_deep_hash(self->map_list);
+  result = result * 31 + flpigeon_deep_hash(self->map);
+  result = result * 31 + flpigeon_deep_hash(self->string_map);
+  result = result * 31 + flpigeon_deep_hash(self->int_map);
+  result = result * 31 + flpigeon_deep_hash(self->enum_map);
+  result = result * 31 + flpigeon_deep_hash(self->object_map);
+  result = result * 31 + flpigeon_deep_hash(self->list_map);
+  result = result * 31 + flpigeon_deep_hash(self->map_map);
+  return result;
+}
+
 struct _CoreTestsPigeonTestAllClassesWrapper {
   GObject parent_instance;
 
@@ -2347,6 +3262,59 @@ core_tests_pigeon_test_all_classes_wrapper_new_from_list(FlValue* values) {
       class_list, nullable_class_list, class_map, nullable_class_map);
 }
 
+gboolean core_tests_pigeon_test_all_classes_wrapper_equals(
+    CoreTestsPigeonTestAllClassesWrapper* a,
+    CoreTestsPigeonTestAllClassesWrapper* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!core_tests_pigeon_test_all_nullable_types_equals(
+          a->all_nullable_types, b->all_nullable_types)) {
+    return FALSE;
+  }
+  if (!core_tests_pigeon_test_all_nullable_types_without_recursion_equals(
+          a->all_nullable_types_without_recursion,
+          b->all_nullable_types_without_recursion)) {
+    return FALSE;
+  }
+  if (!core_tests_pigeon_test_all_types_equals(a->all_types, b->all_types)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->class_list, b->class_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->nullable_class_list, b->nullable_class_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->class_map, b->class_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->nullable_class_map, b->nullable_class_map)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_all_classes_wrapper_hash(
+    CoreTestsPigeonTestAllClassesWrapper* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_CLASSES_WRAPPER(self), 0);
+  guint result = 0;
+  result = result * 31 + core_tests_pigeon_test_all_nullable_types_hash(
+                             self->all_nullable_types);
+  result = result * 31 +
+           core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
+               self->all_nullable_types_without_recursion);
+  result = result * 31 + core_tests_pigeon_test_all_types_hash(self->all_types);
+  result = result * 31 + flpigeon_deep_hash(self->class_list);
+  result = result * 31 + flpigeon_deep_hash(self->nullable_class_list);
+  result = result * 31 + flpigeon_deep_hash(self->class_map);
+  result = result * 31 + flpigeon_deep_hash(self->nullable_class_map);
+  return result;
+}
+
 struct _CoreTestsPigeonTestTestMessage {
   GObject parent_instance;
 
@@ -2407,6 +3375,28 @@ core_tests_pigeon_test_test_message_new_from_list(FlValue* values) {
     test_list = value0;
   }
   return core_tests_pigeon_test_test_message_new(test_list);
+}
+
+gboolean core_tests_pigeon_test_test_message_equals(
+    CoreTestsPigeonTestTestMessage* a, CoreTestsPigeonTestTestMessage* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->test_list, b->test_list)) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_test_message_hash(
+    CoreTestsPigeonTestTestMessage* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_TEST_MESSAGE(self), 0);
+  guint result = 0;
+  result = result * 31 + flpigeon_deep_hash(self->test_list);
+  return result;
 }
 
 struct _CoreTestsPigeonTestMessageCodec {
@@ -4830,6 +5820,208 @@ core_tests_pigeon_test_host_integration_core_api_echo_required_int_response_new_
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_REQUIRED_INT_RESPONSE(
           g_object_new(
               core_tests_pigeon_test_host_integration_core_api_echo_required_int_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse,
+    core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ARE_ALL_NULLABLE_TYPES_EQUAL_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse*
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_new(
+    gboolean return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ARE_ALL_NULLABLE_TYPES_EQUAL_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_bool(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse*
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ARE_ALL_NULLABLE_TYPES_EQUAL_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse,
+    core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_HASH_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_new(
+    int64_t return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_int(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse,
+    core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new(
+    int64_t return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_int(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_GET_ALL_NULLABLE_TYPES_WITHOUT_RECURSION_HASH_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
@@ -14727,6 +15919,112 @@ core_tests_pigeon_test_host_integration_core_api_echo_required_int_cb(
 }
 
 static void
+core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->are_all_nullable_types_equal == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllNullableTypes* a =
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+          fl_value_get_custom_value_object(value0));
+  FlValue* value1 = fl_value_get_list_value(message_, 1);
+  CoreTestsPigeonTestAllNullableTypes* b =
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+          fl_value_get_custom_value_object(value1));
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiAreAllNullableTypesEqualResponse)
+      response =
+          self->vtable->are_all_nullable_types_equal(a, b, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "areAllNullableTypesEqual");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "areAllNullableTypesEqual", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->get_all_nullable_types_hash == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllNullableTypes* value =
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesHashResponse)
+      response =
+          self->vtable->get_all_nullable_types_hash(value, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "getAllNullableTypesHash");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "getAllNullableTypesHash", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->get_all_nullable_types_without_recursion_hash == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value =
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiGetAllNullableTypesWithoutRecursionHashResponse)
+      response = self->vtable->get_all_nullable_types_without_recursion_hash(
+          value, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "getAllNullableTypesWithoutRecursionHash");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "getAllNullableTypesWithoutRecursionHash", error->message);
+  }
+}
+
+static void
 core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -18082,6 +19380,45 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_required_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_required_int_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* are_all_nullable_types_equal_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "areAllNullableTypesEqual%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) are_all_nullable_types_equal_channel =
+      fl_basic_message_channel_new(messenger,
+                                   are_all_nullable_types_equal_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      are_all_nullable_types_equal_channel,
+      core_tests_pigeon_test_host_integration_core_api_are_all_nullable_types_equal_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* get_all_nullable_types_hash_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "getAllNullableTypesHash%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) get_all_nullable_types_hash_channel =
+      fl_basic_message_channel_new(messenger,
+                                   get_all_nullable_types_hash_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_hash_channel,
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_hash_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* get_all_nullable_types_without_recursion_hash_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "getAllNullableTypesWithoutRecursionHash%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      get_all_nullable_types_without_recursion_hash_channel =
+          fl_basic_message_channel_new(
+              messenger,
+              get_all_nullable_types_without_recursion_hash_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_without_recursion_hash_channel,
+      core_tests_pigeon_test_host_integration_core_api_get_all_nullable_types_without_recursion_hash_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_all_nullable_types_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAllNullableTypes%s",
@@ -19917,6 +21254,40 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_required_int_channel,
                                                nullptr, nullptr, nullptr);
+  g_autofree gchar* are_all_nullable_types_equal_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "areAllNullableTypesEqual%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) are_all_nullable_types_equal_channel =
+      fl_basic_message_channel_new(messenger,
+                                   are_all_nullable_types_equal_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      are_all_nullable_types_equal_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* get_all_nullable_types_hash_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "getAllNullableTypesHash%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) get_all_nullable_types_hash_channel =
+      fl_basic_message_channel_new(messenger,
+                                   get_all_nullable_types_hash_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_hash_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* get_all_nullable_types_without_recursion_hash_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "getAllNullableTypesWithoutRecursionHash%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      get_all_nullable_types_without_recursion_hash_channel =
+          fl_basic_message_channel_new(
+              messenger,
+              get_all_nullable_types_without_recursion_hash_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      get_all_nullable_types_without_recursion_hash_channel, nullptr, nullptr,
+      nullptr);
   g_autofree gchar* echo_all_nullable_types_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoAllNullableTypes%s",
