@@ -79,7 +79,7 @@
 
 @end
 
-@interface FLTGroundOverlaysController ()
+@interface FGMGroundOverlaysController ()
 
 /// A map from ground overlay id to the controller that manages it.
 @property(strong, nonatomic) NSMutableDictionary<NSString *, FGMGroundOverlayController *>
@@ -96,7 +96,7 @@
 
 @end
 
-@implementation FLTGroundOverlaysController
+@implementation FGMGroundOverlaysController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                   eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate

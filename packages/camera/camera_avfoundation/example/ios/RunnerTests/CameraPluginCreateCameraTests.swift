@@ -6,11 +6,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class CameraPluginCreateCameraTests: XCTestCase {
   private func createCameraPlugin() -> (
     CameraPlugin, MockCameraPermissionManager, MockCaptureSession
@@ -50,15 +45,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: false)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -85,15 +80,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       completion(nil)
     }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 
@@ -117,15 +112,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     }
     mockCaptureSession.canSetSessionPresetStub = { _ in true }
 
-    cameraPlugin.createCamera(
-      withName: "camera_name",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+    cameraPlugin.create(
+      cameraName: "camera_name",
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true)
-    ) { result, error in
+    ) { result in
       expectation.fulfill()
     }
 

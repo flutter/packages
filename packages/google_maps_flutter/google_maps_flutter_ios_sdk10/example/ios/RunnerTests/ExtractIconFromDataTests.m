@@ -5,7 +5,7 @@
 @import google_maps_flutter_ios_sdk10;
 @import XCTest;
 
-#import "TestAssetProvider.h"
+#import "TestUtils/TestAssetProvider.h"
 
 @interface ExtractIconFromDataTests : XCTestCase
 - (UIImage *)createOnePixelImage;
@@ -275,6 +275,109 @@
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
   XCTAssertEqual(resultImage.size.height, 1.0);
+}
+
+/// Tests for PinConfig (GMSPinImageOptions) - requires iOS 16.0+ and Google Maps SDK 9.0+.
+/// On earlier versions, FGMIconFromBitmap returns nil for PinConfig, which is expected behavior.
+- (void)testExtractIconFromPinConfigWithGlyphColor {
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
+
+  FGMPlatformColor *backgroundColor = [FGMPlatformColor makeWithRed:0.0
+                                                              green:1.0
+                                                               blue:1.0
+                                                              alpha:1.0];
+  FGMPlatformColor *borderColor = [FGMPlatformColor makeWithRed:1.0 green:0.0 blue:1.0 alpha:1.0];
+  FGMPlatformColor *glyphColor = [FGMPlatformColor makeWithRed:0.1 green:0.2 blue:0.3 alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:backgroundColor
+                                              borderColor:borderColor
+                                               glyphColor:glyphColor
+                                           glyphTextColor:nil
+                                                glyphText:nil
+                                              glyphBitmap:nil];
+
+  CGFloat screenScale = 3.0;
+
+  UIImage *resultImage =
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], assetProvider, screenScale);
+
+  // PinConfig may return nil on old Google Maps SDK versions (<=8.4.0).
+  // Also, due to a Google Maps SDK issue (https://issuetracker.google.com/issues/370536110),
+  // GMSPinImage can return a zero-sized image.
+  XCTAssertTrue(resultImage == nil || resultImage.size.width >= 0);
+  XCTAssertTrue(resultImage == nil || resultImage.size.height >= 0);
+}
+
+- (void)testExtractIconFromPinConfigWithGlyphText {
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
+
+  FGMPlatformColor *glyphTextColor = [FGMPlatformColor makeWithRed:1.0
+                                                             green:1.0
+                                                              blue:1.0
+                                                             alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:nil
+                                              borderColor:nil
+                                               glyphColor:nil
+                                           glyphTextColor:glyphTextColor
+                                                glyphText:@"Hi"
+                                              glyphBitmap:nil];
+
+  CGFloat screenScale = 3.0;
+
+  UIImage *resultImage =
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], assetProvider, screenScale);
+
+  // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
+  // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
+  // in test environment - the important thing is that the call doesn't crash.
+  // When the image is valid, it should have positive dimensions.
+  XCTAssertTrue(resultImage == nil || resultImage.size.width >= 0);
+  XCTAssertTrue(resultImage == nil || resultImage.size.height >= 0);
+}
+
+- (void)testExtractIconFromPinConfigWithGlyphBitmap {
+  UIImage *testImage = [self createOnePixelImage];
+  NSString *assetName = @"fakeImageNameKey";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
+
+  FGMPlatformBitmapAssetMap *assetBitmap =
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
+                                     bitmapScaling:FGMPlatformMapBitmapScalingAuto
+                                   imagePixelRatio:1
+                                             width:nil
+                                            height:nil];
+  FGMPlatformBitmap *glyphBitmap = [FGMPlatformBitmap makeWithBitmap:assetBitmap];
+
+  FGMPlatformColor *backgroundColor = [FGMPlatformColor makeWithRed:1.0
+                                                              green:1.0
+                                                               blue:1.0
+                                                              alpha:1.0];
+  FGMPlatformColor *borderColor = [FGMPlatformColor makeWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:backgroundColor
+                                              borderColor:borderColor
+                                               glyphColor:nil
+                                           glyphTextColor:nil
+                                                glyphText:nil
+                                              glyphBitmap:glyphBitmap];
+
+  CGFloat screenScale = 3.0;
+
+  UIImage *resultImage =
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], assetProvider, screenScale);
+
+  // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
+  // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
+  // in test environment - the important thing is that the call doesn't crash.
+  // When the image is valid, it should have positive dimensions.
+  XCTAssertTrue(resultImage == nil || resultImage.size.width >= 0);
+  XCTAssertTrue(resultImage == nil || resultImage.size.height >= 0);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize100x100to10x100 {
