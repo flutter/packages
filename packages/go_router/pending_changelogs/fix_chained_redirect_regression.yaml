@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes chained top-level redirects not being fully resolved (e.g. `/ → /a → /b` stopping at `/a`).
+  - Fixes route-level redirects not triggering top-level redirect re-evaluation on the new location.
+version: patch
