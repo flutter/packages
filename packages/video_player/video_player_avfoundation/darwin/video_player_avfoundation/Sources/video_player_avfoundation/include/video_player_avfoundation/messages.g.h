@@ -100,6 +100,7 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
     (FlutterError *_Nullable *_Nonnull)error;
 - (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
                           error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setAllowScreenAutoLock:(BOOL)allowScreenAutoLock error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

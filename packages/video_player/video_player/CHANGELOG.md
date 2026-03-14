@@ -1,5 +1,6 @@
 ## 2.11.1
 
+* Implement screen auto-lock control for video playback.
 * Optimizes caption retrieval with binary search.
 
 ## 2.11.0

@@ -179,6 +179,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setAllowScreenAutoLock(int playerId, bool allowScreenAutoLock) {
+    return _playerWith(
+      id: playerId,
+    ).setAllowScreenAutoLock(allowScreenAutoLock);
+  }
+
+  @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
       id: playerId,
@@ -274,6 +281,9 @@ class _PlayerInstance {
   Future<void> setVolume(double volume) => _api.setVolume(volume);
 
   Future<void> setPlaybackSpeed(double speed) => _api.setPlaybackSpeed(speed);
+
+  Future<void> setAllowScreenAutoLock(bool allowScreenAutoLock) =>
+      _api.setAllowScreenAutoLock(allowScreenAutoLock);
 
   Future<void> seekTo(Duration position) {
     return _api.seekTo(position.inMilliseconds);
