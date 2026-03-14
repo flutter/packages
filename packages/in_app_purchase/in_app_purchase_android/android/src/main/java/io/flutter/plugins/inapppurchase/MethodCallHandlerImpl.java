@@ -8,8 +8,8 @@ import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBilling
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.fromUnfetchedProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toBillingClientFeature;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
@@ -33,7 +33,6 @@ import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
@@ -44,7 +43,6 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
@@ -228,12 +226,15 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
       billingClient.queryProductDetailsAsync(
           params,
-          (billingResult, productDetailsList) -> {
-            updateCachedProducts(productDetailsList);
+          (billingResult, productDetailsResult) -> {
+            updateCachedProducts(productDetailsResult.getProductDetailsList());
             final PlatformProductDetailsResponse.Builder responseBuilder =
                 new PlatformProductDetailsResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
-                    .setProductDetails(fromProductDetailsList(productDetailsList));
+                    .setProductDetails(
+                        fromProductDetailsList(productDetailsResult.getProductDetailsList()))
+                    .setUnfetchedProductList(
+                        fromUnfetchedProductList(productDetailsResult.getUnfetchedProductList()));
             result.success(responseBuilder.build());
           });
     } catch (RuntimeException e) {
@@ -389,33 +390,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
                 new PlatformPurchasesResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
                     .setPurchases(fromPurchasesList(purchasesList));
-            result.success(builder.build());
-          });
-    } catch (RuntimeException e) {
-      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
-    }
-  }
-
-  @Override
-  @Deprecated
-  public void queryPurchaseHistoryAsync(
-      @NonNull PlatformProductType productType,
-      @NonNull Result<Messages.PlatformPurchaseHistoryResponse> result) {
-    if (billingClient == null) {
-      result.error(getNullBillingClientError());
-      return;
-    }
-
-    try {
-      billingClient.queryPurchaseHistoryAsync(
-          QueryPurchaseHistoryParams.newBuilder()
-              .setProductType(toProductTypeString(productType))
-              .build(),
-          (billingResult, purchasesList) -> {
-            PlatformPurchaseHistoryResponse.Builder builder =
-                new PlatformPurchaseHistoryResponse.Builder()
-                    .setBillingResult(fromBillingResult(billingResult))
-                    .setPurchases(fromPurchaseHistoryRecordList(purchasesList));
             result.success(builder.build());
           });
     } catch (RuntimeException e) {
