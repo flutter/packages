@@ -1,0 +1,44 @@
+name: cross_file_android
+description: Implementation of cross_file_platform_interface for Android.
+repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file_android
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    implements: cross_file
+    platforms:
+      android:
+        dartPluginClass: CrossFileAndroid
+        package: dev.flutter.packages.cross_file_android
+        pluginClass: CrossFileAndroidPlugin
+
+dependencies:
+  cross_file_io:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_io
+  cross_file_platform_interface:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_platform_interface
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  build_runner: ^2.10.4
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  pigeon: ^26.1.7
+
+topics:
+  - file
+  - cross-file
