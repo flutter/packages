@@ -8,6 +8,9 @@ tasks:
     infra_step: true
   - name: create all_packages app
     script: .ci/scripts/create_all_packages_app.sh
+    # build-examples builds with Swift Package Manager, so run build-all without
+    # it to test both modes in CI.
+    args: ["--no-swift-package-manager"]
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: build all_packages for iOS debug
     script: .ci/scripts/build_all_packages_app.sh
