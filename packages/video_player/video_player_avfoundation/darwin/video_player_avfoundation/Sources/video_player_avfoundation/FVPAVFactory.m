@@ -197,8 +197,8 @@
   // The default factory always vends FVPDefault* implementations, so it is safe to cast back.
   FVPDefaultAVAsset *defaultAsset = (FVPDefaultAVAsset *)asset;
   return [[FVPDefaultAVPlayerItem alloc]
-      initWithPlayerItem:[AVPlayerItem playerItemWithAsset:defaultAsset.asset]
-   resourceLoaderDelegate:defaultAsset.resourceLoaderDelegate];
+          initWithPlayerItem:[AVPlayerItem playerItemWithAsset:defaultAsset.asset]
+      resourceLoaderDelegate:defaultAsset.resourceLoaderDelegate];
 }
 
 - (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem {

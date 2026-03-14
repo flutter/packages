@@ -34,7 +34,7 @@ class DrmDemosHome extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.phone_iphone),
-            title: const Text('iOS FairPlay Demo'),
+            title: const Text('iOS / macOS FairPlay Demo'),
             subtitle: const Text(
               'HLS + FairPlay certificate and license server',
             ),
@@ -65,9 +65,9 @@ class AndroidWidevineDrmDemo extends StatelessWidget {
   }
 }
 
-/// Demo screen for iOS FairPlay playback.
+/// Demo screen for iOS / macOS FairPlay playback.
 class IosFairPlayDrmDemo extends StatelessWidget {
-  /// Creates an iOS FairPlay demo.
+  /// Creates an iOS / macOS FairPlay demo.
   const IosFairPlayDrmDemo({super.key});
 
   @override
@@ -147,9 +147,7 @@ class _DrmDemoScreenState extends State<_DrmDemoScreen> {
   }
 
   void _applyDefaults() {
-    _viewType = _isWidevineDemo
-        ? VideoViewType.platformView
-        : VideoViewType.textureView;
+    _viewType = VideoViewType.platformView;
 
     if (_isWidevineDemo) {
       _streamUrlController.text = _widevineStreamUrl;
@@ -306,7 +304,7 @@ class _DrmDemoScreenState extends State<_DrmDemoScreen> {
   Widget build(BuildContext context) {
     final title = _isWidevineDemo
         ? 'Android Widevine DRM Demo'
-        : 'iOS FairPlay DRM Demo';
+        : 'iOS / macOS FairPlay DRM Demo';
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -419,7 +417,8 @@ class _DrmDemoScreenState extends State<_DrmDemoScreen> {
   Widget _buildPlatformHintCard() {
     final isSupportedPlatform = _isWidevineDemo
         ? defaultTargetPlatform == TargetPlatform.android
-        : defaultTargetPlatform == TargetPlatform.iOS;
+        : defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS;
 
     final Color color = isSupportedPlatform
         ? Colors.green.shade50
@@ -432,10 +431,10 @@ class _DrmDemoScreenState extends State<_DrmDemoScreen> {
         ? 'This platform matches the selected DRM demo.'
         : (_isWidevineDemo
               ? 'Run this demo on Android for Widevine playback.'
-              : 'Run this demo on iOS for FairPlay playback.');
+              : 'Run this demo on iOS or macOS for FairPlay playback.');
     final subtitle = _isWidevineDemo
         ? 'Widevine defaults to Platform View for better device compatibility.'
-        : 'FairPlay defaults to Texture View.';
+        : 'FairPlay defaults to Platform View for DRM compatibility.';
 
     return Card(
       color: color,

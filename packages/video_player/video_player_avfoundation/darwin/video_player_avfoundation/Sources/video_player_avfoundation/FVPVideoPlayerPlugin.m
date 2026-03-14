@@ -333,13 +333,10 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
   }
 
   NSObject<FVPAVAsset> *asset;
-  if ([(id)self.avFactory
-          respondsToSelector:@selector(URLAssetWithURL:
-                                              options:
-                               fairPlayCertificateURL:
-                                   fairPlayLicenseURL:
-                               fairPlayLicenseHeaders:
-                                    fairPlayContentId:)]) {
+  if ([(id)self.avFactory respondsToSelector:@selector
+                          (URLAssetWithURL:
+                                   options:fairPlayCertificateURL:fairPlayLicenseURL
+                                          :fairPlayLicenseHeaders:fairPlayContentId:)]) {
     asset = [self.avFactory URLAssetWithURL:assetURL
                                     options:itemOptions
                      fairPlayCertificateURL:fairPlayCertificateURL
