@@ -460,7 +460,7 @@ class VideoPlayerOptions {
   /// Set this to true to allow the screen to auto-lock during video playback.
   /// The default value is false, meaning the screen will stay awake during playback.
   ///
-  /// This option is currently only supported on iOS.
+  /// This option is currently only supported on iOS and macOS.
   final bool allowScreenAutoLock;
 
   /// Additional web controls
