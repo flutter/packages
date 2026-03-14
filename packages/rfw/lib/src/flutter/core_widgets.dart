@@ -651,11 +651,19 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
 
   'Text': (BuildContext context, DataSource source) {
     String? text = source.v<String>(['text']);
+    text ??= source.v<int>(['text'])?.toString();
+    text ??= source.v<double>(['text'])?.toString();
     if (text == null) {
       final builder = StringBuffer();
       final int count = source.length(['text']);
       for (var index = 0; index < count; index += 1) {
-        builder.write(source.v<String>(['text', index]) ?? '');
+        final List<Object> key = <Object>['text', index];
+        String? segment = source.v<String>(key);
+        segment ??= source.v<int>(key)?.toString();
+        segment ??= source.v<double>(key)?.toString();
+        if (segment != null) {
+          builder.write(segment);
+        }
       }
       text = builder.toString();
     }
