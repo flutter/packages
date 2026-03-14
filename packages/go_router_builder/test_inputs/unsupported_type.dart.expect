@@ -1,1 +1,1 @@
-The parameter type `Stopwatch` is not supported.
+The parameter type `Stopwatch` is not supported. Consider using @TypedQueryParameter with a custom encoder and decoder.
