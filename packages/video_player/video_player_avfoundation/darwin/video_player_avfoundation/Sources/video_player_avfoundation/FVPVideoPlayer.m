@@ -509,7 +509,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setAllowScreenAutoLock:(BOOL)allowScreenAutoLock error:(FlutterError *_Nullable *_Nonnull)error {
-  if (@available(iOS 12.0, *)) {
+  if (@available(iOS 12.0, macOS 10.14, *)) {
     self.player.preventsDisplaySleepDuringVideoPlayback = !allowScreenAutoLock;
   }
 }
