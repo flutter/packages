@@ -1,3 +1,8 @@
+## 17.1.1
+
+- Fixes `ShellRoute` key collisions when `push()` keeps multiple shell branches in
+  the widget tree at the same time.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.

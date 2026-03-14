@@ -192,6 +192,73 @@ void main() {
     expect(find.byKey(b), findsOneWidget);
   });
 
+  testWidgets(
+    'push to a sibling shell route under the same parent shell route',
+    (WidgetTester tester) async {
+      const firstNavigatorKey = _CollidingNavigatorKey('first');
+      const secondNavigatorKey = _CollidingNavigatorKey('second');
+      final routes = <RouteBase>[
+        ShellRoute(
+          builder: (_, __, Widget child) =>
+              _ShellScaffold(label: 'project-shell', child: child),
+          routes: <RouteBase>[
+            ShellRoute(
+              navigatorKey: firstNavigatorKey,
+              builder: (_, __, Widget child) =>
+                  _ShellScaffold(label: 'first-shell', child: child),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/first',
+                  builder: (_, __) => const _CounterPage(label: 'first count'),
+                ),
+              ],
+            ),
+            ShellRoute(
+              navigatorKey: secondNavigatorKey,
+              builder: (_, __, Widget child) =>
+                  _ShellScaffold(label: 'second-shell', child: child),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/second',
+                  builder: (_, __) => const Text('second page'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/first',
+      );
+
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('first-shell'), findsOneWidget);
+      expect(find.text('first count: 0'), findsOneWidget);
+
+      await tester.tap(find.text('first count: 0'));
+      await tester.pump();
+      expect(find.text('first count: 1'), findsOneWidget);
+
+      router.push('/second');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('first-shell'), findsNothing);
+      expect(find.text('second-shell'), findsOneWidget);
+      expect(find.text('second page'), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('project-shell'), findsOneWidget);
+      expect(find.text('second-shell'), findsNothing);
+      expect(find.text('first-shell'), findsOneWidget);
+      expect(find.text('first count: 1'), findsOneWidget);
+    },
+  );
+
   testWidgets('push inside or outside shell route', (
     WidgetTester tester,
   ) async {
@@ -316,4 +383,63 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+}
+
+class _ShellScaffold extends StatelessWidget {
+  const _ShellScaffold({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Column(
+        children: <Widget>[
+          Text(label),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class _CounterPage extends StatefulWidget {
+  const _CounterPage({required this.label});
+
+  final String label;
+
+  @override
+  State<_CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<_CounterPage> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            _count++;
+          });
+        },
+        child: Text('${widget.label}: $_count'),
+      ),
+    );
+  }
+}
+
+class _CollidingNavigatorKey extends GlobalKey<NavigatorState> {
+  const _CollidingNavigatorKey(this._label) : super.constructor();
+
+  final String _label;
+
+  @override
+  int get hashCode => 0;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _CollidingNavigatorKey && other._label == _label;
 }
