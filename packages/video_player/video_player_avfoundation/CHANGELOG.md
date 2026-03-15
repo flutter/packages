@@ -1,3 +1,8 @@
+## NEXT
+
+* Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.
+* Video track selection requires iOS 15+ / macOS 12+ for HLS streams.
+
 ## 2.9.4
 
 * Ensures that the display link does not continue requesting frames after a player is disposed.
