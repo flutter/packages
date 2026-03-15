@@ -1302,6 +1302,25 @@ void main() {
           ),
         ]);
       });
+
+      test('Should set the image quality', () async {
+        // Arrange
+        final channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'setImageQuality': null},
+        );
+
+        // Act
+        await camera.setImageQuality(cameraId, 50);
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall(
+            'setImageQuality',
+            arguments: <String, Object?>{'cameraId': cameraId, 'quality': 50},
+          ),
+        ]);
+      });
     });
   });
 }
