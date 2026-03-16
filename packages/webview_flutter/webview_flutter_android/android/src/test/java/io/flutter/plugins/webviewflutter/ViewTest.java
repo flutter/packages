@@ -16,7 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
@@ -97,23 +97,26 @@ public class ViewTest {
     final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
 
     final View instance = mock(View.class);
-    final WindowInsetsCompat windowInsets = mock(WindowInsetsCompat.class);
-    final Insets insets = Insets.of(1, 2, 3, 4);
-
-    when(windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())).thenReturn(insets);
+    final WindowInsetsCompat originalInsets =
+        new WindowInsetsCompat.Builder()
+            .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(1, 2, 3, 4))
+            .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(4, 5, 6, 7))
+            .build();
 
     try (MockedStatic<ViewCompat> viewCompatMockedStatic = mockStatic(ViewCompat.class)) {
       api.setInsetListenerToSetInsetsToZero(
-          instance, Collections.singletonList(WindowInsets.SYSTEM_BARS));
+          instance, List.of(WindowInsets.SYSTEM_BARS, WindowInsets.DISPLAY_CUTOUT));
 
       final ArgumentCaptor<OnApplyWindowInsetsListener> listenerCaptor =
           ArgumentCaptor.forClass(OnApplyWindowInsetsListener.class);
       viewCompatMockedStatic.verify(
           () -> ViewCompat.setOnApplyWindowInsetsListener(eq(instance), listenerCaptor.capture()));
 
-      listenerCaptor.getValue().onApplyWindowInsets(instance, windowInsets);
+      final WindowInsetsCompat newInsets =
+          listenerCaptor.getValue().onApplyWindowInsets(instance, originalInsets);
 
-      verify(instance).setPadding(insets.left, insets.top, insets.right, insets.bottom);
+      assertEquals(Insets.NONE, newInsets.getInsets(WindowInsetsCompat.Type.systemBars()));
+      assertEquals(Insets.NONE, newInsets.getInsets(WindowInsetsCompat.Type.displayCutout()));
     }
   }
 }

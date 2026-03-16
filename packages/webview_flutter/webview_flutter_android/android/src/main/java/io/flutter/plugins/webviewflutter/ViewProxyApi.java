@@ -117,13 +117,9 @@ public class ViewProxyApi extends PigeonApiView {
 
     ViewCompat.setOnApplyWindowInsetsListener(
         pigeon_instance,
-        (view, windowInsets) -> {
-          final Insets allInsets = windowInsets.getInsets(insetsTypeMask);
-          pigeon_instance.setPadding(
-              allInsets.left, allInsets.top, allInsets.right, allInsets.bottom);
-          return new WindowInsetsCompat.Builder(windowInsets)
-              .setInsets(insetsTypeMask, Insets.NONE)
-              .build();
-        });
+        (view, windowInsets) ->
+            new WindowInsetsCompat.Builder(windowInsets)
+                .setInsets(insetsTypeMask, Insets.NONE)
+                .build());
   }
 }
