@@ -849,6 +849,70 @@ void main() {
               originalPubspecContents.trim(),
             );
           });
+
+          test(
+            'is set before running pub get, and includes the plugin package',
+            () async {
+              mockPlatform.isMacOS = true;
+              final RepositoryPackage plugin = createFakePlugin(
+                'plugin1',
+                packagesDir,
+                platformSupport: <String, PlatformDetails>{
+                  platformName: const PlatformDetails(PlatformSupport.inline),
+                },
+              );
+              final RepositoryPackage example = plugin.getExamples().first;
+              final String originalPluginPubspecContents = plugin.pubspecFile
+                  .readAsStringSync();
+              final String originalExamplePubspecContents = example.pubspecFile
+                  .readAsStringSync();
+              String? buildTimePluginPubspecContents;
+              String? buildTimeExamplePubspecContents;
+              processRunner.mockProcessesForExecutable[getFlutterCommand(
+                mockPlatform,
+              )] = <FakeProcessInfo>[
+                FakeProcessInfo(MockProcess(), <String>['pub', 'get'], () {
+                  buildTimePluginPubspecContents = plugin.pubspecFile
+                      .readAsStringSync();
+                  buildTimeExamplePubspecContents = example.pubspecFile
+                      .readAsStringSync();
+                }),
+              ];
+
+              await runCapturingPrint(runner, <String>[
+                'fetch-deps',
+                '--$platformName',
+                '--swift-package-manager',
+              ]);
+
+              // Ensure that SwiftPM was enabled for the plugin and the example.
+              expect(
+                originalPluginPubspecContents,
+                isNot(contains('enable-swift-package-manager: true')),
+              );
+              expect(
+                originalExamplePubspecContents,
+                isNot(contains('enable-swift-package-manager: true')),
+              );
+              expect(
+                buildTimePluginPubspecContents,
+                contains('enable-swift-package-manager: true'),
+              );
+              expect(
+                buildTimeExamplePubspecContents,
+                contains('enable-swift-package-manager: true'),
+              );
+              // And that it was undone after.
+              expect(
+                plugin.pubspecFile.readAsStringSync().trim(),
+                originalPluginPubspecContents.trim(),
+              );
+              expect(
+                example.pubspecFile.readAsStringSync().trim(),
+                originalExamplePubspecContents.trim(),
+              );
+            },
+          );
         });
       }
     });
