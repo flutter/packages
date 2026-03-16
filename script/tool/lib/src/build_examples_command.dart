@@ -199,9 +199,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     }
     print('');
 
-    final bool? swiftPackageManagerOverride = isPlugin
-        ? _swiftPackageManagerFeatureConfig
-        : null;
+    final bool? swiftPackageManagerOverride = _swiftPackageManagerFeatureConfig;
 
     var builtSomething = false;
     for (final RepositoryPackage example in package.getExamples()) {
