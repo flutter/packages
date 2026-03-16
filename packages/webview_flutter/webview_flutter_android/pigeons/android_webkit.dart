@@ -143,7 +143,7 @@ enum MixedContentMode {
 
 /// Defines different types of sources causing window insets.
 ///
-/// See https://developer.android.com/reference/kotlin/android/view/WindowInsets.Type
+/// See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
 enum WindowInsets {
   /// All system bars.
   ///
@@ -153,6 +153,30 @@ enum WindowInsets {
 
   /// An inset type representing the area that used by DisplayCutout.
   displayCutout,
+
+  /// An insets type representing the window of a caption bar.
+  captionBar,
+
+  /// An insets type representing the window of an InputMethod.
+  ime,
+
+  mandatorySystemGestures,
+
+  /// An insets type representing any system bars for navigation.
+  navigationBars,
+
+  /// An insets type representing any system bars for displaying status.
+  statusBars,
+
+  /// An insets type representing the system gesture insets.
+  ///
+  /// The system gesture insets represent the area of a window where system
+  /// gestures have priority and may consume some or all touch input, e.g. due
+  /// to the a system bar occupying it, or it being reserved for touch-only
+  /// gestures.
+  systemGestures,
+
+  tappableElement,
 }
 
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
