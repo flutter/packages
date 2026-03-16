@@ -891,8 +891,6 @@ abstract class View {
   /// `ViewCompat.setOnApplyWindowInsetsListener` to mark the passed insets to
   /// zero.
   ///
-  /// Sets the padding of the view to match the insets passed.
-  ///
   /// This is a convenience method because `View.OnApplyWindowInsetsListener`
   /// requires implementing a callback that requires a synchronous return value.
   void setInsetListenerToSetInsetsToZero(List<WindowInsets> insets);

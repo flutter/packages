@@ -5369,8 +5369,6 @@ abstract class PigeonApiView(
    * Sets the listener to the native method `ViewCompat.setOnApplyWindowInsetsListener` to mark the
    * passed insets to zero.
    *
-   * Sets the padding of the view to match the insets passed.
-   *
    * This is a convenience method because `View.OnApplyWindowInsetsListener` requires implementing a
    * callback that requires a synchronous return value.
    */
