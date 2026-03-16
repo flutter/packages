@@ -7,6 +7,8 @@ on:
 jobs:
   create_release_pr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grants write permission to create a branch and PR.
     env:
       BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
