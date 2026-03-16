@@ -1,3 +1,8 @@
+## 3.24.1
+
+* Updates platform views on iOS to only have a weak reference to the native view. This is a
+  potential workaround to prevent a crash during the Flutter engine shutdown. See https://github.com/flutter/flutter/issues/168535
+
 ## 3.24.0
 
 * Adds support for `WebKitWebViewControllerCreationParams.javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
