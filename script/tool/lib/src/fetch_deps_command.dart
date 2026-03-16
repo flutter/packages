@@ -147,6 +147,30 @@ class FetchDepsCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     var fetchedDeps = false;
     final skips = <String>[];
+
+    final bool? swiftPackageManagerOverride = _swiftPackageManagerFeatureConfig;
+    // Rather than changing global config state, enable SwiftPM via a
+    // temporary package-level override. This must be done before running any
+    // Flutter commands, not just `build`, because `flutter pub get` triggers
+    // codepaths that can generate a Podfile, changing the behavior of
+    // `flutter build`.
+    if (swiftPackageManagerOverride != null) {
+      print(
+        'Overriding enable-swift-package-manager to '
+        '$swiftPackageManagerOverride',
+      );
+      setSwiftPackageManagerState(
+        package,
+        enabled: swiftPackageManagerOverride,
+      );
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(
+          example,
+          enabled: swiftPackageManagerOverride,
+        );
+      }
+    }
+
     if (getBoolArg(_dartFlag)) {
       final bool filterPlatforms = getBoolArg(
         _supportingTargetPlatformsOnlyFlag,
@@ -173,40 +197,9 @@ class FetchDepsCommand extends PackageLoopingCommand {
         case FlutterPlatform.android:
           result = await _fetchAndroidDeps(package);
         case FlutterPlatform.ios:
+          result = await _fetchDarwinDeps(package, platformIOS);
         case FlutterPlatform.macos:
-          {
-            final bool? swiftPackageManagerOverride =
-                _swiftPackageManagerFeatureConfig;
-            final String platformString = platform == FlutterPlatform.ios
-                ? platformIOS
-                : platformMacOS;
-            // Rather than changing global config state, enable SwiftPM via a
-            // temporary package-level override.
-            if (swiftPackageManagerOverride != null) {
-              for (final RepositoryPackage example in package.getExamples()) {
-                print(
-                  'Overriding enable-swift-package-manager to '
-                  '$swiftPackageManagerOverride',
-                );
-                setSwiftPackageManagerState(
-                  example,
-                  enabled: swiftPackageManagerOverride,
-                );
-              }
-            }
-
-            result = await _fetchDarwinDeps(package, platformString);
-
-            // If an override was added, remove it.
-            if (swiftPackageManagerOverride != null) {
-              for (final RepositoryPackage example in package.getExamples()) {
-                print('Removing enable-swift-package-manager override');
-                setSwiftPackageManagerState(example, enabled: null);
-              }
-            }
-            break;
-          }
-
+          result = await _fetchDarwinDeps(package, platformMacOS);
         case FlutterPlatform.linux:
         case FlutterPlatform.web:
         case FlutterPlatform.windows:
@@ -222,6 +215,15 @@ class FetchDepsCommand extends PackageLoopingCommand {
           errors.addAll(result.details);
         case RunState.excluded:
           throw StateError('Unreachable');
+      }
+    }
+
+    // If an override was added, remove it.
+    if (swiftPackageManagerOverride != null) {
+      print('Removing enable-swift-package-manager override');
+      setSwiftPackageManagerState(package, enabled: null);
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(example, enabled: null);
       }
     }
 
