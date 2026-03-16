@@ -1,3 +1,7 @@
+## 6.3.29
+
+* Ensures non-web schemes (e.g., tel, mailto) are handled by external applications instead of opening in an unsupported in-app WebView.
+
 ## 6.3.28
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

@@ -76,12 +76,13 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
 
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final bool isWebUrl = url.startsWith('http:') || url.startsWith('https:');
     final bool inApp;
     var requireNonBrowser = false;
     switch (options.mode) {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:
-        inApp = true;
+        inApp = isWebUrl;
       case PreferredLaunchMode.externalApplication:
         inApp = false;
       case PreferredLaunchMode.externalNonBrowserApplication:
@@ -93,7 +94,7 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       // ignore: no_default_cases, unreachable_switch_default
       default:
         // By default, open web URLs in the application.
-        inApp = url.startsWith('http:') || url.startsWith('https:');
+        inApp = isWebUrl;
     }
 
     final bool succeeded;

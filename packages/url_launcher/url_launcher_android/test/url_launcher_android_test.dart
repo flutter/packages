@@ -225,6 +225,21 @@ void main() {
         ),
       );
     });
+
+    test('uses external for non-web schemes', () async {
+      final launcher = UrlLauncherAndroid(api: api);
+      final bool launched = await launcher.launch(
+        'supportedcustomscheme://example.com/',
+        useSafariVC: true,
+        useWebView: true,
+        enableJavaScript: false,
+        enableDomStorage: false,
+        universalLinksOnly: false,
+        headers: const <String, String>{},
+      );
+      expect(launched, true);
+      expect(api.usedWebView, false);
+    });
   });
 
   group('launch without webview', () {
@@ -363,6 +378,16 @@ void main() {
         ),
       );
     });
+
+    test('uses external for non-web schemes', () async {
+      final launcher = UrlLauncherAndroid(api: api);
+      final bool launched = await launcher.launchUrl(
+        'supportedcustomscheme://example.com/',
+        const LaunchOptions(mode: PreferredLaunchMode.inAppWebView),
+      );
+      expect(launched, true);
+      expect(api.usedWebView, false);
+    });
   });
 
   group('launch with custom tab', () {
@@ -375,6 +400,16 @@ void main() {
       expect(launched, true);
       expect(api.usedWebView, true);
       expect(api.allowedCustomTab, true);
+    });
+
+    test('uses external for non-web schemes', () async {
+      final launcher = UrlLauncherAndroid(api: api);
+      final bool launched = await launcher.launchUrl(
+        'supportedcustomscheme://example.com/',
+        const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView),
+      );
+      expect(launched, true);
+      expect(api.usedWebView, false);
     });
   });
 
