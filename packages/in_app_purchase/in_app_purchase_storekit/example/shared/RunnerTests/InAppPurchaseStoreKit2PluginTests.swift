@@ -229,6 +229,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
                 "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
             )
 
+    session.clearTransactions()
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
