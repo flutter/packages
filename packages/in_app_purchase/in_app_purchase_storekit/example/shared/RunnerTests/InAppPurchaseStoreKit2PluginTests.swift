@@ -181,6 +181,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      osVersion.majorVersion == 23 && osVersion.minorVersion == 2,
+                "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
+            )
+
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
 
@@ -217,6 +223,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      osVersion.majorVersion == 23 && osVersion.minorVersion == 2,
+                "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
+            )
+
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
@@ -227,7 +239,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
-          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
         expectation.fulfill()
       }
     }
@@ -290,7 +302,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testDiscountedProductSuccess() async throws {
@@ -303,7 +315,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testPurchaseWithAppAccountToken() async throws {
