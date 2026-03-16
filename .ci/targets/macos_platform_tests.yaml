@@ -4,7 +4,7 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: download Dart and macOS deps
     script: .ci/scripts/tool_runner.sh
-    args: ["fetch-deps", "--macos", "--supporting-target-platforms-only"]
+    args: ["fetch-deps", "--macos", "--supporting-target-platforms-only", "--swift-package-manager"]
     infra_step: true
   - name: build examples
     script: .ci/scripts/tool_runner.sh
