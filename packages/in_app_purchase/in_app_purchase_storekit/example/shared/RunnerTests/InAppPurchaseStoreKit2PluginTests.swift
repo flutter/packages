@@ -238,10 +238,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success:
         XCTFail("Purchase should NOT succeed.")
       case .failure(let error):
-        let nsError = error as NSError
-              XCTAssertEqual(nsError.domain, NSURLErrorDomain)
-              XCTAssertEqual(nsError.code, -1009) // Not connected to internet
-              expectation.fulfill()
+        XCTAssertEqual(
+          error.localizedDescription,
+          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+        expectation.fulfill()
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
