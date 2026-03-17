@@ -184,8 +184,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
       osVersion.majorVersion == 23 && osVersion.minorVersion == 2,
-                "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
-            )
+      "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
+    )
 
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
@@ -226,8 +226,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
       osVersion.majorVersion == 23 && osVersion.minorVersion == 2,
-                "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
-            )
+      "Known StoreKitTest bug on Xcode 23.2 with setSimulatedError() when used on .loadProducts API"
+    )
 
     session.clearTransactions()
     try await session.setSimulatedError(
