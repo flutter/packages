@@ -670,7 +670,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     });
 
     try {
-      await cameraController.initialize();
+      await cameraController.initialize(() {
+        print('CAMILLE: Calling set state');
+        setState(() {});
+      });
       await Future.wait(<Future<Object?>>[
         // The exposure mode is currently not supported on the web.
         ...!kIsWeb
@@ -888,7 +891,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      await cameraController.startVideoRecording();
+      await cameraController.startVideoRecording(onAvailable: (_) {});
     } on CameraException catch (e) {
       _showCameraException(e);
       return;
