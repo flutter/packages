@@ -19,22 +19,8 @@ class MockFlutterApi: IOSQuickActionsFlutterApiProtocol {
   }
 }
 
-class FakeConnectionOptions: UIScene.ConnectionOptions {
-  var _shortcutItem: UIApplicationShortcutItem?
-
-  override var shortcutItem: UIApplicationShortcutItem? {
-    return _shortcutItem
-  }
-
-  /// Creates a `FakeConnectionOptions` with the given shortcut item.
-  ///
-  /// `UIScene.ConnectionOptions` has no accessible initializer in Swift, so
-  /// we go through `NSObject.Type.init()` (ObjC runtime) to allocate the subclass.
-  static func withShortcutItem(_ item: UIApplicationShortcutItem) -> FakeConnectionOptions {
-    let instance = (self as NSObject.Type).init() as! FakeConnectionOptions
-    instance._shortcutItem = item
-    return instance
-  }
+struct MockConnectionOptions: ConnectionOptionsProtocol {
+  let shortcutItem: UIApplicationShortcutItem?
 }
 
 @MainActor
@@ -266,13 +252,16 @@ struct QuickActionsPluginTests {
       }
 
       let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+      var completionSuccess: Bool?
       let actionResult = plugin.windowScene(
         windowScene,
         performActionFor: item
       ) { success in
+        completionSuccess = success
       }
 
       #expect(actionResult, "windowScene performActionFor must return true.")
+      #expect(completionSuccess == true)
     }
   }
 
@@ -336,16 +325,11 @@ struct QuickActionsPluginTests {
         confirmed()
       }
 
-      let options = FakeConnectionOptions.withShortcutItem(item)
-
-      let scene = UIApplication.shared.connectedScenes.first!
-      let connectResult = plugin.scene(
-        scene,
-        willConnectTo: scene.session,
-        options: options)
+      let connectResult = plugin.handleSceneWillConnectTo(
+        connectionOptions: MockConnectionOptions(shortcutItem: item))
       #expect(connectResult, "scene willConnectTo must return true when shortcut is provided.")
 
-      plugin.sceneDidBecomeActive(scene)
+      plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
     }
   }
 }
