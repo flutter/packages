@@ -15,6 +15,22 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   }
 
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    if webView.url?.absoluteString.contains("#") == true {
+      let scriptString = """
+        window.setTimeout(function(){
+          var hash = window.location.hash;
+          if(hash){
+            var id = hash.substring(1);
+            var el = document.getElementById(id) || document.querySelector('[id=\"' + id + '\"]') || document.getElementsByName(id)[0];
+            if(el){
+              el.scrollIntoView();
+            }
+          }
+        },100);
+        """
+      webView.evaluateJavaScript(scriptString, completionHandler: nil)
+    }
+
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFinishNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString

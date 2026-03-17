@@ -43,6 +43,18 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
 
     @Override
     public void onPageFinished(@NonNull WebView view, @NonNull String url) {
+      if (url.contains("#")) {
+        view.evaluateJavascript(
+            "window.setTimeout(function(){"
+                + "var hash = window.location.hash;"
+                + "if(hash){"
+                + "var id = hash.substring(1);"
+                + "var el = document.getElementById(id) || document.querySelector('[id=\"' + id + '\"]') || document.getElementsByName(id)[0];"
+                + "if(el){ el.scrollIntoView(); }"
+                + "}"
+                + "},100);",
+            null);
+      }
       api.getPigeonRegistrar()
           .runOnMainThread(() -> api.onPageFinished(this, view, url, reply -> null));
     }

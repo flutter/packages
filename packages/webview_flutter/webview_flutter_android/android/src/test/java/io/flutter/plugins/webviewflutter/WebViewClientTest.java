@@ -38,6 +38,34 @@ public class WebViewClientTest {
   }
 
   @Test
+  public void onPageFinished_withAnchor() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final WebView webView = mock(WebView.class);
+    final String url = "https://flutter.dev#anchor";
+    instance.onPageFinished(webView, url);
+
+    verify(webView).evaluateJavascript(any(String.class), eq(null));
+    verify(mockApi).onPageFinished(eq(instance), eq(webView), eq(url), any());
+  }
+
+  @Test
+  public void onPageFinished_withoutAnchor() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final WebView webView = mock(WebView.class);
+    final String url = "https://flutter.dev";
+    instance.onPageFinished(webView, url);
+
+    verify(webView, org.mockito.Mockito.never()).evaluateJavascript(any(String.class), any());
+    verify(mockApi).onPageFinished(eq(instance), eq(webView), eq(url), any());
+  }
+
+  @Test
   public void onReceivedError() {
     final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());

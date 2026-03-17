@@ -16,13 +16,32 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     XCTAssertNotNil(instance)
   }
 
-  @MainActor func testDidFinishNavigation() {
+  @MainActor func testDidFinishNavigationWithAnchor() {
     let api = TestNavigationDelegateApi()
     let registrar = TestProxyApiRegistrar()
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = TestWebView(frame: .zero)
+    webView.customUrl = URL(string: "https://flutter.dev#anchor")
 
     instance.webView(webView, didFinish: nil)
+
+    XCTAssertTrue(webView.evaluateJavaScriptCalled)
+    XCTAssertNotNil(webView.evaluatedJavaScriptString)
+    XCTAssertTrue(webView.evaluatedJavaScriptString!.contains("window.location.hash"))
+
+    XCTAssertEqual(api.didFinishNavigationArgs, [webView, webView.url?.absoluteString])
+  }
+
+  @MainActor func testDidFinishNavigationWithoutAnchor() {
+    let api = TestNavigationDelegateApi()
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
+    let webView = TestWebView(frame: .zero)
+    webView.customUrl = URL(string: "https://flutter.dev")
+
+    instance.webView(webView, didFinish: nil)
+
+    XCTAssertFalse(webView.evaluateJavaScriptCalled)
 
     XCTAssertEqual(api.didFinishNavigationArgs, [webView, webView.url?.absoluteString])
   }
@@ -239,8 +258,20 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
 }
 
 class TestWebView: WKWebView {
+  var evaluateJavaScriptCalled = false
+  var evaluatedJavaScriptString: String? = nil
+  var customUrl: URL? = URL(string: "https://flutter.dev")
+
   override var url: URL? {
-    return URL(string: "http://google.com")
+    return customUrl
+  }
+
+  override func evaluateJavaScript(
+    _ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil
+  ) {
+    evaluateJavaScriptCalled = true
+    evaluatedJavaScriptString = javaScriptString
+    completionHandler?(nil, nil)
   }
 }
 
