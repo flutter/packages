@@ -47,6 +47,23 @@ public class ImageCaptureTest {
   }
 
   @Test
+  public void pigeon_defaultConstructor_setsJpegQualityWhenProvided() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
+    final long targetRotation = Surface.ROTATION_0;
+    final long jpegQuality = 75;
+    final ImageCapture imageCapture =
+        api.pigeon_defaultConstructor(
+            mockResolutionSelector, targetRotation, CameraXFlashMode.OFF, jpegQuality);
+
+    assertEquals(imageCapture.getResolutionSelector(), mockResolutionSelector);
+    assertEquals(imageCapture.getTargetRotation(), Surface.ROTATION_0);
+    assertEquals(imageCapture.getFlashMode(), ImageCapture.FLASH_MODE_OFF);
+    assertEquals(imageCapture.getJpegQuality(), 75);
+  }
+
+  @Test
   public void resolutionSelector_returnsExpectedResolutionSelector() {
     final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
 
