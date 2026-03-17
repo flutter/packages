@@ -1421,9 +1421,8 @@ PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
         );
 }
 
-PlatformMarkerType? _platformMarkerTypeFromMarkerType(MarkerType? markerType) {
+PlatformMarkerType _platformMarkerTypeFromMarkerType(MarkerType markerType) {
   return switch (markerType) {
-    null => null,
     MarkerType.marker => PlatformMarkerType.marker,
     MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
   };
@@ -1455,7 +1454,9 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    markerType: _platformMarkerTypeFromMarkerType(config.markerType),
+    markerType: _platformMarkerTypeFromMarkerType(
+      config.markerType ?? MarkerType.marker,
+    ),
     mapId: config.mapId,
     style: config.style,
   );

@@ -274,21 +274,16 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const cameraEventChannel = EventChannel(
-      'plugins.flutter.io/camera_avfoundation/imageStream',
-    );
-    _platformImageStreamSubscription = cameraEventChannel
-        .receiveBroadcastStream()
-        .listen((dynamic imageData) {
-          try {
-            _hostApi.receivedImageStreamData();
-          } on PlatformException catch (e) {
-            throw CameraException(e.code, e.message);
-          }
-          _frameStreamController!.add(
-            cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>),
-          );
-        });
+    _platformImageStreamSubscription = imageDataStream().listen((
+      PlatformCameraImageData imageData,
+    ) {
+      try {
+        _hostApi.receivedImageStreamData();
+      } on PlatformException catch (e) {
+        throw CameraException(e.code, e.message);
+      }
+      _frameStreamController!.add(cameraImageFromPlatformData(imageData));
+    });
   }
 
   FutureOr<void> _onFrameStreamCancel() async {

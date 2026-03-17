@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'stdout',
     javaOut: 'stdout',
-    dartOptions: DartOptions(),
+    dartOptions: DartOptions(ignoreLints: false),
   ),
 )
 @HostApi()

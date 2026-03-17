@@ -4,11 +4,6 @@
 
 import AVFoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// A protocol which abstracts the discovery of camera devices.
 /// It is a thin wrapper around `AVCaptureDiscoverySession` and it exists to allow mocking in tests.
 protocol CameraDeviceDiscoverer {

@@ -2,35 +2,37 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
-
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+
+import 'messages.g.dart';
 
 /// Converts method channel call [data] for `receivedImageStreamData` to a
 /// [CameraImageData].
-CameraImageData cameraImageFromPlatformData(Map<dynamic, dynamic> data) {
+CameraImageData cameraImageFromPlatformData(PlatformCameraImageData data) {
   return CameraImageData(
-    format: _cameraImageFormatFromPlatformData(data['format']),
-    height: data['height'] as int,
-    width: data['width'] as int,
-    lensAperture: data['lensAperture'] as double?,
-    sensorExposureTime: data['sensorExposureTime'] as int?,
-    sensorSensitivity: data['sensorSensitivity'] as double?,
+    format: _cameraImageFormatFromPlatformImageFormat(data.formatCode),
+    width: data.width,
+    height: data.height,
+    lensAperture: data.lensAperture,
+    sensorExposureTime: data.sensorExposureTimeNanoseconds,
+    sensorSensitivity: data.sensorSensitivity,
     planes: List<CameraImagePlane>.unmodifiable(
-      (data['planes'] as List<dynamic>).map<CameraImagePlane>(
-        (dynamic planeData) => _cameraImagePlaneFromPlatformData(
-          planeData as Map<dynamic, dynamic>,
-        ),
+      data.planes.map<CameraImagePlane>(
+        (PlatformCameraImagePlane planeData) =>
+            _cameraImagePlaneFromPlatformData(planeData),
       ),
     ),
   );
 }
 
-CameraImageFormat _cameraImageFormatFromPlatformData(dynamic data) {
-  return CameraImageFormat(_imageFormatGroupFromPlatformData(data), raw: data);
+CameraImageFormat _cameraImageFormatFromPlatformImageFormat(int data) {
+  return CameraImageFormat(
+    _imageFormatGroupFromPlatformImageFormat(data),
+    raw: data,
+  );
 }
 
-ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
+ImageFormatGroup _imageFormatGroupFromPlatformImageFormat(int data) {
   switch (data) {
     case 875704438: // kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
       return ImageFormatGroup.yuv420;
@@ -42,12 +44,13 @@ ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
   return ImageFormatGroup.unknown;
 }
 
-CameraImagePlane _cameraImagePlaneFromPlatformData(Map<dynamic, dynamic> data) {
+CameraImagePlane _cameraImagePlaneFromPlatformData(
+  PlatformCameraImagePlane data,
+) {
   return CameraImagePlane(
-    bytes: data['bytes'] as Uint8List,
-    bytesPerPixel: data['bytesPerPixel'] as int?,
-    bytesPerRow: data['bytesPerRow'] as int,
-    height: data['height'] as int?,
-    width: data['width'] as int?,
+    bytes: data.bytes,
+    bytesPerRow: data.bytesPerRow,
+    width: data.width,
+    height: data.height,
   );
 }

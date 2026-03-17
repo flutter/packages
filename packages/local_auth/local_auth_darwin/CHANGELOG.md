@@ -1,3 +1,7 @@
+## 2.0.3
+
+* Adds iOS setup instructions to README.
+
 ## 2.0.2
 
 * Improves compatibility with UIScene.

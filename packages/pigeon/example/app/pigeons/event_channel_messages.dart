@@ -7,7 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/event_channel_messages.g.dart',
-    dartOptions: DartOptions(),
+    dartOptions: DartOptions(ignoreLints: false),
     cppOptions: CppOptions(namespace: 'pigeon_example'),
     kotlinOut:
         'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/EventChannelMessages.g.kt',

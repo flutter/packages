@@ -127,6 +127,28 @@ the `GoogleMap`'s `onMapCreated` callback.
 The `GoogleMap` widget should be used within a widget with a bounded size. Using it
 in an unbounded widget will cause the application to throw a Flutter exception.
 
+### Advanced Markers
+
+[Advanced Markers](https://developers.google.com/maps/documentation/javascript/advanced-markers/overview) 
+are map markers that offer extra customization options. 
+[Map ID](https://developers.google.com/maps/documentation/get-map-id) is 
+required in order to use Advanced Markers:
+
+<?code-excerpt "readme_sample_advanced_markers.dart (AdvancedMarkersSample)"?>
+```dart
+body: GoogleMap(
+  // Set your Map ID.
+  mapId: 'my-map-id',
+  // Enable support for Advanced Markers.
+  markerType: GoogleMapMarkerType.advancedMarker,
+  initialCameraPosition: _kGooglePlex,
+),
+```
+
+**WARNING:** On iOS, using a PinConfig may result in the marker not showing. For details and updates, see
+[this issue](https://issuetracker.google.com/issues/370536110). If this issue has not been fixed in the version of the
+Google Maps SDK you are using, consider using an asset or bitmap for customization on iOS.
+
 ### Sample Usage
 
 <?code-excerpt "readme_sample.dart (MapSample)"?>

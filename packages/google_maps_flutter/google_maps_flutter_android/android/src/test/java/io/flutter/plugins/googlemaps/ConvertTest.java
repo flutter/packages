@@ -381,10 +381,14 @@ public class ConvertTest {
     Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor());
   }
 
+  ///  Returns a PlatformMapConfiguration.Builder that sets required parameters.
+  private Messages.PlatformMapConfiguration.Builder getMinimalConfigurationBuilder() {
+    return new Messages.PlatformMapConfiguration.Builder().setMarkerType(PlatformMarkerType.MARKER);
+  }
+
   @Test
   public void interpretMapConfiguration_handlesNulls() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().build();
+    final Messages.PlatformMapConfiguration config = getMinimalConfigurationBuilder().build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verifyNoInteractions(optionsSink);
   }
@@ -392,7 +396,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesCompassEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setCompassEnabled(false).build();
+        getMinimalConfigurationBuilder().setCompassEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setCompassEnabled(false);
   }
@@ -400,7 +404,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesMapToolbarEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMapToolbarEnabled(true).build();
+        getMinimalConfigurationBuilder().setMapToolbarEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapToolbarEnabled(true);
   }
@@ -408,7 +412,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesRotateGesturesEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setRotateGesturesEnabled(false).build();
+        getMinimalConfigurationBuilder().setRotateGesturesEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setRotateGesturesEnabled(false);
   }
@@ -416,7 +420,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesScrollGesturesEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setScrollGesturesEnabled(true).build();
+        getMinimalConfigurationBuilder().setScrollGesturesEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setScrollGesturesEnabled(true);
   }
@@ -424,7 +428,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesTiltGesturesEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTiltGesturesEnabled(false).build();
+        getMinimalConfigurationBuilder().setTiltGesturesEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTiltGesturesEnabled(false);
   }
@@ -432,7 +436,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesTrackCameraPosition() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTrackCameraPosition(true).build();
+        getMinimalConfigurationBuilder().setTrackCameraPosition(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTrackCameraPosition(true);
   }
@@ -440,7 +444,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesZoomControlsEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setZoomControlsEnabled(false).build();
+        getMinimalConfigurationBuilder().setZoomControlsEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setZoomControlsEnabled(false);
   }
@@ -448,7 +452,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesZoomGesturesEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setZoomGesturesEnabled(true).build();
+        getMinimalConfigurationBuilder().setZoomGesturesEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setZoomGesturesEnabled(true);
   }
@@ -456,7 +460,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesMyLocationEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMyLocationEnabled(false).build();
+        getMinimalConfigurationBuilder().setMyLocationEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMyLocationEnabled(false);
   }
@@ -464,7 +468,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesMyLocationButtonEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMyLocationButtonEnabled(true).build();
+        getMinimalConfigurationBuilder().setMyLocationButtonEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMyLocationButtonEnabled(true);
   }
@@ -472,7 +476,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesIndoorViewEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setIndoorViewEnabled(false).build();
+        getMinimalConfigurationBuilder().setIndoorViewEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setIndoorEnabled(false);
   }
@@ -480,7 +484,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesTrafficEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTrafficEnabled(true).build();
+        getMinimalConfigurationBuilder().setTrafficEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTrafficEnabled(true);
   }
@@ -488,7 +492,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesBuildingsEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setBuildingsEnabled(false).build();
+        getMinimalConfigurationBuilder().setBuildingsEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setBuildingsEnabled(false);
   }
@@ -496,7 +500,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesLiteModeEnabled() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setLiteModeEnabled(true).build();
+        getMinimalConfigurationBuilder().setLiteModeEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setLiteModeEnabled(true);
   }
@@ -504,7 +508,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesStyle() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setStyle("foo").build();
+        getMinimalConfigurationBuilder().setStyle("foo").build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapStyle("foo");
   }
@@ -512,7 +516,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+        getMinimalConfigurationBuilder()
             .setCameraTargetBounds(new Messages.PlatformCameraTargetBounds.Builder().build())
             .build();
     Convert.interpretMapConfiguration(config, optionsSink);
@@ -523,7 +527,7 @@ public class ConvertTest {
   public void interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
     LatLngBounds bounds = new LatLngBounds(new LatLng(10, 20), new LatLng(30, 40));
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+        getMinimalConfigurationBuilder()
             .setCameraTargetBounds(
                 new Messages.PlatformCameraTargetBounds.Builder()
                     .setBounds(
@@ -548,9 +552,7 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesMapType() {
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
-            .setMapType(Messages.PlatformMapType.HYBRID)
-            .build();
+        getMinimalConfigurationBuilder().setMapType(Messages.PlatformMapType.HYBRID).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapType(MAP_TYPE_HYBRID);
   }
@@ -562,7 +564,7 @@ public class ConvertTest {
     final double left = 3.0;
     final double right = 4.0;
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+        getMinimalConfigurationBuilder()
             .setPadding(
                 new Messages.PlatformEdgeInsets.Builder()
                     .setTop(top)
@@ -581,7 +583,7 @@ public class ConvertTest {
     final double min = 1.0;
     final double max = 2.0;
     final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+        getMinimalConfigurationBuilder()
             .setMinMaxZoomPreference(
                 new Messages.PlatformZoomRange.Builder().setMin(min).setMax(max).build())
             .build();
