@@ -431,6 +431,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     await processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
+    // if (preview != null) {
+    //   await preview!.setSurfaceProvider(null);
+    // }
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
@@ -438,6 +441,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     // _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
     //   systemServicesManager,
     // );
+    if (_previewView == null) {
+      _previewView = PreviewView();
+      await _previewView!.registerPreviewView();
+    }
+
+    final SurfaceProvider surfaceProvider = await _previewView!
+        .getSurfaceProvider();
+    await preview!.setSurfaceProvider(surfaceProvider);
     _flutterSurfaceTextureId = 3;
 
     // Configure ImageCapture instance.
@@ -507,14 +518,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
-    if (_previewView == null) {
-      _previewView = PreviewView();
-      await _previewView!.registerPreviewView();
-    }
 
-    final SurfaceProvider surfaceProvider = await _previewView!
-        .getSurfaceProvider();
-    await preview!.setSurfaceProvider(surfaceProvider);
     camera = await processCameraProvider!.bindToLifecycle(
       cameraSelector!,
       <UseCase>[preview!, imageCapture!, imageAnalysis!],
@@ -527,8 +531,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // configured camera:
 
     // Retrieve preview resolution.
-    final ResolutionInfo previewResolutionInfo = (await preview!
-        .getResolutionInfo())!;
+    ResolutionInfo? previewResInfo = await preview!.getResolutionInfo();
+    print(
+      'CAMILLE: PREVIEW RESOLUTION INFO: ${previewResInfo!.resolution!.height} x ${previewResInfo!.resolution!.width}',
+    );
+    final ResolutionInfo previewResolutionInfo = previewResInfo!;
 
     // Mark auto-focus, auto-exposure and setting points for focus & exposure
     // as available operations as CameraX does its best across devices to
@@ -1057,12 +1064,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _bindUseCaseToLifecycle(preview!, cameraId);
   }
 
+  PlatformViewLink? platformView;
+
   /// Returns a widget showing a live camera preview for the camera with ID [cameraId].
   ///
   /// [createCamera] must be called before attempting to build this preview, and
   /// [cameraId] can be retrieved from that call.
   @override
   Widget buildPreview(int cameraId) {
+    print("CAMILLE: rebuilding preview!");
     if (!previewInitiallyBound) {
       // No camera has been created, and thus, the preview UseCase has not been
       // bound to the camera lifecycle, restricting this preview from being
@@ -1078,7 +1088,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Pass parameters to the platform side.
     const creationParams = <String, dynamic>{};
 
-    return PlatformViewLink(
+    platformView ??= PlatformViewLink(
       viewType: viewType,
       surfaceFactory: (context, controller) {
         return AndroidViewSurface(
@@ -1102,6 +1112,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           ..create();
       },
     );
+
+    return platformView!;
     // final Stream<DeviceOrientation> deviceOrientationStream =
     //     onDeviceOrientationChanged().map(
     //       (DeviceOrientationChangedEvent e) => e.orientation,
