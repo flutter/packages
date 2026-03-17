@@ -238,10 +238,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success:
         XCTFail("Purchase should NOT succeed.")
       case .failure(let error):
-        XCTAssertEqual(
-          error.localizedDescription,
-          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
-        expectation.fulfill()
+        let nsError = error as NSError
+              XCTAssertEqual(nsError.domain, NSURLErrorDomain)
+              XCTAssertEqual(nsError.code, -1009) // Not connected to internet
+              expectation.fulfill()
       }
     }
     await fulfillment(of: [expectation], timeout: 5)
