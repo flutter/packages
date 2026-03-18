@@ -384,6 +384,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     //   is the recommended way to ensure proper resource cleanup and reinitialization.
     // TODO(nateshmbhat): Remove this workaround once Media3 provides a supported
     // renderer reset path or reliable resolution-changing track switches.
+    // https://github.com/flutter/flutter/issues/183824
     if (dimensionsChanged) {
       final boolean wasPlaying = exoPlayer.isPlaying();
       final long currentPosition = exoPlayer.getCurrentPosition();
