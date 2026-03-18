@@ -202,7 +202,9 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})',
     );
     if (generatorOptions.useGeneratedAnnotation ?? false) {
-      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+      indent.writeln(
+        '@javax.annotation.Generated("$defaultPluginPackageName")',
+      );
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
