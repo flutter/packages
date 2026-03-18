@@ -1,6 +1,6 @@
 ## 0.3.0+12
 
-* Bumps androidx.core:core-ktx from 1.13.0 to 1.18.0.
+* Bumps `androidx.core:core-ktx` from 1.13.0 to 1.18.0.
 
 ## 0.3.0+11
 
