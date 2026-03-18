@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-final class FLTCamSetFlashModeTests: XCTestCase {
+final class CameraSetFlashModeTests: XCTestCase {
   private func createCamera() -> (Camera, MockCaptureDevice, MockCapturePhotoOutput) {
     let mockDevice = MockCaptureDevice()
     let mockCapturePhotoOutput = MockCapturePhotoOutput()

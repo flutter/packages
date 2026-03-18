@@ -6,7 +6,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-final class FLTCamExposureTests: XCTestCase {
+final class CameraExposureTests: XCTestCase {
   private func createCamera() -> (Camera, MockCaptureDevice, MockDeviceOrientationProvider) {
     let mockDevice = MockCaptureDevice()
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()

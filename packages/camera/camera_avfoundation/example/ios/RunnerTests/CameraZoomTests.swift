@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-final class FLTCamZoomTests: XCTestCase {
+final class CameraZoomTests: XCTestCase {
   private func createCamera() -> (Camera, MockCaptureDevice) {
     let mockDevice = MockCaptureDevice()
 
