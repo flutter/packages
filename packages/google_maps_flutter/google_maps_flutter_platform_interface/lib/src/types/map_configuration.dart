@@ -144,6 +144,11 @@ class MapConfiguration {
   /// used.
   final MarkerType? markerType;
 
+  /// Preferred color scheme for the cloud-styled map. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
+  final MapColorScheme? colorScheme;
+
   /// Identifier that's associated with a specific cloud-based map style.
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
@@ -152,11 +157,6 @@ class MapConfiguration {
   /// Deprecated in favor of [mapId].
   @Deprecated('cloudMapId is deprecated. Use mapId instead.')
   String? get cloudMapId => mapId;
-
-  /// Preferred color scheme for the cloud-styled map. Web only.
-  ///
-  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
-  final MapColorScheme? colorScheme;
 
   /// Returns a new options object containing only the values of this instance
   /// that are different from [other].
@@ -231,9 +231,9 @@ class MapConfiguration {
           ? buildingsEnabled
           : null,
       mapId: mapId != other.mapId ? mapId : null,
-      colorScheme: colorScheme != other.colorScheme ? colorScheme : null,
       style: style != other.style ? style : null,
       markerType: markerType != other.markerType ? markerType : null,
+      colorScheme: colorScheme != other.colorScheme ? colorScheme : null,
     );
   }
 
@@ -271,8 +271,8 @@ class MapConfiguration {
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
       mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
-      colorScheme: diff.colorScheme ?? colorScheme,
       markerType: diff.markerType ?? markerType,
+      colorScheme: diff.colorScheme ?? colorScheme,
     );
   }
 
@@ -301,9 +301,9 @@ class MapConfiguration {
       trafficEnabled == null &&
       buildingsEnabled == null &&
       mapId == null &&
-      colorScheme == null &&
       style == null &&
-      markerType == null;
+      markerType == null &&
+      colorScheme == null;
 
   @override
   bool operator ==(Object other) {
@@ -338,8 +338,8 @@ class MapConfiguration {
         buildingsEnabled == other.buildingsEnabled &&
         mapId == other.mapId &&
         style == other.style &&
-        colorScheme == other.colorScheme &&
-        markerType == other.markerType;
+        markerType == other.markerType &&
+        colorScheme == other.colorScheme;
   }
 
   @override
@@ -368,8 +368,8 @@ class MapConfiguration {
     buildingsEnabled,
     mapId,
     style,
-    colorScheme,
     markerType,
+    colorScheme,
   ]);
 }
 
