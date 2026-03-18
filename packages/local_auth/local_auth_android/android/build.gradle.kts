@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.localauth'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.localauth"
+version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,15 +19,17 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 24
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -35,21 +37,22 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
     }
 
-
     testOptions {
-        unitTests.includeAndroidResources = true
-        unitTests.returnDefaultValues = true
-        unitTests.all {
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            all {
+                it.outputs.upToDateWhen { false }
+                it.testLogging {
+                    events("passed", "skipped", "failed", "standardOut", "standardError")
+                    showStandardStreams = true
+                }
             }
         }
     }
