@@ -369,11 +369,12 @@ void main() {
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
       verify(mockWebSettings.setUseWideViewPort(false)).called(1);
       verify(
-        mockWebView
-            .setInsetListenerToSetInsetsToZero(<android_webview.WindowInsets>[
-              android_webview.WindowInsets.systemBars,
-              android_webview.WindowInsets.displayCutout,
-            ]),
+        mockWebView.setInsetListenerToSetInsetsToZero(
+          <android_webview.WindowInsetsType>[
+            android_webview.WindowInsetsType.systemBars,
+            android_webview.WindowInsetsType.displayCutout,
+          ],
+        ),
       ).called(1);
     });
 

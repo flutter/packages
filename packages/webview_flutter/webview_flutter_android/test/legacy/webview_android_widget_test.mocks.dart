@@ -675,10 +675,10 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
 
   @override
   _i4.Future<void> setInsetListenerToSetInsetsToZero(
-    List<_i2.WindowInsets>? insets,
+    List<_i2.WindowInsetsType>? types,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#setInsetListenerToSetInsetsToZero, [insets]),
+            Invocation.method(#setInsetListenerToSetInsetsToZero, [types]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
