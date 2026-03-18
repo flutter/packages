@@ -485,6 +485,22 @@ void main() {
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
+
+    test('handle colorScheme', () async {
+      const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
+
+      const empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.colorScheme, MapColorScheme.followSystem);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
   });
 
   group('isEmpty', () {
@@ -638,6 +654,12 @@ void main() {
 
     test('is false with style', () async {
       const diff = MapConfiguration(style: 'a style');
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with colorScheme', () async {
+      const diff = MapConfiguration(colorScheme: MapColorScheme.followSystem);
 
       expect(diff.isEmpty, false);
     });
