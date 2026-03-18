@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds support for `colorScheme` for cloud-based maps styling brightness in web.
+
 ## 2.14.2
 
 * Adds documentation about iOS rendering issue with `PinConfig`.
