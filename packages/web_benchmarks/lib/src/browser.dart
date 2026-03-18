@@ -312,12 +312,13 @@ Future<WipConnection> _connectToChromeDebugPort(
   );
   print('Connecting to DevTools: $devtoolsUri');
   final chromeConnection = ChromeConnection('localhost', port);
-  final Iterable<ChromeTab> tabs = (await chromeConnection.getTabs()).where((
-    ChromeTab tab,
-  ) {
-    return tab.url.startsWith('http://localhost');
-  });
-  final ChromeTab tab = tabs.single;
+  final ChromeTab? tab = await chromeConnection.getTab(
+    (ChromeTab tab) => tab.url.startsWith('http://localhost'),
+    retryFor: const Duration(seconds: 5),
+  );
+  if (tab == null) {
+    throw Exception('Chrome failed to open a tab for http://localhost');
+  }
   final WipConnection debugConnection = await tab.connect();
   print('Connected to Chrome tab: ${tab.title} (${tab.url})');
   return debugConnection;
