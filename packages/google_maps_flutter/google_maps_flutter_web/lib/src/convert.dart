@@ -131,7 +131,6 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   options.mapId = configuration.mapId;
 
-  // Convert the color scheme, if any, and set it
   final gmaps.ColorScheme? jsColorScheme = _gmapTypeColorSchemeForPluginColor(
     configuration.colorScheme,
   );
