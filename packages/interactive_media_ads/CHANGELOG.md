@@ -1,6 +1,10 @@
-## 0.3.0+12
+## 0.3.0+13
 
 * Updates build files from Groovy to Kotlin.
+
+## 0.3.0+12
+
+* Bumps `androidx.core:core-ktx` from 1.13.0 to 1.18.0.
 
 ## 0.3.0+11
 
