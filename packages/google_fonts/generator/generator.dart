@@ -12,10 +12,9 @@ import 'package:mustache_template/mustache.dart';
 
 import 'fonts.pb.dart';
 
-const String _generatedAllPartsFilePath =
-    'lib/src/google_fonts_all_parts.g.dart';
+const String _generatedAllPartsFilePath = 'lib/src/google_fonts_all_parts.dart';
 String _generatedPartFilePath(String part) =>
-    'lib/src/google_fonts_parts/part_$part.g.dart';
+    'lib/src/google_fonts_parts/part_$part.dart';
 const String _familiesSupportedPath = 'generator/families_supported';
 const String _familiesDiffPath = 'generator/families_diff';
 
@@ -25,6 +24,8 @@ Future<void> main() async {
   print('Success! Using $protoUrl');
 
   final Directory fontDirectory = await _readFontsProtoData(protoUrl);
+  _computeVariantCounts(fontDirectory);
+
   print('\nValidating font URLs and file contents...');
   await _verifyUrls(fontDirectory);
   print(_success);
@@ -166,24 +167,63 @@ class _FamiliesDelta {
   // (e.g. CHANGELOG, PR description).
   String markdownDiff() {
     final Iterable<String> addedPrintable = added.map(
-      (String family) => '  - Added `$family`',
+      (String family) => '  - `$family`',
     );
     final Iterable<String> removedPrintable = removed.map(
-      (String family) => '  - Removed `$family`',
+      (String family) => '  - `$family`',
     );
 
     var diff = '';
-    if (removedPrintable.isNotEmpty) {
-      diff += removedPrintable.join('\n');
+    if (addedPrintable.isNotEmpty) {
+      diff += '- Added fonts:\n';
+      diff += addedPrintable.join('\n');
       diff += '\n';
     }
-    if (addedPrintable.isNotEmpty) {
-      diff += addedPrintable.join('\n');
+    if (removedPrintable.isNotEmpty) {
+      diff += '- Removed fonts:\n';
+      diff += removedPrintable.join('\n');
       diff += '\n';
     }
 
     return diff;
   }
+}
+
+void _computeVariantCounts(Directory fontDirectory) {
+  final int families = fontDirectory.family.length;
+
+  // Pre-dedup counts
+  var preStatic = 0;
+  var preVariable = 0;
+  for (final FontFamily family in fontDirectory.family) {
+    for (final Font font in family.fonts) {
+      if (font.isVf) {
+        preVariable += 1;
+      } else {
+        preStatic += 1;
+      }
+    }
+  }
+  print(
+    'Found $families font families, composed of $preStatic static variants and $preVariable variable variants.',
+  );
+
+  // Post-dedup counts
+  var postStatic = 0;
+  var postVariable = 0;
+  for (final FontFamily family in fontDirectory.family) {
+    final List<Font> filtered = _deduplicateFonts(family.fonts);
+    for (final font in filtered) {
+      if (font.isVf) {
+        postVariable += 1;
+      } else {
+        postStatic += 1;
+      }
+    }
+  }
+  print(
+    'After deduplication: composed of $postStatic static variants and $postVariable variable variants.',
+  );
 }
 
 void _generateDartCode(Directory fontDirectory) {
@@ -213,6 +253,8 @@ void _generateDartCode(Directory fontDirectory) {
       'labelSmall',
     ];
 
+    final List<Font> filteredVariants = _deduplicateFonts(item.fonts);
+
     methods.add(<String, dynamic>{
       'methodName': methodName,
       'part': methodName[0].toUpperCase(),
@@ -220,7 +262,7 @@ void _generateDartCode(Directory fontDirectory) {
       'fontFamilyDisplay': family,
       'docsUrl': 'https://fonts.google.com/specimen/$familyWithPlusSigns',
       'fontUrls': <Map<String, Object>>[
-        for (final Font variant in item.fonts)
+        for (final Font variant in filteredVariants)
           <String, Object>{
             'variantWeight': variant.weight.start,
             'variantStyle': variant.italic.start.round() == 1
@@ -288,6 +330,69 @@ void _generateDartCode(Directory fontDirectory) {
 
 void _writeDartFile(String path, String content) {
   File(path).writeAsStringSync(content);
+}
+
+/// Remove variable-font entries when a static entry of the same
+/// weight/italic exists. Keep variable only if no static equivalent.
+/// Also deduplicate static variants by keeping only default width (100.0).
+///
+// TODO(guidezpl): Add explicit variable-font support, see
+// https://github.com/flutter/flutter/issues/174575 and
+// https://github.com/flutter/flutter/issues/174567
+// TODO(guidezpl): Add font width/stretch support to google_fonts API to properly
+// handle width variants (condensed, normal, extended) instead of deduplicating them.
+List<Font> _deduplicateFonts(List<Font> fonts) {
+  // First, identify variable fonts, and group static fonts by weight/italic to
+  // find the best width variant.
+  final List<Font> variableFonts = [];
+  final Map<String, List<Font>> staticGroups = {};
+  for (final font in fonts) {
+    if (font.isVf) {
+      variableFonts.add(font);
+    } else {
+      final key = '${font.weight.start}_${font.italic.start.round()}';
+      staticGroups.putIfAbsent(key, () => []).add(font);
+    }
+  }
+
+  // For each static group, keep a single width (default to 100.0) variant.
+  final filteredVariants = <Font>[];
+  for (final List<Font> group in staticGroups.values) {
+    Font? defaultWidthVariant;
+    for (final font in group) {
+      if (font.width.start == 100.0) {
+        defaultWidthVariant = font;
+        break;
+      }
+    }
+
+    if (defaultWidthVariant == null) {
+      // If no default width, and more than one variant, we'll have to revise
+      // this logic to understand which width to prefer.
+      assert(group.length == 1);
+    }
+
+    filteredVariants.add(defaultWidthVariant ?? group.first);
+  }
+
+  // Now, for each variable font, check if a static equivalent exists.
+  // If so, skip the variable font.
+  for (final variant in variableFonts) {
+    var hasStaticEquivalent = false;
+    for (final other in fonts) {
+      if (!other.isVf &&
+          other.weight.start == variant.weight.start &&
+          other.italic.start.round() == variant.italic.start.round()) {
+        hasStaticEquivalent = true;
+        break;
+      }
+    }
+    if (!hasStaticEquivalent) {
+      filteredVariants.add(variant);
+    }
+  }
+
+  return filteredVariants;
 }
 
 String _familyToMethodName(String family) {

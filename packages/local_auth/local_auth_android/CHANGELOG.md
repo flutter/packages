@@ -1,3 +1,7 @@
+## 2.0.5
+
+* Adds platform-specific setup instructions to README.
+
 ## 2.0.4
 
 * Bumps androidx.core:core from 1.13.1 to 1.17.0.

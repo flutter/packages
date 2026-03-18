@@ -84,7 +84,7 @@ final class FIAPPaymentQueueDelegateTests: XCTestCase {
     XCTAssertTrue(shouldContinue)
   }
 
-  #if TARGET_OS_IOS
+  #if os(iOS)
     func testShouldShowPriceConsentIfNeeded() throws {
       if #available(iOS 13.4, *) {
         let channelStub = MethodChannelStub()

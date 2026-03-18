@@ -308,7 +308,7 @@ abstract class AdsLoader {
 abstract class AdsManagerLoadedEvent {
   /// The ads manager that will control playback of the loaded ads, or null when
   /// using dynamic ad insertion.
-  late final AdsManager manager;
+  late final AdsManager? manager;
 }
 
 /// An event raised when there is an error loading or playing ads.
@@ -961,7 +961,7 @@ abstract class AdsRenderingSettings {
   bool getFocusSkipButtonWhenAvailable();
 
   /// The SDK will prioritize the media with MIME type on the list.
-  List<String> getMimeTypes();
+  List<String>? getMimeTypes();
 
   /// Maximum recommended bitrate.
   ///

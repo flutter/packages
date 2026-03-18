@@ -21,7 +21,7 @@ gitTool="git -c advice.detachedHead=false"
 generate_everything() {
   local inputPath=$1
   local outputDir=$2
-  pub run pigeon \
+  dart run pigeon \
     --input "$inputPath" \
     --dart_out "$outputDir/dart.dart" \
     --java_out "$outputDir/java.dart" \

@@ -12,7 +12,7 @@ class NavigationResponseProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
 
-    let instance = WKNavigationResponse()
+    let instance = TestNavigationResponse.instance
     let value = try? api.pigeonDelegate.response(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.response)
@@ -22,7 +22,7 @@ class NavigationResponseProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
 
-    let instance = TestNavigationResponse()
+    let instance = TestNavigationResponse.instance
     let value = try? api.pigeonDelegate.isForMainFrame(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.isForMainFrame)
@@ -30,7 +30,15 @@ class NavigationResponseProxyAPITests: XCTestCase {
 }
 
 class TestNavigationResponse: WKNavigationResponse {
+  // Provides a static instance to prevent a crash when a WKNavigationResponse is deallocated
+  // See https://github.com/flutter/flutter/issues/173326
+  static let instance = TestNavigationResponse()
+
   let testResponse = URLResponse()
+
+  private override init() {
+    super.init()
+  }
 
   override var isForMainFrame: Bool {
     return true

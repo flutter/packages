@@ -1,3 +1,24 @@
+## 3.24.0
+
+* Adds support for `WebKitWebViewControllerCreationParams.javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
+  `window.open()` to work without user interaction on iOS and macOS.
+
+## 3.23.8
+
+* Fixes lossy transition from Dart Color to native UIColor when calling `setBackgroundColor`.
+
+## 3.23.7
+
+* Fixes crash when calling setOnConsoleMessage multiple times.
+
+## 3.23.6
+
+* Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.
+
+## 3.23.5
+
+* Removes internal native library Dart proxy.
+
 ## 3.23.4
 
 * Replaces use of deprecated Color.value.

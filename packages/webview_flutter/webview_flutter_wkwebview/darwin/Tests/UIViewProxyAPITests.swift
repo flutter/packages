@@ -17,14 +17,13 @@ class UIViewProxyAPITests: XCTestCase {
       let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
       let instance = UIView(frame: .zero)
-      let value = 0xFFF4_4336
+      let red = 0.1
+      let green = 0.2
+      let blue = 0.3
+      let alpha = 0.4
       try? api.pigeonDelegate.setBackgroundColor(
-        pigeonApi: api, pigeonInstance: instance, value: Int64(value))
-
-      let red = CGFloat(Double((value >> 16 & 0xff)) / 255.0)
-      let green = CGFloat(Double(value >> 8 & 0xff) / 255.0)
-      let blue = CGFloat(Double(value & 0xff) / 255.0)
-      let alpha = CGFloat(Double(value >> 24 & 0xff) / 255.0)
+        pigeonApi: api, pigeonInstance: instance,
+        value: UIColor(red: red, green: green, blue: blue, alpha: alpha))
 
       XCTAssertEqual(
         instance.backgroundColor, UIColor(red: red, green: green, blue: blue, alpha: alpha))

@@ -1,3 +1,23 @@
+## 2.9.4
+
+* Updates `androidx.media3` to 1.9.2.
+
+## 2.9.3
+
+* Updates `androidx.media3` to 1.9.1.
+
+## 2.9.2
+
+* Bumps kotlin_version to 2.3.0.
+
+## 2.9.1
+
+* Updates to Pigeon 26.1.5.
+
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
 ## 2.8.22
 
 * Bumps kotlin_version to 2.2.21.
@@ -183,7 +203,6 @@
 ## 2.7.2
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
-
 * Re-adds Impeller support.
 
 ## 2.7.1

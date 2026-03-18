@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import test_plugin
 
@@ -13,48 +13,52 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
   }
 }
 
-class MultipleArityTests: XCTestCase {
+@MainActor
+struct MultipleArityTests {
   var codec = FlutterStandardMessageCodec.sharedInstance()
-  func testSimpleHost() throws {
+
+  @Test
+  func simpleHost() async throws {
     let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumPigeonCodec.shared)
     MultipleArityHostApiSetup.setUp(
       binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let inputX = 10
     let inputY = 7
     let inputEncoded = binaryMessenger.codec.encode([inputX, inputY])
 
-    let expectation = XCTestExpectation(description: "subtraction")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList![0] as? Int64
-      XCTAssertEqual(3, output)
-      XCTAssertTrue(outputList?.count == 1)
-      expectation.fulfill()
+        let output = outputList![0] as? Int64
+        #expect(output == 3)
+        #expect(outputList?.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testSimpleFlutter() throws {
+  @Test
+  func simpleFlutter() async throws {
     let binaryMessenger = HandlerBinaryMessenger(codec: codec) { args in
       return (args[0] as! Int) - (args[1] as! Int)
     }
     let api = MultipleArityFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "subtraction")
-    api.subtract(x: 30, y: 10) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(20, res)
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      api.subtract(x: 30, y: 10) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == 20)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 }

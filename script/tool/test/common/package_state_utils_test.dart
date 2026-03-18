@@ -545,6 +545,30 @@ void main() {
       expect(state.needsVersionChange, true);
       expect(state.needsChangelogChange, true);
     });
+
+    test('detects pending changelog changes for batch release', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+
+      const changedFiles = <String>[
+        'packages/a_package/pending_changelogs/some_change.yaml',
+      ];
+
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_package/',
+      );
+
+      expect(state.hasChanges, true);
+      expect(state.hasChangelogChange, true);
+    });
   });
 }
 

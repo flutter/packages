@@ -6,6 +6,7 @@
 
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
@@ -217,9 +218,11 @@ class _Elements {
             .translated(
               parserState.parseDoubleWithUnits(
                 parserState.attribute('x', def: '0'),
+                percentageRef: parserState.viewportWidth,
               )!,
               parserState.parseDoubleWithUnits(
                 parserState.attribute('y', def: '0'),
+                percentageRef: parserState.viewportHeight,
               )!,
             );
 
@@ -482,14 +485,26 @@ class _Elements {
 // ignore: avoid_classes_with_only_static_members
 class _Paths {
   static Path circle(SvgParser parserState) {
+    final double? vw = parserState.viewportWidth;
+    final double? vh = parserState.viewportHeight;
     final double cx = parserState.parseDoubleWithUnits(
       parserState.attribute('cx', def: '0'),
+      percentageRef: vw,
     )!;
     final double cy = parserState.parseDoubleWithUnits(
       parserState.attribute('cy', def: '0'),
+      percentageRef: vh,
     )!;
+    // For circle radius percentage, use the normalized diagonal per SVG spec:
+    // https://www.w3.org/TR/SVG2/coords.html#Units
+    // "For any other length value expressed as a percentage of the SVG viewport,
+    // the percentage must be calculated as a percentage of the normalized diagonal"
+    final double? diagRef = (vw != null && vh != null)
+        ? math.sqrt(vw * vw + vh * vh) / math.sqrt(2)
+        : null;
     final double r = parserState.parseDoubleWithUnits(
       parserState.attribute('r', def: '0'),
+      percentageRef: diagRef,
     )!;
     final oval = Rect.fromCircle(cx, cy, r);
     return PathBuilder(
@@ -503,17 +518,23 @@ class _Paths {
   }
 
   static Path rect(SvgParser parserState) {
+    final double? vw = parserState.viewportWidth;
+    final double? vh = parserState.viewportHeight;
     final double x = parserState.parseDoubleWithUnits(
       parserState.attribute('x', def: '0'),
+      percentageRef: vw,
     )!;
     final double y = parserState.parseDoubleWithUnits(
       parserState.attribute('y', def: '0'),
+      percentageRef: vh,
     )!;
     final double w = parserState.parseDoubleWithUnits(
       parserState.attribute('width', def: '0'),
+      percentageRef: vw,
     )!;
     final double h = parserState.parseDoubleWithUnits(
       parserState.attribute('height', def: '0'),
+      percentageRef: vh,
     )!;
     String? rxRaw = parserState.attribute('rx');
     String? ryRaw = parserState.attribute('ry');
@@ -521,8 +542,14 @@ class _Paths {
     ryRaw ??= rxRaw;
 
     if (rxRaw != null && rxRaw != '') {
-      final double rx = parserState.parseDoubleWithUnits(rxRaw)!;
-      final double ry = parserState.parseDoubleWithUnits(ryRaw)!;
+      final double rx = parserState.parseDoubleWithUnits(
+        rxRaw,
+        percentageRef: vw,
+      )!;
+      final double ry = parserState.parseDoubleWithUnits(
+        ryRaw,
+        percentageRef: vh,
+      )!;
       return PathBuilder(
         parserState._currentAttributes.fillRule,
       ).addRRect(Rect.fromLTWH(x, y, w, h), rx, ry).toPath();
@@ -552,17 +579,23 @@ class _Paths {
   }
 
   static Path ellipse(SvgParser parserState) {
+    final double? vw = parserState.viewportWidth;
+    final double? vh = parserState.viewportHeight;
     final double cx = parserState.parseDoubleWithUnits(
       parserState.attribute('cx', def: '0'),
+      percentageRef: vw,
     )!;
     final double cy = parserState.parseDoubleWithUnits(
       parserState.attribute('cy', def: '0'),
+      percentageRef: vh,
     )!;
     final double rx = parserState.parseDoubleWithUnits(
       parserState.attribute('rx', def: '0'),
+      percentageRef: vw,
     )!;
     final double ry = parserState.parseDoubleWithUnits(
       parserState.attribute('ry', def: '0'),
+      percentageRef: vh,
     )!;
 
     final r = Rect.fromLTWH(cx - rx, cy - ry, rx * 2, ry * 2);
@@ -572,17 +605,23 @@ class _Paths {
   }
 
   static Path line(SvgParser parserState) {
+    final double? vw = parserState.viewportWidth;
+    final double? vh = parserState.viewportHeight;
     final double x1 = parserState.parseDoubleWithUnits(
       parserState.attribute('x1', def: '0'),
+      percentageRef: vw,
     )!;
     final double x2 = parserState.parseDoubleWithUnits(
       parserState.attribute('x2', def: '0'),
+      percentageRef: vw,
     )!;
     final double y1 = parserState.parseDoubleWithUnits(
       parserState.attribute('y1', def: '0'),
+      percentageRef: vh,
     )!;
     final double y2 = parserState.parseDoubleWithUnits(
       parserState.attribute('y2', def: '0'),
+      percentageRef: vh,
     )!;
 
     return PathBuilder(
@@ -968,17 +1007,32 @@ class SvgParser {
   /// relative to the provided [xHeight]:
   /// 1 ex = 1 * `xHeight`.
   ///
+  /// Passing a `%` value will calculate the result
+  /// relative to the provided [percentageRef]:
+  /// 50% with percentageRef=100 = 50.
+  ///
   /// The `rawDouble` might include a unit which is
   /// stripped off when parsed to a `double`.
   ///
   /// Passing `null` will return `null`.
-  double? parseDoubleWithUnits(String? rawDouble, {bool tryParse = false}) {
+  double? parseDoubleWithUnits(
+    String? rawDouble, {
+    bool tryParse = false,
+    double? percentageRef,
+  }) {
     return numbers.parseDoubleWithUnits(
       rawDouble,
       tryParse: tryParse,
       theme: theme,
+      percentageRef: percentageRef,
     );
   }
+
+  /// Returns the viewport width, or null if not yet parsed.
+  double? get viewportWidth => _root?.width;
+
+  /// Returns the viewport height, or null if not yet parsed.
+  double? get viewportHeight => _root?.height;
 
   static final Map<String, double> _kTextSizeMap = <String, double>{
     'xx-small': 10,
@@ -1372,21 +1426,10 @@ class SvgParser {
       }
     }
 
-    // handle rgba() colors e.g. rgba(255, 255, 255, 1.0)
-    if (colorString.toLowerCase().startsWith('rgba')) {
-      final List<String> rawColorElements = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
-          .map((String rawColor) => rawColor.trim())
-          .toList();
-
-      final double opacity = parseDouble(rawColorElements.removeLast())!;
-
-      final List<int> rgb = rawColorElements
-          .map((String rawColor) => int.parse(rawColor))
-          .toList();
-
-      return Color.fromRGBO(rgb[0], rgb[1], rgb[2], opacity);
+    // handle rgba() colors e.g. rgb(255, 255, 255) and rgba(255, 255, 255, 1.0)
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/rgb
+    if (colorString.toLowerCase().startsWith('rgb')) {
+      return parseRgbFunction(colorString);
     }
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
@@ -1454,26 +1497,6 @@ class SvgParser {
         rgb[1].round(),
         rgb[2].round(),
       );
-    }
-
-    // handle rgb() colors e.g. rgb(255, 255, 255)
-    if (colorString.toLowerCase().startsWith('rgb')) {
-      final List<int> rgb = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
-          .map((String rawColor) {
-            rawColor = rawColor.trim();
-            if (rawColor.endsWith('%')) {
-              rawColor = rawColor.substring(0, rawColor.length - 1);
-              return (parseDouble(rawColor)! * 2.55).round();
-            }
-            return int.parse(rawColor);
-          })
-          .toList();
-
-      // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
-      final int a = rgb.length > 3 ? rgb[3] : 255;
-      return Color.fromARGB(a, rgb[0], rgb[1], rgb[2]);
     }
 
     // handle named colors ('red', 'green', etc.).
