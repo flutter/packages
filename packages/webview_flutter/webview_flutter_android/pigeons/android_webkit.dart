@@ -144,7 +144,7 @@ enum MixedContentMode {
 /// Defines different types of sources causing window insets.
 ///
 /// See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
-enum WindowInsets {
+enum WindowInsetsType {
   /// All system bars.
   ///
   /// Includes statusBars(), captionBar() as well as navigationBars(),
@@ -893,7 +893,7 @@ abstract class View {
   ///
   /// This is a convenience method because `View.OnApplyWindowInsetsListener`
   /// requires implementing a callback that requires a synchronous return value.
-  void setInsetListenerToSetInsetsToZero(List<WindowInsets> insets);
+  void setInsetListenerToSetInsetsToZero(List<WindowInsetsType> types);
 }
 
 /// A callback interface used by the host application to set the Geolocation

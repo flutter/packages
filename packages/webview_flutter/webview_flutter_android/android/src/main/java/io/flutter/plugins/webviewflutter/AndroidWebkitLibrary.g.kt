@@ -708,7 +708,7 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
         value is OverScrollMode ||
         value is SslErrorType ||
         value is MixedContentMode ||
-        value is WindowInsets ||
+        value is WindowInsetsType ||
         value == null) {
       super.writeValue(stream, value)
       return
@@ -1104,7 +1104,7 @@ enum class MixedContentMode(val raw: Int) {
  *
  * See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
  */
-enum class WindowInsets(val raw: Int) {
+enum class WindowInsetsType(val raw: Int) {
   /**
    * All system bars.
    *
@@ -1134,7 +1134,7 @@ enum class WindowInsets(val raw: Int) {
   TAPPABLE_ELEMENT(8);
 
   companion object {
-    fun ofRaw(raw: Int): WindowInsets? {
+    fun ofRaw(raw: Int): WindowInsetsType? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -1159,7 +1159,7 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { MixedContentMode.ofRaw(it.toInt()) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { WindowInsets.ofRaw(it.toInt()) }
+        return (readValue(buffer) as Long?)?.let { WindowInsetsType.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -1187,7 +1187,7 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
         stream.write(133)
         writeValue(stream, value.raw.toLong())
       }
-      is WindowInsets -> {
+      is WindowInsetsType -> {
         stream.write(134)
         writeValue(stream, value.raw.toLong())
       }
@@ -5374,7 +5374,7 @@ abstract class PigeonApiView(
    */
   abstract fun setInsetListenerToSetInsetsToZero(
       pigeon_instance: android.view.View,
-      insets: List<WindowInsets>
+      types: List<WindowInsetsType>
   )
 
   companion object {
@@ -5531,10 +5531,10 @@ abstract class PigeonApiView(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.view.View
-            val insetsArg = args[1] as List<WindowInsets>
+            val typesArg = args[1] as List<WindowInsetsType>
             val wrapped: List<Any?> =
                 try {
-                  api.setInsetListenerToSetInsetsToZero(pigeon_instanceArg, insetsArg)
+                  api.setInsetListenerToSetInsetsToZero(pigeon_instanceArg, typesArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)

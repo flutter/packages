@@ -877,7 +877,7 @@ enum MixedContentMode {
 /// Defines different types of sources causing window insets.
 ///
 /// See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
-enum WindowInsets {
+enum WindowInsetsType {
   /// All system bars.
   ///
   /// Includes statusBars(), captionBar() as well as navigationBars(),
@@ -932,7 +932,7 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is MixedContentMode) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is WindowInsets) {
+    } else if (value is WindowInsetsType) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
     } else {
@@ -960,7 +960,7 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : MixedContentMode.values[value];
       case 134:
         final value = readValue(buffer) as int?;
-        return value == null ? null : WindowInsets.values[value];
+        return value == null ? null : WindowInsetsType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -7355,7 +7355,7 @@ class View extends PigeonInternalProxyApiBaseClass {
   /// This is a convenience method because `View.OnApplyWindowInsetsListener`
   /// requires implementing a callback that requires a synchronous return value.
   Future<void> setInsetListenerToSetInsetsToZero(
-    List<WindowInsets> insets,
+    List<WindowInsetsType> types,
   ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecView;
@@ -7368,7 +7368,7 @@ class View extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this, insets],
+      <Object?>[this, types],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 

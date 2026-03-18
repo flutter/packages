@@ -74,16 +74,16 @@ public class ViewProxyApi extends PigeonApiView {
 
   @Override
   public void setInsetListenerToSetInsetsToZero(
-      @NonNull View pigeon_instance, @NonNull List<? extends WindowInsets> insets) {
-    if (insets.isEmpty()) {
+      @NonNull View pigeon_instance, @NonNull List<? extends WindowInsetsType> types) {
+    if (types.isEmpty()) {
       ViewCompat.setOnApplyWindowInsetsListener(
           pigeon_instance, (view, windowInsets) -> windowInsets);
       return;
     }
 
     int typeMaskAccumulator = 0;
-    for (WindowInsets inset : insets) {
-      switch (inset) {
+    for (WindowInsetsType type : types) {
+      switch (type) {
         case SYSTEM_BARS:
           typeMaskAccumulator |= WindowInsetsCompat.Type.systemBars();
           break;
