@@ -30,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                   eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider;
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                     markerType:(FGMPlatformMarkerType)markerType;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers;

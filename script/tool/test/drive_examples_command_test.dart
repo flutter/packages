@@ -48,8 +48,6 @@ void main() {
       );
       runner.addCommand(command);
 
-      // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-      mockPlatform.environment['CHANNEL'] = 'master';
       mockPlatform.environment['FLUTTER_LOGS_DIR'] = '/path/to/logs';
     });
 

@@ -1,3 +1,7 @@
+## 2.18.0
+
+* Adds support for advanced markers.
+ 
 ## 2.17.5
 
 * Adds UIScene compatibility.

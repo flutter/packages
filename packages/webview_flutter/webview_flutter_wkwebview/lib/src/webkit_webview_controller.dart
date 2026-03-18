@@ -82,6 +82,7 @@ class WebKitWebViewControllerCreationParams
     },
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
+    this.javaScriptCanOpenWindowsAutomatically,
   }) {
     _configuration = WKWebViewConfiguration();
 
@@ -122,10 +123,13 @@ class WebKitWebViewControllerCreationParams
         },
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
+    bool? javaScriptCanOpenWindowsAutomatically,
   }) : this(
          mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
          allowsInlineMediaPlayback: allowsInlineMediaPlayback,
          limitsNavigationsToAppBoundDomains: limitsNavigationsToAppBoundDomains,
+         javaScriptCanOpenWindowsAutomatically:
+             javaScriptCanOpenWindowsAutomatically,
        );
 
   late final WKWebViewConfiguration _configuration;
@@ -147,6 +151,12 @@ class WebKitWebViewControllerCreationParams
   /// (Only available for iOS > 14.0)
   /// Defaults to false.
   final bool limitsNavigationsToAppBoundDomains;
+
+  /// Whether JavaScript can open windows without user interaction.
+  ///
+  /// When `null`, the platform's native default is used
+  /// (`false` on iOS, `true` on macOS).
+  final bool? javaScriptCanOpenWindowsAutomatically;
 }
 
 /// An implementation of [PlatformWebViewController] with the WebKit api.
@@ -624,16 +634,36 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) {
+    const Color transparent = Colors.transparent;
     return Future.wait(<Future<void>>[
       _webView.setOpaque(false),
-      _webView.setBackgroundColor(Colors.transparent.toARGB32()),
+      _webView.setBackgroundColor(
+        UIColor(
+          red: transparent.r,
+          green: transparent.g,
+          blue: transparent.b,
+          alpha: transparent.a,
+        ),
+      ),
       // This method must be called last.
-      _webView.scrollView.setBackgroundColor(color.toARGB32()),
+      _webView.scrollView.setBackgroundColor(
+        UIColor(red: color.r, green: color.g, blue: color.b, alpha: color.a),
+      ),
     ]);
   }
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
+    final bool? javaScriptCanOpenWindowsAutomatically =
+        _webKitParams.javaScriptCanOpenWindowsAutomatically;
+    if (javaScriptCanOpenWindowsAutomatically != null) {
+      final WKPreferences preferences = await _webView.configuration
+          .getPreferences();
+      await preferences.setJavaScriptCanOpenWindowsAutomatically(
+        javaScriptCanOpenWindowsAutomatically,
+      );
+    }
+
     // Attempt to set the value that requires iOS 14+.
     try {
       final WKWebpagePreferences webpagePreferences = await _webView

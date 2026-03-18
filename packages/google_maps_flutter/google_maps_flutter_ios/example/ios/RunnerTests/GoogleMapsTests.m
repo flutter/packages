@@ -232,7 +232,25 @@
                                                                                   longitude:0.0]
                                                    tilt:0.0
                                                    zoom:0.0]
-                   mapConfiguration:[[FGMPlatformMapConfiguration alloc] init]
+                   mapConfiguration:[FGMPlatformMapConfiguration
+                                         makeWithCompassEnabled:nil
+                                             cameraTargetBounds:nil
+                                                        mapType:nil
+                                           minMaxZoomPreference:nil
+                                          rotateGesturesEnabled:nil
+                                          scrollGesturesEnabled:nil
+                                            tiltGesturesEnabled:nil
+                                            trackCameraPosition:nil
+                                            zoomGesturesEnabled:nil
+                                              myLocationEnabled:nil
+                                        myLocationButtonEnabled:nil
+                                                        padding:nil
+                                              indoorViewEnabled:nil
+                                                 trafficEnabled:nil
+                                               buildingsEnabled:nil
+                                                     markerType:FGMPlatformMarkerTypeMarker
+                                                          mapId:nil
+                                                          style:nil]
                      initialCircles:@[]
                      initialMarkers:@[]
                     initialPolygons:@[]

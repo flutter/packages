@@ -159,6 +159,91 @@ void main() {
     expect(fittedBox.clipBehavior, Clip.hardEdge);
   });
 
+  group('BoxFit', () {
+    Future<(RenderBox, RenderBox)> setupBoxFitVectorGraphic(
+      WidgetTester tester, {
+      required BoxFit fit,
+    }) async {
+      final buffer = VectorGraphicsBuffer();
+      codec.writeSize(buffer, 100, 50);
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          child: Center(
+            child: SizedBox(
+              width: 200,
+              height: 200,
+              child: VectorGraphic(
+                fit: fit,
+                loader: TestBytesLoader(buffer.done()),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final RenderProxyBox outsideBox = tester.renderObject(
+        find.byType(VectorGraphic),
+      );
+      expect(outsideBox.size, const Size(200, 200));
+
+      final RenderBox insideBox = tester.renderObject(
+        find.byType(SizedBox).last,
+      );
+      expect(insideBox.size, const Size(100, 50));
+
+      return (outsideBox, insideBox);
+    }
+
+    testWidgets(
+      'Scale on BoxFit.contain without constraints, but with viewbox',
+      (WidgetTester tester) async {
+        final (RenderBox outsideBox, RenderBox insideBox) =
+            await setupBoxFitVectorGraphic(tester, fit: BoxFit.contain);
+
+        // Top left point as offset in child space
+        final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+        // Top left point as offset in parent space
+        final Offset outsidePoint = outsideBox.localToGlobal(
+          const Offset(0, 50),
+        );
+
+        expect(insidePoint, equals(outsidePoint));
+      },
+    );
+
+    testWidgets('Scale on BoxFit.cover without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final (RenderBox outsideBox, RenderBox insideBox) =
+          await setupBoxFitVectorGraphic(tester, fit: BoxFit.cover);
+
+      // Top left point as offset in child space
+      final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+      // Top left point as offset in parent space
+      final Offset outsidePoint = outsideBox.localToGlobal(
+        const Offset(-100, 0),
+      );
+
+      expect(insidePoint, equals(outsidePoint));
+    });
+
+    testWidgets('Scale on BoxFit.fill without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final (RenderBox outsideBox, RenderBox insideBox) =
+          await setupBoxFitVectorGraphic(tester, fit: BoxFit.fill);
+
+      // Top left point as offset in child space
+      final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+      // Top left point as offset in parent space
+      final Offset outsidePoint = outsideBox.localToGlobal(Offset.zero);
+
+      expect(insidePoint, equals(outsidePoint));
+    });
+  });
+
   group('ClipBehavior', () {
     testWidgets('Sets clipBehavior to hardEdge if not provided', (
       WidgetTester tester,
@@ -209,9 +294,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(SizedBox), findsNWidgets(2));
+    expect(find.byType(SizedBox), findsNWidgets(1));
 
-    final sizedBox = find.byType(SizedBox).evaluate().last.widget as SizedBox;
+    final sizedBox = find.byType(SizedBox).evaluate().single.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
@@ -601,7 +686,7 @@ void main() {
     // A blank image, because the image hasn't loaded yet.
     await expectLater(
       find.byKey(key),
-      matchesGoldenFile('vg_with_image_blank.png'),
+      matchesGoldenFile('goldens/vg_with_image_blank.png'),
     );
 
     expect(imageCache.currentSize, 1);
@@ -615,10 +700,10 @@ void main() {
     expect(imageCache.statusForKey(imageKey).live, false);
     expect(imageCache.statusForKey(imageKey).keepAlive, true);
 
-    // A blue square, becuase the image is available now.
+    // A blue square, because the image is available now.
     await expectLater(
       find.byKey(key),
-      matchesGoldenFile('vg_with_image_blue.png'),
+      matchesGoldenFile('goldens/vg_with_image_blue.png'),
     );
   }, skip: kIsWeb);
 
