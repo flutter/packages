@@ -1,6 +1,6 @@
 ## 2.19.3
 
-* Adds support for legacy render in AndroidManifest.xml
+* Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
 
 ## 2.19.2
 
