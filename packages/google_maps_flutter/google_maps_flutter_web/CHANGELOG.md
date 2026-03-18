@@ -1,6 +1,6 @@
 ## 0.6.2
 
-* Adds `colorScheme` support for web cloud-based maps styling brightness.
+* Adds `colorScheme` support for controlling cloud-based map brightness.
 
 ## 0.6.1
 
