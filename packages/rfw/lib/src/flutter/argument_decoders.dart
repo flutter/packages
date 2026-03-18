@@ -804,7 +804,12 @@ class ArgumentDecoders {
       return null;
     }
     return IconData(
+      // RFW does _not_ support tree-shaking icons. Explicitly suppress the lint
+      // that warns about non-constant arguments which will cause the flutter
+      // icon tree shaker to bail out of tree-shaking icons.
+      // ignore: non_const_argument_for_const_parameter
       icon,
+      // ignore: non_const_argument_for_const_parameter
       fontFamily: source.v<String>([...key, 'fontFamily']),
       matchTextDirection: source.v<bool>([...key, 'matchTextDirection']) ?? false,
     );

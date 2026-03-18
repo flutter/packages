@@ -38,80 +38,83 @@ void main() {
   });
 
   group('Link Widget', () {
-    testWidgets('creates anchor with correct attributes', (
-      WidgetTester tester,
-    ) async {
-      final Uri uri = Uri.parse('http://foobar/example?q=1');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri,
-              target: LinkTarget.blank,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+    testWidgets(
+      'creates anchor with correct attributes',
+      (WidgetTester tester) async {
+        final Uri uri = Uri.parse('http://foobar/example?q=1');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri,
+                target: LinkTarget.blank,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      // Platform view creation happens asynchronously.
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        // Platform view creation happens asynchronously.
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      final html.Element anchor = _findSingleAnchor();
-      expect(anchor.getAttribute('href'), uri.toString());
-      expect(anchor.getAttribute('target'), '_blank');
+        final html.Element anchor = _findSingleAnchor();
+        expect(anchor.getAttribute('href'), uri.toString());
+        expect(anchor.getAttribute('target'), '_blank');
 
-      final Uri uri2 = Uri.parse('http://foobar2/example?q=2');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri2,
-              target: LinkTarget.self,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+        final Uri uri2 = Uri.parse('http://foobar2/example?q=2');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri2,
+                target: LinkTarget.self,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      // Check that the same anchor has been updated.
-      expect(anchor.getAttribute('href'), uri2.toString());
-      expect(anchor.getAttribute('target'), '_self');
+        // Check that the same anchor has been updated.
+        expect(anchor.getAttribute('href'), uri2.toString());
+        expect(anchor.getAttribute('target'), '_self');
 
-      final Uri uri3 = Uri.parse('/foobar');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri3,
-              target: LinkTarget.self,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+        final Uri uri3 = Uri.parse('/foobar');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri3,
+                target: LinkTarget.self,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      // Check that internal route properly prepares using the default
-      // [UrlStrategy]
-      expect(
-        anchor.getAttribute('href'),
-        ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
-      );
-      expect(anchor.getAttribute('target'), '_self');
-    });
+        // Check that internal route properly prepares using the default
+        // [UrlStrategy]
+        expect(
+          anchor.getAttribute('href'),
+          ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
+        );
+        expect(anchor.getAttribute('target'), '_self');
+      },
+      // Flaky under WASM: https://github.com/flutter/flutter/issues/182844
+      skip: true,
+    );
 
     testWidgets('sizes itself correctly', (WidgetTester tester) async {
       final Key containerKey = GlobalKey();

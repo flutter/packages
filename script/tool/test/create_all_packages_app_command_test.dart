@@ -11,6 +11,7 @@ import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
+import 'package:yaml/yaml.dart';
 
 import 'mocks.dart';
 import 'util.dart';
@@ -494,6 +495,34 @@ android {
               line.contains('15.0'),
         ),
       );
+    });
+
+    test('disables Swift Package Manager if requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--no-swift-package-manager',
+      ]);
+
+      final Pubspec pubspec = command.app.parsePubspec();
+      final flutterConfig = pubspec.flutter?['config'] as YamlMap?;
+      expect(flutterConfig?['enable-swift-package-manager'], false);
+    });
+
+    test('enables Swift Package Manager if requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--swift-package-manager',
+      ]);
+
+      final Pubspec pubspec = command.app.parsePubspec();
+      final flutterConfig = pubspec.flutter?['config'] as YamlMap?;
+      expect(flutterConfig?['enable-swift-package-manager'], true);
     });
 
     test('calls flutter pub get', () async {
