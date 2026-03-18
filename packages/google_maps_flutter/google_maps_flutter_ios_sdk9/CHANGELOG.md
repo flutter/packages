@@ -1,3 +1,7 @@
+## 2.18.1
+
+* Use built-in COCOAPODS define to detect CocoaPods builds.
+
 ## 2.18.0
 
 * Adds support for advanced markers.
