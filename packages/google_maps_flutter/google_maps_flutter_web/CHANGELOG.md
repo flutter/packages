@@ -1,7 +1,3 @@
-## 0.6.2
-
-* Adds `colorScheme` support for web cloud-based maps styling brightness.
-
 ## 0.6.1
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.
