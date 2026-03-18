@@ -1,0 +1,219 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import AVFoundation
+import XCTest
+
+@testable import camera_avfoundation
+
+/// Utils for creating default class instances used in tests
+enum CameraTestUtils {
+  /// This method provides a convenient way to create media settings with minimal configuration.
+  /// Audio is enabled by default, while other parameters use platform-specific defaults.
+  static func createDefaultMediaSettings(resolutionPreset: PlatformResolutionPreset)
+    -> PlatformMediaSettings
+  {
+    return PlatformMediaSettings(
+      resolutionPreset: resolutionPreset,
+      framesPerSecond: nil,
+      videoBitrate: nil,
+      audioBitrate: nil,
+      enableAudio: true)
+  }
+
+  /// Creates a test `CameraConfiguration` with a default mock setup.
+  static func createTestCameraConfiguration() -> CameraConfiguration {
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+
+    let audioSessionMock = MockCaptureSession()
+    audioSessionMock.canSetSessionPresetStub = { _ in true }
+
+    let frameRateRangeMock1 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 30)
+
+    let captureDeviceFormatMock1 = MockCaptureDeviceFormat()
+    captureDeviceFormatMock1.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock1]
+
+    let frameRateRangeMock2 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 60)
+
+    let captureDeviceFormatMock2 = MockCaptureDeviceFormat()
+    captureDeviceFormatMock2.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock2]
+
+    let captureDeviceMock = MockCaptureDevice()
+    captureDeviceMock.flutterFormats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
+
+    var currentFormat: CaptureDeviceFormat = captureDeviceFormatMock1
+
+    captureDeviceMock.activeFormatStub = { currentFormat }
+    captureDeviceMock.setActiveFormatStub = { format in
+      currentFormat = format
+    }
+
+    let configuration = CameraConfiguration(
+      mediaSettings: createDefaultMediaSettings(
+        resolutionPreset: PlatformResolutionPreset.medium),
+      mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
+      captureDeviceFactory: { _ in captureDeviceMock },
+      audioCaptureDeviceFactory: { MockCaptureDevice() },
+      captureSessionFactory: { videoSessionMock },
+      captureSessionQueue: captureSessionQueue,
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      initialCameraName: "camera_name"
+    )
+
+    configuration.videoCaptureSession = videoSessionMock
+    configuration.audioCaptureSession = audioSessionMock
+    configuration.orientation = .portrait
+
+    configuration.assetWriterFactory = { _, _ in MockAssetWriter() }
+
+    configuration.inputPixelBufferAdaptorFactory = { _, _ in
+      MockAssetWriterInputPixelBufferAdaptor()
+    }
+
+    return configuration
+  }
+
+  static func createTestCamera(_ configuration: CameraConfiguration) -> DefaultCamera {
+    return (try? DefaultCamera(configuration: configuration))!
+  }
+
+  static func createTestCamera() -> DefaultCamera {
+    return createTestCamera(createTestCameraConfiguration())
+  }
+
+  static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
+    -> DefaultCamera
+  {
+    let configuration = createTestCameraConfiguration()
+    configuration.captureSessionQueue = captureSessionQueue
+    return createTestCamera(configuration)
+  }
+
+  /// Creates a test sample buffer.
+  /// @return a test sample buffer.
+  static func createTestSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
+    var pixelBuffer: CVPixelBuffer?
+    CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+
+    var formatDescription: CMFormatDescription?
+    CMVideoFormatDescriptionCreateForImageBuffer(
+      allocator: kCFAllocatorDefault,
+      imageBuffer: pixelBuffer!,
+      formatDescriptionOut: &formatDescription)
+
+    var timingInfo = CMSampleTimingInfo(
+      duration: duration,
+      presentationTimeStamp: timestamp,
+      decodeTimeStamp: .invalid)
+
+    var sampleBuffer: CMSampleBuffer?
+    CMSampleBufferCreateReadyWithImageBuffer(
+      allocator: kCFAllocatorDefault,
+      imageBuffer: pixelBuffer!,
+      formatDescription: formatDescription!,
+      sampleTiming: &timingInfo,
+      sampleBufferOut: &sampleBuffer)
+
+    return sampleBuffer!
+  }
+
+  /// Creates a test audio sample buffer.
+  /// @return a test audio sample buffer.
+  static func createTestAudioSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
+    var blockBuffer: CMBlockBuffer?
+    CMBlockBufferCreateWithMemoryBlock(
+      allocator: kCFAllocatorDefault,
+      memoryBlock: nil,
+      blockLength: Int(duration.value),
+      blockAllocator: kCFAllocatorDefault,
+      customBlockSource: nil,
+      offsetToData: 0,
+      dataLength: Int(duration.value),
+      flags: kCMBlockBufferAssureMemoryNowFlag,
+      blockBufferOut: &blockBuffer)
+
+    var formatDescription: CMFormatDescription?
+    var basicDescription = AudioStreamBasicDescription(
+      mSampleRate: Float64(duration.timescale),
+      mFormatID: kAudioFormatLinearPCM,
+      mFormatFlags: 0,
+      mBytesPerPacket: 1,
+      mFramesPerPacket: 1,
+      mBytesPerFrame: 1,
+      mChannelsPerFrame: 1,
+      mBitsPerChannel: 8,
+      mReserved: 0)
+
+    CMAudioFormatDescriptionCreate(
+      allocator: kCFAllocatorDefault,
+      asbd: &basicDescription,
+      layoutSize: 0,
+      layout: nil,
+      magicCookieSize: 0,
+      magicCookie: nil,
+      extensions: nil,
+      formatDescriptionOut: &formatDescription)
+
+    var sampleBuffer: CMSampleBuffer?
+    CMAudioSampleBufferCreateReadyWithPacketDescriptions(
+      allocator: kCFAllocatorDefault,
+      dataBuffer: blockBuffer!,
+      formatDescription: formatDescription!,
+      sampleCount: CMItemCount(duration.value),
+      presentationTimeStamp: timestamp,
+      packetDescriptions: nil,
+      sampleBufferOut: &sampleBuffer)
+
+    return sampleBuffer!
+  }
+
+  static func createTestAudioOutput() -> AVCaptureOutput {
+    return AVCaptureAudioDataOutput()
+  }
+
+  static func createTestConnection(_ output: AVCaptureOutput) -> AVCaptureConnection {
+    return AVCaptureConnection(inputPorts: [], output: output)
+  }
+}
+
+extension XCTestCase {
+  /// Wait until a round trip of a given `DispatchQueue` is complete. This allows for testing
+  /// side-effects of async functions that do not provide any notification of completion.
+  func waitForQueueRoundTrip(with queue: DispatchQueue) {
+    let expectation = expectation(description: "Queue flush")
+
+    queue.async {
+      if queue == DispatchQueue.main {
+        expectation.fulfill()
+      } else {
+        DispatchQueue.main.async {
+          expectation.fulfill()
+        }
+      }
+    }
+
+    wait(for: [expectation], timeout: 1)
+  }
+
+  func assertSuccess<T>(
+    _ result: Result<T, any Error>, file: StaticString = #file, line: UInt = #line
+  ) -> T? {
+    switch result {
+    case .success(let value):
+      return value
+    case .failure(let error):
+      XCTFail("Expected success, but got failure: \(error)", file: file, line: line)
+      return nil
+    }
+  }
+}
