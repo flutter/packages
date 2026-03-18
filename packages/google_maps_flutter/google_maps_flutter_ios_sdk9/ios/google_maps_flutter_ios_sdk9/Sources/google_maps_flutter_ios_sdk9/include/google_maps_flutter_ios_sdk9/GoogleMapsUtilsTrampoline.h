@@ -5,7 +5,7 @@
 // If Swift Package Manager is in use, Objective-C headers are available under the
 // GoogleMapsUtilsObjC package. When using CocoaPods, the headers are provided by the
 // GoogleMapsUtils package.
-#ifdef FGM_USING_COCOAPODS
+#if defined(COCOAPODS) && COCOAPODS
 @import GoogleMapsUtils;
 #else
 @import GoogleMapsUtilsObjC;

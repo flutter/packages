@@ -28,8 +28,6 @@ Downloaded by pub (not CocoaPods).
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
-    # To handle the difference in framework names between CocoaPods and Swift Package Manager.
-    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) FGM_USING_COCOAPODS=1',
   }
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'google_maps_flutter_ios_sdk10_privacy' => ['google_maps_flutter_ios_sdk10/Sources/google_maps_flutter_ios_sdk10/Resources/PrivacyInfo.xcprivacy']}
