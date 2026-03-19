@@ -183,6 +183,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   func testGetProductsWithStoreKitError() async throws {
     let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
       osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
       "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
     )
@@ -225,10 +226,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
   func testFailedNetworkErrorPurchase() async throws {
     let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
       osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
       "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
     )
 
+    // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
     session.clearTransactions()
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
