@@ -28,10 +28,6 @@ Future<List<CameraDescription>> availableCameras() async {
   return CameraPlatform.instance.availableCameras();
 }
 
-// TODO(stuartmorgan): Remove this once the package requires 2.10, where the
-// dart:async `unawaited` accepts a nullable future.
-void _unawaited(Future<void>? future) {}
-
 /// The state of a [CameraController].
 class CameraValue {
   /// Creates a new camera controller state.
@@ -304,7 +300,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         mediaSettings ?? const MediaSettings(),
       );
 
-      _unawaited(
+      unawaited(
         CameraPlatform.instance.onCameraInitialized(_cameraId).first.then((
           CameraInitializedEvent event,
         ) {
@@ -857,7 +853,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     if (_isDisposed) {
       return;
     }
-    _unawaited(_deviceOrientationSubscription?.cancel());
+    unawaited(_deviceOrientationSubscription?.cancel());
     _isDisposed = true;
     super.dispose();
     if (_initCalled != null) {
@@ -902,13 +898,7 @@ class Optional<T> extends IterableBase<T> {
   const Optional.absent() : _value = null;
 
   /// Constructs an Optional of the given [value].
-  ///
-  /// Throws [ArgumentError] if [value] is null.
-  Optional.of(T value) : _value = value {
-    // TODO(cbracken): Delete and make this ctor const once mixed-mode
-    // execution is no longer around.
-    ArgumentError.checkNotNull(value);
-  }
+  const Optional.of(T value) : _value = value;
 
   /// Constructs an Optional of the given [value].
   ///

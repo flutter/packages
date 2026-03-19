@@ -19,6 +19,8 @@ void main() {
   late Directory packagesDir;
   const groovyJavaIncompatabilityIndicator =
       'build.gradle must set an explicit Java compatibility version.';
+  const kotlinJavaIncompatabilityIndicator =
+      'build.gradle.kts must set an explicit Java compatibility version.';
 
   setUp(() {
     final GitDir gitDir;
@@ -124,6 +126,101 @@ ${warningsConfigured ? warningConfig : ''}
 
 dependencies {
     implementation 'fake.package:fake:1.0.0'
+}
+''');
+  }
+
+  /// Writes a fake android/build.gradle.kts file for plugin [package] with the
+  /// given options.
+  void writeFakeKotlinPluginBuildGradle(
+    RepositoryPackage package, {
+    bool includeLanguageVersion = false,
+    bool includeSourceCompat = false,
+    bool includeTargetCompat = false,
+    bool commentSourceLanguage = false,
+    bool includeNamespace = true,
+    bool commentNamespace = false,
+    bool warningsConfigured = true,
+    String compileSdk = '36',
+    bool includeKotlinOptions = true,
+    bool commentKotlinOptions = false,
+    bool useDeprecatedJvmTargetStyle = false,
+    int jvmTargetValue = 17,
+    int kotlinJvmValue = 17,
+  }) {
+    final File buildGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle.kts');
+    buildGradle.createSync(recursive: true);
+
+    const warningConfig = '''
+    lint {
+        checkAllWarnings = true
+        warningsAsErrors = true
+        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
+        baseline = file("lint-baseline.xml")
+    }
+''';
+    final javaSection =
+        '''
+java {
+    toolchain {
+        ${commentSourceLanguage ? '// ' : ''}languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+''';
+    final sourceCompat =
+        '${commentSourceLanguage ? '// ' : ''}sourceCompatibility = JavaVersion.VERSION_$jvmTargetValue';
+    final targetCompat =
+        '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_$jvmTargetValue';
+    final namespace =
+        '    ${commentNamespace ? '// ' : ''}namespace = "$_defaultFakeNamespace"';
+    final kotlinJvmTarget = useDeprecatedJvmTargetStyle
+        ? '$jvmTargetValue'
+        : 'JavaVersion.VERSION_$kotlinJvmValue.toString()';
+    final kotlinConfig =
+        '''
+    ${commentKotlinOptions ? '//' : ''}kotlinOptions {
+        ${commentKotlinOptions ? '//' : ''}jvmTarget = $kotlinJvmTarget
+    ${commentKotlinOptions ? '//' : ''}}''';
+
+    buildGradle.writeAsStringSync('''
+group = "dev.flutter.plugins.fake"
+version = "1.0-SNAPSHOT"
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+${includeLanguageVersion ? javaSection : ''}
+android {
+${includeNamespace ? namespace : ''}
+    compileSdk = $compileSdk
+
+    defaultConfig {
+        minSdk = 30
+    }
+${warningsConfigured ? warningConfig : ''}
+    compileOptions {
+        ${includeSourceCompat ? sourceCompat : ''}
+        ${includeTargetCompat ? targetCompat : ''}
+    }
+    ${includeKotlinOptions ? kotlinConfig : ''}
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    implementation("fake.package:fake:1.0.0")
 }
 ''');
   }
@@ -542,32 +639,65 @@ flutter {
     );
   });
 
-  test('fails when build.gradle has no java compatibility version', () async {
-    final RepositoryPackage package = createFakePlugin(
-      'a_plugin',
-      packagesDir,
-      examples: <String>[],
-    );
-    writeFakeGroovyPluginBuildGradle(package);
-    writeFakeManifest(package);
+  test(
+    'fails when build.gradle has no java compatibility version - groovy',
+    () async {
+      final RepositoryPackage package = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+      writeFakeGroovyPluginBuildGradle(package);
+      writeFakeManifest(package);
 
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-      runner,
-      <String>['gradle-check'],
-      errorHandler: (Error e) {
-        commandError = e;
-      },
-    );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['gradle-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains(groovyJavaIncompatabilityIndicator),
-      ]),
-    );
-  });
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(groovyJavaIncompatabilityIndicator),
+        ]),
+      );
+    },
+  );
+
+  test(
+    'fails when build.gradle has no java compatibility version - kotlin',
+    () async {
+      final RepositoryPackage package = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+      writeFakeKotlinPluginBuildGradle(package);
+      writeFakeManifest(package);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['gradle-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(kotlinJavaIncompatabilityIndicator),
+        ]),
+      );
+    },
+  );
 
   test(
     'fails when sourceCompatibility is provided with out targetCompatibility',
@@ -774,7 +904,7 @@ flutter {
   test('does not require java version in examples - kotlin', () async {
     const pluginName = 'a_plugin';
     final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
-    writeFakeGroovyPluginBuildGradle(package, includeLanguageVersion: true);
+    writeFakeKotlinPluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
     writeFakeKotlinExampleBuildGradles(example, pluginName: pluginName);
@@ -888,7 +1018,7 @@ flutter {
     },
   );
 
-  test('fails when namespace is missing', () async {
+  test('fails when namespace is missing - groovy', () async {
     final RepositoryPackage package = createFakePlugin(
       'a_plugin',
       packagesDir,
@@ -915,6 +1045,37 @@ flutter {
       output,
       containsAllInOrder(<Matcher>[
         contains('build.gradle must set a "namespace"'),
+      ]),
+    );
+  });
+
+  test('fails when namespace is missing - kotlin', () async {
+    final RepositoryPackage package = createFakePlugin(
+      'a_plugin',
+      packagesDir,
+      examples: <String>[],
+    );
+    writeFakeKotlinPluginBuildGradle(
+      package,
+      includeLanguageVersion: true,
+      includeNamespace: false,
+    );
+    writeFakeManifest(package);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+      runner,
+      <String>['gradle-check'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('build.gradle.kts must set a "namespace"'),
       ]),
     );
   });
@@ -953,7 +1114,7 @@ flutter {
   test('fails when namespace is missing from example - kotlin', () async {
     const pluginName = 'a_plugin';
     final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
-    writeFakeGroovyPluginBuildGradle(package, includeLanguageVersion: true);
+    writeFakeKotlinPluginBuildGradle(package, includeLanguageVersion: true);
     writeFakeManifest(package);
     final RepositoryPackage example = package.getExamples().first;
     writeFakeKotlinExampleBuildGradles(
