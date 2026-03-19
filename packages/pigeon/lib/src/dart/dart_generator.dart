@@ -523,6 +523,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   /// Writes the code for host [Api], [api].
   /// Example:
+  /// ```dart
   /// class FooCodec extends StandardMessageCodec {...}
   ///
   /// abstract class Foo {
@@ -530,6 +531,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   ///   int add(int x, int y);
   ///   static void setUp(Foo api, {BinaryMessenger? binaryMessenger}) {...}
   /// }
+  /// ```
   @override
   void writeFlutterApi(
     InternalDartOptions generatorOptions,
@@ -599,6 +601,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   /// Writes the code for host [Api], [api].
   /// Example:
+  /// ```dart
   /// class FooCodec extends StandardMessageCodec {...}
   ///
   /// class Foo {
@@ -606,6 +609,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   ///   static const MessageCodec<Object?> codec = FooCodec();
   ///   Future<int> add(int x, int y) async {...}
   /// }
+  /// ```
   ///
   /// Messages will be sent and received in a list.
   ///
