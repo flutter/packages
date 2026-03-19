@@ -1,5 +1,5 @@
-group = 'io.flutter.plugins.localauth'
-version = '1.0-SNAPSHOT'
+group = "io.flutter.plugins.localauth"
+version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath("com.android.tools.build:gradle:8.13.1")
     }
 }
 
@@ -19,15 +19,17 @@ rootProject.allprojects {
     }
 }
 
-apply plugin: 'com.android.library'
+plugins {
+    id("com.android.library")
+}
 
 android {
     namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 24
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -35,32 +37,33 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    lintOptions {
+    lint {
         checkAllWarnings = true
         warningsAsErrors = true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
+        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
     }
 
-
     testOptions {
-        unitTests.includeAndroidResources = true
-        unitTests.returnDefaultValues = true
-        unitTests.all {
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            all {
+                it.outputs.upToDateWhen { false }
+                it.testLogging {
+                    events("passed", "skipped", "failed", "standardOut", "standardError")
+                    showStandardStreams = true
+                }
             }
         }
     }
 }
 
 dependencies {
-    api("androidx.core:core:1.17.0")
+    api("androidx.core:core:1.18.0")
     api("androidx.biometric:biometric:1.1.0")
     api("androidx.fragment:fragment:1.8.9")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.22.0")
+    testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("org.robolectric:robolectric:4.16")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test:rules:1.7.0")

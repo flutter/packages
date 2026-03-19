@@ -13,23 +13,36 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+#if os(iOS)
+  class PlatformViewImpl: NSObject, FlutterPlatformView {
+    // TODO(bparrishMines): Change to strong reference once this issue is fixed in the engine and
+    // makes it to stable. See https://github.com/flutter/flutter/issues/168535.
+    // The InstanceManager used by pigeon adds an associated object to added instances that makes a message call when
+    // they are deallocated. This sets a weak reference to the underlying UIView to prevent a crash where the UIView is
+    // no longer referenced by the plugin, but the FlutterViewController still maintains a transitive reference to it
+    // when the BinaryMessenger becomes invalid.
+    weak var uiView: UIView?
+
+    init(uiView: UIView) {
+      self.uiView = uiView
+    }
+
+    func view() -> UIView {
+      if let uiView = uiView {
+        return uiView
+      }
+
+      NSLog(
+        "WebViewFlutterPluginError: UIView has been deallocated, but is still being requested as a PlatformView."
+      )
+      return UIView()
+    }
+  }
+#endif
+
 /// Implementation of `FlutterPlatformViewFactory` that retrieves the view from the `WebKitLibraryPigeonInstanceManager`.
 class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
   unowned let instanceManager: WebKitLibraryPigeonInstanceManager
-
-  #if os(iOS)
-    class PlatformViewImpl: NSObject, FlutterPlatformView {
-      let uiView: UIView
-
-      init(uiView: UIView) {
-        self.uiView = uiView
-      }
-
-      func view() -> UIView {
-        return uiView
-      }
-    }
-  #endif
 
   init(instanceManager: WebKitLibraryPigeonInstanceManager) {
     self.instanceManager = instanceManager
@@ -42,14 +55,9 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
       let identifier: Int64 = args is Int64 ? args as! Int64 : Int64(args as! Int32)
       let instance: AnyObject? = instanceManager.instance(forIdentifier: identifier)
 
-      if let instance = instance as? FlutterPlatformView {
-        instance.view().frame = frame
-        return instance
-      } else {
-        let view = instance as! UIView
-        view.frame = frame
-        return PlatformViewImpl(uiView: view)
-      }
+      let view = instance as! UIView
+      view.frame = frame
+      return PlatformViewImpl(uiView: view)
     }
   #elseif os(macOS)
     func create(
