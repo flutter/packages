@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import androidx.camera.view.PreviewView;
 
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
@@ -31,6 +32,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         new ProxyApiRegistrar(
             binding.getBinaryMessenger(),
             binding.getApplicationContext(),
+            binding.getPlatformViewRegistry(),
             binding.getTextureRegistry());
     proxyApiRegistrar.setUp();
   }
