@@ -1,3 +1,7 @@
+## 0.7.1+1
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 0.7.1
 
 * Removes outdated restrictions against concurrent camera use cases.

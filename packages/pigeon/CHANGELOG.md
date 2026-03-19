@@ -1,3 +1,7 @@
+## 26.2.4
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 26.2.3
 
 * Produces a helpful error message when a method return type is missing or an

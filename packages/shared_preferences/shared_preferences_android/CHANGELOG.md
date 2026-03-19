@@ -1,3 +1,7 @@
+## 2.4.22
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 2.4.21
 
 * Reverts `androidx.datastore:datastore` to 1.1.7 due to a regression 16 KB
