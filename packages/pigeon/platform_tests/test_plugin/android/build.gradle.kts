@@ -31,6 +31,7 @@ plugins {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+        allWarningsAsErrors = true
     }
 }
 
