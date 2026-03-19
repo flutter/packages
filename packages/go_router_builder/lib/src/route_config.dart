@@ -219,7 +219,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
         return MapEntry<String, String>(pathParameter, valueBuffer.toString());
       }),
     );
-    final String location = patternToPath(_basePathForLocation, pathParameters);
+    final String location = patternToPath(Uri.encodeFull(_basePathForLocation), pathParameters);
     return "'$location'";
   }
 
