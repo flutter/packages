@@ -1,3 +1,7 @@
+## 1.1.3
+
+* Coerces `int` and `double` values to `String` in the core `Text` widget adapter for both direct and list-based `text` values.
+
 ## 1.1.2
 
 * Removes outdated call for feedback from the README.
