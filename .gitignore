@@ -58,3 +58,4 @@ gradlew.bat
 .project
 .classpath
 .settings
+.claude/agents/flutter_assistant.agent.md

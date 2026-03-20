@@ -5,12 +5,6 @@
 import Flutter
 import UIKit
 
-protocol ConnectionOptionsProtocol {
-  var shortcutItem: UIApplicationShortcutItem? { get }
-}
-
-extension UIScene.ConnectionOptions: ConnectionOptionsProtocol {}
-
 public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi,
   FlutterSceneLifeCycleDelegate
 {
@@ -89,17 +83,15 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     willConnectTo session: UISceneSession,
     options connectionOptions: UIScene.ConnectionOptions?
   ) -> Bool {
-    return handleSceneWillConnectTo(connectionOptions: connectionOptions)
+    return handleSceneWillConnectTo(shortcutItem: connectionOptions?.shortcutItem)
   }
 
-  func handleSceneWillConnectTo(connectionOptions: ConnectionOptionsProtocol?) -> Bool {
-    // Handle the case where app is launched via a shortcut item in scene-based lifecycle.
-    if let shortcutItem = connectionOptions?.shortcutItem {
+  func handleSceneWillConnectTo(shortcutItem: UIApplicationShortcutItem?) -> Bool {
+    if let shortcutItem {
       // Keep hold of the shortcut type and handle it in the
       // `sceneDidBecomeActive:` method once the Dart MethodChannel
       // is initialized.
       launchingShortcutType = shortcutItem.type
-      // Return true to indicate we handled the connection.
       return true
     }
     return false

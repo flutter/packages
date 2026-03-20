@@ -19,10 +19,6 @@ class MockFlutterApi: IOSQuickActionsFlutterApiProtocol {
   }
 }
 
-struct MockConnectionOptions: ConnectionOptionsProtocol {
-  let shortcutItem: UIApplicationShortcutItem?
-}
-
 @MainActor
 struct QuickActionsPluginTests {
 
@@ -325,8 +321,7 @@ struct QuickActionsPluginTests {
         confirmed()
       }
 
-      let connectResult = plugin.handleSceneWillConnectTo(
-        connectionOptions: MockConnectionOptions(shortcutItem: item))
+      let connectResult = plugin.handleSceneWillConnectTo(shortcutItem: item)
       #expect(connectResult, "scene willConnectTo must return true when shortcut is provided.")
 
       plugin.sceneDidBecomeActive(UIApplication.shared.connectedScenes.first!)
