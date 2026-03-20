@@ -121,17 +121,28 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
       return data
     }
 
+    // Verify the source is actually JPEG. If the format doesn't match
+    // (e.g. if this is called with HEIF data in the future), return
+    // the original data unchanged rather than silently re-encoding.
+    if let sourceType = CGImageSourceGetType(source) as? String,
+      sourceType != "public.jpeg"
+    {
+      return data
+    }
+
     // Copy all original EXIF/metadata properties so they are preserved in the output.
     let metadata =
       CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
 
+    // CGImageDestinationCreateWithData writes the re-encoded image into mutableData.
+    // CGImageDestinationFinalize must be called before reading from it.
     let mutableData = NSMutableData()
     guard
       let destination = CGImageDestinationCreateWithData(
-        mutableData as CFMutableData,
+        mutableData as CFMutableData,  // output buffer for the encoded image
         "public.jpeg" as CFString,  // UTI for JPEG format
         1,  // imageCount: single image
-        nil)
+        nil)  // no additional options
     else {
       return data
     }
@@ -145,6 +156,7 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
       return data
     }
 
+    // Return as immutable Data. mutableData now contains the finalized JPEG.
     return mutableData as Data
   }
 }
