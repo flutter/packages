@@ -91,7 +91,7 @@ dependencies {
 
     // The following Espresso dependency can be either "implementation"
     // or "androidTestImplementation", depending on whether you want the
-    // dependency to appear on your APK"s compile classpath or the test APK
+    // dependency to appear on your APK's compile classpath or the test APK
     // classpath.
     api("androidx.test.espresso:espresso-idling-resource:3.7.0")
 }
