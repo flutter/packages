@@ -1,3 +1,8 @@
+## 1.2.7
+
+* Adds example demonstrating build-time SVG asset transformation.
+* Adds Usage section to README.
+
 ## 1.2.6
 
 * Fixes `linux-arm64` host support by selecting the Flutter engine
@@ -29,6 +34,7 @@
 ## 1.2.1
 
 * Fixes HSL/HSLA color parsing for decimal percentage components (e.g. `hsl(270, 100%, 76.27%)`).
+
 
 ## 1.2.0
 
