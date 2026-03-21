@@ -40,7 +40,7 @@ void main() {
 
   // Lambdas
   final lambdaTemplate = Template('{{# transform }}hello{{/ transform }}');
-  final String Function(LambdaContext) lambda = (LambdaContext ctx) =>
+  final lambda = (LambdaContext ctx) =>
       ctx.renderString().toUpperCase();
   print('=== Lambdas ===');
   print(lambdaTemplate.renderString({'transform': lambda}));
