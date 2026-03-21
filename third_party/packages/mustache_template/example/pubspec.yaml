@@ -1,0 +1,10 @@
+name: mustache_template_example
+description: Example app for mustache_template package.
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  mustache_template:
+    path: ../
