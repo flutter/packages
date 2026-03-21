@@ -19,7 +19,7 @@ void main() {
 
   final template = Template(source, name: 'example.html');
 
-  final String output = template.renderString({
+  final output = template.renderString({
     'names': [
       {'firstname': 'Greg', 'lastname': 'Lowe'},
       {'firstname': 'Bob', 'lastname': 'Johnson'},
