@@ -1,3 +1,7 @@
+## 2.0.4
+
+* Adds a runnable example app and refreshes README code samples.
+
 ## 2.0.3
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.

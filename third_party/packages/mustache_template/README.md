@@ -10,7 +10,7 @@ This library passes all [mustache specification](https://github.com/mustache/spe
 
 ## Example usage
 
-<?code-excerpt "readme_excerpts.dart (ExampleUsage)"?>
+<?code-excerpt "main.dart (ExampleUsage)" plaster="none"?>
 ```dart
 import 'package:mustache_template/mustache_template.dart';
 
@@ -27,7 +27,7 @@ void main() {
 
   final template = Template(source, name: 'template-filename.html');
 
-  final output = template.renderString({
+  final String output = template.renderString({
     'names': [
       {'firstname': 'Greg', 'lastname': 'Lowe'},
       {'firstname': 'Bob', 'lastname': 'Johnson'},
@@ -36,6 +36,7 @@ void main() {
 
   print(output);
 }
+
 ```
 
 A template is parsed when it is created, after parsing it can be rendered any number of times with different values. A TemplateException is thrown if there is a problem parsing or rendering the template.

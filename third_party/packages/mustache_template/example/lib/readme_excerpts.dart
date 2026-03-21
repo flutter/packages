@@ -9,44 +9,19 @@
 // ignore_for_file: prefer_function_declarations_over_variables
 // ignore_for_file: specify_nonobvious_local_variable_types
 
-// #docregion ExampleUsage
 import 'package:mustache_template/mustache_template.dart';
 
-void main() {
-  const source = '''
-{{# names }}
-  <div>{{ lastname }}, {{ firstname }}</div>
-{{/ names }}
-{{^ names }}
-  <div>No names.</div>
-{{/ names }}
-{{! I am a comment. }}
-''';
-
-  final template = Template(source, name: 'template-filename.html');
-
-  final output = template.renderString({
-    'names': [
-      {'firstname': 'Greg', 'lastname': 'Lowe'},
-      {'firstname': 'Bob', 'lastname': 'Johnson'},
-    ],
-  });
-
-  print(output);
-}
-// #enddocregion ExampleUsage
-
-void nestedPathsExample() {
+String nestedPathsExample() {
   // #docregion NestedPaths
   final t = Template('{{ author.name }}');
   final output = t.renderString({
     'author': {'name': 'Greg Lowe'},
   });
   // #enddocregion NestedPaths
-  print(output);
+  return output;
 }
 
-void partialsExample() {
+String partialsExample() {
   // #docregion Partials
   final partial = Template('{{ foo }}', name: 'partial');
 
@@ -62,48 +37,48 @@ void partialsExample() {
 
   final output = t.renderString({'foo': 'bar'}); // bar
   // #enddocregion Partials
-  print(output);
+  return output;
 }
 
-void lambdaSimpleExample() {
+String lambdaSimpleExample() {
   // #docregion LambdaSimple
   final t = Template('{{# foo }}{{/ foo }}');
   final lambda = (_) => 'bar';
   final output = t.renderString({'foo': lambda}); // bar
   // #enddocregion LambdaSimple
-  print(output);
+  return output;
 }
 
-void lambdaShownExample() {
+String lambdaShownExample() {
   // #docregion LambdaShown
   final t = Template('{{# foo }}hidden{{/ foo }}');
   final lambda = (_) => 'shown';
   final output = t.renderString({'foo': lambda}); // shown
   // #enddocregion LambdaShown
-  print(output);
+  return output;
 }
 
-void lambdaRenderExample() {
+String lambdaRenderExample() {
   // #docregion LambdaRender
   final t = Template('{{# foo }}oi{{/ foo }}');
   final lambda = (LambdaContext ctx) =>
       '<b>${ctx.renderString().toUpperCase()}</b>';
   final output = t.renderString({'foo': lambda}); // <b>OI</b>
   // #enddocregion LambdaRender
-  print(output);
+  return output;
 }
 
-void lambdaRenderBarExample() {
+String lambdaRenderBarExample() {
   // #docregion LambdaRenderBar
   final t = Template('{{# foo }}{{bar}}{{/ foo }}');
   final lambda = (LambdaContext ctx) =>
       '<b>${ctx.renderString().toUpperCase()}</b>';
   final output = t.renderString({'foo': lambda, 'bar': 'pub'}); // <b>PUB</b>
   // #enddocregion LambdaRenderBar
-  print(output);
+  return output;
 }
 
-void lambdaRenderSourceExample() {
+String lambdaRenderSourceExample() {
   // #docregion LambdaRenderSource
   final t = Template('{{# foo }}{{bar}}{{/ foo }}');
   final lambda = (LambdaContext ctx) =>
@@ -114,5 +89,5 @@ void lambdaRenderSourceExample() {
     'cmd': 'build',
   }); // pub build
   // #enddocregion LambdaRenderSource
-  print(output);
+  return output;
 }

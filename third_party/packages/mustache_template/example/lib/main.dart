@@ -4,10 +4,15 @@
 
 // ignore_for_file: avoid_print, prefer_function_declarations_over_variables
 
+// #docregion ExampleUsage
 import 'package:mustache_template/mustache_template.dart';
 
 void main() {
+  // #enddocregion ExampleUsage
+  print('=== Basic Template ===');
+
   // Basic template rendering with sections and inverted sections.
+  // #docregion ExampleUsage
   const source = '''
 {{# names }}
   <div>{{ lastname }}, {{ firstname }}</div>
@@ -15,9 +20,10 @@ void main() {
 {{^ names }}
   <div>No names.</div>
 {{/ names }}
+{{! I am a comment. }}
 ''';
 
-  final template = Template(source, name: 'example.html');
+  final template = Template(source, name: 'template-filename.html');
 
   final String output = template.renderString({
     'names': [
@@ -26,8 +32,8 @@ void main() {
     ],
   });
 
-  print('=== Basic Template ===');
   print(output);
+  // #enddocregion ExampleUsage
 
   // Nested paths
   final nested = Template('{{ author.name }}');
@@ -44,4 +50,7 @@ void main() {
       ctx.renderString().toUpperCase();
   print('=== Lambdas ===');
   print(lambdaTemplate.renderString({'transform': lambda}));
+  // #docregion ExampleUsage
 }
+
+// #enddocregion ExampleUsage
