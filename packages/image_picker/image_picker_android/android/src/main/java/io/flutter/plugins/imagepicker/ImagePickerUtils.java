@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import java.util.Arrays;
 
 final class ImagePickerUtils {
+  private static final int ANDROID_16_API_LEVEL = 36;
+
   /** returns true, if permission present in manifest, otherwise false */
   private static boolean isPermissionPresentInManifest(Context context, String permissionName) {
     try {
@@ -102,9 +104,6 @@ final class ImagePickerUtils {
    * <p>See <a href="https://github.com/flutter/flutter/issues/182071">flutter/flutter#182071</a>.
    */
   static boolean effectiveUsePhotoPicker(boolean usePhotoPickerFromDart) {
-    if (Build.VERSION.SDK_INT >= 36) {
-      return true;
-    }
-    return usePhotoPickerFromDart;
+    return Build.VERSION.SDK_INT >= ANDROID_16_API_LEVEL || usePhotoPickerFromDart;
   }
 }
