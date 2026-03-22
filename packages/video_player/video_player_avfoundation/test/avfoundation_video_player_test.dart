@@ -509,6 +509,20 @@ void main() {
       verify(playerApi.setPlaybackSpeed(speed));
     });
 
+    test('setBandwidthLimit', () async {
+      final (
+        AVFoundationVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
+      const maxBandwidthBps = 5000000;
+      await player.setBandwidthLimit(1, maxBandwidthBps);
+
+      verify(playerApi.setBandwidthLimit(maxBandwidthBps));
+    });
+
     test('seekTo', () async {
       final (
         AVFoundationVideoPlayer player,

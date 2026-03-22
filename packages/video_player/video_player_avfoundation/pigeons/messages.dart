@@ -93,4 +93,17 @@ abstract class VideoPlayerInstanceApi {
   List<MediaSelectionAudioTrackData> getAudioTracks();
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
+
+  /// Sets the maximum bandwidth limit in bits per second for HLS adaptive bitrate streaming.
+  /// Pass 0 to remove any bandwidth limit and allow the player to select quality freely.
+  /// Common values:
+  ///   - 360p: 500000 bps (500 kbps)
+  ///   - 480p: 800000 bps (800 kbps)
+  ///   - 720p: 1200000 bps (1.2 Mbps)
+  ///   - 1080p: 2500000 bps (2.5 Mbps)
+  ///
+  /// Note: On iOS/macOS, this sets the preferredPeakBitRate on AVPlayerItem,
+  /// which influences AVPlayer's HLS variant selection.
+  @ObjCSelector('setBandwidthLimit:')
+  void setBandwidthLimit(int maxBandwidthBps);
 }

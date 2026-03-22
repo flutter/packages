@@ -508,6 +508,27 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void)setBandwidthLimit:(NSInteger)maxBandwidthBps
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  if (!currentItem) {
+    *error = [FlutterError errorWithCode:@"no_player_item"
+                                 message:@"The player has no current item."
+                                 details:nil];
+    return;
+  }
+
+  if (maxBandwidthBps <= 0) {
+    // A value of 0 tells AVFoundation to use its default limit, effectively
+    // removing any cap and letting the player choose quality freely.
+    currentItem.preferredPeakBitRate = 0;
+  } else {
+    // AVPlayer will attempt to select HLS variant streams at or below this
+    // bitrate. The actual bitrate depends on available variants.
+    currentItem.preferredPeakBitRate = (double)maxBandwidthBps;
+  }
+}
+
 #pragma mark - Private
 
 - (int64_t)duration {

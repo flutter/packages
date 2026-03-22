@@ -678,4 +678,39 @@ class VideoPlayerInstanceApi {
       return;
     }
   }
+
+  /// Sets the maximum bandwidth limit in bits per second for HLS adaptive bitrate streaming.
+  /// Pass 0 to remove any bandwidth limit and allow the player to select quality freely.
+  /// Common values:
+  ///   - 360p: 500000 bps (500 kbps)
+  ///   - 480p: 800000 bps (800 kbps)
+  ///   - 720p: 1200000 bps (1.2 Mbps)
+  ///   - 1080p: 2500000 bps (2.5 Mbps)
+  ///
+  /// Note: On iOS/macOS, this sets the preferredPeakBitRate on AVPlayerItem,
+  /// which influences AVPlayer's HLS variant selection.
+  Future<void> setBandwidthLimit(int maxBandwidthBps) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.setBandwidthLimit$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[maxBandwidthBps],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }

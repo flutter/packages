@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds `setBandwidthLimit` for adaptive bitrate streaming via `preferredPeakBitRate`.
+
 ## 2.9.4
 
 * Ensures that the display link does not continue requesting frames after a player is disposed.
