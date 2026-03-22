@@ -6,8 +6,11 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -18,19 +21,25 @@ import androidx.annotation.NonNull;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.exifinterface.media.ExifInterface;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ImageCaptureTest {
+  @Rule public TemporaryFolder tempFolder = new TemporaryFolder();
+
   @Test
   public void pigeon_defaultConstructor_createsImageCaptureWithCorrectConfiguration() {
     final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
@@ -244,5 +253,82 @@ public class ImageCaptureTest {
     api.setTargetRotation(instance, rotation);
 
     verify(instance).setTargetRotation((int) rotation);
+  }
+
+  @Test
+  public void patchExifExposureTime_writesExposureTimeWhenMissing() throws IOException {
+    final File file = tempFolder.newFile("test.jpg");
+    try (MockedConstruction<ExifInterface> mockedExif =
+        mockConstruction(
+            ExifInterface.class,
+            (mock, ctx) ->
+                when(mock.getAttribute(ExifInterface.TAG_EXPOSURE_TIME)).thenReturn(null))) {
+      ImageCaptureProxyApi.patchExifExposureTime(file, 500_000_000L);
+      ExifInterface exif = mockedExif.constructed().get(0);
+      verify(exif).setAttribute(ExifInterface.TAG_EXPOSURE_TIME, String.valueOf(0.5));
+      verify(exif).saveAttributes();
+    }
+  }
+
+  @Test
+  public void patchExifExposureTime_doesNotOverwriteExistingExposureTime() throws IOException {
+    final File file = tempFolder.newFile("test.jpg");
+    try (MockedConstruction<ExifInterface> mockedExif =
+        mockConstruction(
+            ExifInterface.class,
+            (mock, ctx) ->
+                when(mock.getAttribute(ExifInterface.TAG_EXPOSURE_TIME)).thenReturn("0.8"))) {
+      ImageCaptureProxyApi.patchExifExposureTime(file, 1_000_000_000L);
+      ExifInterface exif = mockedExif.constructed().get(0);
+      verify(exif).getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+      verify(exif, never()).setAttribute(eq(ExifInterface.TAG_EXPOSURE_TIME), any());
+      verify(exif, never()).saveAttributes();
+    }
+  }
+
+  @Test
+  public void patchExifExposureTime_doesNothingWhenExposureTimeIsNull() throws IOException {
+    final File file = tempFolder.newFile("test.jpg");
+    try (MockedConstruction<ExifInterface> mockedExif =
+        mockConstruction(ExifInterface.class)) {
+      ImageCaptureProxyApi.patchExifExposureTime(file, null);
+      assertEquals(0, mockedExif.constructed().size());
+    }
+  }
+
+  @Test
+  public void patchExifExposureTime_continuesOnExifError() {
+    final File nonExistentFile = new File("/non/existent/path.jpg");
+    // Should not throw even when ExifInterface fails to open the file
+    ImageCaptureProxyApi.patchExifExposureTime(nonExistentFile, 1_000_000_000L);
+  }
+
+  @Test
+  public void onImageSaved_callsPatchExifExposureTime() {
+    final ProxyApiRegistrar mockApiRegistrar = mock(ProxyApiRegistrar.class);
+    final ImageCaptureProxyApi api = new ImageCaptureProxyApi(mockApiRegistrar);
+    api.lastExposureTimeNs.set(123_000_000L);
+
+    final File mockFile = mock(File.class);
+    when(mockFile.getAbsolutePath()).thenReturn("test/path.jpg");
+
+    final String[] result = {null};
+    final ImageCapture.OnImageSavedCallback callback =
+        api.createOnImageSavedCallback(
+            mockFile,
+            mock(SystemServicesManager.class),
+            ResultCompat.asCompatCallback(
+                reply -> {
+                  result[0] = reply.getOrNull();
+                  return null;
+                }));
+
+    try (MockedStatic<ImageCaptureProxyApi> mockedApi =
+        mockStatic(ImageCaptureProxyApi.class)) {
+      callback.onImageSaved(mock(ImageCapture.OutputFileResults.class));
+      mockedApi.verify(
+          () -> ImageCaptureProxyApi.patchExifExposureTime(mockFile, 123_000_000L));
+    }
+    assertEquals("test/path.jpg", result[0]);
   }
 }
