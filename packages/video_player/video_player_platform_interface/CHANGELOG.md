@@ -1,5 +1,6 @@
-## NEXT
+## 6.7.0
 
+* Adds `setBandwidthLimit` and `isBandwidthLimitSupportAvailable` methods for adaptive bitrate streaming control.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.6.0
