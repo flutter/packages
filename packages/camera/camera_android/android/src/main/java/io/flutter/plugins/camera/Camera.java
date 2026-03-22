@@ -135,8 +135,9 @@ class Camera
   private CaptureTimeoutsWrapper captureTimeouts;
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
-  /** Exposure time in nanoseconds for the current capture */
-  private Long currentCaptureExposureTime;
+
+  private final StillCaptureExposurePairing stillCaptureExposurePairing =
+      new StillCaptureExposurePairing();
 
   Messages.Result<String> flutterResult;
 
@@ -628,8 +629,7 @@ class Camera
 
     flutterResult = result;
 
-    // Reset exposure time for new capture
-    currentCaptureExposureTime = null;
+    stillCaptureExposurePairing.reset();
 
     // Create temporary file.
     final File outputDir = applicationContext.getCacheDir();
@@ -733,9 +733,8 @@ class Camera
               @NonNull CameraCaptureSession session,
               @NonNull CaptureRequest request,
               @NonNull TotalCaptureResult result) {
-            // Extract exposure time from the capture result for this specific image
-            Long exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
-            currentCaptureExposureTime = exposureTime;
+            stillCaptureExposurePairing.onTotalCaptureResult(
+                result, Camera.this::enqueueStillPictureWithExposure);
             unlockAutoFocus();
           }
         };
@@ -1247,6 +1246,11 @@ class Camera
       return;
     }
 
+    stillCaptureExposurePairing.onImageAvailable(image, this::enqueueStillPictureWithExposure);
+  }
+
+  private void enqueueStillPictureWithExposure(
+      @NonNull Image image, @Nullable Long exposureTimeNs) {
     backgroundHandler.post(
         new ImageSaver(
             image,
@@ -1262,7 +1266,7 @@ class Camera
                 dartMessenger.error(flutterResult, errorCode, errorMessage, null);
               }
             },
-            currentCaptureExposureTime));
+            exposureTimeNs));
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 

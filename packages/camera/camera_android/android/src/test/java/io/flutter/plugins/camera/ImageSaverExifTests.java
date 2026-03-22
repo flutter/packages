@@ -121,6 +121,7 @@ public class ImageSaverExifTests {
       imageSaver.run();
       verify(mockCallback).onComplete("absolute/path");
       verify(mockCallback, never()).onError(any(), any());
+      org.junit.Assert.assertFalse(mockedExif.constructed().isEmpty());
     }
   }
 }
