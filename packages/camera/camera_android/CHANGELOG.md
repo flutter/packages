@@ -1,7 +1,10 @@
-## 0.10.10+15
+## 0.10.10+16
 
 * Manually writes exposure time to EXIF metadata on Honor devices where Camera2 API doesn't automatically transfer it. Only sets exposure time if not already present in EXIF to avoid overwriting existing metadata.
 * Pairs still JPEG images with their `TotalCaptureResult` using matching sensor timestamps so exposure time is available for EXIF even when `onImageAvailable` is delivered before `onCaptureCompleted`.
+
+## 0.10.10+15
+* Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return within try blocks are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
 
 ## 0.10.10+14
 

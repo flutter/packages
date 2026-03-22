@@ -51,6 +51,15 @@ class IsPlayingStateEvent extends PlatformVideoEvent {
   late final bool isPlaying;
 }
 
+/// Sent when audio tracks change.
+///
+/// This includes when the selected audio track changes after calling selectAudioTrack.
+/// Corresponds to ExoPlayer's onTracksChanged.
+class AudioTrackChangedEvent extends PlatformVideoEvent {
+  /// The ID of the newly selected audio track, if any.
+  late final String? selectedTrackId;
+}
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({required this.playerId});
@@ -71,6 +80,72 @@ class TexturePlayerIds {
 
   final int playerId;
   final int textureId;
+}
+
+class PlaybackState {
+  PlaybackState({required this.playPosition, required this.bufferPosition});
+
+  /// The current playback position, in milliseconds.
+  final int playPosition;
+
+  /// The current buffer position, in milliseconds.
+  final int bufferPosition;
+}
+
+/// Represents an audio track in a video.
+class AudioTrackMessage {
+  AudioTrackMessage({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String id;
+  String label;
+  String language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
+/// Raw audio track data from ExoPlayer Format objects.
+class ExoPlayerAudioTrackData {
+  ExoPlayerAudioTrackData({
+    required this.groupIndex,
+    required this.trackIndex,
+    this.label,
+    this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  int groupIndex;
+  int trackIndex;
+  String? label;
+  String? language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
+/// Container for raw audio track data from Android ExoPlayer.
+class NativeAudioTrackData {
+  NativeAudioTrackData({this.exoPlayerTracks});
+
+  /// ExoPlayer-based tracks
+  List<ExoPlayerAudioTrackData>? exoPlayerTracks;
 }
 
 @HostApi()
@@ -111,6 +186,12 @@ abstract class VideoPlayerInstanceApi {
 
   /// Returns the current buffer position, in milliseconds.
   int getBufferedPosition();
+
+  /// Gets the available audio tracks for the video.
+  NativeAudioTrackData getAudioTracks();
+
+  /// Selects which audio track is chosen for playback from its [groupIndex] and [trackIndex]
+  void selectAudioTrack(int groupIndex, int trackIndex);
 }
 
 @EventChannelApi()

@@ -13,6 +13,7 @@ import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/process_runner.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
@@ -52,10 +53,18 @@ class CreateAllPackagesAppCommand extends PackageCommand {
           'The replacement will be done before any tool-driven '
           'modifications.',
     );
+    argParser.addFlag(
+      _swiftPackageManagerFlag,
+      defaultsTo: null,
+      help:
+          'Explicitly sets the app-level flag for Swift Package Manager in '
+          'pubspec.yaml.',
+    );
   }
 
   static const String _legacySourceFlag = 'legacy-source';
   static const String _outputDirectoryFlag = 'output-dir';
+  static const String _swiftPackageManagerFlag = 'swift-package-manager';
 
   /// The location to create the synthesized app project.
   Directory get _appDirectory => packagesDir.fileSystem
@@ -121,6 +130,13 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       // flutter pub get above, so can't currently be run on Windows.
       if (!platform.isWindows) _updateMacosPodfile(),
     ]);
+
+    final bool? swiftPackageManagerOverride = getNullableBoolArg(
+      _swiftPackageManagerFlag,
+    );
+    if (swiftPackageManagerOverride != null) {
+      setSwiftPackageManagerState(app, enabled: swiftPackageManagerOverride);
+    }
   }
 
   Future<int> _createApp() async {
@@ -424,13 +440,17 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     final File podfile = app
         .platformDirectory(FlutterPlatform.macos)
         .childFile('Podfile');
-    _adjustFile(
-      podfile,
-      replacements: <String, List<String>>{
-        // macOS 10.15 is required by in_app_purchase.
-        'platform :osx': <String>["platform :osx, '10.15'"],
-      },
-    );
+    if (podfile.existsSync()) {
+      _adjustFile(
+        podfile,
+        replacements: <String, List<String>>{
+          // macOS 10.15 is required by in_app_purchase.
+          'platform :osx': <String>["platform :osx, '10.15'"],
+        },
+      );
+    } else {
+      print('Unable to find ${podfile.path} for updating. Skipping.');
+    }
   }
 
   Future<void> _updateMacOSPbxproj() async {
@@ -457,9 +477,9 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     _adjustFile(
       pbxprojFile,
       replacements: <String, List<String>>{
-        // iOS 14 is required by google_maps_flutter.
+        // iOS 15 is required by google_maps_flutter_ios_sdk9.
         'IPHONEOS_DEPLOYMENT_TARGET': <String>[
-          '				IPHONEOS_DEPLOYMENT_TARGET = 14.0;',
+          '				IPHONEOS_DEPLOYMENT_TARGET = 15.0;',
         ],
       },
     );

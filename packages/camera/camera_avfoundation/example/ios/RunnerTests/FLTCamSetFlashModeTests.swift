@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class FLTCamSetFlashModeTests: XCTestCase {
   private func createCamera() -> (Camera, MockCaptureDevice, MockCapturePhotoOutput) {
     let mockDevice = MockCaptureDevice()
@@ -39,8 +34,9 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.torch) { error in
-      XCTAssertNil(error)
+    camera.setFlashMode(.torch) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -56,10 +52,14 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.torch) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setFlashModeFailed")
-      XCTAssertEqual(error?.message, "Device does not support torch mode")
+    camera.setFlashMode(.torch) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setFlashModeFailed")
+        XCTAssertEqual(error.message, "Device does not support torch mode")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
@@ -74,10 +74,14 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.torch) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setFlashModeFailed")
-      XCTAssertEqual(error?.message, "Torch mode is currently not available")
+    camera.setFlashMode(.torch) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setFlashModeFailed")
+        XCTAssertEqual(error.message, "Torch mode is currently not available")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
@@ -101,8 +105,14 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.auto) { error in
-      XCTAssertNil(error)
+    camera.setFlashMode(.auto) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
 
@@ -118,10 +128,14 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.auto) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setFlashModeFailed")
-      XCTAssertEqual(error?.message, "Device does not have flash capabilities")
+    camera.setFlashMode(.auto) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setFlashModeFailed")
+        XCTAssertEqual(error.message, "Device does not have flash capabilities")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
@@ -138,10 +152,14 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setFlashMode(.auto) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setFlashModeFailed")
-      XCTAssertEqual(error?.message, "Device does not support this specific flash mode")
+    camera.setFlashMode(.auto) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setFlashModeFailed")
+        XCTAssertEqual(error.message, "Device does not support this specific flash mode")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 

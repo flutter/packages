@@ -19,15 +19,14 @@ class AndroidViewWidget extends StatelessWidget {
   /// The [AndroidViewWidget] should only be instantiated internally.
   /// This constructor is visible for testing purposes only and should
   /// never be called externally.
-  AndroidViewWidget({
+  const AndroidViewWidget({
     super.key,
     required this.view,
     this.layoutDirection = TextDirection.ltr,
     this.onPlatformViewCreated,
     this.displayWithHybridComposition = false,
-    ima.PigeonInstanceManager? instanceManager,
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager = instanceManager ?? ima.PigeonInstanceManager.instance;
+  });
 
   /// The unique identifier for the view type to be embedded.
   static const String _viewType =
@@ -35,13 +34,6 @@ class AndroidViewWidget extends StatelessWidget {
 
   /// The reference to the Android native view that should be shown.
   final ima.View view;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  final ima.PigeonInstanceManager instanceManager;
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -82,7 +74,9 @@ class AndroidViewWidget extends StatelessWidget {
   }
 
   AndroidViewController _initAndroidView(PlatformViewCreationParams params) {
-    final int? identifier = instanceManager.getIdentifier(view);
+    final int? identifier = ima.PigeonInstanceManager.instance.getIdentifier(
+      view,
+    );
 
     if (displayWithHybridComposition) {
       return platformViewsServiceProxy.initExpensiveAndroidView(

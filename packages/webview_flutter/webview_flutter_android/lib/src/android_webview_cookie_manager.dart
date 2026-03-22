@@ -83,8 +83,7 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
     AndroidWebViewController controller,
     bool accept,
   ) {
-    // ignore: invalid_use_of_protected_member
-    final WebView webView = _cookieManager.pigeon_instanceManager
+    final WebView webView = PigeonInstanceManager.instance
         .getInstanceWithWeakReference(controller.webViewIdentifier)!;
     return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }

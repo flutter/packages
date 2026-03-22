@@ -120,6 +120,8 @@ void main() {
         final List<PurchaseDetails> result = await completer.future;
         expect(result.length, 1);
         expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.purchased);
+        expect(result.first.pendingCompletePurchase, true);
       },
     );
 
@@ -172,7 +174,7 @@ void main() {
     });
 
     test(
-      'buying consumable, should get PurchaseVerificationData with serverVerificationData and localVerificationData',
+      'buying consumable, should get PurchaseVerificationData with serverVerificationData, localVerificationData, and appAccountToken',
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
@@ -207,6 +209,10 @@ void main() {
         expect(
           result.first.verificationData.localVerificationData,
           'jsonRepresentation',
+        );
+        expect(
+          (result.first as SK2PurchaseDetails).appAccountToken,
+          'appAccountToken',
         );
       },
     );
@@ -337,6 +343,116 @@ void main() {
             fakeStoreKit2Platform.lastPurchaseOptions!;
 
         expect(lastPurchaseOptions.quantity, 1);
+      },
+    );
+
+    test(
+      'user cancelled purchase should emit canceled status to purchaseStream',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.userCancelled;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.canceled);
+        expect(result.first.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'pending purchase should emit pending status to purchaseStream',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.pending;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.pending);
+        expect(result.first.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'unverified purchase should receive transaction with purchased status',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.unverified;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        // Native side sends the transaction for unverified case
+        // The transaction comes with purchased status from native side
+        expect(result.first.status, PurchaseStatus.purchased);
+        expect(result.first.pendingCompletePurchase, true);
       },
     );
   });
@@ -657,5 +773,37 @@ void main() {
         );
       },
     );
+  });
+
+  group('unfinished transactions', () {
+    test('should return unfinished transactions', () async {
+      final List<SK2Transaction> transactions =
+          await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.id, '123');
+      expect(transactions.first.productId, 'product_id');
+    });
+
+    test(
+      'should expose receiptData (JWS) in unfinished transactions',
+      () async {
+        final List<SK2Transaction> transactions =
+            await SK2Transaction.unfinishedTransactions();
+
+        expect(transactions, isNotEmpty);
+        expect(transactions.first.receiptData, isNotNull);
+        expect(transactions.first.receiptData, 'fake_jws_representation');
+      },
+    );
+
+    test('should expose appAccountToken in unfinished transactions', () async {
+      final List<SK2Transaction> transactions =
+          await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.appAccountToken, isNotNull);
+      expect(transactions.first.appAccountToken, 'fake_app_account_token');
+    });
   });
 }

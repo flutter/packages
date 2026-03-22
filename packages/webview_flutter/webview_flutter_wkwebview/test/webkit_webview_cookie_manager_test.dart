@@ -8,7 +8,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
-import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_cookie_manager_test.mocks.dart';
@@ -17,16 +16,18 @@ import 'webkit_webview_cookie_manager_test.mocks.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
   group('WebKitWebViewCookieManager', () {
     test('clearCookies', () {
       final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
 
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
       final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-          ),
-        ),
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       when(
@@ -51,20 +52,20 @@ void main() {
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
       Map<HttpCookiePropertyKey, Object?>? cookieProperties;
-      final cookie = HTTPCookie.pigeon_detached(
-        pigeon_instanceManager: TestInstanceManager(),
-      );
+      final cookie = HTTPCookie.pigeon_detached();
+
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
+      PigeonOverrides.hTTPCookie_new =
+          ({
+            required Map<HttpCookiePropertyKey, Object> properties,
+            dynamic observeValue,
+          }) {
+            cookieProperties = properties;
+            return cookie;
+          };
       final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-            newHTTPCookie:
-                ({required Map<HttpCookiePropertyKey, Object> properties}) {
-                  cookieProperties = properties;
-                  return cookie;
-                },
-          ),
-        ),
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       await manager.setCookie(
@@ -86,12 +87,10 @@ void main() {
       final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
       final manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-          ),
-        ),
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       expect(
@@ -107,9 +106,4 @@ void main() {
       );
     });
   });
-}
-
-// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
-class TestInstanceManager extends PigeonInstanceManager {
-  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

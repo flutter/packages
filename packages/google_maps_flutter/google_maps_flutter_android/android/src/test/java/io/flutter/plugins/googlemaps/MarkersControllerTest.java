@@ -17,16 +17,22 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions.CollisionBehavior;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerCollisionBehavior;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,7 +87,8 @@ public class MarkersControllerTest {
         .setZIndex(0.0)
         .setConsumeTapEvents(false)
         .setIcon(icon)
-        .setInfoWindow(infoWindow);
+        .setInfoWindow(infoWindow)
+        .setCollisionBehavior(PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY);
   }
 
   @Before
@@ -90,14 +97,16 @@ public class MarkersControllerTest {
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
-    clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
+    clusterManagersController =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     controller =
         new MarkersController(
             flutterApi,
             clusterManagersController,
             assetManager,
             density,
-            bitmapDescriptorFactoryWrapper);
+            bitmapDescriptorFactoryWrapper,
+            PlatformMarkerType.MARKER);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
@@ -199,15 +208,27 @@ public class MarkersControllerTest {
 
     when(marker.getId()).thenReturn(googleMarkerId);
 
-    // Add marker and capture the markerBuilder
+    // Store reference to verify later, since markerIdToMarkerBuilder is private
+    final MarkerBuilder[] addedMarkerBuilder = new MarkerBuilder[1];
+
+    // Add marker and verify addItems is called with correct parameters
     controller.addMarkers(Collections.singletonList(builder.build()));
-    ArgumentCaptor<MarkerBuilder> captor = ArgumentCaptor.forClass(MarkerBuilder.class);
-    Mockito.verify(clusterManagersController, times(1)).addItem(captor.capture());
-    MarkerBuilder capturedMarkerBuilder = captor.getValue();
-    assertEquals(clusterManagerId, capturedMarkerBuilder.clusterManagerId());
+    Mockito.verify(clusterManagersController, times(1))
+        .addItems(
+            eq(clusterManagerId),
+            Mockito.argThat(
+                markerBuilders -> {
+                  if (markerBuilders.size() == 1
+                      && markerBuilders.get(0).clusterManagerId().equals(clusterManagerId)) {
+                    // Store reference for later use in onClusterItemRendered
+                    addedMarkerBuilder[0] = markerBuilders.get(0);
+                    return true;
+                  }
+                  return false;
+                }));
 
     // clusterManagersController calls onClusterItemRendered with created marker.
-    controller.onClusterItemRendered(capturedMarkerBuilder, marker);
+    controller.onClusterItemRendered(addedMarkerBuilder[0], marker);
 
     // Change marker to test that markerController is created and the marker can be updated
     final LatLng latLng2 = new LatLng(3.3, 4.4);
@@ -226,9 +247,12 @@ public class MarkersControllerTest {
     controller.removeMarkers(Collections.singletonList(googleMarkerId));
 
     Mockito.verify(clusterManagersController, times(1))
-        .removeItem(
+        .removeItems(
+            eq(clusterManagerId),
             Mockito.argThat(
-                markerBuilder -> markerBuilder.clusterManagerId().equals(clusterManagerId)));
+                markerBuilders ->
+                    markerBuilders.size() == 1
+                        && markerBuilders.get(0).clusterManagerId().equals(clusterManagerId)));
   }
 
   @Test
@@ -265,5 +289,232 @@ public class MarkersControllerTest {
     Mockito.verify(clusterManagersController, times(0)).removeItem(any());
 
     Mockito.verify(spyMarkerCollection, times(1)).remove(marker);
+  }
+
+  @Test
+  public void markerBuilder_setCollisionBehavior() {
+    Messages.PlatformMarker platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
+    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "1", PlatformMarkerType.ADVANCED_MARKER);
+
+    // Default collision behavior of an AdvancedMarker
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    MarkerOptions markerOptions = markerBuilder.build();
+    Assert.assertEquals(AdvancedMarkerOptions.class, markerOptions.getClass());
+    Assert.assertEquals(
+        CollisionBehavior.REQUIRED, ((AdvancedMarkerOptions) markerOptions).getCollisionBehavior());
+
+    // Customized collision behavior of an AdvancedMarker
+    platformMarker =
+        defaultMarkerBuilder()
+            .setMarkerId("1")
+            .setCollisionBehavior(PlatformMarkerCollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY)
+            .build();
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    markerOptions = markerBuilder.build();
+    Assert.assertEquals(AdvancedMarkerOptions.class, markerOptions.getClass());
+    Assert.assertEquals(
+        CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+        ((AdvancedMarkerOptions) markerOptions).getCollisionBehavior());
+
+    // Legacy markers don't have collision behavior in the marker options
+    platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
+    markerBuilder = new MarkerBuilder("m_1", "1", PlatformMarkerType.MARKER);
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    markerOptions = markerBuilder.build();
+    Assert.assertEquals(MarkerOptions.class, markerOptions.getClass());
+  }
+
+  @Test
+  public void controller_BatchAddMultipleMarkersWithClusterManagerId() {
+    final String clusterManagerId = "cm123";
+
+    // Create multiple markers with the same cluster manager
+    final List<Messages.PlatformMarker> markers = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId("marker" + i)
+          .setClusterManagerId(clusterManagerId)
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(1.0 + i)
+                  .setLongitude(2.0 + i)
+                  .build());
+      markers.add(builder.build());
+    }
+
+    // Add all markers in one batch
+    controller.addMarkers(markers);
+
+    // Verify addItems is called exactly once with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .addItems(
+            eq(clusterManagerId),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
+
+    // Verify addItem is never called (we're using batch operation)
+    Mockito.verify(clusterManagersController, times(0)).addItem(any());
+  }
+
+  @Test
+  public void controller_BatchRemoveMultipleMarkersWithClusterManagerId() {
+    final String clusterManagerId = "cm123";
+
+    // First add markers
+    final List<Messages.PlatformMarker> markers = new ArrayList<>();
+    final List<String> markerIds = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      String markerId = "marker" + i;
+      markerIds.add(markerId);
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId(markerId)
+          .setClusterManagerId(clusterManagerId)
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(1.0 + i)
+                  .setLongitude(2.0 + i)
+                  .build());
+      markers.add(builder.build());
+    }
+
+    controller.addMarkers(markers);
+
+    // Remove all markers in one batch
+    controller.removeMarkers(markerIds);
+
+    // Verify removeItems is called exactly once with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .removeItems(
+            eq(clusterManagerId),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
+
+    // Verify removeItem is never called (we're using batch operation)
+    Mockito.verify(clusterManagersController, times(0)).removeItem(any());
+  }
+
+  @Test
+  public void controller_BatchChangeMarkersWithClusterManagerChange() {
+    final String clusterManagerId1 = "cm123";
+    final String clusterManagerId2 = "cm456";
+
+    // First add markers to cluster manager 1
+    final List<Messages.PlatformMarker> initialMarkers = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId("marker" + i)
+          .setClusterManagerId(clusterManagerId1)
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(1.0 + i)
+                  .setLongitude(2.0 + i)
+                  .build());
+      initialMarkers.add(builder.build());
+    }
+    controller.addMarkers(initialMarkers);
+
+    // Reset mock to clear invocation counts
+    Mockito.reset(clusterManagersController);
+
+    // Now change all markers to cluster manager 2
+    final List<Messages.PlatformMarker> changedMarkers = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId("marker" + i)
+          .setClusterManagerId(clusterManagerId2) // Different cluster manager
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(3.0 + i)
+                  .setLongitude(4.0 + i)
+                  .build());
+      changedMarkers.add(builder.build());
+    }
+    controller.changeMarkers(changedMarkers);
+
+    // Verify removeItems is called exactly once for cluster manager 1 with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .removeItems(
+            eq(clusterManagerId1),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId1))));
+
+    // Verify addItems is called exactly once for cluster manager 2 with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .addItems(
+            eq(clusterManagerId2),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId2))));
+
+    // Verify individual operations are never called (we're using batch operations)
+    Mockito.verify(clusterManagersController, times(0)).addItem(any());
+    Mockito.verify(clusterManagersController, times(0)).removeItem(any());
+  }
+
+  @Test
+  public void controller_ChangeMarkerInPlace() {
+    final Marker marker = mock(Marker.class);
+    final String markerId = "marker1";
+    final String clusterManagerId = "cm123";
+
+    when(marker.getId()).thenReturn(markerId);
+
+    // Add a clustered marker
+    final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+    builder
+        .setMarkerId(markerId)
+        .setClusterManagerId(clusterManagerId)
+        .setPosition(
+            new Messages.PlatformLatLng.Builder().setLatitude(1.0).setLongitude(2.0).build());
+    controller.addMarkers(Collections.singletonList(builder.build()));
+
+    // Capture the MarkerBuilder passed to addItems
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<MarkerBuilder>> captor = ArgumentCaptor.forClass(List.class);
+    Mockito.verify(clusterManagersController).addItems(eq(clusterManagerId), captor.capture());
+    MarkerBuilder capturedMarkerBuilder = captor.getValue().get(0);
+
+    // Simulate cluster render so markerController exists
+    controller.onClusterItemRendered(capturedMarkerBuilder, marker);
+
+    // Reset to clear invocation counts
+    Mockito.reset(clusterManagersController);
+
+    // Change marker in place (same clusterManagerId)
+    final LatLng newLatLng = new LatLng(3.0, 4.0);
+    builder.setPosition(
+        new Messages.PlatformLatLng.Builder()
+            .setLatitude(newLatLng.latitude)
+            .setLongitude(newLatLng.longitude)
+            .build());
+    controller.changeMarkers(Collections.singletonList(builder.build()));
+
+    // In-place update: marker position is updated directly
+    Mockito.verify(marker, times(1)).setPosition(newLatLng);
+    // No re-clustering needed
+    Mockito.verify(clusterManagersController, times(0)).addItems(any(), any());
+    Mockito.verify(clusterManagersController, times(0)).removeItems(any(), any());
   }
 }

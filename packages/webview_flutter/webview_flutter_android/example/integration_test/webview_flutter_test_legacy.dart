@@ -150,7 +150,7 @@ Future<void> main() async {
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
-            return AndroidWebView(instanceManager: instanceManager).build(
+            return AndroidWebView().build(
               context: context,
               creationParams: CreationParams(
                 webSettings: WebSettings(
