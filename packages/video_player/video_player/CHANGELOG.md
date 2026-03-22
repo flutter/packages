@@ -1,3 +1,8 @@
+## 2.12.0
+
+* Adds `setBandwidthLimit` method for adaptive bitrate streaming control.
+* Adds internal `AdaptiveBitrateManager` for automatic quality adjustment based on buffering events.
+
 ## 2.11.1
 
 * Optimizes caption retrieval with binary search.
