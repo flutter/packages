@@ -1,3 +1,7 @@
+## 0.7.1+1
+
+* Writes exposure time to EXIF metadata when the device's JPEG encoder omits it. Uses Camera2 interop to capture `SENSOR_EXPOSURE_TIME` and patches EXIF after CameraX saves the file.
+
 ## 0.7.1
 
 * Removes outdated restrictions against concurrent camera use cases.

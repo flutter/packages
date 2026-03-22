@@ -4,14 +4,25 @@
 
 package io.flutter.plugins.camerax;
 
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
+import android.hardware.camera2.TotalCaptureResult;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.annotation.VisibleForTesting;
+import androidx.camera.camera2.interop.Camera2Interop;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.exifinterface.media.ExifInterface;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -22,8 +33,13 @@ import kotlin.jvm.functions.Function1;
  * native class or an instance of that class.
  */
 class ImageCaptureProxyApi extends PigeonApiImageCapture {
+  private static final String TAG = "ImageCaptureProxyApi";
+
   static final String TEMPORARY_FILE_NAME = "CAP";
   static final String JPG_FILE_TYPE = ".jpg";
+
+  @VisibleForTesting
+  final AtomicReference<Long> lastExposureTimeNs = new AtomicReference<>();
 
   ImageCaptureProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
@@ -35,6 +51,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
+  @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override
   public ImageCapture pigeon_defaultConstructor(
@@ -62,6 +79,22 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);
     }
+
+    Camera2Interop.Extender<ImageCapture> extender = new Camera2Interop.Extender<>(builder);
+    extender.setSessionCaptureCallback(
+        new CameraCaptureSession.CaptureCallback() {
+          @Override
+          public void onCaptureCompleted(
+              @NonNull CameraCaptureSession session,
+              @NonNull CaptureRequest request,
+              @NonNull TotalCaptureResult result) {
+            Long exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+            if (exposureTime != null) {
+              lastExposureTimeNs.set(exposureTime);
+            }
+          }
+        });
+
     return builder.build();
   }
 
@@ -128,6 +161,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     return new ImageCapture.OnImageSavedCallback() {
       @Override
       public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+        patchExifExposureTime(file, lastExposureTimeNs.get());
         ResultCompat.success(file.getAbsolutePath(), callback);
       }
 
@@ -159,6 +193,24 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
         return "The ImageCapture use case was bound to an invalid camera by the Flutter camera plugin. If you see this error, please file an issue if you cannot find one that already exists: https://github.com/flutter/flutter/issues/.";
       default:
         return "An unknown error has occurred while attempting to take a picture. Check the logs for more details.";
+    }
+  }
+
+  @VisibleForTesting
+  static void patchExifExposureTime(@NonNull File file, @Nullable Long exposureTimeNs) {
+    if (exposureTimeNs == null) {
+      return;
+    }
+    try {
+      ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+      String existingExposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+      if (existingExposureTime == null || existingExposureTime.isEmpty()) {
+        double exposureTimeInSeconds = exposureTimeNs / 1_000_000_000.0;
+        exif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, String.valueOf(exposureTimeInSeconds));
+        exif.saveAttributes();
+      }
+    } catch (IOException e) {
+      Log.w(TAG, "Failed to write exposure time to EXIF", e);
     }
   }
 }
