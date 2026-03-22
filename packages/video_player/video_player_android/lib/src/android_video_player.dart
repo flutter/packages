@@ -266,6 +266,17 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return true;
   }
 
+  @override
+  Future<void> setBandwidthLimit(int playerId, int maxBandwidthBps) {
+    return _playerWith(id: playerId).setBandwidthLimit(maxBandwidthBps);
+  }
+
+  @override
+  bool isBandwidthLimitSupportAvailable() {
+    // Android with ExoPlayer supports adaptive bitrate bandwidth limiting.
+    return true;
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -382,6 +393,10 @@ class _PlayerInstance {
     } finally {
       _audioTrackSelectionCompleter = null;
     }
+  }
+
+  Future<void> setBandwidthLimit(int maxBandwidthBps) {
+    return _api.setBandwidthLimit(maxBandwidthBps);
   }
 
   Future<void> dispose() async {

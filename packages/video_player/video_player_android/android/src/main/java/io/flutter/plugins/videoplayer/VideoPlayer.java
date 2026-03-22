@@ -7,6 +7,7 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -19,7 +20,9 @@ import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +94,45 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     exoPlayer.setAudioAttributes(
         new AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
         !isMixMode);
+  }
+
+  /**
+   * Creates an {@link ExoPlayer} configured for adaptive bitrate streaming.
+   *
+   * <p>Configures {@link AdaptiveTrackSelection.Factory} and {@link DefaultBandwidthMeter} so
+   * ExoPlayer selects video tracks based on measured network bandwidth.
+   *
+   * @param context application context.
+   * @param asset video asset providing the media source factory.
+   * @return a configured ExoPlayer instance.
+   */
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
+  @UnstableApi
+  @NonNull
+  public static ExoPlayer createAbrExoPlayer(
+      @NonNull Context context, @NonNull VideoAsset asset) {
+    DefaultBandwidthMeter bandwidthMeter =
+        new DefaultBandwidthMeter.Builder(context)
+            .setInitialBitrateEstimate(1_000_000)
+            .build();
+
+    DefaultTrackSelector trackSelector =
+        new DefaultTrackSelector(context, new AdaptiveTrackSelection.Factory());
+
+    trackSelector.setParameters(
+        trackSelector
+            .buildUponParameters()
+            .setAllowVideoNonSeamlessAdaptiveness(true)
+            .setAllowVideoMixedDecoderSupportAdaptiveness(true)
+            .setForceLowestBitrate(false)
+            .setForceHighestSupportedBitrate(false)
+            .build());
+
+    return new ExoPlayer.Builder(context)
+        .setTrackSelector(trackSelector)
+        .setBandwidthMeter(bandwidthMeter)
+        .setMediaSourceFactory(asset.getMediaSourceFactory(context))
+        .build();
   }
 
   @Override
@@ -231,6 +273,28 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // Apply the track selection override
     trackSelector.setParameters(
         trackSelector.buildUponParameters().setOverrideForType(override).build());
+  }
+
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
+  @UnstableApi
+  @Override
+  public void setBandwidthLimit(long maxBandwidthBps) {
+    if (trackSelector == null) {
+      return;
+    }
+
+    DefaultTrackSelector.Parameters.Builder parametersBuilder =
+        trackSelector.buildUponParameters();
+
+    if (maxBandwidthBps <= 0) {
+      parametersBuilder
+          .setMaxVideoBitrate(Integer.MAX_VALUE);
+    } else {
+      int maxBitrate = maxBandwidthBps > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) maxBandwidthBps;
+      parametersBuilder.setMaxVideoBitrate(maxBitrate);
+    }
+
+    trackSelector.setParameters(parametersBuilder.build());
   }
 
   public void dispose() {

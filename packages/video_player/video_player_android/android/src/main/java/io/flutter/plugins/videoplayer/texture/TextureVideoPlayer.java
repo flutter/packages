@@ -30,6 +30,7 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
 public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProducer.Callback {
   // True when the ExoPlayer instance has a null surface.
   private boolean needsSurface = true;
+  
   /**
    * Creates a texture video player.
    *
@@ -49,20 +50,15 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
       @NonNull SurfaceProducer surfaceProducer,
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
-    return new TextureVideoPlayer(
+    
+    TextureVideoPlayer player = new TextureVideoPlayer(
         events,
         surfaceProducer,
         asset.getMediaItem(),
         options,
-        () -> {
-          androidx.media3.exoplayer.trackselection.DefaultTrackSelector trackSelector =
-              new androidx.media3.exoplayer.trackselection.DefaultTrackSelector(context);
-          ExoPlayer.Builder builder =
-              new ExoPlayer.Builder(context)
-                  .setTrackSelector(trackSelector)
-                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
-          return builder.build();
-        });
+        () -> VideoPlayer.createAbrExoPlayer(context, asset));
+
+    return player;
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.

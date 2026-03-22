@@ -40,4 +40,21 @@ void main() {
   test('default implementation isAudioTrackSupportAvailable returns false', () {
     expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
+
+  test(
+    'default implementation setBandwidthLimit throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.setBandwidthLimit(1, 5000000),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test(
+    'default implementation isBandwidthLimitSupportAvailable returns false',
+    () {
+      expect(initialInstance.isBandwidthLimitSupportAvailable(), false);
+    },
+  );
 }

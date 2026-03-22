@@ -51,19 +51,14 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
       @NonNull VideoPlayerCallbacks events,
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
-    return new PlatformViewVideoPlayer(
+    
+    PlatformViewVideoPlayer player = new PlatformViewVideoPlayer(
         events,
         asset.getMediaItem(),
         options,
-        () -> {
-          androidx.media3.exoplayer.trackselection.DefaultTrackSelector trackSelector =
-              new androidx.media3.exoplayer.trackselection.DefaultTrackSelector(context);
-          ExoPlayer.Builder builder =
-              new ExoPlayer.Builder(context)
-                  .setTrackSelector(trackSelector)
-                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
-          return builder.build();
-        });
+        () -> VideoPlayer.createAbrExoPlayer(context, asset));
+
+    return player;
   }
 
   @NonNull

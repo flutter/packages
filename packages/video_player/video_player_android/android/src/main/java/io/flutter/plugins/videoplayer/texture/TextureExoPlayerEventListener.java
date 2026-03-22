@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.Format;
 import androidx.media3.common.VideoSize;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
@@ -51,7 +52,14 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.getDegrees());
   }
 
-  @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
+  @Override
+  public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
+    // No-op: during adaptive bitrate quality transitions the resolution changes
+    // but we should not re-report initialization to Flutter. The texture surface
+    // automatically adapts to new dimensions.
+  }
+
+  @OptIn(markerClass = UnstableApi.class)
   // A video's Format and its rotation degrees are unstable because they are not guaranteed
   // the same implementation across API versions. It is possible that this logic may need
   // revisiting should the implementation change across versions of the Exoplayer API.

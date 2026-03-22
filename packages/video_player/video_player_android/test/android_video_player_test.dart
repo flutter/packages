@@ -950,5 +950,19 @@ void main() {
         verify(api.selectAudioTrack(0, 1));
       });
     });
+
+    test('setBandwidthLimit', () async {
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
+
+      await player.setBandwidthLimit(1, 5000000);
+
+      verify(playerApi.setBandwidthLimit(5000000));
+    });
   });
 }

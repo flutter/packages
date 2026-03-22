@@ -153,6 +153,45 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   bool isAudioTrackSupportAvailable() {
     return false;
   }
+
+  /// Sets the maximum bandwidth limit for adaptive bitrate streaming.
+  ///
+  /// This method controls which HLS/DASH variant streams are selected by
+  /// limiting the maximum video bitrate the player will choose.
+  ///
+  /// [playerId] identifies the video player instance.
+  /// [maxBandwidthBps] is the maximum bandwidth in bits per second.
+  /// Pass 0 or a negative value to remove the limit and allow the player
+  /// to select quality freely.
+  ///
+  /// Common bandwidth values:
+  ///   - 360p:  500000 bps (500 kbps)
+  ///   - 480p:  800000 bps (800 kbps)
+  ///   - 720p:  1200000 bps (1.2 Mbps)
+  ///   - 1080p: 2500000 bps (2.5 Mbps)
+  ///
+  /// Platform-specific behavior:
+  /// - **Android**: Uses ExoPlayer's `DefaultTrackSelector.setMaxVideoBitrate()`.
+  /// - **iOS/macOS**: Sets `AVPlayerItem.preferredPeakBitRate`.
+  /// - **Web**: Not implemented (throws [UnimplementedError]).
+  Future<void> setBandwidthLimit(int playerId, int maxBandwidthBps) {
+    throw UnimplementedError('setBandwidthLimit() has not been implemented.');
+  }
+
+  /// Returns whether bandwidth limit setting is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports setting a bandwidth limit for adaptive bitrate
+  /// streaming. This follows the same pattern as
+  /// [isAudioTrackSupportAvailable].
+  ///
+  /// Returns `true` if [setBandwidthLimit] is supported, `false` otherwise.
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support bandwidth limiting.
+  bool isBandwidthLimitSupportAvailable() {
+    return false;
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}

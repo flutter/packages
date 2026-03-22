@@ -1,3 +1,9 @@
+## 2.10.0
+
+* Adds adaptive bitrate streaming support with `setBandwidthLimit` for HLS/DASH content.
+* Configures ExoPlayer with `AdaptiveTrackSelection.Factory` and `DefaultBandwidthMeter` for optimized ABR.
+* Uses `TextureView` in platform view mode for seamless resolution switching during quality transitions.
+
 ## 2.9.4
 
 * Updates `androidx.media3` to 1.9.2.
