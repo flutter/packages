@@ -1,3 +1,7 @@
+## 0.3.9
+
+* Fixes TableSpan vertical borders being flipped when horizontal scrolling is reversed.
+
 ## 0.3.8
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.

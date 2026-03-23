@@ -1612,6 +1612,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1620,6 +1621,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1630,6 +1632,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1638,6 +1641,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1682,6 +1686,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1690,6 +1695,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1700,6 +1706,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1708,6 +1715,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });

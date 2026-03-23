@@ -577,6 +577,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });
@@ -598,6 +599,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });
