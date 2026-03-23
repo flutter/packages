@@ -851,58 +851,57 @@ void main() {
       );
     });
 
-    testWidgets('paints borders correctly when cross axis is reversed (TableView)', (
-      WidgetTester tester,
-    ) async {
-      final tableView = TableView.builder(
-        verticalDetails: const ScrollableDetails.vertical(),
-        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
-        rowCount: 1,
-        columnCount: 1,
-        columnBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-          foregroundDecoration: TableSpanDecoration(
-            border: TableSpanBorder(
-              leading: BorderSide(color: Colors.orange, width: 3),
+    testWidgets(
+      'paints borders correctly when cross axis is reversed (TableView)',
+      (WidgetTester tester) async {
+        final tableView = TableView.builder(
+          verticalDetails: const ScrollableDetails.vertical(),
+          horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+          rowCount: 1,
+          columnCount: 1,
+          columnBuilder: (int index) => const TableSpan(
+            extent: FixedTableSpanExtent(200.0),
+            foregroundDecoration: TableSpanDecoration(
+              border: TableSpanBorder(
+                leading: BorderSide(color: Colors.orange, width: 3),
+              ),
             ),
           ),
-        ),
-        rowBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-        ),
-        cellBuilder: (_, TableVicinity vicinity) {
-          return TableViewCell(
-            child: Container(
-              height: 200,
-              width: 200,
-              color: Colors.grey.withValues(alpha: 0.5),
-            ),
-          );
-        },
-      );
+          rowBuilder: (int index) =>
+              const TableSpan(extent: FixedTableSpanExtent(200.0)),
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              child: Container(
+                height: 200,
+                width: 200,
+                color: Colors.grey.withValues(alpha: 0.5),
+              ),
+            );
+          },
+        );
 
-      tester.view.physicalSize = const Size(400, 400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+        await tester.pumpAndSettle();
 
-      expect(
-        find.byType(TableViewport),
-        paints
-          ..path(
+        expect(
+          find.byType(TableViewport),
+          paints..path(
             includes: <Offset>[
               const Offset(400.0, 0.0),
               const Offset(400.0, 200.0),
             ],
             color: const Color(0xffff9800),
           ),
-      );
-    });
+        );
+      },
+    );
   });
 
   group('merged cell decorations', () {

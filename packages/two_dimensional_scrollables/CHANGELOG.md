@@ -1,6 +1,6 @@
 ## 0.3.9
 
-* Fixes TableSpan vertical borders being flipped when horizontal scrolling is reversed.
+* Fixes TableSpan borders being flipped when one or both axis directions are reversed.
 
 ## 0.3.8
 

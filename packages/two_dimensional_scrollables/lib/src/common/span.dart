@@ -499,6 +499,6 @@ class SpanDecorationPaintDetails {
   /// The [AxisDirection] of the [Axis] perpendicular to the [Span].
   ///
   /// Used to determine the correct leading/trailing edge when deciding how to
-  /// paint borders or padding for the span in the thickness dimension.
+  /// paint borders or apply padding.
   final AxisDirection? crossAxisDirection;
 }
