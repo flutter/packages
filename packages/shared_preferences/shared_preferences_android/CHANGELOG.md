@@ -1,3 +1,7 @@
+## 2.4.22
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 2.4.21
 
 * Reverts `androidx.datastore:datastore` to 1.1.7 due to a regression 16 KB

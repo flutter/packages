@@ -1,3 +1,7 @@
+## 2.9.5
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 2.9.4
 
 * Updates `androidx.media3` to 1.9.2.

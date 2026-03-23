@@ -1,3 +1,7 @@
+## 2.19.4
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 2.19.3
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.

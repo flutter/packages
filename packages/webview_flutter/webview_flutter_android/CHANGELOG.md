@@ -1,3 +1,7 @@
+## 4.10.14
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 4.10.13
 
 * Bumps androidx.webkit:webkit from 1.14.0 to 1.15.0.

@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.34
 
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
 * Updates README to reflect currently supported OS version.
 
 ## 2.0.33

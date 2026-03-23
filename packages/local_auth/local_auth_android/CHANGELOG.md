@@ -1,3 +1,7 @@
+## 2.0.8
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 2.0.7
 
 * Updates build files from Groovy to Kotlin.

@@ -1,3 +1,7 @@
+## 0.10.10+16
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 0.10.10+15
 
 * Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return within try blocks are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).

@@ -1,3 +1,7 @@
+## 6.3.29
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 6.3.28
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

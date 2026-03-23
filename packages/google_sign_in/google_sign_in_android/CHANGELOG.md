@@ -1,3 +1,7 @@
+## 7.2.10
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 7.2.9
 
 * Simplifies internal code for Kotlin/Java interoperability.

@@ -1,3 +1,7 @@
+## 0.8.13+15
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 0.8.13+14
 
 * Bumps androidx.activity:activity from 1.12.2 to 1.12.4.

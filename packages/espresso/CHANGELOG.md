@@ -1,3 +1,7 @@
+## 0.4.0+24
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.0.
+
 ## 0.4.0+23
 
 * Removed the unused `io.flutter.network-policy` metadata tag from the README and example application.
