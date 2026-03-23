@@ -853,6 +853,7 @@ void main() {
     testWidgets(
       'paints borders correctly when cross axis is reversed (TableView)',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
         final tableView = TableView.builder(
           horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
           rowCount: 1,
@@ -904,6 +905,7 @@ void main() {
     testWidgets(
       'paints borders correctly when vertical scrolling is reversed (TableView)',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
         final tableView = TableView.builder(
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
           rowCount: 1,
@@ -955,6 +957,7 @@ void main() {
     testWidgets(
       'TableView row decoration rect is correct when vertical axis is reversed and padding is used',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
         final tableView = TableView.builder(
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
           rowCount: 1,
