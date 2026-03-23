@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
@@ -855,7 +854,6 @@ void main() {
       'paints borders correctly when cross axis is reversed (TableView)',
       (WidgetTester tester) async {
         final tableView = TableView.builder(
-          verticalDetails: const ScrollableDetails.vertical(),
           horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
           rowCount: 1,
           columnCount: 1,
@@ -908,7 +906,6 @@ void main() {
       (WidgetTester tester) async {
         final tableView = TableView.builder(
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
-          horizontalDetails: const ScrollableDetails.horizontal(),
           rowCount: 1,
           columnCount: 1,
           columnBuilder: (int index) =>
