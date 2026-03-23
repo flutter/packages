@@ -545,12 +545,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           );
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
-          return Rect.fromPoints(
-            Offset(0.0, parentData.layoutOffset!.dy),
-            Offset(
-              viewportDimension.width,
-              rowSpan.trailingOffset - verticalOffset.pixels,
-            ),
+          return Rect.fromLTRB(
+            0.0,
+            parentData.paintOffset!.dy -
+                (consumePadding ? rowSpan.configuration.padding.leading : 0.0),
+            viewportDimension.width,
+            parentData.paintOffset!.dy +
+                child.size.height +
+                (consumePadding ? rowSpan.configuration.padding.trailing : 0.0),
           );
         }
 

@@ -442,18 +442,18 @@ class SpanBorder {
     final AxisDirection? crossAxisDirection = details.crossAxisDirection;
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
-        final isLeadingTop = crossAxisDirection != null
-            ? crossAxisDirection == AxisDirection.down
-            : axisDirection == AxisDirection.right;
+        final bool isLeadingTop =
+            crossAxisDirection == null ||
+            crossAxisDirection == AxisDirection.down;
         final border = Border(
           top: isLeadingTop ? leading : trailing,
           bottom: isLeadingTop ? trailing : leading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
-        final isLeadingLeft = crossAxisDirection != null
-            ? crossAxisDirection == AxisDirection.right
-            : axisDirection == AxisDirection.down;
+        final bool isLeadingLeft =
+            crossAxisDirection == null ||
+            crossAxisDirection == AxisDirection.right;
         final border = Border(
           left: isLeadingLeft ? leading : trailing,
           right: isLeadingLeft ? trailing : leading,
