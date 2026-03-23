@@ -677,6 +677,11 @@ class Camera
       captureSession.capture(
           previewRequestBuilder.build(), cameraCaptureCallback, backgroundHandler);
 
+      // Reset the trigger to idle again.
+      previewRequestBuilder.set(
+          CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+          CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE);
+
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
@@ -796,6 +801,9 @@ class Camera
               : e.getMessage();
       dartMessenger.sendCameraErrorEvent(message);
     }
+    // Reset the trigger to idle again.
+      previewRequestBuilder.set(
+          CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE);
   }
 
   /** Cancel and reset auto focus state and refresh the preview session. */
