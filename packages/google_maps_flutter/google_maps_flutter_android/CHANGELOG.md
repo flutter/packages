@@ -1,3 +1,7 @@
+## 2.19.4
+
+* Bumps com.google.maps.android:android-maps-utils from 4.1.0 to 4.1.1.
+
 ## 2.19.3
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.
