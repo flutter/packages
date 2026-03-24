@@ -3226,8 +3226,10 @@ class InputDecoration {
   /// The direction to use for both the [labelText] and the [hintText].
   ///
   /// This parameter ensures visual consistency across all text elements
-  /// within the input field. If provided, it overrides individual direction
-  /// settings.
+  /// within the input field.
+  ///
+  /// Individual direction settings, such as [hintTextDirection], take
+  /// precedence when provided.
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.

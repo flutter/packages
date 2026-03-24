@@ -489,6 +489,14 @@ class TextField extends StatefulWidget {
   final TextAlignVertical? textAlignVertical;
 
   /// {@macro flutter.widgets.editableText.textDirection}
+  ///
+  /// This property only affects the direction of the editable text within
+  /// the field.
+  ///
+  /// It does not influence the direction of text in the [InputDecoration],
+  /// such as [labelText] or [hintText]. To control those, use
+  /// [InputDecoration.textDirection] and/or
+  /// [InputDecoration.hintTextDirection].
   final TextDirection? textDirection;
 
   /// {@macro flutter.widgets.editableText.autofocus}
