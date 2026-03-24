@@ -127,5 +127,10 @@ Future<void> main(List<String> args) async {
         ),
       ),
     ),
-  ).generate(logger: null, tempDirectory: Uri.directory('temp'));
+  ).generate(
+    logger: null,
+    tempDirectory: Uri.directory(
+      '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin_objc',
+    ),
+  );
 }

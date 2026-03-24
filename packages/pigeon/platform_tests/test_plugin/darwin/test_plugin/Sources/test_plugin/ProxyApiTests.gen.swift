@@ -55,7 +55,7 @@ private func wrapError(_ error: Any) -> [Any?] {
   }
   return [
     "\(error)",
-    "\(type(of: error))",
+    "\(Swift.type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }

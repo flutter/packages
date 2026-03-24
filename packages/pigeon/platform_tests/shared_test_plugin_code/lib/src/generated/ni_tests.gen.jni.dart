@@ -2846,7 +2846,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncDouble = NIHostIntegrationCoreApi._class
@@ -2907,7 +2910,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncBool = NIHostIntegrationCoreApi._class
@@ -2968,7 +2974,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncString = NIHostIntegrationCoreApi._class
@@ -3031,7 +3040,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncUint8List = NIHostIntegrationCoreApi._class
@@ -3097,7 +3109,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -3162,7 +3174,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncInt64List = NIHostIntegrationCoreApi._class
@@ -3228,7 +3243,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -3296,7 +3311,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -3428,7 +3443,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3497,7 +3511,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3566,7 +3579,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3636,7 +3648,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3706,7 +3717,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3775,7 +3785,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3844,7 +3853,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -3913,7 +3921,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -4495,7 +4502,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o?.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableDouble = NIHostIntegrationCoreApi._class
@@ -4562,7 +4572,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o?.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableBool = NIHostIntegrationCoreApi._class
@@ -4629,7 +4642,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o?.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableString = NIHostIntegrationCoreApi._class
@@ -4696,7 +4712,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o?.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableUint8List = NIHostIntegrationCoreApi._class
@@ -4764,7 +4783,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -4833,7 +4852,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o?.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableInt64List = NIHostIntegrationCoreApi._class
@@ -4901,7 +4923,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -4972,7 +4994,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -5110,7 +5132,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5181,7 +5202,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5252,7 +5272,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5323,7 +5342,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5396,7 +5414,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5466,7 +5483,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5537,7 +5553,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -5610,7 +5625,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -8091,7 +8105,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncInt = NIHostIntegrationCoreApi._class
@@ -8152,7 +8169,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncDouble = NIHostIntegrationCoreApi._class
@@ -8213,7 +8233,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncString = NIHostIntegrationCoreApi._class
@@ -8278,7 +8301,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncUint8List = NIHostIntegrationCoreApi
@@ -8345,7 +8371,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -8413,7 +8439,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncInt64List = NIHostIntegrationCoreApi
@@ -8480,7 +8509,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -8549,7 +8578,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -8683,7 +8712,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -8753,7 +8781,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -8823,7 +8850,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -8892,7 +8918,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -8962,7 +8987,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -9033,7 +9057,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -9105,7 +9128,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -9173,7 +9195,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -9242,7 +9263,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -9314,7 +9334,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -9513,7 +9532,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o?.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableInt = NIHostIntegrationCoreApi
@@ -9581,7 +9603,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o?.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableDouble = NIHostIntegrationCoreApi
@@ -9649,7 +9674,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o?.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableString = NIHostIntegrationCoreApi
@@ -9717,7 +9745,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o?.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableUint8List =
@@ -9785,7 +9816,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -9854,7 +9885,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o?.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableInt64List =
@@ -9922,7 +9956,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -9992,7 +10026,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -10194,7 +10228,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10265,7 +10298,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10337,7 +10369,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10409,7 +10440,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -10481,7 +10511,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -10555,7 +10584,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10628,7 +10656,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10701,7 +10728,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10773,7 +10799,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -10846,7 +10871,6 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -11070,7 +11094,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 }
 
@@ -13853,7 +13880,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncDouble = NIHostIntegrationCoreApiRegistrar._class
@@ -13914,7 +13944,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncBool = NIHostIntegrationCoreApiRegistrar._class
@@ -13975,7 +14008,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncString = NIHostIntegrationCoreApiRegistrar._class
@@ -14038,7 +14074,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncUint8List = NIHostIntegrationCoreApiRegistrar._class
@@ -14104,7 +14143,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -14169,7 +14208,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncInt64List = NIHostIntegrationCoreApiRegistrar._class
@@ -14235,7 +14277,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -14304,7 +14346,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -14436,7 +14478,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14505,7 +14546,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14574,7 +14614,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14644,7 +14683,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14714,7 +14752,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14783,7 +14820,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14852,7 +14888,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -14921,7 +14956,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -15508,7 +15542,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o?.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableDouble = NIHostIntegrationCoreApiRegistrar
@@ -15576,7 +15613,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o?.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableBool = NIHostIntegrationCoreApiRegistrar
@@ -15644,7 +15684,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o?.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableString = NIHostIntegrationCoreApiRegistrar
@@ -15712,7 +15755,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o?.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableUint8List =
@@ -15780,7 +15826,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -15849,7 +15895,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o?.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableInt64List =
@@ -15917,7 +15966,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -15987,7 +16036,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -16127,7 +16176,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16199,7 +16247,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16270,7 +16317,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16342,7 +16388,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16415,7 +16460,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16486,7 +16530,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16558,7 +16601,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -16632,7 +16674,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -19126,7 +19167,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncInt = NIHostIntegrationCoreApiRegistrar
@@ -19188,7 +19232,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncDouble =
@@ -19249,7 +19296,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncString =
@@ -19314,7 +19364,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncUint8List =
@@ -19380,7 +19433,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -19447,7 +19500,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncInt64List =
@@ -19513,7 +19569,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -19581,7 +19637,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -19716,7 +19772,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -19785,7 +19840,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -19854,7 +19908,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -19923,7 +19976,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -19993,7 +20045,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -20065,7 +20116,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -20136,7 +20186,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -20204,7 +20253,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -20273,7 +20321,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -20344,7 +20391,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -20542,7 +20588,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o?.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableInt =
@@ -20609,7 +20658,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o?.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableDouble =
@@ -20676,7 +20728,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o?.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableString =
@@ -20743,7 +20798,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o?.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableUint8List =
@@ -20811,7 +20869,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -20880,7 +20938,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o?.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableInt64List =
@@ -20948,7 +21009,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -21018,7 +21079,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       $o = $r;
     }
     return $o?.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -21217,7 +21278,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21288,7 +21348,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21360,7 +21419,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21432,7 +21490,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -21504,7 +21561,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -21577,7 +21633,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21650,7 +21705,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21722,7 +21776,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21794,7 +21847,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     }
     return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -21867,7 +21919,6 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -22090,7 +22141,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 }
 
@@ -25784,7 +25838,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncInt = NIFlutterIntegrationCoreApi._class
@@ -25845,7 +25902,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncDouble = NIFlutterIntegrationCoreApi._class
@@ -25906,7 +25966,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncString = NIFlutterIntegrationCoreApi._class
@@ -25969,7 +26032,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncUint8List = NIFlutterIntegrationCoreApi._class
@@ -26035,7 +26101,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -26100,7 +26166,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncInt64List = NIFlutterIntegrationCoreApi._class
@@ -26166,7 +26235,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -26234,7 +26303,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -26366,7 +26435,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26435,7 +26503,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26504,7 +26571,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26573,7 +26639,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -26643,7 +26708,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -26713,7 +26777,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26783,7 +26846,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26852,7 +26914,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26921,7 +26982,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -26990,7 +27050,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -27187,7 +27246,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+    return $o?.as<jni$_.JBoolean>(
+      jni$_.JBoolean.type as jni$_.JType<jni$_.JBoolean>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableInt = NIFlutterIntegrationCoreApi._class
@@ -27252,7 +27314,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
+    return $o?.as<jni$_.JLong>(
+      jni$_.JLong.type as jni$_.JType<jni$_.JLong>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableDouble = NIFlutterIntegrationCoreApi._class
@@ -27319,7 +27384,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
+    return $o?.as<jni$_.JDouble>(
+      jni$_.JDouble.type as jni$_.JType<jni$_.JDouble>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableString = NIFlutterIntegrationCoreApi._class
@@ -27386,7 +27454,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
+    return $o?.as<jni$_.JString>(
+      jni$_.JString.type as jni$_.JType<jni$_.JString>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableUint8List = NIFlutterIntegrationCoreApi
@@ -27455,7 +27526,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JByteArray>(
-      jni$_.JByteArray.type,
+      jni$_.JByteArray.type as jni$_.JType<jni$_.JByteArray>,
       releaseOriginal: true,
     );
   }
@@ -27525,7 +27596,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
+    return $o?.as<jni$_.JIntArray>(
+      jni$_.JIntArray.type as jni$_.JType<jni$_.JIntArray>,
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableInt64List = NIFlutterIntegrationCoreApi
@@ -27594,7 +27668,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JLongArray>(
-      jni$_.JLongArray.type,
+      jni$_.JLongArray.type as jni$_.JType<jni$_.JLongArray>,
       releaseOriginal: true,
     );
   }
@@ -27665,7 +27739,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       $o = $r;
     }
     return $o?.as<jni$_.JDoubleArray>(
-      jni$_.JDoubleArray.type,
+      jni$_.JDoubleArray.type as jni$_.JType<jni$_.JDoubleArray>,
       releaseOriginal: true,
     );
   }
@@ -27803,7 +27877,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<jni$_.JObject?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -27875,7 +27948,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAnEnum?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -27947,7 +28019,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }
@@ -28018,7 +28089,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAnEnum>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-
       releaseOriginal: true,
     );
   }
@@ -28090,7 +28160,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JList<NIAllNullableTypes>>(
       jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-
       releaseOriginal: true,
     );
   }
@@ -28161,7 +28230,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-
       releaseOriginal: true,
     );
   }
@@ -28235,7 +28303,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-
       releaseOriginal: true,
     );
   }
@@ -28305,7 +28372,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-
       releaseOriginal: true,
     );
   }
@@ -28376,7 +28442,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     }
     return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
       jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-
       releaseOriginal: true,
     );
   }
@@ -28450,7 +28515,6 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
       jni$_.JMap.type
           as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-
       releaseOriginal: true,
     );
   }

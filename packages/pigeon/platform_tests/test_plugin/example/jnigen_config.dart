@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:jnigen/jnigen.dart';
 import 'package:logging/logging.dart';
+import 'package:pigeon/jnigen_fix.dart';
 
 void main() async {
   await generateJniBindings(
@@ -34,5 +35,9 @@ void main() async {
         'NIAnotherEnum',
       ],
     ),
+  );
+
+  fixJniBindings(
+    '../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart',
   );
 }

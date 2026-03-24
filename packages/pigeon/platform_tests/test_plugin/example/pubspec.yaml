@@ -45,6 +45,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   logging: ^1.3.0
+  pigeon:
+    path: ../../..
   swift2objc: 
     git:
       url: https://github.com/dart-lang/native/

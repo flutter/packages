@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 #include <stdint.h>
-#import "../../../../example/temp/test_plugin.h"
+#import "test_plugin.h"
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"

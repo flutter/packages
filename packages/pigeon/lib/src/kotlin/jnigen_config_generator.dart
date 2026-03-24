@@ -46,6 +46,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     indent.writeln('// ignore_for_file: prefer_const_constructors');
     indent.writeln("import 'package:jnigen/jnigen.dart';");
     indent.writeln("import 'package:logging/logging.dart';");
+    indent.writeln("import 'package:pigeon/jnigen_fix.dart';");
     indent.writeln('');
     indent.writeScoped('void main() async {', '}', () {
       indent.writeScoped('await generateJniBindings(', ');', () {
@@ -82,6 +83,10 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
           });
         });
       });
+      indent.newln();
+      final outputPath =
+          '${path.relative(path.withoutExtension(generatorOptions.dartOptions.dartOut ?? './lib/pigeons/'), from: generatorOptions.appDirectory ?? './')}.jni.dart';
+      indent.writeln("fixJniBindings('${outputPath.replaceAll("'", r"\'")}');");
     });
     sink.write(indent.toString());
   }

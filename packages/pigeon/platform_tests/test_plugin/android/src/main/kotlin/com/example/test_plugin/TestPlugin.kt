@@ -37,6 +37,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     testSuffixApiOne.setUp(binding, "suffixOne")
     val testSuffixApiTwo = TestPluginWithSuffix()
     testSuffixApiTwo.setUp(binding, "suffixTwo")
+    niMessageApi = NIHostIntegrationCoreApiRegistrar().register(NIIntegrationTests())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
@@ -66,6 +67,20 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes? {
     return everything
+  }
+
+  override fun areAllNullableTypesEqual(a: AllNullableTypes, b: AllNullableTypes): Boolean {
+    return a == b
+  }
+
+  override fun getAllNullableTypesHash(value: AllNullableTypes): Long {
+    return value.hashCode().toLong()
+  }
+
+  override fun getAllNullableTypesWithoutRecursionHash(
+      value: AllNullableTypesWithoutRecursion
+  ): Long {
+    return value.hashCode().toLong()
   }
 
   override fun echoAllNullableTypesWithoutRecursion(

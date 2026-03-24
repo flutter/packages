@@ -66,6 +66,13 @@ import 'package:swiftgen/swiftgen.dart';
     final String? configuredSdkTriple =
         generatorOptions.swiftOptions.appleSdkTriple;
 
+    final String objcDir = path.posix.join(
+      path.posix.dirname(
+        path.posix.dirname(generatorOptions.swiftOptions.swiftOut),
+      ),
+      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc',
+    );
+
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
       if (configuredSdkPath != null) {
         indent.writeln("String sdkPath = '$configuredSdkPath';");
@@ -157,7 +164,7 @@ import 'package:swiftgen/swiftgen.dart';
     output: Output(
       module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
       dartFile: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
-      objectiveCFile: Uri.file('${path.posix.join(path.posix.dirname(path.posix.dirname(generatorOptions.swiftOptions.swiftOut)), '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc', '${path.posix.basenameWithoutExtension(generatorOptions.swiftOptions.swiftOut)}.m')}'),
+      objectiveCFile: Uri.file('${path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(generatorOptions.swiftOptions.swiftOut)}.m')}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
@@ -201,7 +208,7 @@ ${hasAsyncFlutterApi ? '''
     ),
   ).generate(
     logger: null,
-    tempDirectory: Uri.directory('temp'),
+    tempDirectory: Uri.directory('$objcDir'),
   );
       ''');
     });
