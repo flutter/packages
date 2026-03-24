@@ -67,6 +67,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
       FlutterPlatform.android,
     );
     final File topLevelGradleFile = _getBuildGradleFile(androidDir);
+    final bool isKts = topLevelGradleFile.path.endsWith('.kts');
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
@@ -81,6 +82,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
       if (!_validateExampleTopLevelSettingsGradle(
         package,
         topLevelSettingsGradleFile,
+        isKts: isKts,
       )) {
         succeeded = false;
       }
@@ -99,11 +101,24 @@ class GradleCheckCommand extends PackageLoopingCommand {
   }
 
   // Returns the gradle file in the given directory.
-  File _getBuildGradleFile(Directory dir) => dir.childFile('build.gradle');
+  File _getBuildGradleFile(Directory dir) {
+    const buildGradleBaseName = 'build.gradle';
+    const buildGradleKtsBaseName = '$buildGradleBaseName.kts';
+    if (dir.childFile(buildGradleKtsBaseName).existsSync()) {
+      return dir.childFile(buildGradleKtsBaseName);
+    }
+    return dir.childFile(buildGradleBaseName);
+  }
 
   // Returns the settings gradle file in the given directory.
-  File _getSettingsGradleFile(Directory dir) =>
-      dir.childFile('settings.gradle');
+  File _getSettingsGradleFile(Directory dir) {
+    const settingsGradleBaseName = 'settings.gradle';
+    const settingsGradleKtsBaseName = '$settingsGradleBaseName.kts';
+    if (dir.childFile(settingsGradleKtsBaseName).existsSync()) {
+      return dir.childFile(settingsGradleKtsBaseName);
+    }
+    return dir.childFile(settingsGradleBaseName);
+  }
 
   // Returns the main/AndroidManifest.xml file for the given package.
   File _getMainAndroidManifest(
@@ -131,25 +146,31 @@ class GradleCheckCommand extends PackageLoopingCommand {
       '${indentation}Validating '
       '${getRelativePosixPath(gradleFile, from: package.directory)}.',
     );
+    final bool isKts = gradleFile.path.endsWith('.kts');
     final String contents = gradleFile.readAsStringSync();
     final List<String> lines = contents.split('\n');
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     var succeeded = true;
-    if (!_validateNamespace(package, contents, isExample: false)) {
+    if (!_validateNamespace(
+      package,
+      contents,
+      isExample: false,
+      isKts: isKts,
+    )) {
       succeeded = false;
     }
-    if (!_validateCompatibilityVersions(lines)) {
+    if (!_validateCompatibilityVersions(lines, isKts: isKts)) {
       succeeded = false;
     }
-    if (!_validateKotlinJvmCompatibility(lines)) {
+    if (!_validateKotlinJvmCompatibility(lines, isKts: isKts)) {
       succeeded = false;
     }
-    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
+    if (!_validateJavaKotlinCompileOptionsAlignment(lines, isKts: isKts)) {
       succeeded = false;
     }
-    if (!_validateGradleDrivenLintConfig(package, lines)) {
+    if (!_validateGradleDrivenLintConfig(lines, isKts: isKts)) {
       succeeded = false;
     }
     if (!_validateCompileSdkUsage(package, lines)) {
@@ -166,7 +187,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// String printed as example of valid example root build.gradle repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static const String exampleRootGradleArtifactHubString =
+  static const String exampleGroovyRootGradleArtifactHubString =
       '''
         // See $artifactHubDocumentationString for more info.
         def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
@@ -176,31 +197,62 @@ class GradleCheckCommand extends PackageLoopingCommand {
         }
 ''';
 
+  /// String printed as example of valid example root build.gradle.kts repository
+  /// configuration that enables artifact hub env variable.
+  @visibleForTesting
+  static const String exampleKotlinRootGradleArtifactHubString =
+      '''
+        // See $artifactHubDocumentationString for more info.
+        val artifactRepoKey = "ARTIFACT_HUB_REPOSITORY"
+        val artifactRepoUrl = System.getenv(artifactRepoKey)
+        if (artifactRepoUrl != null) {
+            println("Using artifact hub")
+            maven {
+                url = uri(artifactRepoUrl)
+            }
+        }
+''';
+
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
   /// Required in root gradle file.
   bool _validateArtifactHubUsage(
     RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
     // Gradle variable name used to hold environment variable string.
     const keyVariable = 'artifactRepoKey';
+    const urlVariable = 'artifactRepoUrl';
     final keyPresentRegex = RegExp(
       '$keyVariable'
-      r"\s+=\s+'ARTIFACT_HUB_REPOSITORY'",
+      r'''\s+=\s+["']ARTIFACT_HUB_REPOSITORY["']''',
     );
     final documentationPresentRegex = RegExp(
       r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
     );
-    final keyReadRegex = RegExp(
-      r'if.*System\.getenv.*\.containsKey.*'
-      '$keyVariable',
-    );
-    final keyUsedRegex = RegExp(
-      r'maven.*url.*System\.getenv\('
-      '$keyVariable',
-    );
+    final keyReadRegex = isKts
+        ? RegExp(
+            '$urlVariable'
+            r'\s*=\s*System\.getenv\('
+            '$keyVariable'
+            r'\)',
+          )
+        : RegExp(
+            r'if.*System\.getenv.*\.containsKey.*'
+            '$keyVariable',
+          );
+    final keyUsedRegex = isKts
+        ? RegExp(
+            r'url = uri\('
+            '$urlVariable'
+            r'\)',
+          )
+        : RegExp(
+            r'maven.*url.*System\.getenv\('
+            '$keyVariable',
+          );
 
     final bool keyPresent = gradleLines.any(
       (String line) => keyPresentRegex.hasMatch(line),
@@ -216,9 +268,12 @@ class GradleCheckCommand extends PackageLoopingCommand {
     );
 
     if (!(documentationPresent && keyPresent && keyRead && keyUsed)) {
+      final String exampleString = isKts
+          ? exampleKotlinRootGradleArtifactHubString
+          : exampleGroovyRootGradleArtifactHubString;
       printError(
         'Failed Artifact Hub validation. Include the following in '
-        'example root build.gradle:\n$exampleRootGradleArtifactHubString',
+        'example root build.gradle:\n$exampleString',
       );
     }
 
@@ -229,8 +284,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// some_package/example/android/settings.gradle).
   bool _validateExampleTopLevelSettingsGradle(
     RepositoryPackage package,
-    File gradleSettingsFile,
-  ) {
+    File gradleSettingsFile, {
+    required bool isKts,
+  }) {
     print(
       '${indentation}Validating '
       '${getRelativePosixPath(gradleSettingsFile, from: package.directory)}.',
@@ -240,7 +296,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     var succeeded = true;
-    if (!_validateArtifactHubSettingsUsage(package, lines)) {
+    if (!_validateArtifactHubSettingsUsage(package, lines, isKts: isKts)) {
       succeeded = false;
     }
     return succeeded;
@@ -249,11 +305,22 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// String printed as a valid example of settings.gradle repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static String exampleSettingsArtifactHubString = '''
+  static const String exampleGroovySettingsArtifactHubString = '''
 plugins {
     id "dev.flutter.flutter-plugin-loader" version "1.0.0"
     // ...other plugins
     id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
+}
+  ''';
+
+  /// String printed as a valid example of settings.gradle.kts repository
+  /// configuration that enables artifact hub env variable.
+  @visibleForTesting
+  static const String exampleKotlinSettingsArtifactHubString = '''
+plugins {
+    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
+    // ...other plugins
+    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.1"
 }
   ''';
 
@@ -263,8 +330,9 @@ plugins {
   /// Required in root gradle file.
   bool _validateArtifactHubSettingsUsage(
     RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
     final documentationPresentRegex = RegExp(
       r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
     );
@@ -290,17 +358,20 @@ plugins {
         );
       }
       if (!declarativeArtifactRegistryApplied) {
+        final String exampleString = isKts
+            ? exampleKotlinSettingsArtifactHubString
+            : exampleGroovySettingsArtifactHubString;
         printError(
           'Include the following in '
-          'example root settings.gradle:\n$exampleSettingsArtifactHubString',
+          'example root settings.gradle:\n$exampleString',
         );
       }
     }
     return validArtifactConfiguration;
   }
 
-  /// Validates the top-level build.gradle for an example app (e.g.,
-  /// some_package/example/android/build.gradle).
+  /// Validates the top-level build.gradle(.kts) for an example app (e.g.,
+  /// some_package/example/android/build.gradle(.kts)).
   bool _validateExampleTopLevelBuildGradle(
     RepositoryPackage package,
     File gradleFile,
@@ -309,6 +380,7 @@ plugins {
       '${indentation}Validating '
       '${getRelativePosixPath(gradleFile, from: package.directory)}.',
     );
+    final bool isKts = gradleFile.path.endsWith('.kts');
     final String contents = gradleFile.readAsStringSync();
     final List<String> lines = contents.split('\n');
 
@@ -318,17 +390,17 @@ plugins {
     if (!_validateJavacLintConfig(package, lines)) {
       succeeded = false;
     }
-    if (!_validateKotlinVersion(package, lines)) {
+    if (!_validateKotlinVersion(package, lines, isKts: isKts)) {
       succeeded = false;
     }
-    if (!_validateArtifactHubUsage(package, lines)) {
+    if (!_validateArtifactHubUsage(package, lines, isKts: isKts)) {
       succeeded = false;
     }
     return succeeded;
   }
 
-  /// Validates the app-level build.gradle for an example app (e.g.,
-  /// some_package/example/android/app/build.gradle).
+  /// Validates the app-level build.gradle(.kts) for an example app (e.g.,
+  /// some_package/example/android/app/build.gradle(.kts)).
   bool _validateExampleAppBuildGradle(
     RepositoryPackage package,
     File gradleFile,
@@ -337,12 +409,13 @@ plugins {
       '${indentation}Validating '
       '${getRelativePosixPath(gradleFile, from: package.directory)}.',
     );
+    final bool isKts = gradleFile.path.endsWith('.kts');
     final String contents = gradleFile.readAsStringSync();
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     var succeeded = true;
-    if (!_validateNamespace(package, contents, isExample: true)) {
+    if (!_validateNamespace(package, contents, isExample: true, isKts: isKts)) {
       succeeded = false;
     }
     return succeeded;
@@ -354,6 +427,7 @@ plugins {
     RepositoryPackage package,
     String gradleContents, {
     required bool isExample,
+    required bool isKts,
   }) {
     // Regex to validate that the following namespace definition
     // is found (where the single quotes can be single or double):
@@ -367,8 +441,9 @@ plugins {
     );
 
     if (nameSpaceRegexMatch == null) {
-      const errorMessage = '''
-build.gradle must set a "namespace":
+      final errorMessage =
+          '''
+build.gradle${isKts ? '.kts' : ''} must set a "namespace":
 
     android {
         namespace = "dev.flutter.foo"
@@ -388,6 +463,7 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
         package,
         isExample: isExample,
         namespace: nameSpaceRegexMatch.group(1)!,
+        isKts: isKts,
       );
     }
   }
@@ -401,6 +477,7 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
     RepositoryPackage package, {
     required bool isExample,
     required String namespace,
+    required bool isKts,
   }) {
     final manifestPackageRegex = RegExp(r'package\s*=\s*"(.*?)"');
     final String manifestContents = _getMainAndroidManifest(
@@ -411,10 +488,11 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       manifestContents,
     );
     if (packageMatch != null && namespace != packageMatch.group(1)) {
+      final buildGradleName = 'build.gradle${isKts ? '.kts' : ''}';
       final errorMessage =
           '''
-build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
-  build.gradle namespace: "$namespace"
+$buildGradleName "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
+  $buildGradleName namespace: "$namespace"
   AndroidMastifest.xml package: "${packageMatch.group(1)}"
 ''';
       printError(
@@ -428,7 +506,10 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
   /// Checks for a source compatibiltiy version, so that it's explicit rather
   /// than using whatever the client's local toolchaing defaults to (which can
   /// lead to compile errors that show up for clients, but not in CI).
-  bool _validateCompatibilityVersions(List<String> gradleLines) {
+  bool _validateCompatibilityVersions(
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
     final bool hasLanguageVersion = gradleLines.any(
       (String line) => line.contains('languageVersion') && !_isCommented(line),
     );
@@ -449,9 +530,9 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
               !_isCommented(line),
         );
     if (!hasLanguageVersion && !hasCompabilityVersions) {
-      const javaErrorMessage =
+      final javaErrorMessage =
           '''
-build.gradle(.kts) must set an explicit Java compatibility version.
+build.gradle${isKts ? '.kts' : ''} must set an explicit Java compatibility version.
 
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
@@ -481,7 +562,10 @@ for more details.''';
     return true;
   }
 
-  bool _validateKotlinJvmCompatibility(List<String> gradleLines) {
+  bool _validateKotlinJvmCompatibility(
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
     bool isKotlinOptions(String line) =>
         line.contains('kotlinOptions') && !_isCommented(line);
     final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
@@ -506,7 +590,7 @@ for more details.''';
       }
       final kotlinErrorMessage =
           '''
-If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
+If build.gradle${isKts ? '.kts' : ''} sets jvmTarget then it must use JavaVersion syntax.
   Good:
     android {
       kotlinOptions {
@@ -525,7 +609,11 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
     return true;
   }
 
-  bool _validateJavaKotlinCompileOptionsAlignment(List<String> gradleLines) {
+  bool _validateJavaKotlinCompileOptionsAlignment(
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
+    final buildGradleName = 'build.gradle${isKts ? '.kts' : ''}';
     final javaVersions = <String>[];
     // Some java versions have the format VERSION_1_8 but we dont need to handle those
     // because they are below the minimum.
@@ -544,8 +632,9 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
     if (javaVersions.isNotEmpty) {
       final int version = int.parse(javaVersions.first);
       if (!javaVersions.every((String element) => element == '$version')) {
-        const javaVersionAlignmentError = '''
-If build.gradle(.kts) uses JavaVersion.* versions must be the same.
+        final javaVersionAlignmentError =
+            '''
+If $buildGradleName uses JavaVersion.* versions must be the same.
 ''';
         printError(
           '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}',
@@ -556,7 +645,7 @@ If build.gradle(.kts) uses JavaVersion.* versions must be the same.
       if (version < _minimumJavaVersion) {
         final minimumJavaVersionError =
             '''
-build.gradle(.kts) uses "JavaVersion.VERSION_$version".
+$buildGradleName uses "JavaVersion.VERSION_$version".
 Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
 ''';
         printError(
@@ -573,18 +662,14 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
   /// Gradle-driven lints (those checked by ./gradlew lint) and treat them as
   /// errors.
   bool _validateGradleDrivenLintConfig(
-    RepositoryPackage package,
-    List<String> gradleLines,
-  ) {
-    final List<String> gradleBuildContents = package
-        .platformDirectory(FlutterPlatform.android)
-        .childFile('build.gradle')
-        .readAsLinesSync();
-    if (!gradleBuildContents.any(
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
+    if (!gradleLines.any(
           (String line) =>
               line.contains('checkAllWarnings = true') && !_isCommented(line),
         ) ||
-        !gradleBuildContents.any(
+        !gradleLines.any(
           (String line) =>
               line.contains('warningsAsErrors = true') && !_isCommented(line),
         )) {
@@ -592,7 +677,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
         '${indentation}This package is not configured to enable all '
         'Gradle-driven lint warnings and treat them as errors. '
         'Please add the following to the lintOptions section of '
-        'android/build.gradle:',
+        'android/build.gradle${isKts ? '.kts' : ''}:',
       );
       print('''
         checkAllWarnings = true
@@ -748,8 +833,9 @@ gradle.projectsEvaluated {
   /// least a minimum value, if it is set at all.
   bool _validateKotlinVersion(
     RepositoryPackage example,
-    List<String> gradleLines,
-  ) {
+    List<String> gradleLines, {
+    required bool isKts,
+  }) {
     final kotlinVersionRegex = RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
     RegExpMatch? match;
     if (gradleLines.any((String line) {
@@ -759,7 +845,7 @@ gradle.projectsEvaluated {
       final version = Version.parse(match!.group(1)!);
       if (version < minKotlinVersion) {
         printError(
-          'build.gradle sets "ext.kotlin_version" to "$version". The '
+          'build.gradle${isKts ? '.kts' : ''} sets "ext.kotlin_version" to "$version". The '
           'minimum Kotlin version that can be specified is '
           '$minKotlinVersion, for compatibility with modern dependencies.',
         );

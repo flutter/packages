@@ -207,7 +207,6 @@
 ## 2.7.2
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
-
 * Re-adds Impeller support.
 
 ## 2.7.1
