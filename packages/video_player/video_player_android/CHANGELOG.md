@@ -1,3 +1,7 @@
+## 2.9.5
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.9.4
 
 * Updates `androidx.media3` to 1.9.2.

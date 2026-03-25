@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
 import XCTest
 
 @testable import camera_avfoundation
@@ -51,7 +52,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
-    // FLTCam allows to set frame rate with 1/10 precision.
+    // Camera allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
       minFrameDurationExpectation.fulfill()
@@ -59,7 +60,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
-    // FLTCam allows to set frame rate with 1/10 precision.
+    // Camera allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
       maxFrameDurationExpectation.fulfill()

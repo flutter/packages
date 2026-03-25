@@ -962,6 +962,7 @@ if (wrapped == null) {
 
   /// Writes the code for a flutter [Api], [api].
   /// Example:
+  /// ```java
   /// public static final class Foo {
   ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
   ///   public interface Result<T> {
@@ -969,6 +970,7 @@ if (wrapped == null) {
   ///   }
   ///   public int add(int x, int y, Result<int> result) {...}
   /// }
+  /// ```
   @override
   void writeFlutterApi(
     InternalJavaOptions generatorOptions,

@@ -9,6 +9,10 @@ on:
 jobs:
   create_sync_pr:
     runs-on: ubuntu-latest
+    permissions:
+      # The create-pull-request action needs both content and pull-requests permissions.
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd

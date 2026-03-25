@@ -1676,10 +1676,10 @@ static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Null
     return YES;
   }
   if (a == nil) {
-    return b == (id)[NSNull null];
+    return b == [NSNull null];
   }
   if (b == nil) {
-    return a == (id)[NSNull null];
+    return a == [NSNull null];
   }
   if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
     return [a isEqual:b] || (isnan([(NSNumber *)a doubleValue]) && isnan([(NSNumber *)b doubleValue]));
