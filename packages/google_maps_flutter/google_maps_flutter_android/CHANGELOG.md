@@ -1,3 +1,7 @@
+## 2.19.4
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.19.3
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.

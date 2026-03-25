@@ -1,6 +1,10 @@
-## 4.10.14
+## 4.10.15
 
 * Fixes dartdoc comments that accidentally used HTML.
+
+## 4.10.14
+
+* Updates build files from Groovy to Kotlin.
 
 ## 4.10.13
 

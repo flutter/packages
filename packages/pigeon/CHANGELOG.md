@@ -1,6 +1,12 @@
-## 26.2.4
+## 26.3.1
 
 * Fixes dartdoc comments that accidentally used HTML.
+
+## 26.3.0
+
+* Optimizes and improves data class equality and hashing.
+* Changes hashing and equality methods to behave consistently across platforms.
+* Adds equality methods to previously unsupported languages.
 
 ## 26.2.3
 
