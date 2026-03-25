@@ -711,6 +711,39 @@ void main() {
     expect(map.mapConfiguration.markerType, MarkerType.marker);
   });
 
+  testWidgets('Is default color scheme null', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.colorScheme, null);
+  });
+
+  testWidgets('Can set color scheme to non-default', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          colorScheme: MapColorScheme.light,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.colorScheme, MapColorScheme.light);
+  });
+
   testWidgets('Can update mapId', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(

@@ -496,13 +496,13 @@ class TypeDeclaration {
       associatedProxyApi = null,
       typeArguments = const <TypeDeclaration>[];
 
-  /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
+  /// The base name of the [TypeDeclaration] (ex `Foo` to `Foo<Bar>?`).
   final String baseName;
 
   /// Whether the declaration represents 'void'.
   bool get isVoid => baseName == 'void';
 
-  /// Whether the type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
+  /// Whether the type arguments to the entity (ex `Bar` to `Foo<Bar>?`).
   final List<TypeDeclaration> typeArguments;
 
   /// Whether the type is nullable.

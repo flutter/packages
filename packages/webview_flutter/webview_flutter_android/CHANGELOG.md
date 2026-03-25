@@ -1,7 +1,15 @@
-## 4.10.14
+## 4.10.16
 
 * Adds opt out of `displayCutout` and `systemBars` Android inset changes. See
   https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/insets.md#opt_out
+
+## 4.10.15
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 4.10.14
+
+* Updates build files from Groovy to Kotlin.
 
 ## 4.10.13
 
