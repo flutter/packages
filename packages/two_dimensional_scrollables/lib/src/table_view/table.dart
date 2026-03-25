@@ -900,7 +900,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final Alignment resolvedAlignment = alignment.resolve(textDirection);
     _hAlignmentOffset = 0.0;
     if (!_columnsAreInfinite && _columnMetrics.isNotEmpty) {
-      final double totalWidth = _pinnedColumnsExtent +
+      final double totalWidth =
+          _pinnedColumnsExtent +
           _columnMetrics[delegate.columnCount! - 1]!.trailingOffset;
       if (totalWidth < viewportDimension.width) {
         _hAlignmentOffset =
@@ -912,7 +913,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     _vAlignmentOffset = 0.0;
     if (!_rowsAreInfinite && _rowMetrics.isNotEmpty) {
-      final double totalHeight = _pinnedRowsExtent +
+      final double totalHeight =
+          _pinnedRowsExtent +
           _rowMetrics[delegate.rowCount! - 1]!.trailingOffset;
       if (totalHeight < viewportDimension.height) {
         _vAlignmentOffset =
@@ -923,7 +925,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     if (_firstNonPinnedCell == null &&
-
         _lastPinnedRow == null &&
         _lastPinnedColumn == null) {
       assert(_lastNonPinnedCell == null);

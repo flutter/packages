@@ -8,6 +8,47 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
   group('TableView alignment', () {
+    testWidgets('Default alignment - topLeft', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        WidgetsApp(
+          color: const Color(0xFFFFFFFF),
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 600,
+                height: 600,
+                child: TableView.builder(
+                  columnCount: 1,
+                  rowCount: 1,
+                  columnBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (context, vicinity) {
+                    return TableViewCell(
+                      child: SizedBox(
+                        key: ValueKey<String>(
+                          'cell ${vicinity.column}:${vicinity.row}',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Offset tableTopLeft = tester.getTopLeft(find.byType(TableView));
+      // Default is Alignment.topLeft (0, 0)
+      final Finder cell00 = find.byKey(const ValueKey<String>('cell 0:0'));
+      expect(tester.getTopLeft(cell00) - tableTopLeft, Offset.zero);
+    });
+
     testWidgets('Horizontal alignment - center', (WidgetTester tester) async {
       const viewportWidth = 600.0;
 
@@ -314,8 +355,9 @@ void main() {
       );
     });
 
-    testWidgets('Alignment with reversed horizontal axis',
-        (WidgetTester tester) async {
+    testWidgets('Alignment with reversed horizontal axis', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
@@ -364,8 +406,9 @@ void main() {
       );
     });
 
-    testWidgets('Alignment with reversed vertical axis',
-        (WidgetTester tester) async {
+    testWidgets('Alignment with reversed vertical axis', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
@@ -413,8 +456,9 @@ void main() {
       );
     });
 
-    testWidgets('Alignment with both axes reversed',
-        (WidgetTester tester) async {
+    testWidgets('Alignment with both axes reversed', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
@@ -513,8 +557,9 @@ void main() {
       );
     });
 
-    testWidgets('Overflow alignment behaves like start in overflow axis',
-        (WidgetTester tester) async {
+    testWidgets('Overflow alignment behaves like start in overflow axis', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
@@ -554,7 +599,10 @@ void main() {
       // Table (300) > Viewport (200). Horizontal alignment should be ignored (start).
       // Viewport (400) > Table (100) Row. Vertical alignment should be center (150).
       final Finder cell00 = find.byKey(const ValueKey<String>('cell 0:0'));
-      expect(tester.getTopLeft(cell00) - tableTopLeft, const Offset(0.0, 150.0));
+      expect(
+        tester.getTopLeft(cell00) - tableTopLeft,
+        const Offset(0.0, 150.0),
+      );
     });
   });
 }
