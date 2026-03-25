@@ -267,7 +267,7 @@ class GoRouterStateRegistry extends ChangeNotifier {
 
   /// Updates this registry with new records.
   void updateRegistry(Map<Page<Object?>, GoRouterState> newRegistry) {
-    bool shouldNotify = false;
+    var shouldNotify = false;
     final Set<Page<Object?>> pagesWithAssociation = _routePageAssociation.values
         .toSet();
     for (final MapEntry<Page<Object?>, GoRouterState> entry

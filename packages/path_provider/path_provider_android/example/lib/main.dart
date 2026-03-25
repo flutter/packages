@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<String?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<List<String>?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');

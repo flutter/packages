@@ -67,8 +67,9 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       if (packageIndex == -1) {
         continue;
       }
-      final List<String> relativeComponents =
-          allComponents.sublist(packageIndex + 1);
+      final List<String> relativeComponents = allComponents.sublist(
+        packageIndex + 1,
+      );
       // The package name is either the directory directly under packages/, or
       // the directory under that in the case of a federated plugin.
       String packageName = relativeComponents.removeAt(0);
@@ -83,8 +84,9 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       if (relativeComponents.last.endsWith('.dart') &&
           !await _changeIsCommentOnly(gitVersionFinder, path)) {
         _changedDartFiles[packageName] ??= <String>[];
-        _changedDartFiles[packageName]!
-            .add(p.posix.joinAll(relativeComponents));
+        _changedDartFiles[packageName]!.add(
+          p.posix.joinAll(relativeComponents),
+        );
       }
 
       if (packageName.endsWith(_platformInterfaceSuffix) &&
@@ -109,7 +111,8 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       // As the leaf nodes in the graph, a published package interface change is
       // assumed to be correct, and other changes are validated against that.
       return PackageResult.skip(
-          'Platform interface changes are not validated.');
+        'Platform interface changes are not validated.',
+      );
     }
 
     // Special-case combination PRs that are following repo process, so that
@@ -117,31 +120,35 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     // the PR (but is still an error so that the PR can't land without following
     // the resolution process).
     if (package.getExamples().any(_hasTemporaryDependencyOverrides)) {
-      printError('"$kDoNotLandWarning" found in pubspec.yaml, so this is '
-          'assumed to be the initial combination PR for a federated change, '
-          'following the standard repository procedure. This failure is '
-          'expected, in order to prevent accidentally landing the temporary '
-          'overrides, and will automatically be resolved when the temporary '
-          'overrides are replaced by dependency version bumps later in the '
-          'process.');
+      printError(
+        '"$kDoNotLandWarning" found in pubspec.yaml, so this is '
+        'assumed to be the initial combination PR for a federated change, '
+        'following the standard repository procedure. This failure is '
+        'expected, in order to prevent accidentally landing the temporary '
+        'overrides, and will automatically be resolved when the temporary '
+        'overrides are replaced by dependency version bumps later in the '
+        'process.',
+      );
       return PackageResult.fail(<String>['Unresolved combo PR.']);
     }
 
     // Uses basename to match _changedPackageFiles.
     final String basePackageName = package.directory.parent.basename;
-    final String platformInterfacePackageName =
+    final platformInterfacePackageName =
         '$basePackageName$_platformInterfaceSuffix';
     final List<String> changedPlatformInterfaceFiles =
         _changedDartFiles[platformInterfacePackageName] ?? <String>[];
 
-    if (!_modifiedAndPublishedPlatformInterfacePackages
-        .contains(platformInterfacePackageName)) {
+    if (!_modifiedAndPublishedPlatformInterfacePackages.contains(
+      platformInterfacePackageName,
+    )) {
       print('No published changes for $platformInterfacePackageName.');
       return PackageResult.success();
     }
 
-    if (!changedPlatformInterfaceFiles
-        .any((String path) => path.startsWith('lib/'))) {
+    if (!changedPlatformInterfaceFiles.any(
+      (String path) => path.startsWith('lib/'),
+    )) {
       print('No public code changes for $platformInterfacePackageName.');
       return PackageResult.success();
     }
@@ -168,39 +175,48 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     // change to another file accidentally included), while not setting too
     // high a bar for detecting mass changes. This can be tuned if there are
     // issues with false positives or false negatives.
-    const int massChangePluginThreshold = 3;
+    const massChangePluginThreshold = 3;
     if (_changedPlugins.length >= massChangePluginThreshold) {
-      logWarning('Ignoring potentially dangerous change, as this appears '
-          'to be a mass change.');
+      logWarning(
+        'Ignoring potentially dangerous change, as this appears '
+        'to be a mass change.',
+      );
       return PackageResult.success();
     }
 
-    printError('Dart changes are not allowed to other packages in '
-        '$basePackageName in the same PR as changes to public Dart code in '
-        '$platformInterfacePackageName, as this can cause accidental breaking '
-        'changes to be missed by automated checks. Please split the changes to '
-        'these two packages into separate PRs.\n\n'
-        'If you believe that this is a false positive, please file a bug.');
-    return PackageResult.fail(
-        <String>['$platformInterfacePackageName changed.']);
+    printError(
+      'Dart changes are not allowed to other packages in '
+      '$basePackageName in the same PR as changes to public Dart code in '
+      '$platformInterfacePackageName, as this can cause accidental breaking '
+      'changes to be missed by automated checks. Please split the changes to '
+      'these two packages into separate PRs.\n\n'
+      'If you believe that this is a false positive, please file a bug.',
+    );
+    return PackageResult.fail(<String>[
+      '$platformInterfacePackageName changed.',
+    ]);
   }
 
   Future<bool> _packageWillBePublished(
-      String pubspecRepoRelativePosixPath) async {
+    String pubspecRepoRelativePosixPath,
+  ) async {
     final File pubspecFile = childFileWithSubcomponents(
-        packagesDir.parent, p.posix.split(pubspecRepoRelativePosixPath));
+      packagesDir.parent,
+      p.posix.split(pubspecRepoRelativePosixPath),
+    );
     if (!pubspecFile.existsSync()) {
       // If the package was deleted, nothing will be published.
       return false;
     }
-    final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
+    final pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
     if (pubspec.publishTo == 'none') {
       return false;
     }
 
     final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-    final Version? previousVersion =
-        await gitVersionFinder.getPackageVersion(pubspecRepoRelativePosixPath);
+    final Version? previousVersion = await gitVersionFinder.getPackageVersion(
+      pubspecRepoRelativePosixPath,
+    );
     if (previousVersion == null) {
       // The plugin is new, so it will be published.
       return true;
@@ -209,15 +225,17 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _changeIsCommentOnly(
-      GitVersionFinder git, String repoPath) async {
+    GitVersionFinder git,
+    String repoPath,
+  ) async {
     final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-    final RegExp changeLine = RegExp(r'^[+-]');
+    final changeLine = RegExp(r'^[+-]');
     // This will not catch /**/-style comments, but false negatives are fine
     // (and in practice, we almost never use that comment style in Dart code).
-    final RegExp commentLine = RegExp(r'^[+-]\s*//');
-    final RegExp blankLine = RegExp(r'^[+-]\s*$');
-    bool foundComment = false;
-    for (final String line in diff) {
+    final commentLine = RegExp(r'^[+-]\s*//');
+    final blankLine = RegExp(r'^[+-]\s*$');
+    var foundComment = false;
+    for (final line in diff) {
       if (!changeLine.hasMatch(line) ||
           line.startsWith('--- ') ||
           line.startsWith('+++ ')) {

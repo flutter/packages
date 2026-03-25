@@ -9,16 +9,16 @@ void main() {
   group('types', () {
     test('WebResourceRequest', () {
       final Uri uri = Uri.parse('https://www.google.com');
-      final WebResourceRequest request = WebResourceRequest(uri: uri);
+      final request = WebResourceRequest(uri: uri);
       expect(request.uri, uri);
     });
 
     test('WebResourceResponse', () {
       final Uri uri = Uri.parse('https://www.google.com');
-      const int statusCode = 404;
-      const Map<String, String> headers = <String, String>{'a': 'header'};
+      const statusCode = 404;
+      const headers = <String, String>{'a': 'header'};
 
-      final WebResourceResponse response = WebResourceResponse(
+      final response = WebResourceResponse(
         uri: uri,
         statusCode: statusCode,
         headers: headers,

@@ -9,7 +9,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Vertices.fromFloat32List', () {
-    final Vertices vertices = Vertices.fromFloat32List(
+    final vertices = Vertices.fromFloat32List(
       Float32List.fromList(<double>[1, 2, 3, 4, 5, 6]),
     );
 
@@ -26,7 +26,7 @@ void main() {
   });
 
   test('IndexedVertices - creates valid index', () {
-    final Vertices vertices = Vertices.fromFloat32List(
+    final vertices = Vertices.fromFloat32List(
       Float32List.fromList(<double>[
         1,
         1,
@@ -76,7 +76,7 @@ void main() {
   });
 
   test('IndexedVertices - does not index if index is larger', () {
-    final Float32List original = Float32List.fromList(<double>[
+    final original = Float32List.fromList(<double>[
       1,
       1,
       2,
@@ -96,7 +96,7 @@ void main() {
       4,
       5,
     ]);
-    final Vertices vertices = Vertices.fromFloat32List(original);
+    final vertices = Vertices.fromFloat32List(original);
 
     final IndexedVertices indexedVertices = vertices.createIndex();
     expect(indexedVertices.vertices, original);

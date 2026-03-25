@@ -15,9 +15,9 @@ void main() {
   testWidgets('router rebuild with extra codec works', (
     WidgetTester tester,
   ) async {
-    const String initialString = 'some string';
-    const String empty = 'empty';
-    final GoRouter router = GoRouter(
+    const initialString = 'some string';
+    const empty = 'empty';
+    final router = GoRouter(
       initialLocation: '/',
       extraCodec: ComplexDataCodec(),
       initialExtra: ComplexData(initialString),
@@ -37,7 +37,7 @@ void main() {
     );
 
     addTearDown(router.dispose);
-    final SimpleDependency dependency = SimpleDependency();
+    final dependency = SimpleDependency();
     addTearDown(() => dependency.dispose());
 
     await tester.pumpWidget(
@@ -56,9 +56,9 @@ void main() {
   testWidgets(
     'Restores state correctly',
     (WidgetTester tester) async {
-      const String initialString = 'some string';
-      const String empty = 'empty';
-      final List<RouteBase> routes = <RouteBase>[
+      const initialString = 'some string';
+      const empty = 'empty';
+      final routes = <RouteBase>[
         GoRoute(
           path: '/',
           builder: (_, GoRouterState state) {

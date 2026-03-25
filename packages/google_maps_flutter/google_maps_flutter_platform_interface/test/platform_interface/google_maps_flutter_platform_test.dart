@@ -38,8 +38,7 @@ void main() {
     });
 
     test('Can be mocked with `implements`', () {
-      final GoogleMapsFlutterPlatformMock mock =
-          GoogleMapsFlutterPlatformMock();
+      final mock = GoogleMapsFlutterPlatformMock();
       GoogleMapsFlutterPlatform.instance = mock;
     });
 
@@ -131,8 +130,9 @@ void main() {
             ExtendsGoogleMapsFlutterPlatform();
         GoogleMapsFlutterPlatform.instance = platform;
 
-        const CameraUpdateAnimationConfiguration animationConfig =
-            CameraUpdateAnimationConfiguration(duration: Duration(seconds: 2));
+        const animationConfig = CameraUpdateAnimationConfiguration(
+          duration: Duration(seconds: 2),
+        );
         final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
           const CameraPosition(target: LatLng(10.0, 15.0)),
         );

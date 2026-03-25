@@ -23,11 +23,11 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setFeatureFlags(pigeon_instance: ImaSdkSettings, featureFlags: Map<String, String>) {
-    pigeon_instance.featureFlags = featureFlags
+    pigeon_instance.setFeatureFlags(featureFlags)
   }
 
   override fun setLanguage(pigeon_instance: ImaSdkSettings, language: String) {
-    pigeon_instance.language = language
+    pigeon_instance.setLanguage(language)
   }
 
   override fun setMaxRedirects(pigeon_instance: ImaSdkSettings, maxRedirects: Long) {
@@ -35,18 +35,18 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setPlayerType(pigeon_instance: ImaSdkSettings, playerType: String) {
-    pigeon_instance.playerType = playerType
+    pigeon_instance.setPlayerType(playerType)
   }
 
   override fun setPlayerVersion(pigeon_instance: ImaSdkSettings, playerVersion: String) {
-    pigeon_instance.playerVersion = playerVersion
+    pigeon_instance.setPlayerVersion(playerVersion)
   }
 
   override fun setPpid(pigeon_instance: ImaSdkSettings, ppid: String) {
-    pigeon_instance.ppid = ppid
+    pigeon_instance.setPpid(ppid)
   }
 
   override fun setSessionId(pigeon_instance: ImaSdkSettings, sessionId: String) {
-    pigeon_instance.sessionId = sessionId
+    pigeon_instance.setSessionId(sessionId)
   }
 }

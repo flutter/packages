@@ -57,7 +57,7 @@ void main() {
     }
   });
 
-  final List<StorageDirectory?> allDirs = <StorageDirectory?>[
+  final allDirs = <StorageDirectory?>[
     null,
     StorageDirectory.music,
     StorageDirectory.podcasts,
@@ -68,7 +68,7 @@ void main() {
     StorageDirectory.movies,
   ];
 
-  for (final StorageDirectory? type in allDirs) {
+  for (final type in allDirs) {
     testWidgets('getExternalStorageDirectories (type: $type)', (
       WidgetTester tester,
     ) async {
@@ -93,8 +93,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (directoryPath == null) {
     return;
   }
-  final Directory directory = Directory(directoryPath);
-  final File file = File('${directory.path}${Platform.pathSeparator}$name');
+  final directory = Directory(directoryPath);
+  final file = File('${directory.path}${Platform.pathSeparator}$name');
 
   if (file.existsSync()) {
     file.deleteSync();

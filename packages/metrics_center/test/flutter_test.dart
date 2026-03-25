@@ -9,8 +9,8 @@ import 'common.dart';
 import 'utility.dart';
 
 void main() {
-  const String gitRevision = 'ca799fa8b2254d09664b78ee80c43b434788d112';
-  final FlutterEngineMetricPoint simplePoint = FlutterEngineMetricPoint(
+  const gitRevision = 'ca799fa8b2254d09664b78ee80c43b434788d112';
+  final simplePoint = FlutterEngineMetricPoint(
     'BM_ParagraphLongLayout',
     287235,
     gitRevision,
@@ -22,7 +22,7 @@ void main() {
     expect(simplePoint.tags[kGitRevisionKey], gitRevision);
     expect(simplePoint.tags[kNameKey], 'BM_ParagraphLongLayout');
 
-    final FlutterEngineMetricPoint detailedPoint = FlutterEngineMetricPoint(
+    final detailedPoint = FlutterEngineMetricPoint(
       'BM_ParagraphLongLayout',
       287224,
       'ca799fa8b2254d09664b78ee80c43b434788d112',

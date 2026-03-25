@@ -8,10 +8,14 @@ import XCTest
 @testable import in_app_purchase_storekit
 
 final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
+
+  public var lastUpdate: [in_app_purchase_storekit.SK2TransactionMessage] = []
+
   func onTransactionsUpdated(
     newTransactions newTransactionsArg: [in_app_purchase_storekit.SK2TransactionMessage],
     completion: @escaping (Result<Void, in_app_purchase_storekit.PigeonError>) -> Void
   ) {
+    lastUpdate = newTransactionsArg
     // We should only write to a flutter channel from the main thread.
     XCTAssertTrue(Thread.isMainThread)
   }
@@ -21,6 +25,7 @@ final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 final class InAppPurchase2PluginTests: XCTestCase {
   private var session: SKTestSession!
   private var plugin: InAppPurchasePlugin!
+  private var callback: FakeIAP2Callback = FakeIAP2Callback()
 
   override func setUp() async throws {
     try await super.setUp()
@@ -33,7 +38,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin = InAppPurchasePluginStub(receiptManager: FIAPReceiptManagerStub()) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
     }
-    plugin.transactionCallbackAPI = FakeIAP2Callback()
+    plugin.transactionCallbackAPI = callback
     try plugin.startListeningToTransactions()
   }
 
@@ -86,11 +91,17 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     await fulfillment(of: [purchaseExpectation], timeout: 5)
 
+    XCTAssert(callback.lastUpdate.count == 1)
+    XCTAssert(
+      callback.lastUpdate.first?.status != .restored,
+      "Ordinary purchase updates should not be marked as restoring")
+
     plugin.transactions {
       result in
       switch result {
       case .success(let transactions):
         XCTAssert(transactions.count == 1)
+        XCTAssert(transactions.first?.status != .restored)
         transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
@@ -170,6 +181,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
 
@@ -206,13 +224,22 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
+    // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
+    session.clearTransactions()
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success:
-        XCTFail("Purchase should NOT suceed.")
+        XCTFail("Purchase should NOT succeed.")
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
@@ -279,7 +306,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testDiscountedProductSuccess() async throws {
@@ -292,7 +319,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testPurchaseWithAppAccountToken() async throws {
@@ -376,6 +403,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
     await fulfillment(of: [purchaseExpectation], timeout: 5)
 
+    XCTAssert(callback.lastUpdate.count == 1)
+    XCTAssert(callback.lastUpdate.first?.status != .restored)
+
     plugin.restorePurchases { result in
       switch result {
       case .success():
@@ -385,6 +415,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [restoreExpectation], timeout: 5)
+
+    XCTAssert(callback.lastUpdate.count == 1)
+    XCTAssert(callback.lastUpdate.first?.status == .restored)
   }
 
   func testFinishTransaction() async throws {
@@ -393,7 +426,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchase):
+      case .success(_):
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")

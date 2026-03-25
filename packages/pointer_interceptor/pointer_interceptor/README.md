@@ -2,7 +2,7 @@
 
 |             | iOS     | Web |
 |-------------|---------|-----|
-| **Support** | iOS 12+ | Any |
+| **Support** | iOS 13+ | Any |
 
 `PointerInterceptor` is a widget that prevents mouse events from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html) in web, or an underlying [`PlatformView`](https://api.flutter.dev/flutter/widgets/PlatformViewLink-class.html) on iOS.
 

@@ -10,7 +10,7 @@ const TreeRow span = TreeRow(extent: FixedTreeRowExtent(50));
 
 void main() {
   test('TreeVicinity converts ChildVicinity', () {
-    const TreeVicinity vicinity = TreeVicinity(depth: 5, row: 10);
+    const vicinity = TreeVicinity(depth: 5, row: 10);
     expect(vicinity.xIndex, 5);
     expect(vicinity.yIndex, 10);
     expect(vicinity.row, 10);
@@ -20,7 +20,7 @@ void main() {
 
   group('TreeRowBuilderDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
-      final TreeRowBuilderDelegate delegate = TreeRowBuilderDelegate(
+      final delegate = TreeRowBuilderDelegate(
         nodeBuilder: (_, __) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('sets max y index (not x) of super class', () {
-      final TreeRowBuilderDelegate delegate = TreeRowBuilderDelegate(
+      final delegate = TreeRowBuilderDelegate(
         nodeBuilder: (_, __) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,
@@ -62,10 +62,10 @@ void main() {
     });
 
     test('Notifies listeners & rebuilds', () {
-      bool notified = false;
+      var notified = false;
       TreeRowBuilderDelegate oldDelegate;
 
-      final TreeRowBuilderDelegate delegate = TreeRowBuilderDelegate(
+      final delegate = TreeRowBuilderDelegate(
         nodeBuilder: (_, __) => const SizedBox(),
         rowBuilder: (_) => span,
         rowCount: 6,

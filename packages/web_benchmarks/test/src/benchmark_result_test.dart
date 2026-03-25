@@ -8,7 +8,7 @@ import 'package:web_benchmarks/server.dart';
 void main() {
   group('can serialize and deserialize', () {
     test('$BenchmarkResults', () {
-      final Map<String, Object?> data = <String, Object?>{
+      final data = <String, Object?>{
         'foo': <Map<String, Object?>>[
           <String, Object?>{'metric': 'foo.bar', 'value': 12.34, 'delta': -0.2},
           <String, Object?>{'metric': 'foo.baz', 'value': 10, 'delta': 3.3},
@@ -18,7 +18,7 @@ void main() {
         ],
       };
 
-      final BenchmarkResults benchmarkResults = BenchmarkResults.parse(data);
+      final benchmarkResults = BenchmarkResults.parse(data);
       expect(benchmarkResults.scores.length, 2);
       final List<BenchmarkScore> fooBenchmarks =
           benchmarkResults.scores['foo']!;
@@ -40,13 +40,13 @@ void main() {
     });
 
     test('$BenchmarkScore', () {
-      final Map<String, Object?> data = <String, Object?>{
+      final data = <String, Object?>{
         'metric': 'foo',
         'value': 1.234,
         'delta': -0.4,
       };
 
-      final BenchmarkScore score = BenchmarkScore.parse(data);
+      final score = BenchmarkScore.parse(data);
       expect(score.metric, 'foo');
       expect(score.value, 1.234);
       expect(score.delta, -0.4);

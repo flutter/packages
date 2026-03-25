@@ -4,8 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
+import android.hardware.camera2.CaptureRequest;
+import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.camera.camera2.interop.Camera2Interop;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.core.content.ContextCompat;
@@ -18,11 +23,15 @@ import androidx.core.content.ContextCompat;
 class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
+  // Range<?> is defined as Range<Integer> in pigeon.
+  @SuppressWarnings("unchecked")
+  @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override
   public ImageAnalysis pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
+      @Nullable Range<?> targetFpsRange,
       @Nullable Long outputImageFormat) {
     final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
     if (resolutionSelector != null) {
@@ -34,6 +43,12 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
     if (outputImageFormat != null) {
       builder.setOutputImageFormat(outputImageFormat.intValue());
+    }
+
+    if (targetFpsRange != null) {
+      Camera2Interop.Extender<ImageAnalysis> extender = new Camera2Interop.Extender<>(builder);
+      extender.setCaptureRequestOption(
+          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
     return builder.build();

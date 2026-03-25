@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Testing
 
 @testable import test_plugin
 
@@ -13,9 +13,10 @@ class MyApi: HostTrivialApi {
 // Since the generator is almost entirely shared with iOS, this is currently
 // just testing that the generated code compiles for macOS (e.g., that the
 // Flutter framework import is correct).
-class BasicCompileTest: XCTestCase {
-  func testMakeApi() {
+struct BasicCompileTest {
+  @Test
+  func makeApi() {
     let api = MyApi()
-    XCTAssertNotNil(api)
+    #expect(api as Any? != nil)
   }
 }

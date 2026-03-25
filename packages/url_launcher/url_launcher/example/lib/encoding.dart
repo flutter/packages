@@ -41,7 +41,7 @@ void main() => runApp(
 
 void _composeMail() {
   // #docregion encode-query-parameters
-  final Uri emailLaunchUri = Uri(
+  final emailLaunchUri = Uri(
     scheme: 'mailto',
     path: 'smith@example.com',
     query: encodeQueryParameters(<String, String>{

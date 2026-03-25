@@ -383,7 +383,7 @@ class SpanDecoration {
   /// cells.
   void paint(SpanDecorationPaintDetails details) {
     if (color != null) {
-      final Paint paint = Paint()
+      final paint = Paint()
         ..color = color!
         ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
@@ -439,17 +439,24 @@ class SpanBorder {
   /// cells.
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
     final AxisDirection axisDirection = details.axisDirection;
+    final AxisDirection? crossAxisDirection = details.crossAxisDirection;
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
-        final Border border = Border(
-          top: axisDirection == AxisDirection.right ? leading : trailing,
-          bottom: axisDirection == AxisDirection.right ? trailing : leading,
+        final bool isLeadingTop =
+            crossAxisDirection == null ||
+            crossAxisDirection == AxisDirection.down;
+        final border = Border(
+          top: isLeadingTop ? leading : trailing,
+          bottom: isLeadingTop ? trailing : leading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
       case Axis.vertical:
-        final Border border = Border(
-          left: axisDirection == AxisDirection.down ? leading : trailing,
-          right: axisDirection == AxisDirection.down ? trailing : leading,
+        final bool isLeadingLeft =
+            crossAxisDirection == null ||
+            crossAxisDirection == AxisDirection.right;
+        final border = Border(
+          left: isLeadingLeft ? leading : trailing,
+          right: isLeadingLeft ? trailing : leading,
         );
         border.paint(details.canvas, details.rect, borderRadius: borderRadius);
     }
@@ -468,6 +475,7 @@ class SpanDecorationPaintDetails {
     required this.canvas,
     required this.rect,
     required this.axisDirection,
+    this.crossAxisDirection,
   });
 
   /// The [Canvas] that the [SpanDecoration] will be painted to.
@@ -487,4 +495,10 @@ class SpanDecorationPaintDetails {
   /// [AxisDirection.right], which would be [Axis.horizontal], a row is being
   /// painted.
   final AxisDirection axisDirection;
+
+  /// The [AxisDirection] of the [Axis] perpendicular to the [Span].
+  ///
+  /// Used to determine the correct leading/trailing edge when deciding how to
+  /// paint borders or apply padding.
+  final AxisDirection? crossAxisDirection;
 }

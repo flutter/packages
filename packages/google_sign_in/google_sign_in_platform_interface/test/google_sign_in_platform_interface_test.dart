@@ -41,8 +41,7 @@ void main() {
     test(
       'Default implementation of clearAuthorizationToken throws unimplemented error',
       () {
-        final ExtendsGoogleSignInPlatform platform =
-            ExtendsGoogleSignInPlatform();
+        final platform = ExtendsGoogleSignInPlatform();
 
         expect(
           () => platform.clearAuthorizationToken(
@@ -56,13 +55,13 @@ void main() {
 
   group('GoogleSignInUserData', () {
     test('can be compared by == operator', () {
-      const GoogleSignInUserData firstInstance = GoogleSignInUserData(
+      const firstInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
       );
-      const GoogleSignInUserData secondInstance = GoogleSignInUserData(
+      const secondInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
@@ -74,32 +73,32 @@ void main() {
 
   group('AuthenticationTokenData', () {
     test('can be compared by == operator', () {
-      const AuthenticationTokenData firstInstance = AuthenticationTokenData(
-        idToken: 'idToken',
-      );
-      const AuthenticationTokenData secondInstance = AuthenticationTokenData(
-        idToken: 'idToken',
-      );
+      const firstInstance = AuthenticationTokenData(idToken: 'idToken');
+      const secondInstance = AuthenticationTokenData(idToken: 'idToken');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
 
   group('ClientAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const ClientAuthorizationTokenData firstInstance =
-          ClientAuthorizationTokenData(accessToken: 'accessToken');
-      const ClientAuthorizationTokenData secondInstance =
-          ClientAuthorizationTokenData(accessToken: 'accessToken');
+      const firstInstance = ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
+      const secondInstance = ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
       expect(firstInstance == secondInstance, isTrue);
     });
   });
 
   group('ServerAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const ServerAuthorizationTokenData firstInstance =
-          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
-      const ServerAuthorizationTokenData secondInstance =
-          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
+      const firstInstance = ServerAuthorizationTokenData(
+        serverAuthCode: 'serverAuthCode',
+      );
+      const secondInstance = ServerAuthorizationTokenData(
+        serverAuthCode: 'serverAuthCode',
+      );
       expect(firstInstance == secondInstance, isTrue);
     });
   });

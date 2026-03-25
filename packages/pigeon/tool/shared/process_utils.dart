@@ -25,8 +25,8 @@ Future<int> runProcess(
     return process.exitCode;
   }
 
-  final List<int> stdoutBuffer = <int>[];
-  final List<int> stderrBuffer = <int>[];
+  final stdoutBuffer = <int>[];
+  final stderrBuffer = <int>[];
   final Future<void> stdoutFuture = process.stdout.forEach(stdoutBuffer.addAll);
   final Future<void> stderrFuture = process.stderr.forEach(stderrBuffer.addAll);
   final int exitCode = await process.exitCode;

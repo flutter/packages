@@ -26,8 +26,8 @@ void main() {
   });
 
   test('invalid extra throws', () {
-    const example.MyExtraCodec extraCodec = example.MyExtraCodec();
-    const List<Object?> invalidValue = <Object?>['invalid'];
+    const extraCodec = example.MyExtraCodec();
+    const invalidValue = <Object?>['invalid'];
 
     expect(
       () => extraCodec.decode(invalidValue),

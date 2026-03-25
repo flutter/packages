@@ -11,31 +11,31 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('getTemporaryDirectory', (WidgetTester tester) async {
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
     final String? result = await provider.getTemporaryPath();
     _verifySampleFile(result, 'temporaryDirectory');
   });
 
   testWidgets('getApplicationDocumentsDirectory', (WidgetTester tester) async {
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
     final String? result = await provider.getApplicationDocumentsPath();
     _verifySampleFile(result, 'applicationDocuments');
   });
 
   testWidgets('getApplicationSupportDirectory', (WidgetTester tester) async {
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
     final String? result = await provider.getApplicationSupportPath();
     _verifySampleFile(result, 'applicationSupport');
   });
 
   testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
     final String? result = await provider.getApplicationCachePath();
     _verifySampleFile(result, 'applicationCache');
   });
 
   testWidgets('getDownloadsDirectory', (WidgetTester tester) async {
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
     final String? result = await provider.getDownloadsPath();
     _verifySampleFile(result, 'downloads');
   });
@@ -48,8 +48,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (directoryPath == null) {
     return;
   }
-  final Directory directory = Directory(directoryPath);
-  final File file = File('${directory.path}${Platform.pathSeparator}$name');
+  final directory = Directory(directoryPath);
+  final file = File('${directory.path}${Platform.pathSeparator}$name');
 
   if (file.existsSync()) {
     file.deleteSync();

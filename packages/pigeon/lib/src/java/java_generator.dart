@@ -59,8 +59,7 @@ class JavaOptions {
   /// Creates a [JavaOptions] from a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
-    final Iterable<dynamic>? copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return JavaOptions(
       className: map['className'] as String?,
       package: map['package'] as String?,
@@ -72,7 +71,7 @@ class JavaOptions {
   /// Converts a [JavaOptions] to a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (className != null) 'className': className!,
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
@@ -203,10 +202,15 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       '@SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})',
     );
     if (generatorOptions.useGeneratedAnnotation ?? false) {
-      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+      indent.writeln(
+        '@javax.annotation.Generated("$defaultPluginPackageName")',
+      );
     }
     indent.writeln('public class ${generatorOptions.className!} {');
     indent.inc();
+    _writeNumberHelpers(indent);
+    _writeDeepEquals(indent);
+    _writeDeepHashCode(indent);
   }
 
   @override
@@ -218,7 +222,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     required String dartPackageName,
   }) {
     String camelToSnake(String camelCase) {
-      final RegExp regex = RegExp('([a-z])([A-Z]+)');
+      final regex = RegExp('([a-z])([A-Z]+)');
       return camelCase
           .replaceAllMapped(regex, (Match m) => '${m[1]}_${m[2]}')
           .toUpperCase();
@@ -263,7 +267,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.',
     ];
     indent.newln();
@@ -313,9 +317,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       field,
       (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
     );
-    final String nullability = field.type.isNullable
-        ? '@Nullable '
-        : '@NonNull ';
+    final nullability = field.type.isNullable ? '@Nullable ' : '@NonNull ';
     addDocumentationComments(
       indent,
       field.documentationComments,
@@ -384,13 +386,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       final Iterable<String> checks = classDefinition.fields.map((
         NamedType field,
       ) {
-        // Objects.equals only does pointer equality for array types.
-        if (_javaTypeIsArray(field.type)) {
-          return 'Arrays.equals(${field.name}, that.${field.name})';
-        }
-        return field.type.isNullable
-            ? 'Objects.equals(${field.name}, that.${field.name})'
-            : '${field.name}.equals(that.${field.name})';
+        return 'pigeonDeepEquals(${field.name}, that.${field.name})';
       });
       indent.writeln('return ${checks.join(' && ')};');
     });
@@ -399,32 +395,269 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     // Implement hashCode().
     indent.writeln('@Override');
     indent.writeScoped('public int hashCode() {', '}', () {
-      // As with equalty checks, arrays need special handling.
-      final Iterable<String> arrayFieldNames = classDefinition.fields
-          .where((NamedType field) => _javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final Iterable<String> nonArrayFieldNames = classDefinition.fields
-          .where((NamedType field) => !_javaTypeIsArray(field.type))
-          .map((NamedType field) => field.name);
-      final String nonArrayHashValue = nonArrayFieldNames.isNotEmpty
-          ? 'Objects.hash(${nonArrayFieldNames.join(', ')})'
-          : '0';
-
-      if (arrayFieldNames.isEmpty) {
-        // Return directly if there are no array variables, to avoid redundant
-        // variable lint warnings.
-        indent.writeln('return $nonArrayHashValue;');
+      final Iterable<String> fieldNames = classDefinition.fields.map(
+        (NamedType field) => field.name,
+      );
+      if (fieldNames.isEmpty) {
+        indent.writeln('return Objects.hash(getClass());');
       } else {
-        const String resultVar = '${varNamePrefix}result';
-        indent.writeln('int $resultVar = $nonArrayHashValue;');
-        // Manually mix in the Arrays.hashCode values.
-        for (final String name in arrayFieldNames) {
-          indent.writeln(
-            '$resultVar = 31 * $resultVar + Arrays.hashCode($name);',
-          );
-        }
-        indent.writeln('return $resultVar;');
+        indent.writeln(
+          'Object[] fields = new Object[] {getClass(), ${fieldNames.join(', ')}};',
+        );
+        indent.writeln('return pigeonDeepHashCode(fields);');
       }
+    });
+    indent.newln();
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.writeScoped(
+      'static boolean pigeonDeepEquals(Object a, Object b) {',
+      '}',
+      () {
+        indent.writeln('if (a == b) { return true; }');
+        indent.writeln('if (a == null || b == null) { return false; }');
+        indent.writeScoped(
+          'if (a instanceof byte[] && b instanceof byte[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((byte[]) a, (byte[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof int[] && b instanceof int[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((int[]) a, (int[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof long[] && b instanceof long[]) {',
+          '}',
+          () {
+            indent.writeln('return Arrays.equals((long[]) a, (long[]) b);');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof double[] && b instanceof double[]) {',
+          '}',
+          () {
+            indent.writeln('double[] da = (double[]) a;');
+            indent.writeln('double[] db = (double[]) b;');
+            indent.writeScoped('if (da.length != db.length) {', '}', () {
+              indent.writeln('return false;');
+            });
+            indent.writeScoped(
+              'for (int i = 0; i < da.length; i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDoubleEquals(da[i], db[i])) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof List && b instanceof List) {',
+          '}',
+          () {
+            indent.writeln('List<?> listA = (List<?>) a;');
+            indent.writeln('List<?> listB = (List<?>) b;');
+            indent.writeln(
+              'if (listA.size() != listB.size()) { return false; }',
+            );
+            indent.writeScoped(
+              'for (int i = 0; i < listA.size(); i++) {',
+              '}',
+              () {
+                indent.writeScoped(
+                  'if (!pigeonDeepEquals(listA.get(i), listB.get(i))) {',
+                  '}',
+                  () {
+                    indent.writeln('return false;');
+                  },
+                );
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Map && b instanceof Map) {',
+          '}',
+          () {
+            indent.writeln('Map<?, ?> mapA = (Map<?, ?>) a;');
+            indent.writeln('Map<?, ?> mapB = (Map<?, ?>) b;');
+            indent.writeln('if (mapA.size() != mapB.size()) { return false; }');
+            indent.writeScoped(
+              'for (Map.Entry<?, ?> entryA : mapA.entrySet()) {',
+              '}',
+              () {
+                indent.writeln('Object keyA = entryA.getKey();');
+                indent.writeln('Object valueA = entryA.getValue();');
+                indent.writeln('boolean found = false;');
+                indent.writeScoped(
+                  'for (Map.Entry<?, ?> entryB : mapB.entrySet()) {',
+                  '}',
+                  () {
+                    indent.writeln('Object keyB = entryB.getKey();');
+                    indent.writeScoped(
+                      'if (pigeonDeepEquals(keyA, keyB)) {',
+                      '}',
+                      () {
+                        indent.writeln('Object valueB = entryB.getValue();');
+                        indent.writeln(
+                          'if (pigeonDeepEquals(valueA, valueB)) {',
+                        );
+                        indent.nest(1, () {
+                          indent.writeln('found = true;');
+                          indent.writeln('break;');
+                        });
+                        indent.writeln('} else {');
+                        indent.nest(1, () {
+                          indent.writeln('return false;');
+                        });
+                        indent.writeln('}');
+                      },
+                    );
+                  },
+                );
+                indent.writeScoped('if (!found) {', '}', () {
+                  indent.writeln('return false;');
+                });
+              },
+            );
+            indent.writeln('return true;');
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Double && b instanceof Double) {',
+          '}',
+          () {
+            indent.writeln(
+              'return pigeonDoubleEquals((double) a, (double) b);',
+            );
+          },
+        );
+        indent.writeScoped(
+          'if (a instanceof Float && b instanceof Float) {',
+          '}',
+          () {
+            indent.writeln('return pigeonFloatEquals((float) a, (float) b);');
+          },
+        );
+        indent.writeln('return a.equals(b);');
+      },
+    );
+    indent.newln();
+  }
+
+  void _writeDeepHashCode(Indent indent) {
+    indent.writeScoped('static int pigeonDeepHashCode(Object value) {', '}', () {
+      indent.writeln('if (value == null) { return 0; }');
+      indent.writeScoped('if (value instanceof byte[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((byte[]) value);');
+      });
+      indent.writeScoped('if (value instanceof int[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((int[]) value);');
+      });
+      indent.writeScoped('if (value instanceof long[]) {', '}', () {
+        indent.writeln('return Arrays.hashCode((long[]) value);');
+      });
+      indent.writeScoped('if (value instanceof double[]) {', '}', () {
+        indent.writeln('double[] da = (double[]) value;');
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (double d : da) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDoubleHashCode(d);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof List) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (List<?>) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Map) {', '}', () {
+        indent.writeln('int result = 0;');
+        indent.writeScoped(
+          'for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {',
+          '}',
+          () {
+            indent.writeln(
+              'result += ((pigeonDeepHashCode(entry.getKey()) * 31) ^ pigeonDeepHashCode(entry.getValue()));',
+            );
+          },
+        );
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Object[]) {', '}', () {
+        indent.writeln('int result = 1;');
+        indent.writeScoped('for (Object item : (Object[]) value) {', '}', () {
+          indent.writeln('result = 31 * result + pigeonDeepHashCode(item);');
+        });
+        indent.writeln('return result;');
+      });
+      indent.writeScoped('if (value instanceof Double) {', '}', () {
+        indent.writeln('return pigeonDoubleHashCode((double) value);');
+      });
+      indent.writeScoped('if (value instanceof Float) {', '}', () {
+        indent.writeln('return pigeonFloatHashCode((float) value);');
+      });
+      indent.writeln('return value.hashCode();');
+    });
+    indent.newln();
+  }
+
+  void _writeNumberHelpers(Indent indent) {
+    indent.writeScoped(
+      'static boolean pigeonDoubleEquals(double a, double b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0 ? 0.0 : a) == (b == 0.0 ? 0.0 : b) || (Double.isNaN(a) && Double.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped(
+      'static boolean pigeonFloatEquals(float a, float b) {',
+      '}',
+      () {
+        indent.writeln('// Normalize -0.0 to 0.0 and handle NaN equality.');
+        indent.writeln(
+          'return (a == 0.0f ? 0.0f : a) == (b == 0.0f ? 0.0f : b) || (Float.isNaN(a) && Float.isNaN(b));',
+        );
+      },
+    );
+    indent.newln();
+    indent.writeScoped('static int pigeonDoubleHashCode(double d) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeScoped('if (d == 0.0) {', '}', () {
+        indent.writeln('d = 0.0;');
+      });
+      indent.writeln('long bits = Double.doubleToLongBits(d);');
+      indent.writeln('return (int) (bits ^ (bits >>> 32));');
+    });
+    indent.newln();
+    indent.writeScoped('static int pigeonFloatHashCode(float f) {', '}', () {
+      indent.writeln(
+        '// Normalize -0.0 to 0.0 and handle NaN to ensure consistent hash codes.',
+      );
+      indent.writeScoped('if (f == 0.0f) {', '}', () {
+        indent.writeln('f = 0.0f;');
+      });
+      indent.writeln('return Float.floatToIntBits(f);');
     });
     indent.newln();
   }
@@ -444,9 +677,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           field,
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
         );
-        final String nullability = field.type.isNullable
-            ? '@Nullable'
-            : '@NonNull';
+        final nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
         indent.newln();
         indent.writeln(
           'private @Nullable ${hostDatatype.datatype} ${field.name};',
@@ -465,7 +696,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       indent.newln();
       indent.write('public @NonNull ${classDefinition.name} build() ');
       indent.addScoped('{', '}', () {
-        const String returnVal = 'pigeonReturn';
+        const returnVal = 'pigeonReturn';
         indent.writeln(
           '${classDefinition.name} $returnVal = new ${classDefinition.name}();',
         );
@@ -516,7 +747,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> ${varNamePrefix}list) ',
     );
     indent.addScoped('{', '}', () {
-      const String result = 'pigeonResult';
+      const result = 'pigeonResult';
       indent.writeln(
         '${classDefinition.name} $result = new ${classDefinition.name}();',
       );
@@ -550,13 +781,13 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     ).toList();
 
     void writeEncodeLogic(EnumeratedType customType) {
-      final String encodeString = customType.type == CustomTypes.customClass
+      final encodeString = customType.type == CustomTypes.customClass
           ? 'toList()'
           : 'index';
-      final String nullCheck = customType.type == CustomTypes.customEnum
+      final nullCheck = customType.type == CustomTypes.customEnum
           ? 'value == null ? null : '
           : '';
-      final String valueString = customType.enumeration < maximumCodecFieldKey
+      final valueString = customType.enumeration < maximumCodecFieldKey
           ? '$nullCheck((${customType.name}) value).$encodeString'
           : 'wrap.toList()';
       final int enumeration = customType.enumeration < maximumCodecFieldKey
@@ -600,7 +831,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       }
     }
 
-    final EnumeratedType overflowClass = EnumeratedType(
+    final overflowClass = EnumeratedType(
       _overflowClassName,
       maximumCodecFieldKey,
       CustomTypes.customClass,
@@ -632,7 +863,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         '}',
         () {
           indent.writeScoped('switch (type) {', '}', () {
-            for (final EnumeratedType customType in enumeratedTypes) {
+            for (final customType in enumeratedTypes) {
               if (customType.enumeration < maximumCodecFieldKey) {
                 writeDecodeLogic(customType);
               }
@@ -670,19 +901,16 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
     List<EnumeratedType> types, {
     required String dartPackageName,
   }) {
-    final NamedType overflowInteration = NamedType(
+    final overflowInteration = NamedType(
       name: 'type',
       type: const TypeDeclaration(baseName: 'int', isNullable: false),
     );
-    final NamedType overflowObject = NamedType(
+    final overflowObject = NamedType(
       name: 'wrapped',
       type: const TypeDeclaration(baseName: 'Object', isNullable: true),
     );
-    final List<NamedType> overflowFields = <NamedType>[
-      overflowInteration,
-      overflowObject,
-    ];
-    final Class overflowClass = Class(
+    final overflowFields = <NamedType>[overflowInteration, overflowObject];
+    final overflowClass = Class(
       name: _overflowClassName,
       fields: overflowFields,
     );
@@ -734,6 +962,7 @@ if (wrapped == null) {
 
   /// Writes the code for a flutter [Api], [api].
   /// Example:
+  /// ```java
   /// public static final class Foo {
   ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
   ///   public interface Result<T> {
@@ -741,6 +970,7 @@ if (wrapped == null) {
   ///   }
   ///   public int add(int x, int y, Result<int> result) {...}
   /// }
+  /// ```
   @override
   void writeFlutterApi(
     InternalJavaOptions generatorOptions,
@@ -754,7 +984,7 @@ if (wrapped == null) {
       return '${_getArgumentName(count, argument)}Arg';
     }
 
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Java.',
     ];
     addDocumentationComments(
@@ -844,7 +1074,7 @@ if (wrapped == null) {
           );
         }
         indent.addScoped('{', '}', () {
-          const String channel = 'channel';
+          const channel = 'channel';
           indent.writeln(
             'final String channelName = "${makeChannelName(api, func, dartPackageName)}" + messageChannelSuffix;',
           );
@@ -888,7 +1118,7 @@ if (wrapped == null) {
                     if (func.returnType.isVoid) {
                       indent.writeln('result.success();');
                     } else {
-                      const String output = 'output';
+                      const output = 'output';
                       final String outputExpression;
                       indent.writeln('@SuppressWarnings("ConstantConditions")');
                       outputExpression =
@@ -950,7 +1180,7 @@ if (wrapped == null) {
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    const List<String> generatedMessages = <String>[
+    const generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.',
     ];
     addDocumentationComments(
@@ -1033,7 +1263,7 @@ if (wrapped == null) {
     final String returnType = method.isAsynchronous
         ? 'void'
         : _javaTypeForDartType(method.returnType);
-    final List<String> argSignature = <String>[];
+    final argSignature = <String>[];
     if (method.parameters.isNotEmpty) {
       final Iterable<String> argTypes = method.parameters.map(
         (NamedType e) => _nullsafeJavaTypeForDartType(e.type),
@@ -1102,7 +1332,7 @@ if (wrapped == null) {
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
             indent.writeln('ArrayList<Object> wrapped = new ArrayList<>();');
-            final List<String> methodArgument = <String>[];
+            final methodArgument = <String>[];
             if (method.parameters.isNotEmpty) {
               indent.writeln(
                 'ArrayList<Object> args = (ArrayList<Object>) message;',
@@ -1110,8 +1340,8 @@ if (wrapped == null) {
               enumerate(method.parameters, (int index, NamedType arg) {
                 final String argType = _javaTypeForDartType(arg.type);
                 final String argName = _getSafeArgumentName(index, arg);
-                final String argExpression = argName;
-                String accessor = 'args.get($index)';
+                final argExpression = argName;
+                var accessor = 'args.get($index)';
                 if (argType != 'Object') {
                   accessor = _cast(accessor, javaType: argType);
                 }
@@ -1120,17 +1350,15 @@ if (wrapped == null) {
               });
             }
             if (method.isAsynchronous) {
-              final String resultValue = method.returnType.isVoid
-                  ? 'null'
-                  : 'result';
+              final resultValue = method.returnType.isVoid ? 'null' : 'result';
               final String resultType = _getResultType(method.returnType);
-              final String resultParam = method.returnType.isVoid
+              final resultParam = method.returnType.isVoid
                   ? ''
                   : '$returnType result';
-              final String addResultArg = method.returnType.isVoid
+              final addResultArg = method.returnType.isVoid
                   ? 'null'
                   : resultValue;
-              const String resultName = 'resultCallback';
+              const resultName = 'resultCallback';
               indent.format('''
 $resultType $resultName =
 \t\tnew $resultType() {
@@ -1147,8 +1375,7 @@ $resultType $resultName =
 ''');
               methodArgument.add(resultName);
             }
-            final String call =
-                'api.${method.name}(${methodArgument.join(', ')})';
+            final call = 'api.${method.name}(${methodArgument.join(', ')})';
             if (method.isAsynchronous) {
               indent.writeln('$call;');
             } else {
@@ -1341,7 +1568,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
 String _intToEnum(String expression, String enumName, bool nullable) {
-  final String toEnum = '$enumName.values()[((Long) $expression).intValue()]';
+  final toEnum = '$enumName.values()[((Long) $expression).intValue()]';
   return nullable ? '$expression == null ? null : $toEnum' : toEnum;
 }
 
@@ -1381,12 +1608,8 @@ String _javaTypeForBuiltinGenericDartType(
   }
 }
 
-bool _javaTypeIsArray(TypeDeclaration type) {
-  return _javaTypeForBuiltinDartType(type)?.endsWith('[]') ?? false;
-}
-
 String? _javaTypeForBuiltinDartType(TypeDeclaration type) {
-  const Map<String, String> javaTypeForDartTypeMap = <String, String>{
+  const javaTypeForDartTypeMap = <String, String>{
     'bool': 'Boolean',
     'int': 'Long',
     'String': 'String',

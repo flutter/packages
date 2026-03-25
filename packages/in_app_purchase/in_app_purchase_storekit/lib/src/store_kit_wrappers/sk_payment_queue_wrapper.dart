@@ -239,7 +239,7 @@ class SKPaymentQueueWrapper {
         }
       case 'restoreCompletedTransactionsFailed':
         {
-          final SKError error = SKError.fromJson(
+          final error = SKError.fromJson(
             Map<String, dynamic>.from(call.arguments as Map<dynamic, dynamic>),
           );
           return Future<void>(() {
@@ -254,13 +254,12 @@ class SKPaymentQueueWrapper {
         }
       case 'shouldAddStorePayment':
         {
-          final Map<Object?, Object?> arguments =
-              call.arguments as Map<Object?, Object?>;
-          final SKPaymentWrapper payment = SKPaymentWrapper.fromJson(
+          final arguments = call.arguments as Map<Object?, Object?>;
+          final payment = SKPaymentWrapper.fromJson(
             (arguments['payment']! as Map<dynamic, dynamic>)
                 .cast<String, dynamic>(),
           );
-          final SKProductWrapper product = SKProductWrapper.fromJson(
+          final product = SKProductWrapper.fromJson(
             (arguments['product']! as Map<dynamic, dynamic>)
                 .cast<String, dynamic>(),
           );
@@ -310,14 +309,12 @@ class SKPaymentQueueWrapper {
     final SKPaymentQueueDelegateWrapper delegate = _paymentQueueDelegate!;
     switch (call.method) {
       case 'shouldContinueTransaction':
-        final Map<Object?, Object?> arguments =
-            call.arguments as Map<Object?, Object?>;
-        final SKPaymentTransactionWrapper transaction =
-            SKPaymentTransactionWrapper.fromJson(
-              (arguments['transaction']! as Map<dynamic, dynamic>)
-                  .cast<String, dynamic>(),
-            );
-        final SKStorefrontWrapper storefront = SKStorefrontWrapper.fromJson(
+        final arguments = call.arguments as Map<Object?, Object?>;
+        final transaction = SKPaymentTransactionWrapper.fromJson(
+          (arguments['transaction']! as Map<dynamic, dynamic>)
+              .cast<String, dynamic>(),
+        );
+        final storefront = SKStorefrontWrapper.fromJson(
           (arguments['storefront']! as Map<dynamic, dynamic>)
               .cast<String, dynamic>(),
         );

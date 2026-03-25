@@ -76,8 +76,8 @@ class FileSelectorAndroid extends FileSelectorPlatform {
       return FileTypes(extensions: <String>[], mimeTypes: <String>[]);
     }
 
-    final Set<String> mimeTypes = <String>{};
-    final Set<String> extensions = <String>{};
+    final mimeTypes = <String>{};
+    final extensions = <String>{};
 
     for (final XTypeGroup group in typeGroups) {
       if (!group.allowsAny &&

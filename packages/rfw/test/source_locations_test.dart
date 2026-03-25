@@ -50,13 +50,13 @@ widget verify { state: true } = switch args.value.c.0 {
       }
       return (node.source!.start.source as String).substring(node.source!.start.offset, node.source!.end.offset);
     }
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       // We use the actual source text as the sourceIdentifier to make it trivial to find the source contents.
       // In normal operation, the sourceIdentifier would be the file name or some similar object.
       ..update(const LibraryName(<String>['test']), parseLibraryFile(sourceFile, sourceIdentifier: sourceFile));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{
           'a': <String, Object?>{ 'b': 0xEE },

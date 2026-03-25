@@ -91,8 +91,8 @@ void main() {
       );
       expect(element.tagName.toLowerCase(), 'div');
 
-      for (int i = 0; i <= 4; i++) {
-        final web.MouseEvent event = web.MouseEvent(
+      for (var i = 0; i <= 4; i++) {
+        final event = web.MouseEvent(
           'mousedown',
           web.MouseEventInit(button: i, cancelable: true),
         );

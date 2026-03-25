@@ -67,7 +67,7 @@ class _SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onDoPostRequest(PlatformWebViewController controller) async {
-    final LoadRequestParams params = LoadRequestParams(
+    final params = LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/post'),
       method: LoadRequestMethod.post,
       headers: const <String, String>{

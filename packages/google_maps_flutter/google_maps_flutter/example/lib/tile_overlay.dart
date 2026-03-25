@@ -52,7 +52,7 @@ class TileOverlayBodyState extends State<TileOverlayBody> {
   }
 
   void _addTileOverlay() {
-    final TileOverlay tileOverlay = TileOverlay(
+    final tileOverlay = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_1'),
       tileProvider: _DebugTileProvider(),
     );
@@ -69,9 +69,7 @@ class TileOverlayBodyState extends State<TileOverlayBody> {
 
   @override
   Widget build(BuildContext context) {
-    final Set<TileOverlay> overlays = <TileOverlay>{
-      if (_tileOverlay != null) _tileOverlay!,
-    };
+    final overlays = <TileOverlay>{if (_tileOverlay != null) _tileOverlay!};
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -123,10 +121,10 @@ class _DebugTileProvider implements TileProvider {
 
   @override
   Future<Tile> getTile(int x, int y, int? zoom) async {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(recorder);
-    final TextSpan textSpan = TextSpan(text: '$x,$y', style: textStyle);
-    final TextPainter textPainter = TextPainter(
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final textSpan = TextSpan(text: '$x,$y', style: textStyle);
+    final textPainter = TextPainter(
       text: textSpan,
       textDirection: TextDirection.ltr,
     );

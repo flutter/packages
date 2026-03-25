@@ -50,8 +50,9 @@ class CMakeProject {
 
   /// The project's 'example' build directory for this instance's platform.
   Directory get buildDirectory {
-    Directory buildDir =
-        flutterProject.childDirectory('build').childDirectory(_platformDirName);
+    Directory buildDir = flutterProject
+        .childDirectory('build')
+        .childDirectory(_platformDirName);
     if (arch != null) {
       buildDir = buildDir.childDirectory(arch!);
     }
@@ -109,16 +110,13 @@ class CMakeProject {
     String target, {
     List<String> arguments = const <String>[],
   }) {
-    return processRunner.runAndStream(
-      getCmakeCommand(),
-      <String>[
-        '--build',
-        buildDirectory.path,
-        '--target',
-        target,
-        if (platform.isWindows) ...<String>['--config', buildMode],
-        ...arguments,
-      ],
-    );
+    return processRunner.runAndStream(getCmakeCommand(), <String>[
+      '--build',
+      buildDirectory.path,
+      '--target',
+      target,
+      if (platform.isWindows) ...<String>['--config', buildMode],
+      ...arguments,
+    ]);
   }
 }

@@ -314,6 +314,12 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     return _map(mapId).lastStyleError;
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) async {
+    final GoogleMapController map = _map(mapId);
+    return map.isAdvancedMarkersAvailable();
+  }
+
   /// Disposes of the current map. It can't be used afterwards!
   @override
   void dispose({required int mapId}) {
@@ -334,10 +340,9 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
       return _mapById[creationId]!.widget!;
     }
 
-    final StreamController<MapEvent<Object?>> controller =
-        StreamController<MapEvent<Object?>>.broadcast();
+    final controller = StreamController<MapEvent<Object?>>.broadcast();
 
-    final GoogleMapController mapController = GoogleMapController(
+    final mapController = GoogleMapController(
       mapId: creationId,
       streamController: controller,
       widgetConfiguration: widgetConfiguration,

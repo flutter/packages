@@ -108,10 +108,9 @@ class GooglePlayProductDetails extends ProductDetails {
         ),
       ];
     } else {
-      final List<GooglePlayProductDetails> productDetailList =
-          <GooglePlayProductDetails>[];
+      final productDetailList = <GooglePlayProductDetails>[];
       for (
-        int subscriptionIndex = 0;
+        var subscriptionIndex = 0;
         subscriptionIndex < productDetails.subscriptionOfferDetails!.length;
         subscriptionIndex++
       ) {

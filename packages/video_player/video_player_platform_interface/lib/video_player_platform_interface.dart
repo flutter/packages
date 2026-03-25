@@ -521,7 +521,7 @@ class VideoPlayerWebOptionsControls {
 
   /// A string representation of disallowed controls
   String get controlsList {
-    final List<String> controlsList = <String>[];
+    final controlsList = <String>[];
     if (!allowDownload) {
       controlsList.add('nodownload');
     }

@@ -26,26 +26,21 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Constructor', () {
-    const String expectedClientId = '3xp3c73d_c113n7_1d';
+    const expectedClientId = '3xp3c73d_c113n7_1d';
 
     testWidgets('Loads clientId when set in a meta', (_) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.autoDetectedClientId, isNull);
 
       // Add it to the test page now, and try again
-      final web.HTMLMetaElement meta =
-          web.document.createElement('meta') as web.HTMLMetaElement
-            ..name = clientIdMetaName
-            ..content = expectedClientId;
+      final meta = web.document.createElement('meta') as web.HTMLMetaElement
+        ..name = clientIdMetaName
+        ..content = expectedClientId;
 
       web.document.head!.appendChild(meta);
 
-      final GoogleSignInPlugin another = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final another = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(another.autoDetectedClientId, expectedClientId);
 
@@ -70,8 +65,36 @@ void main() {
       await plugin.init(
         const InitParameters(clientId: 'some-non-null-client-id'),
       );
+    });
 
-      expect(plugin.initialized, completes);
+    testWidgets('throws if init is called twice', (_) async {
+      await plugin.init(
+        const InitParameters(clientId: 'some-non-null-client-id'),
+      );
+
+      // Calling init() a second time should throw state error
+      expect(
+        () => plugin.init(
+          const InitParameters(clientId: 'some-non-null-client-id'),
+        ),
+        throwsStateError,
+      );
+    });
+
+    testWidgets('throws if init is called twice synchronously', (_) async {
+      final Future<void> firstInit = plugin.init(
+        const InitParameters(clientId: 'some-non-null-client-id'),
+      );
+
+      // Calling init() a second time synchronously should throw state error
+      expect(
+        () => plugin.init(
+          const InitParameters(clientId: 'some-non-null-client-id'),
+        ),
+        throwsStateError,
+      );
+
+      await firstInit;
     });
 
     testWidgets('asserts clientId is not null', (_) async {
@@ -90,42 +113,11 @@ void main() {
         );
       }, throwsAssertionError);
     });
-
-    testWidgets('must be called for most of the API to work', (_) async {
-      expect(() async {
-        await plugin.attemptLightweightAuthentication(
-          const AttemptLightweightAuthenticationParameters(),
-        );
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.clientAuthorizationTokensForScopes(
-          const ClientAuthorizationTokensForScopesParameters(
-            request: AuthorizationRequestDetails(
-              scopes: <String>[],
-              userId: null,
-              email: null,
-              promptIfUnauthorized: false,
-            ),
-          ),
-        );
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.signOut(const SignOutParams());
-      }, throwsStateError);
-
-      expect(() async {
-        await plugin.disconnect(const DisconnectParams());
-      }, throwsStateError);
-    });
   });
 
   group('support queries', () {
     testWidgets('reports lack of support for authenticate', (_) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.supportsAuthenticate(), false);
     });
@@ -133,9 +125,7 @@ void main() {
     testWidgets('reports requirement for user interaction to authorize', (
       _,
     ) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.authorizationRequiresUserInteraction(), true);
     });
@@ -144,9 +134,7 @@ void main() {
   group('(with mocked GIS)', () {
     late GoogleSignInPlugin plugin;
     late MockGisSdkClient mockGis;
-    const InitParameters options = InitParameters(
-      clientId: 'some-non-null-client-id',
-    );
+    const options = InitParameters(clientId: 'some-non-null-client-id');
 
     setUp(() {
       mockGis = MockGisSdkClient();
@@ -182,8 +170,8 @@ void main() {
     });
 
     group('clientAuthorizationTokensForScopes', () {
-      const String someAccessToken = '50m3_4cc35_70k3n';
-      const List<String> scopes = <String>['scope1', 'scope2'];
+      const someAccessToken = '50m3_4cc35_70k3n';
+      const scopes = <String>['scope1', 'scope2'];
 
       setUp(() {
         plugin.init(options);
@@ -232,7 +220,7 @@ void main() {
       });
 
       testWidgets('passes expected values to requestScopes', (_) async {
-        const String someUserId = 'someUser';
+        const someUserId = 'someUser';
         mockito
             .when(
               mockGis.requestScopes(
@@ -292,8 +280,8 @@ void main() {
     });
 
     group('serverAuthorizationTokensForScopes', () {
-      const String someAuthCode = 'abc123';
-      const List<String> scopes = <String>['scope1', 'scope2'];
+      const someAuthCode = 'abc123';
+      const scopes = <String>['scope1', 'scope2'];
 
       setUp(() {
         plugin.init(options);
@@ -304,7 +292,7 @@ void main() {
             .when(mockGis.requestServerAuthCode(mockito.any))
             .thenAnswer((_) => Future<String>.value(someAuthCode));
 
-        const AuthorizationRequestDetails request = AuthorizationRequestDetails(
+        const request = AuthorizationRequestDetails(
           scopes: scopes,
           userId: null,
           email: null,
@@ -323,8 +311,7 @@ void main() {
 
         expect(token?.serverAuthCode, someAuthCode);
 
-        final AuthorizationRequestDetails passedRequest =
-            arguments.first! as AuthorizationRequestDetails;
+        final passedRequest = arguments.first! as AuthorizationRequestDetails;
         expect(passedRequest.scopes, request.scopes);
         expect(passedRequest.userId, request.userId);
         expect(passedRequest.email, request.email);
@@ -357,7 +344,7 @@ void main() {
       });
 
       testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
-        const String someToken = 'someToken';
+        const someToken = 'someToken';
         await plugin.clearAuthorizationToken(
           const ClearAuthorizationTokenParams(accessToken: someToken),
         );
@@ -372,8 +359,7 @@ void main() {
   });
 
   group('userDataEvents', () {
-    final StreamController<AuthenticationEvent> controller =
-        StreamController<AuthenticationEvent>.broadcast();
+    final controller = StreamController<AuthenticationEvent>.broadcast();
     late GoogleSignInPlugin plugin;
 
     setUp(() {

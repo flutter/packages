@@ -11,25 +11,23 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
-  final SharedPreferencesAsyncFoundationOptions emptyOptions =
-      SharedPreferencesAsyncFoundationOptions();
+  final emptyOptions = SharedPreferencesAsyncFoundationOptions();
 
   SharedPreferencesAsyncFoundation getPreferences() {
-    final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
-    final SharedPreferencesAsyncFoundation preferences =
-        SharedPreferencesAsyncFoundation(api: api);
+    final api = _FakeSharedPreferencesApi();
+    final preferences = SharedPreferencesAsyncFoundation(api: api);
 
     return preferences;
   }
@@ -224,7 +222,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
     List<String?>? allowList,
     SharedPreferencesPigeonOptions options,
   ) async {
-    final Map<String, Object> filteredItems = <String, Object>{...items};
+    final filteredItems = <String, Object>{...items};
     if (allowList != null) {
       filteredItems.removeWhere((String key, _) => !allowList.contains(key));
     }

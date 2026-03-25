@@ -42,7 +42,7 @@ class SharedPreferencesAsync {
   ///
   /// Ignores any keys whose values are types which are incompatible with shared_preferences.
   Future<Set<String>> getKeys({Set<String>? allowList}) async {
-    final GetPreferencesParameters parameters = GetPreferencesParameters(
+    final parameters = GetPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.getKeys(parameters, _options);
@@ -54,38 +54,38 @@ class SharedPreferencesAsync {
   ///
   /// Ignores any entries of types which are incompatible with shared_preferences.
   Future<Map<String, Object?>> getAll({Set<String>? allowList}) async {
-    final GetPreferencesParameters parameters = GetPreferencesParameters(
+    final parameters = GetPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.getPreferences(parameters, _options);
   }
 
   /// Reads a value from the platform, throwing a [TypeError] if the value is
-  /// not a bool.
+  /// not a `bool`.
   Future<bool?> getBool(String key) async {
     return _platform.getBool(key, _options);
   }
 
   /// Reads a value from the platform, throwing a [TypeError] if the value is
-  /// not an int.
+  /// not an `int`.
   Future<int?> getInt(String key) async {
     return _platform.getInt(key, _options);
   }
 
   /// Reads a value from the platform, throwing a [TypeError] if the value is
-  /// not a double.
+  /// not a `double`.
   Future<double?> getDouble(String key) async {
     return _platform.getDouble(key, _options);
   }
 
   /// Reads a value from the platform, throwing a [TypeError] if the value is
-  /// not a String.
+  /// not a `String`.
   Future<String?> getString(String key) async {
     return _platform.getString(key, _options);
   }
 
   /// Reads a list of string values from the platform, throwing a [TypeError]
-  /// if the value not a List<String>.
+  /// if the value is not a `List<String>`.
   Future<List<String>?> getStringList(String key) async {
     return _platform.getStringList(key, _options);
   }
@@ -145,7 +145,7 @@ class SharedPreferencesAsync {
   ///
   /// It is highly recommended that an [allowList] be provided to this call.
   Future<void> clear({Set<String>? allowList}) {
-    final ClearPreferencesParameters parameters = ClearPreferencesParameters(
+    final parameters = ClearPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.clear(parameters, _options);
@@ -197,12 +197,11 @@ class SharedPreferencesWithCache {
     required SharedPreferencesWithCacheOptions cacheOptions,
     Map<String, Object?>? cache,
   }) async {
-    final SharedPreferencesWithCache preferences =
-        SharedPreferencesWithCache._create(
-          sharedPreferencesOptions: sharedPreferencesOptions,
-          cacheOptions: cacheOptions,
-          cache: cache,
-        );
+    final preferences = SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
 
     await preferences.reloadCache();
 

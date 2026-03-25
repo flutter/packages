@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 
 /// Returns a generated png image in [ByteData] format with the requested size.
 Future<ByteData> createCustomMarkerIconImage({required Size size}) async {
-  final ui.PictureRecorder recorder = ui.PictureRecorder();
-  final Canvas canvas = Canvas(recorder);
-  final _MarkerPainter painter = _MarkerPainter();
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+  final painter = _MarkerPainter();
 
   painter.paint(canvas, size);
 
@@ -30,7 +30,7 @@ class _MarkerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Rect rect = Offset.zero & size;
-    const RadialGradient gradient = RadialGradient(
+    const gradient = RadialGradient(
       colors: <Color>[Colors.yellow, Colors.red],
       stops: <double>[0.4, 1.0],
     );

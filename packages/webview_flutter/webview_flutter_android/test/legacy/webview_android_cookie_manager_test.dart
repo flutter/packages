@@ -17,7 +17,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('clearCookies should call android_webview.clearCookies', () {
-    final MockCookieManager mockCookieManager = MockCookieManager();
+    final mockCookieManager = MockCookieManager();
     when(
       mockCookieManager.removeAllCookies(),
     ).thenAnswer((_) => Future<bool>.value(true));
@@ -45,7 +45,7 @@ void main() {
   test(
     'setCookie should call android_webview.csetCookie with properly formatted cookie value',
     () {
-      final MockCookieManager mockCookieManager = MockCookieManager();
+      final mockCookieManager = MockCookieManager();
       WebViewAndroidCookieManager(cookieManager: mockCookieManager).setCookie(
         const WebViewCookie(name: 'foo&', value: 'bar@', domain: 'flutter.dev'),
       );

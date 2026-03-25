@@ -11,7 +11,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   group('InAppPurchase', () {
-    final ProductDetails productDetails = ProductDetails(
+    final productDetails = ProductDetails(
       id: 'id',
       title: 'title',
       description: 'description',
@@ -20,7 +20,7 @@ void main() {
       currencyCode: 'currencyCode',
     );
 
-    final PurchaseDetails purchaseDetails = PurchaseDetails(
+    final purchaseDetails = PurchaseDetails(
       productID: 'productID',
       verificationData: PurchaseVerificationData(
         localVerificationData: 'localVerificationData',
@@ -93,9 +93,7 @@ void main() {
     });
 
     test('buyConsumable', () async {
-      final PurchaseParam purchaseParam = PurchaseParam(
-        productDetails: productDetails,
-      );
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
       );
@@ -113,9 +111,7 @@ void main() {
     });
 
     test('buyConsumable with autoConsume=false', () async {
-      final PurchaseParam purchaseParam = PurchaseParam(
-        productDetails: productDetails,
-      );
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
         autoConsume: false,

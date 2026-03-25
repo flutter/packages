@@ -7,7 +7,7 @@
 extension MaybeEnum<T extends Enum> on List<T> {
   /// Attempts to retrieve an enum of type T by its [name].
   T? maybe(String? name) {
-    for (final T value in this) {
+    for (final value in this) {
       if (value.name == name) {
         return value;
       }

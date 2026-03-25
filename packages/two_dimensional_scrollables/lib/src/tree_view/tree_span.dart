@@ -103,9 +103,12 @@ class TreeRowBorder extends SpanBorder {
 
   @override
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
-    final Border border = Border(
-      top: top,
-      bottom: bottom,
+    final AxisDirection? crossAxisDirection = details.crossAxisDirection;
+    final bool isLeadingTop =
+        crossAxisDirection == null || crossAxisDirection == AxisDirection.down;
+    final border = Border(
+      top: isLeadingTop ? top : bottom,
+      bottom: isLeadingTop ? bottom : top,
       left: left,
       right: right,
     );

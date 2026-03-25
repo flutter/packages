@@ -384,7 +384,7 @@ class _ExampleSingleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double height = 100.0;
+    const height = 100.0;
 
     return _InkWellOverlay(
       openContainer: openContainer,

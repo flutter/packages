@@ -27,7 +27,7 @@ final Enum emptyEnum = Enum(
 
 void main() {
   test('gen one api', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -77,48 +77,46 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
       expect(code, contains('class Api'));
       expect(code, contains('virtual ~Api() {}\n'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('Input::Input()'));
       expect(code, contains('Output::Output'));
       expect(
@@ -126,7 +124,7 @@ void main() {
         contains(
           RegExp(
             r'void Api::SetUp\(\s*'
-            r'flutter::BinaryMessenger\* binary_messenger,\s*'
+            r'::flutter::BinaryMessenger\* binary_messenger,\s*'
             r'Api\* api\s*\)',
           ),
         ),
@@ -135,14 +133,14 @@ void main() {
   });
 
   test('naming follows style', () {
-    final Enum anEnum = Enum(
+    final anEnum = Enum(
       name: 'AnEnum',
       members: <EnumMember>[
         EnumMember(name: 'one'),
         EnumMember(name: 'fortyTwo'),
       ],
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -200,24 +198,23 @@ void main() {
       enums: <Enum>[anEnum],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
       // Getters and setters should use optional getter/setter style.
@@ -233,24 +230,23 @@ void main() {
       expect(code, contains('kFortyTwo'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
       expect(code, contains('Output::set_output_field(bool value_arg)'));
@@ -258,7 +254,7 @@ void main() {
   });
 
   test('FlutterError fields are private with public accessors', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -287,24 +283,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       expect(
         code.split('\n'),
@@ -314,19 +309,19 @@ void main() {
           contains('  const std::string& code() const { return code_; }'),
           contains('  const std::string& message() const { return message_; }'),
           contains(
-            '  const flutter::EncodableValue& details() const { return details_; }',
+            '  const ::flutter::EncodableValue& details() const { return details_; }',
           ),
           contains(' private:'),
           contains('  std::string code_;'),
           contains('  std::string message_;'),
-          contains('  flutter::EncodableValue details_;'),
+          contains('  ::flutter::EncodableValue details_;'),
         ]),
       );
     }
   });
 
   test('Error field is private with public accessors', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -356,24 +351,23 @@ void main() {
       containsHostApi: true,
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       expect(
         code.split('\n'),
@@ -391,7 +385,7 @@ void main() {
   });
 
   test('Spaces before {', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -441,53 +435,51 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
     }
   });
 
   test('include blocks follow style', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -516,24 +508,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('''
@@ -549,24 +540,23 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              headerIncludePath: 'a_header.h',
-              cppHeaderOut: '',
-              cppSourceOut: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'a_header.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('''
@@ -577,6 +567,8 @@ void main() {
 #include <flutter/encodable_value.h>
 #include <flutter/standard_message_codec.h>
 
+#include <cmath>
+#include <limits>
 #include <map>
 #include <optional>
 #include <string>
@@ -586,7 +578,7 @@ void main() {
   });
 
   test('namespaces follows style', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -615,55 +607,53 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              namespace: 'foo',
-              headerIncludePath: '',
-              cppHeaderOut: '',
-              cppSourceOut: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          namespace: 'foo',
+          headerIncludePath: '',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              namespace: 'foo',
-              headerIncludePath: '',
-              cppHeaderOut: '',
-              cppSourceOut: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          namespace: 'foo',
+          headerIncludePath: '',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
     }
   });
 
   test('data classes handle nullable fields', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -725,24 +715,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       // There should be a default constructor.
       expect(code, contains('Nested();'));
@@ -788,24 +777,23 @@ void main() {
       expect(code, contains('std::unique_ptr<Nested> nullable_nested_'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       // There should be a default constructor.
       expect(code, contains('Nested::Nested() {}'));
@@ -893,7 +881,7 @@ void main() {
   });
 
   test('data classes handle non-nullable fields', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -958,24 +946,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       // There should not be a default constructor.
       expect(code, isNot(contains('Nested();')));
@@ -1012,24 +999,23 @@ void main() {
       expect(code, contains('std::unique_ptr<Nested> non_nullable_nested_;'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
 
       // There should not be a default constructor.
       expect(code, isNot(contains('Nested::Nested() {}')));
@@ -1074,7 +1060,7 @@ void main() {
   });
 
   test('host nullable return types map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1158,24 +1144,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'),
@@ -1191,13 +1176,13 @@ void main() {
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableList>> ReturnNullableList()',
+          'ErrorOr<std::optional<::flutter::EncodableList>> ReturnNullableList()',
         ),
       );
       expect(
         code,
         contains(
-          'ErrorOr<std::optional<flutter::EncodableMap>> ReturnNullableMap()',
+          'ErrorOr<std::optional<::flutter::EncodableMap>> ReturnNullableMap()',
         ),
       );
       expect(
@@ -1210,7 +1195,7 @@ void main() {
   });
 
   test('host non-nullable return types map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1294,35 +1279,34 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
       expect(code, contains('ErrorOr<std::string> ReturnString()'));
-      expect(code, contains('ErrorOr<flutter::EncodableList> ReturnList()'));
-      expect(code, contains('ErrorOr<flutter::EncodableMap> ReturnMap()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableList> ReturnList()'));
+      expect(code, contains('ErrorOr<::flutter::EncodableMap> ReturnMap()'));
       expect(code, contains('ErrorOr<ReturnData> ReturnDataClass()'));
     }
   });
 
   test('host nullable arguments map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1408,24 +1392,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -1434,33 +1417,32 @@ void main() {
             r'const bool\* a_bool,\s*'
             r'const int64_t\* an_int,\s*'
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue\* a_generic_object\s*\)',
           ),
         ),
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
       // and get_if will automatically handle null values (since a null
       // EncodableValue will not match the queried type, so get_if will return
@@ -1520,7 +1502,7 @@ void main() {
   });
 
   test('host non-nullable arguments map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1606,24 +1588,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -1632,33 +1613,32 @@ void main() {
             r'bool a_bool,\s*'
             r'int64_t an_int,\s*'
             r'const std::string& a_string,\s*'
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object\s*\)',
+            r'const ::flutter::EncodableValue& a_generic_object\s*\)',
           ),
         ),
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // Most types should extract references. Since the type is non-nullable,
       // there's only one possible type.
       expect(
@@ -1712,7 +1692,7 @@ void main() {
   });
 
   test('flutter nullable arguments map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1801,24 +1781,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
       // awkward for some uses (literals, values that could be inlined) but
       // unlike setters there's no way to provide reference-based alternatives
@@ -1836,10 +1815,10 @@ void main() {
             // Nullable strings use std::string* rather than std::string_view*
             // since there's no implicit conversion for pointer types.
             r'const std::string\* a_string,\s*'
-            r'const flutter::EncodableList\* a_list,\s*'
-            r'const flutter::EncodableMap\* a_map,\s*'
+            r'const ::flutter::EncodableList\* a_list,\s*'
+            r'const ::flutter::EncodableMap\* a_map,\s*'
             r'const ParameterObject\* an_object,\s*'
-            r'const flutter::EncodableValue\* a_generic_object,',
+            r'const ::flutter::EncodableValue\* a_generic_object,',
           ),
         ),
       );
@@ -1855,24 +1834,23 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // All types pass nulls values when the pointer is null.
       // Standard types are wrapped an EncodableValues.
       expect(
@@ -1908,7 +1886,7 @@ void main() {
   });
 
   test('flutter non-nullable arguments map correctly', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1997,24 +1975,23 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.header,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -2026,10 +2003,10 @@ void main() {
             // nullable strings.
             r'const std::string& a_string,\s*'
             // Non-POD types use const references.
-            r'const flutter::EncodableList& a_list,\s*'
-            r'const flutter::EncodableMap& a_map,\s*'
+            r'const ::flutter::EncodableList& a_list,\s*'
+            r'const ::flutter::EncodableMap& a_map,\s*'
             r'const ParameterObject& an_object,\s*'
-            r'const flutter::EncodableValue& a_generic_object,\s*',
+            r'const ::flutter::EncodableValue& a_generic_object,\s*',
           ),
         ),
       );
@@ -2045,24 +2022,23 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<InternalCppOptions> generatorOptions =
-          OutputFileOptions<InternalCppOptions>(
-            fileType: FileType.source,
-            languageOptions: const InternalCppOptions(
-              cppHeaderOut: '',
-              cppSourceOut: '',
-              headerIncludePath: '',
-            ),
-          );
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
       generator.generate(
         generatorOptions,
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       // Standard types are wrapped in EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
       expect(code, contains('EncodableValue(an_int_arg)'));
@@ -2075,7 +2051,7 @@ void main() {
   });
 
   test('host API argument extraction uses references', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2101,24 +2077,23 @@ void main() {
       enums: <Enum>[],
     );
 
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.source,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
     // inefficient.
     expect(
@@ -2129,7 +2104,7 @@ void main() {
   });
 
   test('enum argument', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Bar',
@@ -2175,7 +2150,7 @@ void main() {
   });
 
   test('transfers documentation comments', () {
-    final List<String> comments = <String>[
+    final comments = <String>[
       ' api comment',
       ' api method comment',
       ' class comment',
@@ -2183,12 +2158,12 @@ void main() {
       ' enum comment',
       ' enum member comment',
     ];
-    int count = 0;
+    var count = 0;
 
-    final List<String> unspacedComments = <String>['////////'];
-    int unspacedCount = 0;
+    final unspacedComments = <String>['////////'];
+    var unspacedCount = 0;
 
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2249,32 +2224,31 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.header,
-          languageOptions: const InternalCppOptions(
-            headerIncludePath: 'foo',
-            cppHeaderOut: '',
-            cppSourceOut: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.header,
+      languageOptions: const InternalCppOptions(
+        headerIncludePath: 'foo',
+        cppHeaderOut: '',
+        cppSourceOut: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
-    for (final String comment in comments) {
+    final code = sink.toString();
+    for (final comment in comments) {
       expect(code, contains('//$comment'));
     }
     expect(code, contains('// ///'));
   });
 
   test('creates custom codecs', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2324,29 +2298,28 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.header,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.header,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
-    expect(code, contains(' : public flutter::StandardCodecSerializer'));
+    final code = sink.toString();
+    expect(code, contains(' : public ::flutter::StandardCodecSerializer'));
   });
 
   test('Does not send unwrapped EncodableLists', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2424,30 +2397,29 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.source,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
     expect(code, contains('reply(EncodableValue('));
   });
 
   test('does not keep unowned references in async handlers', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'HostApi',
@@ -2513,24 +2485,23 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.source,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     // Nothing should be captured by reference for async handlers, since their
     // lifetime is unknown (and expected to be longer than the stack's).
     expect(code, isNot(contains('&reply')));
@@ -2542,7 +2513,7 @@ void main() {
   });
 
   test('connection error contains channel name', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2568,24 +2539,23 @@ void main() {
       enums: <Enum>[],
       containsFlutterApi: true,
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.source,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2596,7 +2566,7 @@ void main() {
   });
 
   test('stack allocates the message channel.', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2621,24 +2591,23 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<InternalCppOptions> generatorOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: FileType.source,
-          languageOptions: const InternalCppOptions(
-            cppHeaderOut: '',
-            cppSourceOut: '',
-            headerIncludePath: '',
-          ),
-        );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
     generator.generate(
       generatorOptions,
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2646,5 +2615,171 @@ void main() {
       ),
     );
     expect(code, contains('channel.Send'));
+  });
+
+  test('data class equality', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool operator==(const Foo& other) const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          cppHeaderOut: '',
+          cppSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+    }
+  });
+
+  test('data class equality with pointers', () {
+    final nested = Class(
+      name: 'Nested',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'data',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: TypeDeclaration(
+                baseName: 'Nested',
+                isNullable: true,
+                associatedClass: nested,
+              ),
+              name: 'nested',
+            ),
+          ],
+        ),
+        nested,
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = CppGenerator();
+    final generatorOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: FileType.source,
+      languageOptions: const InternalCppOptions(
+        cppHeaderOut: '',
+        cppSourceOut: '',
+        headerIncludePath: '',
+      ),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
+  });
+
+  test('data classes implement Hash', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Input',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'field1',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Hash() const;'));
+    }
+    {
+      final sink = StringBuffer();
+      const generator = CppGenerator();
+      final generatorOptions = OutputFileOptions<InternalCppOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalCppOptions(
+          headerIncludePath: 'foo.h',
+          cppHeaderOut: '',
+          cppSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('size_t Input::Hash() const {'));
+    }
   });
 }

@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 |                | Android | iOS       | Web                    |
 |----------------|---------|-----------|------------------------|
-| **Support**    | SDK 24+ | iOS 12.0+ | [See `camera_web `][1] |
+| **Support**    | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
 
 ## Features
 

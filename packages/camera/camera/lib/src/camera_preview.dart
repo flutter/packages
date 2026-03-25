@@ -59,7 +59,7 @@ class CameraPreview extends StatelessWidget {
   }
 
   int _getQuarterTurns() {
-    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+    final turns = <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
       DeviceOrientation.landscapeRight: 1,
       DeviceOrientation.portraitDown: 2,

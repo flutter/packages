@@ -9,8 +9,8 @@
 import 'dart:io';
 
 void formatHexStream(String hexStream) {
-  String s = '';
-  for (int i = 0; i < hexStream.length / 2; i++) {
+  var s = '';
+  for (var i = 0; i < hexStream.length / 2; i++) {
     if (s.isNotEmpty) {
       s += ', ';
     }
@@ -30,8 +30,8 @@ void formatHexStream(String hexStream) {
 
 // Support code for generating the hex-lists in test/decode_test.dart.
 void hexDumpList(List<int> package) {
-  String s = '';
-  for (int i = 0; i < package.length; i++) {
+  var s = '';
+  for (var i = 0; i < package.length; i++) {
     if (s.isNotEmpty) {
       s += ', ';
     }
@@ -54,8 +54,8 @@ void hexDumpList(List<int> package) {
 
 void dumpDatagram(Datagram datagram) {
   String toHex(List<int> ints) {
-    final StringBuffer buffer = StringBuffer();
-    for (int i = 0; i < ints.length; i++) {
+    final buffer = StringBuffer();
+    for (var i = 0; i < ints.length; i++) {
       buffer.write(ints[i].toRadixString(16).padLeft(2, '0'));
       if ((i + 1) % 10 == 0) {
         buffer.writeln();

@@ -28,7 +28,7 @@ void main() {
 
     void onAdErrorEvent(AdErrorEvent event) {}
 
-    final AdsManagerDelegate delegate = AdsManagerDelegate(
+    final delegate = AdsManagerDelegate(
       onAdEvent: expectAsync1((AdEvent event) {
         expect(event.type, AdEventType.adBreakEnded);
         expect(event.ad, isNotNull);

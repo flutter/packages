@@ -181,7 +181,7 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final web.Response response =
+    final response =
         await _httpRequestFactory.request(
               request.uri.toString(),
               method: request.method.serialize(),

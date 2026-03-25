@@ -255,10 +255,10 @@ class Camera {
 
     final int videoWidth = videoElement.videoWidth;
     final int videoHeight = videoElement.videoHeight;
-    final web.HTMLCanvasElement canvas = web.HTMLCanvasElement()
+    final canvas = web.HTMLCanvasElement()
       ..width = videoWidth
       ..height = videoHeight;
-    final bool isBackCamera = getLensDirection() == CameraLensDirection.back;
+    final isBackCamera = getLensDirection() == CameraLensDirection.back;
 
     // Flip the picture horizontally if it is not taken from a back camera.
     if (!isBackCamera) {
@@ -275,7 +275,7 @@ class Camera {
       videoHeight.toDouble(),
     );
 
-    final Completer<web.Blob> blobCompleter = Completer<web.Blob>();
+    final blobCompleter = Completer<web.Blob>();
     canvas.toBlob(
       (web.Blob blob) {
         blobCompleter.complete(blob);
@@ -456,9 +456,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support any of the
   /// available video mime types from [_videoMimeType].
   Future<void> startVideoRecording() async {
-    final web.MediaRecorderOptions options = web.MediaRecorderOptions(
-      mimeType: _videoMimeType,
-    );
+    final options = web.MediaRecorderOptions(mimeType: _videoMimeType);
     if (recorderOptions.audioBitrate != null) {
       options.audioBitsPerSecond = recorderOptions.audioBitrate!;
     }
@@ -492,7 +490,7 @@ class Camera {
     _onVideoRecordingErrorSubscription = mediaRecorderOnErrorProvider
         .forTarget(mediaRecorder)
         .listen((web.Event event) {
-          final web.ErrorEvent error = event as web.ErrorEvent;
+          final error = event as web.ErrorEvent;
           videoRecordingErrorController.add(error);
         });
 
@@ -511,7 +509,7 @@ class Camera {
       final web.Blob videoBlob = blobBuilder(_videoData, videoType);
 
       // Create a file containing the video blob.
-      final XFile file = XFile(
+      final file = XFile(
         web.URL.createObjectURL(videoBlob),
         mimeType: _videoMimeType,
         name: videoBlob.hashCode.toString(),
@@ -605,7 +603,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support
   /// any of the available video mime types.
   String get _videoMimeType {
-    const List<String> types = <String>[
+    const types = <String>[
       'video/webm;codecs="vp9,opus"',
       'video/mp4',
       'video/webm',
@@ -630,7 +628,7 @@ class Camera {
 
   /// Applies default styles to the video [element].
   void _applyDefaultVideoStyles(web.HTMLVideoElement element) {
-    final bool isBackCamera = getLensDirection() == CameraLensDirection.back;
+    final isBackCamera = getLensDirection() == CameraLensDirection.back;
 
     // Flip the video horizontally if it is not taken from a back camera.
     if (!isBackCamera) {

@@ -103,7 +103,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
         ThemeData.estimateBrightnessForColor(cell.color) == Brightness.light
         ? Colors.black
         : Colors.white;
-    final TextStyle style = TextStyle(
+    final style = TextStyle(
       color: textColor,
       fontSize: 18.0,
       fontWeight: vicinity.column == 0 ? FontWeight.bold : null,

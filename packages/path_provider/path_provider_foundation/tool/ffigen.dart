@@ -33,7 +33,7 @@ void main() {
         },
         includeMember: (Declaration declaration, String member) {
           final String interfaceName = declaration.originalName;
-          final String signature = member;
+          final signature = member;
           return switch (interfaceName) {
             'NSFileManager' => <String>{
               'containerURLForSecurityApplicationGroupIdentifier:',

@@ -4,43 +4,49 @@
 
 import Flutter
 import Foundation
-import XCTest
+import Testing
 
 @testable import test_plugin
 
-final class InstanceManagerTests: XCTestCase {
-  func testAddDartCreatedInstance() {
+@MainActor
+struct InstanceManagerTests {
+  @Test
+  func addDartCreatedInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
-    XCTAssertEqual(instanceManager.instance(forIdentifier: 0), object)
-    XCTAssertEqual(instanceManager.identifierWithStrongReference(forInstance: object), 0)
+    #expect(instanceManager.instance(forIdentifier: 0) === object)
+    #expect(instanceManager.identifierWithStrongReference(forInstance: object) == 0)
   }
 
-  func testAddHostCreatedInstance() {
+  @Test
+  func addHostCreatedInstance() throws {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
     _ = instanceManager.addHostCreatedInstance(object)
 
     let identifier = instanceManager.identifierWithStrongReference(forInstance: object)
-    XCTAssertEqual(instanceManager.instance(forIdentifier: try XCTUnwrap(identifier)), object)
+    let unwrappedIdentifier = try #require(identifier)
+    #expect(instanceManager.instance(forIdentifier: unwrappedIdentifier) === object)
   }
 
-  func testRemoveInstance() {
+  @Test
+  func removeInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
 
-    XCTAssertEqual(try! instanceManager.removeInstance(withIdentifier: 0), object)
-    XCTAssertEqual(instanceManager.strongInstanceCount, 0)
+    #expect(try! instanceManager.removeInstance(withIdentifier: 0) === object)
+    #expect(instanceManager.strongInstanceCount == 0)
   }
 
-  func testFinalizerCallsDelegateMethod() {
+  @Test
+  func finalizerCallsDelegateMethod() {
     let finalizerDelegate = TestFinalizerDelegate()
 
     var object: NSObject? = NSObject()
@@ -48,10 +54,11 @@ final class InstanceManagerTests: XCTestCase {
       to: object!, identifier: 0, delegate: finalizerDelegate)
 
     object = nil
-    XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
+    #expect(finalizerDelegate.lastHandledIdentifier == 0)
   }
 
-  func testRemoveAllObjects() {
+  @Test
+  func removeAllObjects() {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
@@ -59,11 +66,12 @@ final class InstanceManagerTests: XCTestCase {
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
     try? instanceManager.removeAllObjects()
 
-    XCTAssertEqual(instanceManager.strongInstanceCount, 0)
-    XCTAssertEqual(instanceManager.weakInstanceCount, 0)
+    #expect(instanceManager.strongInstanceCount == 0)
+    #expect(instanceManager.weakInstanceCount == 0)
   }
 
-  func testCanAddSameObjectWithAddDartCreatedInstance() {
+  @Test
+  func canAddSameObjectWithAddDartCreatedInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
@@ -74,10 +82,11 @@ final class InstanceManagerTests: XCTestCase {
     let instance1: NSObject? = instanceManager.instance(forIdentifier: 0)
     let instance2: NSObject? = instanceManager.instance(forIdentifier: 1)
 
-    XCTAssertEqual(instance1, instance2)
+    #expect(instance1 === instance2)
   }
 
-  func testObjectsAreStoredWithPointerHashcode() {
+  @Test
+  func objectsAreStoredWithPointerHashcode() {
     let finalizerDelegate = EmptyFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
 
@@ -91,17 +100,18 @@ final class InstanceManagerTests: XCTestCase {
     let instance2 = EquatableClass()
 
     // Ensure instances are considered equal.
-    XCTAssertTrue(instance1 == instance2)
+    #expect(instance1 == instance2)
 
     _ = instanceManager.addHostCreatedInstance(instance1)
     _ = instanceManager.addHostCreatedInstance(instance2)
 
-    XCTAssertNotEqual(
-      instanceManager.identifierWithStrongReference(forInstance: instance1),
-      instanceManager.identifierWithStrongReference(forInstance: instance2))
+    #expect(
+      instanceManager.identifierWithStrongReference(forInstance: instance1)
+        != instanceManager.identifierWithStrongReference(forInstance: instance2))
   }
 
-  func testInstanceManagerCanBeDeallocated() {
+  @Test
+  func instanceManagerCanBeDeallocated() {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
 
@@ -127,10 +137,11 @@ final class InstanceManagerTests: XCTestCase {
     ProxyApiTestsPigeonInternalFinalizer.attach(
       to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
     registrar = nil
-    XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
+    #expect(finalizerDelegate.lastHandledIdentifier == 0)
   }
 
-  func testRemoveAllObjectsRemovesFinalizersFromWeakInstances() {
+  @Test
+  func removeAllObjectsRemovesFinalizersFromWeakInstances() {
     let finalizerDelegate = TestFinalizerDelegate()
     let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
 
@@ -143,9 +154,10 @@ final class InstanceManagerTests: XCTestCase {
     let _: AnyObject? = try! instanceManager.removeInstance(withIdentifier: identifier)
     try? instanceManager.removeAllObjects()
 
-    XCTAssertNil(finalizer.delegate)
-    XCTAssertNil(
-      objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
+    #expect(finalizer.delegate == nil)
+    #expect(
+      objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey)
+        == nil)
   }
 }
 

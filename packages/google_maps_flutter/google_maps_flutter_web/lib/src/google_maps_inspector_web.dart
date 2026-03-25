@@ -5,6 +5,7 @@
 import 'dart:js_interop';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -16,7 +17,7 @@ typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
 typedef ClusterManagersControllerProvider =
-    ClusterManagersController? Function(int mapId);
+    ClusterManagersController<Object?>? Function(int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
 typedef GroundOverlaysControllerProvider =
@@ -108,7 +109,7 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
         Uint8List.fromList(<int>[0]),
         bitmapScaling: MapBitmapScaling.none,
       ),
-      bounds: gmLatLngBoundsTolatLngBounds(groundOverlay.bounds),
+      bounds: gmLatLngBoundsToLatLngBounds(groundOverlay.bounds),
       transparency: 1.0 - groundOverlay.opacity,
       visible: groundOverlay.map != null,
       clickable: clickable != null && (clickable as JSBoolean).toDart,
@@ -149,5 +150,16 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
           mapId,
         )?.getClusters(clusterManagerId) ??
         <Cluster>[];
+  }
+
+  /// Returns the stream of clustering events for a given [ClusterManager].
+  @visibleForTesting
+  Stream<ClusteringEvent>? getClusteringEvents({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) {
+    return _clusterManagersControllerProvider(
+      mapId,
+    )?.getClustererEvents(clusterManagerId);
   }
 }

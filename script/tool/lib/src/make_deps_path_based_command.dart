@@ -27,19 +27,19 @@ const int _exitPackageNotFound = 3;
 class MakeDepsPathBasedCommand extends PackageCommand {
   /// Creates an instance of the command to convert selected dependencies to
   /// path-based.
-  MakeDepsPathBasedCommand(
-    super.packagesDir, {
-    super.gitDir,
-  }) {
-    argParser.addMultiOption(_targetDependenciesArg,
-        help:
-            'The names of the packages to convert to path-based dependencies.\n'
-            'Ignored if --$_targetDependenciesWithNonBreakingUpdatesArg is '
-            'passed.',
-        valueHelp: 'some_package');
+  MakeDepsPathBasedCommand(super.packagesDir, {super.gitDir}) {
+    argParser.addMultiOption(
+      _targetDependenciesArg,
+      help:
+          'The names of the packages to convert to path-based dependencies.\n'
+          'Ignored if --$_targetDependenciesWithNonBreakingUpdatesArg is '
+          'passed.',
+      valueHelp: 'some_package',
+    );
     argParser.addFlag(
       _targetDependenciesWithNonBreakingUpdatesArg,
-      help: 'Causes all packages that have non-breaking version changes '
+      help:
+          'Causes all packages that have non-breaking version changes '
           'when compared against the git base to be treated as target '
           'packages.\n\nOnly packages with dependency constraints that allow '
           'the new version of a given target package will be updated. E.g., '
@@ -69,8 +69,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
 
   @override
   Future<void> run() async {
-    final bool targetByVersion =
-        getBoolArg(_targetDependenciesWithNonBreakingUpdatesArg);
+    final bool targetByVersion = getBoolArg(
+      _targetDependenciesWithNonBreakingUpdatesArg,
+    );
     final Set<String> targetDependencies = targetByVersion
         ? await _getNonBreakingUpdatePackages()
         : getStringListArg(_targetDependenciesArg).toSet();
@@ -89,18 +90,20 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         ? <String, Version?>{
             for (final RepositoryPackage package
                 in localDependencyPackages.values)
-              package.directory.basename: package.parsePubspec().version
+              package.directory.basename: package.parsePubspec().version,
           }
         : <String, Version>{};
 
     final String repoRootPath = (await gitDir).path;
     for (final File pubspec in await _getAllPubspecs()) {
       final String displayPath = p.posix.joinAll(
-          path.split(path.relative(pubspec.absolute.path, from: repoRootPath)));
+        path.split(path.relative(pubspec.absolute.path, from: repoRootPath)),
+      );
       final bool changed = await _addDependencyOverridesIfNecessary(
-          RepositoryPackage(pubspec.parent),
-          localDependencyPackages,
-          localPackageVersions);
+        RepositoryPackage(pubspec.parent),
+        localDependencyPackages,
+        localPackageVersions,
+      );
       if (changed) {
         print('  Modified $displayPath');
       }
@@ -108,25 +111,28 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   }
 
   Map<String, RepositoryPackage> _findLocalPackages(Set<String> packageNames) {
-    final Map<String, RepositoryPackage> targets =
-        <String, RepositoryPackage>{};
-    for (final String packageName in packageNames) {
-      final Directory topLevelCandidate =
-          packagesDir.childDirectory(packageName);
+    final targets = <String, RepositoryPackage>{};
+    for (final packageName in packageNames) {
+      final Directory topLevelCandidate = packagesDir.childDirectory(
+        packageName,
+      );
       // If packages/<packageName>/ exists, then either that directory is the
       // package, or packages/<packageName>/<packageName>/ exists and is the
       // package (in the case of a federated plugin).
       if (topLevelCandidate.existsSync()) {
-        final Directory appFacingCandidate =
-            topLevelCandidate.childDirectory(packageName);
-        targets[packageName] = RepositoryPackage(appFacingCandidate.existsSync()
-            ? appFacingCandidate
-            : topLevelCandidate);
+        final Directory appFacingCandidate = topLevelCandidate.childDirectory(
+          packageName,
+        );
+        targets[packageName] = RepositoryPackage(
+          appFacingCandidate.existsSync()
+              ? appFacingCandidate
+              : topLevelCandidate,
+        );
         continue;
       }
       // Check for a match in the third-party packages directory.
-      final Directory thirdPartyCandidate =
-          thirdPartyPackagesDir.childDirectory(packageName);
+      final Directory thirdPartyCandidate = thirdPartyPackagesDir
+          .childDirectory(packageName);
       if (thirdPartyCandidate.existsSync()) {
         targets[packageName] = RepositoryPackage(thirdPartyCandidate);
         continue;
@@ -136,8 +142,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
       // If it's the latter, it will be a directory whose name is a prefix.
       for (final FileSystemEntity entity in packagesDir.listSync()) {
         if (entity is Directory && packageName.startsWith(entity.basename)) {
-          final Directory subPackageCandidate =
-              entity.childDirectory(packageName);
+          final Directory subPackageCandidate = entity.childDirectory(
+            packageName,
+          );
           if (subPackageCandidate.existsSync()) {
             targets[packageName] = RepositoryPackage(subPackageCandidate);
             break;
@@ -180,24 +187,29 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
 
     // Determine the dependencies to be overridden.
-    final Pubspec pubspec = Pubspec.parse(pubspecContents);
+    final pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       // Filter out any dependencies with version constraint that wouldn't allow
       // the target if published, and anything that is already path-based.
       ...<MapEntry<String, Dependency>>[
-        ...pubspec.dependencies.entries,
-        ...pubspec.devDependencies.entries,
-      ]
-          .where((MapEntry<String, Dependency> element) =>
-              element.value is! PathDependency)
-          .where((MapEntry<String, Dependency> element) =>
-              allowsVersion(element.value, versions[element.key]))
+            ...pubspec.dependencies.entries,
+            ...pubspec.devDependencies.entries,
+          ]
+          .where(
+            (MapEntry<String, Dependency> element) =>
+                element.value is! PathDependency,
+          )
+          .where(
+            (MapEntry<String, Dependency> element) =>
+                allowsVersion(element.value, versions[element.key]),
+          )
           .map((MapEntry<String, Dependency> entry) => entry.key),
       ...additionalPackagesToOverride,
     ];
     final List<String> packagesToOverride = combinedDependencies
         .where(
-            (String packageName) => localDependencies.containsKey(packageName))
+          (String packageName) => localDependencies.containsKey(packageName),
+        )
         .toList();
 
     if (packagesToOverride.isEmpty) {
@@ -208,19 +220,19 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     final String repoRootPath = packagesDir.parent.path;
     final int packageDepth = path
         .split(
-            path.relative(package.directory.absolute.path, from: repoRootPath))
+          path.relative(package.directory.absolute.path, from: repoRootPath),
+        )
         .length;
-    final List<String> relativeBasePathComponents =
-        List<String>.filled(packageDepth, '..');
+    final relativeBasePathComponents = List<String>.filled(packageDepth, '..');
 
     // Add the overrides.
-    final YamlEditor editablePubspec = YamlEditor(pubspecContents);
+    final editablePubspec = YamlEditor(pubspecContents);
     final YamlNode root = editablePubspec.parseAt(<String>[]);
-    const String dependencyOverridesKey = 'dependency_overrides';
+    const dependencyOverridesKey = 'dependency_overrides';
 
     // Add in any existing overrides, then sort the combined list to avoid
     // sort_pub_dependencies lint violations.
-    final YamlMap? existingOverrides =
+    final existingOverrides =
         (root as YamlMap)[dependencyOverridesKey] as YamlMap?;
     final List<String> allDependencyOverrides = <String>{
       ...existingOverrides?.keys.cast<String>() ?? <String>[],
@@ -235,16 +247,19 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     // failures.
     // This uses string concatenation rather than YamlMap because the latter
     // doesn't guarantee any particular output order for its entries.
-    final List<String> newOverrideLines = <String>[];
-    for (final String packageName in allDependencyOverrides) {
+    final newOverrideLines = <String>[];
+    for (final packageName in allDependencyOverrides) {
       final String overrideValue;
       if (packagesToOverride.contains(packageName)) {
         // Create a new override.
 
         // Find the relative path from the common base to the local package.
         final List<String> repoRelativePathComponents = path.split(
-            path.relative(localDependencies[packageName]!.path,
-                from: repoRootPath));
+          path.relative(
+            localDependencies[packageName]!.path,
+            from: repoRootPath,
+          ),
+        );
         final String pathValue = p.posix.joinAll(<String>[
           ...relativeBasePathComponents,
           ...repoRelativePathComponents,
@@ -258,19 +273,21 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
     // Create an empty section as a placeholder to replace.
     editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
-    String newContent = editablePubspec.toString();
+    var newContent = editablePubspec.toString();
 
     // Add the warning if it's not already there.
-    final String warningComment =
+    final warningComment =
         newContent.contains(_dependencyOverrideWarningComment)
-            ? ''
-            : '$_dependencyOverrideWarningComment\n';
+        ? ''
+        : '$_dependencyOverrideWarningComment\n';
     // Replace the placeholder with the new section.
-    newContent =
-        newContent.replaceFirst(RegExp('$dependencyOverridesKey:\\s*{}\\n'), '''
+    newContent = newContent.replaceFirst(
+      RegExp('$dependencyOverridesKey:\\s*{}\\n'),
+      '''
 $warningComment$dependencyOverridesKey:
 ${newOverrideLines.join('\n')}
-''');
+''',
+    );
 
     // Write the new pubspec.
     package.pubspecFile.writeAsStringSync(newContent);
@@ -282,8 +299,11 @@ ${newOverrideLines.join('\n')}
     // it needs the overrides in order for tests to pass.
     for (final RepositoryPackage example in package.getExamples()) {
       await _addDependencyOverridesIfNecessary(
-          example, localDependencies, versions,
-          additionalPackagesToOverride: packagesToOverride);
+        example,
+        localDependencies,
+        versions,
+        additionalPackagesToOverride: packagesToOverride,
+      );
     }
 
     return true;
@@ -292,8 +312,10 @@ ${newOverrideLines.join('\n')}
   /// Returns all pubspecs anywhere under the packages directory.
   Future<List<File>> _getAllPubspecs() => packagesDir.parent
       .list(recursive: true, followLinks: false)
-      .where((FileSystemEntity entity) =>
-          entity is File && p.basename(entity.path) == 'pubspec.yaml')
+      .where(
+        (FileSystemEntity entity) =>
+            entity is File && p.basename(entity.path) == 'pubspec.yaml',
+      )
       .map((FileSystemEntity file) => file as File)
       .toList();
 
@@ -307,7 +329,7 @@ ${newOverrideLines.join('\n')}
     final String baseSha = await gitVersionFinder.getBaseSha();
     print('Finding changed packages relative to "$baseSha"...');
 
-    final Set<String> changedPackages = <String>{};
+    final changedPackages = <String>{};
     for (final String changedPath in await gitVersionFinder.getChangedFiles()) {
       // Git output always uses Posix paths.
       final List<String> allComponents = p.posix.split(changedPath);
@@ -320,13 +342,19 @@ ${newOverrideLines.join('\n')}
         print('  Skipping $changedPath; not in packages directory.');
         continue;
       }
-      final RepositoryPackage package =
-          RepositoryPackage(packagesDir.fileSystem.file(changedPath).parent);
+      final package = RepositoryPackage(
+        packagesDir.fileSystem.file(changedPath).parent,
+      );
       // Ignored deleted packages, as they won't be published.
       if (!package.pubspecFile.existsSync()) {
-        final String directoryName = p.posix.joinAll(path.split(path.relative(
-            package.directory.absolute.path,
-            from: packagesDir.parent.path)));
+        final String directoryName = p.posix.joinAll(
+          path.split(
+            path.relative(
+              package.directory.absolute.path,
+              from: packagesDir.parent.path,
+            ),
+          ),
+        );
         print('  Skipping $directoryName; deleted.');
         continue;
       }
@@ -348,12 +376,18 @@ ${newOverrideLines.join('\n')}
       return false;
     }
 
-    final String pubspecGitPath = p.posix.joinAll(path.split(path.relative(
-        package.pubspecFile.absolute.path,
-        from: (await gitDir).path)));
+    final String pubspecGitPath = p.posix.joinAll(
+      path.split(
+        path.relative(
+          package.pubspecFile.absolute.path,
+          from: (await gitDir).path,
+        ),
+      ),
+    );
     final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-    final Version? previousVersion =
-        await gitVersionFinder.getPackageVersion(pubspecGitPath);
+    final Version? previousVersion = await gitVersionFinder.getPackageVersion(
+      pubspecGitPath,
+    );
     if (previousVersion == null) {
       // The plugin is new, so nothing can be depending on it yet.
       return false;

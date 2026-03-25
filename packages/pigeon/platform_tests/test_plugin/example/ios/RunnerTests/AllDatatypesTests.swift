@@ -3,34 +3,34 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import test_plugin
 
-class AllDatatypesTests: XCTestCase {
+@MainActor
+struct AllDatatypesTests {
 
-  func testAllNull() throws {
+  @Test
+  func allNull() async throws {
     let everything = AllNullableTypes()
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-
-    api.echoNullable(everything) { result in
-      switch result {
-      case .success(let res):
-        XCTAssert(everything == res!)
-        expectation.fulfill()
-      case .failure(_):
-        return
-
+    await confirmation { confirmed in
+      api.echoNullable(everything) { result in
+        switch result {
+        case .success(let res):
+          #expect(everything == res)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testAllEquals() throws {
+  @Test
+  func allEquals() async throws {
     let everything = AllNullableTypes(
       aNullableBool: true,
       aNullableInt: 1,
@@ -59,19 +59,17 @@ class AllDatatypesTests: XCTestCase {
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-
-    api.echoNullable(everything) { res in
-      switch res {
-      case .success(let res):
-        XCTAssert(everything == res!)
-        expectation.fulfill()
-        return
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      api.echoNullable(everything) { res in
+        switch res {
+        case .success(let res):
+          #expect(everything == res)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
   private let correctList: [Any?] = ["a", 2, "three"]
@@ -83,98 +81,247 @@ class AllDatatypesTests: XCTestCase {
   private let differentKeyMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "d": "three"]
   private let differentValueMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": "five"]
 
-  private lazy var correctListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": correctList]
-  private lazy var matchingListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": matchingList]
-  private lazy var differentListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": differentList]
+  private var correctListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": correctList] }
+  private var matchingListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": matchingList] }
+  private var differentListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": differentList] }
 
-  private lazy var correctMapInList: [Any?] = ["a", 2, correctMap]
-  private lazy var matchingMapInList: [Any?] = ["a", 2, matchingMap]
-  private lazy var differentKeyMapInList: [Any?] = ["a", 2, differentKeyMap]
-  private lazy var differentValueMapInList: [Any?] = ["a", 2, differentValueMap]
+  private var correctMapInList: [Any?] { ["a", 2, correctMap] }
+  private var matchingMapInList: [Any?] { ["a", 2, matchingMap] }
+  private var differentKeyMapInList: [Any?] { ["a", 2, differentKeyMap] }
+  private var differentValueMapInList: [Any?] { ["a", 2, differentValueMap] }
 
-  func testEqualityMethodCorrectlyChecksDeepEquality() {
+  @Test
+  func equalityMethodCorrectlyChecksDeepEquality() {
     let generic = AllNullableTypes(list: correctList, map: correctMap)
     let identical = generic
-    XCTAssertEqual(generic, identical, "Identical copies should be equal")
+    #expect(generic == identical, "Identical copies should be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingClasses() {
     let generic = AllNullableTypes(list: correctList, map: correctMap)
     let allNull = AllNullableTypes()
-    XCTAssertNotEqual(
-      allNull, generic, "Instance with nil properties should not equal instance with values")
+    #expect(
+      allNull != generic, "Instance with nil properties should not equal instance with values")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingListsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingListsInClasses() {
     let withList = AllNullableTypes(list: correctList)
     let withDifferentList = AllNullableTypes(list: differentList)
-    XCTAssertNotEqual(
-      withList, withDifferentList, "Instances with different lists should not be equal")
+    #expect(
+      withList != withDifferentList, "Instances with different lists should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesMatchingButUniqueListsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesMatchingButUniqueListsInClasses() {
     let withList = AllNullableTypes(list: correctList)
     let withMatchingList = AllNullableTypes(list: matchingList)
-    XCTAssertEqual(withList, withMatchingList, "Instances with equivalent lists should be equal")
+    #expect(withList == withMatchingList, "Instances with equivalent lists should be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingKeysInMapsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingKeysInMapsInClasses() {
     let withMap = AllNullableTypes(map: correctMap)
     let withDifferentMap = AllNullableTypes(map: differentKeyMap)
-    XCTAssertNotEqual(
-      withMap, withDifferentMap, "Instances with different map keys should not be equal")
+    #expect(
+      withMap != withDifferentMap, "Instances with different map keys should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingValuesInMapsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingValuesInMapsInClasses() {
     let withMap = AllNullableTypes(map: correctMap)
     let withDifferentMap = AllNullableTypes(map: differentValueMap)
-    XCTAssertNotEqual(
-      withMap, withDifferentMap, "Instances with different map values should not be equal")
+    #expect(
+      withMap != withDifferentMap, "Instances with different map values should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesMatchingButUniqueMapsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesMatchingButUniqueMapsInClasses() {
     let withMap = AllNullableTypes(map: correctMap)
     let withMatchingMap = AllNullableTypes(map: matchingMap)
-    XCTAssertEqual(withMap, withMatchingMap, "Instances with equivalent maps should be equal")
+    #expect(withMap == withMatchingMap, "Instances with equivalent maps should be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingListsNestedInMapsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingListsNestedInMapsInClasses() {
     let withListInMap = AllNullableTypes(map: correctListInMap)
     let withDifferentListInMap = AllNullableTypes(map: differentListInMap)
-    XCTAssertNotEqual(
-      withListInMap, withDifferentListInMap,
+    #expect(
+      withListInMap != withDifferentListInMap,
       "Instances with different nested lists in maps should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesMatchingButUniqueListsNestedInMapsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesMatchingButUniqueListsNestedInMapsInClasses() {
     let withListInMap = AllNullableTypes(map: correctListInMap)
     let withMatchingListInMap = AllNullableTypes(map: matchingListInMap)
-    XCTAssertEqual(
-      withListInMap, withMatchingListInMap,
+    #expect(
+      withListInMap == withMatchingListInMap,
       "Instances with equivalent nested lists in maps should be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingKeysInMapsNestedInListsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingKeysInMapsNestedInListsInClasses() {
     let withMapInList = AllNullableTypes(list: correctMapInList)
     let withDifferentMapInList = AllNullableTypes(list: differentKeyMapInList)
-    XCTAssertNotEqual(
-      withMapInList, withDifferentMapInList,
+    #expect(
+      withMapInList != withDifferentMapInList,
       "Instances with different nested map keys in lists should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesNonMatchingValuesInMapsNestedInListsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesNonMatchingValuesInMapsNestedInListsInClasses() {
     let withMapInList = AllNullableTypes(list: correctMapInList)
     let withDifferentMapInList = AllNullableTypes(list: differentValueMapInList)
-    XCTAssertNotEqual(
-      withMapInList, withDifferentMapInList,
+    #expect(
+      withMapInList != withDifferentMapInList,
       "Instances with different nested map values in lists should not be equal")
   }
 
-  func testEqualityMethodCorrectlyIdentifiesMatchingButUniqueMapsNestedInListsInClasses() {
+  @Test
+  func equalityMethodCorrectlyIdentifiesMatchingButUniqueMapsNestedInListsInClasses() {
     let withMapInList = AllNullableTypes(list: correctMapInList)
     let withMatchingMapInList = AllNullableTypes(list: matchingMapInList)
-    XCTAssertEqual(
-      withMapInList, withMatchingMapInList,
+    #expect(
+      withMapInList == withMatchingMapInList,
       "Instances with equivalent nested maps in lists should be equal")
+  }
+
+  @Test
+  func equalityWithNaN() throws {
+    let list = [Double.nan]
+    let map: [Int64: Double?] = [1: Double.nan]
+    let a = AllNullableTypes(
+      aNullableDouble: Double.nan,
+      doubleList: list,
+      recursiveClassList: [AllNullableTypes(aNullableDouble: Double.nan)],
+      map: map
+    )
+    let b = AllNullableTypes(
+      aNullableDouble: Double.nan,
+      doubleList: list,
+      recursiveClassList: [AllNullableTypes(aNullableDouble: Double.nan)],
+      map: map
+    )
+    #expect(a == b)
+  }
+
+  @Test
+  func hashWithNaN() throws {
+    let a = AllNullableTypes(aNullableDouble: Double.nan)
+    let b = AllNullableTypes(aNullableDouble: Double.nan)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func structEquality() {
+    let a = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    let b = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    let c = AllNullableTypesWithoutRecursion(aNullableInt: 2)
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test
+  func crossTypeEquality() {
+    let a = AllNullableTypes(aNullableInt: 1)
+    let b = AllNullableTypesWithoutRecursion(aNullableInt: 1)
+    // They are different types, so they shouldn't be equal even if we cast to Any
+    let anyA: Any = a
+    let anyB: Any = b
+    #expect(!(anyA as? AllNullableTypesWithoutRecursion == b))
+    #expect(!(anyB as? AllNullableTypes == a))
+  }
+
+  @Test
+  func typedDataEquality() {
+    let data1 = "1234".data(using: .utf8)!
+    let data2 = "1234".data(using: .utf8)!
+    // Ensure they are different instances in memory if possible,
+    // though Data in Swift is a value type.
+    // FlutterStandardTypedData is a class.
+    let a = AllNullableTypes(aNullableByteArray: FlutterStandardTypedData(bytes: data1))
+    let c = a
+    c.aNullableByteArray = FlutterStandardTypedData(bytes: data2)
+
+    #expect(a == c)
+  }
+
+  @Test
+  func signedZeroEquality() {
+    let a = AllNullableTypes(aNullableDouble: 0.0)
+    let b = AllNullableTypes(aNullableDouble: -0.0)
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func nestedZeroListEquality() {
+    let a = AllNullableTypes(doubleList: [0.0])
+    let b = AllNullableTypes(doubleList: [-0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapKeyEquality() {
+    let a = AllNullableTypes(map: [0.0: "a"])
+    let b = AllNullableTypes(map: [-0.0: "a"])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
+  }
+
+  @Test
+  func zeroMapValueEquality() {
+    let a = AllNullableTypes(map: ["a": 0.0])
+    let b = AllNullableTypes(map: ["a": -0.0])
+    #expect(a == b)
+
+    var hasherA = Hasher()
+    a.hash(into: &hasherA)
+    let hashA = hasherA.finalize()
+
+    var hasherB = Hasher()
+    b.hash(into: &hasherB)
+    let hashB = hasherB.finalize()
+
+    #expect(hashA == hashB)
   }
 }

@@ -1,3 +1,8 @@
+## 2.0.34
+
+* Updates build files from Groovy to Kotlin.
+* Updates README to reflect currently supported OS version.
+
 ## 2.0.33
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

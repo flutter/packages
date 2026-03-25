@@ -21,7 +21,7 @@ For example:
 
   final String name = args[0];
 
-  final MDnsClient client = MDnsClient();
+  final client = MDnsClient();
   await client.start();
   await for (final IPAddressResourceRecord record
       in client.lookup<IPAddressResourceRecord>(

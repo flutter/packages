@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _authenticate() async {
-    bool authenticated = false;
+    var authenticated = false;
     try {
       setState(() {
         _isAuthenticating = true;

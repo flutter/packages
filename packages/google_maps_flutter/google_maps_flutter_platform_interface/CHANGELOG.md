@@ -1,3 +1,12 @@
+## 2.15.0
+
+* Adds support for `colorScheme` for cloud-based maps styling brightness in web.
+
+## 2.14.2
+
+* Adds documentation about iOS rendering issue with `PinConfig`.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.

@@ -39,7 +39,7 @@ const List<int> libraryBlobSignature = <int>[0xFE, 0x52, 0x46, 0x57];
 ///  * [encodeLibraryBlob], which uses a superset of this format to encode
 ///    Remote Flutter Widgets binary library blobs.
 Uint8List encodeDataBlob(Object value) {
-  final _BlobEncoder encoder = _BlobEncoder();
+  final encoder = _BlobEncoder();
   encoder.writeSignature(dataBlobSignature);
   encoder.writeValue(value);
   return encoder.bytes.toBytes();
@@ -65,7 +65,7 @@ Uint8List encodeDataBlob(Object value) {
 ///    Remote Flutter Widgets binary library blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 Object decodeDataBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(dataBlobSignature);
   final Object result = decoder.readValue();
   if (!decoder.finished) {
@@ -83,7 +83,7 @@ Object decodeDataBlob(Uint8List bytes) {
 ///    Remote Flutter Widgets binary data blobs.
 ///  * [parseLibraryFile], which parses the text variant of this format.
 Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
-  final _BlobEncoder encoder = _BlobEncoder();
+  final encoder = _BlobEncoder();
   encoder.writeSignature(libraryBlobSignature);
   encoder.writeLibrary(value);
   return encoder.bytes.toBytes();
@@ -276,7 +276,7 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///    Remote Flutter Widgets binary data blobs.
 ///  * [parseDataFile], which parses the text variant of this format.
 RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
-  final _BlobDecoder decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
+  final decoder = _BlobDecoder(bytes.buffer.asByteData(bytes.offsetInBytes, bytes.lengthInBytes));
   decoder.expectSignature(libraryBlobSignature);
   final RemoteWidgetLibrary result = decoder.readLibrary();
   if (!decoder.finished) {
@@ -410,7 +410,7 @@ class _BlobDecoder {
   Switch _readSwitch() {
     final Object value = _readArgument();
     final int count = _readInt64();
-    final Map<Object?, Object> cases = Map<Object?, Object>.fromEntries(
+    final cases = Map<Object?, Object>.fromEntries(
       Iterable<MapEntry<Object?, Object>>.generate(
         count,
         (int index) => MapEntry<Object?, Object>(
@@ -530,9 +530,9 @@ class _BlobDecoder {
 
   void expectSignature(List<int> signature) {
     assert(signature.length == 4);
-    final List<int> bytes = <int>[];
-    bool match = true;
-    for (final int byte in signature) {
+    final bytes = <int>[];
+    var match = true;
+    for (final byte in signature) {
       final int read = _readByte();
       bytes.add(read);
       if (read != byte) {
@@ -685,7 +685,7 @@ class _BlobEncoder {
       });
     } else if (value is SetStateHandler) {
       bytes.addByte(_msSetState);
-      final StateReference reference = value.stateReference as StateReference;
+      final reference = value.stateReference as StateReference;
       _writeInt64(reference.parts.length);
       reference.parts.forEach(_writePart);
       _writeArgument(value.value);
@@ -697,7 +697,7 @@ class _BlobEncoder {
 
   void _writeDeclarationList(List<WidgetDeclaration> value) {
     _writeInt64(value.length);
-    for (final WidgetDeclaration declaration in value) {
+    for (final declaration in value) {
       _writeString(declaration.name);
       if (declaration.initialState != null) {
         _writeMap(declaration.initialState!, _writeArgument);
@@ -710,7 +710,7 @@ class _BlobEncoder {
 
   void _writeImportList(List<Import> value) {
     _writeInt64(value.length);
-    for (final Import import in value) {
+    for (final import in value) {
       _writeInt64(import.name.parts.length);
       import.name.parts.forEach(_writeString);
     }

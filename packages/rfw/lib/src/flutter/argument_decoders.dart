@@ -614,8 +614,9 @@ class ArgumentDecoders {
   /// The first argument must be the `values` list for that enum; this is the
   /// list of values that is searched.
   ///
-  /// For example, `enumValue<TileMode>(TileMode.values, source, ['tileMode']) ??
-  /// TileMode.clamp` reads the `tileMode` key of `source`, and looks for the
+  /// For example,
+  /// `enumValue<TileMode>(TileMode.values, source, ['tileMode']) ?? TileMode.clamp`
+  /// reads the `tileMode` key of `source`, and looks for the
   /// first match in [TileMode.values], defaulting to [TileMode.clamp] if
   /// nothing matches; thus, the string `mirror` would return [TileMode.mirror].
   static T? enumValue<T>(List<T> values, DataSource source, List<Object> key) {
@@ -623,7 +624,7 @@ class ArgumentDecoders {
     if (value == null) {
       return null;
     }
-    for (int index = 0; index < values.length; index += 1) {
+    for (var index = 0; index < values.length; index += 1) {
       if (value == values[index].toString().split('.').last) {
         return values[index];
       }
@@ -804,7 +805,12 @@ class ArgumentDecoders {
       return null;
     }
     return IconData(
+      // RFW does _not_ support tree-shaking icons. Explicitly suppress the lint
+      // that warns about non-constant arguments which will cause the flutter
+      // icon tree shaker to bail out of tree-shaking icons.
+      // ignore: non_const_argument_for_const_parameter
       icon,
+      // ignore: non_const_argument_for_const_parameter
       fontFamily: source.v<String>([...key, 'fontFamily']),
       matchTextDirection: source.v<bool>([...key, 'matchTextDirection']) ?? false,
     );
@@ -1028,7 +1034,7 @@ class ArgumentDecoders {
     if (!source.isMap(key)) {
       return null;
     }
-    final Paint result = Paint();
+    final result = Paint();
     final BlendMode? paintBlendMode = enumValue<BlendMode>(BlendMode.values, source, [...key, 'blendMode']);
     if (paintBlendMode != null) {
       result.blendMode = paintBlendMode;

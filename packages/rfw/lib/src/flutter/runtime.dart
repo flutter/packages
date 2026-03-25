@@ -364,7 +364,7 @@ class Runtime extends ChangeNotifier {
       for (final Import import in library.imports) {
         final LibraryName dependency = import.name;
         if (visited.contains(dependency)) {
-          final List<LibraryName> path = <LibraryName>[dependency];
+          final path = <LibraryName>[dependency];
           for (final LibraryName name in visited.toList().reversed) {
             if (name == dependency) {
               break;
@@ -462,7 +462,7 @@ class Runtime extends ChangeNotifier {
           )..propagateSource(source);
         }
         usedWidgets = usedWidgets.toSet()..add(widget.fullName);
-        final WidgetDeclaration constructor = widget.constructor as WidgetDeclaration;
+        final constructor = widget.constructor as WidgetDeclaration;
         final int newDepth;
         if (constructor.initialState != null) {
           newDepth = stateDepth + 1;
@@ -527,7 +527,7 @@ class Runtime extends ChangeNotifier {
     Set<FullyQualifiedWidgetName> usedWidgets,
   ) {
     if (node is ConstructorCall) {
-      final DynamicMap subArguments = _bindArguments(
+      final subArguments = _bindArguments(
         context,
         node.arguments,
         arguments,
@@ -546,7 +546,7 @@ class Runtime extends ChangeNotifier {
     }
     if (node is WidgetBuilderDeclaration) {
       return (DynamicMap widgetBuilderArg) {
-        final DynamicMap newWidgetBuilderScope = <String, Object?> {
+        final newWidgetBuilderScope = <String, Object?> {
           ...widgetBuilderScope,
           node.argumentName: widgetBuilderArg,
         };
@@ -763,8 +763,8 @@ abstract class _CurriedWidget extends BlobNode {
     _DataResolverCallback dataResolver,
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
   ) {
-    int currentIndex = 0; // where we are in `list` (some entries of which might represent multiple values, because they are themselves loops)
-    int effectiveIndex = 0; // where we are in the fully expanded list (the coordinate space in which we're aiming for `targetEffectiveIndex`)
+    var currentIndex = 0; // where we are in `list` (some entries of which might represent multiple values, because they are themselves loops)
+    var effectiveIndex = 0; // where we are in the fully expanded list (the coordinate space in which we're aiming for `targetEffectiveIndex`)
     while ((effectiveIndex <= targetEffectiveIndex || targetEffectiveIndex < 0) && currentIndex < list.length) {
       final Object node = list[currentIndex]!;
       if (node is Loop) {
@@ -838,8 +838,8 @@ abstract class _CurriedWidget extends BlobNode {
     _DataResolverCallback dataResolver,
     _WidgetBuilderArgResolverCallback widgetBuilderArgResolver,
   ) {
-    int index = 0;
-    Object current = root;
+    var index = 0;
+    var current = root;
     while (true) {
       if (current is DataReference) {
         if (index < parts.length) {
@@ -1207,7 +1207,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   void applySetState(List<Object> parts, Object value) {
     assert(parts.isNotEmpty);
     assert(_stateStore != null);
-    int index = 0;
+    var index = 0;
     Object current = _stateStore!;
     while (index < parts.length) {
       final Object subindex = parts[index];
@@ -1379,7 +1379,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
       final List<AnyEventHandler> handlers = value.whereType<AnyEventHandler>().toList();
       if (handlers.isNotEmpty) {
         return generator(([DynamicMap? extraArguments]) {
-          for (final AnyEventHandler entry in handlers) {
+          for (final entry in handlers) {
             if (entry is EventHandler) {
               DynamicMap arguments = entry.eventArguments;
               if (extraArguments != null) {
@@ -1404,7 +1404,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   final List<_Subscription> _dependencies = <_Subscription>[];
 
   Object _fetch(List<Object> argsKey, { required bool expandLists }) {
-    final _Key key = _Key(_kArgsSection, argsKey);
+    final key = _Key(_kArgsSection, argsKey);
     final Object? value = _argsCache[key];
     if (value != null && (value is! DynamicList || !expandLists)) {
       return value;
@@ -1437,7 +1437,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   }
 
   Object _dataResolver(List<Object> rawDataKey) {
-    final _Key dataKey = _Key(_kDataSection, rawDataKey);
+    final dataKey = _Key(_kDataSection, rawDataKey);
     final _Subscription subscription;
     if (!_subscriptions.containsKey(dataKey)) {
       subscription = _Subscription(widget.data, this, rawDataKey);
@@ -1450,7 +1450,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   }
 
   Object _widgetBuilderArgResolver(List<Object> rawDataKey) {
-    final _Key widgetBuilderArgKey = _Key(_kWidgetBuilderArgSection, rawDataKey);
+    final widgetBuilderArgKey = _Key(_kWidgetBuilderArgSection, rawDataKey);
     final _Subscription subscription = _subscriptions[widgetBuilderArgKey] ??= _Subscription(
       widget.widgetBuilderScope,
       this,
@@ -1461,7 +1461,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
   }
 
   Object _stateResolver(List<Object> rawStateKey, int depth) {
-    final _Key stateKey = _Key(depth, rawStateKey);
+    final stateKey = _Key(depth, rawStateKey);
     final _Subscription subscription;
     if (!_subscriptions.containsKey(stateKey)) {
       if (depth >= _states.length) {
@@ -1482,7 +1482,7 @@ class _WidgetState extends State<_Widget> implements DataSource {
 
   void updateData(Set<_Key> affectedArgs) {
     setState(() {
-      for (final _Key key in affectedArgs) {
+      for (final key in affectedArgs) {
         _argsCache[key] = null;
       }
     });
@@ -1564,7 +1564,7 @@ class _Subscription {
 }
 
 Widget _buildErrorWidget(String message) {
-  final FlutterErrorDetails detail = FlutterErrorDetails(
+  final detail = FlutterErrorDetails(
     exception: message,
     stack: StackTrace.current,
     library: 'Remote Flutter Widgets',

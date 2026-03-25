@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    final QuickActionsIos quickActions = QuickActionsIos();
+    final quickActions = QuickActionsIos();
     quickActions.initialize((String shortcutType) {
       setState(() {
         shortcut = shortcutType;

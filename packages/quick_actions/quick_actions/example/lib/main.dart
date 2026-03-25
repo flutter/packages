@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    const QuickActions quickActions = QuickActions();
+    const quickActions = QuickActions();
     quickActions.initialize((String shortcutType) {
       setState(() {
         shortcut = shortcutType;

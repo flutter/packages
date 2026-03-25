@@ -109,7 +109,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final CreationOptions pigeonCreationOptions = CreationOptions(
+    final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: httpHeaders,
       userAgent: userAgent,
@@ -138,12 +138,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   String? _userAgentFromHeaders(Map<String, String> httpHeaders) {
     // TODO(stuartmorgan): HTTP headers are case-insensitive, so this should be
     //  adjusted to find any entry where the key has a case-insensitive match.
-    const String userAgentKey = 'User-Agent';
+    const userAgentKey = 'User-Agent';
     // TODO(stuartmorgan): Investigate removing this. The use of a hard-coded
     //  default agent dates back to the original ExoPlayer implementation of the
     //  plugin, but it's not clear why the default isn't null, which would let
     //  ExoPlayer use its own default value.
-    const String defaultUserAgent = 'ExoPlayer';
+    const defaultUserAgent = 'ExoPlayer';
     return httpHeaders[userAgentKey] ?? defaultUserAgent;
   }
 
@@ -225,6 +225,47 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final NativeAudioTrackData nativeData = await _playerWith(
+      id: playerId,
+    ).getAudioTracks();
+    final tracks = <VideoAudioTrack>[];
+
+    // Convert ExoPlayer tracks to VideoAudioTrack
+    if (nativeData.exoPlayerTracks != null) {
+      for (final ExoPlayerAudioTrackData track in nativeData.exoPlayerTracks!) {
+        // Construct a string ID from groupIndex and trackIndex for compatibility
+        final trackId = '${track.groupIndex}_${track.trackIndex}';
+        tracks.add(
+          VideoAudioTrack(
+            id: trackId,
+            label: track.label,
+            language: track.language,
+            isSelected: track.isSelected,
+            bitrate: track.bitrate,
+            sampleRate: track.sampleRate,
+            channelCount: track.channelCount,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    return _playerWith(id: playerId).selectAudioTrack(trackId);
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // Android with ExoPlayer supports audio track selection
+    return true;
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -272,6 +313,7 @@ class _PlayerInstance {
   Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
   bool _isBuffering = false;
+  Completer<void>? _audioTrackSelectionCompleter;
 
   final VideoPlayerViewState viewState;
 
@@ -305,6 +347,41 @@ class _PlayerInstance {
 
   Stream<VideoEvent> videoEvents() {
     return _eventStreamController.stream;
+  }
+
+  Future<NativeAudioTrackData> getAudioTracks() {
+    return _api.getAudioTracks();
+  }
+
+  Future<void> selectAudioTrack(String trackId) async {
+    // Parse the trackId to get groupIndex and trackIndex
+    final List<String> parts = trackId.split('_');
+    if (parts.length != 2) {
+      throw ArgumentError(
+        'Invalid trackId format: "$trackId". Expected format: "groupIndex_trackIndex"',
+      );
+    }
+
+    final int groupIndex = int.parse(parts[0]);
+    final int trackIndex = int.parse(parts[1]);
+
+    // Create a completer to wait for the track selection to complete
+    _audioTrackSelectionCompleter = Completer<void>();
+
+    try {
+      await _api.selectAudioTrack(groupIndex, trackIndex);
+
+      // Wait for the onTracksChanged event from ExoPlayer with a timeout
+      await _audioTrackSelectionCompleter!.future.timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          // If we timeout, just continue - the track may still have been selected
+          // This is a fallback in case the event doesn't arrive for some reason
+        },
+      );
+    } finally {
+      _audioTrackSelectionCompleter = null;
+    }
   }
 
   Future<void> dispose() async {
@@ -402,6 +479,13 @@ class _PlayerInstance {
         // Any state other than buffering should end the buffering state.
         if (event.state != PlatformPlaybackState.buffering) {
           _setBuffering(false);
+        }
+      case AudioTrackChangedEvent _:
+        // Complete the audio track selection completer if it exists
+        // This signals that the track selection has completed
+        if (_audioTrackSelectionCompleter != null &&
+            !_audioTrackSelectionCompleter!.isCompleted) {
+          _audioTrackSelectionCompleter!.complete();
         }
     }
   }

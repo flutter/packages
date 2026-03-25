@@ -121,7 +121,7 @@ class Timeseries {
       candidateValues,
     );
 
-    final List<AnnotatedSample> annotatedValues = <AnnotatedSample>[
+    final annotatedValues = <AnnotatedSample>[
       for (final double warmUpValue in warmUpValues)
         AnnotatedSample(
           magnitude: warmUpValue,
@@ -243,7 +243,7 @@ class TimeseriesStats {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.writeln(
       '$name: (samples: $cleanSampleCount clean/$outlierSampleCount '
       'outliers/${cleanSampleCount + outlierSampleCount} '
@@ -342,7 +342,7 @@ Map<double, double> computePercentiles(
       '$label: attempted to compute a percentile of an empty value list.',
     );
   }
-  for (final double percentile in percentiles) {
+  for (final percentile in percentiles) {
     if (percentile < 0.0 || percentile > 1.0) {
       throw StateError(
         '$label: attempted to compute a percentile for an invalid '
@@ -354,8 +354,8 @@ Map<double, double> computePercentiles(
   final List<double> sorted = values.sorted(
     (double a, double b) => a.compareTo(b),
   );
-  final Map<double, double> computed = <double, double>{};
-  for (final double percentile in percentiles) {
+  final computed = <double, double>{};
+  for (final percentile in percentiles) {
     final int percentileIndex = (sorted.length * percentile).round().clamp(
       0,
       sorted.length - 1,

@@ -88,19 +88,19 @@ class Tessellator extends Visitor<Node, void>
       return pathNode;
     }
 
-    final List<Node> children = <Node>[];
+    final children = <Node>[];
     if (fill != null) {
-      final VerticesBuilder builder = VerticesBuilder();
+      final builder = VerticesBuilder();
       for (final PathCommand command in pathNode.path.commands) {
         switch (command.type) {
           case PathCommandType.move:
-            final MoveToCommand move = command as MoveToCommand;
+            final move = command as MoveToCommand;
             builder.moveTo(move.x, move.y);
           case PathCommandType.line:
-            final LineToCommand line = command as LineToCommand;
+            final line = command as LineToCommand;
             builder.lineTo(line.x, line.y);
           case PathCommandType.cubic:
-            final CubicToCommand cubic = command as CubicToCommand;
+            final cubic = command as CubicToCommand;
             builder.cubicTo(
               cubic.x1,
               cubic.y1,
@@ -117,7 +117,7 @@ class Tessellator extends Visitor<Node, void>
         fillType: pathNode.path.fillType,
       );
       if (rawVertices.isNotEmpty) {
-        final Vertices vertices = Vertices.fromFloat32List(rawVertices);
+        final vertices = Vertices.fromFloat32List(rawVertices);
         final IndexedVertices indexedVertices = vertices.createIndex();
         children.add(
           ResolvedVerticesNode(

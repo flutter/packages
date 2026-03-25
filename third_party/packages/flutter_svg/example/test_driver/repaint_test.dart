@@ -13,7 +13,7 @@ Future<void> main() async {
       // animate
       await Future<void>.delayed(const Duration(seconds: 10));
     });
-    final TimelineSummary summary = TimelineSummary.summarize(timeline);
+    final summary = TimelineSummary.summarize(timeline);
     await summary.writeTimelineToFile('repaint', pretty: true);
   } finally {
     await driver.close();

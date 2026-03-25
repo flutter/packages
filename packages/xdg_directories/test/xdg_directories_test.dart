@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
 
 void main() {
-  final Map<String, String> fakeEnv = <String, String>{};
+  final fakeEnv = <String, String>{};
   late Directory tmpDir;
 
   String testRootPath() {
@@ -102,7 +102,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
   });
 
   test('Can get userDirs', () {
-    final Map<String, String> expected = <String, String>{
+    final expected = <String, String>{
       'DESKTOP': testPath('Desktop'),
       'DOCUMENTS': testPath('Documents'),
       'DOWNLOAD': testPath('Downloads'),
@@ -115,7 +115,7 @@ XDG_VIDEOS_DIR="$HOME/Videos"
     xdg.xdgProcessRunner = FakeProcessRunner(expected);
     final Set<String> userDirs = xdg.getUserDirectoryNames();
     expect(userDirs, equals(expected.keys.toSet()));
-    for (final String key in userDirs) {
+    for (final key in userDirs) {
       expect(
         xdg.getUserDirectory(key)!.path,
         equals(expected[key]),

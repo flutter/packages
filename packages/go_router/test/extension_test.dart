@@ -12,7 +12,7 @@ void main() {
       WidgetTester tester, {
       Listenable? refreshListenable,
     }) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(

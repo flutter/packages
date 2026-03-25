@@ -10,7 +10,7 @@ void main() {
     test(
       'fromSkProduct should correctly parse data from a SKProductWrapper instance.',
       () {
-        final ProductDetails productDetails = ProductDetails(
+        final productDetails = ProductDetails(
           id: 'id',
           title: 'title',
           description: 'description',

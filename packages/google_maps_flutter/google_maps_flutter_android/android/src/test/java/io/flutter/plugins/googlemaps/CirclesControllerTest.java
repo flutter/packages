@@ -52,10 +52,10 @@ public class CirclesControllerTest {
     builder
         .setCircleId(id)
         .setConsumeTapEvents(false)
-        .setFillColor(0L)
+        .setFillColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
         .setCenter(new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
         .setRadius(1.0)
-        .setStrokeColor(0L)
+        .setStrokeColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
         .setStrokeWidth(1L)
         .setVisible(true)
         .setZIndex(0.0);

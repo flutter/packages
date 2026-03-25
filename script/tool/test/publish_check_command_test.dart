@@ -27,7 +27,7 @@ void main() {
     late CommandRunner<void> runner;
 
     CommandRunner<void> configureRunner({MockClient? httpClient}) {
-      final PublishCheckCommand publishCheckCommand = PublishCheckCommand(
+      final publishCheckCommand = PublishCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -66,17 +66,22 @@ void main() {
       await runCapturingPrint(runner, <String>['publish-check']);
 
       expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                'flutter',
-                const <String>['pub', 'publish', '--', '--dry-run'],
-                plugin1.path),
-            ProcessCall(
-                'flutter',
-                const <String>['pub', 'publish', '--', '--dry-run'],
-                plugin2.path),
-          ]));
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('flutter', const <String>[
+            'pub',
+            'publish',
+            '--',
+            '--dry-run',
+          ], plugin1.path),
+          ProcessCall('flutter', const <String>[
+            'pub',
+            'publish',
+            '--',
+            '--dry-run',
+          ], plugin2.path),
+        ]),
+      );
     });
 
     test('publish prepares dependencies of examples (when present)', () async {
@@ -94,13 +99,13 @@ void main() {
       await runCapturingPrint(runner, <String>['publish-check']);
 
       // For plugin1, these are the expected pub get calls that will happen
-      final Iterable<ProcessCall> pubGetCalls =
-          plugin1.getExamples().map((RepositoryPackage example) {
-        return ProcessCall(
-          getFlutterCommand(mockPlatform),
-          const <String>['pub', 'get'],
-          example.path,
-        );
+      final Iterable<ProcessCall> pubGetCalls = plugin1.getExamples().map((
+        RepositoryPackage example,
+      ) {
+        return ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+          'pub',
+          'get',
+        ], example.path);
       });
 
       expect(pubGetCalls, hasLength(2));
@@ -109,15 +114,19 @@ void main() {
         orderedEquals(<ProcessCall>[
           // plugin1 has 2 examples, so there's some 'dart pub get' calls.
           ...pubGetCalls,
-          ProcessCall(
-              'flutter',
-              const <String>['pub', 'publish', '--', '--dry-run'],
-              plugin1.path),
+          ProcessCall('flutter', const <String>[
+            'pub',
+            'publish',
+            '--',
+            '--dry-run',
+          ], plugin1.path),
           // plugin2 has no examples, so there's no extra 'dart pub get' calls.
-          ProcessCall(
-              'flutter',
-              const <String>['pub', 'publish', '--', '--dry-run'],
-              plugin2.path),
+          ProcessCall('flutter', const <String>[
+            'pub',
+            'publish',
+            '--',
+            '--dry-run',
+          ], plugin2.path),
         ]),
       );
     });
@@ -127,15 +136,20 @@ void main() {
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
-        FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
-            <String>['pub', 'publish'])
+        FakeProcessInfo(
+          MockProcess(exitCode: 1, stdout: 'Some error from pub'),
+          <String>['pub', 'publish'],
+        ),
       ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['publish-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
@@ -153,86 +167,100 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['publish-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('No valid pubspec found.'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('No valid pubspec found.')]),
       );
     });
 
     test('fails if AUTHORS is missing', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.authorsFile.deleteSync();
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['publish-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
         output,
         containsAllInOrder(<Matcher>[
           contains(
-              'No AUTHORS file found. Packages must include an AUTHORS file.'),
+            'No AUTHORS file found. Packages must include an AUTHORS file.',
+          ),
         ]),
       );
     });
 
     test('does not require AUTHORS for third-party', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir.parent
-              .childDirectory('third_party')
-              .childDirectory('packages'));
+        'a_package',
+        packagesDir.parent
+            .childDirectory('third_party')
+            .childDirectory('packages'),
+      );
       package.authorsFile.deleteSync();
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['publish-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'publish-check',
+      ]);
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for a_package'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('Running for a_package')]),
       );
     });
 
     test('pass on prerelease if --allow-pre-release flag is on', () async {
       createFakePlugin('d', packagesDir);
 
-      final MockProcess process = MockProcess(
-          exitCode: 1,
-          stdout: 'Package has 1 warning.\n'
-              'Packages with an SDK constraint on a pre-release of the Dart '
-              'SDK should themselves be published as a pre-release version.');
+      final process = MockProcess(
+        exitCode: 1,
+        stdout:
+            'Package has 1 warning.\n'
+            'Packages with an SDK constraint on a pre-release of the Dart '
+            'SDK should themselves be published as a pre-release version.',
+      );
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
         FakeProcessInfo(process, <String>['pub', 'publish']),
       ];
 
       expect(
-          runCapturingPrint(
-              runner, <String>['publish-check', '--allow-pre-release']),
-          completes);
+        runCapturingPrint(runner, <String>[
+          'publish-check',
+          '--allow-pre-release',
+        ]),
+        completes,
+      );
     });
 
     test('fail on prerelease if --allow-pre-release flag is off', () async {
       createFakePlugin('d', packagesDir);
 
-      final MockProcess process = MockProcess(
-          exitCode: 1,
-          stdout: 'Package has 1 warning.\n'
-              'Packages with an SDK constraint on a pre-release of the Dart '
-              'SDK should themselves be published as a pre-release version.');
+      final process = MockProcess(
+        exitCode: 1,
+        stdout:
+            'Package has 1 warning.\n'
+            'Packages with an SDK constraint on a pre-release of the Dart '
+            'SDK should themselves be published as a pre-release version.',
+      );
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
         FakeProcessInfo(process, <String>['pub', 'publish']),
@@ -240,16 +268,20 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['publish-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
         output,
         containsAllInOrder(<Matcher>[
           contains(
-              'Packages with an SDK constraint on a pre-release of the Dart SDK'),
+            'Packages with an SDK constraint on a pre-release of the Dart SDK',
+          ),
           contains('Unable to publish d'),
         ]),
       );
@@ -260,73 +292,91 @@ void main() {
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
-        FakeProcessInfo(MockProcess(stdout: 'Package has 0 warnings.'),
-            <String>['pub', 'publish']),
+        FakeProcessInfo(
+          MockProcess(stdout: 'Package has 0 warnings.'),
+          <String>['pub', 'publish'],
+        ),
       ];
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['publish-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'publish-check',
+      ]);
 
       expect(output, isNot(contains(contains('ERROR:'))));
     });
 
     test(
-        'runs validation even for packages that are already published and reports failure',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '0.1.0');
+      'runs validation even for packages that are already published and reports failure',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '0.1.0',
+        );
 
-      final MockClient mockClient = MockClient((http.Request request) async {
-        if (request.url.pathSegments.last == 'a_package.json') {
-          return http.Response(
+        final mockClient = MockClient((http.Request request) async {
+          if (request.url.pathSegments.last == 'a_package.json') {
+            return http.Response(
               json.encode(<String, dynamic>{
                 'name': 'a_package',
-                'versions': <String>[
-                  '0.0.1',
-                  '0.1.0',
-                ],
+                'versions': <String>['0.0.1', '0.1.0'],
               }),
-              200);
-        }
-        return http.Response('', 500);
-      });
+              200,
+            );
+          }
+          return http.Response('', 500);
+        });
 
-      runner = configureRunner(httpClient: mockClient);
+        runner = configureRunner(httpClient: mockClient);
 
-      processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
-            <String>['pub', 'publish'])
-      ];
+        processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+          FakeProcessInfo(
+            MockProcess(exitCode: 1, stdout: 'Some error from pub'),
+            <String>['pub', 'publish'],
+          ),
+        ];
 
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['publish-check'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Unable to publish a_package'),
-        ]),
-      );
-      expect(
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Unable to publish a_package'),
+          ]),
+        );
+        expect(
           processRunner.recordedCalls,
           contains(
-            ProcessCall(
-                'flutter',
-                const <String>['pub', 'publish', '--', '--dry-run'],
-                package.path),
-          ));
-    });
+            ProcessCall('flutter', const <String>[
+              'pub',
+              'publish',
+              '--',
+              '--dry-run',
+            ], package.path),
+          ),
+        );
+      },
+    );
 
     test('skips packages that are marked as not for publishing', () async {
-      createFakePackage('a_package', packagesDir,
-          version: '0.1.0', publishTo: 'none');
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '0.1.0',
+        publishTo: 'none',
+      );
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['publish-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'publish-check',
+      ]);
 
       expect(
         output,
@@ -338,52 +388,62 @@ void main() {
     });
 
     test(
-        'runs validation even for packages that are already published and reports success',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '0.1.0');
+      'runs validation even for packages that are already published and reports success',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '0.1.0',
+        );
 
-      final MockClient mockClient = MockClient((http.Request request) async {
-        if (request.url.pathSegments.last == 'a_package.json') {
-          return http.Response(
+        final mockClient = MockClient((http.Request request) async {
+          if (request.url.pathSegments.last == 'a_package.json') {
+            return http.Response(
               json.encode(<String, dynamic>{
                 'name': 'a_package',
-                'versions': <String>[
-                  '0.0.1',
-                  '0.1.0',
-                ],
+                'versions': <String>['0.0.1', '0.1.0'],
               }),
-              200);
-        }
-        return http.Response('', 500);
-      });
+              200,
+            );
+          }
+          return http.Response('', 500);
+        });
 
-      runner = configureRunner(httpClient: mockClient);
+        runner = configureRunner(httpClient: mockClient);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['publish-check']);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+        ]);
 
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-              'Package a_package version: 0.1.0 has already been published on pub.'),
-        ]),
-      );
-      expect(
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Package a_package version: 0.1.0 has already been published on pub.',
+            ),
+          ]),
+        );
+        expect(
           processRunner.recordedCalls,
           contains(
-            ProcessCall(
-                'flutter',
-                const <String>['pub', 'publish', '--', '--dry-run'],
-                package.path),
-          ));
-    });
+            ProcessCall('flutter', const <String>[
+              'pub',
+              'publish',
+              '--',
+              '--dry-run',
+            ], package.path),
+          ),
+        );
+      },
+    );
 
     group('pre-publish script', () {
       test('runs if present', () async {
-        final RepositoryPackage package =
-            createFakePackage('a_package', packagesDir, examples: <String>[]);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          examples: <String>[],
+        );
         package.prePublishScript.createSync(recursive: true);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -397,28 +457,26 @@ void main() {
           ]),
         );
         expect(
-            processRunner.recordedCalls,
-            containsAllInOrder(<ProcessCall>[
-              ProcessCall(
-                  'dart',
-                  const <String>[
-                    'pub',
-                    'get',
-                  ],
-                  package.directory.path),
-              ProcessCall(
-                  'dart',
-                  const <String>[
-                    'run',
-                    'tool/pre_publish.dart',
-                  ],
-                  package.directory.path),
-            ]));
+          processRunner.recordedCalls,
+          containsAllInOrder(<ProcessCall>[
+            ProcessCall('dart', const <String>[
+              'pub',
+              'get',
+            ], package.directory.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'tool/pre_publish.dart',
+            ], package.directory.path),
+          ]),
+        );
       });
 
       test('runs before publish --dry-run', () async {
-        final RepositoryPackage package =
-            createFakePackage('a_package', packagesDir, examples: <String>[]);
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          examples: <String>[],
+        );
         package.prePublishScript.createSync(recursive: true);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -432,111 +490,100 @@ void main() {
           ]),
         );
         expect(
-            processRunner.recordedCalls,
-            containsAllInOrder(<ProcessCall>[
-              ProcessCall(
-                  'dart',
-                  const <String>[
-                    'run',
-                    'tool/pre_publish.dart',
-                  ],
-                  package.directory.path),
-              ProcessCall(
-                  'flutter',
-                  const <String>[
-                    'pub',
-                    'publish',
-                    '--',
-                    '--dry-run',
-                  ],
-                  package.directory.path),
-            ]));
+          processRunner.recordedCalls,
+          containsAllInOrder(<ProcessCall>[
+            ProcessCall('dart', const <String>[
+              'run',
+              'tool/pre_publish.dart',
+            ], package.directory.path),
+            ProcessCall('flutter', const <String>[
+              'pub',
+              'publish',
+              '--',
+              '--dry-run',
+            ], package.directory.path),
+          ]),
+        );
       });
 
       test('causes command failure if it fails', () async {
         final RepositoryPackage package = createFakePackage(
-            'a_package', packagesDir,
-            isFlutter: true, examples: <String>[]);
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+        );
         package.prePublishScript.createSync(recursive: true);
 
         processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 1),
-              <String>['run']), // run tool/pre_publish.dart
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+            'run',
+          ]), // run tool/pre_publish.dart
         ];
 
         Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'publish-check',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['publish-check'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
         expect(commandError, isA<ToolExit>());
         expect(
           output,
-          containsAllInOrder(<Matcher>[
-            contains('Pre-publish script failed.'),
-          ]),
+          containsAllInOrder(<Matcher>[contains('Pre-publish script failed.')]),
         );
         expect(
-            processRunner.recordedCalls,
-            containsAllInOrder(<ProcessCall>[
-              ProcessCall(
-                  getFlutterCommand(mockPlatform),
-                  const <String>[
-                    'pub',
-                    'get',
-                  ],
-                  package.directory.path),
-              ProcessCall(
-                  'dart',
-                  const <String>[
-                    'run',
-                    'tool/pre_publish.dart',
-                  ],
-                  package.directory.path),
-            ]));
+          processRunner.recordedCalls,
+          containsAllInOrder(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+              'pub',
+              'get',
+            ], package.directory.path),
+            ProcessCall('dart', const <String>[
+              'run',
+              'tool/pre_publish.dart',
+            ], package.directory.path),
+          ]),
+        );
       });
     });
 
     test(
-        '--machine: Log JSON with status:no-publish and correct human message, if there are no packages need to be published. ',
-        () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
-        'name': 'a',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-        ],
-      };
+      '--machine: Log JSON with status:no-publish and correct human message, if there are no packages need to be published. ',
+      () async {
+        const httpResponseA = <String, dynamic>{
+          'name': 'a',
+          'versions': <String>['0.0.1', '0.1.0'],
+        };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
-        'name': 'b',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-          '0.2.0',
-        ],
-      };
+        const httpResponseB = <String, dynamic>{
+          'name': 'b',
+          'versions': <String>['0.0.1', '0.1.0', '0.2.0'],
+        };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
-        if (request.url.pathSegments.last == 'no_publish_a.json') {
-          return http.Response(json.encode(httpResponseA), 200);
-        } else if (request.url.pathSegments.last == 'no_publish_b.json') {
-          return http.Response(json.encode(httpResponseB), 200);
-        }
-        return http.Response('', 500);
-      });
+        final mockClient = MockClient((http.Request request) async {
+          if (request.url.pathSegments.last == 'no_publish_a.json') {
+            return http.Response(json.encode(httpResponseA), 200);
+          } else if (request.url.pathSegments.last == 'no_publish_b.json') {
+            return http.Response(json.encode(httpResponseB), 200);
+          }
+          return http.Response('', 500);
+        });
 
-      runner = configureRunner(httpClient: mockClient);
+        runner = configureRunner(httpClient: mockClient);
 
-      createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
-      createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
+        createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
+        createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
 
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check', '--machine']);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+          '--machine',
+        ]);
 
-      expect(output.first, r'''
+        expect(output.first, r'''
 {
   "status": "no-publish",
   "humanMessage": [
@@ -557,45 +604,42 @@ void main() {
     "No issues found!"
   ]
 }''');
-    });
+      },
+    );
 
     test(
-        '--machine: Log JSON with status:needs-publish and correct human message, if there is at least 1 plugin needs to be published.',
-        () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
-        'name': 'a',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-        ],
-      };
+      '--machine: Log JSON with status:needs-publish and correct human message, if there is at least 1 plugin needs to be published.',
+      () async {
+        const httpResponseA = <String, dynamic>{
+          'name': 'a',
+          'versions': <String>['0.0.1', '0.1.0'],
+        };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
-        'name': 'b',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-        ],
-      };
+        const httpResponseB = <String, dynamic>{
+          'name': 'b',
+          'versions': <String>['0.0.1', '0.1.0'],
+        };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
-        if (request.url.pathSegments.last == 'no_publish_a.json') {
-          return http.Response(json.encode(httpResponseA), 200);
-        } else if (request.url.pathSegments.last == 'no_publish_b.json') {
-          return http.Response(json.encode(httpResponseB), 200);
-        }
-        return http.Response('', 500);
-      });
+        final mockClient = MockClient((http.Request request) async {
+          if (request.url.pathSegments.last == 'no_publish_a.json') {
+            return http.Response(json.encode(httpResponseA), 200);
+          } else if (request.url.pathSegments.last == 'no_publish_b.json') {
+            return http.Response(json.encode(httpResponseB), 200);
+          }
+          return http.Response('', 500);
+        });
 
-      runner = configureRunner(httpClient: mockClient);
+        runner = configureRunner(httpClient: mockClient);
 
-      createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
-      createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
+        createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
+        createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
 
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check', '--machine']);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+          '--machine',
+        ]);
 
-      expect(output.first, r'''
+        expect(output.first, r'''
 {
   "status": "needs-publish",
   "humanMessage": [
@@ -616,65 +660,72 @@ void main() {
     "No issues found!"
   ]
 }''');
-    });
+      },
+    );
 
     test(
-        '--machine: Log correct JSON, if there is at least 1 plugin contains error.',
-        () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
-        'name': 'a',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-        ],
-      };
+      '--machine: Log correct JSON, if there is at least 1 plugin contains error.',
+      () async {
+        const httpResponseA = <String, dynamic>{
+          'name': 'a',
+          'versions': <String>['0.0.1', '0.1.0'],
+        };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
-        'name': 'b',
-        'versions': <String>[
-          '0.0.1',
-          '0.1.0',
-        ],
-      };
+        const httpResponseB = <String, dynamic>{
+          'name': 'b',
+          'versions': <String>['0.0.1', '0.1.0'],
+        };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
-        print('url ${request.url}');
-        print(request.url.pathSegments.last);
-        if (request.url.pathSegments.last == 'no_publish_a.json') {
-          return http.Response(json.encode(httpResponseA), 200);
-        } else if (request.url.pathSegments.last == 'no_publish_b.json') {
-          return http.Response(json.encode(httpResponseB), 200);
-        }
-        return http.Response('', 500);
-      });
+        final mockClient = MockClient((http.Request request) async {
+          print('url ${request.url}');
+          print(request.url.pathSegments.last);
+          if (request.url.pathSegments.last == 'no_publish_a.json') {
+            return http.Response(json.encode(httpResponseA), 200);
+          } else if (request.url.pathSegments.last == 'no_publish_b.json') {
+            return http.Response(json.encode(httpResponseB), 200);
+          }
+          return http.Response('', 500);
+        });
 
-      runner = configureRunner(httpClient: mockClient);
+        runner = configureRunner(httpClient: mockClient);
 
-      final RepositoryPackage plugin =
-          createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
-      createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
+        final RepositoryPackage plugin = createFakePlugin(
+          'no_publish_a',
+          packagesDir,
+          version: '0.1.0',
+        );
+        createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
 
-      await plugin.pubspecFile.writeAsString('bad-yaml');
+        await plugin.pubspecFile.writeAsString('bad-yaml');
 
-      bool hasError = false;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['publish-check', '--machine'],
+        var hasError = false;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['publish-check', '--machine'],
           errorHandler: (Error error) {
-        expect(error, isA<ToolExit>());
-        hasError = true;
-      });
-      expect(hasError, isTrue);
+            expect(error, isA<ToolExit>());
+            hasError = true;
+          },
+        );
+        expect(hasError, isTrue);
 
-      expect(output.first, contains(r'''
+        expect(
+          output.first,
+          contains(
+            r'''
 {
   "status": "error",
   "humanMessage": [
     "\n============================================================\n|| Running for no_publish_a\n============================================================\n",
-    "Failed to parse `pubspec.yaml` at /packages/no_publish_a/pubspec.yaml: ParsedYamlException:'''));
-      // This is split into two checks since the details of the YamlException
-      // aren't controlled by this package, so asserting its exact format would
-      // make the test fragile to irrelevant changes in those details.
-      expect(output.first, contains(r'''
+    "Failed to parse `pubspec.yaml` at /packages/no_publish_a/pubspec.yaml: ParsedYamlException:''',
+          ),
+        );
+        // This is split into two checks since the details of the YamlException
+        // aren't controlled by this package, so asserting its exact format would
+        // make the test fragile to irrelevant changes in those details.
+        expect(
+          output.first,
+          contains(r'''
     "No valid pubspec found.",
     "\n============================================================\n|| Running for no_publish_b\n============================================================\n",
     "url https://pub.dev/packages/no_publish_b.json",
@@ -686,7 +737,9 @@ void main() {
     "  no_publish_a",
     "See above for full details."
   ]
-}'''));
-    });
+}'''),
+        );
+      },
+    );
   });
 }

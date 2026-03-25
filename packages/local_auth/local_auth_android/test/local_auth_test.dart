@@ -109,7 +109,7 @@ void main() {
           api.authenticate(any, any),
         ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
 
-        const String reason = 'test reason';
+        const reason = 'test reason';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[],
@@ -118,7 +118,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(any, captureAny),
         );
-        final AuthStrings strings = result.captured[0] as AuthStrings;
+        final strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_android.dart
@@ -134,7 +134,7 @@ void main() {
             api.authenticate(any, any),
           ).thenAnswer((_) async => AuthResult(code: AuthResultCode.success));
 
-          const String reason = 'test reason';
+          const reason = 'test reason';
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[AnotherPlatformAuthMessages()],
@@ -143,7 +143,7 @@ void main() {
           final VerificationResult result = verify(
             api.authenticate(any, captureAny),
           );
-          final AuthStrings strings = result.captured[0] as AuthStrings;
+          final strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_android.dart
@@ -161,10 +161,10 @@ void main() {
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
         // - they are different from each other.
-        const String reason = 'A';
-        const String hint = 'B';
-        const String cancel = 'C';
-        const String signInTitle = 'D';
+        const reason = 'A';
+        const hint = 'B';
+        const cancel = 'C';
+        const signInTitle = 'D';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
@@ -180,7 +180,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(any, captureAny),
         );
-        final AuthStrings strings = result.captured[0] as AuthStrings;
+        final strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         expect(strings.signInHint, hint);
         expect(strings.cancelButton, cancel);
@@ -195,9 +195,9 @@ void main() {
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
         // - they are different from each other.
-        const String reason = 'A';
-        const String hint = 'B';
-        const String cancel = 'C';
+        const reason = 'A';
+        const hint = 'B';
+        const cancel = 'C';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
@@ -208,7 +208,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(any, captureAny),
         );
-        final AuthStrings strings = result.captured[0] as AuthStrings;
+        final strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the provided values.
         expect(strings.signInHint, hint);
@@ -233,7 +233,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(captureAny, any),
         );
-        final AuthOptions options = result.captured[0] as AuthOptions;
+        final options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, false);
         expect(options.sensitiveTransaction, true);
         expect(options.sticky, false);
@@ -257,7 +257,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(captureAny, any),
         );
-        final AuthOptions options = result.captured[0] as AuthOptions;
+        final options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, true);
         expect(options.sensitiveTransaction, false);
         expect(options.sticky, true);
@@ -630,7 +630,7 @@ void main() {
       test(
         'converts unknownError to unknownError LocalAuthException, passing error message',
         () async {
-          const String errorMessage = 'Some error message';
+          const errorMessage = 'Some error message';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResult(
               code: AuthResultCode.unknownError,

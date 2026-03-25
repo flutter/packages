@@ -20,21 +20,19 @@ class PlaceMarkerPage extends GoogleMapExampleAppPage {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceMarkerBody();
+    return const _PlaceMarkerBody();
   }
 }
 
-class PlaceMarkerBody extends StatefulWidget {
-  const PlaceMarkerBody({super.key});
+class _PlaceMarkerBody extends StatefulWidget {
+  const _PlaceMarkerBody();
 
   @override
-  State<StatefulWidget> createState() => PlaceMarkerBodyState();
+  State<StatefulWidget> createState() => _PlaceMarkerBodyState();
 }
 
-typedef MarkerUpdateAction = Marker Function(Marker marker);
-
-class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
-  PlaceMarkerBodyState();
+class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
+  _PlaceMarkerBodyState();
   static const LatLng center = LatLng(-33.86711, 151.1947171);
 
   GoogleMapController? controller;
@@ -43,14 +41,10 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   int _markerIdCounter = 1;
   LatLng? markerPosition;
 
-  // ignore: use_setters_to_change_properties
   void _onMapCreated(GoogleMapController controller) {
-    this.controller = controller;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    setState(() {
+      this.controller = controller;
+    });
   }
 
   void _onMarkerTapped(MarkerId markerId) {
@@ -59,17 +53,14 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = markers[previousMarkerId]!.copyWith(
-            iconParam: BitmapDescriptor.defaultMarker,
+          final Marker resetOld = copyWithSelectedState(
+            markers[previousMarkerId]!,
+            false,
           );
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = tappedMarker.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
-        );
+        final Marker newMarker = copyWithSelectedState(tappedMarker, true);
         markers[markerId] = newMarker;
 
         markerPosition = null;
@@ -122,11 +113,11 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       return;
     }
 
-    final String markerIdVal = 'marker_id_$_markerIdCounter';
+    final markerIdVal = 'marker_id_$_markerIdCounter';
     _markerIdCounter++;
-    final MarkerId markerId = MarkerId(markerIdVal);
+    final markerId = MarkerId(markerIdVal);
 
-    final Marker marker = Marker(
+    final marker = Marker(
       markerId: markerId,
       position: LatLng(
         center.latitude + sin(_markerIdCounter * pi / 6.0) / 20.0,
@@ -134,8 +125,8 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       ),
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
       onTap: () => _onMarkerTapped(markerId),
-      onDragEnd: (LatLng position) => _onMarkerDragEnd(markerId, position),
       onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
+      onDragEnd: (LatLng position) => _onMarkerDragEnd(markerId, position),
     );
 
     setState(() {
@@ -154,7 +145,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   void _changePosition(MarkerId markerId) {
     final Marker marker = markers[markerId]!;
     final LatLng current = marker.position;
-    final Offset offset = Offset(
+    final offset = Offset(
       center.latitude - current.latitude,
       center.longitude - current.longitude,
     );
@@ -171,7 +162,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   void _changeAnchor(MarkerId markerId) {
     final Marker marker = markers[markerId]!;
     final Offset currentAnchor = marker.anchor;
-    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
+    final newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
       markers[markerId] = marker.copyWith(anchorParam: newAnchor);
     });
@@ -180,7 +171,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   Future<void> _changeInfoAnchor(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
     final Offset currentAnchor = marker.infoWindow.anchor;
-    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
+    final newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
     setState(() {
       markers[markerId] = marker.copyWith(
         infoWindowParam: marker.infoWindow.copyWith(anchorParam: newAnchor),
@@ -204,7 +195,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
 
   Future<void> _changeInfo(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
-    final String newSnippet = '${marker.infoWindow.snippet!}*';
+    final newSnippet = '${marker.infoWindow.snippet!}*';
     setState(() {
       markers[markerId] = marker.copyWith(
         infoWindowParam: marker.infoWindow.copyWith(snippetParam: newSnippet),
@@ -257,9 +248,18 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   }
 
   Future<BitmapDescriptor> _getMarkerIcon(BuildContext context) async {
-    const Size canvasSize = Size(48, 48);
+    const canvasSize = Size(48, 48);
     final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
     return BytesMapBitmap(bytes.buffer.asUint8List());
+  }
+
+  /// Performs customizations of the [marker] to mark it as selected or not.
+  Marker copyWithSelectedState(Marker marker, bool isSelected) {
+    return marker.copyWith(
+      iconParam: isSelected
+          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
+          : BitmapDescriptor.defaultMarker,
+    );
   }
 
   @override

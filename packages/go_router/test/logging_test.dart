@@ -56,7 +56,7 @@ void main() {
         count: 2,
         reason: 'Go router should log the 2 events',
       );
-      final List<String> logs = <String>[];
+      final logs = <String>[];
       Logger.root.onRecord.listen((LogRecord event) => logs.add(event.message));
       GoRouter(
         debugLogDiagnostics: true,
@@ -85,7 +85,7 @@ void main() {
       );
       hierarchicalLoggingEnabled = true;
 
-      final List<String> logs = <String>[];
+      final logs = <String>[];
       Logger.root.onRecord.listen((LogRecord event) => logs.add(event.message));
       GoRouter(
         debugLogDiagnostics: true,

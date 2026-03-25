@@ -35,7 +35,7 @@ void main() {
     });
 
     test('Can be mocked with `implements`', () {
-      final UrlLauncherPlatformMock mock = UrlLauncherPlatformMock();
+      final mock = UrlLauncherPlatformMock();
       UrlLauncherPlatform.instance = mock;
     });
 
@@ -45,10 +45,8 @@ void main() {
   });
 
   group('$MethodChannelUrlLauncher', () {
-    const MethodChannel channel = MethodChannel(
-      'plugins.flutter.io/url_launcher',
-    );
-    final List<MethodCall> log = <MethodCall>[];
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
+    final log = <MethodCall>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
           log.add(methodCall);
@@ -58,7 +56,7 @@ void main() {
           return null;
         });
 
-    final MethodChannelUrlLauncher launcher = MethodChannelUrlLauncher();
+    final launcher = MethodChannelUrlLauncher();
 
     tearDown(() {
       log.clear();

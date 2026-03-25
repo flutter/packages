@@ -8,28 +8,20 @@ import 'package:web_benchmarks/analysis.dart';
 void main() {
   group('averageBenchmarkResults', () {
     test('succeeds for identical benchmark names and metrics', () {
-      final BenchmarkResults result1 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo': <BenchmarkScore>[
-            BenchmarkScore(metric: 'foo.bar', value: 6),
-            BenchmarkScore(metric: 'foo.baz', value: 10),
-          ],
-          'bar': <BenchmarkScore>[
-            BenchmarkScore(metric: 'bar.foo', value: 2.4),
-          ],
-        },
-      );
-      final BenchmarkResults result2 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo': <BenchmarkScore>[
-            BenchmarkScore(metric: 'foo.bar', value: 4),
-            BenchmarkScore(metric: 'foo.baz', value: 10),
-          ],
-          'bar': <BenchmarkScore>[
-            BenchmarkScore(metric: 'bar.foo', value: 1.2),
-          ],
-        },
-      );
+      final result1 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo': <BenchmarkScore>[
+          BenchmarkScore(metric: 'foo.bar', value: 6),
+          BenchmarkScore(metric: 'foo.baz', value: 10),
+        ],
+        'bar': <BenchmarkScore>[BenchmarkScore(metric: 'bar.foo', value: 2.4)],
+      });
+      final result2 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo': <BenchmarkScore>[
+          BenchmarkScore(metric: 'foo.bar', value: 4),
+          BenchmarkScore(metric: 'foo.baz', value: 10),
+        ],
+        'bar': <BenchmarkScore>[BenchmarkScore(metric: 'bar.foo', value: 1.2)],
+      });
       final BenchmarkResults average = computeAverage(<BenchmarkResults>[
         result1,
         result2,
@@ -46,32 +38,24 @@ void main() {
     });
 
     test('fails for mismatched benchmark names', () {
-      final BenchmarkResults result1 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
-        },
-      );
-      final BenchmarkResults result2 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo1': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 4)],
-        },
-      );
+      final result1 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
+      });
+      final result2 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo1': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 4)],
+      });
       expect(() {
         computeAverage(<BenchmarkResults>[result1, result2]);
       }, throwsException);
     });
 
     test('fails for mismatched benchmark metrics', () {
-      final BenchmarkResults result1 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
-        },
-      );
-      final BenchmarkResults result2 = BenchmarkResults(
-        <String, List<BenchmarkScore>>{
-          'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.boo', value: 4)],
-        },
-      );
+      final result1 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
+      });
+      final result2 = BenchmarkResults(<String, List<BenchmarkScore>>{
+        'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.boo', value: 4)],
+      });
       expect(() {
         computeAverage(<BenchmarkResults>[result1, result2]);
       }, throwsException);
@@ -79,12 +63,8 @@ void main() {
   });
 
   test('computeDelta', () {
-    final BenchmarkResults benchmark1 = BenchmarkResults.parse(
-      testBenchmarkResults1,
-    );
-    final BenchmarkResults benchmark2 = BenchmarkResults.parse(
-      testBenchmarkResults2,
-    );
+    final benchmark1 = BenchmarkResults.parse(testBenchmarkResults1);
+    final benchmark2 = BenchmarkResults.parse(testBenchmarkResults2);
     final BenchmarkResults delta = computeDelta(benchmark1, benchmark2);
     expect(delta.toJson(), expectedBenchmarkDelta);
   });

@@ -43,14 +43,12 @@ Iterable<cb.Parameter> asConstructorParameters({
     );
   }
 
-  for (final ApiField field in unattachedFields) {
+  for (final field in unattachedFields) {
     yield cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = field.name
         ..named = true
-        ..type = defineType
-            ? cb.refer(addGenericTypesNullable(field.type))
-            : null
+        ..type = defineType ? cb.refer(addGenericTypes(field.type)) : null
         ..toThis = !defineType
         ..required = !field.type.isNullable,
     );
@@ -83,7 +81,7 @@ Iterable<cb.Parameter> asConstructorParameters({
     );
   }
 
-  for (final Method method in declaredFlutterMethods) {
+  for (final method in declaredFlutterMethods) {
     yield cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = method.name
@@ -113,7 +111,7 @@ Iterable<cb.Parameter> asConstructorParameters({
 Iterable<cb.Field> overridesClassConstructors(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
-  for (final AstProxyApi api in proxyApis) {
+  for (final api in proxyApis) {
     final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
 
     for (final Constructor constructor in api.constructors) {
@@ -166,7 +164,7 @@ Iterable<cb.Field> overridesClassConstructors(
 Iterable<cb.Field> overridesClassStaticFields(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
-  for (final AstProxyApi api in proxyApis) {
+  for (final api in proxyApis) {
     final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
 
     for (final ApiField field in api.fields.where(
@@ -189,7 +187,7 @@ Iterable<cb.Field> overridesClassStaticFields(
 Iterable<cb.Field> overridesClassStaticMethods(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
-  for (final AstProxyApi api in proxyApis) {
+  for (final api in proxyApis) {
     final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
 
     for (final Method method in api.hostMethods.where(
@@ -259,7 +257,7 @@ cb.FunctionType methodAsFunctionType(Method method, {required String apiName}) {
           cb.refer('$apiName ${classMemberNamePrefix}instance'),
         ...method.parameters.mapIndexed((int index, NamedType parameter) {
           return cb.refer(
-            '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+            '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
           );
         }),
       ]),
@@ -281,13 +279,13 @@ Iterable<cb.Method> staticAttachedFieldsGetters(
   Iterable<ApiField> fields, {
   required String apiName,
 }) sync* {
-  for (final ApiField field in fields) {
+  for (final field in fields) {
     yield cb.Method(
       (cb.MethodBuilder builder) => builder
         ..name = field.name
         ..type = cb.MethodType.getter
         ..static = true
-        ..returns = cb.refer(addGenericTypesNullable(field.type))
+        ..returns = cb.refer(addGenericTypes(field.type))
         ..docs.addAll(
           asDocumentationComments(field.documentationComments, docCommentSpec),
         )
@@ -306,7 +304,7 @@ void writeProxyApiPigeonOverrides(
   required DartFormatter formatter,
   required Iterable<AstProxyApi> proxyApis,
 }) {
-  final cb.Class proxyApiOverrides = cb.Class(
+  final proxyApiOverrides = cb.Class(
     (cb.ClassBuilder builder) => builder
       ..name = proxyApiOverridesClassName
       ..annotations.add(cb.refer('visibleForTesting'))
@@ -325,7 +323,7 @@ void writeProxyApiPigeonOverrides(
       ..methods.add(overridesClassResetMethod(proxyApis)),
   );
 
-  final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+  final emitter = cb.DartEmitter(useNullSafetySyntax: true);
   indent.format(formatter.format('${proxyApiOverrides.accept(emitter)}'));
 }
 
@@ -345,20 +343,20 @@ Iterable<cb.Constructor> constructors(
   required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
   required Iterable<Method> declaredFlutterMethods,
 }) sync* {
-  final cb.Parameter binaryMessengerParameter = cb.Parameter(
+  final binaryMessengerParameter = cb.Parameter(
     (cb.ParameterBuilder builder) => builder
       ..name = '${classMemberNamePrefix}binaryMessenger'
       ..named = true
       ..toSuper = true,
   );
 
-  for (final Constructor constructor in constructors) {
+  for (final constructor in constructors) {
     final String? factoryConstructorName = constructor.name.isNotEmpty
         ? constructor.name
         : null;
-    final String constructorName =
+    final constructorName =
         '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'new'}';
-    final String overridesConstructorName = constructor.name.isNotEmpty
+    final overridesConstructorName = constructor.name.isNotEmpty
         ? '${toLowerCamelCase(apiName)}_${constructor.name}'
         : '${toLowerCamelCase(apiName)}_new';
 
@@ -394,17 +392,16 @@ Iterable<cb.Constructor> constructors(
         )
         ..optionalParameters.addAll(parameters)
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final Map<String, cb.Expression> forwardedParams =
-              <String, cb.Expression>{
-                for (final cb.Parameter parameter in parameters)
-                  parameter.name: cb.refer(parameter.name),
-              };
-          final Map<String, cb.Expression>
-          forwardedParamsWithoutMessengerAndManager = <String, cb.Expression>{
-            for (final cb.Parameter parameter
-                in parametersWithoutMessengerAndManager)
+          final forwardedParams = <String, cb.Expression>{
+            for (final cb.Parameter parameter in parameters)
               parameter.name: cb.refer(parameter.name),
           };
+          final forwardedParamsWithoutMessengerAndManager =
+              <String, cb.Expression>{
+                for (final cb.Parameter parameter
+                    in parametersWithoutMessengerAndManager)
+                  parameter.name: cb.refer(parameter.name),
+              };
 
           builder.statements.addAll(<cb.Code>[
             cb.Code(
@@ -462,9 +459,9 @@ Iterable<cb.Constructor> constructors(
             const cb.Code('super.${classMemberNamePrefix}detached()'),
         ])
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final StringBuffer messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: channelName,
             insideAsyncMethod: false,
@@ -493,7 +490,7 @@ Iterable<cb.Constructor> constructors(
             cb.Code(
               'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
             ),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
           ]);
         });
     });
@@ -561,11 +558,11 @@ cb.Field codecInstanceField({
 /// Converts unattached fields from the pigeon AST to `code_builder`
 /// Fields.
 Iterable<cb.Field> unattachedFields(Iterable<ApiField> fields) sync* {
-  for (final ApiField field in fields) {
+  for (final field in fields) {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = field.name
-        ..type = cb.refer(addGenericTypesNullable(field.type))
+        ..type = cb.refer(addGenericTypes(field.type))
         ..modifier = cb.FieldModifier.final$
         ..docs.addAll(
           asDocumentationComments(field.documentationComments, docCommentSpec),
@@ -583,7 +580,7 @@ Iterable<cb.Field> flutterMethodFields(
   Iterable<Method> methods, {
   required String apiName,
 }) sync* {
-  for (final Method method in methods) {
+  for (final method in methods) {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = method.name
@@ -632,7 +629,7 @@ Iterable<cb.Field> flutterMethodFields(
 Iterable<cb.Field> interfaceApiFields(
   Iterable<AstProxyApi> apisOfInterfaces,
 ) sync* {
-  for (final AstProxyApi proxyApi in apisOfInterfaces) {
+  for (final proxyApi in apisOfInterfaces) {
     for (final Method method in proxyApi.methods) {
       yield cb.Field(
         (cb.FieldBuilder builder) => builder
@@ -659,7 +656,7 @@ Iterable<cb.Field> interfaceApiFields(
                   NamedType parameter,
                 ) {
                   return cb.refer(
-                    '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+                    '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
                   );
                 }),
               ]),
@@ -680,11 +677,11 @@ Iterable<cb.Field> interfaceApiFields(
 /// final MyOtherProxyApiClass value = _pigeon_value();
 /// ```
 Iterable<cb.Field> attachedFields(Iterable<ApiField> fields) sync* {
-  for (final ApiField field in fields) {
+  for (final field in fields) {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = '${field.isStatic ? '_' : ''}${field.name}'
-        ..type = cb.refer(addGenericTypesNullable(field.type))
+        ..type = cb.refer(addGenericTypes(field.type))
         ..modifier = cb.FieldModifier.final$
         ..static = field.isStatic
         ..late = !field.isStatic
@@ -751,7 +748,7 @@ cb.Method setUpMessageHandlerMethod({
                   ..requiredParameters.addAll(
                     unattachedFields.mapIndexed((int index, ApiField field) {
                       return cb.refer(
-                        '${addGenericTypesNullable(field.type)} ${getParameterName(index, field)}',
+                        '${addGenericTypes(field.type)} ${getParameterName(index, field)}',
                       );
                     }),
                   ),
@@ -775,7 +772,7 @@ cb.Method setUpMessageHandlerMethod({
                       NamedType parameter,
                     ) {
                       return cb.refer(
-                        '${addGenericTypesNullable(parameter.type)} ${getParameterName(index, parameter)}',
+                        '${addGenericTypes(parameter.type)} ${getParameterName(index, parameter)}',
                       );
                     }),
                   ]),
@@ -793,10 +790,10 @@ cb.Method setUpMessageHandlerMethod({
         ],
         if (hasCallbackConstructor)
           ...cb.Block((cb.BlockBuilder builder) {
-            final StringBuffer messageHandlerSink = StringBuffer();
-            const String methodName = '${classMemberNamePrefix}newInstance';
+            final messageHandlerIndent = Indent();
+            const methodName = '${classMemberNamePrefix}newInstance';
             DartGenerator.writeFlutterMethodMessageHandler(
-              Indent(messageHandlerSink),
+              messageHandlerIndent,
               name: methodName,
               parameters: <Parameter>[
                 Parameter(
@@ -845,13 +842,13 @@ cb.Method setUpMessageHandlerMethod({
                         ')';
                   },
             );
-            builder.statements.add(cb.Code(messageHandlerSink.toString()));
+            builder.statements.add(cb.Code(messageHandlerIndent.toString()));
           }).statements,
         for (final Method method in flutterMethods)
           ...cb.Block((cb.BlockBuilder builder) {
-            final StringBuffer messageHandlerSink = StringBuffer();
+            final messageHandlerIndent = Indent();
             DartGenerator.writeFlutterMethodMessageHandler(
-              Indent(messageHandlerSink),
+              messageHandlerIndent,
               name: method.name,
               parameters: <Parameter>[
                 Parameter(
@@ -882,11 +879,11 @@ cb.Method setUpMessageHandlerMethod({
                     Iterable<Parameter> parameters,
                     Iterable<String> safeArgumentNames,
                   ) {
-                    final String nullability = method.isRequired ? '' : '?';
+                    final nullability = method.isRequired ? '' : '?';
                     return '($methodName ?? ${safeArgumentNames.first}.$methodName)$nullability.call(${safeArgumentNames.join(',')})';
                   },
             );
-            builder.statements.add(cb.Code(messageHandlerSink.toString()));
+            builder.statements.add(cb.Code(messageHandlerIndent.toString()));
           }).statements,
       ]),
   );
@@ -904,20 +901,19 @@ Iterable<cb.Method> attachedFieldMethods(
   required String codecInstanceName,
   required String codecName,
 }) sync* {
-  for (final ApiField field in fields) {
+  for (final field in fields) {
     yield cb.Method((cb.MethodBuilder builder) {
-      final String type = addGenericTypesNullable(field.type);
-      const String instanceName = '${varNamePrefix}instance';
-      const String identifierInstanceName =
-          '${varNamePrefix}instanceIdentifier';
+      final String type = addGenericTypes(field.type);
+      const instanceName = '${varNamePrefix}instance';
+      const identifierInstanceName = '${varNamePrefix}instanceIdentifier';
       builder
         ..name = '$varNamePrefix${field.name}'
         ..static = field.isStatic
         ..returns = cb.refer(type)
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final StringBuffer messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: makeChannelNameWithStrings(
               apiName: apiName,
@@ -970,7 +966,7 @@ Iterable<cb.Method> attachedFieldMethods(
               ),
             ],
             const cb.Code('() async {'),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
             const cb.Code('}();'),
             const cb.Code('return $instanceName;'),
           ]);
@@ -990,13 +986,13 @@ Iterable<cb.Method> hostMethods(
   required String codecInstanceName,
   required String codecName,
 }) sync* {
-  for (final Method method in methods) {
+  for (final method in methods) {
     assert(method.location == ApiLocation.host);
     final Iterable<cb.Parameter> parameters = method.parameters.mapIndexed(
       (int index, NamedType parameter) => cb.Parameter(
         (cb.ParameterBuilder builder) => builder
           ..name = getParameterName(index, parameter)
-          ..type = cb.refer(addGenericTypesNullable(parameter.type)),
+          ..type = cb.refer(addGenericTypes(parameter.type)),
       ),
     );
     yield cb.Method(
@@ -1025,9 +1021,9 @@ Iterable<cb.Method> hostMethods(
           ],
         ])
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final StringBuffer messageCallSink = StringBuffer();
+          final messageCallIndent = Indent();
           DartGenerator.writeHostMethodMessageCall(
-            Indent(messageCallSink),
+            messageCallIndent,
             addSuffixVariable: false,
             channelName: makeChannelNameWithStrings(
               apiName: apiName,
@@ -1075,7 +1071,7 @@ Iterable<cb.Method> hostMethods(
             const cb.Code(
               'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
             ),
-            cb.Code(messageCallSink.toString()),
+            cb.Code(messageCallIndent.toString()),
           ]);
         }),
     );

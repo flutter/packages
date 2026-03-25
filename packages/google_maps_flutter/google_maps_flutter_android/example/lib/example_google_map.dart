@@ -312,11 +312,12 @@ class ExampleGoogleMap extends StatefulWidget {
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
     this.groundOverlays = const <GroundOverlay>{},
+    this.markerType = MarkerType.marker,
     this.onCameraMove,
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.cloudMapId,
+    this.mapId,
     this.style,
   });
 
@@ -430,10 +431,13 @@ class ExampleGoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? cloudMapId;
+  final String? mapId;
 
   /// The locally configured style for the map.
   final String? style;
+
+  /// The type of marker to use (legacy or advanced).
+  final MarkerType markerType;
 
   /// Creates a [State] for this [ExampleGoogleMap].
   @override
@@ -680,7 +684,8 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    cloudMapId: map.cloudMapId,
+    markerType: map.markerType,
+    mapId: map.mapId,
     style: map.style,
   );
 }

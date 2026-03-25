@@ -43,7 +43,7 @@ void main() {
       'ParagraphFixture/TextBigO_BigO',
       'ParagraphFixture/TextBigO_RMS',
     ]);
-    for (final MetricPoint p in points) {
+    for (final p in points) {
       expect(p.tags.containsKey('host_name'), false);
       expect(p.tags.containsKey('load_avg'), false);
       expect(p.tags.containsKey('caches'), false);

@@ -13,7 +13,7 @@ class ContentType {
         .split(';')
         .map((String e) => e.trim().toLowerCase());
 
-    for (final String chunk in chunks) {
+    for (final chunk in chunks) {
       if (!chunk.contains('=')) {
         _mimeType = chunk;
       } else {

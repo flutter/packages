@@ -94,7 +94,7 @@ void main() {
           (_) async => AuthResultDetails(result: AuthResult.success),
         );
 
-        const String reason = 'test reason';
+        const reason = 'test reason';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[],
@@ -103,7 +103,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(any, captureAny),
         );
-        final AuthStrings strings = result.captured[0] as AuthStrings;
+        final strings = result.captured[0] as AuthStrings;
         expect(strings.reason, reason);
         // These should all be the default values from
         // auth_messages_ios.dart
@@ -123,7 +123,7 @@ void main() {
             (_) async => AuthResultDetails(result: AuthResult.success),
           );
 
-          const String reason = 'test reason';
+          const reason = 'test reason';
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[AnotherPlatformAuthMessages()],
@@ -132,7 +132,7 @@ void main() {
           final VerificationResult result = verify(
             api.authenticate(any, captureAny),
           );
-          final AuthStrings strings = result.captured[0] as AuthStrings;
+          final strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_ios.dart
@@ -153,7 +153,7 @@ void main() {
             (_) async => AuthResultDetails(result: AuthResult.success),
           );
 
-          const String reason = 'test reason';
+          const reason = 'test reason';
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[const MacOSAuthMessages()],
@@ -162,7 +162,7 @@ void main() {
           final VerificationResult result = verify(
             api.authenticate(any, captureAny),
           );
-          final AuthStrings strings = result.captured[0] as AuthStrings;
+          final strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
           // These should all be the default values from
           // auth_messages_ios.dart
@@ -186,9 +186,9 @@ void main() {
           // These are arbitrary values; all that matters is that:
           // - they are different from the defaults, and
           // - they are different from each other.
-          const String reason = 'A';
-          const String cancel = 'B';
-          const String localizedFallbackTitle = 'C';
+          const reason = 'A';
+          const cancel = 'B';
+          const localizedFallbackTitle = 'C';
 
           await plugin.authenticate(
             localizedReason: reason,
@@ -204,7 +204,7 @@ void main() {
           final VerificationResult result = verify(
             api.authenticate(any, captureAny),
           );
-          final AuthStrings strings = result.captured[0] as AuthStrings;
+          final strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
           expect(strings.cancelButton, cancel);
           expect(strings.localizedFallbackTitle, localizedFallbackTitle);
@@ -225,9 +225,9 @@ void main() {
           // These are arbitrary values; all that matters is that:
           // - they are different from the defaults, and
           // - they are different from each other.
-          const String reason = 'A';
-          const String cancel = 'B';
-          const String localizedFallbackTitle = 'C';
+          const reason = 'A';
+          const cancel = 'B';
+          const localizedFallbackTitle = 'C';
           await plugin.authenticate(
             localizedReason: reason,
             authMessages: <AuthMessages>[
@@ -242,7 +242,7 @@ void main() {
           final VerificationResult result = verify(
             api.authenticate(any, captureAny),
           );
-          final AuthStrings strings = result.captured[0] as AuthStrings;
+          final strings = result.captured[0] as AuthStrings;
           expect(strings.reason, reason);
           expect(strings.cancelButton, cancel);
           expect(strings.localizedFallbackTitle, localizedFallbackTitle);
@@ -259,8 +259,8 @@ void main() {
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
         // - they are different from each other.
-        const String reason = 'A';
-        const String localizedFallbackTitle = 'B';
+        const reason = 'A';
+        const localizedFallbackTitle = 'B';
         await plugin.authenticate(
           localizedReason: reason,
           authMessages: <AuthMessages>[
@@ -273,7 +273,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(any, captureAny),
         );
-        final AuthStrings strings = result.captured[0] as AuthStrings;
+        final strings = result.captured[0] as AuthStrings;
         // These should all be the provided values.
         expect(strings.reason, reason);
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
@@ -299,7 +299,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(captureAny, any),
         );
-        final AuthOptions options = result.captured[0] as AuthOptions;
+        final options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, false);
         expect(options.sticky, false);
       });
@@ -321,7 +321,7 @@ void main() {
         final VerificationResult result = verify(
           api.authenticate(captureAny, any),
         );
-        final AuthOptions options = result.captured[0] as AuthOptions;
+        final options = result.captured[0] as AuthOptions;
         expect(options.biometricOnly, true);
         expect(options.sticky, true);
       });
@@ -371,8 +371,8 @@ void main() {
       test(
         'converts uiUnavailable to LocalAuthExceptionCode.uiUnavailable',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.uiUnavailable,
@@ -411,8 +411,8 @@ void main() {
       test(
         'converts systemCancel to LocalAuthExceptionCode.systemCanceled',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.systemCancel,
@@ -451,8 +451,8 @@ void main() {
       test(
         'converts userCancel to LocalAuthExceptionCode.userCanceled',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.userCancel,
@@ -491,8 +491,8 @@ void main() {
       test(
         'converts biometryDisconnected to LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.biometryDisconnected,
@@ -532,8 +532,8 @@ void main() {
       test(
         'converts biometryLockout to LocalAuthExceptionCode.biometricLockout',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.biometryLockout,
@@ -572,8 +572,8 @@ void main() {
       test(
         'converts biometryNotAvailable to LocalAuthExceptionCode.noBiometricHardware',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.biometryNotAvailable,
@@ -612,8 +612,8 @@ void main() {
       test(
         'converts biometryNotPaired to LocalAuthExceptionCode.noBiometricHardware',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.biometryNotPaired,
@@ -652,8 +652,8 @@ void main() {
       test(
         'converts biometryNotEnrolled to LocalAuthExceptionCode.noBiometricsEnrolled',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.biometryNotEnrolled,
@@ -692,8 +692,8 @@ void main() {
       test(
         'converts invalidContext to LocalAuthExceptionCode.uiUnavailable',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.invalidContext,
@@ -732,8 +732,8 @@ void main() {
       test(
         'converts invalidDimensions to LocalAuthExceptionCode.uiUnavailable',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.invalidDimensions,
@@ -772,8 +772,8 @@ void main() {
       test(
         'converts notInteractive to LocalAuthExceptionCode.uiUnavailable',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.notInteractive,
@@ -812,8 +812,8 @@ void main() {
       test(
         'converts passcodeNotSet to LocalAuthExceptionCode.noCredentialsSet',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.passcodeNotSet,
@@ -852,8 +852,8 @@ void main() {
       test(
         'converts userFallback to LocalAuthExceptionCode.userRequestedFallback',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.userFallback,
@@ -892,8 +892,8 @@ void main() {
       test(
         'converts unknownError to LocalAuthExceptionCode.unknownError',
         () async {
-          const String errorMessage = 'a message';
-          const String errorDetails = 'some details';
+          const errorMessage = 'a message';
+          const errorDetails = 'some details';
           when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(
               result: AuthResult.unknownError,

@@ -34,14 +34,21 @@ class ProcessRunner {
     bool exitOnError = false,
   }) async {
     print(
-        'Running command: "$executable ${args.join(' ')}" in ${workingDir?.path ?? io.Directory.current.path}');
-    final io.Process process = await io.Process.start(executable, args,
-        workingDirectory: workingDir?.path,
-        environment: environment,
-        mode: io.ProcessStartMode.inheritStdio);
+      'Running command: "$executable ${args.join(' ')}" in ${workingDir?.path ?? io.Directory.current.path}',
+    );
+    final io.Process process = await io.Process.start(
+      executable,
+      args,
+      workingDirectory: workingDir?.path,
+      environment: environment,
+      mode: io.ProcessStartMode.inheritStdio,
+    );
     if (exitOnError && await process.exitCode != 0) {
-      final String error =
-          _getErrorString(executable, args, workingDir: workingDir);
+      final String error = _getErrorString(
+        executable,
+        args,
+        workingDir: workingDir,
+      );
       print('$error See above for details.');
       throw ToolExit(await process.exitCode);
     }
@@ -71,15 +78,21 @@ class ProcessRunner {
     Encoding stdoutEncoding = io.systemEncoding,
     Encoding stderrEncoding = io.systemEncoding,
   }) async {
-    final io.ProcessResult result = await io.Process.run(executable, args,
-        workingDirectory: workingDir?.path,
-        environment: environment,
-        stdoutEncoding: stdoutEncoding,
-        stderrEncoding: stderrEncoding);
+    final io.ProcessResult result = await io.Process.run(
+      executable,
+      args,
+      workingDirectory: workingDir?.path,
+      environment: environment,
+      stdoutEncoding: stdoutEncoding,
+      stderrEncoding: stderrEncoding,
+    );
     if (result.exitCode != 0) {
       if (logOnError) {
-        final String error =
-            _getErrorString(executable, args, workingDir: workingDir);
+        final String error = _getErrorString(
+          executable,
+          args,
+          workingDir: workingDir,
+        );
         print('$error Stderr:\n${result.stdout}');
       }
       if (exitOnError) {
@@ -95,16 +108,25 @@ class ProcessRunner {
   /// passing [workingDir].
   ///
   /// Returns the started [io.Process].
-  Future<io.Process> start(String executable, List<String> args,
-      {Directory? workingDirectory}) async {
-    final io.Process process = await io.Process.start(executable, args,
-        workingDirectory: workingDirectory?.path);
+  Future<io.Process> start(
+    String executable,
+    List<String> args, {
+    Directory? workingDirectory,
+  }) async {
+    final io.Process process = await io.Process.start(
+      executable,
+      args,
+      workingDirectory: workingDirectory?.path,
+    );
     return process;
   }
 
-  String _getErrorString(String executable, List<String> args,
-      {Directory? workingDir}) {
-    final String workdir = workingDir == null ? '' : ' in ${workingDir.path}';
+  String _getErrorString(
+    String executable,
+    List<String> args, {
+    Directory? workingDir,
+  }) {
+    final workdir = workingDir == null ? '' : ' in ${workingDir.path}';
     return 'ERROR: Unable to execute "$executable ${args.join(' ')}"$workdir.';
   }
 }

@@ -108,12 +108,16 @@ class VideoConstraints {
   // TODO(dit): package:web has a class for this. Use it instead of jsify and toJson.
   /// Convert `this` to something that can be used on the browser.
   JSAny toMediaStreamConstraints() {
-    return <String, Object>{
+    final constraints = <String, Object>{
       if (width != null) 'width': width!.toJson(),
       if (height != null) 'height': height!.toJson(),
       if (facingMode != null) 'facingMode': facingMode!.toJson(),
       if (deviceId != null) 'deviceId': <String, Object>{'exact': deviceId!},
-    }.jsify()!;
+    };
+
+    // Return true instead of empty object for better browser compatibility.
+    // Firefox Android rejects getUserMedia({video: {}}) but accepts {video: true}.
+    return constraints.isEmpty ? true.toJS : constraints.jsify()!;
   }
 
   @override
@@ -238,7 +242,7 @@ class VideoSizeConstraint {
   // TODO(dit): package:web has a class for this. Use it instead of toJson.
   /// Converts the current instance to a Map.
   Object toJson() {
-    final Map<String, dynamic> json = <String, dynamic>{};
+    final json = <String, dynamic>{};
 
     if (ideal != null) {
       json['ideal'] = ideal;

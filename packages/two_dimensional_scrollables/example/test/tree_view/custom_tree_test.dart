@@ -35,7 +35,7 @@ void main() {
     expect(verticalPosition.maxScrollExtent, 0.0);
     expect(verticalPosition.pixels, 0.0);
 
-    final CustomTreeExampleState state =
+    final state =
         tester.state(find.byType(CustomTreeExample)) as CustomTreeExampleState;
 
     state.treeController.toggleNode(state.treeController.getNodeFor('lib')!);

@@ -20,7 +20,7 @@ void main() {
 
   SharedPreferencesWindows.registerWith();
 
-  const Map<String, Object> flutterTestValues = <String, Object>{
+  const flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
     'flutter.Bool': true,
     'flutter.Int': 42,
@@ -28,7 +28,7 @@ void main() {
     'flutter.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> prefixTestValues = <String, Object>{
+  const prefixTestValues = <String, Object>{
     'prefix.String': 'hello world',
     'prefix.Bool': true,
     'prefix.Int': 42,
@@ -36,7 +36,7 @@ void main() {
     'prefix.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+  const nonPrefixTestValues = <String, Object>{
     'String': 'hello world',
     'Bool': true,
     'Int': 42,
@@ -44,7 +44,7 @@ void main() {
     'StringList': <String>['foo', 'bar'],
   };
 
-  final Map<String, Object> allTestValues = <String, Object>{};
+  final allTestValues = <String, Object>{};
 
   allTestValues.addAll(flutterTestValues);
   allTestValues.addAll(prefixTestValues);
@@ -71,7 +71,7 @@ void main() {
   }
 
   SharedPreferencesWindows getPreferences() {
-    final SharedPreferencesWindows prefs = SharedPreferencesWindows();
+    final prefs = SharedPreferencesWindows();
     prefs.fs = fs;
     prefs.pathProvider = pathProvider;
     return prefs;

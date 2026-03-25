@@ -66,7 +66,7 @@ final class IOSImaSettings extends PlatformImaSettings {
   }
 
   IMASettings _createSettings() {
-    final IMASettings settings = IMASettings();
+    final settings = IMASettings();
     if (params.language case final String language) {
       settings.setLanguage(language);
     }

@@ -248,7 +248,7 @@ bool _listEquals<T>(List<T>? a, List<T>? b) {
   if (a == null || b == null || a.length != b.length) {
     return false;
   }
-  for (int index = 0; index < a.length; index += 1) {
+  for (var index = 0; index < a.length; index += 1) {
     if (a[index] != b[index]) {
       return false;
     }
@@ -290,7 +290,7 @@ class LibraryName implements Comparable<LibraryName> {
 
   @override
   int compareTo(LibraryName other) {
-    for (int index = 0; index < parts.length; index += 1) {
+    for (var index = 0; index < parts.length; index += 1) {
       if (other.parts.length <= index) {
         return 1;
       }

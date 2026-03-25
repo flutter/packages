@@ -19,22 +19,33 @@ import 'repository_package.dart';
 /// If [streamOutput] is false, output will only be printed if the command
 /// fails.
 Future<bool> runPubGet(
-    RepositoryPackage package, ProcessRunner processRunner, Platform platform,
-    {bool alwaysUseFlutter = false, bool streamOutput = true}) async {
+  RepositoryPackage package,
+  ProcessRunner processRunner,
+  Platform platform, {
+  bool alwaysUseFlutter = false,
+  bool streamOutput = true,
+}) async {
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
   final bool useFlutter = alwaysUseFlutter || package.requiresFlutter();
-  final String command =
-      useFlutter ? (platform.isWindows ? 'flutter.bat' : 'flutter') : 'dart';
-  final List<String> args = <String>['pub', 'get'];
+  final command = useFlutter
+      ? (platform.isWindows ? 'flutter.bat' : 'flutter')
+      : 'dart';
+  final args = <String>['pub', 'get'];
 
   final int exitCode;
   if (streamOutput) {
-    exitCode = await processRunner.runAndStream(command, args,
-        workingDir: package.directory);
+    exitCode = await processRunner.runAndStream(
+      command,
+      args,
+      workingDir: package.directory,
+    );
   } else {
-    final io.ProcessResult result =
-        await processRunner.run(command, args, workingDir: package.directory);
+    final io.ProcessResult result = await processRunner.run(
+      command,
+      args,
+      workingDir: package.directory,
+    );
     exitCode = result.exitCode;
     if (exitCode != 0) {
       print('${result.stdout}\n${result.stderr}\n');

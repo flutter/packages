@@ -131,7 +131,7 @@ class Polygon implements MapsObject<Polygon> {
   /// Converts this object to something serializable in JSON.
   @override
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -180,7 +180,7 @@ class Polygon implements MapsObject<Polygon> {
   int get hashCode => polygonId.hashCode;
 
   Object _pointsToJson() {
-    final List<Object> result = <Object>[];
+    final result = <Object>[];
     for (final LatLng point in points) {
       result.add(point.toJson());
     }
@@ -188,10 +188,10 @@ class Polygon implements MapsObject<Polygon> {
   }
 
   List<List<Object>> _holesToJson() {
-    final List<List<Object>> result = <List<Object>>[];
+    final result = <List<Object>>[];
     for (final List<LatLng> hole in holes) {
-      final List<Object> jsonHole = <Object>[];
-      for (final LatLng point in hole) {
+      final jsonHole = <Object>[];
+      for (final point in hole) {
         jsonHole.add(point.toJson());
       }
       result.add(jsonHole);

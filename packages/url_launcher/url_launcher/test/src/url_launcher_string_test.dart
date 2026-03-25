@@ -10,12 +10,12 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final MockUrlLauncher mock = MockUrlLauncher();
+  final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
   group('canLaunchUrlString', () {
     test('handles returning true', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setCanLaunchExpectations(urlString)
         ..setResponse(true);
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('handles returning false', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setCanLaunchExpectations(urlString)
         ..setResponse(false);
@@ -39,7 +39,7 @@ void main() {
 
   group('launchUrlString', () {
     test('default behavior with web URL', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -56,7 +56,7 @@ void main() {
     });
 
     test('default behavior with non-web URL', () async {
-      const String urlString = 'customscheme:foo';
+      const urlString = 'customscheme:foo';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -73,7 +73,7 @@ void main() {
     });
 
     test('explicit default launch mode with web URL', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -90,7 +90,7 @@ void main() {
     });
 
     test('explicit default launch mode with non-web URL', () async {
-      const String urlString = 'customscheme:foo';
+      const urlString = 'customscheme:foo';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -107,7 +107,7 @@ void main() {
     });
 
     test('in-app webview', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -127,7 +127,7 @@ void main() {
     });
 
     test('external browser', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -147,7 +147,7 @@ void main() {
     });
 
     test('in-app browser', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('in-app browser with title', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -191,7 +191,7 @@ void main() {
     });
 
     test('external non-browser only', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -214,7 +214,7 @@ void main() {
     });
 
     test('in-app webview without javascript', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -240,7 +240,7 @@ void main() {
     });
 
     test('in-app webview without DOM storage', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -266,7 +266,7 @@ void main() {
     });
 
     test('in-app webview with headers', () async {
-      const String urlString = 'https://flutter.dev';
+      const urlString = 'https://flutter.dev';
       mock
         ..setLaunchExpectations(
           url: urlString,
@@ -300,8 +300,7 @@ void main() {
     });
 
     test('non-web URL with default options', () async {
-      const String emailLaunchUrlString =
-          'mailto:smith@example.com?subject=Hello';
+      const emailLaunchUrlString = 'mailto:smith@example.com?subject=Hello';
       mock
         ..setLaunchExpectations(
           url: emailLaunchUrlString,
@@ -319,7 +318,7 @@ void main() {
 
     test('allows non-parsable url', () async {
       // Not a valid Dart [Uri], but a valid URL on at least some platforms.
-      const String urlString =
+      const urlString =
           'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1';
       mock
         ..setLaunchExpectations(

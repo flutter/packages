@@ -20,7 +20,7 @@ void main() {
   });
 
   test('startImageStream() throws $CameraException when uninitialized', () {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -50,7 +50,7 @@ void main() {
   test(
     'startImageStream() throws $CameraException when recording videos',
     () async {
-      final CameraController cameraController = CameraController(
+      final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -80,7 +80,7 @@ void main() {
   test(
     'startImageStream() throws $CameraException when already streaming images',
     () async {
-      final CameraController cameraController = CameraController(
+      final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -107,7 +107,7 @@ void main() {
   );
 
   test('startImageStream() calls CameraPlatform', () async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -127,7 +127,7 @@ void main() {
   });
 
   test('stopImageStream() throws $CameraException when uninitialized', () {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -157,7 +157,7 @@ void main() {
   test(
     'stopImageStream() throws $CameraException when not streaming images',
     () async {
-      final CameraController cameraController = CameraController(
+      final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -181,7 +181,7 @@ void main() {
   );
 
   test('stopImageStream() intended behaviour', () async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -203,7 +203,7 @@ void main() {
   });
 
   test('startVideoRecording() can stream images', () async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -225,7 +225,7 @@ void main() {
   });
 
   test('startVideoRecording() by default does not stream', () async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       const CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,

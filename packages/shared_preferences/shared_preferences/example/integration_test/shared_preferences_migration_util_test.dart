@@ -42,7 +42,7 @@ void main() {
 
   group('SharedPreferences with setPrefix and allowList', () {
     runAllGroups(() {
-      final Set<String> allowList = <String>{
+      final allowList = <String>{
         'prefix.$boolKey',
         'prefix.$intKey',
         'prefix.$doubleKey',
@@ -65,8 +65,7 @@ void runAllGroups(
   bool keysCollide = false,
 }) {
   group('default sharedPreferencesAsyncOptions', () {
-    const SharedPreferencesOptions sharedPreferencesAsyncOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesAsyncOptions = SharedPreferencesOptions();
 
     runTests(
       sharedPreferencesAsyncOptions,
@@ -160,7 +159,7 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
+    final asyncPreferences = SharedPreferencesAsync(
       options: sharedPreferencesAsyncOptions,
     );
 
@@ -179,7 +178,7 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
+    final asyncPreferences = SharedPreferencesAsync(
       options: sharedPreferencesAsyncOptions,
     );
 
@@ -197,7 +196,7 @@ void runTests(
         migrationCompletedKey: migrationCompletedKey,
       );
 
-      final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
+      final asyncPreferences = SharedPreferencesAsync(
         options: sharedPreferencesAsyncOptions,
       );
       await preferences.setInt(intKey, -0);

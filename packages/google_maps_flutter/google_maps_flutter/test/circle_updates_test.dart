@@ -28,7 +28,7 @@ void main() {
   });
 
   testWidgets('Initializing a circle', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
+    const c1 = Circle(circleId: CircleId('circle_1'));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
@@ -41,8 +41,8 @@ void main() {
   });
 
   testWidgets('Adding a circle', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_2'));
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_2'));
 
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c2}));
@@ -59,7 +59,7 @@ void main() {
   });
 
   testWidgets('Removing a circle', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
+    const c1 = Circle(circleId: CircleId('circle_1'));
 
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{}));
@@ -73,8 +73,8 @@ void main() {
   });
 
   testWidgets('Updating a circle', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_1'), radius: 10);
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_1'), radius: 10);
 
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c2}));
@@ -88,8 +88,8 @@ void main() {
   });
 
   testWidgets('Updating a circle', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_1'), radius: 10);
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_1'), radius: 10);
 
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1}));
     await tester.pumpWidget(_mapWithCircles(<Circle>{c2}));
@@ -103,12 +103,12 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Circle c1 = const Circle(circleId: CircleId('circle_1'));
-    Circle c2 = const Circle(circleId: CircleId('circle_2'));
-    final Set<Circle> prev = <Circle>{c1, c2};
+    var c1 = const Circle(circleId: CircleId('circle_1'));
+    var c2 = const Circle(circleId: CircleId('circle_2'));
+    final prev = <Circle>{c1, c2};
     c1 = const Circle(circleId: CircleId('circle_1'), visible: false);
     c2 = const Circle(circleId: CircleId('circle_2'), radius: 10);
-    final Set<Circle> cur = <Circle>{c1, c2};
+    final cur = <Circle>{c1, c2};
 
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
@@ -121,14 +121,14 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    Circle c2 = const Circle(circleId: CircleId('circle_2'));
-    const Circle c3 = Circle(circleId: CircleId('circle_3'));
-    final Set<Circle> prev = <Circle>{c2, c3};
+    var c2 = const Circle(circleId: CircleId('circle_2'));
+    const c3 = Circle(circleId: CircleId('circle_3'));
+    final prev = <Circle>{c2, c3};
 
     // c1 is added, c2 is updated, c3 is removed.
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
+    const c1 = Circle(circleId: CircleId('circle_1'));
     c2 = const Circle(circleId: CircleId('circle_2'), radius: 10);
-    final Set<Circle> cur = <Circle>{c1, c2};
+    final cur = <Circle>{c1, c2};
 
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
@@ -145,12 +145,12 @@ void main() {
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_2'));
-    Circle c3 = const Circle(circleId: CircleId('circle_3'));
-    final Set<Circle> prev = <Circle>{c1, c2, c3};
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_2'));
+    var c3 = const Circle(circleId: CircleId('circle_3'));
+    final prev = <Circle>{c1, c2, c3};
     c3 = const Circle(circleId: CircleId('circle_3'), radius: 10);
-    final Set<Circle> cur = <Circle>{c1, c2, c3};
+    final cur = <Circle>{c1, c2, c3};
 
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
@@ -163,10 +163,10 @@ void main() {
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
-    Circle c1 = const Circle(circleId: CircleId('circle_1'));
-    final Set<Circle> prev = <Circle>{c1};
+    var c1 = const Circle(circleId: CircleId('circle_1'));
+    final prev = <Circle>{c1};
     c1 = Circle(circleId: const CircleId('circle_1'), onTap: () {});
-    final Set<Circle> cur = <Circle>{c1};
+    final cur = <Circle>{c1};
 
     await tester.pumpWidget(_mapWithCircles(prev));
     await tester.pumpWidget(_mapWithCircles(cur));
@@ -181,10 +181,10 @@ void main() {
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_2'));
-    const Circle c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
-    const Circle c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_2'));
+    const c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
+    const c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithCircles(<Circle>{c1, c2}));

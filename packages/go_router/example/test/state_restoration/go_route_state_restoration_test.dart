@@ -11,11 +11,11 @@ void main() {
       'is restored when restorationIds are provided', (
     WidgetTester tester,
   ) async {
-    const String homeTitle = 'Home';
-    const String loginTitle = 'Login';
+    const homeTitle = 'Home';
+    const loginTitle = 'Login';
 
-    const String homeText = 'homeText';
-    const String loginText = 'loginText';
+    const homeText = 'homeText';
+    const loginText = 'loginText';
 
     await tester.pumpWidget(const App());
     expect(find.text(homeTitle), findsOneWidget);

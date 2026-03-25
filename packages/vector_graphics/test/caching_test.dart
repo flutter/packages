@@ -21,7 +21,7 @@ void main() {
   testWidgets(
     'Does not reload identical bytes when forced to re-create state object',
     (WidgetTester tester) async {
-      final TestAssetBundle testBundle = TestAssetBundle();
+      final testBundle = TestAssetBundle();
       final GlobalKey key = GlobalKey();
 
       await tester.pumpWidget(
@@ -55,7 +55,7 @@ void main() {
   testWidgets('Only loads bytes once for a repeated vg', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -113,8 +113,8 @@ void main() {
   testWidgets('Does not cache bytes that come from different asset bundles', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundleA = TestAssetBundle();
-    final TestAssetBundle testBundleB = TestAssetBundle();
+    final testBundleA = TestAssetBundle();
+    final testBundleB = TestAssetBundle();
     final GlobalKey key = GlobalKey();
 
     await tester.pumpWidget(
@@ -147,7 +147,7 @@ void main() {
   });
 
   testWidgets('reload bytes when locale changes', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
     final GlobalKey key = GlobalKey();
 
     await tester.pumpWidget(
@@ -194,7 +194,7 @@ void main() {
   testWidgets('reload bytes when text direction changes', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
     final GlobalKey key = GlobalKey();
 
     await tester.pumpWidget(
@@ -231,7 +231,7 @@ void main() {
   testWidgets(
     'Cache is purged immediately after last VectorGraphic removed from tree',
     (WidgetTester tester) async {
-      final TestAssetBundle testBundle = TestAssetBundle();
+      final testBundle = TestAssetBundle();
       final GlobalKey key = GlobalKey();
 
       await tester.pumpWidget(
@@ -269,11 +269,9 @@ void main() {
   testWidgets('Bytes loading that becomes stale does not populate the cache', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
     final GlobalKey key = GlobalKey();
-    final ControlledAssetBytesLoader loader = ControlledAssetBytesLoader(
-      'foo.svg',
-    );
+    final loader = ControlledAssetBytesLoader('foo.svg');
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -323,7 +321,7 @@ class TestAssetBundle extends Fake implements AssetBundle {
   @override
   Future<ByteData> load(String key) async {
     loadKeys.add(key);
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
     return buffer.done();
   }

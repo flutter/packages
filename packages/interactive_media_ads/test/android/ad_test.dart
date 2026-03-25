@@ -26,7 +26,7 @@ void main() {
     });
 
     test('UniversalAdId sets unknown values to null', () async {
-      final MockAdsManager mockAdsManager = MockAdsManager();
+      final mockAdsManager = MockAdsManager();
 
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
@@ -47,7 +47,7 @@ void main() {
             return MockAdErrorListener();
           };
 
-      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      final adsManager = AndroidAdsManager(mockAdsManager);
 
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
@@ -60,7 +60,7 @@ void main() {
         ),
       );
 
-      final MockAdEvent mockAdEvent = MockAdEvent();
+      final mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
       when(mockAdEvent.ad).thenReturn(
         createTestAd(
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('CompanionAd sets 0 values for height/width to null', () async {
-      final MockAdsManager mockAdsManager = MockAdsManager();
+      final mockAdsManager = MockAdsManager();
 
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
@@ -98,7 +98,7 @@ void main() {
             return MockAdErrorListener();
           };
 
-      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      final adsManager = AndroidAdsManager(mockAdsManager);
 
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
@@ -111,7 +111,7 @@ void main() {
         ),
       );
 
-      final MockAdEvent mockAdEvent = MockAdEvent();
+      final mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
       when(mockAdEvent.ad).thenReturn(
         createTestAd(
@@ -125,7 +125,7 @@ void main() {
     });
 
     test('Ad sets durations of -1 to null', () async {
-      final MockAdsManager mockAdsManager = MockAdsManager();
+      final mockAdsManager = MockAdsManager();
 
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
@@ -146,7 +146,7 @@ void main() {
             return MockAdErrorListener();
           };
 
-      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+      final adsManager = AndroidAdsManager(mockAdsManager);
 
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
@@ -160,7 +160,7 @@ void main() {
         ),
       );
 
-      final MockAdEvent mockAdEvent = MockAdEvent();
+      final mockAdEvent = MockAdEvent();
       when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
       when(mockAdEvent.ad).thenReturn(
         createTestAd(

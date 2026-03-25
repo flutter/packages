@@ -103,7 +103,7 @@ Future<int> add(int a, int b) async {
 /// Sends message through host api using `MessageData` class
 /// and api `sendMessage` method.
 Future<bool> sendMessage(String messageText) {
-  final MessageData message = MessageData(
+  final message = MessageData(
     code: Code.one,
     data: <String, String>{'header': 'this is a header'},
     description: 'uri text',

@@ -1,6 +1,12 @@
-## NEXT
+## 2.0.4
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Fixes a broken README link to the Mustache manual.
+
+## 2.0.3
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Fixes error handling in LambdaContext by adding missing throw statements.
+* Uses StateError instead of Exception for unreachable code in parser.
 
 ## 2.0.2
 

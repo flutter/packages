@@ -19,31 +19,39 @@ void main() {
     });
 
     test('colorize works', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
       expect(
-          colorizeString(message, Styles.MAGENTA), '\x1B[35m$message\x1B[0m');
+        colorizeString(message, Styles.MAGENTA),
+        '\x1B[35m$message\x1B[0m',
+      );
     });
 
     test('printSuccess is green', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
-      expect(await _capturePrint(() => printSuccess(message)),
-          '\x1B[32m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printSuccess(message)),
+        '\x1B[32m$message\x1B[0m',
+      );
     });
 
     test('printWarning is yellow', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
-      expect(await _capturePrint(() => printWarning(message)),
-          '\x1B[33m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printWarning(message)),
+        '\x1B[33m$message\x1B[0m',
+      );
     });
 
     test('printError is red', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
-      expect(await _capturePrint(() => printError(message)),
-          '\x1B[31m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printError(message)),
+        '\x1B[31m$message\x1B[0m',
+      );
     });
   });
 
@@ -57,25 +65,25 @@ void main() {
     });
 
     test('colorize no-ops', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
       expect(colorizeString(message, Styles.MAGENTA), message);
     });
 
     test('printSuccess just prints', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
       expect(await _capturePrint(() => printSuccess(message)), message);
     });
 
     test('printWarning just prints', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
       expect(await _capturePrint(() => printWarning(message)), message);
     });
 
     test('printError just prints', () async {
-      const String message = 'a message';
+      const message = 'a message';
 
       expect(await _capturePrint(() => printError(message)), message);
     });
@@ -86,8 +94,8 @@ void main() {
 /// what was printed.
 /// A custom [errorHandler] can be used to handle the runner error as desired without throwing.
 Future<String> _capturePrint(void Function() printFunction) async {
-  final StringBuffer output = StringBuffer();
-  final ZoneSpecification spec = ZoneSpecification(
+  final output = StringBuffer();
+  final spec = ZoneSpecification(
     print: (_, __, ___, String message) {
       output.write(message);
     },

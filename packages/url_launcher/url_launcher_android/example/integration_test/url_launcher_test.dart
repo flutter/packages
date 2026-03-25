@@ -40,8 +40,8 @@ void main() {
       }),
     );
     // Https to avoid cleartext warning on android.
-    final String prefixUrl = 'https://${server.address.address}:${server.port}';
-    final String primaryUrl = '$prefixUrl/hello.txt';
+    final prefixUrl = 'https://${server.address.address}:${server.port}';
+    final primaryUrl = '$prefixUrl/hello.txt';
 
     // Launch a url then close.
     expect(

@@ -9,6 +9,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_web/src/google_maps_inspector_web.dart';
+import 'package:google_maps_flutter_web/src/marker_clustering.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -19,23 +21,20 @@ void main() {
   final GoogleMapsInspectorPlatform inspector =
       GoogleMapsInspectorPlatform.instance!;
 
-  const LatLng mapCenter = LatLng(20, 20);
-  const CameraPosition initialCameraPosition = CameraPosition(
-    target: mapCenter,
-  );
+  const mapCenter = LatLng(20, 20);
+  const initialCameraPosition = CameraPosition(target: mapCenter);
 
   group('MarkersController', () {
-    const int testMapId = 33930;
-
     testWidgets('Marker clustering', (WidgetTester tester) async {
-      const ClusterManagerId clusterManagerId = ClusterManagerId('cluster 1');
+      const testMapId = 33930;
+      const clusterManagerId = ClusterManagerId('cluster 1');
 
-      final Set<ClusterManager> clusterManagers = <ClusterManager>{
+      final clusterManagers = <ClusterManager>{
         const ClusterManager(clusterManagerId: clusterManagerId),
       };
 
       // Create the marker with clusterManagerId.
-      final Set<Marker> initialMarkers = <Marker>{
+      final initialMarkers = <Marker>{
         const Marker(
           markerId: MarkerId('1'),
           position: mapCenter,
@@ -48,7 +47,7 @@ void main() {
         ),
       };
 
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
 
       await _pumpMap(
         tester,
@@ -69,8 +68,6 @@ void main() {
       final int mapId = await mapIdCompleter.future;
       expect(mapId, equals(testMapId));
 
-      addTearDown(() => plugin.dispose(mapId: mapId));
-
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
@@ -87,14 +84,11 @@ void main() {
 
       // Copy only the first marker with null clusterManagerId.
       // This means that both markers should be removed from the cluster.
-      final Set<Marker> updatedMarkers = <Marker>{
+      final updatedMarkers = <Marker>{
         _copyMarkerWithClusterManagerId(initialMarkers.first, null),
       };
 
-      final MarkerUpdates markerUpdates = MarkerUpdates.from(
-        initialMarkers,
-        updatedMarkers,
-      );
+      final markerUpdates = MarkerUpdates.from(initialMarkers, updatedMarkers);
       await plugin.updateMarkers(markerUpdates, mapId: mapId);
 
       final List<Cluster> updatedClusters =
@@ -110,11 +104,88 @@ void main() {
 
       expect(updatedClusters.length, 0);
     });
+
+    testWidgets('clusters render once per batched add', (
+      WidgetTester tester,
+    ) async {
+      const clusterManagerId = ClusterManagerId('cluster 1');
+
+      final clusterManagers = <ClusterManager>{
+        const ClusterManager(clusterManagerId: clusterManagerId),
+      };
+
+      // Create the marker with clusterManagerId.
+      final initialMarkers = <Marker>{
+        for (var i = 0; i < 3; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            position: mapCenter,
+            clusterManagerId: clusterManagerId,
+          ),
+      };
+
+      final markersCluster1 = <Marker>{
+        for (var i = 3; i < 7; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            clusterManagerId: clusterManagerId,
+            position: mapCenter,
+          ),
+      };
+
+      const testMapId = 33931;
+      final events = StreamController<ClusteringEvent>();
+      await _pumpMap(
+        tester,
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) async {
+            final StreamSubscription<ClusteringEvent>? subscription =
+                (inspector as GoogleMapsInspectorWeb)
+                    .getClusteringEvents(
+                      mapId: testMapId,
+                      clusterManagerId: clusterManagerId,
+                    )
+                    ?.listen(events.add);
+
+            await plugin.updateMarkers(
+              MarkerUpdates.from(initialMarkers, markersCluster1),
+              mapId: testMapId,
+            );
+
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await subscription?.cancel();
+            await events.close();
+          },
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
+        ),
+      );
+
+      await expectLater(
+        events.stream,
+        emitsInAnyOrder([
+          // Once per initial markers
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          // Once per new cluster
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          emitsDone,
+        ]),
+      );
+    });
   });
 }
 
 // Repeatedly checks an asynchronous value against a test condition, waiting
-// one frame between each check, returing the value if it passes the predicate
+// one frame between each check, returning the value if it passes the predicate
 // before [maxTries] is reached.
 //
 // Returns null if the predicate is never satisfied.
@@ -128,7 +199,7 @@ Future<T?> waitForValueMatchingPredicate<T>(
   bool Function(T) predicate, {
   int maxTries = 100,
 }) async {
-  for (int i = 0; i < maxTries; i++) {
+  for (var i = 0; i < maxTries; i++) {
     final T value = await getValue();
     if (predicate(value)) {
       return value;

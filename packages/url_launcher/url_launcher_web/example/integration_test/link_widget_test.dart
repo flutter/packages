@@ -19,7 +19,7 @@ import 'package:web/web.dart' as html;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final List<String> pushedRouteNames = <String>[];
+  final pushedRouteNames = <String>[];
   late Future<ByteData> Function(String) originalPushFunction;
 
   setUp(() {
@@ -38,80 +38,83 @@ void main() {
   });
 
   group('Link Widget', () {
-    testWidgets('creates anchor with correct attributes', (
-      WidgetTester tester,
-    ) async {
-      final Uri uri = Uri.parse('http://foobar/example?q=1');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri,
-              target: LinkTarget.blank,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+    testWidgets(
+      'creates anchor with correct attributes',
+      (WidgetTester tester) async {
+        final Uri uri = Uri.parse('http://foobar/example?q=1');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri,
+                target: LinkTarget.blank,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      // Platform view creation happens asynchronously.
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        // Platform view creation happens asynchronously.
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      final html.Element anchor = _findSingleAnchor();
-      expect(anchor.getAttribute('href'), uri.toString());
-      expect(anchor.getAttribute('target'), '_blank');
+        final html.Element anchor = _findSingleAnchor();
+        expect(anchor.getAttribute('href'), uri.toString());
+        expect(anchor.getAttribute('target'), '_blank');
 
-      final Uri uri2 = Uri.parse('http://foobar2/example?q=2');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri2,
-              target: LinkTarget.self,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+        final Uri uri2 = Uri.parse('http://foobar2/example?q=2');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri2,
+                target: LinkTarget.self,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      // Check that the same anchor has been updated.
-      expect(anchor.getAttribute('href'), uri2.toString());
-      expect(anchor.getAttribute('target'), '_self');
+        // Check that the same anchor has been updated.
+        expect(anchor.getAttribute('href'), uri2.toString());
+        expect(anchor.getAttribute('target'), '_self');
 
-      final Uri uri3 = Uri.parse('/foobar');
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebLinkDelegate(
-            TestLinkInfo(
-              uri: uri3,
-              target: LinkTarget.self,
-              builder: (BuildContext context, FollowLink? followLink) {
-                return const SizedBox(width: 100, height: 100);
-              },
+        final Uri uri3 = Uri.parse('/foobar');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebLinkDelegate(
+              TestLinkInfo(
+                uri: uri3,
+                target: LinkTarget.self,
+                builder: (BuildContext context, FollowLink? followLink) {
+                  return const SizedBox(width: 100, height: 100);
+                },
+              ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump();
+        );
+        await tester.pumpAndSettle();
+        await tester.pump();
 
-      // Check that internal route properly prepares using the default
-      // [UrlStrategy]
-      expect(
-        anchor.getAttribute('href'),
-        ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
-      );
-      expect(anchor.getAttribute('target'), '_self');
-    });
+        // Check that internal route properly prepares using the default
+        // [UrlStrategy]
+        expect(
+          anchor.getAttribute('href'),
+          ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()),
+        );
+        expect(anchor.getAttribute('target'), '_self');
+      },
+      // Flaky under WASM: https://github.com/flutter/flutter/issues/182844
+      skip: true,
+    );
 
     testWidgets('sizes itself correctly', (WidgetTester tester) async {
       final Key containerKey = GlobalKey();
@@ -176,7 +179,7 @@ void main() {
 
     testWidgets('can be created and disposed', (WidgetTester tester) async {
       final Uri uri = Uri.parse('http://foobar');
-      const int itemCount = 500;
+      const itemCount = 500;
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -205,6 +208,43 @@ void main() {
         800,
         maxScrolls: 1000,
       );
+    });
+
+    testWidgets('MergeSemantics is always present to avoid duplicate nodes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                WebLinkDelegate(
+                  TestLinkInfo(
+                    uri: Uri.parse('https://dart.dev/xyz'),
+                    target: LinkTarget.blank,
+                    builder: (BuildContext context, FollowLink? followLink) {
+                      return ElevatedButton(
+                        onPressed: followLink,
+                        child: const Text('First Button'),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final Finder buttonFinder = find.byType(ElevatedButton);
+      expect(buttonFinder, findsOneWidget);
+
+      final Element buttonElement = tester.element(buttonFinder);
+      final MergeSemantics? parentWidget = buttonElement
+          .findAncestorWidgetOfExactType<MergeSemantics>();
+      expect(parentWidget, isNotNull);
     });
   });
 
@@ -895,17 +935,13 @@ void main() {
           isLink: true,
           identifier: 'test-link-12',
           // linkUrl: 'https://foobar/example?q=1',
-          children: <Matcher>[
-            matchesSemantics(
-              hasTapAction: true,
-              hasEnabledState: true,
-              hasFocusAction: true,
-              isEnabled: true,
-              isButton: true,
-              isFocusable: true,
-              label: 'Button Link Text',
-            ),
-          ],
+          hasTapAction: true,
+          hasEnabledState: true,
+          hasFocusAction: true,
+          isEnabled: true,
+          isButton: true,
+          isFocusable: true,
+          label: 'Button Link Text',
         ),
       );
 
@@ -941,7 +977,9 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find.descendant(of: linkFinder, matching: find.byType(Semantics)),
+          find
+              .descendant(of: linkFinder, matching: find.byType(Semantics))
+              .first,
         ),
         matchesSemantics(
           isLink: true,
@@ -1308,10 +1346,10 @@ void main() {
 }
 
 List<html.Element> _findAllAnchors() {
-  final List<html.Element> foundAnchors = <html.Element>[];
+  final foundAnchors = <html.Element>[];
   final html.NodeList anchors = html.document.querySelectorAll('a');
-  for (int i = 0; i < anchors.length; i++) {
-    final html.Element anchor = anchors.item(i)! as html.Element;
+  for (var i = 0; i < anchors.length; i++) {
+    final anchor = anchors.item(i)! as html.Element;
     if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
       foundAnchors.add(anchor);
     }
@@ -1331,7 +1369,7 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   //     (html.Event e) {
   //       e.preventDefault();
   //     }.toJS);
-  final html.MouseEvent mouseEvent = html.MouseEvent(
+  final mouseEvent = html.MouseEvent(
     'click',
     html.MouseEventInit(bubbles: true, cancelable: true, metaKey: metaKey),
   );
@@ -1343,7 +1381,7 @@ html.KeyboardEvent _simulateKeydown(
   html.Element target, {
   bool metaKey = false,
 }) {
-  final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
+  final keydownEvent = html.KeyboardEvent(
     'keydown',
     html.KeyboardEventInit(
       bubbles: true,
