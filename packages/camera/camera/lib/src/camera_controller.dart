@@ -1049,13 +1049,7 @@ class Optional<T> extends IterableBase<T> {
   const Optional.absent() : _value = null;
 
   /// Constructs an Optional of the given [value].
-  ///
-  /// Throws [ArgumentError] if [value] is null.
-  Optional.of(T value) : _value = value {
-    // TODO(cbracken): Delete and make this ctor const once mixed-mode
-    // execution is no longer around.
-    ArgumentError.checkNotNull(value);
-  }
+  const Optional.of(T value) : _value = value;
 
   /// Constructs an Optional of the given [value].
   ///

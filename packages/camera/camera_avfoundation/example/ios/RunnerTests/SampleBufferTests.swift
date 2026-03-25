@@ -61,7 +61,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 }
 
-/// Includes test cases related to sample buffer handling for FLTCam class.
+/// Includes test cases related to sample buffer handling for Camera class.
 final class CameraSampleBufferTests: XCTestCase {
   private func createCamera() -> (
     DefaultCamera,
@@ -119,7 +119,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let deliveredPixelBuffer = camera.copyPixelBuffer()?.takeRetainedValue()
     XCTAssertEqual(
       deliveredPixelBuffer, capturedPixelBuffer,
-      "FLTCam must deliver the latest captured pixel buffer to copyPixelBuffer API.")
+      "Camera must deliver the latest captured pixel buffer to copyPixelBuffer API.")
   }
 
   func testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording() {

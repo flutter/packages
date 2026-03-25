@@ -5,10 +5,14 @@ on:
     types: [batch-release-pr]
 
 jobs:
-  create_release_pr:
+  create_batch_release_branch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grants write permission to create a branch.
     env:
       BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
+    outputs:
+      branch_created: ${{ steps.check-branch-exists.outputs.exists }}
     steps:
       - name: checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -36,8 +40,20 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
+  create_release_pr:
+    needs: create_batch_release_branch
+    if: needs.create_batch_release_branch.outputs.branch_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # Grants write permission to create a PR.
+    env:
+      BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ env.BRANCH_NAME }}
       - name: Create batch release PR
-        if: steps.check-branch-exists.outputs.exists == 'true'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

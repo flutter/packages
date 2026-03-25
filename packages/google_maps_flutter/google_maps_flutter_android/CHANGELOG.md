@@ -1,8 +1,9 @@
 ## 2.19.4
 
 * Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
+* Updates build files from Groovy to Kotlin.
 
-# 2.19.3
+## 2.19.3
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.
 
