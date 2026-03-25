@@ -1,7 +1,7 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// ignore_for_file: avoid_print
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+// ignore_for_file: avoid_print
 
 import 'dart:typed_data';
 

@@ -233,13 +233,10 @@ class FormatCommand extends PackageLoopingCommand {
       final String clangFormat = await _findValidClangFormat();
 
       print('Formatting .cc, .cpp, .h, .m, and .mm files...');
-      final int exitCode = await _runBatched(
-          clangFormat,
-          <String>[
-            '-i',
-            '--style=file',
-          ],
-          files: clangFiles);
+      final int exitCode = await _runBatched(clangFormat, <String>[
+        '-i',
+        '--style=file',
+      ], files: clangFiles);
       if (exitCode != 0) {
         printError(
           'Failed to format C, C++, and Objective-C files: exit code $exitCode.',
@@ -255,28 +252,22 @@ class FormatCommand extends PackageLoopingCommand {
     });
     if (swiftFiles.isNotEmpty) {
       print('Formatting .swift files...');
-      final int formatExitCode = await _runBatched(
-          'xcrun',
-          <String>[
-            'swift-format',
-            '-i',
-          ],
-          files: swiftFiles);
+      final int formatExitCode = await _runBatched('xcrun', <String>[
+        'swift-format',
+        '-i',
+      ], files: swiftFiles);
       if (formatExitCode != 0) {
         printError('Failed to format Swift files: exit code $formatExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
       }
 
       print('Linting .swift files...');
-      final int lintExitCode = await _runBatched(
-          'xcrun',
-          <String>[
-            'swift-format',
-            'lint',
-            '--parallel',
-        // '--strict',
-          ],
-          files: swiftFiles);
+      final int lintExitCode = await _runBatched('xcrun', <String>[
+        'swift-format',
+        'lint',
+        '--parallel',
+        '--strict',
+      ], files: swiftFiles);
       if (lintExitCode == 1) {
         printError('Swift linter found issues. See above for linter output.');
         throw ToolExit(_exitSwiftLintFoundIssues);
@@ -324,14 +315,11 @@ class FormatCommand extends PackageLoopingCommand {
       }
 
       print('Formatting .java files...');
-      final int exitCode = await _runBatched(
-          java,
-          <String>[
-            '-jar',
-            formatterPath,
-            '--replace',
-          ],
-          files: javaFiles);
+      final int exitCode = await _runBatched(java, <String>[
+        '-jar',
+        formatterPath,
+        '--replace',
+      ], files: javaFiles);
       if (exitCode != 0) {
         printError('Failed to format Java files: exit code $exitCode.');
         throw ToolExit(_exitJavaFormatFailed);
@@ -358,13 +346,10 @@ class FormatCommand extends PackageLoopingCommand {
       }
 
       print('Formatting .kt files...');
-      final int exitCode = await _runBatched(
-          java,
-          <String>[
-            '-jar',
-            formatterPath,
-          ],
-          files: kotlinFiles);
+      final int exitCode = await _runBatched(java, <String>[
+        '-jar',
+        formatterPath,
+      ], files: kotlinFiles);
       if (exitCode != 0) {
         printError('Failed to format Kotlin files: exit code $exitCode.');
         throw ToolExit(_exitKotlinFormatFailed);
@@ -573,8 +558,9 @@ class FormatCommand extends PackageLoopingCommand {
     required Iterable<String> files,
     Directory? workingDir,
   }) async {
-    final int commandLineMax =
-        platform.isWindows ? windowsCommandLineMax : nonWindowsCommandLineMax;
+    final int commandLineMax = platform.isWindows
+        ? windowsCommandLineMax
+        : nonWindowsCommandLineMax;
 
     // Compute the max length of the file argument portion of a batch.
     // Add one to each argument's length for the space before it.
@@ -592,13 +578,10 @@ class FormatCommand extends PackageLoopingCommand {
     );
     for (final batch in batches) {
       batch.sort(); // For ease of testing.
-      final int exitCode = await processRunner.runAndStream(
-          command,
-          <String>[
-            ...arguments,
-            ...batch,
-          ],
-          workingDir: workingDir ?? packagesDir);
+      final int exitCode = await processRunner.runAndStream(command, <String>[
+        ...arguments,
+        ...batch,
+      ], workingDir: workingDir ?? packagesDir);
       if (exitCode != 0) {
         return exitCode;
       }
@@ -660,8 +643,9 @@ class FormatCommand extends PackageLoopingCommand {
             ?.cast<Map<Object, Object?>>()
             .where((Map<Object, Object?> p) => p['name'] == packageName)
             .firstOrNull;
-    final String? resolvedLanguageVersion =
-        packageInfo == null ? null : packageInfo['languageVersion'] as String?;
+    final String? resolvedLanguageVersion = packageInfo == null
+        ? null
+        : packageInfo['languageVersion'] as String?;
     if (resolvedLanguageVersion == null) {
       // This shouldn't ever happen, so log for potential investigation.
       printWarning(

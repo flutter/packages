@@ -42,6 +42,8 @@
 - http
 - intl
 - io
+- jni
+- jnigen
 - js
 - json_serializable
 - leak_tracker
@@ -62,6 +64,8 @@
 - shelf_static
 - source_gen
 - stream_transform
+- swift2objc
+- swiftgen
 - test
 - test_api
 - vm_service

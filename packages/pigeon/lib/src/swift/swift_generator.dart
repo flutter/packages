@@ -278,7 +278,6 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln('// swift-format-ignore-file: AlwaysUseLowerCamelCase');
     indent.newln();
   }
 
@@ -892,6 +891,7 @@ if (wrapped == nil) {
       if (classDefinition.isSealed) {
         return;
       }
+      indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
       indent.writeScoped(
         'static func fromSwift(_ ${varNamePrefix}Class: ${classDefinition.name}?) -> ${classDefinition.name}Bridge? {',
         '}',
@@ -1193,6 +1193,7 @@ if (wrapped == nil) {
     bool useFfi = false,
   }) {
     final String className = classDefinition.name;
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
     indent.write(
       'static func fromList(_ ${varNamePrefix}list: [Any?]) -> $className? ',
     );
