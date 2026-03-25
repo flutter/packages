@@ -64,6 +64,7 @@ class InputDatePickerFormField extends StatefulWidget {
     this.acceptEmptyDate = false,
     this.focusNode,
     this.calendarDelegate = const GregorianCalendarDelegate(),
+    this.dateInputDelegate,
   }) : initialDate = initialDate != null ? calendarDelegate.dateOnly(initialDate) : null,
        firstDate = calendarDelegate.dateOnly(firstDate),
        lastDate = calendarDelegate.dateOnly(lastDate) {
@@ -151,6 +152,10 @@ class InputDatePickerFormField extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
+  /// A delegate that manages the formatting, parsing, and input validation
+  /// for date text fields.
+  final DateInputDelegate? dateInputDelegate;
+
   @override
   State<InputDatePickerFormField> createState() => _InputDatePickerFormFieldState();
 }
@@ -196,7 +201,10 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   void _updateValueForSelectedDate() {
     if (_selectedDate != null) {
       final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-      _inputText = widget.calendarDelegate.formatCompactDate(_selectedDate!, localizations);
+      final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
+      _inputText = dateInputDelegate != null
+          ? dateInputDelegate.format(_selectedDate!, localizations)
+          : widget.calendarDelegate.formatCompactDate(_selectedDate!, localizations);
       var textEditingValue = TextEditingValue(text: _inputText!);
       // Select the new text if we are auto focused and haven't selected the text before.
       if (widget.autofocus && !_autoSelected) {
@@ -214,6 +222,10 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
+    if (dateInputDelegate != null) {
+      return dateInputDelegate.parse(text, localizations);
+    }
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -266,12 +278,19 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
         inputTheme.border ??
         (useMaterial3 ? const OutlineInputBorder() : const UnderlineInputBorder());
 
+    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
+    final List<TextInputFormatter> effectiveFormatters =
+        dateInputDelegate?.inputFormatters ?? <TextInputFormatter>[];
+    final String effectiveHelpText =
+        dateInputDelegate?.helpText(localizations) ??
+        widget.calendarDelegate.dateHelpText(localizations);
+
     return Semantics(
       container: true,
       child: TextFormField(
         decoration:
             InputDecoration(
-              hintText: widget.fieldHintText ?? widget.calendarDelegate.dateHelpText(localizations),
+              hintText: widget.fieldHintText ?? effectiveHelpText,
               labelText: widget.fieldLabelText ?? localizations.dateInputLabel,
             ).applyDefaults(
               inputTheme
@@ -285,16 +304,8 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
         autofocus: widget.autofocus,
         controller: _controller,
         focusNode: widget.focusNode,
-        inputFormatters: [...?_textInputFormatter],
+        inputFormatters: effectiveFormatters,
       ),
     );
-  }
-
-  List<TextInputFormatter>? get _textInputFormatter {
-    return switch (widget.calendarDelegate) {
-      DateInputGregorianCalendarDelegate(:final List<TextInputFormatter>? inputFormatters) =>
-        inputFormatters,
-      _ => null,
-    };
   }
 }

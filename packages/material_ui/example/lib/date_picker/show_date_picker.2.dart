@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Flutter code sample showing how to use [showDatePicker] with a custom
-/// [DateInputGregorianCalendarDelegate] to support configurable text input formats.
+/// [DateInputDelegate] to support configurable text input formats.
 
 void main() => runApp(const DatePickerSampleApp());
 
@@ -33,16 +33,18 @@ class _DatePickerSampleState extends State<DatePickerSample> {
   DateSeparator _separator = DateSeparator.dot;
 
   Future<void> _showPicker() async {
+    final DateInputDelegate dateInputDelegate = CustomDateInputDelegate(
+      formatType: _formatType,
+      separator: _separator,
+    );
+
     final DateTime? result = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime(2021, 7, 25),
       firstDate: DateTime(2021),
       lastDate: DateTime(2999, 7, 25),
       initialEntryMode: DatePickerEntryMode.input,
-      calendarDelegate: ConfigurableDateDelegate(
-        formatType: _formatType,
-        separator: _separator,
-      ),
+      dateInputDelegate: dateInputDelegate,
     );
 
     if (result != null) {
@@ -154,9 +156,6 @@ enum DateSeparator {
 ///   (e.g. day–month–year, month–day–year, year–month–day).
 /// - Provides utilities to format a [DateTime] into a string and to parse
 ///   user input back into a [DateTime], returning `null` for invalid values.
-///
-/// This formatter is typically wired through a custom calendar delegate,
-/// such as [ConfigurableDateDelegate], rather than being attached directly.
 class DateInputFormatter extends TextInputFormatter {
   const DateInputFormatter({required this.formatType, required this.separator});
 
@@ -258,10 +257,10 @@ class DateInputFormatter extends TextInputFormatter {
   }
 }
 
-class ConfigurableDateDelegate extends DateInputGregorianCalendarDelegate {
-  const ConfigurableDateDelegate({
+class CustomDateInputDelegate extends DateInputDelegate {
+  const CustomDateInputDelegate({
     required this.formatType,
-    this.separator = DateSeparator.slash,
+    required this.separator,
   });
 
   final DateInputFormat formatType;
@@ -277,18 +276,13 @@ class ConfigurableDateDelegate extends DateInputGregorianCalendarDelegate {
   ];
 
   @override
-  String dateHelpText(MaterialLocalizations localizations) =>
-      _formatter.pattern;
+  String helpText(MaterialLocalizations localizations) => _formatter.pattern;
 
   @override
-  String formatCompactDate(
-    DateTime date,
-    MaterialLocalizations localizations,
-  ) => _formatter.format(date);
+  String format(DateTime date, MaterialLocalizations localizations) =>
+      _formatter.format(date);
 
   @override
-  DateTime? parseCompactDate(
-    String? inputString,
-    MaterialLocalizations localizations,
-  ) => _formatter.parse(inputString);
+  DateTime? parse(String? input, MaterialLocalizations localizations) =>
+      _formatter.parse(input);
 }

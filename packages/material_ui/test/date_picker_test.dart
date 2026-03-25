@@ -2775,7 +2775,7 @@ void main() {
     expect(tester.getSize(find.byType(DatePickerDialog)).isEmpty, isTrue);
   });
 
-  group('DateInputGregorianCalendarDelegate', () {
+  group('DateInputConfiguration', () {
     Widget buildApp() {
       return MaterialApp(
         home: Material(
@@ -2790,7 +2790,7 @@ void main() {
                     firstDate: firstDate,
                     lastDate: lastDate,
                     initialEntryMode: DatePickerEntryMode.input,
-                    calendarDelegate: const TestDateInputGregorianCalendarDelegate(),
+                    dateInputDelegate: const _TestDateInputDelegate(),
                   );
                 },
               );
@@ -2819,7 +2819,7 @@ void main() {
                       firstDate: firstDate,
                       lastDate: lastDate,
                       initialEntryMode: DatePickerEntryMode.input,
-                      calendarDelegate: const TestDateInputGregorianCalendarDelegate(),
+                      dateInputDelegate: const _TestDateInputDelegate(),
                     );
                   },
                 );
@@ -3011,23 +3011,47 @@ class TestCalendarDelegate extends GregorianCalendarDelegate {
   }
 }
 
-class TestDateInputGregorianCalendarDelegate extends DateInputGregorianCalendarDelegate {
-  const TestDateInputGregorianCalendarDelegate();
+class _TestDateInputDelegate extends DateInputDelegate {
+  const _TestDateInputDelegate();
 
   @override
   List<TextInputFormatter> get inputFormatters => <TextInputFormatter>[
     FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(8),
   ];
 
   @override
-  DateTime? parseCompactDate(String? inputString, MaterialLocalizations localizations) {
-    // yyyyMMdd
-    if (inputString == null || inputString.length != 8) {
+  String helpText(MaterialLocalizations localizations) {
+    return 'aaaammdd';
+  }
+
+  @override
+  String format(DateTime date, MaterialLocalizations localizations) {
+    final String year = date.year.toString().padLeft(4, '0');
+    final String month = date.month.toString().padLeft(2, '0');
+    final String day = date.day.toString().padLeft(2, '0');
+    return '$year$month$day';
+  }
+
+  @override
+  DateTime? parse(String? input, MaterialLocalizations localizations) {
+    if (input == null || input.length != 8) {
       return null;
     }
-    final int year = int.parse(inputString.substring(0, 4));
-    final int month = int.parse(inputString.substring(4, 6));
-    final int day = int.parse(inputString.substring(6, 8));
-    return DateTime(year, month, day);
+
+    try {
+      final int year = int.parse(input.substring(0, 4));
+      final int month = int.parse(input.substring(4, 6));
+      final int day = int.parse(input.substring(6, 8));
+
+      final date = DateTime(year, month, day);
+      if (date.year == year && date.month == month && date.day == day) {
+        return date;
+      }
+    } catch (e) {
+      return null;
+    }
+
+    return null;
   }
 }
