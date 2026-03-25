@@ -18,12 +18,12 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Sync ${{ github.ref_name }} to main"
-          title: "Sync ${{ github.ref_name }} to main"
-          body: "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch."
-          branch: ${{ github.ref_name }}
-          base: main
-          labels: "post-${{ github.ref_name }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base "main" \
+            --head "${{ github.ref_name }}" \
+            --title "Sync ${{ github.ref_name }} to main" \
+            --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
+            --label "post-${{ github.ref_name }}"
