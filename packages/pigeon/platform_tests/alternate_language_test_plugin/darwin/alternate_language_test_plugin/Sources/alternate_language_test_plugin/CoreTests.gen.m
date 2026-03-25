@@ -7,7 +7,6 @@
 
 #import "./include/alternate_language_test_plugin/CoreTests.gen.h"
 
-
 #if TARGET_OS_OSX
 @import FlutterMacOS;
 #else
