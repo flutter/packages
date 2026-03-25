@@ -257,7 +257,7 @@ class DateInputFormatter extends TextInputFormatter {
   }
 }
 
-class CustomDateInputDelegate extends DateInputDelegate {
+final class CustomDateInputDelegate extends DateInputDelegate {
   const CustomDateInputDelegate({
     required this.formatType,
     required this.separator,

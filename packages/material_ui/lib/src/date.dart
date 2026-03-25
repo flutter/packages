@@ -497,7 +497,7 @@ class DateTimeRange<T extends DateTime> {
 /// See also:
 ///
 ///  * [CalendarDelegate], which handles the underlying calendar math and navigation.
-abstract class DateInputDelegate {
+abstract base class DateInputDelegate {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const DateInputDelegate();
