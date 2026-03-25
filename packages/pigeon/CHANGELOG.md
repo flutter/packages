@@ -1,3 +1,7 @@
+## 26.2.4
+
+* Updates `analyzer` dependency to support version 10.0.0.
+
 ## 26.2.3
 
 * Produces a helpful error message when a method return type is missing or an
