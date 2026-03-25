@@ -3022,7 +3022,7 @@ class _TestDateInputDelegate extends DateInputDelegate {
 
   @override
   String helpText(MaterialLocalizations localizations) {
-    return 'aaaammdd';
+    return 'yyyymmdd';
   }
 
   @override
