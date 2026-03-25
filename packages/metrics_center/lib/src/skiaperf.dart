@@ -126,7 +126,7 @@ class SkiaPerfPoint extends MetricPoint {
     );
   }
 
-  /// In the format of '<owner>/<name>' such as 'flutter/flutter' or
+  /// In the format of `<owner>/<name>` such as 'flutter/flutter' or
   /// 'flutter/engine'.
   final String githubRepo;
 
