@@ -614,7 +614,6 @@
   return nil;
 }
 
-
 @end
 
 // This FlutterBinaryMessenger is a protocol, so to make a stub it has to be implemented.
