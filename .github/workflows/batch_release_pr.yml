@@ -45,7 +45,9 @@ jobs:
     if: needs.create_batch_release_branch.outputs.branch_created == 'true'
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write # Grants write permission to create a PR.
+      # The create-pull-request action needs both content and pull-requests permissions.
+      pull-requests: write
+      contents: write
     env:
       BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:

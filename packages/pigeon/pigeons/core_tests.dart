@@ -435,6 +435,17 @@ abstract class HostIntegrationCoreApi {
 
   // ========== Synchronous nullable method tests ==========
 
+  /// Returns the result of platform-side equality check.
+  bool areAllNullableTypesEqual(AllNullableTypes a, AllNullableTypes b);
+
+  /// Returns the platform-side hash code for the given object.
+  int getAllNullableTypesHash(AllNullableTypes value);
+
+  /// Returns the platform-side hash code for the given object.
+  int getAllNullableTypesWithoutRecursionHash(
+    AllNullableTypesWithoutRecursion value,
+  );
+
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
   @SwiftFunction('echo(_:)')
