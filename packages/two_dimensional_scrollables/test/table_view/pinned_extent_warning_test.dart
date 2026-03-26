@@ -47,8 +47,8 @@ void main() {
       expect(
         log,
         contains(
-          contains(
-            'TableView has pinned columns with a total width of 300.0, which exceeds the viewport width of 200.0',
+          matches(
+            r'TableView has pinned columns with a total width of 300(\.0)?, which exceeds the viewport width of 200(\.0)?',
           ),
         ),
       );
@@ -93,8 +93,8 @@ void main() {
       expect(
         log,
         contains(
-          contains(
-            'TableView has pinned rows with a total height of 300.0, which exceeds the viewport height of 200.0',
+          matches(
+            r'TableView has pinned rows with a total height of 300(\.0)?, which exceeds the viewport height of 200(\.0)?',
           ),
         ),
       );
