@@ -451,7 +451,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           'from being visible.',
         );
       } else if (_pinnedColumnsExtent == viewportDimension.width) {
-        final bool hasUnpinnedColumns = delegate.columnCount == null ||
+        final bool hasUnpinnedColumns =
+            delegate.columnCount == null ||
             delegate.columnCount! > delegate.pinnedColumnCount;
         if (hasUnpinnedColumns) {
           debugPrint(
@@ -469,7 +470,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           'from being visible.',
         );
       } else if (_pinnedRowsExtent == viewportDimension.height) {
-        final bool hasUnpinnedRows = delegate.rowCount == null ||
+        final bool hasUnpinnedRows =
+            delegate.rowCount == null ||
             delegate.rowCount! > delegate.pinnedRowCount;
         if (hasUnpinnedRows) {
           debugPrint(
