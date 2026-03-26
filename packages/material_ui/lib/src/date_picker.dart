@@ -3512,15 +3512,16 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
     final bool useMaterial3 = theme.useMaterial3;
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     final InputDecorationThemeData inputTheme = InputDecorationTheme.of(context);
-    final DateInputDelegate? config = widget.dateInputDelegate;
+    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
     final InputBorder inputBorder =
         inputTheme.border ??
         (useMaterial3 ? const OutlineInputBorder() : const UnderlineInputBorder());
 
     final List<TextInputFormatter> effectiveFormatters =
-        config?.inputFormatters ?? <TextInputFormatter>[];
+        dateInputDelegate?.inputFormatters ?? <TextInputFormatter>[];
     final String effectiveHelpText =
-        config?.helpText(localizations) ?? widget.calendarDelegate.dateHelpText(localizations);
+        dateInputDelegate?.helpText(localizations) ??
+        widget.calendarDelegate.dateHelpText(localizations);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

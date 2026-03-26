@@ -3011,7 +3011,7 @@ class TestCalendarDelegate extends GregorianCalendarDelegate {
   }
 }
 
-class _TestDateInputDelegate extends DateInputDelegate {
+base class _TestDateInputDelegate extends DateInputDelegate {
   const _TestDateInputDelegate();
 
   @override
