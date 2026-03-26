@@ -6,7 +6,7 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-/// A mock implementation of `FLTCaptureDevice` that allows mocking the class
+/// A mock implementation of `CaptureDevice` that allows mocking the class
 /// properties.
 class MockCaptureDevice: NSObject, CaptureDevice {
   var activeFormatStub: (() -> CaptureDeviceFormat)?

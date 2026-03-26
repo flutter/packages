@@ -181,6 +181,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
 
@@ -217,6 +224,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
+    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+    try XCTSkipIf(
+      // https://developer.apple.com/forums/thread/808030
+      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
+      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+    )
+
+    // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
+    session.clearTransactions()
     try await session.setSimulatedError(
       .generic(.networkError(URLError(.badURL))), forAPI: .loadProducts)
     let expectation = self.expectation(description: "products request should fail")
@@ -290,7 +306,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testDiscountedProductSuccess() async throws {
@@ -303,7 +319,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 10)
   }
 
   func testPurchaseWithAppAccountToken() async throws {

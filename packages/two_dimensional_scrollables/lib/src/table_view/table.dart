@@ -116,6 +116,7 @@ class TableView extends TwoDimensionalScrollView {
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.clipBehavior,
+    this.alignment = Alignment.topLeft,
   });
 
   /// Creates a [TableView] of widgets that are created on demand.
@@ -155,6 +156,7 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     required TableViewCellBuilder cellBuilder,
+    this.alignment = Alignment.topLeft,
   }) : assert(pinnedRowCount >= 0),
        assert(rowCount == null || rowCount >= 0),
        assert(rowCount == null || rowCount >= pinnedRowCount),
@@ -199,6 +201,7 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     List<List<TableViewCell>> cells = const <List<TableViewCell>>[],
+    this.alignment = Alignment.topLeft,
   }) : assert(pinnedRowCount >= 0),
        assert(pinnedColumnCount >= 0),
        super(
@@ -210,6 +213,11 @@ class TableView extends TwoDimensionalScrollView {
            rowBuilder: rowBuilder,
          ),
        );
+
+  /// The alignment of the table within the viewport when there is extra space.
+  ///
+  /// Defaults to [Alignment.topLeft].
+  final AlignmentGeometry alignment;
 
   @override
   TableViewport buildViewport(
@@ -226,6 +234,7 @@ class TableView extends TwoDimensionalScrollView {
       mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
+      alignment: alignment,
     );
   }
 }
@@ -245,7 +254,11 @@ class TableViewport extends TwoDimensionalViewport {
     required super.mainAxis,
     super.cacheExtent,
     super.clipBehavior,
+    this.alignment = Alignment.topLeft,
   });
+
+  /// The alignment of the table within the viewport when there is extra space.
+  final AlignmentGeometry alignment;
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
@@ -259,6 +272,8 @@ class TableViewport extends TwoDimensionalViewport {
       clipBehavior: clipBehavior,
       delegate: delegate as TableCellDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
+      alignment: alignment,
+      textDirection: Directionality.maybeOf(context),
     );
   }
 
@@ -275,7 +290,9 @@ class TableViewport extends TwoDimensionalViewport {
       ..mainAxis = mainAxis
       ..cacheExtent = cacheExtent
       ..clipBehavior = clipBehavior
-      ..delegate = delegate as TableCellDelegateMixin;
+      ..delegate = delegate as TableCellDelegateMixin
+      ..alignment = alignment
+      ..textDirection = Directionality.maybeOf(context);
   }
 }
 
@@ -299,7 +316,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
-  });
+    AlignmentGeometry alignment = Alignment.topLeft,
+    TextDirection? textDirection,
+  }) : _alignment = alignment,
+       _textDirection = textDirection;
 
   @override
   TableCellDelegateMixin get delegate =>
@@ -308,6 +328,31 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   set delegate(TableCellDelegateMixin value) {
     super.delegate = value;
   }
+
+  /// The alignment of the table within the viewport when there is extra space.
+  AlignmentGeometry get alignment => _alignment;
+  AlignmentGeometry _alignment;
+  set alignment(AlignmentGeometry value) {
+    if (_alignment == value) {
+      return;
+    }
+    _alignment = value;
+    markNeedsLayout();
+  }
+
+  /// The text direction with which to resolve [alignment].
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
+    if (_textDirection == value) {
+      return;
+    }
+    _textDirection = value;
+    markNeedsLayout();
+  }
+
+  double _hAlignmentOffset = 0.0;
+  double _vAlignmentOffset = 0.0;
 
   // Skipped vicinities for the current frame based on merged cells.
   // This prevents multiple build calls for the same cell that spans multiple
@@ -852,6 +897,33 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _updateFirstAndLastVisibleCell();
     }
 
+    final Alignment resolvedAlignment = alignment.resolve(textDirection);
+    _hAlignmentOffset = 0.0;
+    if (!_columnsAreInfinite && _columnMetrics.isNotEmpty) {
+      final double totalWidth =
+          _pinnedColumnsExtent +
+          _columnMetrics[delegate.columnCount! - 1]!.trailingOffset;
+      if (totalWidth < viewportDimension.width) {
+        _hAlignmentOffset =
+            (viewportDimension.width - totalWidth) *
+            (resolvedAlignment.x + 1.0) /
+            2.0;
+      }
+    }
+
+    _vAlignmentOffset = 0.0;
+    if (!_rowsAreInfinite && _rowMetrics.isNotEmpty) {
+      final double totalHeight =
+          _pinnedRowsExtent +
+          _rowMetrics[delegate.rowCount! - 1]!.trailingOffset;
+      if (totalHeight < viewportDimension.height) {
+        _vAlignmentOffset =
+            (viewportDimension.height - totalHeight) *
+            (resolvedAlignment.y + 1.0) /
+            2.0;
+      }
+    }
+
     if (_firstNonPinnedCell == null &&
         _lastPinnedRow == null &&
         _lastPinnedColumn == null) {
@@ -862,19 +934,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final double? offsetIntoColumn = _firstNonPinnedColumn != null
         ? horizontalOffset.pixels -
               _columnMetrics[_firstNonPinnedColumn]!.leadingOffset -
-              _pinnedColumnsExtent
+              _pinnedColumnsExtent -
+              _hAlignmentOffset
         : null;
     final double? offsetIntoRow = _firstNonPinnedRow != null
         ? verticalOffset.pixels -
               _rowMetrics[_firstNonPinnedRow]!.leadingOffset -
-              _pinnedRowsExtent
+              _pinnedRowsExtent -
+              _vAlignmentOffset
         : null;
     if (_lastPinnedRow != null && _lastPinnedColumn != null) {
       // Layout cells that are contained in both pinned rows and columns
       _layoutCells(
         start: TableVicinity.zero,
         end: TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
-        offset: Offset.zero,
+        offset: Offset(-_hAlignmentOffset, -_vAlignmentOffset),
       );
     }
 
@@ -886,7 +960,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _layoutCells(
         start: TableVicinity(column: _firstNonPinnedColumn!, row: 0),
         end: TableVicinity(column: _lastNonPinnedColumn!, row: _lastPinnedRow!),
-        offset: Offset(offsetIntoColumn!, 0),
+        offset: Offset(offsetIntoColumn!, -_vAlignmentOffset),
       );
     }
     if (_lastPinnedColumn != null && _firstNonPinnedRow != null) {
@@ -897,7 +971,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _layoutCells(
         start: TableVicinity(column: 0, row: _firstNonPinnedRow!),
         end: TableVicinity(column: _lastPinnedColumn!, row: _lastNonPinnedRow!),
-        offset: Offset(0, offsetIntoRow!),
+        offset: Offset(-_hAlignmentOffset, offsetIntoRow!),
       );
     }
     if (_firstNonPinnedCell != null) {
@@ -1176,6 +1250,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // follows row or column major ordering. Here is slightly different
     // as we break the cells up into 4 main paint passes to clip for overlap.
 
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+
     if (_firstNonPinnedCell != null) {
       // Paint all visible un-pinned cells
       assert(_lastNonPinnedCell != null);
@@ -1183,12 +1260,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? 0.0
-              : _pinnedColumnsExtent,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? 0.0
-              : _pinnedRowsExtent,
+          (reversedH ? 0.0 : _pinnedColumnsExtent) +
+              (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
+          (reversedV ? 0.0 : _pinnedRowsExtent) +
+              (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           viewportDimension.width - _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -1214,12 +1289,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? viewportDimension.width - _pinnedColumnsExtent
-              : 0.0,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? 0.0
-              : _pinnedRowsExtent,
+          reversedH
+              ? viewportDimension.width -
+                    _pinnedColumnsExtent -
+                    _hAlignmentOffset
+              : _hAlignmentOffset,
+          (reversedV ? 0.0 : _pinnedRowsExtent) +
+              (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -1248,12 +1324,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? 0.0
-              : _pinnedColumnsExtent,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? viewportDimension.height - _pinnedRowsExtent
-              : 0.0,
+          (reversedH ? 0.0 : _pinnedColumnsExtent) +
+              (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
+          reversedV
+              ? viewportDimension.height - _pinnedRowsExtent - _vAlignmentOffset
+              : _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _pinnedRowsExtent,
         ),
@@ -1336,7 +1411,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final foregroundColumns = <Rect, TableSpanDecoration>{};
     final backgroundColumns = <Rect, TableSpanDecoration>{};
 
-    final TableSpan rowSpan = _rowMetrics[leadingVicinity.row]!.configuration;
     for (
       int column = leadingVicinity.column;
       column <= trailingVicinity.column;
@@ -1415,27 +1489,45 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           required RenderBox trailingCell,
           required bool consumePadding,
         }) {
-          final ({double leading, double trailing}) offsetCorrection =
-              axisDirectionIsReversed(verticalAxisDirection)
-              ? (
-                  leading: leadingCell.size.height,
-                  trailing: trailingCell.size.height,
-                )
-              : (leading: 0.0, trailing: 0.0);
-          return Rect.fromPoints(
-            parentDataOf(leadingCell).paintOffset! +
-                offset -
-                Offset(
-                  consumePadding ? columnSpan.padding.leading : 0.0,
-                  rowSpan.padding.leading - offsetCorrection.leading,
-                ),
-            parentDataOf(trailingCell).paintOffset! +
-                offset +
-                Offset(trailingCell.size.width, trailingCell.size.height) +
-                Offset(
-                  consumePadding ? columnSpan.padding.trailing : 0.0,
-                  rowSpan.padding.trailing - offsetCorrection.trailing,
-                ),
+          final bool reversedH = axisDirectionIsReversed(
+            horizontalAxisDirection,
+          );
+          final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+          final TableSpan leadingRowSpan =
+              _rowMetrics[parentDataOf(leadingCell).tableVicinity.row]!
+                  .configuration;
+          final TableSpan trailingRowSpan =
+              _rowMetrics[parentDataOf(trailingCell).tableVicinity.row]!
+                  .configuration;
+
+          final double leftExpansion = consumePadding
+              ? (reversedH
+                    ? columnSpan.padding.trailing
+                    : columnSpan.padding.leading)
+              : 0.0;
+          final double rightExpansion = consumePadding
+              ? (reversedH
+                    ? columnSpan.padding.leading
+                    : columnSpan.padding.trailing)
+              : 0.0;
+          final double topExpansion = reversedV
+              ? trailingRowSpan.padding.trailing
+              : leadingRowSpan.padding.leading;
+          final double bottomExpansion = reversedV
+              ? leadingRowSpan.padding.leading
+              : trailingRowSpan.padding.trailing;
+
+          final Offset p1 = parentDataOf(leadingCell).paintOffset! + offset;
+          final Offset p2 =
+              parentDataOf(trailingCell).paintOffset! +
+              offset +
+              Offset(trailingCell.size.width, trailingCell.size.height);
+
+          return Rect.fromLTRB(
+            math.min(p1.dx, p2.dx - trailingCell.size.width) - leftExpansion,
+            math.min(p1.dy, p2.dy - trailingCell.size.height) - topExpansion,
+            math.max(p1.dx + leadingCell.size.width, p2.dx) + rightExpansion,
+            math.max(p1.dy + leadingCell.size.height, p2.dy) + bottomExpansion,
           );
         }
 
@@ -1471,8 +1563,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // Row decorations
     final foregroundRows = <Rect, TableSpanDecoration>{};
     final backgroundRows = <Rect, TableSpanDecoration>{};
-    final TableSpan columnSpan =
-        _columnMetrics[leadingVicinity.column]!.configuration;
     for (int row = leadingVicinity.row; row <= trailingVicinity.row; row++) {
       TableSpan rowSpan = _rowMetrics[row]!.configuration;
       if (rowSpan.backgroundDecoration != null ||
@@ -1547,27 +1637,41 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           required RenderBox trailingCell,
           required bool consumePadding,
         }) {
-          final ({double leading, double trailing}) offsetCorrection =
-              axisDirectionIsReversed(horizontalAxisDirection)
-              ? (
-                  leading: leadingCell.size.width,
-                  trailing: trailingCell.size.width,
-                )
-              : (leading: 0.0, trailing: 0.0);
-          return Rect.fromPoints(
-            parentDataOf(leadingCell).paintOffset! +
-                offset -
-                Offset(
-                  columnSpan.padding.leading - offsetCorrection.leading,
-                  consumePadding ? rowSpan.padding.leading : 0.0,
-                ),
-            parentDataOf(trailingCell).paintOffset! +
-                offset +
-                Offset(trailingCell.size.width, trailingCell.size.height) +
-                Offset(
-                  columnSpan.padding.leading - offsetCorrection.trailing,
-                  consumePadding ? rowSpan.padding.trailing : 0.0,
-                ),
+          final bool reversedH = axisDirectionIsReversed(
+            horizontalAxisDirection,
+          );
+          final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+          final TableSpan leadingColSpan =
+              _columnMetrics[parentDataOf(leadingCell).tableVicinity.column]!
+                  .configuration;
+          final TableSpan trailingColSpan =
+              _columnMetrics[parentDataOf(trailingCell).tableVicinity.column]!
+                  .configuration;
+
+          final double leftExpansion = reversedH
+              ? trailingColSpan.padding.trailing
+              : leadingColSpan.padding.leading;
+          final double rightExpansion = reversedH
+              ? leadingColSpan.padding.leading
+              : trailingColSpan.padding.trailing;
+          final double topExpansion = consumePadding
+              ? (reversedV ? rowSpan.padding.trailing : rowSpan.padding.leading)
+              : 0.0;
+          final double bottomExpansion = consumePadding
+              ? (reversedV ? rowSpan.padding.leading : rowSpan.padding.trailing)
+              : 0.0;
+
+          final Offset p1 = parentDataOf(leadingCell).paintOffset! + offset;
+          final Offset p2 =
+              parentDataOf(trailingCell).paintOffset! +
+              offset +
+              Offset(trailingCell.size.width, trailingCell.size.height);
+
+          return Rect.fromLTRB(
+            math.min(p1.dx, p2.dx - trailingCell.size.width) - leftExpansion,
+            math.min(p1.dy, p2.dy - trailingCell.size.height) - topExpansion,
+            math.max(p1.dx + leadingCell.size.width, p2.dx) + rightExpansion,
+            math.max(p1.dy + leadingCell.size.height, p2.dy) + bottomExpansion,
           );
         }
 
@@ -1612,6 +1716,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1620,6 +1725,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1630,6 +1736,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1638,6 +1745,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1682,6 +1790,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1690,6 +1799,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1700,6 +1810,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
+            crossAxisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -1708,6 +1819,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
+            crossAxisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
