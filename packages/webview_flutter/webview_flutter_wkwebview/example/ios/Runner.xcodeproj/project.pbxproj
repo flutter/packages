@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		33C8DADB2E8D711500A9B7CA /* TemporaryObjCStub.m in Sources */ = {isa = PBXBuildFile; fileRef = 33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		8F0E23522EEB5D6B002AB342 /* ColorProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0E23512EEB5D6B002AB342 /* ColorProxyAPITests.swift */; };
@@ -88,8 +87,6 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		33C8DAD92E8D711500A9B7CA /* TemporaryObjCStub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporaryObjCStub.h; sourceTree = "<group>"; };
-		33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TemporaryObjCStub.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		68BDCAE923C3F7CB00D9C032 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		68BDCAED23C3F7CB00D9C032 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -131,7 +128,6 @@
 		8F1488E02D2DE27000191744 /* WebViewConfigurationProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewConfigurationProxyAPITests.swift; path = ../../darwin/Tests/WebViewConfigurationProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1488E12D2DE27000191744 /* WebViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewProxyAPITests.swift; path = ../../darwin/Tests/WebViewProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthenticationChallengeResponseProxyAPITests.swift; path = ../../darwin/Tests/AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
-		8F66D9D72D1362BE000835F9 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		8FEC64812DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GetTrustResultResponseProxyAPITests.swift; path = ../../darwin/Tests/GetTrustResultResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FEC64822DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SecCertificateProxyAPITests.swift; path = ../../darwin/Tests/SecCertificateProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FEC64832DA2C6DC00C48569 /* SecTrustProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SecTrustProxyAPITests.swift; path = ../../darwin/Tests/SecTrustProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
@@ -179,8 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				8F0E23512EEB5D6B002AB342 /* ColorProxyAPITests.swift */,
-				33C8DAD92E8D711500A9B7CA /* TemporaryObjCStub.h */,
-				33C8DADA2E8D711500A9B7CA /* TemporaryObjCStub.m */,
 				8F0EDFD22E1F4967001938E6 /* ProxyAPIRegistrarTests.swift */,
 				8FEC64812DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift */,
 				8FEC64822DA2C6DC00C48569 /* SecCertificateProxyAPITests.swift */,
@@ -217,7 +211,6 @@
 				8F1488E02D2DE27000191744 /* WebViewConfigurationProxyAPITests.swift */,
 				8F1488E12D2DE27000191744 /* WebViewProxyAPITests.swift */,
 				68BDCAED23C3F7CB00D9C032 /* Info.plist */,
-				8F66D9D72D1362BE000835F9 /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -397,7 +390,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -493,7 +486,6 @@
 				8F1488EC2D2DE27000191744 /* FrameInfoProxyAPITests.swift in Sources */,
 				8F1488ED2D2DE27000191744 /* ErrorProxyAPITests.swift in Sources */,
 				8F1488EE2D2DE27000191744 /* NSObjectProxyAPITests.swift in Sources */,
-				33C8DADB2E8D711500A9B7CA /* TemporaryObjCStub.m in Sources */,
 				8F1488EF2D2DE27000191744 /* NavigationResponseProxyAPITests.swift in Sources */,
 				8FEC64852DA2C6DC00C48569 /* GetTrustResultResponseProxyAPITests.swift in Sources */,
 				8FEC64862DA2C6DC00C48569 /* WebpagePreferencesProxyAPITests.swift in Sources */,
@@ -584,7 +576,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
@@ -607,7 +598,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 				USE_HEADERMAP = NO;
@@ -861,7 +851,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

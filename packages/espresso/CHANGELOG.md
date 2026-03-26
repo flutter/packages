@@ -1,3 +1,7 @@
+## 0.4.0+24
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.4.0+23
 
 * Removed the unused `io.flutter.network-policy` metadata tag from the README and example application.
