@@ -4,7 +4,7 @@ group = "com.example.test_plugin"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = '2.1.0'
+    val kotlin_version = "2.1.0"
     repositories {
         google()
         mavenCentral()
@@ -12,7 +12,7 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.13.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
 
