@@ -91,10 +91,11 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
       guard let originalData = photo.fileDataRepresentation() else {
         return nil
       }
-      // Only re-encode when a quality below 100 was explicitly requested.
-      // The caller (DefaultCamera.captureToFile) only sets imageQuality for
-      // JPEG captures, so the data is guaranteed to be JPEG at this point.
-      guard let quality = self?.imageQuality, quality < 100 else {
+      guard let quality = self?.imageQuality, quality < 100,
+        let source = CGImageSourceCreateWithData(originalData as CFData, nil),
+        let sourceType = CGImageSourceGetType(source) as? String,
+        sourceType == "public.jpeg"
+      else {
         return originalData
       }
       return Self.reencodeJPEG(data: originalData, quality: quality)
