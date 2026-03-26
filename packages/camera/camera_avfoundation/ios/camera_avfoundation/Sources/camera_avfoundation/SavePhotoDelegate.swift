@@ -121,15 +121,6 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
       return data
     }
 
-    // Verify the source is actually JPEG. If the format doesn't match
-    // (e.g. if this is called with HEIF data in the future), return
-    // the original data unchanged rather than silently re-encoding.
-    if let sourceType = CGImageSourceGetType(source) as? String,
-      sourceType != "public.jpeg"
-    {
-      return data
-    }
-
     // Copy all original EXIF/metadata properties so they are preserved in the output.
     let metadata =
       CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
