@@ -12,6 +12,7 @@ void main() {
     testWidgets('Warns when pinned columns exceed viewport width', (
       WidgetTester tester,
     ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/136833
       final log = <String>[];
       final DebugPrintCallback oldDebugPrint = debugPrint;
       debugPrint = (String? message, {int? wrapWidth}) {
@@ -40,7 +41,9 @@ void main() {
         ),
       );
 
-      // Pinned columns extent = 300, viewport width = 200.
+      // Pinned columns extent = 300 (3 * 100), viewport width = 200.
+      // A warning is expected because the pinned columns are wider than the
+      // viewport, meaning even the pinned content cannot be fully displayed.
       expect(
         log,
         contains(
@@ -55,6 +58,7 @@ void main() {
     testWidgets('Warns when pinned rows exceed viewport height', (
       WidgetTester tester,
     ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/136833
       final log = <String>[];
       final DebugPrintCallback oldDebugPrint = debugPrint;
       debugPrint = (String? message, {int? wrapWidth}) {
@@ -83,7 +87,9 @@ void main() {
         ),
       );
 
-      // Pinned rows extent = 300, viewport height = 200.
+      // Pinned rows extent = 300 (3 * 100), viewport height = 200.
+      // A warning is expected because the pinned rows are taller than the
+      // viewport, meaning even the pinned content cannot be fully displayed.
       expect(
         log,
         contains(
@@ -98,6 +104,7 @@ void main() {
     testWidgets(
       'Warns when pinned columns fully consume viewport width and there are unpinned columns',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/136833
         final log = <String>[];
         final DebugPrintCallback oldDebugPrint = debugPrint;
         debugPrint = (String? message, {int? wrapWidth}) {
@@ -126,7 +133,10 @@ void main() {
           ),
         );
 
-        // Pinned columns extent = 200, viewport width = 200. Unpinned columns = 1.
+        // Pinned columns extent = 200 (2 * 100), viewport width = 200.
+        // There is 1 unpinned column (columnCount: 3, pinnedColumnCount: 2).
+        // Since the pinned columns take up the entire viewport width, the
+        // unpinned column will never be visible during scrolling.
         expect(
           log,
           contains(
@@ -140,6 +150,7 @@ void main() {
     testWidgets(
       'Warns when pinned rows fully consume viewport height and there are unpinned rows',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/136833
         final log = <String>[];
         final DebugPrintCallback oldDebugPrint = debugPrint;
         debugPrint = (String? message, {int? wrapWidth}) {
@@ -168,7 +179,10 @@ void main() {
           ),
         );
 
-        // Pinned rows extent = 200, viewport height = 200. Unpinned rows = 1.
+        // Pinned rows extent = 200 (2 * 100), viewport height = 200.
+        // There is 1 unpinned row (rowCount: 3, pinnedRowCount: 2).
+        // Since the pinned rows take up the entire viewport height, the
+        // unpinned row will never be visible during scrolling.
         expect(
           log,
           contains(
@@ -182,6 +196,7 @@ void main() {
     testWidgets(
       'Does not warn when all columns are pinned even if they consume viewport',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/136833
         final log = <String>[];
         final DebugPrintCallback oldDebugPrint = debugPrint;
         debugPrint = (String? message, {int? wrapWidth}) {
@@ -210,6 +225,11 @@ void main() {
           ),
         );
 
+        // Pinned columns extent = 200 (2 * 100), viewport width = 200.
+        // Although the pinned columns fully consume the viewport width,
+        // ALL columns are pinned (columnCount: 2, pinnedColumnCount: 2).
+        // Since there are no unpinned columns, no warning is issued about
+        // unpinned columns being hidden.
         expect(
           log,
           isNot(contains(contains('Unpinned columns will not be visible'))),
