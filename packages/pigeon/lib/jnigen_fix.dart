@@ -4,6 +4,7 @@
 
 import 'dart:io';
 
+// TODO(tarrinneal): Remove this file when the issue is fixed: https://github.com/dart-lang/native/issues/3235
 /// Applies a post-generation patch to fix generic typing bugs in the jnigen output.
 /// See specific issue with casting mapped types using older jnigen generators.
 void fixJniBindings(String jnigenOutputPath) {

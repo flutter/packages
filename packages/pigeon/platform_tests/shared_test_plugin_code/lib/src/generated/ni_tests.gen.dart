@@ -223,7 +223,7 @@ class _PigeonJniCodec {
     } else if (value is int) {
       return JLong(value) as T;
     } else if (value is String) {
-      return JString.fromString(value) as T;
+      return value.toJString() as T;
     } else if (value is Uint8List) {
       final JByteArray array = JByteArray(value.length);
       array.setRange(
@@ -1153,11 +1153,11 @@ PlatformException _wrapJniException(JThrowable e) {
       jni_bridge.NiTestsError.type,
     );
     return PlatformException(
-      code: pigeonError.getCode().toDartString(),
-      message: pigeonError.getMessage()?.toDartString(),
-      details: pigeonError.getDetails()?.isA<JString>(JString.type) ?? false
-          ? pigeonError.getDetails()!.as(JString.type).toDartString()
-          : pigeonError.getDetails(),
+      code: pigeonError.code.toDartString(),
+      message: pigeonError.message?.toDartString(),
+      details: pigeonError.details?.isA<JString>(JString.type) ?? false
+          ? pigeonError.details!.as(JString.type).toDartString()
+          : pigeonError.details,
       stacktrace: e.javaStackTrace,
     );
   }
@@ -1181,7 +1181,7 @@ enum NIAnEnum {
   }
 
   static NIAnEnum? fromJni(jni_bridge.NIAnEnum? jniEnum) {
-    return jniEnum == null ? null : NIAnEnum.values[jniEnum.getRaw()];
+    return jniEnum == null ? null : NIAnEnum.values[jniEnum.raw];
   }
 
   NSNumber toFfi() {
@@ -1205,7 +1205,7 @@ enum NIAnotherEnum {
   }
 
   static NIAnotherEnum? fromJni(jni_bridge.NIAnotherEnum? jniEnum) {
-    return jniEnum == null ? null : NIAnotherEnum.values[jniEnum.getRaw()];
+    return jniEnum == null ? null : NIAnotherEnum.values[jniEnum.raw];
   }
 
   NSNumber toFfi() {
@@ -1249,9 +1249,7 @@ class NIUnusedClass {
   static NIUnusedClass? fromJni(jni_bridge.NIUnusedClass? jniClass) {
     return jniClass == null
         ? null
-        : NIUnusedClass(
-            aField: _PigeonJniCodec.readValue(jniClass.getAField()),
-          );
+        : NIUnusedClass(aField: _PigeonJniCodec.readValue(jniClass.aField));
   }
 
   static NIUnusedClass? fromFfi(ffi_bridge.NIUnusedClassBridge? ffiClass) {
@@ -1496,88 +1494,78 @@ class NIAllTypes {
     return jniClass == null
         ? null
         : NIAllTypes(
-            aBool: jniClass.getABool(),
-            anInt: jniClass.getAnInt(),
-            anInt64: jniClass.getAnInt64(),
-            aDouble: jniClass.getADouble(),
+            aBool: jniClass.aBool,
+            anInt: jniClass.anInt,
+            anInt64: jniClass.anInt64,
+            aDouble: jniClass.aDouble,
             aByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getAByteArray())!
-                    as Uint8List),
+                (_PigeonJniCodec.readValue(jniClass.aByteArray)! as Uint8List),
             a4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getA4ByteArray())!
-                    as Int32List),
+                (_PigeonJniCodec.readValue(jniClass.a4ByteArray)! as Int32List),
             a8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getA8ByteArray())!
-                    as Int64List),
+                (_PigeonJniCodec.readValue(jniClass.a8ByteArray)! as Int64List),
             aFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.getAFloatArray())!
+                (_PigeonJniCodec.readValue(jniClass.aFloatArray)!
                     as Float64List),
-            anEnum: NIAnEnum.fromJni(jniClass.getAnEnum())!,
-            anotherEnum: NIAnotherEnum.fromJni(jniClass.getAnotherEnum())!,
-            aString: jniClass.getAString().toDartString(releaseOriginal: true),
-            anObject: _PigeonJniCodec.readValue(jniClass.getAnObject())!,
-            list:
-                (_PigeonJniCodec.readValue(jniClass.getList())!
-                        as List<Object?>)
-                    .cast<Object?>(),
+            anEnum: NIAnEnum.fromJni(jniClass.anEnum)!,
+            anotherEnum: NIAnotherEnum.fromJni(jniClass.anotherEnum)!,
+            aString: jniClass.aString.toDartString(releaseOriginal: true),
+            anObject: _PigeonJniCodec.readValue(jniClass.anObject)!,
+            list: (_PigeonJniCodec.readValue(jniClass.list)! as List<Object?>)
+                .cast<Object?>(),
             stringList:
-                (_PigeonJniCodec.readValue(jniClass.getStringList())!
+                (_PigeonJniCodec.readValue(jniClass.stringList)!
                         as List<Object?>)
                     .cast<String>(),
             intList:
-                (_PigeonJniCodec.readValue(jniClass.getIntList())!
-                        as List<Object?>)
+                (_PigeonJniCodec.readValue(jniClass.intList)! as List<Object?>)
                     .cast<int>(),
             doubleList:
-                (_PigeonJniCodec.readValue(jniClass.getDoubleList())!
+                (_PigeonJniCodec.readValue(jniClass.doubleList)!
                         as List<Object?>)
                     .cast<double>(),
             boolList:
-                (_PigeonJniCodec.readValue(jniClass.getBoolList())!
-                        as List<Object?>)
+                (_PigeonJniCodec.readValue(jniClass.boolList)! as List<Object?>)
                     .cast<bool>(),
             enumList:
-                (_PigeonJniCodec.readValue(jniClass.getEnumList())!
-                        as List<Object?>)
+                (_PigeonJniCodec.readValue(jniClass.enumList)! as List<Object?>)
                     .cast<NIAnEnum>(),
             objectList:
-                (_PigeonJniCodec.readValue(jniClass.getObjectList())!
+                (_PigeonJniCodec.readValue(jniClass.objectList)!
                         as List<Object?>)
                     .cast<Object>(),
             listList:
-                (_PigeonJniCodec.readValue(jniClass.getListList())!
-                        as List<Object?>)
+                (_PigeonJniCodec.readValue(jniClass.listList)! as List<Object?>)
                     .cast<List<Object?>>(),
             mapList:
-                (_PigeonJniCodec.readValue(jniClass.getMapList())!
-                        as List<Object?>)
+                (_PigeonJniCodec.readValue(jniClass.mapList)! as List<Object?>)
                     .cast<Map<Object?, Object?>>(),
             map:
-                (_PigeonJniCodec.readValue(jniClass.getMap())!
+                (_PigeonJniCodec.readValue(jniClass.map)!
                         as Map<Object?, Object?>)
                     .cast<Object?, Object?>(),
             stringMap:
-                (_PigeonJniCodec.readValue(jniClass.getStringMap())!
+                (_PigeonJniCodec.readValue(jniClass.stringMap)!
                         as Map<Object?, Object?>)
                     .cast<String, String>(),
             intMap:
-                (_PigeonJniCodec.readValue(jniClass.getIntMap())!
+                (_PigeonJniCodec.readValue(jniClass.intMap)!
                         as Map<Object?, Object?>)
                     .cast<int, int>(),
             enumMap:
-                (_PigeonJniCodec.readValue(jniClass.getEnumMap())!
+                (_PigeonJniCodec.readValue(jniClass.enumMap)!
                         as Map<Object?, Object?>)
                     .cast<NIAnEnum, NIAnEnum>(),
             objectMap:
-                (_PigeonJniCodec.readValue(jniClass.getObjectMap())!
+                (_PigeonJniCodec.readValue(jniClass.objectMap)!
                         as Map<Object?, Object?>)
                     .cast<Object, Object>(),
             listMap:
-                (_PigeonJniCodec.readValue(jniClass.getListMap())!
+                (_PigeonJniCodec.readValue(jniClass.listMap)!
                         as Map<Object?, Object?>)
                     .cast<int, List<Object?>>(),
             mapMap:
-                (_PigeonJniCodec.readValue(jniClass.getMapMap())!
+                (_PigeonJniCodec.readValue(jniClass.mapMap)!
                         as Map<Object?, Object?>)
                     .cast<int, Map<Object?, Object?>>(),
           );
@@ -2004,113 +1992,106 @@ class NIAllNullableTypes {
     return jniClass == null
         ? null
         : NIAllNullableTypes(
-            aNullableBool: jniClass.getANullableBool()?.booleanValue(
+            aNullableBool: jniClass.aNullableBool?.toDartBool(
               releaseOriginal: true,
             ),
-            aNullableInt: jniClass.getANullableInt()?.longValue(
+            aNullableInt: jniClass.aNullableInt?.toDartInt(
               releaseOriginal: true,
             ),
-            aNullableInt64: jniClass.getANullableInt64()?.longValue(
+            aNullableInt64: jniClass.aNullableInt64?.toDartInt(
               releaseOriginal: true,
             ),
-            aNullableDouble: jniClass.getANullableDouble()?.doubleValue(
+            aNullableDouble: jniClass.aNullableDouble?.toDartDouble(
               releaseOriginal: true,
             ),
             aNullableByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullableByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullableByteArray)
                     as Uint8List?),
             aNullable4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullable4ByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
                     as Int32List?),
             aNullable8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullable8ByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
                     as Int64List?),
             aNullableFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullableFloatArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
                     as Float64List?),
-            aNullableEnum: NIAnEnum.fromJni(jniClass.getANullableEnum()),
+            aNullableEnum: NIAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NIAnotherEnum.fromJni(
-              jniClass.getAnotherNullableEnum(),
+              jniClass.anotherNullableEnum,
             ),
-            aNullableString: jniClass.getANullableString()?.toDartString(
+            aNullableString: jniClass.aNullableString?.toDartString(
               releaseOriginal: true,
             ),
             aNullableObject: _PigeonJniCodec.readValue(
-              jniClass.getANullableObject(),
+              jniClass.aNullableObject,
             ),
             allNullableTypes: NIAllNullableTypes.fromJni(
-              jniClass.getAllNullableTypes(),
+              jniClass.allNullableTypes,
             ),
-            list:
-                (_PigeonJniCodec.readValue(jniClass.getList())
-                        as List<Object?>?)
-                    ?.cast<Object?>(),
+            list: (_PigeonJniCodec.readValue(jniClass.list) as List<Object?>?)
+                ?.cast<Object?>(),
             stringList:
-                (_PigeonJniCodec.readValue(jniClass.getStringList())
+                (_PigeonJniCodec.readValue(jniClass.stringList)
                         as List<Object?>?)
                     ?.cast<String?>(),
             intList:
-                (_PigeonJniCodec.readValue(jniClass.getIntList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.intList) as List<Object?>?)
                     ?.cast<int?>(),
             doubleList:
-                (_PigeonJniCodec.readValue(jniClass.getDoubleList())
+                (_PigeonJniCodec.readValue(jniClass.doubleList)
                         as List<Object?>?)
                     ?.cast<double?>(),
             boolList:
-                (_PigeonJniCodec.readValue(jniClass.getBoolList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.boolList) as List<Object?>?)
                     ?.cast<bool?>(),
             enumList:
-                (_PigeonJniCodec.readValue(jniClass.getEnumList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.enumList) as List<Object?>?)
                     ?.cast<NIAnEnum?>(),
             objectList:
-                (_PigeonJniCodec.readValue(jniClass.getObjectList())
+                (_PigeonJniCodec.readValue(jniClass.objectList)
                         as List<Object?>?)
                     ?.cast<Object?>(),
             listList:
-                (_PigeonJniCodec.readValue(jniClass.getListList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.listList) as List<Object?>?)
                     ?.cast<List<Object?>?>(),
             mapList:
-                (_PigeonJniCodec.readValue(jniClass.getMapList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.mapList) as List<Object?>?)
                     ?.cast<Map<Object?, Object?>?>(),
             recursiveClassList:
-                (_PigeonJniCodec.readValue(jniClass.getRecursiveClassList())
+                (_PigeonJniCodec.readValue(jniClass.recursiveClassList)
                         as List<Object?>?)
                     ?.cast<NIAllNullableTypes?>(),
             map:
-                (_PigeonJniCodec.readValue(jniClass.getMap())
+                (_PigeonJniCodec.readValue(jniClass.map)
                         as Map<Object?, Object?>?)
                     ?.cast<Object?, Object?>(),
             stringMap:
-                (_PigeonJniCodec.readValue(jniClass.getStringMap())
+                (_PigeonJniCodec.readValue(jniClass.stringMap)
                         as Map<Object?, Object?>?)
                     ?.cast<String?, String?>(),
             intMap:
-                (_PigeonJniCodec.readValue(jniClass.getIntMap())
+                (_PigeonJniCodec.readValue(jniClass.intMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, int?>(),
             enumMap:
-                (_PigeonJniCodec.readValue(jniClass.getEnumMap())
+                (_PigeonJniCodec.readValue(jniClass.enumMap)
                         as Map<Object?, Object?>?)
                     ?.cast<NIAnEnum?, NIAnEnum?>(),
             objectMap:
-                (_PigeonJniCodec.readValue(jniClass.getObjectMap())
+                (_PigeonJniCodec.readValue(jniClass.objectMap)
                         as Map<Object?, Object?>?)
                     ?.cast<Object?, Object?>(),
             listMap:
-                (_PigeonJniCodec.readValue(jniClass.getListMap())
+                (_PigeonJniCodec.readValue(jniClass.listMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, List<Object?>?>(),
             mapMap:
-                (_PigeonJniCodec.readValue(jniClass.getMapMap())
+                (_PigeonJniCodec.readValue(jniClass.mapMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, Map<Object?, Object?>?>(),
             recursiveClassMap:
-                (_PigeonJniCodec.readValue(jniClass.getRecursiveClassMap())
+                (_PigeonJniCodec.readValue(jniClass.recursiveClassMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, NIAllNullableTypes?>(),
           );
@@ -2545,102 +2526,95 @@ class NIAllNullableTypesWithoutRecursion {
     return jniClass == null
         ? null
         : NIAllNullableTypesWithoutRecursion(
-            aNullableBool: jniClass.getANullableBool()?.booleanValue(
+            aNullableBool: jniClass.aNullableBool?.toDartBool(
               releaseOriginal: true,
             ),
-            aNullableInt: jniClass.getANullableInt()?.longValue(
+            aNullableInt: jniClass.aNullableInt?.toDartInt(
               releaseOriginal: true,
             ),
-            aNullableInt64: jniClass.getANullableInt64()?.longValue(
+            aNullableInt64: jniClass.aNullableInt64?.toDartInt(
               releaseOriginal: true,
             ),
-            aNullableDouble: jniClass.getANullableDouble()?.doubleValue(
+            aNullableDouble: jniClass.aNullableDouble?.toDartDouble(
               releaseOriginal: true,
             ),
             aNullableByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullableByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullableByteArray)
                     as Uint8List?),
             aNullable4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullable4ByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
                     as Int32List?),
             aNullable8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullable8ByteArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
                     as Int64List?),
             aNullableFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.getANullableFloatArray())
+                (_PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
                     as Float64List?),
-            aNullableEnum: NIAnEnum.fromJni(jniClass.getANullableEnum()),
+            aNullableEnum: NIAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NIAnotherEnum.fromJni(
-              jniClass.getAnotherNullableEnum(),
+              jniClass.anotherNullableEnum,
             ),
-            aNullableString: jniClass.getANullableString()?.toDartString(
+            aNullableString: jniClass.aNullableString?.toDartString(
               releaseOriginal: true,
             ),
             aNullableObject: _PigeonJniCodec.readValue(
-              jniClass.getANullableObject(),
+              jniClass.aNullableObject,
             ),
-            list:
-                (_PigeonJniCodec.readValue(jniClass.getList())
-                        as List<Object?>?)
-                    ?.cast<Object?>(),
+            list: (_PigeonJniCodec.readValue(jniClass.list) as List<Object?>?)
+                ?.cast<Object?>(),
             stringList:
-                (_PigeonJniCodec.readValue(jniClass.getStringList())
+                (_PigeonJniCodec.readValue(jniClass.stringList)
                         as List<Object?>?)
                     ?.cast<String?>(),
             intList:
-                (_PigeonJniCodec.readValue(jniClass.getIntList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.intList) as List<Object?>?)
                     ?.cast<int?>(),
             doubleList:
-                (_PigeonJniCodec.readValue(jniClass.getDoubleList())
+                (_PigeonJniCodec.readValue(jniClass.doubleList)
                         as List<Object?>?)
                     ?.cast<double?>(),
             boolList:
-                (_PigeonJniCodec.readValue(jniClass.getBoolList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.boolList) as List<Object?>?)
                     ?.cast<bool?>(),
             enumList:
-                (_PigeonJniCodec.readValue(jniClass.getEnumList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.enumList) as List<Object?>?)
                     ?.cast<NIAnEnum?>(),
             objectList:
-                (_PigeonJniCodec.readValue(jniClass.getObjectList())
+                (_PigeonJniCodec.readValue(jniClass.objectList)
                         as List<Object?>?)
                     ?.cast<Object?>(),
             listList:
-                (_PigeonJniCodec.readValue(jniClass.getListList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.listList) as List<Object?>?)
                     ?.cast<List<Object?>?>(),
             mapList:
-                (_PigeonJniCodec.readValue(jniClass.getMapList())
-                        as List<Object?>?)
+                (_PigeonJniCodec.readValue(jniClass.mapList) as List<Object?>?)
                     ?.cast<Map<Object?, Object?>?>(),
             map:
-                (_PigeonJniCodec.readValue(jniClass.getMap())
+                (_PigeonJniCodec.readValue(jniClass.map)
                         as Map<Object?, Object?>?)
                     ?.cast<Object?, Object?>(),
             stringMap:
-                (_PigeonJniCodec.readValue(jniClass.getStringMap())
+                (_PigeonJniCodec.readValue(jniClass.stringMap)
                         as Map<Object?, Object?>?)
                     ?.cast<String?, String?>(),
             intMap:
-                (_PigeonJniCodec.readValue(jniClass.getIntMap())
+                (_PigeonJniCodec.readValue(jniClass.intMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, int?>(),
             enumMap:
-                (_PigeonJniCodec.readValue(jniClass.getEnumMap())
+                (_PigeonJniCodec.readValue(jniClass.enumMap)
                         as Map<Object?, Object?>?)
                     ?.cast<NIAnEnum?, NIAnEnum?>(),
             objectMap:
-                (_PigeonJniCodec.readValue(jniClass.getObjectMap())
+                (_PigeonJniCodec.readValue(jniClass.objectMap)
                         as Map<Object?, Object?>?)
                     ?.cast<Object?, Object?>(),
             listMap:
-                (_PigeonJniCodec.readValue(jniClass.getListMap())
+                (_PigeonJniCodec.readValue(jniClass.listMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, List<Object?>?>(),
             mapMap:
-                (_PigeonJniCodec.readValue(jniClass.getMapMap())
+                (_PigeonJniCodec.readValue(jniClass.mapMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, Map<Object?, Object?>?>(),
           );
@@ -2922,27 +2896,27 @@ class NIAllClassesWrapper {
         ? null
         : NIAllClassesWrapper(
             allNullableTypes: NIAllNullableTypes.fromJni(
-              jniClass.getAllNullableTypes(),
+              jniClass.allNullableTypes,
             )!,
             allNullableTypesWithoutRecursion:
                 NIAllNullableTypesWithoutRecursion.fromJni(
-                  jniClass.getAllNullableTypesWithoutRecursion(),
+                  jniClass.allNullableTypesWithoutRecursion,
                 ),
-            allTypes: NIAllTypes.fromJni(jniClass.getAllTypes()),
+            allTypes: NIAllTypes.fromJni(jniClass.allTypes),
             classList:
-                (_PigeonJniCodec.readValue(jniClass.getClassList())!
+                (_PigeonJniCodec.readValue(jniClass.classList)!
                         as List<Object?>)
                     .cast<NIAllTypes?>(),
             nullableClassList:
-                (_PigeonJniCodec.readValue(jniClass.getNullableClassList())
+                (_PigeonJniCodec.readValue(jniClass.nullableClassList)
                         as List<Object?>?)
                     ?.cast<NIAllNullableTypesWithoutRecursion?>(),
             classMap:
-                (_PigeonJniCodec.readValue(jniClass.getClassMap())!
+                (_PigeonJniCodec.readValue(jniClass.classMap)!
                         as Map<Object?, Object?>)
                     .cast<int?, NIAllTypes?>(),
             nullableClassMap:
-                (_PigeonJniCodec.readValue(jniClass.getNullableClassMap())
+                (_PigeonJniCodec.readValue(jniClass.nullableClassMap)
                         as Map<Object?, Object?>?)
                     ?.cast<int?, NIAllNullableTypesWithoutRecursion?>(),
           );
@@ -3104,7 +3078,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     if (Platform.isAndroid) {
       final jni_bridge.NIHostIntegrationCoreApiRegistrar? link =
           jni_bridge.NIHostIntegrationCoreApiRegistrar().getInstance(
-            JString.fromString(channelName),
+            channelName.toJString(),
           );
       if (link == null) {
         _throwNoInstanceError(channelName);
@@ -4341,7 +4315,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLong? res = _jniApi.echoNullableInt(
           _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
         );
-        final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+        final int? dartTypeRes = res?.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4366,7 +4340,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDouble? res = _jniApi.echoNullableDouble(
           _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
         );
-        final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+        final double? dartTypeRes = res?.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4391,7 +4365,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JBoolean? res = _jniApi.echoNullableBool(
           _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
         );
-        final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+        final bool? dartTypeRes = res?.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5082,7 +5056,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLong? res = _jniApi.echoOptionalNullableInt(
           _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
         );
-        final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+        final int? dartTypeRes = res?.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5157,7 +5131,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JLong res = await _jniApi.echoAsyncInt(anInt);
-        final int dartTypeRes = res.longValue(releaseOriginal: true);
+        final int dartTypeRes = res.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5188,7 +5162,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JDouble res = await _jniApi.echoAsyncDouble(aDouble);
-        final double dartTypeRes = res.doubleValue(releaseOriginal: true);
+        final double dartTypeRes = res.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5219,7 +5193,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JBoolean res = await _jniApi.echoAsyncBool(aBool);
-        final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6076,7 +6050,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLong? res = await _jniApi.echoAsyncNullableInt(
           _PigeonJniCodec.writeValue<JLong?>(anInt),
         );
-        final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+        final int? dartTypeRes = res?.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6109,7 +6083,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDouble? res = await _jniApi.echoAsyncNullableDouble(
           _PigeonJniCodec.writeValue<JDouble?>(aDouble),
         );
-        final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+        final double? dartTypeRes = res?.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6142,7 +6116,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JBoolean? res = await _jniApi.echoAsyncNullableBool(
           _PigeonJniCodec.writeValue<JBoolean?>(aBool),
         );
-        final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+        final bool? dartTypeRes = res?.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7740,7 +7714,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JBoolean? res = _jniApi.callFlutterEchoNullableBool(
           _PigeonJniCodec.writeValue<JBoolean?>(aBool),
         );
-        final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+        final bool? dartTypeRes = res?.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7765,7 +7739,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLong? res = _jniApi.callFlutterEchoNullableInt(
           _PigeonJniCodec.writeValue<JLong?>(anInt),
         );
-        final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+        final int? dartTypeRes = res?.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7790,7 +7764,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDouble? res = _jniApi.callFlutterEchoNullableDouble(
           _PigeonJniCodec.writeValue<JDouble?>(aDouble),
         );
-        final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+        final double? dartTypeRes = res?.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8620,7 +8594,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JBoolean res = await _jniApi.callFlutterEchoAsyncBool(aBool);
-        final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8651,7 +8625,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JLong res = await _jniApi.callFlutterEchoAsyncInt(anInt);
-        final int dartTypeRes = res.longValue(releaseOriginal: true);
+        final int dartTypeRes = res.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8682,7 +8656,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JDouble res = await _jniApi.callFlutterEchoAsyncDouble(aDouble);
-        final double dartTypeRes = res.doubleValue(releaseOriginal: true);
+        final double dartTypeRes = res.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9425,7 +9399,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JBoolean? res = await _jniApi.callFlutterEchoAsyncNullableBool(
           _PigeonJniCodec.writeValue<JBoolean?>(aBool),
         );
-        final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+        final bool? dartTypeRes = res?.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9458,7 +9432,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLong? res = await _jniApi.callFlutterEchoAsyncNullableInt(
           _PigeonJniCodec.writeValue<JLong?>(anInt),
         );
-        final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+        final int? dartTypeRes = res?.toDartInt(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9491,7 +9465,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDouble? res = await _jniApi.callFlutterEchoAsyncNullableDouble(
           _PigeonJniCodec.writeValue<JDouble?>(aDouble),
         );
-        final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+        final double? dartTypeRes = res?.toDartDouble(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -10305,7 +10279,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final JBoolean res = await _jniApi.callFlutterNoopOnBackgroundThread();
-        final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -16322,7 +16296,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
           jni_bridge.NIFlutterIntegrationCoreApi.implement(this);
       jni_bridge.NIFlutterIntegrationCoreApiRegistrar().registerInstance(
         impl,
-        JString.fromString(name),
+        name.toJString(),
       );
     }
     if (Platform.isIOS || Platform.isMacOS) {
@@ -20183,8 +20157,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
   ) {
     if (dartApi != null) {
       final NIAllNullableTypes response = dartApi!.sendMultipleNullableTypes(
-        aNullableBool?.booleanValue(releaseOriginal: true),
-        aNullableInt?.longValue(releaseOriginal: true),
+        aNullableBool?.toDartBool(releaseOriginal: true),
+        aNullableInt?.toDartInt(releaseOriginal: true),
         aNullableString?.toDartString(releaseOriginal: true),
       );
       return response.toJni();
@@ -20219,8 +20193,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
     if (dartApi != null) {
       final NIAllNullableTypesWithoutRecursion response = dartApi!
           .sendMultipleNullableTypesWithoutRecursion(
-            aNullableBool?.booleanValue(releaseOriginal: true),
-            aNullableInt?.longValue(releaseOriginal: true),
+            aNullableBool?.toDartBool(releaseOriginal: true),
+            aNullableInt?.toDartInt(releaseOriginal: true),
             aNullableString?.toDartString(releaseOriginal: true),
           );
       return response.toJni();
@@ -20559,7 +20533,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JBoolean? echoNullableBool(JBoolean? aBool) {
     if (dartApi != null) {
       final bool? response = dartApi!.echoNullableBool(
-        aBool?.booleanValue(releaseOriginal: true),
+        aBool?.toDartBool(releaseOriginal: true),
       );
       return _PigeonJniCodec.writeValue<JBoolean?>(response);
     } else {
@@ -20571,7 +20545,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JLong? echoNullableInt(JLong? anInt) {
     if (dartApi != null) {
       final int? response = dartApi!.echoNullableInt(
-        anInt?.longValue(releaseOriginal: true),
+        anInt?.toDartInt(releaseOriginal: true),
       );
       return _PigeonJniCodec.writeValue<JLong?>(response);
     } else {
@@ -20583,7 +20557,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JDouble? echoNullableDouble(JDouble? aDouble) {
     if (dartApi != null) {
       final double? response = dartApi!.echoNullableDouble(
-        aDouble?.doubleValue(releaseOriginal: true),
+        aDouble?.toDartDouble(releaseOriginal: true),
       );
       return _PigeonJniCodec.writeValue<JDouble?>(response);
     } else {
@@ -21300,7 +21274,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JBoolean?> echoAsyncNullableBool(JBoolean? aBool) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncNullableBool(aBool?.booleanValue(releaseOriginal: true))
+          .echoAsyncNullableBool(aBool?.toDartBool(releaseOriginal: true))
           .then((response) {
             return _PigeonJniCodec.writeValue<JBoolean?>(response);
           });
@@ -21313,7 +21287,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JLong?> echoAsyncNullableInt(JLong? anInt) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncNullableInt(anInt?.longValue(releaseOriginal: true))
+          .echoAsyncNullableInt(anInt?.toDartInt(releaseOriginal: true))
           .then((response) {
             return _PigeonJniCodec.writeValue<JLong?>(response);
           });
@@ -21326,7 +21300,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JDouble?> echoAsyncNullableDouble(JDouble? aDouble) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncNullableDouble(aDouble?.doubleValue(releaseOriginal: true))
+          .echoAsyncNullableDouble(aDouble?.toDartDouble(releaseOriginal: true))
           .then((response) {
             return _PigeonJniCodec.writeValue<JDouble?>(response);
           });

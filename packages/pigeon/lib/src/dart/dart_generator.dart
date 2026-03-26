@@ -497,20 +497,16 @@ class _JniType extends _NativeInteropType<_JniType> {
     return jniName;
   }
 
-  String getJniGetterMethodName(String field) {
-    return 'get${toUpperCamelCase(field)}()';
-  }
-
   String get primitiveToDartMethodName {
     switch (type.baseName) {
       case 'String':
         return 'toDartString';
       case 'int':
-        return 'longValue';
+        return 'toDartInt';
       case 'double':
-        return 'doubleValue';
+        return 'toDartDouble';
       case 'bool':
-        return 'booleanValue';
+        return 'toDartBool';
       default:
         return '';
     }
@@ -854,7 +850,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           '}',
           () {
             indent.writeln(
-              'return jniEnum == null ? null : ${anEnum.name}.values[jniEnum.getRaw()];',
+              'return jniEnum == null ? null : ${anEnum.name}.values[jniEnum.raw];',
             );
           },
         );
@@ -1061,7 +1057,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             )) {
               final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
               indent.writeln(
-                '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${jniType.getJniGetterMethodName(field.name)}')},',
+                '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${field.name}')},',
               );
             }
           },
@@ -1340,7 +1336,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               'jni_bridge.${api.name}Registrar().registerInstance(',
             );
             indent.writeln('  impl,');
-            indent.writeln('  JString.fromString(name),');
+            indent.writeln('  name.toJString(),');
             indent.writeln(');');
           });
         }
@@ -1717,7 +1713,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   late $dartApiName res;
     if (Platform.isAndroid) {
       final $jniApiRegistrarName? link =
-          $jniApiRegistrarName().getInstance(JString.fromString(channelName));
+          $jniApiRegistrarName().getInstance(channelName.toJString());
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
@@ -1924,11 +1920,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     if (e.isA<jni_bridge.${generatorOptions.jniErrorClassName}>(jni_bridge.${generatorOptions.jniErrorClassName}.type)) {
       final jni_bridge.${generatorOptions.jniErrorClassName} pigeonError = e.as(jni_bridge.${generatorOptions.jniErrorClassName}.type);
       return PlatformException(
-        code: pigeonError.getCode().toDartString(),
-        message: pigeonError.getMessage()?.toDartString(),
-        details: pigeonError.getDetails()?.isA<JString>(JString.type) ?? false
-            ? pigeonError.getDetails()!.as(JString.type).toDartString()
-            : pigeonError.getDetails(),
+        code: pigeonError.code.toDartString(),
+        message: pigeonError.message?.toDartString(),
+        details: pigeonError.details?.isA<JString>(JString.type) ?? false
+            ? pigeonError.details!.as(JString.type).toDartString()
+            : pigeonError.details,
         stacktrace: e.javaStackTrace,
       );
     }
@@ -2689,7 +2685,7 @@ class _PigeonJniCodec {
     } else if (value is int) {
       return JLong(value) as T;
     } else if (value is String) {
-      return JString.fromString(value) as T;
+      return value.toJString() as T;
     } else if (value is Uint8List) {
       final JByteArray array = JByteArray(value.length);
       array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));

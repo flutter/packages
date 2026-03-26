@@ -26,19 +26,19 @@ dependency_overrides:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffi
-      ref: a3066bf4a77c6d7f7a2407bed637d82948608d6b
+      ref: a1b844b93b95882fc9d47a19371a63a163132dd6
   ffigen:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffigen
-      ref: a3066bf4a77c6d7f7a2407bed637d82948608d6b
+      ref: a1b844b93b95882fc9d47a19371a63a163132dd6
   objective_c:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/objective_c
-      ref: a3066bf4a77c6d7f7a2407bed637d82948608d6b
+      ref: a1b844b93b95882fc9d47a19371a63a163132dd6
   swift2objc:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swift2objc
-      ref: a3066bf4a77c6d7f7a2407bed637d82948608d6b
+      ref: a1b844b93b95882fc9d47a19371a63a163132dd6
