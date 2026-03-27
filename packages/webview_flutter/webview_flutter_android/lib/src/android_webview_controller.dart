@@ -160,6 +160,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
+
     _webView.setWebChromeClient(_webChromeClient);
   }
 
