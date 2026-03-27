@@ -5,7 +5,7 @@ on:
       - 'release-go_router'
 jobs:
   release:
-    uses: ./.github/workflows/resuable_release.yml
+    uses: ./.github/workflows/reusable_release.yml
     with:
       is-batch-release: true
       branch-name: '${{ github.ref_name }}'

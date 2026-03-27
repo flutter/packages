@@ -45,7 +45,9 @@ jobs:
     if: needs.create_batch_release_branch.outputs.branch_created == 'true'
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write # Grants write permission to create a PR.
+      # The create-pull-request action needs both content and pull-requests permissions.
+      pull-requests: write
+      contents: write
     env:
       BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
@@ -54,13 +56,13 @@ jobs:
         with:
           ref: ${{ env.BRANCH_NAME }}
       - name: Create batch release PR
-        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "[${{ github.event.client_payload.package }}] Batch release"
-          title: "[${{ github.event.client_payload.package }}] Batch release"
-          body: "This PR was created automatically to batch release the `${{ github.event.client_payload.package }}`."
-          branch: ${{ env.BRANCH_NAME }}
-          base: release-${{ github.event.client_payload.package }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base "release-${{ github.event.client_payload.package }}" \
+            --head "${{ env.BRANCH_NAME }}" \
+            --title "[${{ github.event.client_payload.package }}] Batch release" \
+            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`."
 
 
