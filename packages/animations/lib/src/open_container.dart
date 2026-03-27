@@ -82,7 +82,7 @@ typedef ClosedCallback<S> = void Function(S data);
 ///       appBar: AppBar(title: const Text('Details Page')),
 ///       body: const Center(
 ///         child: Text(
-///           'This page opened with Container Transform animation,
+///           'This page opened with Container Transform animation',
 ///           style: TextStyle(fontSize: 18),
 ///           textAlign: TextAlign.center,
 ///         ),
