@@ -1,3 +1,7 @@
+## 4.2.1
+
+* Updates analyzer constraint to '<12.0.0'.
+
 ## 4.2.0
 
 - Adds supports for `TypedQueryParameter` annotation.
