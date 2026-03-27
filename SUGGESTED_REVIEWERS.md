@@ -56,7 +56,7 @@ reviewed by someone else.
 `google_adsense`:
   - @sokoloff06, @ditman
 
-`google_identity_services_**Web**`:
+`google_identity_services_web`:
   - @mdebbar
 
 `google_fonts`:
