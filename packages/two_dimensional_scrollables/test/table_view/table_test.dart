@@ -4177,10 +4177,15 @@ void main() {
   );
 
   testWidgets(
-    'Table does not crash when focusing outside of the table while focused text field is not in the view - https://github.com/flutter/flutter/issues/137112',
+    'Table does not crash when focusing outside of the table while focused text field is not in the view',
     (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/137112
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
 
       await tester.pumpWidget(
         MaterialApp(
