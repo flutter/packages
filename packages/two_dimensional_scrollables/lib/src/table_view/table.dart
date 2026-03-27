@@ -116,6 +116,7 @@ class TableView extends TwoDimensionalScrollView {
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.clipBehavior,
+    this.alignment = Alignment.topLeft,
   });
 
   /// Creates a [TableView] of widgets that are created on demand.
@@ -155,6 +156,7 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     required TableViewCellBuilder cellBuilder,
+    this.alignment = Alignment.topLeft,
   }) : assert(pinnedRowCount >= 0),
        assert(rowCount == null || rowCount >= 0),
        assert(rowCount == null || rowCount >= pinnedRowCount),
@@ -199,6 +201,7 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     List<List<TableViewCell>> cells = const <List<TableViewCell>>[],
+    this.alignment = Alignment.topLeft,
   }) : assert(pinnedRowCount >= 0),
        assert(pinnedColumnCount >= 0),
        super(
@@ -210,6 +213,11 @@ class TableView extends TwoDimensionalScrollView {
            rowBuilder: rowBuilder,
          ),
        );
+
+  /// The alignment of the table within the viewport when there is extra space.
+  ///
+  /// Defaults to [Alignment.topLeft].
+  final AlignmentGeometry alignment;
 
   @override
   TableViewport buildViewport(
@@ -226,6 +234,7 @@ class TableView extends TwoDimensionalScrollView {
       mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
+      alignment: alignment,
     );
   }
 }
@@ -245,7 +254,11 @@ class TableViewport extends TwoDimensionalViewport {
     required super.mainAxis,
     super.cacheExtent,
     super.clipBehavior,
+    this.alignment = Alignment.topLeft,
   });
+
+  /// The alignment of the table within the viewport when there is extra space.
+  final AlignmentGeometry alignment;
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
@@ -259,6 +272,8 @@ class TableViewport extends TwoDimensionalViewport {
       clipBehavior: clipBehavior,
       delegate: delegate as TableCellDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
+      alignment: alignment,
+      textDirection: Directionality.maybeOf(context),
     );
   }
 
@@ -275,7 +290,9 @@ class TableViewport extends TwoDimensionalViewport {
       ..mainAxis = mainAxis
       ..cacheExtent = cacheExtent
       ..clipBehavior = clipBehavior
-      ..delegate = delegate as TableCellDelegateMixin;
+      ..delegate = delegate as TableCellDelegateMixin
+      ..alignment = alignment
+      ..textDirection = Directionality.maybeOf(context);
   }
 }
 
@@ -299,7 +316,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
-  });
+    AlignmentGeometry alignment = Alignment.topLeft,
+    TextDirection? textDirection,
+  }) : _alignment = alignment,
+       _textDirection = textDirection;
 
   @override
   TableCellDelegateMixin get delegate =>
@@ -308,6 +328,31 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   set delegate(TableCellDelegateMixin value) {
     super.delegate = value;
   }
+
+  /// The alignment of the table within the viewport when there is extra space.
+  AlignmentGeometry get alignment => _alignment;
+  AlignmentGeometry _alignment;
+  set alignment(AlignmentGeometry value) {
+    if (_alignment == value) {
+      return;
+    }
+    _alignment = value;
+    markNeedsLayout();
+  }
+
+  /// The text direction with which to resolve [alignment].
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
+    if (_textDirection == value) {
+      return;
+    }
+    _textDirection = value;
+    markNeedsLayout();
+  }
+
+  double _hAlignmentOffset = 0.0;
+  double _vAlignmentOffset = 0.0;
 
   // Skipped vicinities for the current frame based on merged cells.
   // This prevents multiple build calls for the same cell that spans multiple
@@ -384,13 +429,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     );
   }
 
-  // TODO(Piinks): Pinned rows/cols do not account for what is visible on the
-  //  screen. Ostensibly, we would not want to have pinned rows/columns that
-  //  extend beyond the viewport, we would never see them as they would never
-  //  scroll into view. So this currently implementation is fairly assuming
-  //  we will never have rows/cols that are outside of the viewport. We should
-  //  maybe add an assertion for this during layout.
-  // https://github.com/flutter/flutter/issues/136833
   int? get _lastPinnedRow =>
       delegate.pinnedRowCount > 0 ? delegate.pinnedRowCount - 1 : null;
   int? get _lastPinnedColumn =>
@@ -402,6 +440,49 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   double get _pinnedColumnsExtent => _lastPinnedColumn != null
       ? _columnMetrics[_lastPinnedColumn]!.trailingOffset
       : 0.0;
+
+  void _debugCheckPinnedExtent() {
+    assert(() {
+      if (_pinnedColumnsExtent > viewportDimension.width) {
+        debugPrint(
+          'TableView has pinned columns with a total width of '
+          '$_pinnedColumnsExtent, which exceeds the viewport width of '
+          '${viewportDimension.width}. This will prevent unpinned columns '
+          'from being visible.',
+        );
+      } else if (_pinnedColumnsExtent == viewportDimension.width) {
+        final bool hasUnpinnedColumns =
+            delegate.columnCount == null ||
+            delegate.columnCount! > delegate.pinnedColumnCount;
+        if (hasUnpinnedColumns) {
+          debugPrint(
+            'TableView has pinned columns that fully consume the viewport width. '
+            'Unpinned columns will not be visible.',
+          );
+        }
+      }
+
+      if (_pinnedRowsExtent > viewportDimension.height) {
+        debugPrint(
+          'TableView has pinned rows with a total height of '
+          '$_pinnedRowsExtent, which exceeds the viewport height of '
+          '${viewportDimension.height}. This will prevent unpinned rows '
+          'from being visible.',
+        );
+      } else if (_pinnedRowsExtent == viewportDimension.height) {
+        final bool hasUnpinnedRows =
+            delegate.rowCount == null ||
+            delegate.rowCount! > delegate.pinnedRowCount;
+        if (hasUnpinnedRows) {
+          debugPrint(
+            'TableView has pinned rows that fully consume the viewport height. '
+            'Unpinned rows will not be visible.',
+          );
+        }
+      }
+      return true;
+    }());
+  }
 
   @override
   TableViewParentData parentDataOf(RenderBox child) =>
@@ -847,9 +928,37 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _updateColumnMetrics();
       _updateRowMetrics();
       _updateScrollBounds();
+      _debugCheckPinnedExtent();
     } else {
       // Updates the visible cells based on cached table metrics.
       _updateFirstAndLastVisibleCell();
+    }
+
+    final Alignment resolvedAlignment = alignment.resolve(textDirection);
+    _hAlignmentOffset = 0.0;
+    if (!_columnsAreInfinite && _columnMetrics.isNotEmpty) {
+      final double totalWidth =
+          _pinnedColumnsExtent +
+          _columnMetrics[delegate.columnCount! - 1]!.trailingOffset;
+      if (totalWidth < viewportDimension.width) {
+        _hAlignmentOffset =
+            (viewportDimension.width - totalWidth) *
+            (resolvedAlignment.x + 1.0) /
+            2.0;
+      }
+    }
+
+    _vAlignmentOffset = 0.0;
+    if (!_rowsAreInfinite && _rowMetrics.isNotEmpty) {
+      final double totalHeight =
+          _pinnedRowsExtent +
+          _rowMetrics[delegate.rowCount! - 1]!.trailingOffset;
+      if (totalHeight < viewportDimension.height) {
+        _vAlignmentOffset =
+            (viewportDimension.height - totalHeight) *
+            (resolvedAlignment.y + 1.0) /
+            2.0;
+      }
     }
 
     if (_firstNonPinnedCell == null &&
@@ -862,19 +971,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final double? offsetIntoColumn = _firstNonPinnedColumn != null
         ? horizontalOffset.pixels -
               _columnMetrics[_firstNonPinnedColumn]!.leadingOffset -
-              _pinnedColumnsExtent
+              _pinnedColumnsExtent -
+              _hAlignmentOffset
         : null;
     final double? offsetIntoRow = _firstNonPinnedRow != null
         ? verticalOffset.pixels -
               _rowMetrics[_firstNonPinnedRow]!.leadingOffset -
-              _pinnedRowsExtent
+              _pinnedRowsExtent -
+              _vAlignmentOffset
         : null;
     if (_lastPinnedRow != null && _lastPinnedColumn != null) {
       // Layout cells that are contained in both pinned rows and columns
       _layoutCells(
         start: TableVicinity.zero,
         end: TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
-        offset: Offset.zero,
+        offset: Offset(-_hAlignmentOffset, -_vAlignmentOffset),
       );
     }
 
@@ -886,7 +997,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _layoutCells(
         start: TableVicinity(column: _firstNonPinnedColumn!, row: 0),
         end: TableVicinity(column: _lastNonPinnedColumn!, row: _lastPinnedRow!),
-        offset: Offset(offsetIntoColumn!, 0),
+        offset: Offset(offsetIntoColumn!, -_vAlignmentOffset),
       );
     }
     if (_lastPinnedColumn != null && _firstNonPinnedRow != null) {
@@ -897,7 +1008,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _layoutCells(
         start: TableVicinity(column: 0, row: _firstNonPinnedRow!),
         end: TableVicinity(column: _lastPinnedColumn!, row: _lastNonPinnedRow!),
-        offset: Offset(0, offsetIntoRow!),
+        offset: Offset(-_hAlignmentOffset, offsetIntoRow!),
       );
     }
     if (_firstNonPinnedCell != null) {
@@ -1176,6 +1287,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // follows row or column major ordering. Here is slightly different
     // as we break the cells up into 4 main paint passes to clip for overlap.
 
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+
     if (_firstNonPinnedCell != null) {
       // Paint all visible un-pinned cells
       assert(_lastNonPinnedCell != null);
@@ -1183,12 +1297,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? 0.0
-              : _pinnedColumnsExtent,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? 0.0
-              : _pinnedRowsExtent,
+          (reversedH ? 0.0 : _pinnedColumnsExtent) +
+              (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
+          (reversedV ? 0.0 : _pinnedRowsExtent) +
+              (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           viewportDimension.width - _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -1214,12 +1326,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? viewportDimension.width - _pinnedColumnsExtent
-              : 0.0,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? 0.0
-              : _pinnedRowsExtent,
+          reversedH
+              ? viewportDimension.width -
+                    _pinnedColumnsExtent -
+                    _hAlignmentOffset
+              : _hAlignmentOffset,
+          (reversedV ? 0.0 : _pinnedRowsExtent) +
+              (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -1248,12 +1361,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          axisDirectionIsReversed(horizontalAxisDirection)
-              ? 0.0
-              : _pinnedColumnsExtent,
-          axisDirectionIsReversed(verticalAxisDirection)
-              ? viewportDimension.height - _pinnedRowsExtent
-              : 0.0,
+          (reversedH ? 0.0 : _pinnedColumnsExtent) +
+              (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
+          reversedV
+              ? viewportDimension.height - _pinnedRowsExtent - _vAlignmentOffset
+              : _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _pinnedRowsExtent,
         ),

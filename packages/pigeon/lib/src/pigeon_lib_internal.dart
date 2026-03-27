@@ -1922,10 +1922,14 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         // resolved return type, via
         // `node.declaredFragment!.element.returnType`.
         String erroneousDeclaration = node.name.lexeme;
-        final dart_ast.AstNode? enclosingDeclaration = node.parent;
+        dart_ast.AstNode? enclosingDeclaration = node.parent;
+        while (enclosingDeclaration != null &&
+            enclosingDeclaration is! dart_ast.ClassDeclaration) {
+          enclosingDeclaration = enclosingDeclaration.parent;
+        }
         if (enclosingDeclaration is dart_ast.ClassDeclaration) {
           erroneousDeclaration =
-              '${enclosingDeclaration.name}.$erroneousDeclaration';
+              '${enclosingDeclaration.name.lexeme}.$erroneousDeclaration';
         }
         _errors.add(
           Error(

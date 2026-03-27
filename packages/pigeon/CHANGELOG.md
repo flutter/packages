@@ -1,3 +1,7 @@
+## 26.3.2
+
+* Updates `analyzer` dependency to support version 10.
+
 ## 26.3.1
 
 * Fixes dartdoc comments that accidentally used HTML.
