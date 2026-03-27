@@ -1133,7 +1133,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
                 ),
