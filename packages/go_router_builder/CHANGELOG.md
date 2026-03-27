@@ -1,6 +1,6 @@
 ## 4.2.1
 
-* Adds support for analyzer 11.
+* Adds support for analyzer 11 and 12.
 
 ## 4.2.0
 
