@@ -472,9 +472,7 @@ $entry
 
   test('fails for missing auto-labeler entry', () async {
     const packageName = 'a_package';
-    final packages = <RepositoryPackage>[
-      createFakePackage('a_package', packagesDir),
-    ];
+    createFakePackage('a_package', packagesDir);
 
     root.childFile('README.md').writeAsStringSync('''
 ${readmeTableHeader()}
