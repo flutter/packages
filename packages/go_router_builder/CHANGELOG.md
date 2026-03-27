@@ -1,6 +1,6 @@
 ## 4.2.1
 
-* Updates analyzer constraint to '<12.0.0'.
+* Adds support for analyzer 11.
 
 ## 4.2.0
 
