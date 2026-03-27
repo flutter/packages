@@ -368,14 +368,6 @@ void main() {
       verify(mockWebSettings.setLoadWithOverviewMode(true)).called(1);
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
       verify(mockWebSettings.setUseWideViewPort(false)).called(1);
-      verify(
-        mockWebView.setInsetListenerToSetInsetsToZero(
-          <android_webview.WindowInsetsType>[
-            android_webview.WindowInsetsType.systemBars,
-            android_webview.WindowInsetsType.displayCutout,
-          ],
-        ),
-      ).called(1);
     });
 
     group('loadFile', () {
@@ -2072,6 +2064,29 @@ void main() {
 
     expect(mockSettings, capturedSettings);
     expect(expectedEnabled, capturedEnabled);
+  });
+
+  test('setInsetsForWebContentToIgnore', () async {
+    final mockWebView = MockWebView();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+    );
+
+    await controller.setInsetsForWebContentToIgnore(<AndroidWebViewInsets>[
+      AndroidWebViewInsets.systemBars,
+      AndroidWebViewInsets.displayCutout,
+    ]);
+
+    verify(
+      mockWebView.setInsetListenerToSetInsetsToZero(
+        argThat(
+          containsAll(<android_webview.WindowInsetsType>[
+            android_webview.WindowInsetsType.systemBars,
+            android_webview.WindowInsetsType.displayCutout,
+          ]),
+        ),
+      ),
+    ).called(1);
   });
 
   group('AndroidWebViewWidget', () {

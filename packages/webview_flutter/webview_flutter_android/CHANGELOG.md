@@ -1,7 +1,7 @@
-## 4.10.16
+## 4.11.0
 
-* Adds opt out of `displayCutout` and `systemBars` Android inset changes. See
-  https://chromium.googlesource.com/chromium/src/+/HEAD/android_webview/docs/insets.md#opt_out
+* Adds support to opt out of Android inset changes. See
+  `AndroidWebViewController.setInsetsForWebContentToIgnore`.
 
 ## 4.10.15
 
