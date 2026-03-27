@@ -1,3 +1,7 @@
+## 4.3.0
+
+- Adds `hasOverriddenOnExit` parameter to `GoRouteData.$route` and `RelativeGoRouteData.$route` helper methods for type-safe routes. When set to `true`, enables custom `onExit` callback invocation from route data classes extending `GoRouteData` or `RelativeGoRouteData` when the route is removed from the navigation stack.
+
 ## 4.2.0
 
 - Adds supports for `TypedQueryParameter` annotation.
