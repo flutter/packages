@@ -33,10 +33,8 @@ class _DatePickerSampleState extends State<DatePickerSample> {
   DateSeparator _separator = DateSeparator.dot;
 
   Future<void> _showPicker() async {
-    final DateInputDelegate dateInputDelegate = CustomDateInputDelegate(
-      formatType: _formatType,
-      separator: _separator,
-    );
+    final CustomDateInputDelegate customDateInputDelegate =
+        CustomDateInputDelegate(formatType: _formatType, separator: _separator);
 
     final DateTime? result = await showDatePicker(
       context: context,
@@ -44,7 +42,8 @@ class _DatePickerSampleState extends State<DatePickerSample> {
       firstDate: DateTime(2021),
       lastDate: DateTime(2999, 7, 25),
       initialEntryMode: DatePickerEntryMode.input,
-      dateInputDelegate: dateInputDelegate,
+      calendarDelegate: customDateInputDelegate,
+      inputFormatters: customDateInputDelegate.inputFormatters,
     );
 
     if (result != null) {
@@ -257,7 +256,7 @@ class DateInputFormatter extends TextInputFormatter {
   }
 }
 
-final class CustomDateInputDelegate extends DateInputDelegate {
+final class CustomDateInputDelegate extends GregorianCalendarDelegate {
   const CustomDateInputDelegate({
     required this.formatType,
     required this.separator,
@@ -269,20 +268,24 @@ final class CustomDateInputDelegate extends DateInputDelegate {
   DateInputFormatter get _formatter =>
       DateInputFormatter(formatType: formatType, separator: separator.value);
 
-  @override
   List<TextInputFormatter> get inputFormatters => <TextInputFormatter>[
     FilteringTextInputFormatter.digitsOnly,
     _formatter,
   ];
 
   @override
-  String helpText(MaterialLocalizations localizations) => _formatter.pattern;
+  String dateHelpText(MaterialLocalizations localizations) =>
+      _formatter.pattern;
 
   @override
-  String format(DateTime date, MaterialLocalizations localizations) =>
-      _formatter.format(date);
+  String formatCompactDate(
+    DateTime date,
+    MaterialLocalizations localizations,
+  ) => _formatter.format(date);
 
   @override
-  DateTime? parse(String? input, MaterialLocalizations localizations) =>
-      _formatter.parse(input);
+  DateTime? parseCompactDate(
+    String? inputString,
+    MaterialLocalizations localizations,
+  ) => _formatter.parse(inputString);
 }

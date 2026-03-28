@@ -124,7 +124,7 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro material_ui.calendar_date_picker.calendarDelegate}
 ///
-/// Use [DateInputDelegate] to customize how dates are entered and
+/// Use [inputFormatters] to customize how dates are entered and
 /// formatted in [DatePickerEntryMode.input].
 ///
 /// A custom delegate can define specific date input conventions, such as
@@ -134,7 +134,7 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@tool dartpad}
 /// This sample shows how to customize the text input behavior of
-/// [showDatePicker] using a [DateInputDelegate].
+/// [showDatePicker] using a [inputFormatters].
 ///
 /// ** See code in examples/api/lib/material/date_picker/show_date_picker.2.dart **
 /// {@end-tool}
@@ -250,8 +250,7 @@ Future<DateTime?> showDatePicker({
   Icon? switchToInputEntryModeIcon,
   Icon? switchToCalendarEntryModeIcon,
   CalendarDelegate<DateTime> calendarDelegate = const GregorianCalendarDelegate(),
-  DateInputDelegate? dateInputDelegate,
-
+  List<TextInputFormatter>? inputFormatters,
 }) async {
   initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate);
   firstDate = calendarDelegate.dateOnly(firstDate);
@@ -294,7 +293,7 @@ Future<DateTime?> showDatePicker({
     switchToInputEntryModeIcon: switchToInputEntryModeIcon,
     switchToCalendarEntryModeIcon: switchToCalendarEntryModeIcon,
     calendarDelegate: calendarDelegate,
-    dateInputDelegate: dateInputDelegate,
+    inputFormatters: inputFormatters,
   );
 
   if (textDirection != null) {
@@ -362,7 +361,7 @@ class DatePickerDialog extends StatefulWidget {
     this.switchToCalendarEntryModeIcon,
     this.insetPadding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
     this.calendarDelegate = const GregorianCalendarDelegate(),
-    this.dateInputDelegate,
+    this.inputFormatters,
   }) : initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate),
        firstDate = calendarDelegate.dateOnly(firstDate),
        lastDate = calendarDelegate.dateOnly(lastDate),
@@ -491,9 +490,8 @@ class DatePickerDialog extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
-  /// A delegate that manages the formatting, parsing, and input validation
-  /// for date text fields.
-  final DateInputDelegate? dateInputDelegate;
+  /// {@macro flutter.material.input_date_picker_form_field.inputFormatters}
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<DatePickerDialog> createState() => _DatePickerDialogState();
@@ -709,7 +707,7 @@ class _DatePickerDialogState extends State<DatePickerDialog> with RestorationMix
                         fieldLabelText: widget.fieldLabelText,
                         keyboardType: widget.keyboardType,
                         autofocus: true,
-                        dateInputDelegate: widget.dateInputDelegate,
+                        inputFormatters: widget.inputFormatters,
                       ),
                     ),
                   ),
@@ -1236,7 +1234,7 @@ Future<DateTimeRange?> showDateRangePicker({
   Icon? switchToCalendarEntryModeIcon,
   SelectableDayForRangePredicate? selectableDayPredicate,
   CalendarDelegate<DateTime> calendarDelegate = const GregorianCalendarDelegate(),
-  DateInputDelegate? dateInputDelegate,
+  final List<TextInputFormatter>? inputFormatters,
 }) async {
   initialDateRange = initialDateRange == null ? null : calendarDelegate.datesOnly(initialDateRange);
   firstDate = calendarDelegate.dateOnly(firstDate);
@@ -1302,7 +1300,7 @@ Future<DateTimeRange?> showDateRangePicker({
     switchToInputEntryModeIcon: switchToInputEntryModeIcon,
     switchToCalendarEntryModeIcon: switchToCalendarEntryModeIcon,
     calendarDelegate: calendarDelegate,
-    dateInputDelegate: dateInputDelegate,
+    inputFormatters: inputFormatters,
   );
 
   if (textDirection != null) {
@@ -1402,9 +1400,8 @@ class DateRangePickerDialog extends StatefulWidget {
     this.switchToCalendarEntryModeIcon,
     this.selectableDayPredicate,
     this.calendarDelegate = const GregorianCalendarDelegate(),
-    this.dateInputDelegate,
+    this.inputFormatters,
   });
-
 
   /// The date range that the date range picker starts with when it opens.
   ///
@@ -1542,9 +1539,8 @@ class DateRangePickerDialog extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
-  /// A delegate that manages the formatting, parsing, and input validation
-  /// for date text fields.
-  final DateInputDelegate? dateInputDelegate;
+  /// {@macro flutter.material.input_date_picker_form_field.inputFormatters}
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<DateRangePickerDialog> createState() => _DateRangePickerDialogState();
@@ -1756,7 +1752,7 @@ class _DateRangePickerDialogState extends State<DateRangePickerDialog> with Rest
                     fieldStartLabelText: widget.fieldStartLabelText,
                     fieldEndLabelText: widget.fieldEndLabelText,
                     keyboardType: widget.keyboardType,
-                    dateInputDelegate: widget.dateInputDelegate,
+                    inputFormatters: widget.inputFormatters,
                   ),
                   const Spacer(),
                 ],
@@ -3294,7 +3290,7 @@ class _InputDateRangePicker extends StatefulWidget {
     this.autofocus = false,
     this.autovalidate = false,
     this.keyboardType = TextInputType.datetime,
-    this.dateInputDelegate,
+    this.inputFormatters,
   }) : initialStartDate = initialStartDate == null
            ? null
            : calendarDelegate.dateOnly(initialStartDate),
@@ -3364,9 +3360,8 @@ class _InputDateRangePicker extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
-  /// A delegate that manages the formatting, parsing, and input validation
-  /// for date text fields.
-  final DateInputDelegate? dateInputDelegate;
+  /// {@macro flutter.material.input_date_picker_form_field.inputFormatters}
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   _InputDateRangePickerState createState() => _InputDateRangePickerState();
@@ -3405,20 +3400,15 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
     if (_startDate != null) {
-      _startInputText = dateInputDelegate != null
-          ? dateInputDelegate.format(_startDate!, localizations)
-          : widget.calendarDelegate.formatCompactDate(_startDate!, localizations);
+      _startInputText = widget.calendarDelegate.formatCompactDate(_startDate!, localizations);
       final bool selectText = widget.autofocus && !_autoSelected;
       _updateController(_startController, _startInputText, selectText);
       _autoSelected = selectText;
     }
 
     if (_endDate != null) {
-      _endInputText = dateInputDelegate != null
-          ? dateInputDelegate.format(_endDate!, localizations)
-          : widget.calendarDelegate.formatCompactDate(_endDate!, localizations);
+      _endInputText = widget.calendarDelegate.formatCompactDate(_endDate!, localizations);
       _updateController(_endController, _endInputText, false);
     }
   }
@@ -3447,11 +3437,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
 
-    if (dateInputDelegate != null) {
-      return dateInputDelegate.parse(text, localizations);
-    }
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -3512,16 +3498,9 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
     final bool useMaterial3 = theme.useMaterial3;
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
     final InputDecorationThemeData inputTheme = InputDecorationTheme.of(context);
-    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
     final InputBorder inputBorder =
         inputTheme.border ??
         (useMaterial3 ? const OutlineInputBorder() : const UnderlineInputBorder());
-
-    final List<TextInputFormatter> effectiveFormatters =
-        dateInputDelegate?.inputFormatters ?? <TextInputFormatter>[];
-    final String effectiveHelpText =
-        dateInputDelegate?.helpText(localizations) ??
-        widget.calendarDelegate.dateHelpText(localizations);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3532,14 +3511,15 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             decoration: InputDecoration(
               border: inputBorder,
               filled: inputTheme.filled,
-              hintText: widget.fieldStartHintText ?? effectiveHelpText,
+              hintText:
+                  widget.fieldStartHintText ?? widget.calendarDelegate.dateHelpText(localizations),
               labelText: widget.fieldStartLabelText ?? localizations.dateRangeStartLabel,
               errorText: _startErrorText,
             ),
             keyboardType: widget.keyboardType,
             onChanged: _handleStartChanged,
             autofocus: widget.autofocus,
-            inputFormatters: effectiveFormatters,
+            inputFormatters: widget.inputFormatters,
           ),
         ),
         const SizedBox(width: 8),
@@ -3549,13 +3529,14 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             decoration: InputDecoration(
               border: inputBorder,
               filled: inputTheme.filled,
-              hintText: widget.fieldEndHintText ?? effectiveHelpText,
+              hintText:
+                  widget.fieldEndHintText ?? widget.calendarDelegate.dateHelpText(localizations),
               labelText: widget.fieldEndLabelText ?? localizations.dateRangeEndLabel,
               errorText: _endErrorText,
             ),
             keyboardType: widget.keyboardType,
             onChanged: _handleEndChanged,
-            inputFormatters: effectiveFormatters,
+            inputFormatters: widget.inputFormatters,
           ),
         ),
       ],

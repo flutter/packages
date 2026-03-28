@@ -64,7 +64,7 @@ class InputDatePickerFormField extends StatefulWidget {
     this.acceptEmptyDate = false,
     this.focusNode,
     this.calendarDelegate = const GregorianCalendarDelegate(),
-    this.dateInputDelegate,
+    this.inputFormatters,
   }) : initialDate = initialDate != null ? calendarDelegate.dateOnly(initialDate) : null,
        firstDate = calendarDelegate.dateOnly(firstDate),
        lastDate = calendarDelegate.dateOnly(lastDate) {
@@ -152,9 +152,30 @@ class InputDatePickerFormField extends StatefulWidget {
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
-  /// A delegate that manages the formatting, parsing, and input validation
-  /// for date text fields.
-  final DateInputDelegate? dateInputDelegate;
+  /// {@template flutter.material.input_date_picker_form_field.inputFormatters}
+  /// Optional list of [TextInputFormatter]s applied to the date input field.
+  ///
+  /// These formatters control and restrict how the user enters text, such as
+  /// enforcing a specific date mask (e.g., `MM/dd/yyyy`), limiting allowed
+  /// characters, or automatically inserting date separators.
+  ///
+  /// For date input and validation to function correctly, these formatters
+  /// must be consistent with the [CalendarDelegate.dateHelpText],
+  /// [CalendarDelegate.formatCompactDate], and [CalendarDelegate.parseCompactDate]
+  /// methods. While [CalendarDelegate.dateHelpText] provides the hint text
+  /// orienting the user, [CalendarDelegate.formatCompactDate] defines how a
+  /// selected date is initially displayed in the text field.
+  ///
+  /// Input formatters only affect the visual entry of text and do not perform
+  /// validation or parsing. The conversion of user-entered text depends
+  /// entirely on [CalendarDelegate.parseCompactDate]. If the formatters
+  /// impose a structure that is incompatible with the delegate's parsing
+  /// logic, the input field may fail validation even if the user follows
+  /// the provided mask.
+  ///
+  /// If null, no input formatting is applied.
+  /// {@endtemplate}
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<InputDatePickerFormField> createState() => _InputDatePickerFormFieldState();
@@ -201,10 +222,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
   void _updateValueForSelectedDate() {
     if (_selectedDate != null) {
       final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-      final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
-      _inputText = dateInputDelegate != null
-          ? dateInputDelegate.format(_selectedDate!, localizations)
-          : widget.calendarDelegate.formatCompactDate(_selectedDate!, localizations);
+      _inputText = widget.calendarDelegate.formatCompactDate(_selectedDate!, localizations);
       var textEditingValue = TextEditingValue(text: _inputText!);
       // Select the new text if we are auto focused and haven't selected the text before.
       if (widget.autofocus && !_autoSelected) {
@@ -222,10 +240,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
-    if (dateInputDelegate != null) {
-      return dateInputDelegate.parse(text, localizations);
-    }
+
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -278,19 +293,12 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
         inputTheme.border ??
         (useMaterial3 ? const OutlineInputBorder() : const UnderlineInputBorder());
 
-    final DateInputDelegate? dateInputDelegate = widget.dateInputDelegate;
-    final List<TextInputFormatter> effectiveFormatters =
-        dateInputDelegate?.inputFormatters ?? <TextInputFormatter>[];
-    final String effectiveHelpText =
-        dateInputDelegate?.helpText(localizations) ??
-        widget.calendarDelegate.dateHelpText(localizations);
-
     return Semantics(
       container: true,
       child: TextFormField(
         decoration:
             InputDecoration(
-              hintText: widget.fieldHintText ?? effectiveHelpText,
+              hintText: widget.fieldHintText ?? widget.calendarDelegate.dateHelpText(localizations),
               labelText: widget.fieldLabelText ?? localizations.dateInputLabel,
             ).applyDefaults(
               inputTheme
@@ -304,7 +312,7 @@ class _InputDatePickerFormFieldState extends State<InputDatePickerFormField> {
         autofocus: widget.autofocus,
         controller: _controller,
         focusNode: widget.focusNode,
-        inputFormatters: effectiveFormatters,
+        inputFormatters: widget.inputFormatters,
       ),
     );
   }

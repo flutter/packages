@@ -2775,7 +2775,12 @@ void main() {
     expect(tester.getSize(find.byType(DatePickerDialog)).isEmpty, isTrue);
   });
 
-  group('DateInputConfiguration', () {
+  group('Date TextInputFormatter', () {
+    final inputFormatters = <TextInputFormatter>[
+      FilteringTextInputFormatter.digitsOnly,
+      LengthLimitingTextInputFormatter(8),
+    ];
+
     Widget buildApp() {
       return MaterialApp(
         home: Material(
@@ -2790,7 +2795,8 @@ void main() {
                     firstDate: firstDate,
                     lastDate: lastDate,
                     initialEntryMode: DatePickerEntryMode.input,
-                    dateInputDelegate: const _TestDateInputDelegate(),
+                    calendarDelegate: const _TestDateInputDelegate(),
+                    inputFormatters: inputFormatters,
                   );
                 },
               );
@@ -2819,7 +2825,8 @@ void main() {
                       firstDate: firstDate,
                       lastDate: lastDate,
                       initialEntryMode: DatePickerEntryMode.input,
-                      dateInputDelegate: const _TestDateInputDelegate(),
+                      calendarDelegate: const _TestDateInputDelegate(),
+                      inputFormatters: inputFormatters,
                     );
                   },
                 );
@@ -3011,22 +3018,16 @@ class TestCalendarDelegate extends GregorianCalendarDelegate {
   }
 }
 
-base class _TestDateInputDelegate extends DateInputDelegate {
+class _TestDateInputDelegate extends GregorianCalendarDelegate {
   const _TestDateInputDelegate();
 
   @override
-  List<TextInputFormatter> get inputFormatters => <TextInputFormatter>[
-    FilteringTextInputFormatter.digitsOnly,
-    LengthLimitingTextInputFormatter(8),
-  ];
-
-  @override
-  String helpText(MaterialLocalizations localizations) {
+  String dateHelpText(MaterialLocalizations localizations) {
     return 'yyyymmdd';
   }
 
   @override
-  String format(DateTime date, MaterialLocalizations localizations) {
+  String formatCompactDate(DateTime date, MaterialLocalizations localizations) {
     final String year = date.year.toString().padLeft(4, '0');
     final String month = date.month.toString().padLeft(2, '0');
     final String day = date.day.toString().padLeft(2, '0');
@@ -3034,15 +3035,15 @@ base class _TestDateInputDelegate extends DateInputDelegate {
   }
 
   @override
-  DateTime? parse(String? input, MaterialLocalizations localizations) {
-    if (input == null || input.length != 8) {
+  DateTime? parseCompactDate(String? inputString, MaterialLocalizations localizations) {
+    if (inputString == null || inputString.length != 8) {
       return null;
     }
 
     try {
-      final int year = int.parse(input.substring(0, 4));
-      final int month = int.parse(input.substring(4, 6));
-      final int day = int.parse(input.substring(6, 8));
+      final int year = int.parse(inputString.substring(0, 4));
+      final int month = int.parse(inputString.substring(4, 6));
+      final int day = int.parse(inputString.substring(6, 8));
 
       final date = DateTime(year, month, day);
       if (date.year == year && date.month == month && date.day == day) {

@@ -8,7 +8,6 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'date_picker.dart';
@@ -485,45 +484,4 @@ class DateTimeRange<T extends DateTime> {
 
   @override
   String toString() => '$start - $end';
-}
-
-/// A delegate that manages the formatting, parsing, and input validation
-/// for date text fields within a date picker.
-///
-/// This delegate decouples the text input logic from the calendar system,
-/// allowing custom date formats, input masks (via [inputFormatters]), and
-/// parsing rules independent of the [CalendarDelegate].
-///
-/// See also:
-///
-///  * [CalendarDelegate], which handles the underlying calendar math and navigation.
-abstract base class DateInputDelegate {
-  /// Abstract const constructor. This constructor enables subclasses to provide
-  /// const constructors so that they can be used in const expressions.
-  const DateInputDelegate();
-
-  /// The formatters applied to the text field to guide and validate user input.
-  ///
-  /// These are typically used to provide input masks (e.g., adding slashes
-  /// automatically) or to limit the characters allowed in the field.
-  List<TextInputFormatter> get inputFormatters;
-
-  /// Returns the help text (e.g., "MM/DD/YYYY") used as a hint in the text
-  /// field to indicate the expected date format.
-  ///
-  /// The [localizations] parameter can be used to provide a locale-specific
-  /// format string.
-  String helpText(MaterialLocalizations localizations);
-
-  /// Formats the given [date] into a compact string representation to be
-  /// displayed in the text field's controller.
-  ///
-  /// This should be consistent with the logic in [parse].
-  String format(DateTime date, MaterialLocalizations localizations);
-
-  /// Converts the given [input] string back into a [DateTime] object.
-  ///
-  /// Returns null if the [input] string does not represent a valid date
-  /// according to this delegate's rules.
-  DateTime? parse(String? input, MaterialLocalizations localizations);
 }
