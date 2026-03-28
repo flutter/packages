@@ -8,7 +8,7 @@ environment:
   sdk: ^3.9.0
 
 dependencies:
-  analyzer: ">=8.0.0 <10.0.0"
+  analyzer: ">=10.0.0 <13.0.0"
   args: ^2.5.0
   code_builder: ^4.10.0
   collection: ^1.15.0
@@ -27,3 +27,4 @@ topics:
   - interop
   - platform-channels
   - plugin-development
+
