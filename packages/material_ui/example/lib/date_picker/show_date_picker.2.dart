@@ -30,8 +30,8 @@ class DatePickerSample extends StatefulWidget {
 class _DatePickerSampleState extends State<DatePickerSample> {
   DateTime? _selectedDate;
 
-  DateInputFormat _formatType = DateInputFormat.dayMonthYear;
-  DateSeparator _separator = DateSeparator.dot;
+  DateInputFormat _formatType = .dayMonthYear;
+  DateSeparator _separator = .dot;
 
   Future<void> _showPicker() async {
     final CustomDateInputDelegate customDateInputDelegate =
@@ -63,55 +63,45 @@ class _DatePickerSampleState extends State<DatePickerSample> {
             separator: _separator.value,
           ).format(_selectedDate!);
 
+    final content = <Widget>[
+      Text(label),
+      const SizedBox(height: 24),
+      DropdownButtonFormField<DateInputFormat>(
+        initialValue: _formatType,
+        decoration: const InputDecoration(labelText: 'Date format'),
+        items: [
+          for (final format in DateInputFormat.values)
+            DropdownMenuItem(value: format, child: Text(format.patternLabel)),
+        ],
+        onChanged: (DateInputFormat? value) {
+          if (value != null) {
+            setState(() => _formatType = value);
+          }
+        },
+      ),
+      const SizedBox(height: 16),
+      DropdownButtonFormField<DateSeparator>(
+        initialValue: _separator,
+        decoration: const InputDecoration(labelText: 'Separator'),
+        items: [
+          for (final separator in DateSeparator.values)
+            DropdownMenuItem(value: separator, child: Text(separator.value)),
+        ],
+        onChanged: (DateSeparator? value) {
+          if (value != null) {
+            setState(() => _separator = value);
+          }
+        },
+      ),
+      const SizedBox(height: 24),
+      OutlinedButton(onPressed: _showPicker, child: const Text('Select date')),
+    ];
+
     return Scaffold(
       appBar: AppBar(title: const Text('showDatePicker with input delegate')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(label),
-            const SizedBox(height: 24),
-            DropdownButtonFormField<DateInputFormat>(
-              initialValue: _formatType,
-              decoration: const InputDecoration(labelText: 'Date format'),
-              items: DateInputFormat.values
-                  .map(
-                    (DateInputFormat format) => DropdownMenuItem(
-                      value: format,
-                      child: Text(format.patternLabel),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (DateInputFormat? value) {
-                if (value != null) {
-                  setState(() => _formatType = value);
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<DateSeparator>(
-              initialValue: _separator,
-              decoration: const InputDecoration(labelText: 'Separator'),
-              items: DateSeparator.values
-                  .map(
-                    (DateSeparator sep) =>
-                        DropdownMenuItem(value: sep, child: Text(sep.value)),
-                  )
-                  .toList(),
-              onChanged: (DateSeparator? value) {
-                if (value != null) {
-                  setState(() => _separator = value);
-                }
-              },
-            ),
-            const SizedBox(height: 24),
-            OutlinedButton(
-              onPressed: _showPicker,
-              child: const Text('Select date'),
-            ),
-          ],
-        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: content),
       ),
     );
   }

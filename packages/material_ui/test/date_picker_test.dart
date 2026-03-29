@@ -2781,59 +2781,33 @@ void main() {
       LengthLimitingTextInputFormatter(8),
     ];
 
-    Widget buildApp() {
+    DateTime? result;
+
+    Widget buildApp(Widget child) {
       return MaterialApp(
-        home: Material(
-          child: Builder(
-            builder: (BuildContext context) {
-              return ElevatedButton(
-                child: const Text('Open'),
-                onPressed: () {
-                  showDatePicker(
-                    context: context,
-                    initialDate: initialDate,
-                    firstDate: firstDate,
-                    lastDate: lastDate,
-                    initialEntryMode: DatePickerEntryMode.input,
-                    calendarDelegate: const _TestDateInputDelegate(),
-                    inputFormatters: inputFormatters,
-                  );
-                },
-              );
-            },
-          ),
-        ),
+        home: Scaffold(body: Center(child: child)),
+      );
+    }
+
+    Future<void> openPicker(WidgetTester tester) async {
+      final BuildContext context = tester.element(find.text('Open'));
+
+      result = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: firstDate,
+        lastDate: lastDate,
+        initialEntryMode: DatePickerEntryMode.input,
+        calendarDelegate: const _TestDateInputDelegate(),
+        inputFormatters: inputFormatters,
       );
     }
 
     testWidgets('applies inputFormatters and allows text entry parsing', (
       WidgetTester tester,
     ) async {
-      late DateTime? result;
-
       await tester.pumpWidget(
-        MaterialApp(
-          home: Material(
-            child: Builder(
-              builder: (BuildContext context) {
-                return ElevatedButton(
-                  child: const Text('Open'),
-                  onPressed: () async {
-                    result = await showDatePicker(
-                      context: context,
-                      initialDate: initialDate,
-                      firstDate: firstDate,
-                      lastDate: lastDate,
-                      initialEntryMode: DatePickerEntryMode.input,
-                      calendarDelegate: const _TestDateInputDelegate(),
-                      inputFormatters: inputFormatters,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
+        buildApp(ElevatedButton(onPressed: () => openPicker(tester), child: const Text('Open'))),
       );
 
       await tester.tap(find.text('Open'));
@@ -2849,41 +2823,39 @@ void main() {
     });
 
     testWidgets('filters non-digit input via inputFormatters', (WidgetTester tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(
+        buildApp(ElevatedButton(onPressed: () => openPicker(tester), child: const Text('Open'))),
+      );
 
       await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final Finder textFieldFinder = find.byType(TextField);
+
+      await tester.enterText(textFieldFinder, '2024-06-20');
       await tester.pump();
 
-      final Finder textField = find.byType(TextField);
-      expect(textField, findsOneWidget);
-
-      await tester.enterText(textField, '2024-06-20');
-      await tester.pump();
-
-      final TextField field = tester.widget<TextField>(textField);
-      final TextEditingController controller = field.controller!;
-      // Only digits should remain.
-      expect(controller.text, '20240620');
+      final TextField textField = tester.widget<TextField>(textFieldFinder);
+      // Verify that hyphens were removed by the formatter.
+      expect(textField.controller!.text, '20240620');
     });
 
     testWidgets('rejects alphabetic characters via inputFormatters', (WidgetTester tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(
+        buildApp(ElevatedButton(onPressed: () => openPicker(tester), child: const Text('Open'))),
+      );
 
       await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final Finder textFieldFinder = find.byType(TextField);
+
+      await tester.enterText(textFieldFinder, '20ab24cd0620');
       await tester.pump();
 
-      final Finder textField = find.byType(TextField);
-      expect(textField, findsOneWidget);
-
-      // Try to enter letters mixed with digits.
-      await tester.enterText(textField, '20ab24cd0620');
-      await tester.pump();
-
-      final TextField field = tester.widget<TextField>(textField);
-      final TextEditingController controller = field.controller!;
-
-      // Alphabetic characters should be filtered out.
-      expect(controller.text, '20240620');
+      final TextField textField = tester.widget<TextField>(textFieldFinder);
+      // Only digits should remain in the controller.
+      expect(textField.controller!.text, '20240620');
     });
   });
 }
