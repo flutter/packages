@@ -677,20 +677,21 @@ this command.
     final testBinaries = <File>[];
     var hasMissingBuild = false;
     var buildFailed = false;
-    String arch;
-    const x64DirName = 'x64';
-    const arm64DirName = 'arm64';
-    if (platform.isWindows) {
-      arch = _abi == Abi.windowsX64 ? x64DirName : arm64DirName;
-    } else if (platform.isLinux) {
-      arch = _abi == Abi.linuxX64 ? x64DirName : arm64DirName;
-    } else {
+
+    final String? arch = switch (_abi) {
+      Abi.windowsX64 || Abi.linuxX64 => 'x64',
+      Abi.windowsArm64 || Abi.linuxArm64 => 'arm64',
+      _ => null,
+    };
+
+    if (arch == null) {
       return _PlatformResult(
         RunState.failed,
         error:
-            'Cannot test on platform ${platform.operatingSystem} as CMakeProjects.',
+            'Testing on platform and architecture "$_abi" as CMakeProjects is not supported.',
       );
     }
+
     for (final RepositoryPackage example in plugin.getExamples()) {
       final project = CMakeProject(
         example.directory,
