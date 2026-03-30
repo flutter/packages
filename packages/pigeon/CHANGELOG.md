@@ -1,3 +1,8 @@
+## 26.3.4
+
+* [dart] Supports serializing Lists of Lists and Maps, and serializing Maps of
+  Lists and Maps.
+
 ## 26.3.3
 
 * Updates `analyzer` dependency to support versions 10 through 12.
