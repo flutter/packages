@@ -677,51 +677,28 @@ this command.
     final testBinaries = <File>[];
     var hasMissingBuild = false;
     var buildFailed = false;
-    String? arch;
+    String arch;
     const x64DirName = 'x64';
     const arm64DirName = 'arm64';
     if (platform.isWindows) {
       arch = _abi == Abi.windowsX64 ? x64DirName : arm64DirName;
     } else if (platform.isLinux) {
-      // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
-      // CI configuration for the repository.
-      arch = 'x64';
+      arch = _abi == Abi.linuxX64 ? x64DirName : arm64DirName;
+    } else {
+      return _PlatformResult(
+        RunState.failed,
+        error:
+            'Cannot test on platform ${platform.operatingSystem} as CMakeProjects.',
+      );
     }
     for (final RepositoryPackage example in plugin.getExamples()) {
-      var project = CMakeProject(
+      final project = CMakeProject(
         example.directory,
         buildMode: buildMode,
         processRunner: processRunner,
         platform: platform,
         arch: arch,
       );
-      if (platform.isWindows) {
-        if (arch == arm64DirName && !project.isConfigured()) {
-          // Check for x64, to handle builds newer than 3.13, but that don't yet
-          // have https://github.com/flutter/flutter/issues/129807.
-          // TODO(stuartmorgan): Remove this when CI no longer supports a
-          // version of Flutter without the issue above fixed.
-          project = CMakeProject(
-            example.directory,
-            buildMode: buildMode,
-            processRunner: processRunner,
-            platform: platform,
-            arch: x64DirName,
-          );
-        }
-        if (!project.isConfigured()) {
-          // Check again without the arch subdirectory, since 3.13 doesn't
-          // have it yet.
-          // TODO(stuartmorgan): Remove this when CI no longer supports Flutter
-          // 3.13.
-          project = CMakeProject(
-            example.directory,
-            buildMode: buildMode,
-            processRunner: processRunner,
-            platform: platform,
-          );
-        }
-      }
       if (!project.isConfigured()) {
         printError(
           'ERROR: Run "flutter build" on ${example.displayName}, '
