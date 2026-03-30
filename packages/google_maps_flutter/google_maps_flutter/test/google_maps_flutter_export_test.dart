@@ -43,6 +43,7 @@ void main() {
         main_file.LatLng;
         main_file.LatLngBounds;
         main_file.MapBitmapScaling;
+        main_file.MapColorScheme;
         main_file.MapStyleException;
         main_file.MapType;
         main_file.Marker;
