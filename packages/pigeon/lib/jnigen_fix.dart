@@ -27,5 +27,21 @@ void fixJniBindings(String jnigenOutputPath) {
     return '\$o$optional.as<$type>(\n      $jniType as jni\$_.JType<$type>,\n      releaseOriginal:';
   });
 
+  // Pattern for JList null casts
+  final listRegex = RegExp(
+    r'(\$o\?\.as<jni\$_\.JList>\([^)]+\)\s+)as (jni\$_\.JList<.*?>);',
+  );
+  content = content.replaceAllMapped(listRegex, (Match match) {
+    return '${match.group(1)}as ${match.group(2)}?;';
+  });
+
+  // Pattern for JMap null casts
+  final mapRegex = RegExp(
+    r'(\$o\?\.as<jni\$_\.JMap>\([^)]+\)\s+)as (jni\$_\.JMap<.*?>);',
+  );
+  content = content.replaceAllMapped(mapRegex, (Match match) {
+    return '${match.group(1)}as ${match.group(2)}?;';
+  });
+
   file.writeAsStringSync(content);
 }

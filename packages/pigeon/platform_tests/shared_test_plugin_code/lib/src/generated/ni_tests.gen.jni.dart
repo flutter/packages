@@ -3376,7 +3376,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncList = NIHostIntegrationCoreApi._class
@@ -3441,10 +3444,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>;
   }
 
   static final _id_echoAsyncEnumList = NIHostIntegrationCoreApi._class
@@ -3509,10 +3513,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassList = NIHostIntegrationCoreApi._class
@@ -3577,10 +3582,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncMap = NIHostIntegrationCoreApi._class
@@ -3645,11 +3651,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
   }
 
   static final _id_echoAsyncStringMap = NIHostIntegrationCoreApi._class
@@ -3714,11 +3720,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
   }
 
   static final _id_echoAsyncIntMap = NIHostIntegrationCoreApi._class
@@ -3783,10 +3789,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
   }
 
   static final _id_echoAsyncEnumMap = NIHostIntegrationCoreApi._class
@@ -3851,10 +3858,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassMap = NIHostIntegrationCoreApi._class
@@ -3918,11 +3926,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncEnum = NIHostIntegrationCoreApi._class
@@ -4111,7 +4119,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_throwAsyncErrorFromVoid = NIHostIntegrationCoreApi._class
@@ -4231,7 +4242,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNIAllTypes = NIHostIntegrationCoreApi._class
@@ -5063,7 +5077,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableList = NIHostIntegrationCoreApi._class
@@ -5130,10 +5147,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableEnumList = NIHostIntegrationCoreApi._class
@@ -5200,10 +5218,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassList = NIHostIntegrationCoreApi._class
@@ -5270,10 +5289,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableMap = NIHostIntegrationCoreApi._class
@@ -5339,11 +5359,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableStringMap = NIHostIntegrationCoreApi._class
@@ -5411,11 +5431,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
   }
 
   static final _id_echoAsyncNullableIntMap = NIHostIntegrationCoreApi._class
@@ -5481,10 +5501,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
   }
 
   static final _id_echoAsyncNullableEnumMap = NIHostIntegrationCoreApi._class
@@ -5551,10 +5572,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassMap = NIHostIntegrationCoreApi._class
@@ -5622,11 +5644,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableEnum = NIHostIntegrationCoreApi._class
@@ -8647,7 +8669,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncList = NIHostIntegrationCoreApi._class
@@ -8712,10 +8737,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>;
   }
 
   static final _id_callFlutterEchoAsyncEnumList = NIHostIntegrationCoreApi
@@ -8781,10 +8807,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>;
   }
 
   static final _id_callFlutterEchoAsyncClassList = NIHostIntegrationCoreApi
@@ -8850,10 +8877,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>;
   }
 
   static final _id_callFlutterEchoAsyncNonNullEnumList =
@@ -8918,10 +8946,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>;
   }
 
   static final _id_callFlutterEchoAsyncNonNullClassList =
@@ -8987,10 +9016,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>;
   }
 
   static final _id_callFlutterEchoAsyncMap = NIHostIntegrationCoreApi._class
@@ -9056,11 +9086,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
   }
 
   static final _id_callFlutterEchoAsyncStringMap = NIHostIntegrationCoreApi
@@ -9127,11 +9157,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
   }
 
   static final _id_callFlutterEchoAsyncIntMap = NIHostIntegrationCoreApi._class
@@ -9195,10 +9225,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
   }
 
   static final _id_callFlutterEchoAsyncEnumMap = NIHostIntegrationCoreApi._class
@@ -9263,10 +9294,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>;
   }
 
   static final _id_callFlutterEchoAsyncClassMap = NIHostIntegrationCoreApi
@@ -9333,11 +9365,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
   static final _id_callFlutterEchoAsyncEnum = NIHostIntegrationCoreApi._class
@@ -10092,7 +10124,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableObject = NIHostIntegrationCoreApi
@@ -10160,7 +10195,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableList = NIHostIntegrationCoreApi
@@ -10228,10 +10266,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumList =
@@ -10298,10 +10337,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableClassList =
@@ -10369,10 +10409,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullEnumList =
@@ -10440,10 +10481,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullClassList =
@@ -10511,10 +10553,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableMap = NIHostIntegrationCoreApi
@@ -10583,11 +10626,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableStringMap =
@@ -10655,11 +10698,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableIntMap = NIHostIntegrationCoreApi
@@ -10728,10 +10771,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumMap =
@@ -10799,10 +10843,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableClassMap =
@@ -10870,11 +10915,11 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnum = NIHostIntegrationCoreApi
@@ -14413,7 +14458,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncList = NIHostIntegrationCoreApiRegistrar._class
@@ -14478,10 +14526,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>;
   }
 
   static final _id_echoAsyncEnumList = NIHostIntegrationCoreApiRegistrar._class
@@ -14546,10 +14595,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassList = NIHostIntegrationCoreApiRegistrar._class
@@ -14614,10 +14664,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncMap = NIHostIntegrationCoreApiRegistrar._class
@@ -14682,11 +14733,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
   }
 
   static final _id_echoAsyncStringMap = NIHostIntegrationCoreApiRegistrar._class
@@ -14751,11 +14802,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
   }
 
   static final _id_echoAsyncIntMap = NIHostIntegrationCoreApiRegistrar._class
@@ -14820,10 +14871,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
   }
 
   static final _id_echoAsyncEnumMap = NIHostIntegrationCoreApiRegistrar._class
@@ -14888,10 +14940,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassMap = NIHostIntegrationCoreApiRegistrar._class
@@ -14955,11 +15008,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncEnum = NIHostIntegrationCoreApiRegistrar._class
@@ -15149,7 +15202,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_throwAsyncErrorFromVoid = NIHostIntegrationCoreApiRegistrar
@@ -15271,7 +15327,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNIAllTypes = NIHostIntegrationCoreApiRegistrar
@@ -16108,7 +16167,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableList = NIHostIntegrationCoreApiRegistrar
@@ -16176,10 +16238,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableEnumList = NIHostIntegrationCoreApiRegistrar
@@ -16247,10 +16310,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassList =
@@ -16317,10 +16381,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableMap = NIHostIntegrationCoreApiRegistrar
@@ -16387,11 +16452,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableStringMap =
@@ -16459,11 +16524,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
   }
 
   static final _id_echoAsyncNullableIntMap = NIHostIntegrationCoreApiRegistrar
@@ -16530,10 +16595,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
   }
 
   static final _id_echoAsyncNullableEnumMap = NIHostIntegrationCoreApiRegistrar
@@ -16601,10 +16667,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassMap = NIHostIntegrationCoreApiRegistrar
@@ -16673,11 +16740,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableEnum = NIHostIntegrationCoreApiRegistrar
@@ -19708,7 +19775,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncList = NIHostIntegrationCoreApiRegistrar
@@ -19774,10 +19844,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>;
   }
 
   static final _id_callFlutterEchoAsyncEnumList =
@@ -19842,10 +19913,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>;
   }
 
   static final _id_callFlutterEchoAsyncClassList =
@@ -19910,10 +19982,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>;
   }
 
   static final _id_callFlutterEchoAsyncNonNullEnumList =
@@ -19978,10 +20051,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>;
   }
 
   static final _id_callFlutterEchoAsyncNonNullClassList =
@@ -20047,10 +20121,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>;
   }
 
   static final _id_callFlutterEchoAsyncMap = NIHostIntegrationCoreApiRegistrar
@@ -20117,11 +20192,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
   }
 
   static final _id_callFlutterEchoAsyncStringMap =
@@ -20187,11 +20262,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
   }
 
   static final _id_callFlutterEchoAsyncIntMap =
@@ -20255,10 +20330,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
   }
 
   static final _id_callFlutterEchoAsyncEnumMap =
@@ -20323,10 +20399,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>;
   }
 
   static final _id_callFlutterEchoAsyncClassMap =
@@ -20392,11 +20469,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
   static final _id_callFlutterEchoAsyncEnum = NIHostIntegrationCoreApiRegistrar
@@ -21146,7 +21223,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableObject =
@@ -21213,7 +21293,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_callFlutterEchoAsyncNullableList =
@@ -21280,10 +21363,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumList =
@@ -21350,10 +21434,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableClassList =
@@ -21421,10 +21506,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullEnumList =
@@ -21492,10 +21578,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullClassList =
@@ -21563,10 +21650,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableMap =
@@ -21634,11 +21722,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableStringMap =
@@ -21706,11 +21794,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableIntMap =
@@ -21778,10 +21866,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumMap =
@@ -21849,10 +21938,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableClassMap =
@@ -21920,11 +22010,11 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?;
   }
 
   static final _id_callFlutterEchoAsyncNullableEnum =
@@ -25576,7 +25666,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNIAllTypes = NIFlutterIntegrationCoreApi._class
@@ -26373,7 +26466,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncList = NIFlutterIntegrationCoreApi._class
@@ -26438,10 +26534,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>;
   }
 
   static final _id_echoAsyncEnumList = NIFlutterIntegrationCoreApi._class
@@ -26506,10 +26603,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassList = NIFlutterIntegrationCoreApi._class
@@ -26574,10 +26672,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncNonNullEnumList = NIFlutterIntegrationCoreApi._class
@@ -26642,10 +26741,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>;
   }
 
   static final _id_echoAsyncNonNullClassList = NIFlutterIntegrationCoreApi
@@ -26711,10 +26811,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>;
   }
 
   static final _id_echoAsyncMap = NIFlutterIntegrationCoreApi._class
@@ -26779,11 +26880,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
   }
 
   static final _id_echoAsyncStringMap = NIFlutterIntegrationCoreApi._class
@@ -26848,11 +26949,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
   }
 
   static final _id_echoAsyncIntMap = NIFlutterIntegrationCoreApi._class
@@ -26917,10 +27018,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
   }
 
   static final _id_echoAsyncEnumMap = NIFlutterIntegrationCoreApi._class
@@ -26985,10 +27087,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>;
   }
 
   static final _id_echoAsyncClassMap = NIFlutterIntegrationCoreApi._class
@@ -27052,11 +27155,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
   static final _id_echoAsyncEnum = NIFlutterIntegrationCoreApi._class
@@ -27813,7 +27916,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JObject>(
+      const jni$_.$JObject$Type$(),
+      releaseOriginal: true,
+    );
   }
 
   static final _id_echoAsyncNullableList = NIFlutterIntegrationCoreApi._class
@@ -27880,10 +27986,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<jni$_.JObject?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableEnumList = NIFlutterIntegrationCoreApi
@@ -27951,10 +28058,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassList = NIFlutterIntegrationCoreApi
@@ -28022,10 +28130,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes?>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableNonNullEnumList =
@@ -28092,10 +28201,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAnEnum>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAnEnum>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAnEnum>?;
   }
 
   static final _id_echoAsyncNullableNonNullClassList =
@@ -28163,10 +28273,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList<NIAllNullableTypes>>(
-      jni$_.JList.type as jni$_.JType<jni$_.JList<NIAllNullableTypes>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JList>(
+          jni$_.JList.type as jni$_.JType<jni$_.JList>,
+          releaseOriginal: true,
+        )
+        as jni$_.JList<NIAllNullableTypes>?;
   }
 
   static final _id_echoAsyncNullableMap = NIFlutterIntegrationCoreApi._class
@@ -28232,11 +28343,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
   }
 
   static final _id_echoAsyncNullableStringMap = NIFlutterIntegrationCoreApi
@@ -28305,11 +28416,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JString?, jni$_.JString?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JString?, jni$_.JString?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
   }
 
   static final _id_echoAsyncNullableIntMap = NIFlutterIntegrationCoreApi._class
@@ -28375,10 +28486,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
   }
 
   static final _id_echoAsyncNullableEnumMap = NIFlutterIntegrationCoreApi._class
@@ -28445,10 +28557,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<NIAnEnum?, NIAnEnum?>>(
-      jni$_.JMap.type as jni$_.JType<jni$_.JMap<NIAnEnum?, NIAnEnum?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<NIAnEnum?, NIAnEnum?>?;
   }
 
   static final _id_echoAsyncNullableClassMap = NIFlutterIntegrationCoreApi
@@ -28517,11 +28630,11 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>(
-      jni$_.JMap.type
-          as jni$_.JType<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JMap>(
+          jni$_.JMap.type as jni$_.JType<jni$_.JMap>,
+          releaseOriginal: true,
+        )
+        as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?;
   }
 
   static final _id_echoAsyncNullableEnum = NIFlutterIntegrationCoreApi._class
@@ -35876,7 +35989,8 @@ final class $NIAllNullableTypes$Type$ extends jni$_.JType<NIAllNullableTypes> {
 /// from: `NIAllNullableTypesWithoutRecursion$Companion`
 extension type NIAllNullableTypesWithoutRecursion$Companion._(
   jni$_.JObject _$this
-) implements jni$_.JObject {
+)
+    implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'NIAllNullableTypesWithoutRecursion$Companion',
   );

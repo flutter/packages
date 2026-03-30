@@ -1707,7 +1707,8 @@ extension NIAllNullableTypesBridge$Methods on NIAllNullableTypesBridge {
 /// macOS: introduced 10.15.0
 extension type NIAllNullableTypesWithoutRecursionBridge._(
   objc.ObjCObject object$
-) implements objc.ObjCObject, objc.NSObject {
+)
+    implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NIAllNullableTypesWithoutRecursionBridge] that points to the same underlying object as [other].
   NIAllNullableTypesWithoutRecursionBridge.as(objc.ObjCObject other)
     : object$ = other {
