@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Utils for creating default class instances used in tests
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.

@@ -1,5 +1,7 @@
-## NEXT
+## 2.4.21
 
+* Reverts `androidx.datastore:datastore` to 1.1.7 due to a regression 16 KB
+  page size support in 1.2.0.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.4.20

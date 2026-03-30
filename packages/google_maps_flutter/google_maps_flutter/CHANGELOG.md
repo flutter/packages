@@ -1,6 +1,11 @@
-## NEXT
+## 2.16.0
 
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds `colorScheme` support for web cloud-based maps styling brightness.
+
+## 2.15.0
+
+* Adds support for advanced markers, and new example pages showing their usage.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.14.2
 
@@ -611,7 +616,6 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 ## 0.5.19
 
 * Adds support for toggling Indoor View on or off.
-
 * Allow BitmapDescriptor scaling override
 
 ## 0.5.18

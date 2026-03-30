@@ -6,11 +6,6 @@ import AVFoundation
 import CoreMotion
 import Flutter
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class DefaultCamera: NSObject, Camera {
   var dartAPI: CameraEventApi?
   var onFrameAvailable: (() -> Void)?
@@ -340,7 +335,7 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-  /// Finds the highest available resolution in terms of pixel count for the given device.
+  /// Finds the highest available non-square resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
     -> CaptureDeviceFormat?
@@ -351,12 +346,29 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
+    // These formats are compressed and lossy, and unsupported by the Flutter Engine.
+    let unsupportedSubTypes: [FourCharCode] = [
+      1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
+    ]
+
     for format in captureDevice.flutterFormats {
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+
+      // Skip formats that will crash the Flutter Engine
+      if unsupportedSubTypes.contains(subType) {
+        continue
+      }
+
       let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
+
+      // Guard against 1:1 resolutions provided by the iPhone 17 centre stage sensor.
+      if height == width {
+        continue
+      }
+
       let pixelCount = height * width
-      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
       let isSubTypePreferred = subType == preferredSubType
 
       if pixelCount > maxPixelCount
@@ -367,7 +379,6 @@ final class DefaultCamera: NSObject, Camera {
         isBestSubTypePreferred = isSubTypePreferred
       }
     }
-
     return bestFormat
   }
 
@@ -1197,7 +1208,7 @@ final class DefaultCamera: NSObject, Camera {
 
   func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    imageStreamHandler: ImageStreamHandler & NSObjectProtocol,
+    imageStreamHandler: ImageStreamHandler,
     completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     if isStreamingImages {
@@ -1206,27 +1217,18 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let eventChannel = FlutterEventChannel(
-      name: "plugins.flutter.io/camera_avfoundation/imageStream",
-      binaryMessenger: messenger
-    )
-    let threadSafeEventChannel = ThreadSafeEventChannel(eventChannel: eventChannel)
-
-    self.imageStreamHandler = imageStreamHandler
-    threadSafeEventChannel.setStreamHandler(imageStreamHandler) { [weak self] in
-      guard let strongSelf = self else {
+    ensureToRunOnMainQueue { [weak self] in
+      guard let self else {
         completion(.success(()))
         return
       }
-
-      strongSelf.captureSessionQueue.async { [weak self] in
-        guard let strongSelf = self else {
-          completion(.success(()))
-          return
+      ImageDataStreamStreamHandler.register(with: messenger, streamHandler: imageStreamHandler)
+      self.imageStreamHandler = imageStreamHandler
+      self.captureSessionQueue.async { [weak self] in
+        if let self {
+          self.isStreamingImages = true
+          self.streamingPendingFramesCount = 0
         }
-
-        strongSelf.isStreamingImages = true
-        strongSelf.streamingPendingFramesCount = 0
         completion(.success(()))
       }
     }
@@ -1363,7 +1365,7 @@ final class DefaultCamera: NSObject, Camera {
     let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
     let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
 
-    var planes: [[String: Any]] = []
+    var planes: [PlatformCameraImagePlane] = []
 
     let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
     let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
@@ -1389,12 +1391,12 @@ final class DefaultCamera: NSObject, Camera {
       let length = bytesPerRow * height
       let bytes = Data(bytes: planeAddress!, count: length)
 
-      let planeBuffer: [String: Any] = [
-        "bytesPerRow": bytesPerRow,
-        "width": width,
-        "height": height,
-        "bytes": FlutterStandardTypedData(bytes: bytes),
-      ]
+      let planeBuffer = PlatformCameraImagePlane(
+        bytes: FlutterStandardTypedData(bytes: bytes),
+        bytesPerRow: Int64(bytesPerRow),
+        width: Int64(width),
+        height: Int64(height)
+      )
       planes.append(planeBuffer)
     }
 
@@ -1402,18 +1404,18 @@ final class DefaultCamera: NSObject, Camera {
     // Done accessing the `pixelBuffer` at this point.
     CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
 
-    let imageBuffer: [String: Any] = [
-      "width": imageWidth,
-      "height": imageHeight,
-      "format": videoFormat,
-      "planes": planes,
-      "lensAperture": Double(captureDevice.lensAperture),
-      "sensorExposureTime": Int(captureDevice.exposureDuration.seconds * 1_000_000_000),
-      "sensorSensitivity": Double(captureDevice.iso),
-    ]
+    let imageBuffer = PlatformCameraImageData(
+      formatCode: Int64(videoFormat),
+      width: Int64(imageWidth),
+      height: Int64(imageHeight),
+      planes: planes,
+      lensAperture: Double(captureDevice.lensAperture),
+      sensorExposureTimeNanoseconds: Int64(captureDevice.exposureDuration.seconds * 1_000_000_000),
+      sensorSensitivity: Double(captureDevice.iso)
+    )
 
     DispatchQueue.main.async {
-      eventSink(imageBuffer)
+      eventSink.success(imageBuffer)
     }
   }
 

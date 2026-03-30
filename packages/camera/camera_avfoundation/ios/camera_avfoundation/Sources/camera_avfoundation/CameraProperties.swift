@@ -5,11 +5,6 @@
 import AVFoundation
 import UIKit
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Gets AVCaptureFlashMode from PlatformFlashMode.
 /// mode - flash mode.
 func getAVCaptureFlashMode(for mode: PlatformFlashMode) -> AVCaptureDevice.FlashMode {
