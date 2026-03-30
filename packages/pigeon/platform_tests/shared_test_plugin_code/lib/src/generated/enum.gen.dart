@@ -53,6 +53,15 @@ List<Object?> wrapResponse({
 }
 
 bool _deepEquals(Object? a, Object? b) {
+  if (identical(a, b)) {
+    return true;
+  }
+  if (a is double && b is double) {
+    if (a.isNaN && b.isNaN) {
+      return true;
+    }
+    return a == b;
+  }
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed.every(
@@ -60,14 +69,50 @@ bool _deepEquals(Object? a, Object? b) {
         );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length &&
-        a.entries.every(
-          (MapEntry<Object?, Object?> entry) =>
-              (b as Map<Object?, Object?>).containsKey(entry.key) &&
-              _deepEquals(entry.value, b[entry.key]),
-        );
+    if (a.length != b.length) {
+      return false;
+    }
+    for (final MapEntry<Object?, Object?> entryA in a.entries) {
+      bool found = false;
+      for (final MapEntry<Object?, Object?> entryB in b.entries) {
+        if (_deepEquals(entryA.key, entryB.key)) {
+          if (_deepEquals(entryA.value, entryB.value)) {
+            found = true;
+            break;
+          } else {
+            return false;
+          }
+        }
+      }
+      if (!found) {
+        return false;
+      }
+    }
+    return true;
   }
   return a == b;
+}
+
+int _deepHash(Object? value) {
+  if (value is List) {
+    return Object.hashAll(value.map(_deepHash));
+  }
+  if (value is Map) {
+    int result = 0;
+    for (final MapEntry<Object?, Object?> entry in value.entries) {
+      result += (_deepHash(entry.key) * 31) ^ _deepHash(entry.value);
+    }
+    return result;
+  }
+  if (value is double && value.isNaN) {
+    // Normalize NaN to a consistent hash.
+    return 0x7FF8000000000000.hashCode;
+  }
+  if (value is double && value == 0.0) {
+    // Normalize -0.0 to 0.0 so they have the same hash code.
+    return 0.0.hashCode;
+  }
+  return value.hashCode;
 }
 
 /// This comment is to test enum documentation comments.
@@ -114,12 +159,12 @@ class DataWithEnum {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(encode(), other.encode());
+    return _deepEquals(state, other.state);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
 class _PigeonCodec extends StandardMessageCodec {

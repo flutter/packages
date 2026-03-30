@@ -42,6 +42,19 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+private func doubleEqualsEventChannelTests(_ lhs: Double, _ rhs: Double) -> Bool {
+  return (lhs.isNaN && rhs.isNaN) || lhs == rhs
+}
+
+private func doubleHashEventChannelTests(_ value: Double, _ hasher: inout Hasher) {
+  if value.isNaN {
+    hasher.combine(0x7FF8_0000_0000_0000)
+  } else {
+    // Normalize -0.0 to 0.0
+    hasher.combine(value == 0 ? 0 : value)
+  }
+}
+
 func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
   let cleanLhs = nilOrValue(lhs) as Any?
   let cleanRhs = nilOrValue(rhs) as Any?
@@ -52,56 +65,90 @@ func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
   case (nil, _), (_, nil):
     return false
 
+  case (let lhs as AnyObject, let rhs as AnyObject) where lhs === rhs:
+    return true
+
   case is (Void, Void):
     return true
 
-  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
-    return cleanLhsHashable == cleanRhsHashable
-
-  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
-    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
-    for (index, element) in cleanLhsArray.enumerated() {
-      if !deepEqualsEventChannelTests(element, cleanRhsArray[index]) {
+  case (let lhsArray, let rhsArray) as ([Any?], [Any?]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEqualsEventChannelTests(element, rhsArray[index]) {
         return false
       }
     }
     return true
 
-  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
-    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
-    for (key, cleanLhsValue) in cleanLhsDictionary {
-      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
-      if !deepEqualsEventChannelTests(cleanLhsValue, cleanRhsDictionary[key]!) {
+  case (let lhsArray, let rhsArray) as ([Double], [Double]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !doubleEqualsEventChannelTests(element, rhsArray[index]) {
         return false
       }
     }
     return true
+
+  case (let lhsDictionary, let rhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (lhsKey, lhsValue) in lhsDictionary {
+      var found = false
+      for (rhsKey, rhsValue) in rhsDictionary {
+        if deepEqualsEventChannelTests(lhsKey, rhsKey) {
+          if deepEqualsEventChannelTests(lhsValue, rhsValue) {
+            found = true
+            break
+          } else {
+            return false
+          }
+        }
+      }
+      if !found { return false }
+    }
+    return true
+
+  case (let lhs as Double, let rhs as Double):
+    return doubleEqualsEventChannelTests(lhs, rhs)
+
+  case (let lhsHashable, let rhsHashable) as (AnyHashable, AnyHashable):
+    return lhsHashable == rhsHashable
 
   default:
-    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
     return false
   }
 }
 
 func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
-  if let valueList = value as? [AnyHashable] {
-    for item in valueList { deepHashEventChannelTests(value: item, hasher: &hasher) }
-    return
-  }
-
-  if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys {
-      hasher.combine(key)
-      deepHashEventChannelTests(value: valueDict[key]!, hasher: &hasher)
+  let cleanValue = nilOrValue(value) as Any?
+  if let cleanValue = cleanValue {
+    if let doubleValue = cleanValue as? Double {
+      doubleHashEventChannelTests(doubleValue, &hasher)
+    } else if let valueList = cleanValue as? [Any?] {
+      for item in valueList {
+        deepHashEventChannelTests(value: item, hasher: &hasher)
+      }
+    } else if let valueList = cleanValue as? [Double] {
+      for item in valueList {
+        doubleHashEventChannelTests(item, &hasher)
+      }
+    } else if let valueDict = cleanValue as? [AnyHashable: Any?] {
+      var result = 0
+      for (key, value) in valueDict {
+        var entryKeyHasher = Hasher()
+        deepHashEventChannelTests(value: key, hasher: &entryKeyHasher)
+        var entryValueHasher = Hasher()
+        deepHashEventChannelTests(value: value, hasher: &entryValueHasher)
+        result = result &+ ((entryKeyHasher.finalize() &* 31) ^ entryValueHasher.finalize())
+      }
+      hasher.combine(result)
+    } else if let hashableValue = cleanValue as? AnyHashable {
+      hasher.combine(hashableValue)
+    } else {
+      hasher.combine(String(describing: cleanValue))
     }
-    return
+  } else {
+    hasher.combine(0)
   }
-
-  if let hashableValue = value as? AnyHashable {
-    hasher.combine(hashableValue.hashValue)
-  }
-
-  return hasher.combine(String(describing: value))
 }
 
 enum EventEnum: Int {
@@ -321,13 +368,78 @@ class EventAllNullableTypes: Hashable {
     ]
   }
   static func == (lhs: EventAllNullableTypes, rhs: EventAllNullableTypes) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
     if lhs === rhs {
       return true
     }
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    return deepEqualsEventChannelTests(lhs.aNullableBool, rhs.aNullableBool)
+      && deepEqualsEventChannelTests(lhs.aNullableInt, rhs.aNullableInt)
+      && deepEqualsEventChannelTests(lhs.aNullableInt64, rhs.aNullableInt64)
+      && deepEqualsEventChannelTests(lhs.aNullableDouble, rhs.aNullableDouble)
+      && deepEqualsEventChannelTests(lhs.aNullableByteArray, rhs.aNullableByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
+      && deepEqualsEventChannelTests(lhs.aNullableEnum, rhs.aNullableEnum)
+      && deepEqualsEventChannelTests(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
+      && deepEqualsEventChannelTests(lhs.aNullableString, rhs.aNullableString)
+      && deepEqualsEventChannelTests(lhs.aNullableObject, rhs.aNullableObject)
+      && deepEqualsEventChannelTests(lhs.allNullableTypes, rhs.allNullableTypes)
+      && deepEqualsEventChannelTests(lhs.list, rhs.list)
+      && deepEqualsEventChannelTests(lhs.stringList, rhs.stringList)
+      && deepEqualsEventChannelTests(lhs.intList, rhs.intList)
+      && deepEqualsEventChannelTests(lhs.doubleList, rhs.doubleList)
+      && deepEqualsEventChannelTests(lhs.boolList, rhs.boolList)
+      && deepEqualsEventChannelTests(lhs.enumList, rhs.enumList)
+      && deepEqualsEventChannelTests(lhs.objectList, rhs.objectList)
+      && deepEqualsEventChannelTests(lhs.listList, rhs.listList)
+      && deepEqualsEventChannelTests(lhs.mapList, rhs.mapList)
+      && deepEqualsEventChannelTests(lhs.recursiveClassList, rhs.recursiveClassList)
+      && deepEqualsEventChannelTests(lhs.map, rhs.map)
+      && deepEqualsEventChannelTests(lhs.stringMap, rhs.stringMap)
+      && deepEqualsEventChannelTests(lhs.intMap, rhs.intMap)
+      && deepEqualsEventChannelTests(lhs.enumMap, rhs.enumMap)
+      && deepEqualsEventChannelTests(lhs.objectMap, rhs.objectMap)
+      && deepEqualsEventChannelTests(lhs.listMap, rhs.listMap)
+      && deepEqualsEventChannelTests(lhs.mapMap, rhs.mapMap)
+      && deepEqualsEventChannelTests(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("EventAllNullableTypes")
+    deepHashEventChannelTests(value: aNullableBool, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableInt, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableInt64, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableDouble, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableByteArray, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullable4ByteArray, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullable8ByteArray, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableFloatArray, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableEnum, hasher: &hasher)
+    deepHashEventChannelTests(value: anotherNullableEnum, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableString, hasher: &hasher)
+    deepHashEventChannelTests(value: aNullableObject, hasher: &hasher)
+    deepHashEventChannelTests(value: allNullableTypes, hasher: &hasher)
+    deepHashEventChannelTests(value: list, hasher: &hasher)
+    deepHashEventChannelTests(value: stringList, hasher: &hasher)
+    deepHashEventChannelTests(value: intList, hasher: &hasher)
+    deepHashEventChannelTests(value: doubleList, hasher: &hasher)
+    deepHashEventChannelTests(value: boolList, hasher: &hasher)
+    deepHashEventChannelTests(value: enumList, hasher: &hasher)
+    deepHashEventChannelTests(value: objectList, hasher: &hasher)
+    deepHashEventChannelTests(value: listList, hasher: &hasher)
+    deepHashEventChannelTests(value: mapList, hasher: &hasher)
+    deepHashEventChannelTests(value: recursiveClassList, hasher: &hasher)
+    deepHashEventChannelTests(value: map, hasher: &hasher)
+    deepHashEventChannelTests(value: stringMap, hasher: &hasher)
+    deepHashEventChannelTests(value: intMap, hasher: &hasher)
+    deepHashEventChannelTests(value: enumMap, hasher: &hasher)
+    deepHashEventChannelTests(value: objectMap, hasher: &hasher)
+    deepHashEventChannelTests(value: listMap, hasher: &hasher)
+    deepHashEventChannelTests(value: mapMap, hasher: &hasher)
+    deepHashEventChannelTests(value: recursiveClassMap, hasher: &hasher)
   }
 }
 
@@ -355,10 +467,15 @@ struct IntEvent: PlatformEvent {
     ]
   }
   static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("IntEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -380,10 +497,15 @@ struct StringEvent: PlatformEvent {
     ]
   }
   static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("StringEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -405,10 +527,15 @@ struct BoolEvent: PlatformEvent {
     ]
   }
   static func == (lhs: BoolEvent, rhs: BoolEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("BoolEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -430,10 +557,15 @@ struct DoubleEvent: PlatformEvent {
     ]
   }
   static func == (lhs: DoubleEvent, rhs: DoubleEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("DoubleEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -455,10 +587,15 @@ struct ObjectsEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ObjectsEvent, rhs: ObjectsEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("ObjectsEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -480,10 +617,15 @@ struct EnumEvent: PlatformEvent {
     ]
   }
   static func == (lhs: EnumEvent, rhs: EnumEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("EnumEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 
@@ -505,10 +647,15 @@ struct ClassEvent: PlatformEvent {
     ]
   }
   static func == (lhs: ClassEvent, rhs: ClassEvent) -> Bool {
-    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsEventChannelTests(lhs.value, rhs.value)
   }
+
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+    hasher.combine("ClassEvent")
+    deepHashEventChannelTests(value: value, hasher: &hasher)
   }
 }
 

@@ -614,8 +614,9 @@ class ArgumentDecoders {
   /// The first argument must be the `values` list for that enum; this is the
   /// list of values that is searched.
   ///
-  /// For example, `enumValue<TileMode>(TileMode.values, source, ['tileMode']) ??
-  /// TileMode.clamp` reads the `tileMode` key of `source`, and looks for the
+  /// For example,
+  /// `enumValue<TileMode>(TileMode.values, source, ['tileMode']) ?? TileMode.clamp`
+  /// reads the `tileMode` key of `source`, and looks for the
   /// first match in [TileMode.values], defaulting to [TileMode.clamp] if
   /// nothing matches; thus, the string `mirror` would return [TileMode.mirror].
   static T? enumValue<T>(List<T> values, DataSource source, List<Object> key) {
