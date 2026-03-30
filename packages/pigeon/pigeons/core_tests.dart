@@ -44,7 +44,9 @@ class AllTypes {
     required this.enumList,
     required this.objectList,
     required this.listList,
+    required this.boolListList,
     required this.mapList,
+    required this.boolMapList,
 
     // Maps
     required this.map,
@@ -53,6 +55,7 @@ class AllTypes {
     required this.enumMap,
     required this.objectMap,
     required this.listMap,
+    required this.boolListMap,
     required this.mapMap,
   });
 
@@ -79,7 +82,9 @@ class AllTypes {
   List<AnEnum> enumList;
   List<Object> objectList;
   List<List<Object?>> listList;
+  List<List<bool>> boolListList;
   List<Map<Object?, Object?>> mapList;
+  List<Map<int, bool>> boolMapList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
@@ -89,6 +94,7 @@ class AllTypes {
   Map<AnEnum, AnEnum> enumMap;
   Map<Object, Object> objectMap;
   Map<int, List<Object?>> listMap;
+  Map<int, List<bool>> boolListMap;
   Map<int, Map<Object?, Object?>> mapMap;
 }
 
@@ -121,6 +127,7 @@ class AllNullableTypes {
     this.enumList,
     this.objectList,
     this.listList,
+    this.boolListList,
     this.mapList,
     this.recursiveClassList,
 
@@ -131,6 +138,7 @@ class AllNullableTypes {
     this.enumMap,
     this.objectMap,
     this.listMap,
+    this.boolListMap,
     this.mapMap,
     this.recursiveClassMap,
   );
@@ -159,6 +167,7 @@ class AllNullableTypes {
   List<AnEnum?>? enumList;
   List<Object?>? objectList;
   List<List<Object?>?>? listList;
+  List<List<bool?>?>? boolListList;
   List<Map<Object?, Object?>?>? mapList;
   List<AllNullableTypes?>? recursiveClassList;
 
@@ -170,6 +179,7 @@ class AllNullableTypes {
   Map<AnEnum?, AnEnum?>? enumMap;
   Map<Object?, Object?>? objectMap;
   Map<int?, List<Object?>?>? listMap;
+  Map<int?, List<bool?>?>? boolListMap;
   Map<int?, Map<Object?, Object?>?>? mapMap;
   Map<int?, AllNullableTypes?>? recursiveClassMap;
 }
@@ -353,6 +363,11 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoNonNullClassList:')
   @SwiftFunction('echoNonNull(classList:)')
   List<AllNullableTypes> echoNonNullClassList(List<AllNullableTypes> classList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullBoolListList:')
+  @SwiftFunction('echoNonNull(boolListList:)')
+  List<List<bool>> echoNonNullBoolListList(List<List<bool>> list);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')

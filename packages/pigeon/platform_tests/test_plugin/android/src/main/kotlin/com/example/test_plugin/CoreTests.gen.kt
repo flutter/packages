@@ -279,13 +279,16 @@ data class AllTypes(
     val enumList: List<AnEnum>,
     val objectList: List<Any>,
     val listList: List<List<Any?>>,
+    val boolListList: List<List<Boolean>>,
     val mapList: List<Map<Any?, Any?>>,
+    val boolMapList: List<Map<Long, Boolean>>,
     val map: Map<Any, Any?>,
     val stringMap: Map<String, String>,
     val intMap: Map<Long, Long>,
     val enumMap: Map<AnEnum, AnEnum>,
     val objectMap: Map<Any, Any>,
     val listMap: Map<Long, List<Any?>>,
+    val boolListMap: Map<Long, List<Boolean>>,
     val mapMap: Map<Long, Map<Any?, Any?>>
 ) {
   companion object {
@@ -310,14 +313,17 @@ data class AllTypes(
       val enumList = pigeonVar_list[17] as List<AnEnum>
       val objectList = pigeonVar_list[18] as List<Any>
       val listList = pigeonVar_list[19] as List<List<Any?>>
-      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
-      val map = pigeonVar_list[21] as Map<Any, Any?>
-      val stringMap = pigeonVar_list[22] as Map<String, String>
-      val intMap = pigeonVar_list[23] as Map<Long, Long>
-      val enumMap = pigeonVar_list[24] as Map<AnEnum, AnEnum>
-      val objectMap = pigeonVar_list[25] as Map<Any, Any>
-      val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
-      val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
+      val boolListList = pigeonVar_list[20] as List<List<Boolean>>
+      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>>
+      val boolMapList = pigeonVar_list[22] as List<Map<Long, Boolean>>
+      val map = pigeonVar_list[23] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[24] as Map<String, String>
+      val intMap = pigeonVar_list[25] as Map<Long, Long>
+      val enumMap = pigeonVar_list[26] as Map<AnEnum, AnEnum>
+      val objectMap = pigeonVar_list[27] as Map<Any, Any>
+      val listMap = pigeonVar_list[28] as Map<Long, List<Any?>>
+      val boolListMap = pigeonVar_list[29] as Map<Long, List<Boolean>>
+      val mapMap = pigeonVar_list[30] as Map<Long, Map<Any?, Any?>>
       return AllTypes(
           aBool,
           anInt,
@@ -339,13 +345,16 @@ data class AllTypes(
           enumList,
           objectList,
           listList,
+          boolListList,
           mapList,
+          boolMapList,
           map,
           stringMap,
           intMap,
           enumMap,
           objectMap,
           listMap,
+          boolListMap,
           mapMap)
     }
   }
@@ -372,13 +381,16 @@ data class AllTypes(
         enumList,
         objectList,
         listList,
+        boolListList,
         mapList,
+        boolMapList,
         map,
         stringMap,
         intMap,
         enumMap,
         objectMap,
         listMap,
+        boolListMap,
         mapMap,
     )
   }
@@ -411,13 +423,16 @@ data class AllTypes(
         CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
         CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
         CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolListList, other.boolListList) &&
         CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolMapList, other.boolMapList) &&
         CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
         CoreTestsPigeonUtils.deepEquals(this.stringMap, other.stringMap) &&
         CoreTestsPigeonUtils.deepEquals(this.intMap, other.intMap) &&
         CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
         CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
         CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolListMap, other.boolListMap) &&
         CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap)
   }
 
@@ -443,13 +458,16 @@ data class AllTypes(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.enumList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.objectList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.boolListList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapList)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.boolMapList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.map)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.stringMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.intMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.enumMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.objectMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.boolListMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapMap)
     return result
   }
@@ -482,6 +500,7 @@ data class AllNullableTypes(
     val enumList: List<AnEnum?>? = null,
     val objectList: List<Any?>? = null,
     val listList: List<List<Any?>?>? = null,
+    val boolListList: List<List<Boolean?>?>? = null,
     val mapList: List<Map<Any?, Any?>?>? = null,
     val recursiveClassList: List<AllNullableTypes?>? = null,
     val map: Map<Any, Any?>? = null,
@@ -490,6 +509,7 @@ data class AllNullableTypes(
     val enumMap: Map<AnEnum?, AnEnum?>? = null,
     val objectMap: Map<Any?, Any?>? = null,
     val listMap: Map<Long?, List<Any?>?>? = null,
+    val boolListMap: Map<Long?, List<Boolean?>?>? = null,
     val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
     val recursiveClassMap: Map<Long?, AllNullableTypes?>? = null
 ) {
@@ -516,16 +536,18 @@ data class AllNullableTypes(
       val enumList = pigeonVar_list[18] as List<AnEnum?>?
       val objectList = pigeonVar_list[19] as List<Any?>?
       val listList = pigeonVar_list[20] as List<List<Any?>?>?
-      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
-      val recursiveClassList = pigeonVar_list[22] as List<AllNullableTypes?>?
-      val map = pigeonVar_list[23] as Map<Any, Any?>?
-      val stringMap = pigeonVar_list[24] as Map<String?, String?>?
-      val intMap = pigeonVar_list[25] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[26] as Map<AnEnum?, AnEnum?>?
-      val objectMap = pigeonVar_list[27] as Map<Any?, Any?>?
-      val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
-      val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
-      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, AllNullableTypes?>?
+      val boolListList = pigeonVar_list[21] as List<List<Boolean?>?>?
+      val mapList = pigeonVar_list[22] as List<Map<Any?, Any?>?>?
+      val recursiveClassList = pigeonVar_list[23] as List<AllNullableTypes?>?
+      val map = pigeonVar_list[24] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[25] as Map<String?, String?>?
+      val intMap = pigeonVar_list[26] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[27] as Map<AnEnum?, AnEnum?>?
+      val objectMap = pigeonVar_list[28] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[29] as Map<Long?, List<Any?>?>?
+      val boolListMap = pigeonVar_list[30] as Map<Long?, List<Boolean?>?>?
+      val mapMap = pigeonVar_list[31] as Map<Long?, Map<Any?, Any?>?>?
+      val recursiveClassMap = pigeonVar_list[32] as Map<Long?, AllNullableTypes?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -548,6 +570,7 @@ data class AllNullableTypes(
           enumList,
           objectList,
           listList,
+          boolListList,
           mapList,
           recursiveClassList,
           map,
@@ -556,6 +579,7 @@ data class AllNullableTypes(
           enumMap,
           objectMap,
           listMap,
+          boolListMap,
           mapMap,
           recursiveClassMap)
     }
@@ -584,6 +608,7 @@ data class AllNullableTypes(
         enumList,
         objectList,
         listList,
+        boolListList,
         mapList,
         recursiveClassList,
         map,
@@ -592,6 +617,7 @@ data class AllNullableTypes(
         enumMap,
         objectMap,
         listMap,
+        boolListMap,
         mapMap,
         recursiveClassMap,
     )
@@ -626,6 +652,7 @@ data class AllNullableTypes(
         CoreTestsPigeonUtils.deepEquals(this.enumList, other.enumList) &&
         CoreTestsPigeonUtils.deepEquals(this.objectList, other.objectList) &&
         CoreTestsPigeonUtils.deepEquals(this.listList, other.listList) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolListList, other.boolListList) &&
         CoreTestsPigeonUtils.deepEquals(this.mapList, other.mapList) &&
         CoreTestsPigeonUtils.deepEquals(this.recursiveClassList, other.recursiveClassList) &&
         CoreTestsPigeonUtils.deepEquals(this.map, other.map) &&
@@ -634,6 +661,7 @@ data class AllNullableTypes(
         CoreTestsPigeonUtils.deepEquals(this.enumMap, other.enumMap) &&
         CoreTestsPigeonUtils.deepEquals(this.objectMap, other.objectMap) &&
         CoreTestsPigeonUtils.deepEquals(this.listMap, other.listMap) &&
+        CoreTestsPigeonUtils.deepEquals(this.boolListMap, other.boolListMap) &&
         CoreTestsPigeonUtils.deepEquals(this.mapMap, other.mapMap) &&
         CoreTestsPigeonUtils.deepEquals(this.recursiveClassMap, other.recursiveClassMap)
   }
@@ -661,6 +689,7 @@ data class AllNullableTypes(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.enumList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.objectList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.listList)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.boolListList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.recursiveClassList)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.map)
@@ -669,6 +698,7 @@ data class AllNullableTypes(
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.enumMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.objectMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.listMap)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.boolListMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.mapMap)
     result = 31 * result + CoreTestsPigeonUtils.deepHash(this.recursiveClassMap)
     return result
@@ -1107,6 +1137,8 @@ interface HostIntegrationCoreApi {
   fun echoNonNullEnumList(enumList: List<AnEnum>): List<AnEnum>
   /** Returns the passed list, to test serialization and deserialization. */
   fun echoNonNullClassList(classList: List<AllNullableTypes>): List<AllNullableTypes>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNonNullBoolListList(list: List<List<Boolean>>): List<List<Boolean>>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
   /** Returns the passed map, to test serialization and deserialization. */
@@ -1896,6 +1928,28 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoNonNullClassList(classListArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullBoolListList$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val listArg = args[0] as List<List<Boolean>>
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNonNullBoolListList(listArg))
                 } catch (exception: Throwable) {
                   CoreTestsPigeonUtils.wrapError(exception)
                 }

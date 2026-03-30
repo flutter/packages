@@ -148,6 +148,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return classList
   }
 
+  func echoNonNull(boolListList: [[Bool]]) throws -> [[Bool]] {
+    return boolListList
+  }
+
   func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?] {
     return map
   }

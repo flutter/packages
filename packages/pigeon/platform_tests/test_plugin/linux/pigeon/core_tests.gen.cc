@@ -309,13 +309,16 @@ struct _CoreTestsPigeonTestAllTypes {
   FlValue* enum_list;
   FlValue* object_list;
   FlValue* list_list;
+  FlValue* bool_list_list;
   FlValue* map_list;
+  FlValue* bool_map_list;
   FlValue* map;
   FlValue* string_map;
   FlValue* int_map;
   FlValue* enum_map;
   FlValue* object_map;
   FlValue* list_map;
+  FlValue* bool_list_map;
   FlValue* map_map;
 };
 
@@ -334,13 +337,16 @@ static void core_tests_pigeon_test_all_types_dispose(GObject* object) {
   g_clear_pointer(&self->enum_list, fl_value_unref);
   g_clear_pointer(&self->object_list, fl_value_unref);
   g_clear_pointer(&self->list_list, fl_value_unref);
+  g_clear_pointer(&self->bool_list_list, fl_value_unref);
   g_clear_pointer(&self->map_list, fl_value_unref);
+  g_clear_pointer(&self->bool_map_list, fl_value_unref);
   g_clear_pointer(&self->map, fl_value_unref);
   g_clear_pointer(&self->string_map, fl_value_unref);
   g_clear_pointer(&self->int_map, fl_value_unref);
   g_clear_pointer(&self->enum_map, fl_value_unref);
   g_clear_pointer(&self->object_map, fl_value_unref);
   g_clear_pointer(&self->list_map, fl_value_unref);
+  g_clear_pointer(&self->bool_list_map, fl_value_unref);
   g_clear_pointer(&self->map_map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_types_parent_class)
       ->dispose(object);
@@ -364,9 +370,11 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
     FlValue* double_list, FlValue* bool_list, FlValue* enum_list,
-    FlValue* object_list, FlValue* list_list, FlValue* map_list, FlValue* map,
+    FlValue* object_list, FlValue* list_list, FlValue* bool_list_list,
+    FlValue* map_list, FlValue* bool_map_list, FlValue* map,
     FlValue* string_map, FlValue* int_map, FlValue* enum_map,
-    FlValue* object_map, FlValue* list_map, FlValue* map_map) {
+    FlValue* object_map, FlValue* list_map, FlValue* bool_list_map,
+    FlValue* map_map) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
       g_object_new(core_tests_pigeon_test_all_types_get_type(), nullptr));
   self->a_bool = a_bool;
@@ -400,13 +408,16 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->enum_list = fl_value_ref(enum_list);
   self->object_list = fl_value_ref(object_list);
   self->list_list = fl_value_ref(list_list);
+  self->bool_list_list = fl_value_ref(bool_list_list);
   self->map_list = fl_value_ref(map_list);
+  self->bool_map_list = fl_value_ref(bool_map_list);
   self->map = fl_value_ref(map);
   self->string_map = fl_value_ref(string_map);
   self->int_map = fl_value_ref(int_map);
   self->enum_map = fl_value_ref(enum_map);
   self->object_map = fl_value_ref(object_map);
   self->list_map = fl_value_ref(list_map);
+  self->bool_list_map = fl_value_ref(bool_list_map);
   self->map_map = fl_value_ref(map_map);
   return self;
 }
@@ -538,10 +549,22 @@ FlValue* core_tests_pigeon_test_all_types_get_list_list(
   return self->list_list;
 }
 
+FlValue* core_tests_pigeon_test_all_types_get_bool_list_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->bool_list_list;
+}
+
 FlValue* core_tests_pigeon_test_all_types_get_map_list(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
   return self->map_list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_bool_map_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->bool_map_list;
 }
 
 FlValue* core_tests_pigeon_test_all_types_get_map(
@@ -578,6 +601,12 @@ FlValue* core_tests_pigeon_test_all_types_get_list_map(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
   return self->list_map;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_bool_list_map(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->bool_list_map;
 }
 
 FlValue* core_tests_pigeon_test_all_types_get_map_map(
@@ -623,13 +652,16 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(values, fl_value_ref(self->enum_list));
   fl_value_append_take(values, fl_value_ref(self->object_list));
   fl_value_append_take(values, fl_value_ref(self->list_list));
+  fl_value_append_take(values, fl_value_ref(self->bool_list_list));
   fl_value_append_take(values, fl_value_ref(self->map_list));
+  fl_value_append_take(values, fl_value_ref(self->bool_map_list));
   fl_value_append_take(values, fl_value_ref(self->map));
   fl_value_append_take(values, fl_value_ref(self->string_map));
   fl_value_append_take(values, fl_value_ref(self->int_map));
   fl_value_append_take(values, fl_value_ref(self->enum_map));
   fl_value_append_take(values, fl_value_ref(self->object_map));
   fl_value_append_take(values, fl_value_ref(self->list_map));
+  fl_value_append_take(values, fl_value_ref(self->bool_list_map));
   fl_value_append_take(values, fl_value_ref(self->map_map));
   return values;
 }
@@ -686,28 +718,35 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   FlValue* value19 = fl_value_get_list_value(values, 19);
   FlValue* list_list = value19;
   FlValue* value20 = fl_value_get_list_value(values, 20);
-  FlValue* map_list = value20;
+  FlValue* bool_list_list = value20;
   FlValue* value21 = fl_value_get_list_value(values, 21);
-  FlValue* map = value21;
+  FlValue* map_list = value21;
   FlValue* value22 = fl_value_get_list_value(values, 22);
-  FlValue* string_map = value22;
+  FlValue* bool_map_list = value22;
   FlValue* value23 = fl_value_get_list_value(values, 23);
-  FlValue* int_map = value23;
+  FlValue* map = value23;
   FlValue* value24 = fl_value_get_list_value(values, 24);
-  FlValue* enum_map = value24;
+  FlValue* string_map = value24;
   FlValue* value25 = fl_value_get_list_value(values, 25);
-  FlValue* object_map = value25;
+  FlValue* int_map = value25;
   FlValue* value26 = fl_value_get_list_value(values, 26);
-  FlValue* list_map = value26;
+  FlValue* enum_map = value26;
   FlValue* value27 = fl_value_get_list_value(values, 27);
-  FlValue* map_map = value27;
+  FlValue* object_map = value27;
+  FlValue* value28 = fl_value_get_list_value(values, 28);
+  FlValue* list_map = value28;
+  FlValue* value29 = fl_value_get_list_value(values, 29);
+  FlValue* bool_list_map = value29;
+  FlValue* value30 = fl_value_get_list_value(values, 30);
+  FlValue* map_map = value30;
   return core_tests_pigeon_test_all_types_new(
       a_bool, an_int, an_int64, a_double, a_byte_array, a_byte_array_length,
       a4_byte_array, a4_byte_array_length, a8_byte_array, a8_byte_array_length,
       a_float_array, a_float_array_length, an_enum, another_enum, a_string,
       an_object, list, string_list, int_list, double_list, bool_list, enum_list,
-      object_list, list_list, map_list, map, string_map, int_map, enum_map,
-      object_map, list_map, map_map);
+      object_list, list_list, bool_list_list, map_list, bool_map_list, map,
+      string_map, int_map, enum_map, object_map, list_map, bool_list_map,
+      map_map);
 }
 
 gboolean core_tests_pigeon_test_all_types_equals(
@@ -815,7 +854,13 @@ gboolean core_tests_pigeon_test_all_types_equals(
   if (!flpigeon_deep_equals(a->list_list, b->list_list)) {
     return FALSE;
   }
+  if (!flpigeon_deep_equals(a->bool_list_list, b->bool_list_list)) {
+    return FALSE;
+  }
   if (!flpigeon_deep_equals(a->map_list, b->map_list)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_map_list, b->bool_map_list)) {
     return FALSE;
   }
   if (!flpigeon_deep_equals(a->map, b->map)) {
@@ -834,6 +879,9 @@ gboolean core_tests_pigeon_test_all_types_equals(
     return FALSE;
   }
   if (!flpigeon_deep_equals(a->list_map, b->list_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_list_map, b->bool_list_map)) {
     return FALSE;
   }
   if (!flpigeon_deep_equals(a->map_map, b->map_map)) {
@@ -898,13 +946,16 @@ guint core_tests_pigeon_test_all_types_hash(CoreTestsPigeonTestAllTypes* self) {
   result = result * 31 + flpigeon_deep_hash(self->enum_list);
   result = result * 31 + flpigeon_deep_hash(self->object_list);
   result = result * 31 + flpigeon_deep_hash(self->list_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list_list);
   result = result * 31 + flpigeon_deep_hash(self->map_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_map_list);
   result = result * 31 + flpigeon_deep_hash(self->map);
   result = result * 31 + flpigeon_deep_hash(self->string_map);
   result = result * 31 + flpigeon_deep_hash(self->int_map);
   result = result * 31 + flpigeon_deep_hash(self->enum_map);
   result = result * 31 + flpigeon_deep_hash(self->object_map);
   result = result * 31 + flpigeon_deep_hash(self->list_map);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list_map);
   result = result * 31 + flpigeon_deep_hash(self->map_map);
   return result;
 }
@@ -937,6 +988,7 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   FlValue* enum_list;
   FlValue* object_list;
   FlValue* list_list;
+  FlValue* bool_list_list;
   FlValue* map_list;
   FlValue* recursive_class_list;
   FlValue* map;
@@ -945,6 +997,7 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   FlValue* enum_map;
   FlValue* object_map;
   FlValue* list_map;
+  FlValue* bool_list_map;
   FlValue* map_map;
   FlValue* recursive_class_map;
 };
@@ -972,6 +1025,7 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->enum_list, fl_value_unref);
   g_clear_pointer(&self->object_list, fl_value_unref);
   g_clear_pointer(&self->list_list, fl_value_unref);
+  g_clear_pointer(&self->bool_list_list, fl_value_unref);
   g_clear_pointer(&self->map_list, fl_value_unref);
   g_clear_pointer(&self->recursive_class_list, fl_value_unref);
   g_clear_pointer(&self->map, fl_value_unref);
@@ -980,6 +1034,7 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->enum_map, fl_value_unref);
   g_clear_pointer(&self->object_map, fl_value_unref);
   g_clear_pointer(&self->list_map, fl_value_unref);
+  g_clear_pointer(&self->bool_list_map, fl_value_unref);
   g_clear_pointer(&self->map_map, fl_value_unref);
   g_clear_pointer(&self->recursive_class_map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_nullable_types_parent_class)
@@ -1009,10 +1064,10 @@ core_tests_pigeon_test_all_nullable_types_new(
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
     FlValue* bool_list, FlValue* enum_list, FlValue* object_list,
-    FlValue* list_list, FlValue* map_list, FlValue* recursive_class_list,
-    FlValue* map, FlValue* string_map, FlValue* int_map, FlValue* enum_map,
-    FlValue* object_map, FlValue* list_map, FlValue* map_map,
-    FlValue* recursive_class_map) {
+    FlValue* list_list, FlValue* bool_list_list, FlValue* map_list,
+    FlValue* recursive_class_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map, FlValue* enum_map, FlValue* object_map, FlValue* list_map,
+    FlValue* bool_list_map, FlValue* map_map, FlValue* recursive_class_map) {
   CoreTestsPigeonTestAllNullableTypes* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(g_object_new(
           core_tests_pigeon_test_all_nullable_types_get_type(), nullptr));
@@ -1149,6 +1204,11 @@ core_tests_pigeon_test_all_nullable_types_new(
   } else {
     self->list_list = nullptr;
   }
+  if (bool_list_list != nullptr) {
+    self->bool_list_list = fl_value_ref(bool_list_list);
+  } else {
+    self->bool_list_list = nullptr;
+  }
   if (map_list != nullptr) {
     self->map_list = fl_value_ref(map_list);
   } else {
@@ -1188,6 +1248,11 @@ core_tests_pigeon_test_all_nullable_types_new(
     self->list_map = fl_value_ref(list_map);
   } else {
     self->list_map = nullptr;
+  }
+  if (bool_list_map != nullptr) {
+    self->bool_list_map = fl_value_ref(bool_list_map);
+  } else {
+    self->bool_list_map = nullptr;
   }
   if (map_map != nullptr) {
     self->map_map = fl_value_ref(map_map);
@@ -1360,6 +1425,13 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_list_list(
   return self->list_list;
 }
 
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->bool_list_list;
+}
+
 FlValue* core_tests_pigeon_test_all_nullable_types_get_map_list(
     CoreTestsPigeonTestAllNullableTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
@@ -1414,6 +1486,13 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_list_map(
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
                        nullptr);
   return self->list_map;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list_map(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->bool_list_map;
 }
 
 FlValue* core_tests_pigeon_test_all_nullable_types_get_map_map(
@@ -1516,6 +1595,9 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
   fl_value_append_take(values, self->list_list != nullptr
                                    ? fl_value_ref(self->list_list)
                                    : fl_value_new_null());
+  fl_value_append_take(values, self->bool_list_list != nullptr
+                                   ? fl_value_ref(self->bool_list_list)
+                                   : fl_value_new_null());
   fl_value_append_take(values, self->map_list != nullptr
                                    ? fl_value_ref(self->map_list)
                                    : fl_value_new_null());
@@ -1538,6 +1620,9 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                                    : fl_value_new_null());
   fl_value_append_take(values, self->list_map != nullptr
                                    ? fl_value_ref(self->list_map)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->bool_list_map != nullptr
+                                   ? fl_value_ref(self->bool_list_map)
                                    : fl_value_new_null());
   fl_value_append_take(values, self->map_map != nullptr
                                    ? fl_value_ref(self->map_map)
@@ -1681,54 +1766,64 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
     list_list = value20;
   }
   FlValue* value21 = fl_value_get_list_value(values, 21);
-  FlValue* map_list = nullptr;
+  FlValue* bool_list_list = nullptr;
   if (fl_value_get_type(value21) != FL_VALUE_TYPE_NULL) {
-    map_list = value21;
+    bool_list_list = value21;
   }
   FlValue* value22 = fl_value_get_list_value(values, 22);
-  FlValue* recursive_class_list = nullptr;
+  FlValue* map_list = nullptr;
   if (fl_value_get_type(value22) != FL_VALUE_TYPE_NULL) {
-    recursive_class_list = value22;
+    map_list = value22;
   }
   FlValue* value23 = fl_value_get_list_value(values, 23);
-  FlValue* map = nullptr;
+  FlValue* recursive_class_list = nullptr;
   if (fl_value_get_type(value23) != FL_VALUE_TYPE_NULL) {
-    map = value23;
+    recursive_class_list = value23;
   }
   FlValue* value24 = fl_value_get_list_value(values, 24);
-  FlValue* string_map = nullptr;
+  FlValue* map = nullptr;
   if (fl_value_get_type(value24) != FL_VALUE_TYPE_NULL) {
-    string_map = value24;
+    map = value24;
   }
   FlValue* value25 = fl_value_get_list_value(values, 25);
-  FlValue* int_map = nullptr;
+  FlValue* string_map = nullptr;
   if (fl_value_get_type(value25) != FL_VALUE_TYPE_NULL) {
-    int_map = value25;
+    string_map = value25;
   }
   FlValue* value26 = fl_value_get_list_value(values, 26);
-  FlValue* enum_map = nullptr;
+  FlValue* int_map = nullptr;
   if (fl_value_get_type(value26) != FL_VALUE_TYPE_NULL) {
-    enum_map = value26;
+    int_map = value26;
   }
   FlValue* value27 = fl_value_get_list_value(values, 27);
-  FlValue* object_map = nullptr;
+  FlValue* enum_map = nullptr;
   if (fl_value_get_type(value27) != FL_VALUE_TYPE_NULL) {
-    object_map = value27;
+    enum_map = value27;
   }
   FlValue* value28 = fl_value_get_list_value(values, 28);
-  FlValue* list_map = nullptr;
+  FlValue* object_map = nullptr;
   if (fl_value_get_type(value28) != FL_VALUE_TYPE_NULL) {
-    list_map = value28;
+    object_map = value28;
   }
   FlValue* value29 = fl_value_get_list_value(values, 29);
-  FlValue* map_map = nullptr;
+  FlValue* list_map = nullptr;
   if (fl_value_get_type(value29) != FL_VALUE_TYPE_NULL) {
-    map_map = value29;
+    list_map = value29;
   }
   FlValue* value30 = fl_value_get_list_value(values, 30);
-  FlValue* recursive_class_map = nullptr;
+  FlValue* bool_list_map = nullptr;
   if (fl_value_get_type(value30) != FL_VALUE_TYPE_NULL) {
-    recursive_class_map = value30;
+    bool_list_map = value30;
+  }
+  FlValue* value31 = fl_value_get_list_value(values, 31);
+  FlValue* map_map = nullptr;
+  if (fl_value_get_type(value31) != FL_VALUE_TYPE_NULL) {
+    map_map = value31;
+  }
+  FlValue* value32 = fl_value_get_list_value(values, 32);
+  FlValue* recursive_class_map = nullptr;
+  if (fl_value_get_type(value32) != FL_VALUE_TYPE_NULL) {
+    recursive_class_map = value32;
   }
   return core_tests_pigeon_test_all_nullable_types_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
@@ -1738,9 +1833,9 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
       a_nullable_float_array, a_nullable_float_array_length, a_nullable_enum,
       another_nullable_enum, a_nullable_string, a_nullable_object,
       all_nullable_types, list, string_list, int_list, double_list, bool_list,
-      enum_list, object_list, list_list, map_list, recursive_class_list, map,
-      string_map, int_map, enum_map, object_map, list_map, map_map,
-      recursive_class_map);
+      enum_list, object_list, list_list, bool_list_list, map_list,
+      recursive_class_list, map, string_map, int_map, enum_map, object_map,
+      list_map, bool_list_map, map_map, recursive_class_map);
 }
 
 gboolean core_tests_pigeon_test_all_nullable_types_equals(
@@ -1883,6 +1978,9 @@ gboolean core_tests_pigeon_test_all_nullable_types_equals(
   if (!flpigeon_deep_equals(a->list_list, b->list_list)) {
     return FALSE;
   }
+  if (!flpigeon_deep_equals(a->bool_list_list, b->bool_list_list)) {
+    return FALSE;
+  }
   if (!flpigeon_deep_equals(a->map_list, b->map_list)) {
     return FALSE;
   }
@@ -1905,6 +2003,9 @@ gboolean core_tests_pigeon_test_all_nullable_types_equals(
     return FALSE;
   }
   if (!flpigeon_deep_equals(a->list_map, b->list_map)) {
+    return FALSE;
+  }
+  if (!flpigeon_deep_equals(a->bool_list_map, b->bool_list_map)) {
     return FALSE;
   }
   if (!flpigeon_deep_equals(a->map_map, b->map_map)) {
@@ -1988,6 +2089,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
   result = result * 31 + flpigeon_deep_hash(self->enum_list);
   result = result * 31 + flpigeon_deep_hash(self->object_list);
   result = result * 31 + flpigeon_deep_hash(self->list_list);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list_list);
   result = result * 31 + flpigeon_deep_hash(self->map_list);
   result = result * 31 + flpigeon_deep_hash(self->recursive_class_list);
   result = result * 31 + flpigeon_deep_hash(self->map);
@@ -1996,6 +2098,7 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
   result = result * 31 + flpigeon_deep_hash(self->enum_map);
   result = result * 31 + flpigeon_deep_hash(self->object_map);
   result = result * 31 + flpigeon_deep_hash(self->list_map);
+  result = result * 31 + flpigeon_deep_hash(self->bool_list_map);
   result = result * 31 + flpigeon_deep_hash(self->map_map);
   result = result * 31 + flpigeon_deep_hash(self->recursive_class_map);
   return result;
@@ -4837,6 +4940,73 @@ core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_respon
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NON_NULL_CLASS_LIST_RESPONSE(
           g_object_new(
               core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NON_NULL_BOOL_LIST_LIST_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NON_NULL_BOOL_LIST_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_NON_NULL_BOOL_LIST_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
@@ -15467,6 +15637,38 @@ core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_cb(
   }
 }
 
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_non_null_bool_list_list == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* list = value0;
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse)
+      response =
+          self->vtable->echo_non_null_bool_list_list(list, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoNonNullBoolListList");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoNonNullBoolListList", error->message);
+  }
+}
+
 static void core_tests_pigeon_test_host_integration_core_api_echo_map_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -19209,6 +19411,18 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_non_null_class_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_non_null_bool_list_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNonNullBoolListList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_non_null_bool_list_list_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_non_null_bool_list_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_non_null_bool_list_list_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_map_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoMap%s",
@@ -21113,6 +21327,16 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_non_null_class_list_channel,
                                                nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_non_null_bool_list_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNonNullBoolListList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_non_null_bool_list_list_channel =
+      fl_basic_message_channel_new(messenger,
+                                   echo_non_null_bool_list_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_non_null_bool_list_list_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* echo_map_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoMap%s",

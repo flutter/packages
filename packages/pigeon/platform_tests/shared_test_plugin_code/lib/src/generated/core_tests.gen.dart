@@ -177,13 +177,16 @@ class AllTypes {
     required this.enumList,
     required this.objectList,
     required this.listList,
+    required this.boolListList,
     required this.mapList,
+    required this.boolMapList,
     required this.map,
     required this.stringMap,
     required this.intMap,
     required this.enumMap,
     required this.objectMap,
     required this.listMap,
+    required this.boolListMap,
     required this.mapMap,
   });
 
@@ -227,7 +230,11 @@ class AllTypes {
 
   List<List<Object?>> listList;
 
+  List<List<bool>> boolListList;
+
   List<Map<Object?, Object?>> mapList;
+
+  List<Map<int, bool>> boolMapList;
 
   Map<Object?, Object?> map;
 
@@ -240,6 +247,8 @@ class AllTypes {
   Map<Object, Object> objectMap;
 
   Map<int, List<Object?>> listMap;
+
+  Map<int, List<bool>> boolListMap;
 
   Map<int, Map<Object?, Object?>> mapMap;
 
@@ -265,13 +274,16 @@ class AllTypes {
       enumList,
       objectList,
       listList,
+      boolListList,
       mapList,
+      boolMapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
       listMap,
+      boolListMap,
       mapMap,
     ];
   }
@@ -302,17 +314,32 @@ class AllTypes {
       boolList: (result[16]! as List<Object?>).cast<bool>(),
       enumList: (result[17]! as List<Object?>).cast<AnEnum>(),
       objectList: (result[18]! as List<Object?>).cast<Object>(),
-      listList: (result[19]! as List<Object?>).cast<List<Object?>>(),
-      mapList: (result[20]! as List<Object?>).cast<Map<Object?, Object?>>(),
-      map: result[21]! as Map<Object?, Object?>,
-      stringMap: (result[22]! as Map<Object?, Object?>).cast<String, String>(),
-      intMap: (result[23]! as Map<Object?, Object?>).cast<int, int>(),
-      enumMap: (result[24]! as Map<Object?, Object?>).cast<AnEnum, AnEnum>(),
-      objectMap: (result[25]! as Map<Object?, Object?>).cast<Object, Object>(),
-      listMap: (result[26]! as Map<Object?, Object?>)
-          .cast<int, List<Object?>>(),
-      mapMap: (result[27]! as Map<Object?, Object?>)
-          .cast<int, Map<Object?, Object?>>(),
+      listList: (result[19]! as List<Object?>)
+          .map((e) => e! as List<Object?>)
+          .toList(),
+      boolListList: (result[20]! as List<Object?>)
+          .map((e) => (e! as List<Object?>).cast<bool>())
+          .toList(),
+      mapList: (result[21]! as List<Object?>)
+          .map((e) => e! as Map<Object?, Object?>)
+          .toList(),
+      boolMapList: (result[22]! as List<Object?>)
+          .map((e) => (e! as Map<Object?, Object?>).cast<int, bool>())
+          .toList(),
+      map: result[23]! as Map<Object?, Object?>,
+      stringMap: (result[24]! as Map<Object?, Object?>).cast<String, String>(),
+      intMap: (result[25]! as Map<Object?, Object?>).cast<int, int>(),
+      enumMap: (result[26]! as Map<Object?, Object?>).cast<AnEnum, AnEnum>(),
+      objectMap: (result[27]! as Map<Object?, Object?>).cast<Object, Object>(),
+      listMap: (result[28]! as Map<Object?, Object?>).map(
+        (k, v) => MapEntry(k! as int, v! as List<Object?>),
+      ),
+      boolListMap: (result[29]! as Map<Object?, Object?>).map(
+        (k, v) => MapEntry(k! as int, (v! as List<Object?>).cast<bool>()),
+      ),
+      mapMap: (result[30]! as Map<Object?, Object?>).map(
+        (k, v) => MapEntry(k! as int, v! as Map<Object?, Object?>),
+      ),
     );
   }
 
@@ -345,13 +372,16 @@ class AllTypes {
         _deepEquals(enumList, other.enumList) &&
         _deepEquals(objectList, other.objectList) &&
         _deepEquals(listList, other.listList) &&
+        _deepEquals(boolListList, other.boolListList) &&
         _deepEquals(mapList, other.mapList) &&
+        _deepEquals(boolMapList, other.boolMapList) &&
         _deepEquals(map, other.map) &&
         _deepEquals(stringMap, other.stringMap) &&
         _deepEquals(intMap, other.intMap) &&
         _deepEquals(enumMap, other.enumMap) &&
         _deepEquals(objectMap, other.objectMap) &&
         _deepEquals(listMap, other.listMap) &&
+        _deepEquals(boolListMap, other.boolListMap) &&
         _deepEquals(mapMap, other.mapMap);
   }
 
@@ -384,6 +414,7 @@ class AllNullableTypes {
     this.enumList,
     this.objectList,
     this.listList,
+    this.boolListList,
     this.mapList,
     this.recursiveClassList,
     this.map,
@@ -392,6 +423,7 @@ class AllNullableTypes {
     this.enumMap,
     this.objectMap,
     this.listMap,
+    this.boolListMap,
     this.mapMap,
     this.recursiveClassMap,
   });
@@ -438,6 +470,8 @@ class AllNullableTypes {
 
   List<List<Object?>?>? listList;
 
+  List<List<bool?>?>? boolListList;
+
   List<Map<Object?, Object?>?>? mapList;
 
   List<AllNullableTypes?>? recursiveClassList;
@@ -453,6 +487,8 @@ class AllNullableTypes {
   Map<Object?, Object?>? objectMap;
 
   Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, List<bool?>?>? boolListMap;
 
   Map<int?, Map<Object?, Object?>?>? mapMap;
 
@@ -481,6 +517,7 @@ class AllNullableTypes {
       enumList,
       objectList,
       listList,
+      boolListList,
       mapList,
       recursiveClassList,
       map,
@@ -489,6 +526,7 @@ class AllNullableTypes {
       enumMap,
       objectMap,
       listMap,
+      boolListMap,
       mapMap,
       recursiveClassMap,
     ];
@@ -521,21 +559,33 @@ class AllNullableTypes {
       boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[18] as List<Object?>?)?.cast<AnEnum?>(),
       objectList: result[19] as List<Object?>?,
-      listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
-      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList: (result[22] as List<Object?>?)
+      listList: (result[20] as List<Object?>?)
+          ?.map((e) => e as List<Object?>?)
+          .toList(),
+      boolListList: (result[21] as List<Object?>?)
+          ?.map((e) => (e as List<Object?>?)?.cast<bool?>())
+          .toList(),
+      mapList: (result[22] as List<Object?>?)
+          ?.map((e) => e as Map<Object?, Object?>?)
+          .toList(),
+      recursiveClassList: (result[23] as List<Object?>?)
           ?.cast<AllNullableTypes?>(),
-      map: result[23] as Map<Object?, Object?>?,
-      stringMap: (result[24] as Map<Object?, Object?>?)
+      map: result[24] as Map<Object?, Object?>?,
+      stringMap: (result[25] as Map<Object?, Object?>?)
           ?.cast<String?, String?>(),
-      intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[26] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
-      objectMap: result[27] as Map<Object?, Object?>?,
-      listMap: (result[28] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+      intMap: (result[26] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[27] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
+      objectMap: result[28] as Map<Object?, Object?>?,
+      listMap: (result[29] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as List<Object?>?),
+      ),
+      boolListMap: (result[30] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, (v as List<Object?>?)?.cast<bool?>()),
+      ),
+      mapMap: (result[31] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as Map<Object?, Object?>?),
+      ),
+      recursiveClassMap: (result[32] as Map<Object?, Object?>?)
           ?.cast<int?, AllNullableTypes?>(),
     );
   }
@@ -570,6 +620,7 @@ class AllNullableTypes {
         _deepEquals(enumList, other.enumList) &&
         _deepEquals(objectList, other.objectList) &&
         _deepEquals(listList, other.listList) &&
+        _deepEquals(boolListList, other.boolListList) &&
         _deepEquals(mapList, other.mapList) &&
         _deepEquals(recursiveClassList, other.recursiveClassList) &&
         _deepEquals(map, other.map) &&
@@ -578,6 +629,7 @@ class AllNullableTypes {
         _deepEquals(enumMap, other.enumMap) &&
         _deepEquals(objectMap, other.objectMap) &&
         _deepEquals(listMap, other.listMap) &&
+        _deepEquals(boolListMap, other.boolListMap) &&
         _deepEquals(mapMap, other.mapMap) &&
         _deepEquals(recursiveClassMap, other.recursiveClassMap);
   }
@@ -737,18 +789,24 @@ class AllNullableTypesWithoutRecursion {
       boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[17] as List<Object?>?)?.cast<AnEnum?>(),
       objectList: result[18] as List<Object?>?,
-      listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
-      mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      listList: (result[19] as List<Object?>?)
+          ?.map((e) => e as List<Object?>?)
+          .toList(),
+      mapList: (result[20] as List<Object?>?)
+          ?.map((e) => e as Map<Object?, Object?>?)
+          .toList(),
       map: result[21] as Map<Object?, Object?>?,
       stringMap: (result[22] as Map<Object?, Object?>?)
           ?.cast<String?, String?>(),
       intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
       enumMap: (result[24] as Map<Object?, Object?>?)?.cast<AnEnum?, AnEnum?>(),
       objectMap: result[25] as Map<Object?, Object?>?,
-      listMap: (result[26] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[27] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
+      listMap: (result[26] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as List<Object?>?),
+      ),
+      mapMap: (result[27] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as Map<Object?, Object?>?),
+      ),
     );
   }
 
@@ -1348,6 +1406,32 @@ class HostIntegrationCoreApi {
       isNullValid: false,
     );
     return (pigeonVar_replyValue! as List<Object?>).cast<AllNullableTypes>();
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<List<bool>>> echoNonNullBoolListList(
+    List<List<bool>> list,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullBoolListList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[list],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>)
+        .map((e) => (e! as List<Object?>).cast<bool>())
+        .toList();
   }
 
   /// Returns the passed map, to test serialization and deserialization.

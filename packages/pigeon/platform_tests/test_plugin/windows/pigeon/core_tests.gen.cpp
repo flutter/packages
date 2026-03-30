@@ -295,24 +295,23 @@ size_t PigeonInternalDeepHash(const UnusedClass& v) { return v.Hash(); }
 
 // AllTypes
 
-AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
-                   double a_double, const std::vector<uint8_t>& a_byte_array,
-                   const std::vector<int32_t>& a4_byte_array,
-                   const std::vector<int64_t>& a8_byte_array,
-                   const std::vector<double>& a_float_array,
-                   const AnEnum& an_enum, const AnotherEnum& another_enum,
-                   const std::string& a_string, const EncodableValue& an_object,
-                   const EncodableList& list, const EncodableList& string_list,
-                   const EncodableList& int_list,
-                   const EncodableList& double_list,
-                   const EncodableList& bool_list,
-                   const EncodableList& enum_list,
-                   const EncodableList& object_list,
-                   const EncodableList& list_list,
-                   const EncodableList& map_list, const EncodableMap& map,
-                   const EncodableMap& string_map, const EncodableMap& int_map,
-                   const EncodableMap& enum_map, const EncodableMap& object_map,
-                   const EncodableMap& list_map, const EncodableMap& map_map)
+AllTypes::AllTypes(
+    bool a_bool, int64_t an_int, int64_t an_int64, double a_double,
+    const std::vector<uint8_t>& a_byte_array,
+    const std::vector<int32_t>& a4_byte_array,
+    const std::vector<int64_t>& a8_byte_array,
+    const std::vector<double>& a_float_array, const AnEnum& an_enum,
+    const AnotherEnum& another_enum, const std::string& a_string,
+    const EncodableValue& an_object, const EncodableList& list,
+    const EncodableList& string_list, const EncodableList& int_list,
+    const EncodableList& double_list, const EncodableList& bool_list,
+    const EncodableList& enum_list, const EncodableList& object_list,
+    const EncodableList& list_list, const EncodableList& bool_list_list,
+    const EncodableList& map_list, const EncodableList& bool_map_list,
+    const EncodableMap& map, const EncodableMap& string_map,
+    const EncodableMap& int_map, const EncodableMap& enum_map,
+    const EncodableMap& object_map, const EncodableMap& list_map,
+    const EncodableMap& bool_list_map, const EncodableMap& map_map)
     : a_bool_(a_bool),
       an_int_(an_int),
       an_int64_(an_int64),
@@ -333,13 +332,16 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       enum_list_(enum_list),
       object_list_(object_list),
       list_list_(list_list),
+      bool_list_list_(bool_list_list),
       map_list_(map_list),
+      bool_map_list_(bool_map_list),
       map_(map),
       string_map_(string_map),
       int_map_(int_map),
       enum_map_(enum_map),
       object_map_(object_map),
       list_map_(list_map),
+      bool_list_map_(bool_list_map),
       map_map_(map_map) {}
 
 bool AllTypes::a_bool() const { return a_bool_; }
@@ -458,10 +460,24 @@ void AllTypes::set_list_list(const EncodableList& value_arg) {
   list_list_ = value_arg;
 }
 
+const EncodableList& AllTypes::bool_list_list() const {
+  return bool_list_list_;
+}
+
+void AllTypes::set_bool_list_list(const EncodableList& value_arg) {
+  bool_list_list_ = value_arg;
+}
+
 const EncodableList& AllTypes::map_list() const { return map_list_; }
 
 void AllTypes::set_map_list(const EncodableList& value_arg) {
   map_list_ = value_arg;
+}
+
+const EncodableList& AllTypes::bool_map_list() const { return bool_map_list_; }
+
+void AllTypes::set_bool_map_list(const EncodableList& value_arg) {
+  bool_map_list_ = value_arg;
 }
 
 const EncodableMap& AllTypes::map() const { return map_; }
@@ -498,6 +514,12 @@ void AllTypes::set_list_map(const EncodableMap& value_arg) {
   list_map_ = value_arg;
 }
 
+const EncodableMap& AllTypes::bool_list_map() const { return bool_list_map_; }
+
+void AllTypes::set_bool_list_map(const EncodableMap& value_arg) {
+  bool_list_map_ = value_arg;
+}
+
 const EncodableMap& AllTypes::map_map() const { return map_map_; }
 
 void AllTypes::set_map_map(const EncodableMap& value_arg) {
@@ -506,7 +528,7 @@ void AllTypes::set_map_map(const EncodableMap& value_arg) {
 
 EncodableList AllTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(28);
+  list.reserve(31);
   list.push_back(EncodableValue(a_bool_));
   list.push_back(EncodableValue(an_int_));
   list.push_back(EncodableValue(an_int64_));
@@ -527,13 +549,16 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(enum_list_));
   list.push_back(EncodableValue(object_list_));
   list.push_back(EncodableValue(list_list_));
+  list.push_back(EncodableValue(bool_list_list_));
   list.push_back(EncodableValue(map_list_));
+  list.push_back(EncodableValue(bool_map_list_));
   list.push_back(EncodableValue(map_));
   list.push_back(EncodableValue(string_map_));
   list.push_back(EncodableValue(int_map_));
   list.push_back(EncodableValue(enum_map_));
   list.push_back(EncodableValue(object_map_));
   list.push_back(EncodableValue(list_map_));
+  list.push_back(EncodableValue(bool_list_map_));
   list.push_back(EncodableValue(map_map_));
   return list;
 }
@@ -554,10 +579,12 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<EncodableList>(list[14]), std::get<EncodableList>(list[15]),
       std::get<EncodableList>(list[16]), std::get<EncodableList>(list[17]),
       std::get<EncodableList>(list[18]), std::get<EncodableList>(list[19]),
-      std::get<EncodableList>(list[20]), std::get<EncodableMap>(list[21]),
-      std::get<EncodableMap>(list[22]), std::get<EncodableMap>(list[23]),
+      std::get<EncodableList>(list[20]), std::get<EncodableList>(list[21]),
+      std::get<EncodableList>(list[22]), std::get<EncodableMap>(list[23]),
       std::get<EncodableMap>(list[24]), std::get<EncodableMap>(list[25]),
-      std::get<EncodableMap>(list[26]), std::get<EncodableMap>(list[27]));
+      std::get<EncodableMap>(list[26]), std::get<EncodableMap>(list[27]),
+      std::get<EncodableMap>(list[28]), std::get<EncodableMap>(list[29]),
+      std::get<EncodableMap>(list[30]));
   return decoded;
 }
 
@@ -582,13 +609,16 @@ bool AllTypes::operator==(const AllTypes& other) const {
          PigeonInternalDeepEquals(enum_list_, other.enum_list_) &&
          PigeonInternalDeepEquals(object_list_, other.object_list_) &&
          PigeonInternalDeepEquals(list_list_, other.list_list_) &&
+         PigeonInternalDeepEquals(bool_list_list_, other.bool_list_list_) &&
          PigeonInternalDeepEquals(map_list_, other.map_list_) &&
+         PigeonInternalDeepEquals(bool_map_list_, other.bool_map_list_) &&
          PigeonInternalDeepEquals(map_, other.map_) &&
          PigeonInternalDeepEquals(string_map_, other.string_map_) &&
          PigeonInternalDeepEquals(int_map_, other.int_map_) &&
          PigeonInternalDeepEquals(enum_map_, other.enum_map_) &&
          PigeonInternalDeepEquals(object_map_, other.object_map_) &&
          PigeonInternalDeepEquals(list_map_, other.list_map_) &&
+         PigeonInternalDeepEquals(bool_list_map_, other.bool_list_map_) &&
          PigeonInternalDeepEquals(map_map_, other.map_map_);
 }
 
@@ -618,13 +648,16 @@ size_t AllTypes::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(enum_list_);
   result = result * 31 + PigeonInternalDeepHash(object_list_);
   result = result * 31 + PigeonInternalDeepHash(list_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_list_);
   result = result * 31 + PigeonInternalDeepHash(map_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_map_list_);
   result = result * 31 + PigeonInternalDeepHash(map_);
   result = result * 31 + PigeonInternalDeepHash(string_map_);
   result = result * 31 + PigeonInternalDeepHash(int_map_);
   result = result * 31 + PigeonInternalDeepHash(enum_map_);
   result = result * 31 + PigeonInternalDeepHash(object_map_);
   result = result * 31 + PigeonInternalDeepHash(list_map_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_map_);
   result = result * 31 + PigeonInternalDeepHash(map_map_);
   return result;
 }
@@ -649,11 +682,12 @@ AllNullableTypes::AllNullableTypes(
     const EncodableList* string_list, const EncodableList* int_list,
     const EncodableList* double_list, const EncodableList* bool_list,
     const EncodableList* enum_list, const EncodableList* object_list,
-    const EncodableList* list_list, const EncodableList* map_list,
-    const EncodableList* recursive_class_list, const EncodableMap* map,
-    const EncodableMap* string_map, const EncodableMap* int_map,
-    const EncodableMap* enum_map, const EncodableMap* object_map,
-    const EncodableMap* list_map, const EncodableMap* map_map,
+    const EncodableList* list_list, const EncodableList* bool_list_list,
+    const EncodableList* map_list, const EncodableList* recursive_class_list,
+    const EncodableMap* map, const EncodableMap* string_map,
+    const EncodableMap* int_map, const EncodableMap* enum_map,
+    const EncodableMap* object_map, const EncodableMap* list_map,
+    const EncodableMap* bool_list_map, const EncodableMap* map_map,
     const EncodableMap* recursive_class_map)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
@@ -711,6 +745,9 @@ AllNullableTypes::AllNullableTypes(
                                : std::nullopt),
       list_list_(list_list ? std::optional<EncodableList>(*list_list)
                            : std::nullopt),
+      bool_list_list_(bool_list_list
+                          ? std::optional<EncodableList>(*bool_list_list)
+                          : std::nullopt),
       map_list_(map_list ? std::optional<EncodableList>(*map_list)
                          : std::nullopt),
       recursive_class_list_(recursive_class_list ? std::optional<EncodableList>(
@@ -726,6 +763,8 @@ AllNullableTypes::AllNullableTypes(
                              : std::nullopt),
       list_map_(list_map ? std::optional<EncodableMap>(*list_map)
                          : std::nullopt),
+      bool_list_map_(bool_list_map ? std::optional<EncodableMap>(*bool_list_map)
+                                   : std::nullopt),
       map_map_(map_map ? std::optional<EncodableMap>(*map_map) : std::nullopt),
       recursive_class_map_(recursive_class_map ? std::optional<EncodableMap>(
                                                      *recursive_class_map)
@@ -801,6 +840,9 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
       list_list_(other.list_list_
                      ? std::optional<EncodableList>(*other.list_list_)
                      : std::nullopt),
+      bool_list_list_(other.bool_list_list_
+                          ? std::optional<EncodableList>(*other.bool_list_list_)
+                          : std::nullopt),
       map_list_(other.map_list_ ? std::optional<EncodableList>(*other.map_list_)
                                 : std::nullopt),
       recursive_class_list_(
@@ -821,6 +863,9 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
                       : std::nullopt),
       list_map_(other.list_map_ ? std::optional<EncodableMap>(*other.list_map_)
                                 : std::nullopt),
+      bool_list_map_(other.bool_list_map_
+                         ? std::optional<EncodableMap>(*other.bool_list_map_)
+                         : std::nullopt),
       map_map_(other.map_map_ ? std::optional<EncodableMap>(*other.map_map_)
                               : std::nullopt),
       recursive_class_map_(
@@ -853,6 +898,7 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   enum_list_ = other.enum_list_;
   object_list_ = other.object_list_;
   list_list_ = other.list_list_;
+  bool_list_list_ = other.bool_list_list_;
   map_list_ = other.map_list_;
   recursive_class_list_ = other.recursive_class_list_;
   map_ = other.map_;
@@ -861,6 +907,7 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   enum_map_ = other.enum_map_;
   object_map_ = other.object_map_;
   list_map_ = other.list_map_;
+  bool_list_map_ = other.bool_list_map_;
   map_map_ = other.map_map_;
   recursive_class_map_ = other.recursive_class_map_;
   return *this;
@@ -1151,6 +1198,19 @@ void AllNullableTypes::set_list_list(const EncodableList& value_arg) {
   list_list_ = value_arg;
 }
 
+const EncodableList* AllNullableTypes::bool_list_list() const {
+  return bool_list_list_ ? &(*bool_list_list_) : nullptr;
+}
+
+void AllNullableTypes::set_bool_list_list(const EncodableList* value_arg) {
+  bool_list_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_bool_list_list(const EncodableList& value_arg) {
+  bool_list_list_ = value_arg;
+}
+
 const EncodableList* AllNullableTypes::map_list() const {
   return map_list_ ? &(*map_list_) : nullptr;
 }
@@ -1255,6 +1315,19 @@ void AllNullableTypes::set_list_map(const EncodableMap& value_arg) {
   list_map_ = value_arg;
 }
 
+const EncodableMap* AllNullableTypes::bool_list_map() const {
+  return bool_list_map_ ? &(*bool_list_map_) : nullptr;
+}
+
+void AllNullableTypes::set_bool_list_map(const EncodableMap* value_arg) {
+  bool_list_map_ =
+      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_bool_list_map(const EncodableMap& value_arg) {
+  bool_list_map_ = value_arg;
+}
+
 const EncodableMap* AllNullableTypes::map_map() const {
   return map_map_ ? &(*map_map_) : nullptr;
 }
@@ -1282,7 +1355,7 @@ void AllNullableTypes::set_recursive_class_map(const EncodableMap& value_arg) {
 
 EncodableList AllNullableTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(31);
+  list.reserve(33);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -1325,6 +1398,8 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(object_list_ ? EncodableValue(*object_list_)
                               : EncodableValue());
   list.push_back(list_list_ ? EncodableValue(*list_list_) : EncodableValue());
+  list.push_back(bool_list_list_ ? EncodableValue(*bool_list_list_)
+                                 : EncodableValue());
   list.push_back(map_list_ ? EncodableValue(*map_list_) : EncodableValue());
   list.push_back(recursive_class_list_ ? EncodableValue(*recursive_class_list_)
                                        : EncodableValue());
@@ -1334,6 +1409,8 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(enum_map_ ? EncodableValue(*enum_map_) : EncodableValue());
   list.push_back(object_map_ ? EncodableValue(*object_map_) : EncodableValue());
   list.push_back(list_map_ ? EncodableValue(*list_map_) : EncodableValue());
+  list.push_back(bool_list_map_ ? EncodableValue(*bool_list_map_)
+                                : EncodableValue());
   list.push_back(map_map_ ? EncodableValue(*map_map_) : EncodableValue());
   list.push_back(recursive_class_map_ ? EncodableValue(*recursive_class_map_)
                                       : EncodableValue());
@@ -1436,44 +1513,53 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   if (!encodable_list_list.IsNull()) {
     decoded.set_list_list(std::get<EncodableList>(encodable_list_list));
   }
-  auto& encodable_map_list = list[21];
+  auto& encodable_bool_list_list = list[21];
+  if (!encodable_bool_list_list.IsNull()) {
+    decoded.set_bool_list_list(
+        std::get<EncodableList>(encodable_bool_list_list));
+  }
+  auto& encodable_map_list = list[22];
   if (!encodable_map_list.IsNull()) {
     decoded.set_map_list(std::get<EncodableList>(encodable_map_list));
   }
-  auto& encodable_recursive_class_list = list[22];
+  auto& encodable_recursive_class_list = list[23];
   if (!encodable_recursive_class_list.IsNull()) {
     decoded.set_recursive_class_list(
         std::get<EncodableList>(encodable_recursive_class_list));
   }
-  auto& encodable_map = list[23];
+  auto& encodable_map = list[24];
   if (!encodable_map.IsNull()) {
     decoded.set_map(std::get<EncodableMap>(encodable_map));
   }
-  auto& encodable_string_map = list[24];
+  auto& encodable_string_map = list[25];
   if (!encodable_string_map.IsNull()) {
     decoded.set_string_map(std::get<EncodableMap>(encodable_string_map));
   }
-  auto& encodable_int_map = list[25];
+  auto& encodable_int_map = list[26];
   if (!encodable_int_map.IsNull()) {
     decoded.set_int_map(std::get<EncodableMap>(encodable_int_map));
   }
-  auto& encodable_enum_map = list[26];
+  auto& encodable_enum_map = list[27];
   if (!encodable_enum_map.IsNull()) {
     decoded.set_enum_map(std::get<EncodableMap>(encodable_enum_map));
   }
-  auto& encodable_object_map = list[27];
+  auto& encodable_object_map = list[28];
   if (!encodable_object_map.IsNull()) {
     decoded.set_object_map(std::get<EncodableMap>(encodable_object_map));
   }
-  auto& encodable_list_map = list[28];
+  auto& encodable_list_map = list[29];
   if (!encodable_list_map.IsNull()) {
     decoded.set_list_map(std::get<EncodableMap>(encodable_list_map));
   }
-  auto& encodable_map_map = list[29];
+  auto& encodable_bool_list_map = list[30];
+  if (!encodable_bool_list_map.IsNull()) {
+    decoded.set_bool_list_map(std::get<EncodableMap>(encodable_bool_list_map));
+  }
+  auto& encodable_map_map = list[31];
   if (!encodable_map_map.IsNull()) {
     decoded.set_map_map(std::get<EncodableMap>(encodable_map_map));
   }
-  auto& encodable_recursive_class_map = list[30];
+  auto& encodable_recursive_class_map = list[32];
   if (!encodable_recursive_class_map.IsNull()) {
     decoded.set_recursive_class_map(
         std::get<EncodableMap>(encodable_recursive_class_map));
@@ -1512,6 +1598,7 @@ bool AllNullableTypes::operator==(const AllNullableTypes& other) const {
          PigeonInternalDeepEquals(enum_list_, other.enum_list_) &&
          PigeonInternalDeepEquals(object_list_, other.object_list_) &&
          PigeonInternalDeepEquals(list_list_, other.list_list_) &&
+         PigeonInternalDeepEquals(bool_list_list_, other.bool_list_list_) &&
          PigeonInternalDeepEquals(map_list_, other.map_list_) &&
          PigeonInternalDeepEquals(recursive_class_list_,
                                   other.recursive_class_list_) &&
@@ -1521,6 +1608,7 @@ bool AllNullableTypes::operator==(const AllNullableTypes& other) const {
          PigeonInternalDeepEquals(enum_map_, other.enum_map_) &&
          PigeonInternalDeepEquals(object_map_, other.object_map_) &&
          PigeonInternalDeepEquals(list_map_, other.list_map_) &&
+         PigeonInternalDeepEquals(bool_list_map_, other.bool_list_map_) &&
          PigeonInternalDeepEquals(map_map_, other.map_map_) &&
          PigeonInternalDeepEquals(recursive_class_map_,
                                   other.recursive_class_map_);
@@ -1553,6 +1641,7 @@ size_t AllNullableTypes::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(enum_list_);
   result = result * 31 + PigeonInternalDeepHash(object_list_);
   result = result * 31 + PigeonInternalDeepHash(list_list_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_list_);
   result = result * 31 + PigeonInternalDeepHash(map_list_);
   result = result * 31 + PigeonInternalDeepHash(recursive_class_list_);
   result = result * 31 + PigeonInternalDeepHash(map_);
@@ -1561,6 +1650,7 @@ size_t AllNullableTypes::Hash() const {
   result = result * 31 + PigeonInternalDeepHash(enum_map_);
   result = result * 31 + PigeonInternalDeepHash(object_map_);
   result = result * 31 + PigeonInternalDeepHash(list_map_);
+  result = result * 31 + PigeonInternalDeepHash(bool_list_map_);
   result = result * 31 + PigeonInternalDeepHash(map_map_);
   result = result * 31 + PigeonInternalDeepHash(recursive_class_map_);
   return result;
@@ -3298,6 +3388,43 @@ void HostIntegrationCoreApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                   std::get<EncodableList>(encodable_class_list_arg);
               ErrorOr<EncodableList> output =
                   api->EchoNonNullClassList(class_list_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoNonNullBoolListList" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_list_arg = args.at(0);
+              if (encodable_list_arg.IsNull()) {
+                reply(WrapError("list_arg unexpectedly null."));
+                return;
+              }
+              const auto& list_arg =
+                  std::get<EncodableList>(encodable_list_arg);
+              ErrorOr<EncodableList> output =
+                  api->EchoNonNullBoolListList(list_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;

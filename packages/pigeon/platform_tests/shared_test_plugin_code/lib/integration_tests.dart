@@ -404,6 +404,17 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(listEquals(echoObject, list), true);
     });
 
+    testWidgets('deep lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+
+      final List<List<bool>> echoObject = await api.echoNonNullBoolListList(
+        nonNullBoolListList,
+      );
+      expect(echoObject, equals(nonNullBoolListList));
+    });
+
     testWidgets('enum lists serialize and deserialize correctly', (
       WidgetTester _,
     ) async {

@@ -241,13 +241,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                      enumList:(NSArray<FLTAnEnumBox *> *)enumList
                    objectList:(NSArray<id> *)objectList
                      listList:(NSArray<NSArray<id> *> *)listList
+                 boolListList:(NSArray<NSArray<NSNumber *> *> *)boolListList
                       mapList:(NSArray<NSDictionary<id, id> *> *)mapList
+                  boolMapList:(NSArray<NSDictionary<NSNumber *, NSNumber *> *> *)boolMapList
                           map:(NSDictionary *)map
                     stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
                        intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
                       enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                     objectMap:(NSDictionary<id, id> *)objectMap
                       listMap:(NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                  boolListMap:(NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)boolListMap
                        mapMap:(NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
   pigeonResult.aBool = aBool;
@@ -270,13 +273,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = enumList;
   pigeonResult.objectList = objectList;
   pigeonResult.listList = listList;
+  pigeonResult.boolListList = boolListList;
   pigeonResult.mapList = mapList;
+  pigeonResult.boolMapList = boolMapList;
   pigeonResult.map = map;
   pigeonResult.stringMap = stringMap;
   pigeonResult.intMap = intMap;
   pigeonResult.enumMap = enumMap;
   pigeonResult.objectMap = objectMap;
   pigeonResult.listMap = listMap;
+  pigeonResult.boolListMap = boolListMap;
   pigeonResult.mapMap = mapMap;
   return pigeonResult;
 }
@@ -304,14 +310,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = GetNullableObjectAtIndex(list, 17);
   pigeonResult.objectList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.listList = GetNullableObjectAtIndex(list, 19);
-  pigeonResult.mapList = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
-  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 22);
-  pigeonResult.intMap = GetNullableObjectAtIndex(list, 23);
-  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 24);
-  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 25);
-  pigeonResult.listMap = GetNullableObjectAtIndex(list, 26);
-  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 27);
+  pigeonResult.boolListList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.mapList = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.boolMapList = GetNullableObjectAtIndex(list, 22);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 23);
+  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.intMap = GetNullableObjectAtIndex(list, 25);
+  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 26);
+  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 27);
+  pigeonResult.listMap = GetNullableObjectAtIndex(list, 28);
+  pigeonResult.boolListMap = GetNullableObjectAtIndex(list, 29);
+  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 30);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray<id> *)list {
@@ -339,13 +348,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumList ?: [NSNull null],
     self.objectList ?: [NSNull null],
     self.listList ?: [NSNull null],
+    self.boolListList ?: [NSNull null],
     self.mapList ?: [NSNull null],
+    self.boolMapList ?: [NSNull null],
     self.map ?: [NSNull null],
     self.stringMap ?: [NSNull null],
     self.intMap ?: [NSNull null],
     self.enumMap ?: [NSNull null],
     self.objectMap ?: [NSNull null],
     self.listMap ?: [NSNull null],
+    self.boolListMap ?: [NSNull null],
     self.mapMap ?: [NSNull null],
   ];
 }
@@ -374,13 +386,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.enumList, other.enumList) &&
          FLTPigeonDeepEquals(self.objectList, other.objectList) &&
          FLTPigeonDeepEquals(self.listList, other.listList) &&
+         FLTPigeonDeepEquals(self.boolListList, other.boolListList) &&
          FLTPigeonDeepEquals(self.mapList, other.mapList) &&
+         FLTPigeonDeepEquals(self.boolMapList, other.boolMapList) &&
          FLTPigeonDeepEquals(self.map, other.map) &&
          FLTPigeonDeepEquals(self.stringMap, other.stringMap) &&
          FLTPigeonDeepEquals(self.intMap, other.intMap) &&
          FLTPigeonDeepEquals(self.enumMap, other.enumMap) &&
          FLTPigeonDeepEquals(self.objectMap, other.objectMap) &&
          FLTPigeonDeepEquals(self.listMap, other.listMap) &&
+         FLTPigeonDeepEquals(self.boolListMap, other.boolListMap) &&
          FLTPigeonDeepEquals(self.mapMap, other.mapMap);
 }
 
@@ -407,13 +422,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.enumList);
   result = result * 31 + FLTPigeonDeepHash(self.objectList);
   result = result * 31 + FLTPigeonDeepHash(self.listList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolListList);
   result = result * 31 + FLTPigeonDeepHash(self.mapList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolMapList);
   result = result * 31 + FLTPigeonDeepHash(self.map);
   result = result * 31 + FLTPigeonDeepHash(self.stringMap);
   result = result * 31 + FLTPigeonDeepHash(self.intMap);
   result = result * 31 + FLTPigeonDeepHash(self.enumMap);
   result = result * 31 + FLTPigeonDeepHash(self.objectMap);
   result = result * 31 + FLTPigeonDeepHash(self.listMap);
+  result = result * 31 + FLTPigeonDeepHash(self.boolListMap);
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   return result;
 }
@@ -442,6 +460,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
                objectList:(nullable NSArray<id> *)objectList
                  listList:(nullable NSArray<NSArray<id> *> *)listList
+             boolListList:(nullable NSArray<NSArray<NSNumber *> *> *)boolListList
                   mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
        recursiveClassList:(nullable NSArray<FLTAllNullableTypes *> *)recursiveClassList
                       map:(nullable NSDictionary *)map
@@ -450,6 +469,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                   enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                 objectMap:(nullable NSDictionary<id, id> *)objectMap
                   listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+              boolListMap:(nullable NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)boolListMap
                    mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap
         recursiveClassMap:
             (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)recursiveClassMap {
@@ -475,6 +495,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = enumList;
   pigeonResult.objectList = objectList;
   pigeonResult.listList = listList;
+  pigeonResult.boolListList = boolListList;
   pigeonResult.mapList = mapList;
   pigeonResult.recursiveClassList = recursiveClassList;
   pigeonResult.map = map;
@@ -483,6 +504,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumMap = enumMap;
   pigeonResult.objectMap = objectMap;
   pigeonResult.listMap = listMap;
+  pigeonResult.boolListMap = boolListMap;
   pigeonResult.mapMap = mapMap;
   pigeonResult.recursiveClassMap = recursiveClassMap;
   return pigeonResult;
@@ -510,16 +532,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.enumList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.objectList = GetNullableObjectAtIndex(list, 19);
   pigeonResult.listList = GetNullableObjectAtIndex(list, 20);
-  pigeonResult.mapList = GetNullableObjectAtIndex(list, 21);
-  pigeonResult.recursiveClassList = GetNullableObjectAtIndex(list, 22);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 23);
-  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 24);
-  pigeonResult.intMap = GetNullableObjectAtIndex(list, 25);
-  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 26);
-  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 27);
-  pigeonResult.listMap = GetNullableObjectAtIndex(list, 28);
-  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 29);
-  pigeonResult.recursiveClassMap = GetNullableObjectAtIndex(list, 30);
+  pigeonResult.boolListList = GetNullableObjectAtIndex(list, 21);
+  pigeonResult.mapList = GetNullableObjectAtIndex(list, 22);
+  pigeonResult.recursiveClassList = GetNullableObjectAtIndex(list, 23);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 24);
+  pigeonResult.stringMap = GetNullableObjectAtIndex(list, 25);
+  pigeonResult.intMap = GetNullableObjectAtIndex(list, 26);
+  pigeonResult.enumMap = GetNullableObjectAtIndex(list, 27);
+  pigeonResult.objectMap = GetNullableObjectAtIndex(list, 28);
+  pigeonResult.listMap = GetNullableObjectAtIndex(list, 29);
+  pigeonResult.boolListMap = GetNullableObjectAtIndex(list, 30);
+  pigeonResult.mapMap = GetNullableObjectAtIndex(list, 31);
+  pigeonResult.recursiveClassMap = GetNullableObjectAtIndex(list, 32);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray<id> *)list {
@@ -548,6 +572,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumList ?: [NSNull null],
     self.objectList ?: [NSNull null],
     self.listList ?: [NSNull null],
+    self.boolListList ?: [NSNull null],
     self.mapList ?: [NSNull null],
     self.recursiveClassList ?: [NSNull null],
     self.map ?: [NSNull null],
@@ -556,6 +581,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.enumMap ?: [NSNull null],
     self.objectMap ?: [NSNull null],
     self.listMap ?: [NSNull null],
+    self.boolListMap ?: [NSNull null],
     self.mapMap ?: [NSNull null],
     self.recursiveClassMap ?: [NSNull null],
   ];
@@ -589,6 +615,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.enumList, other.enumList) &&
          FLTPigeonDeepEquals(self.objectList, other.objectList) &&
          FLTPigeonDeepEquals(self.listList, other.listList) &&
+         FLTPigeonDeepEquals(self.boolListList, other.boolListList) &&
          FLTPigeonDeepEquals(self.mapList, other.mapList) &&
          FLTPigeonDeepEquals(self.recursiveClassList, other.recursiveClassList) &&
          FLTPigeonDeepEquals(self.map, other.map) &&
@@ -597,6 +624,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
          FLTPigeonDeepEquals(self.enumMap, other.enumMap) &&
          FLTPigeonDeepEquals(self.objectMap, other.objectMap) &&
          FLTPigeonDeepEquals(self.listMap, other.listMap) &&
+         FLTPigeonDeepEquals(self.boolListMap, other.boolListMap) &&
          FLTPigeonDeepEquals(self.mapMap, other.mapMap) &&
          FLTPigeonDeepEquals(self.recursiveClassMap, other.recursiveClassMap);
 }
@@ -624,6 +652,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.enumList);
   result = result * 31 + FLTPigeonDeepHash(self.objectList);
   result = result * 31 + FLTPigeonDeepHash(self.listList);
+  result = result * 31 + FLTPigeonDeepHash(self.boolListList);
   result = result * 31 + FLTPigeonDeepHash(self.mapList);
   result = result * 31 + FLTPigeonDeepHash(self.recursiveClassList);
   result = result * 31 + FLTPigeonDeepHash(self.map);
@@ -632,6 +661,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.enumMap);
   result = result * 31 + FLTPigeonDeepHash(self.objectMap);
   result = result * 31 + FLTPigeonDeepHash(self.listMap);
+  result = result * 31 + FLTPigeonDeepHash(self.boolListMap);
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   result = result * 31 + FLTPigeonDeepHash(self.recursiveClassMap);
   return result;
@@ -1447,6 +1477,33 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         FlutterError *error;
         NSArray<FLTAllNullableTypes *> *output = [api echoNonNullClassList:arg_classList
                                                                      error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed list, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.echoNonNullBoolListList",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoNonNullBoolListList:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoNonNullBoolListList:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSArray<NSArray<NSNumber *> *> *arg_list = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSArray<NSArray<NSNumber *> *> *output = [api echoNonNullBoolListList:arg_list
+                                                                        error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

@@ -1597,9 +1597,43 @@ String _castValue(String value, TypeDeclaration type) {
   }
 
   final nullAwareOperator = type.isNullable ? '?' : '';
-  final castCall =
-      '$nullAwareOperator.cast<${_flattenTypeArguments(typeArguments)}>()';
-  return '($valueWithTypeCast)$castCall';
+  return '($valueWithTypeCast)$nullAwareOperator.${_castCall(type)}';
+}
+
+/// Returns the code that casts a `List<Object?>` or a `Map<Object?, Object?>`
+/// to a specific List or Map [type], considering nested List or Map type
+/// arguments.
+///
+/// Given a simple [type], like `List<int>`, the returned code is a simple call
+/// to [List.cast]: `cast<int>()`.
+///
+/// Given a deep List type, like `List<List<int>>`, the returned code uses
+/// [List.map] and [List.cast]:
+/// `map((e) => (e! as List<Object?>).cast<int>()).toList()`.
+///
+/// Given a deep Map type, like `Map<int, List<int>>`, the returned code uses
+/// [Map.map] and [Map.cast]:
+/// `map((k, v) => MapEntry(k! as int, (v! as List<Object?>).cast<int>()))`.
+String _castCall(TypeDeclaration type) {
+  if (type.baseName == 'List') {
+    final TypeDeclaration typeArgument = type.typeArguments.first;
+    if (typeArgument.baseName == 'List' || typeArgument.baseName == 'Map') {
+      // We must cast each element in `valueWithTypeCast`.
+      return 'map((e) => ${_castValue('e', typeArgument)}).toList()';
+    }
+  } else if (type.baseName == 'Map') {
+    if (type.typeArguments.any(
+      (e) => e.baseName == 'List' || e.baseName == 'Map',
+    )) {
+      final TypeDeclaration keyTypeArgument = type.typeArguments[0];
+      final TypeDeclaration valueTypeArgument = type.typeArguments[1];
+      return 'map((k, v) => MapEntry('
+          '${_castValue('k', keyTypeArgument)}, '
+          '${_castValue('v', valueTypeArgument)}))';
+    }
+  }
+
+  return 'cast<${_flattenTypeArguments(type.typeArguments)}>()';
 }
 
 /// Returns an argument name that can be used in a context where it is possible to collide.

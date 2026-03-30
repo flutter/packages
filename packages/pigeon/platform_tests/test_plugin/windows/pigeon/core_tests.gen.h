@@ -129,13 +129,16 @@ class AllTypes {
                     const ::flutter::EncodableList& enum_list,
                     const ::flutter::EncodableList& object_list,
                     const ::flutter::EncodableList& list_list,
+                    const ::flutter::EncodableList& bool_list_list,
                     const ::flutter::EncodableList& map_list,
+                    const ::flutter::EncodableList& bool_map_list,
                     const ::flutter::EncodableMap& map,
                     const ::flutter::EncodableMap& string_map,
                     const ::flutter::EncodableMap& int_map,
                     const ::flutter::EncodableMap& enum_map,
                     const ::flutter::EncodableMap& object_map,
                     const ::flutter::EncodableMap& list_map,
+                    const ::flutter::EncodableMap& bool_list_map,
                     const ::flutter::EncodableMap& map_map);
 
   bool a_bool() const;
@@ -198,8 +201,14 @@ class AllTypes {
   const ::flutter::EncodableList& list_list() const;
   void set_list_list(const ::flutter::EncodableList& value_arg);
 
+  const ::flutter::EncodableList& bool_list_list() const;
+  void set_bool_list_list(const ::flutter::EncodableList& value_arg);
+
   const ::flutter::EncodableList& map_list() const;
   void set_map_list(const ::flutter::EncodableList& value_arg);
+
+  const ::flutter::EncodableList& bool_map_list() const;
+  void set_bool_map_list(const ::flutter::EncodableList& value_arg);
 
   const ::flutter::EncodableMap& map() const;
   void set_map(const ::flutter::EncodableMap& value_arg);
@@ -218,6 +227,9 @@ class AllTypes {
 
   const ::flutter::EncodableMap& list_map() const;
   void set_list_map(const ::flutter::EncodableMap& value_arg);
+
+  const ::flutter::EncodableMap& bool_list_map() const;
+  void set_bool_list_map(const ::flutter::EncodableMap& value_arg);
 
   const ::flutter::EncodableMap& map_map() const;
   void set_map_map(const ::flutter::EncodableMap& value_arg);
@@ -259,13 +271,16 @@ class AllTypes {
   ::flutter::EncodableList enum_list_;
   ::flutter::EncodableList object_list_;
   ::flutter::EncodableList list_list_;
+  ::flutter::EncodableList bool_list_list_;
   ::flutter::EncodableList map_list_;
+  ::flutter::EncodableList bool_map_list_;
   ::flutter::EncodableMap map_;
   ::flutter::EncodableMap string_map_;
   ::flutter::EncodableMap int_map_;
   ::flutter::EncodableMap enum_map_;
   ::flutter::EncodableMap object_map_;
   ::flutter::EncodableMap list_map_;
+  ::flutter::EncodableMap bool_list_map_;
   ::flutter::EncodableMap map_map_;
 };
 
@@ -297,6 +312,7 @@ class AllNullableTypes {
       const ::flutter::EncodableList* enum_list,
       const ::flutter::EncodableList* object_list,
       const ::flutter::EncodableList* list_list,
+      const ::flutter::EncodableList* bool_list_list,
       const ::flutter::EncodableList* map_list,
       const ::flutter::EncodableList* recursive_class_list,
       const ::flutter::EncodableMap* map,
@@ -305,6 +321,7 @@ class AllNullableTypes {
       const ::flutter::EncodableMap* enum_map,
       const ::flutter::EncodableMap* object_map,
       const ::flutter::EncodableMap* list_map,
+      const ::flutter::EncodableMap* bool_list_map,
       const ::flutter::EncodableMap* map_map,
       const ::flutter::EncodableMap* recursive_class_map);
 
@@ -397,6 +414,10 @@ class AllNullableTypes {
   void set_list_list(const ::flutter::EncodableList* value_arg);
   void set_list_list(const ::flutter::EncodableList& value_arg);
 
+  const ::flutter::EncodableList* bool_list_list() const;
+  void set_bool_list_list(const ::flutter::EncodableList* value_arg);
+  void set_bool_list_list(const ::flutter::EncodableList& value_arg);
+
   const ::flutter::EncodableList* map_list() const;
   void set_map_list(const ::flutter::EncodableList* value_arg);
   void set_map_list(const ::flutter::EncodableList& value_arg);
@@ -428,6 +449,10 @@ class AllNullableTypes {
   const ::flutter::EncodableMap* list_map() const;
   void set_list_map(const ::flutter::EncodableMap* value_arg);
   void set_list_map(const ::flutter::EncodableMap& value_arg);
+
+  const ::flutter::EncodableMap* bool_list_map() const;
+  void set_bool_list_map(const ::flutter::EncodableMap* value_arg);
+  void set_bool_list_map(const ::flutter::EncodableMap& value_arg);
 
   const ::flutter::EncodableMap* map_map() const;
   void set_map_map(const ::flutter::EncodableMap* value_arg);
@@ -476,6 +501,7 @@ class AllNullableTypes {
   std::optional<::flutter::EncodableList> enum_list_;
   std::optional<::flutter::EncodableList> object_list_;
   std::optional<::flutter::EncodableList> list_list_;
+  std::optional<::flutter::EncodableList> bool_list_list_;
   std::optional<::flutter::EncodableList> map_list_;
   std::optional<::flutter::EncodableList> recursive_class_list_;
   std::optional<::flutter::EncodableMap> map_;
@@ -484,6 +510,7 @@ class AllNullableTypes {
   std::optional<::flutter::EncodableMap> enum_map_;
   std::optional<::flutter::EncodableMap> object_map_;
   std::optional<::flutter::EncodableMap> list_map_;
+  std::optional<::flutter::EncodableMap> bool_list_map_;
   std::optional<::flutter::EncodableMap> map_map_;
   std::optional<::flutter::EncodableMap> recursive_class_map_;
 };
@@ -872,6 +899,9 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoNonNullClassList(
       const ::flutter::EncodableList& class_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoNonNullBoolListList(
+      const ::flutter::EncodableList& list) = 0;
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableMap> EchoMap(
       const ::flutter::EncodableMap& map) = 0;
