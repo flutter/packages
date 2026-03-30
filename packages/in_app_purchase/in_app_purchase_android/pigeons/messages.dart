@@ -447,12 +447,12 @@ abstract class InAppPurchaseApi {
 
 @FlutterApi()
 abstract class InAppPurchaseCallbackApi {
-  /// Called for BillingClientStateListener#onBillingServiceDisconnected().
+  /// Called for `BillingClientStateListener#onBillingServiceDisconnected()`.
   void onBillingServiceDisconnected(int callbackHandle);
 
-  /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
+  /// Called for `PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)`.
   void onPurchasesUpdated(PlatformPurchasesResponse update);
 
-  /// Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails).
+  /// Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`.
   void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 }
