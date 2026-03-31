@@ -32,19 +32,27 @@ class Template implements m.Template {
   String? get name => _name;
 
   @override
-  String renderString(Object? values) {
+  String renderString(
+    Object? values, {
+    m.MissingVariableCallback? onMissingVariable,
+  }) {
     final buf = StringBuffer();
-    render(values, buf);
+    render(values, buf, onMissingVariable: onMissingVariable);
     return buf.toString();
   }
 
   @override
-  void render(Object? values, StringSink sink) {
+  void render(
+    Object? values,
+    StringSink sink, {
+    m.MissingVariableCallback? onMissingVariable,
+  }) {
     final renderer = Renderer(
       sink,
       <dynamic>[values],
       _lenient,
       _htmlEscapeValues,
+      onMissingVariable,
       _partialResolver,
       _name,
       '',

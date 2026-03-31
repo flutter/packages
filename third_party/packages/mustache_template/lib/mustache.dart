@@ -26,12 +26,25 @@ abstract class Template {
   /// [values] can be a combination of Map, List, String. Any non-String object
   /// will be converted using toString(). Null values will cause a
   /// [TemplateException], unless lenient module is enabled.
-  String renderString(Object? values);
+  ///
+  /// If [onMissingVariable] is provided, it will be called for unresolved
+  /// variables before throwing an exception.
+  String renderString(
+    Object? values, {
+    MissingVariableCallback? onMissingVariable,
+  });
 
   /// [values] can be a combination of Map, List, String. Any non-String object
   /// will be converted using toString(). Null values will cause a
   /// [TemplateException], unless lenient module is enabled.
-  void render(Object? values, StringSink sink);
+  ///
+  /// If [onMissingVariable] is provided, it will be called for unresolved
+  /// variables before throwing an exception.
+  void render(
+    Object? values,
+    StringSink sink, {
+    MissingVariableCallback? onMissingVariable,
+  });
 }
 
 // TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
@@ -41,6 +54,34 @@ typedef PartialResolver = Template? Function(String);
 // TODO(stuartmorgan): Remove this. See https://github.com/flutter/flutter/issues/174722.
 // ignore: public_member_api_docs
 typedef LambdaFunction = Object Function(LambdaContext context);
+
+/// Called when a variable tag cannot be resolved from the current context.
+typedef MissingVariableCallback =
+    String? Function(String name, MissingVariableContext context);
+
+/// Passed as an argument to a missing variable callback.
+class MissingVariableContext {
+  /// Creates a context for a missing variable callback invocation.
+  const MissingVariableContext({
+    required this.templateName,
+    required this.source,
+    required this.offset,
+    required this.htmlEscape,
+  });
+
+  /// The name used to identify the template, as passed to the Template
+  /// constructor.
+  final String? templateName;
+
+  /// The template source.
+  final String source;
+
+  /// The character offset of the missing variable tag within [source].
+  final int offset;
+
+  /// Whether the missing variable is rendered with HTML escaping.
+  final bool htmlEscape;
+}
 
 /// Passed as an argument to a mustache lambda function. The methods on
 /// this object may only be called before the lambda function returns. If a

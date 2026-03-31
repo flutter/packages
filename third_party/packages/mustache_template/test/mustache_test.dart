@@ -392,6 +392,154 @@ void main() {
     });
   });
 
+  group('Missing variable callback', () {
+    test('renders fallback in strict mode', () {
+      final String output = Template('_{{missing}}_', name: 'test_template')
+          .renderString(
+            <String, Object?>{},
+            onMissingVariable: (String name, MissingVariableContext context) {
+              expect(name, equals('missing'));
+              expect(context.htmlEscape, isTrue);
+              expect(context.templateName, equals('test_template'));
+              expect(context.offset, equals(1));
+              return 'bob';
+            },
+          );
+      expect(output, equals('_bob_'));
+    });
+
+    test('null fallback preserves strict exception behavior', () {
+      final Exception? ex = renderFail(
+        '{{missing}}',
+        <String, Object?>{},
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            null,
+      );
+      expectFail(ex, null, null, VALUE_MISSING);
+    });
+
+    test('runs before lenient handling', () {
+      final String output = parse('_{{missing}}_', lenient: true).renderString(
+        <String, Object?>{},
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            'bob',
+      );
+      expect(output, equals('_bob_'));
+    });
+
+    test('null fallback preserves lenient behavior', () {
+      final String output = parse('_{{missing}}_', lenient: true).renderString(
+        <String, Object?>{},
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            null,
+      );
+      expect(output, equals('__'));
+    });
+
+    test('null values do not invoke callback', () {
+      var called = false;
+      final String output = Template('_{{var}}_').renderString(
+        <String, Object?>{'var': null},
+        onMissingVariable: (String name, MissingVariableContext context) {
+          called = true;
+          return 'bob';
+        },
+      );
+      expect(output, equals('__'));
+      expect(called, isFalse);
+    });
+
+    test('applies html escaping to callback output', () {
+      final String escapedOutput = parse('_{{missing}}_').renderString(
+        <String, Object?>{},
+        onMissingVariable: (String name, MissingVariableContext context) {
+          expect(context.htmlEscape, isTrue);
+          return '&';
+        },
+      );
+      final String unescapedOutput = parse('_{{{missing}}}_').renderString(
+        <String, Object?>{},
+        onMissingVariable: (String name, MissingVariableContext context) {
+          expect(context.htmlEscape, isFalse);
+          return '&';
+        },
+      );
+      expect(escapedOutput, equals('_&amp;_'));
+      expect(unescapedOutput, equals('_&_'));
+    });
+
+    test('provides full dotted name', () {
+      const fallback = 'bob';
+      final String output = parse('{{#section}}{{missing.name}}{{/section}}')
+          .renderString(
+            <String, Object>{
+              'section': <String, String>{'fallback': fallback},
+            },
+            onMissingVariable: (String name, MissingVariableContext context) {
+              expect(name, equals('missing.name'));
+              return fallback;
+            },
+          );
+      expect(output, equals(fallback));
+    });
+
+    test('provides full name for array index misses', () {
+      const fallback = 'bob';
+      final String output = parse('{{#section}}{{items.9}}{{/section}}')
+          .renderString(
+            <String, Object>{
+              'section': <String, Object>{
+                'items': <String>[],
+                'fallback': fallback,
+              },
+            },
+            onMissingVariable: (String name, MissingVariableContext context) {
+              expect(name, equals('items.9'));
+              return fallback;
+            },
+          );
+      expect(output, equals(fallback));
+    });
+
+    test('propagates to partial rendering', () {
+      const fallback = 'bob';
+      final templates = <String, Template>{};
+      Template? resolver(String name) => templates[name];
+      templates['partial'] = Template('{{missing}}', partialResolver: resolver);
+      final template = Template('{{>partial}}', partialResolver: resolver);
+      final String output = template.renderString(
+        <String, String>{'fallback': fallback},
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            fallback,
+      );
+      expect(output, equals(fallback));
+    });
+
+    test('propagates to lambda renderSource', () {
+      const fallback = 'bob';
+      final String output = Template('{{lambda}}').renderString(
+        <String, Object>{
+          'fallback': fallback,
+          'lambda': (LambdaContext ctx) => ctx.renderSource('{{missing}}'),
+        },
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            fallback,
+      );
+      expect(output, equals(fallback));
+    });
+
+    test('render writes fallback to sink', () {
+      final buffer = StringBuffer();
+      Template('_{{missing}}_').render(
+        <String, Object?>{},
+        buffer,
+        onMissingVariable: (String name, MissingVariableContext context) =>
+            'bob',
+      );
+      expect(buffer.toString(), equals('_bob_'));
+    });
+  });
+
   group('Invalid format', () {
     test('Mismatched tag', () {
       const source = '{{#section}}_{{var}}_{{/notsection}}';
@@ -909,9 +1057,17 @@ void main() {
   });
 }
 
-Exception? renderFail(String source, Object values) {
+Exception? renderFail(
+  String source,
+  Object values, {
+  bool lenient = false,
+  MissingVariableCallback? onMissingVariable,
+}) {
   try {
-    parse(source).renderString(values);
+    parse(
+      source,
+      lenient: lenient,
+    ).renderString(values, onMissingVariable: onMissingVariable);
     return null;
   } on Exception catch (e) {
     return e;

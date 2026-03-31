@@ -1,3 +1,8 @@
+## 2.1.0
+
+* Adds `onMissingVariable` to support custom rendering for unresolved variable
+  tags.
+
 ## 2.0.4
 
 * Fixes a broken README link to the Mustache manual.

@@ -16,6 +16,7 @@ class Renderer extends Visitor {
     List<Object?> stack,
     this.lenient,
     this.htmlEscapeValues,
+    this.onMissingVariable,
     this.partialResolver,
     this.templateName,
     this.indent,
@@ -28,6 +29,7 @@ class Renderer extends Visitor {
         ctx._stack,
         ctx.lenient,
         ctx.htmlEscapeValues,
+        ctx.onMissingVariable,
         ctx.partialResolver,
         ctx.templateName,
         ctx.indent + indent,
@@ -40,6 +42,7 @@ class Renderer extends Visitor {
         ctx._stack,
         ctx.lenient,
         ctx.htmlEscapeValues,
+        ctx.onMissingVariable,
         ctx.partialResolver,
         ctx.templateName,
         ctx.indent,
@@ -52,6 +55,7 @@ class Renderer extends Visitor {
         ctx._stack,
         ctx.lenient,
         ctx.htmlEscapeValues,
+        ctx.onMissingVariable,
         ctx.partialResolver,
         ctx.templateName,
         ctx.indent + indent,
@@ -62,6 +66,7 @@ class Renderer extends Visitor {
   final List<Object?> _stack;
   final bool lenient;
   final bool htmlEscapeValues;
+  final m.MissingVariableCallback? onMissingVariable;
   final m.PartialResolver? partialResolver;
   final String? templateName;
   final String indent;
@@ -126,16 +131,39 @@ class Renderer extends Visitor {
     }
 
     if (value == noSuchProperty) {
+      final String? fallbackValue = _resolveMissingVariable(node);
+      if (fallbackValue != null) {
+        _renderVariableValue(fallbackValue, node);
+        return;
+      }
       if (!lenient) {
         throw error('Value was missing for variable tag: ${node.name}.', node);
       }
     } else {
-      final valueString = (value == null) ? '' : value.toString();
-      final String output = !node.escape || !htmlEscapeValues
-          ? valueString
-          : _htmlEscape(valueString);
-      write(output);
+      _renderVariableValue(value, node);
     }
+  }
+
+  String? _resolveMissingVariable(VariableNode node) {
+    if (onMissingVariable == null) {
+      return null;
+    }
+
+    final context = m.MissingVariableContext(
+      templateName: templateName,
+      source: source,
+      offset: node.start,
+      htmlEscape: node.escape,
+    );
+    return onMissingVariable!(node.name, context);
+  }
+
+  void _renderVariableValue(Object? value, VariableNode node) {
+    final valueString = (value == null) ? '' : value.toString();
+    final String output = !node.escape || !htmlEscapeValues
+        ? valueString
+        : _htmlEscape(valueString);
+    write(output);
   }
 
   @override
