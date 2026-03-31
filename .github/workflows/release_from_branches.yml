@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - 'release-go_router'
+permissions:
+  # Release needs to push a tag back to the repo.
+  contents: write
 jobs:
   release:
     uses: ./.github/workflows/reusable_release.yml

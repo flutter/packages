@@ -402,11 +402,12 @@ class GoogleMap extends StatefulWidget {
   ///
   /// [AdvancedMarker] and [Marker]s classes might not be related to each other
   /// in the platform implementation. It's important to set the correct
-  /// [MarkerType] so that the platform implementation can handle the markers:
-  /// * If [MarkerType.advancedMarker] is used, all markers must be of type
-  /// [AdvancedMarker].
-  /// * If [MarkerType.marker] is used, markers cannot be of type
-  /// [AdvancedMarker].
+  /// [GoogleMapMarkerType] so that the platform implementation can handle the
+  /// markers:
+  /// * If [GoogleMapMarkerType.advancedMarker] is used, all markers must be of
+  ///   type [AdvancedMarker].
+  /// * If [GoogleMapMarkerType.marker] is used, markers cannot be of type
+  ///   [AdvancedMarker].
   ///
   /// While some features work with either type, using the incorrect type
   /// may result in unexpected behavior.
