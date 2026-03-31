@@ -16,7 +16,7 @@ const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
 
 /// A command to verify repository-level metadata about packages, such as
-/// repo README and CODEOWNERS entries.
+/// repo README and auto-label entries.
 class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
   RepoPackageInfoCheckCommand(super.packagesDir, {super.gitDir});
@@ -26,9 +26,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   /// Data from the root README.md table of packages.
   final Map<String, List<String>> _readmeTableEntries =
       <String, List<String>>{};
-
-  /// Packages with entries in CODEOWNERS.
-  final List<String> _ownedPackages = <String>[];
 
   /// Packages with entries in labeler.yml.
   final List<String> _autoLabeledPackages = <String>[];
@@ -82,25 +79,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       }
     }
 
-    // Extract all of the CODEOWNERS package entries.
-    final packageOwnershipPattern = RegExp(
-      r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*',
-    );
-    for (final String line
-        in _repoRoot.childFile('CODEOWNERS').readAsLinesSync()) {
-      final RegExpMatch? match = packageOwnershipPattern.firstMatch(line);
-      if (match == null) {
-        continue;
-      }
-      final String path = match.group(1)!;
-      final String name = match.group(2)!;
-      if (!_repoRoot.childDirectory(path).existsSync()) {
-        printError('Unknown directory "$path" in CODEOWNERS');
-        throw ToolExit(_exitUnknownPackageEntry);
-      }
-      _ownedPackages.add(name);
-    }
-
     // Extract all of the lebeler.yml package entries.
     // Validate the match rules rather than the label itself, as the labels
     // don't always correspond 1:1 to packages and package names.
@@ -125,16 +103,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final String packageName = package.directory.basename;
     final errors = <String>[];
-
-    // All packages should have an owner.
-    // Platform interface packages are considered to be owned by the app-facing
-    // package owner.
-    if (!(_ownedPackages.contains(packageName) ||
-        package.isPlatformInterface &&
-            _ownedPackages.contains(package.directory.parent.basename))) {
-      printError('${indentation}Missing CODEOWNERS entry.');
-      errors.add('Missing CODEOWNERS entry');
-    }
 
     // All packages should have an auto-applied label. For plugins, only the
     // group needs a rule, so check the app-facing package.

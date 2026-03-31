@@ -1,3 +1,7 @@
+## 0.12.0+1
+
+* Makes `Optional.of` constructor `const`.
+
 ## 0.12.0
 
 * Adds support for video stabilization.

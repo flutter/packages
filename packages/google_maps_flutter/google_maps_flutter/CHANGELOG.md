@@ -1,3 +1,11 @@
+## 2.17.0
+
+* Adds missing re-exports of classes related to advanced markers.
+
+## 2.16.0
+
+* Adds `colorScheme` support for web cloud-based maps styling brightness.
+
 ## 2.15.0
 
 * Adds support for advanced markers, and new example pages showing their usage.

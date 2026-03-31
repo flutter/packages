@@ -2,9 +2,13 @@ tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: enable Swift Package Manager
+    # For consistency between stable and master channels, enable SwiftPM.
+    # TODO(stuartmorgan): Remove this step once it's the default on stable.
+    script: .ci/scripts/enable_swift_package_manager.sh
   - name: download Dart and macOS deps
     script: .ci/scripts/tool_runner.sh
-    args: ["fetch-deps", "--macos", "--supporting-target-platforms-only"]
+    args: ["fetch-deps", "--macos", "--supporting-target-platforms-only", "--swift-package-manager"]
     infra_step: true
   - name: build examples
     script: .ci/scripts/tool_runner.sh
