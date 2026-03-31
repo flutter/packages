@@ -3129,6 +3129,11 @@ class InputDecoration {
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.
+  ///
+  /// This is ignored if [label] is provided instead of [labelText].
+  /// If you need to set the direction for a custom [label] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
   final TextDirection? labelTextDirection;
 
   /// Optional widget that appears below the [InputDecorator.child].
@@ -3223,6 +3228,11 @@ class InputDecoration {
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.
+  ///
+  /// This is ignored if [hint] is provided instead of [hintText].
+  /// If you need to set the direction for a custom [hint] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
   final TextDirection? hintTextDirection;
 
   /// The maximum number of lines the [hintText] can occupy.
