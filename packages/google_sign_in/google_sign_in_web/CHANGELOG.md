@@ -1,3 +1,8 @@
+## 1.1.3
+
+* Restored previously reverted changes to prevent `_initCalled` from being invoked twice on web.
+* Fixed `renderButton` being stuck on "Getting ready" on web by correcting the `FutureBuilder` state check to use `ConnectionState.done`.
+
 ## 1.1.2
 
 * Reverts "Throws a more actionable error when init is called more than once."

@@ -12,6 +12,97 @@
 @import Flutter;
 #endif
 
+static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
+  if (a == b) {
+    return YES;
+  }
+  if (a == nil) {
+    return b == [NSNull null];
+  }
+  if (b == nil) {
+    return a == [NSNull null];
+  }
+  if ([a isKindOfClass:[NSNumber class]] && [b isKindOfClass:[NSNumber class]]) {
+    return
+        [a isEqual:b] || (isnan([(NSNumber *)a doubleValue]) && isnan([(NSNumber *)b doubleValue]));
+  }
+  if ([a isKindOfClass:[NSArray class]] && [b isKindOfClass:[NSArray class]]) {
+    NSArray *arrayA = (NSArray *)a;
+    NSArray *arrayB = (NSArray *)b;
+    if (arrayA.count != arrayB.count) {
+      return NO;
+    }
+    for (NSUInteger i = 0; i < arrayA.count; i++) {
+      if (!FLTPigeonDeepEquals(arrayA[i], arrayB[i])) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  if ([a isKindOfClass:[NSDictionary class]] && [b isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictA = (NSDictionary *)a;
+    NSDictionary *dictB = (NSDictionary *)b;
+    if (dictA.count != dictB.count) {
+      return NO;
+    }
+    for (id keyA in dictA) {
+      id valueA = dictA[keyA];
+      BOOL found = NO;
+      for (id keyB in dictB) {
+        if (FLTPigeonDeepEquals(keyA, keyB)) {
+          id valueB = dictB[keyB];
+          if (FLTPigeonDeepEquals(valueA, valueB)) {
+            found = YES;
+            break;
+          } else {
+            return NO;
+          }
+        }
+      }
+      if (!found) {
+        return NO;
+      }
+    }
+    return YES;
+  }
+  return [a isEqual:b];
+}
+
+static NSUInteger __attribute__((unused)) FLTPigeonDeepHash(id _Nullable value) {
+  if (value == nil || value == (id)[NSNull null]) {
+    return 0;
+  }
+  if ([value isKindOfClass:[NSNumber class]]) {
+    NSNumber *n = (NSNumber *)value;
+    double d = n.doubleValue;
+    if (isnan(d)) {
+      // Normalize NaN to a consistent hash.
+      return (NSUInteger)0x7FF8000000000000;
+    }
+    if (d == 0.0) {
+      // Normalize -0.0 to 0.0 so they have the same hash code.
+      d = 0.0;
+    }
+    return @(d).hash;
+  }
+  if ([value isKindOfClass:[NSArray class]]) {
+    NSUInteger result = 1;
+    for (id item in (NSArray *)value) {
+      result = result * 31 + FLTPigeonDeepHash(item);
+    }
+    return result;
+  }
+  if ([value isKindOfClass:[NSDictionary class]]) {
+    NSUInteger result = 0;
+    NSDictionary *dict = (NSDictionary *)value;
+    for (id key in dict) {
+      result += ((FLTPigeonDeepHash(key) * 31) ^ FLTPigeonDeepHash(dict[key]));
+    }
+    return result;
+  }
+  return [value hash];
+}
+
 static NSArray<id> *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -82,6 +173,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [[PGNCodeBox alloc] initWithValue:self.code],
     self.data ?: [NSNull null],
   ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  PGNMessageData *other = (PGNMessageData *)object;
+  return FLTPigeonDeepEquals(self.name, other.name) &&
+         FLTPigeonDeepEquals(self.description, other.description) && self.code == other.code &&
+         FLTPigeonDeepEquals(self.data, other.data);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.name);
+  result = result * 31 + FLTPigeonDeepHash(self.description);
+  result = result * 31 + @(self.code).hash;
+  result = result * 31 + FLTPigeonDeepHash(self.data);
+  return result;
 }
 @end
 
