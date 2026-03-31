@@ -55,7 +55,7 @@ Future<void> main(List<String> args) async {
     'NIAnEnum',
     'NIAnotherEnum',
     'NSURLSessionAuthChallengeDisposition',
-    'NiTestsMyDataType',
+    'NiTestsPigeonInternalNumberType',
   ];
   var targetTriple = '';
   if (targetTriple.isEmpty) {

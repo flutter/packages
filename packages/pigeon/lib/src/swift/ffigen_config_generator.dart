@@ -138,7 +138,7 @@ import 'package:swiftgen/swiftgen.dart';
         if (hasAsyncFlutterApi) {
           indent.writeln("'NSURLSessionAuthChallengeDisposition',");
         }
-        indent.writeln("'${prefix}MyDataType',");
+        indent.writeln("'${prefix}PigeonInternalNumberType',");
         indent.dec();
       });
 

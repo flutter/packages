@@ -121,7 +121,7 @@ private func numberCodec(number: Any) -> Int {
   }
 }
 // Enum to represent the Dart TypedData types
-enum NiTestsMyDataType: Int {
+enum NiTestsPigeonInternalNumberType: Int {
   case uint8 = 0
   case int32 = 1
   case int64 = 2
@@ -141,38 +141,38 @@ enum NiTestsMyDataType: Int {
 
   public init(_ data: [UInt8]) {
     self.data = NSData(bytes: data, length: data.count)
-    self.type = NiTestsMyDataType.uint8.rawValue
+    self.type = NiTestsPigeonInternalNumberType.uint8.rawValue
   }
 
   public init(_ data: [Int32]) {
     self.data = NSData(bytes: data, length: data.count * MemoryLayout<Int32>.size)
-    self.type = NiTestsMyDataType.int32.rawValue
+    self.type = NiTestsPigeonInternalNumberType.int32.rawValue
   }
 
   public init(_ data: [Int64]) {
     self.data = NSData(bytes: data, length: data.count * MemoryLayout<Int64>.size)
-    self.type = NiTestsMyDataType.int64.rawValue
+    self.type = NiTestsPigeonInternalNumberType.int64.rawValue
   }
 
   public init(_ data: [Float32]) {
     self.data = NSData(bytes: data, length: data.count * MemoryLayout<Float32>.size)
-    self.type = NiTestsMyDataType.float32.rawValue
+    self.type = NiTestsPigeonInternalNumberType.float32.rawValue
   }
 
   public init(_ data: [Float64]) {
     self.data = NSData(bytes: data, length: data.count * MemoryLayout<Float64>.size)
-    self.type = NiTestsMyDataType.float64.rawValue
+    self.type = NiTestsPigeonInternalNumberType.float64.rawValue
   }
 
   /// Returns the data as a [UInt8] array, if the type is .uint8
   public func toUint8Array() -> [UInt8]? {
-    guard type == NiTestsMyDataType.uint8.rawValue else { return nil }
+    guard type == NiTestsPigeonInternalNumberType.uint8.rawValue else { return nil }
     return [UInt8](data as Data)
   }
 
   /// Returns the data as a [Int32] array, if the type is .int32
   public func toInt32Array() -> [Int32]? {
-    guard type == NiTestsMyDataType.int32.rawValue else { return nil }
+    guard type == NiTestsPigeonInternalNumberType.int32.rawValue else { return nil }
     guard data.length % MemoryLayout<Int32>.size == 0 else { return nil }
     let count = data.length / MemoryLayout<Int32>.size
     var array = [Int32](repeating: 0, count: count)
@@ -182,7 +182,7 @@ enum NiTestsMyDataType: Int {
 
   /// Returns the data as a [Int64] array, if the type is .int64
   public func toInt64Array() -> [Int64]? {
-    guard type == NiTestsMyDataType.int64.rawValue else { return nil }
+    guard type == NiTestsPigeonInternalNumberType.int64.rawValue else { return nil }
     guard data.length % MemoryLayout<Int64>.size == 0 else { return nil }
     let count = data.length / MemoryLayout<Int64>.size
     var array = [Int64](repeating: 0, count: count)
@@ -192,7 +192,7 @@ enum NiTestsMyDataType: Int {
 
   /// Returns the data as a [Float32] array, if the type is .float32
   public func toFloat32Array() -> [Float32]? {
-    guard type == NiTestsMyDataType.float32.rawValue else { return nil }
+    guard type == NiTestsPigeonInternalNumberType.float32.rawValue else { return nil }
     guard data.length % MemoryLayout<Float32>.size == 0 else { return nil }
     let count = data.length / MemoryLayout<Float32>.size
     var array = [Float32](repeating: 0, count: count)
@@ -202,7 +202,7 @@ enum NiTestsMyDataType: Int {
 
   /// Returns the data as a [Float64] array (Array<Double>), if the type is .float64
   public func toFloat64Array() -> [Double]? {
-    guard type == NiTestsMyDataType.float64.rawValue else { return nil }
+    guard type == NiTestsPigeonInternalNumberType.float64.rawValue else { return nil }
     guard data.length % MemoryLayout<Double>.size == 0 else { return nil }
     let count = data.length / MemoryLayout<Double>.size
     var array = [Double](repeating: 0, count: count)
@@ -1808,15 +1808,15 @@ class _PigeonFfiCodec {
     }
     if let typedData = value as? NiTestsPigeonTypedData {
       switch typedData.type {
-      case NiTestsMyDataType.uint8.rawValue:
+      case NiTestsPigeonInternalNumberType.uint8.rawValue:
         return typedData.toUint8Array()
-      case NiTestsMyDataType.int32.rawValue:
+      case NiTestsPigeonInternalNumberType.int32.rawValue:
         return typedData.toInt32Array()
-      case NiTestsMyDataType.int64.rawValue:
+      case NiTestsPigeonInternalNumberType.int64.rawValue:
         return typedData.toInt64Array()
-      case NiTestsMyDataType.float32.rawValue:
+      case NiTestsPigeonInternalNumberType.float32.rawValue:
         return typedData.toFloat32Array()
-      case NiTestsMyDataType.float64.rawValue:
+      case NiTestsPigeonInternalNumberType.float64.rawValue:
         return typedData.toFloat64Array()
       default:
         return typedData
