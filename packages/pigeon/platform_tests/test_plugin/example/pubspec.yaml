@@ -10,24 +10,24 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffi
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   ffigen: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffigen
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   flutter:
     sdk: flutter
   jni: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   jnigen: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jnigen
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   pub_semver: ^2.2.0
   shared_test_plugin_code:
     path: ../../shared_test_plugin_code
@@ -35,7 +35,7 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swiftgen
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   test_plugin:
     path: ../
 
@@ -51,7 +51,7 @@ dev_dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swift2objc
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
 
 flutter:
   uses-material-design: true
@@ -61,19 +61,19 @@ dependency_overrides:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffi
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   ffigen: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/ffigen
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   objective_c: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/objective_c
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f
   swift2objc: 
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swift2objc
-      ref: d3cda4fc851a3e1dff07558f5616d1eb4502e323
+      ref: 378a68e431e14779606bcbe721c05cb14bf4333f

@@ -82,6 +82,12 @@ the threading model for handling HostApi methods can be selected with the
 Host and Flutter APIs now support the ability to provide a unique message channel suffix string
 to the api to allow for multiple instances to be created and operate in parallel.
 
+### Native Interop (FFI & JNI)
+
+Pigeon supports generating Native Interop bindings using FFI (for Swift) and JNI (for Kotlin) as an alternative to standard MethodChannels. This allows for direct communication with lower overhead.
+
+For detailed information on setup, prerequisites, and instructions on how to use Native Interop, see the [Native Interop Guide](./native_interop_guide.md).
+
 ## Usage
 
 1) Add pigeon as a `dev_dependency`.
