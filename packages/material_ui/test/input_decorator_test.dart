@@ -15780,16 +15780,19 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
-          body: Center(
-            child: InputDecorator(
-              decoration: InputDecoration(
-                hintText: hintText,
-                labelText: labelText,
-                labelTextDirection: TextDirection.rtl,
-                hintTextDirection: TextDirection.ltr,
+          body: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Center(
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  labelText: labelText,
+                  labelTextDirection: TextDirection.rtl,
+                  hintTextDirection: TextDirection.rtl,
+                ),
+                isEmpty: true,
+                child: SizedBox.shrink(),
               ),
-              isEmpty: true,
-              child: SizedBox.shrink(),
             ),
           ),
         ),
@@ -15797,7 +15800,7 @@ void main() {
     );
 
     final Text hint = tester.widget<Text>(find.text(hintText));
-    expect(hint.textDirection, TextDirection.ltr);
+    expect(hint.textDirection, TextDirection.rtl);
 
     final Text label = tester.widget<Text>(find.text(labelText));
     expect(label.textDirection, TextDirection.rtl);
