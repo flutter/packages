@@ -39,8 +39,7 @@ tasks.register<Delete>("clean") {
 gradle.projectsEvaluated {
     project(":file_selector_android") {
         tasks.withType<JavaCompile> {
-            // Ignore classfile due to https://issuetracker.google.com/issues/342067844
-            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror", "-Xlint:-classfile"))
+            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
     }
 }

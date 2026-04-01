@@ -39,7 +39,7 @@ tasks.register<Delete>("clean") {
 gradle.projectsEvaluated {
     project(":google_sign_in_android") {
         tasks.withType<JavaCompile> {
-            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror", "-Xlint:-classfile"))
+            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
     }
 }

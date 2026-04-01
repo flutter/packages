@@ -39,7 +39,7 @@ tasks.register<Delete>("clean") {
 gradle.projectsEvaluated {
     project(":google_maps_flutter_android") {
         tasks.withType<JavaCompile> {
-            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror", "-Xlint:-classfile"))
+            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
         dependencies {
             add("implementation", "com.google.code.findbugs:jsr305:3.0.2")
