@@ -13,27 +13,27 @@ class FrameInfoProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    let instance: TestFrameInfo? = TestFrameInfo()
-    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance!)
+    let instance = TestFrameInfo.instance
+    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance!.isMainFrame)
+    XCTAssertEqual(value, instance.isMainFrame)
   }
 
   @MainActor func testRequest() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    let instance: TestFrameInfo? = TestFrameInfo()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
+    let instance = TestFrameInfo.instance
+    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value?.value, instance!.request)
+    XCTAssertEqual(value?.value, instance.request)
   }
 
   @MainActor func testNilRequest() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    let instance = TestFrameInfoWithNilRequest()
+    let instance = TestFrameInfoWithNilRequest.instance
     let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
     // On macOS 15.5+, `WKFrameInfo.request` returns with an empty URLRequest.
     // Previously it would return nil so accept either.
@@ -46,6 +46,12 @@ class FrameInfoProxyAPITests: XCTestCase {
 }
 
 class TestFrameInfo: WKFrameInfo {
+  static let instance = TestFrameInfo()
+
+  private override init() {
+
+  }
+
   override var isMainFrame: Bool {
     return true
   }
@@ -56,4 +62,9 @@ class TestFrameInfo: WKFrameInfo {
 }
 
 class TestFrameInfoWithNilRequest: WKFrameInfo {
+  static let instance = TestFrameInfoWithNilRequest()
+
+  private override init() {
+
+  }
 }
