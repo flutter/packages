@@ -46,6 +46,8 @@ class FrameInfoProxyAPITests: XCTestCase {
 }
 
 class TestFrameInfo: WKFrameInfo {
+  // Global test instance of `WKFrameInfo`. Using a static instance prevents a crash when
+  // a `WKFrameInfo` is deallocated during a test on iOS 26+.
   static let instance = TestFrameInfo()
 
   private override init() {
@@ -62,6 +64,8 @@ class TestFrameInfo: WKFrameInfo {
 }
 
 class TestFrameInfoWithNilRequest: WKFrameInfo {
+  // Global test instance of `WKFrameInfo` with a nil URLRequest. Using a static instance prevents a
+  // crash when a `WKFrameInfo` is deallocated during a test on iOS 26+.
   static let instance = TestFrameInfoWithNilRequest()
 
   private override init() {
