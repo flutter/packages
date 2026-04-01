@@ -257,20 +257,20 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
 
     let targetQuality: Int64 = 50
 
-    var setImageQualityCalled = false
-    mockCamera.setImageQualityStub = { quality in
+    var setJpegImageQualityCalled = false
+    mockCamera.setJpegImageQualityStub = { quality in
       XCTAssertEqual(quality, targetQuality)
-      setImageQualityCalled = true
+      setJpegImageQualityCalled = true
     }
 
-    cameraPlugin.setImageQuality(quality: targetQuality) { result in
+    cameraPlugin.setJpegImageQuality(quality: targetQuality) { result in
       let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
     waitForExpectations(timeout: 30, handler: nil)
 
-    XCTAssertTrue(setImageQualityCalled)
+    XCTAssertTrue(setJpegImageQualityCalled)
   }
 
   func testStartImageStream_callsCameraStartImageStream() {

@@ -1307,16 +1307,16 @@ void main() {
         // Arrange
         final channel = MethodChannelMock(
           channelName: 'plugins.flutter.io/camera',
-          methods: <String, dynamic>{'setImageQuality': null},
+          methods: <String, dynamic>{'setJpegImageQuality': null},
         );
 
         // Act
-        await camera.setImageQuality(cameraId, 50);
+        await camera.setJpegImageQuality(cameraId, 50);
 
         // Assert
         expect(channel.log, <Matcher>[
           isMethodCall(
-            'setImageQuality',
+            'setJpegImageQuality',
             arguments: <String, Object?>{'cameraId': cameraId, 'quality': 50},
           ),
         ]);

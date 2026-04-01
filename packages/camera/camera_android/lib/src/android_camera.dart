@@ -381,8 +381,8 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setImageQuality(int cameraId, int quality) =>
-      _hostApi.setImageQuality(quality);
+  Future<void> setJpegImageQuality(int cameraId, int quality) =>
+      _hostApi.setJpegImageQuality(quality);
 
   @override
   Widget buildPreview(int cameraId) {

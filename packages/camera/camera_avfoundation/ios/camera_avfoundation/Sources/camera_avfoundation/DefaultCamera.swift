@@ -844,7 +844,7 @@ final class DefaultCamera: NSObject, Camera {
     self.fileFormat = fileFormat
   }
 
-  func setImageQuality(_ quality: Int64) {
+  func setJpegImageQuality(_ quality: Int64) {
     self.imageQuality = quality
   }
 

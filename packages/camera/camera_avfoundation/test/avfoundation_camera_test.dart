@@ -994,9 +994,9 @@ void main() {
     });
 
     test('Should set the image quality', () async {
-      await camera.setImageQuality(cameraId, 50);
+      await camera.setJpegImageQuality(cameraId, 50);
 
-      verify(mockApi.setImageQuality(50));
+      verify(mockApi.setJpegImageQuality(50));
     });
   });
 }

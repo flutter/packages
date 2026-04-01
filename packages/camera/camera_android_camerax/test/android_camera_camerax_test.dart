@@ -3913,7 +3913,7 @@ void main() {
   );
 
   test(
-    'setImageQuality unbinds and recreates ImageCapture with requested quality',
+    'setJpegImageQuality unbinds and recreates ImageCapture with requested quality',
     () async {
       final camera = AndroidCameraCameraX();
       final mockProcessCameraProvider = MockProcessCameraProvider();
@@ -3955,7 +3955,7 @@ void main() {
         mockProcessCameraProvider.isBound(mockImageCapture),
       ).thenAnswer((_) async => true);
 
-      await camera.setImageQuality(cameraId, jpegQuality);
+      await camera.setJpegImageQuality(cameraId, jpegQuality);
 
       verify(
         mockProcessCameraProvider.unbind(<UseCase>[mockImageCapture]),
@@ -3970,7 +3970,7 @@ void main() {
   );
 
   test(
-    'setImageQuality preserves locked target rotation when recreating ImageCapture',
+    'setJpegImageQuality preserves locked target rotation when recreating ImageCapture',
     () async {
       final camera = AndroidCameraCameraX();
       final mockDeviceOrientationManager = MockDeviceOrientationManager();
@@ -4005,7 +4005,7 @@ void main() {
             return mockNewImageCapture;
           };
 
-      await camera.setImageQuality(cameraId, jpegQuality);
+      await camera.setJpegImageQuality(cameraId, jpegQuality);
 
       verifyNever(mockDeviceOrientationManager.getDefaultDisplayRotation());
       expect(actualTargetRotation, lockedTargetRotation);

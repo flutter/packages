@@ -556,11 +556,11 @@ extension CameraPlugin: CameraApi {
     }
   }
 
-  func setImageQuality(
+  func setJpegImageQuality(
     quality: Int64, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
-      self?.camera?.setImageQuality(quality)
+      self?.camera?.setJpegImageQuality(quality)
       completion(.success(()))
     }
   }

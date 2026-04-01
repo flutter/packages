@@ -208,7 +208,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The target rotation set by [lockCaptureOrientation], if any.
   ///
   /// Used to preserve the locked rotation when recreating use cases (e.g.,
-  /// in [setImageQuality]).
+  /// in [setJpegImageQuality]).
   @visibleForTesting
   int? lockedCaptureOrientation;
 
@@ -1142,7 +1142,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// with the requested quality. The next call to [takePicture] will bind
   /// the new instance automatically.
   @override
-  Future<void> setImageQuality(int cameraId, int quality) async {
+  Future<void> setJpegImageQuality(int cameraId, int quality) async {
     // Unbind the current ImageCapture if it exists and is bound.
     if (imageCapture != null) {
       await _unbindUseCaseFromLifecycle(imageCapture!);

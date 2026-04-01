@@ -521,14 +521,14 @@ void main() {
     );
 
     test(
-      'Default implementation of setImageQuality() should throw unimplemented error',
+      'Default implementation of setJpegImageQuality() should throw unimplemented error',
       () {
         // Arrange
         final cameraPlatform = ExtendsCameraPlatform();
 
         // Act & Assert
         expect(
-          () => cameraPlatform.setImageQuality(1, 50),
+          () => cameraPlatform.setJpegImageQuality(1, 50),
           throwsUnimplementedError,
         );
       },

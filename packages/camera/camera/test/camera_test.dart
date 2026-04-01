@@ -885,7 +885,7 @@ void main() {
       },
     );
 
-    test('setImageQuality() calls $CameraPlatform', () async {
+    test('setJpegImageQuality() calls $CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
@@ -896,15 +896,15 @@ void main() {
       );
       await cameraController.initialize();
 
-      await cameraController.setImageQuality(50);
+      await cameraController.setJpegImageQuality(50);
 
       verify(
-        CameraPlatform.instance.setImageQuality(cameraController.cameraId, 50),
+        CameraPlatform.instance.setJpegImageQuality(cameraController.cameraId, 50),
       ).called(1);
     });
 
     test(
-      'setImageQuality() throws $CameraException on $PlatformException',
+      'setJpegImageQuality() throws $CameraException on $PlatformException',
       () async {
         final cameraController = CameraController(
           const CameraDescription(
@@ -917,7 +917,7 @@ void main() {
         await cameraController.initialize();
 
         when(
-          CameraPlatform.instance.setImageQuality(
+          CameraPlatform.instance.setJpegImageQuality(
             cameraController.cameraId,
             50,
           ),
@@ -929,7 +929,7 @@ void main() {
         );
 
         expect(
-          cameraController.setImageQuality(50),
+          cameraController.setJpegImageQuality(50),
           throwsA(
             isA<CameraException>().having(
               (CameraException error) => error.description,
@@ -941,7 +941,7 @@ void main() {
       },
     );
 
-    test('setImageQuality() throws ArgumentError for invalid values', () async {
+    test('setJpegImageQuality() throws ArgumentError for invalid values', () async {
       final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
@@ -953,11 +953,11 @@ void main() {
       await cameraController.initialize();
 
       expect(
-        () => cameraController.setImageQuality(0),
+        () => cameraController.setJpegImageQuality(0),
         throwsA(isA<ArgumentError>()),
       );
       expect(
-        () => cameraController.setImageQuality(101),
+        () => cameraController.setJpegImageQuality(101),
         throwsA(isA<ArgumentError>()),
       );
     });
@@ -4231,9 +4231,9 @@ class MockCameraPlatform extends Mock
   );
 
   @override
-  Future<void> setImageQuality(int? cameraId, int? quality) async =>
+  Future<void> setJpegImageQuality(int? cameraId, int? quality) async =>
       super.noSuchMethod(
-        Invocation.method(#setImageQuality, <Object?>[cameraId, quality]),
+        Invocation.method(#setJpegImageQuality, <Object?>[cameraId, quality]),
       );
 }
 

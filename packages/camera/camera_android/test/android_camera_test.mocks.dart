@@ -320,9 +320,9 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           as _i4.Future<void>);
 
   @override
-  _i4.Future<void> setImageQuality(int? quality) =>
+  _i4.Future<void> setJpegImageQuality(int? quality) =>
       (super.noSuchMethod(
-            Invocation.method(#setImageQuality, [quality]),
+            Invocation.method(#setJpegImageQuality, [quality]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

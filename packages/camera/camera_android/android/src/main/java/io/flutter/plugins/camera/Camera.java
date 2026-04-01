@@ -1413,7 +1413,7 @@ class Camera
    *
    * @param quality JPEG quality value between 1 and 100.
    */
-  public void setImageQuality(@NonNull Long quality) {
+  public void setJpegImageQuality(@NonNull Long quality) {
     JpegQualityFeature jpegQualityFeature = cameraFeatures.getJpegQuality();
     if (jpegQualityFeature == null) {
       jpegQualityFeature = cameraFeatureFactory.createJpegQualityFeature(cameraProperties);

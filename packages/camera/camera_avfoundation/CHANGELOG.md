@@ -1,6 +1,6 @@
 ## 0.10.2
 
-* Adds `setImageQuality` for controlling JPEG compression quality.
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
 
 ## 0.10.1
 

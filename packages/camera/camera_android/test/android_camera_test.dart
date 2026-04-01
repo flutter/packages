@@ -877,10 +877,10 @@ void main() {
     test('Should set the image quality', () async {
       // Arrange
       // Act
-      await camera.setImageQuality(cameraId, 50);
+      await camera.setJpegImageQuality(cameraId, 50);
 
       // Assert
-      verify(mockCameraApi.setImageQuality(50)).called(1);
+      verify(mockCameraApi.setJpegImageQuality(50)).called(1);
     });
   });
 }

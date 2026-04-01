@@ -342,8 +342,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void setImageQuality(@NonNull Long quality) {
-    camera.setImageQuality(quality);
+  public void setJpegImageQuality(@NonNull Long quality) {
+    camera.setJpegImageQuality(quality);
   }
 
   @Override

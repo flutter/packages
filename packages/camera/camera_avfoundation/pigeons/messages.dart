@@ -352,8 +352,8 @@ abstract class CameraApi {
 
   /// Sets the JPEG compression quality for still image capture.
   @async
-  @ObjCSelector('setImageQuality:')
-  void setImageQuality(int quality);
+  @ObjCSelector('setJpegImageQuality:')
+  void setJpegImageQuality(int quality);
 }
 
 @EventChannelApi()

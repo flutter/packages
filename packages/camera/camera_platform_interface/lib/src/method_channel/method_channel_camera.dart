@@ -519,8 +519,8 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setImageQuality(int cameraId, int quality) {
-    return _channel.invokeMethod<void>('setImageQuality', <String, dynamic>{
+  Future<void> setJpegImageQuality(int cameraId, int quality) {
+    return _channel.invokeMethod<void>('setJpegImageQuality', <String, dynamic>{
       'cameraId': cameraId,
       'quality': quality,
     });

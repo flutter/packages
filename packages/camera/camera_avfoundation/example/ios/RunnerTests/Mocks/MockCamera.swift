@@ -27,7 +27,7 @@ final class MockCamera: NSObject, Camera {
   var lockCaptureOrientationStub: ((PlatformDeviceOrientation) -> Void)?
   var unlockCaptureOrientationStub: (() -> Void)?
   var setImageFileFormatStub: ((PlatformImageFileFormat) -> Void)?
-  var setImageQualityStub: ((Int64) -> Void)?
+  var setJpegImageQualityStub: ((Int64) -> Void)?
   var setExposureModeStub: ((PlatformExposureMode) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
   var setExposurePointStub: ((PlatformPoint?, @escaping (Result<Void, any Error>) -> Void) -> Void)?
@@ -145,8 +145,8 @@ final class MockCamera: NSObject, Camera {
     setImageFileFormatStub?(fileFormat)
   }
 
-  func setImageQuality(_ quality: Int64) {
-    setImageQualityStub?(quality)
+  func setJpegImageQuality(_ quality: Int64) {
+    setJpegImageQualityStub?(quality)
   }
 
   func setExposureMode(_ mode: PlatformExposureMode) {

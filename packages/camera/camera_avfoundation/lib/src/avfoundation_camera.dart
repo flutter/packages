@@ -443,8 +443,8 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setImageQuality(int cameraId, int quality) async {
-    await _hostApi.setImageQuality(quality);
+  Future<void> setJpegImageQuality(int cameraId, int quality) async {
+    await _hostApi.setJpegImageQuality(quality);
   }
 
   @override
