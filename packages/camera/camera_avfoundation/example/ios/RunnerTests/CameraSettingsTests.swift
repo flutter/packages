@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
 import XCTest
 
 @testable import camera_avfoundation
@@ -51,7 +52,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
-    // FLTCam allows to set frame rate with 1/10 precision.
+    // Camera allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
       minFrameDurationExpectation.fulfill()
@@ -59,7 +60,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
-    // FLTCam allows to set frame rate with 1/10 precision.
+    // Camera allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
       maxFrameDurationExpectation.fulfill()
@@ -294,6 +295,62 @@ final class CameraSettingsTests: XCTestCase {
     XCTAssertGreaterThan(
       mockAudioSession.addedAudioOutputCount, 0,
       "Audio session should receive AVCaptureAudioDataOutput when enableAudio is true"
+    )
+  }
+
+  func testResolutionPresetWithMax_mustIgnoreLossyFormatsAndSquares() {
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+
+    let lossyFormat = MockCaptureDeviceFormat(
+      codecType: 1_651_798_066,  // 'btp2'
+      width: 4224,
+      height: 3024
+    )
+    let squareFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 4032,
+      height: 4032
+    )
+    let safe4KFormat = MockCaptureDeviceFormat(
+      codecType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+      width: 3840,
+      height: 2160
+    )
+
+    let captureDeviceMock = MockCaptureDevice()
+    captureDeviceMock.flutterFormats = [lossyFormat, squareFormat, safe4KFormat]
+
+    var currentFormat: CaptureDeviceFormat = safe4KFormat
+    captureDeviceMock.activeFormatStub = { currentFormat }
+    captureDeviceMock.setActiveFormatStub = { newFormat in currentFormat = newFormat }
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureSession = videoSessionMock
+
+    configuration.videoDimensionsConverter = { format in
+      return CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+    }
+
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.max
+    )
+
+    let _ = CameraTestUtils.createTestCamera(configuration)
+
+    let selectedFormat = captureDeviceMock.flutterActiveFormat
+    let selectedDimensions = CMVideoFormatDescriptionGetDimensions(selectedFormat.formatDescription)
+
+    XCTAssertEqual(
+      selectedDimensions.width,
+      3840,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
+    )
+    XCTAssertEqual(
+      selectedDimensions.height,
+      2160,
+      "Camera should have ignored the lossy and square formats, safely falling back to 4K."
     )
   }
 }

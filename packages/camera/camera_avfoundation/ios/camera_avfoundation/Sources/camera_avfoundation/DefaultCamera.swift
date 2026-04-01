@@ -335,7 +335,7 @@ final class DefaultCamera: NSObject, Camera {
     audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
   }
 
-  /// Finds the highest available resolution in terms of pixel count for the given device.
+  /// Finds the highest available non-square resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
     -> CaptureDeviceFormat?
@@ -346,12 +346,29 @@ final class DefaultCamera: NSObject, Camera {
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
+    // These formats are compressed and lossy, and unsupported by the Flutter Engine.
+    let unsupportedSubTypes: [FourCharCode] = [
+      1_651_798_066  // Hex for 'btp2', or kCVPixelFormatType_96VersatileBayerPacked12
+    ]
+
     for format in captureDevice.flutterFormats {
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+
+      // Skip formats that will crash the Flutter Engine
+      if unsupportedSubTypes.contains(subType) {
+        continue
+      }
+
       let resolution = videoDimensionsConverter(format)
       let height = UInt(resolution.height)
       let width = UInt(resolution.width)
+
+      // Guard against 1:1 resolutions provided by the iPhone 17 centre stage sensor.
+      if height == width {
+        continue
+      }
+
       let pixelCount = height * width
-      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
       let isSubTypePreferred = subType == preferredSubType
 
       if pixelCount > maxPixelCount
@@ -362,7 +379,6 @@ final class DefaultCamera: NSObject, Camera {
         isBestSubTypePreferred = isSubTypePreferred
       }
     }
-
     return bestFormat
   }
 

@@ -111,7 +111,8 @@ class InternalPigeonOptions {
               options.dartOptions?.sourceOutPath == null)
           ? null
           : InternalDartOptions.fromDartOptions(
-              options.dartOptions ?? const DartOptions(),
+              options.dartOptions ??
+                  DartOptions(ignoreLints: options.ignoreLints),
               dartOut: options.dartOut,
               testOut: options.dartTestOut,
               copyrightHeader: copyrightHeader,
@@ -1578,7 +1579,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         _errors.add(
           Error(
             message:
-                'API "${node.name.lexeme}" can only have one API annotation but contains: ${node.metadata}',
+                'API "${node.namePart.typeName.lexeme}" can only have one API annotation but contains: ${node.metadata}',
             lineNumber: calculateLineNumber(source, node.offset),
           ),
         );
@@ -1605,7 +1606,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         }
 
         _currentApi = AstHostApi(
-          name: node.name.lexeme,
+          name: node.namePart.typeName.lexeme,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
           documentationComments: _documentationCommentsParser(
@@ -1614,7 +1615,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = AstFlutterApi(
-          name: node.name.lexeme,
+          name: node.namePart.typeName.lexeme,
           methods: <Method>[],
           documentationComments: _documentationCommentsParser(
             node.documentationComment?.tokens,
@@ -1641,7 +1642,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           _errors.add(
             Error(
               message:
-                  'ProxyApis should either set the super class in the annotation OR use extends: ("${node.name.lexeme}").',
+                  'ProxyApis should either set the super class in the annotation OR use extends: ("${node.namePart.typeName.lexeme}").',
               lineNumber: calculateLineNumber(source, node.offset),
             ),
           );
@@ -1712,7 +1713,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         }
 
         _currentApi = AstProxyApi(
-          name: node.name.lexeme,
+          name: node.namePart.typeName.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <ApiField>[],
@@ -1759,7 +1760,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           );
         }
         _currentApi = AstEventChannelApi(
-          name: node.name.lexeme,
+          name: node.namePart.typeName.lexeme,
           methods: <Method>[],
           swiftOptions: swiftOptions,
           kotlinOptions: kotlinOptions,
@@ -1770,7 +1771,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     } else {
       _currentClass = Class(
-        name: node.name.lexeme,
+        name: node.namePart.typeName.lexeme,
         fields: <NamedType>[],
         superClassName:
             node.implementsClause?.interfaces.first.name.toString() ??
@@ -1912,36 +1913,62 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     if (_currentApi != null) {
       // Methods without named return types aren't supported.
-      final dart_ast.TypeAnnotation returnType = node.returnType!;
-      returnType as dart_ast.NamedType;
-      _currentApi!.methods.add(
-        Method(
-          name: node.name.lexeme,
-          returnType: TypeDeclaration(
-            baseName: _getNamedTypeQualifiedName(returnType),
-            typeArguments: _typeAnnotationsToTypeArguments(
-              returnType.typeArguments,
+      final dart_ast.TypeAnnotation? returnType = node.returnType;
+      if (returnType is! dart_ast.NamedType) {
+        // In order to support implicit types (either `dynamic` or inherited
+        // return types), type aliases, function types, or record types, we'd
+        // need to use the analyzer's element model, via `getParsedUnit` instead
+        // of `getParsedUnit` in `Pigeon.parseFile`, and then access the
+        // resolved return type, via
+        // `node.declaredFragment!.element.returnType`.
+        String erroneousDeclaration = node.name.lexeme;
+        dart_ast.AstNode? enclosingDeclaration = node.parent;
+        while (enclosingDeclaration != null &&
+            enclosingDeclaration is! dart_ast.ClassDeclaration) {
+          enclosingDeclaration = enclosingDeclaration.parent;
+        }
+        if (enclosingDeclaration is dart_ast.ClassDeclaration) {
+          erroneousDeclaration =
+              '${enclosingDeclaration.namePart.typeName}.$erroneousDeclaration';
+        }
+        _errors.add(
+          Error(
+            message:
+                'Expected a named type for the return type of '
+                '("$erroneousDeclaration").',
+            lineNumber: calculateLineNumber(source, node.offset),
+          ),
+        );
+      } else {
+        _currentApi!.methods.add(
+          Method(
+            name: node.name.lexeme,
+            returnType: TypeDeclaration(
+              baseName: _getNamedTypeQualifiedName(returnType),
+              typeArguments: _typeAnnotationsToTypeArguments(
+                returnType.typeArguments,
+              ),
+              isNullable: returnType.question != null,
             ),
-            isNullable: returnType.question != null,
+            parameters: arguments,
+            isStatic: isStatic,
+            location: switch (_currentApi!) {
+              AstHostApi() => ApiLocation.host,
+              AstProxyApi() => ApiLocation.host,
+              AstFlutterApi() => ApiLocation.flutter,
+              AstEventChannelApi() => ApiLocation.host,
+            },
+            isAsynchronous: isAsynchronous,
+            objcSelector: objcSelector,
+            swiftFunction: swiftFunction,
+            offset: node.offset,
+            taskQueueType: taskQueueType,
+            documentationComments: _documentationCommentsParser(
+              node.documentationComment?.tokens,
+            ),
           ),
-          parameters: arguments,
-          isStatic: isStatic,
-          location: switch (_currentApi!) {
-            AstHostApi() => ApiLocation.host,
-            AstProxyApi() => ApiLocation.host,
-            AstFlutterApi() => ApiLocation.flutter,
-            AstEventChannelApi() => ApiLocation.host,
-          },
-          isAsynchronous: isAsynchronous,
-          objcSelector: objcSelector,
-          swiftFunction: swiftFunction,
-          offset: node.offset,
-          taskQueueType: taskQueueType,
-          documentationComments: _documentationCommentsParser(
-            node.documentationComment?.tokens,
-          ),
-        ),
-      );
+        );
+      }
     } else if (_currentClass != null) {
       _errors.add(
         Error(
@@ -1959,8 +1986,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitEnumDeclaration(dart_ast.EnumDeclaration node) {
     _enums.add(
       Enum(
-        name: node.name.lexeme,
-        members: node.constants
+        name: node.namePart.typeName.lexeme,
+        members: node.body.constants
             .map(
               (dart_ast.EnumConstantDeclaration e) => EnumMember(
                 name: e.name.lexeme,

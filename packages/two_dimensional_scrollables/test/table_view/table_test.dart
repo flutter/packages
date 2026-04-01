@@ -4175,6 +4175,105 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Table does not crash when focusing outside of the table while focused text field is not in the view',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/137112
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                const TextField(key: Key('outside_textfield')),
+                Expanded(
+                  child: TableView.builder(
+                    verticalDetails: ScrollableDetails.vertical(
+                      controller: verticalController,
+                    ),
+                    horizontalDetails: ScrollableDetails.horizontal(
+                      controller: horizontalController,
+                    ),
+                    cellBuilder:
+                        (BuildContext context, TableVicinity vicinity) {
+                          return TableViewCell(
+                            child: Center(
+                              child: TextField(
+                                key: Key(
+                                  'cell_${vicinity.row}_${vicinity.column}',
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                    columnCount: 20,
+                    columnBuilder: (int index) {
+                      return const TableSpan(
+                        foregroundDecoration: TableSpanDecoration(
+                          border: TableSpanBorder(trailing: BorderSide()),
+                        ),
+                        extent: FixedTableSpanExtent(100),
+                      );
+                    },
+                    rowCount: 40,
+                    rowBuilder: (int index) {
+                      return TableSpan(
+                        backgroundDecoration: TableSpanDecoration(
+                          color: index.isEven ? Colors.purple[100] : null,
+                          border: const TableSpanBorder(
+                            trailing: BorderSide(width: 3),
+                          ),
+                        ),
+                        extent: const FixedTableSpanExtent(50),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // 1. Select a TextField in the table.
+      // Use the vicinity from the original crash report.
+      const vicinity = TableVicinity(row: 5, column: 6);
+      final Finder cellTextField = find.byKey(
+        Key('cell_${vicinity.row}_${vicinity.column}'),
+      );
+      // Bring it into view.
+      verticalController.jumpTo(250);
+      horizontalController.jumpTo(600);
+      await tester.pumpAndSettle();
+
+      await tester.tap(cellTextField);
+      await tester.pumpAndSettle();
+      expect(FocusManager.instance.primaryFocus, isNotNull);
+
+      // 2. Scroll until it disappears from the view, without unfocusing it.
+      verticalController.jumpTo(verticalController.offset + 1000);
+      await tester.pumpAndSettle();
+
+      // 3. Select another TextField outside of the table.
+      final Finder outsideTextField = find.byKey(
+        const Key('outside_textfield'),
+      );
+      await tester.tap(outsideTextField);
+      await tester.pumpAndSettle();
+
+      // 4. Scroll back and ensure the table does not crash.
+      verticalController.jumpTo(verticalController.offset - 1000);
+      await tester.pumpAndSettle();
+      expect(cellTextField, findsOneWidget);
+    },
+  );
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

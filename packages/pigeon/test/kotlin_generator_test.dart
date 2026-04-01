@@ -982,6 +982,49 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
+  group('generated annotation', () {
+    late Root root;
+    late KotlinGenerator generator;
+    late StringBuffer sink;
+
+    setUp(() {
+      root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      generator = const KotlinGenerator();
+      sink = StringBuffer();
+    });
+
+    test('with generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+        useGeneratedAnnotation: true,
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains(kotlinGeneratedAnnotation));
+    });
+
+    test('without generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, isNot(contains(kotlinGeneratedAnnotation)));
+    });
+  });
+
   test('generics - list', () {
     final classDefinition = Class(
       name: 'Foobar',
@@ -2026,5 +2069,67 @@ void main() {
 
     // There should be only one occurrence of 'is Foo' in the block
     expect(count, 1);
+  });
+
+  test('data class equality', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('override fun equals(other: Any?): Boolean {'));
+    expect(code, contains('override fun hashCode(): Int {'));
+  });
+
+  test('data class equality multi-field', () {
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'field1',
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: true),
+          name: 'field2',
+        ),
+      ],
+    );
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('override fun equals(other: Any?): Boolean {'));
+    expect(code, contains('override fun hashCode(): Int {'));
   });
 }

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
@@ -850,6 +849,156 @@ void main() {
           ),
       );
     });
+
+    testWidgets(
+      'paints borders correctly when cross axis is reversed (TableView)',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
+        final tableView = TableView.builder(
+          horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+          rowCount: 1,
+          columnCount: 1,
+          columnBuilder: (int index) => const TableSpan(
+            extent: FixedTableSpanExtent(200.0),
+            foregroundDecoration: TableSpanDecoration(
+              border: TableSpanBorder(
+                leading: BorderSide(color: Colors.orange, width: 3),
+              ),
+            ),
+          ),
+          rowBuilder: (int index) =>
+              const TableSpan(extent: FixedTableSpanExtent(200.0)),
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              child: Container(
+                height: 200,
+                width: 200,
+                color: Colors.grey.withValues(alpha: 0.5),
+              ),
+            );
+          },
+        );
+
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byType(TableViewport),
+          paints..path(
+            includes: <Offset>[
+              const Offset(400.0, 0.0),
+              const Offset(400.0, 200.0),
+            ],
+            color: const Color(0xffff9800),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'paints borders correctly when vertical scrolling is reversed (TableView)',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
+        final tableView = TableView.builder(
+          verticalDetails: const ScrollableDetails.vertical(reverse: true),
+          rowCount: 1,
+          columnCount: 1,
+          columnBuilder: (int index) =>
+              const TableSpan(extent: FixedTableSpanExtent(200.0)),
+          rowBuilder: (int index) => const TableSpan(
+            extent: FixedTableSpanExtent(200.0),
+            foregroundDecoration: TableSpanDecoration(
+              border: TableSpanBorder(
+                leading: BorderSide(color: Colors.orange, width: 3),
+              ),
+            ),
+          ),
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              child: Container(
+                height: 200,
+                width: 200,
+                color: Colors.grey.withValues(alpha: 0.5),
+              ),
+            );
+          },
+        );
+
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.byType(TableViewport),
+          paints..path(
+            includes: <Offset>[
+              const Offset(0.0, 400.0),
+              const Offset(200.0, 400.0),
+            ],
+            color: const Color(0xffff9800),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'TableView row decoration rect is correct when vertical axis is reversed and padding is used',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/177117
+        final tableView = TableView.builder(
+          verticalDetails: const ScrollableDetails.vertical(reverse: true),
+          rowCount: 1,
+          columnCount: 1,
+          columnBuilder: (int index) =>
+              const TableSpan(extent: FixedTableSpanExtent(200.0)),
+          rowBuilder: (int index) => const TableSpan(
+            extent: FixedTableSpanExtent(200.0),
+            padding: TableSpanPadding(leading: 10.0, trailing: 20.0),
+            backgroundDecoration: TableSpanDecoration(color: Colors.red),
+          ),
+          cellBuilder: (_, TableVicinity vicinity) {
+            return TableViewCell(
+              child: Container(width: 200, height: 200, color: Colors.blue),
+            );
+          },
+        );
+
+        tester.view.physicalSize = const Size(400, 400);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        await tester.pumpWidget(MaterialApp(home: Scaffold(body: tableView)));
+        await tester.pumpAndSettle();
+
+        // Since vertical is reversed, row 0 is at the bottom (y=400).
+        // Leading padding covers from y=390 to y=400.
+        // Trailing padding covers from y=170 to y=190.
+        // Content covers from y=190 to y=390.
+        expect(
+          find.byType(TableViewport),
+          paints..rect(
+            rect: const Rect.fromLTRB(0.0, 170.0, 200.0, 400.0),
+            color: Colors.red,
+          ),
+        );
+      },
+    );
   });
 
   group('merged cell decorations', () {
