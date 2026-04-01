@@ -8,8 +8,6 @@ on:
       branch-name:
         required: true
         type: string
-# Declare default permissions as read only.
-permissions: read-all
 jobs:
   release:
     if: github.repository_owner == 'flutter'
