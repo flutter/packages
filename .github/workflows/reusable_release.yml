@@ -42,6 +42,7 @@ jobs:
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
+      if: inputs.branch-name == 'main'
       uses: lewagon/wait-on-check-action@a08fbe2b86f9336198f33be6ad9c16b96f92799c
       with:
         ref: ${{ github.sha }}
@@ -54,6 +55,7 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
+      if: inputs.branch-name == 'main'
       uses: lewagon/wait-on-check-action@a08fbe2b86f9336198f33be6ad9c16b96f92799c
       with:
         ref: ${{ github.sha }}
