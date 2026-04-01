@@ -10,7 +10,6 @@ import '../../billing_client_wrappers.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
-import 'in_app_message_wrapper.dart';
 import 'pending_purchases_params_wrapper.dart';
 
 /// Callback triggered by Play in response to purchase activity.

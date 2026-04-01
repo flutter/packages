@@ -6,7 +6,6 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
-import 'billing_client_wrappers/in_app_message_wrapper.dart';
 import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'messages.g.dart';
 
