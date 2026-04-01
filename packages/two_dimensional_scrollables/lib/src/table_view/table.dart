@@ -429,13 +429,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     );
   }
 
-  // TODO(Piinks): Pinned rows/cols do not account for what is visible on the
-  //  screen. Ostensibly, we would not want to have pinned rows/columns that
-  //  extend beyond the viewport, we would never see them as they would never
-  //  scroll into view. So this currently implementation is fairly assuming
-  //  we will never have rows/cols that are outside of the viewport. We should
-  //  maybe add an assertion for this during layout.
-  // https://github.com/flutter/flutter/issues/136833
   int? get _lastPinnedRow =>
       delegate.pinnedRowCount > 0 ? delegate.pinnedRowCount - 1 : null;
   int? get _lastPinnedColumn =>
@@ -447,6 +440,49 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   double get _pinnedColumnsExtent => _lastPinnedColumn != null
       ? _columnMetrics[_lastPinnedColumn]!.trailingOffset
       : 0.0;
+
+  void _debugCheckPinnedExtent() {
+    assert(() {
+      if (_pinnedColumnsExtent > viewportDimension.width) {
+        debugPrint(
+          'TableView has pinned columns with a total width of '
+          '$_pinnedColumnsExtent, which exceeds the viewport width of '
+          '${viewportDimension.width}. This will prevent unpinned columns '
+          'from being visible.',
+        );
+      } else if (_pinnedColumnsExtent == viewportDimension.width) {
+        final bool hasUnpinnedColumns =
+            delegate.columnCount == null ||
+            delegate.columnCount! > delegate.pinnedColumnCount;
+        if (hasUnpinnedColumns) {
+          debugPrint(
+            'TableView has pinned columns that fully consume the viewport width. '
+            'Unpinned columns will not be visible.',
+          );
+        }
+      }
+
+      if (_pinnedRowsExtent > viewportDimension.height) {
+        debugPrint(
+          'TableView has pinned rows with a total height of '
+          '$_pinnedRowsExtent, which exceeds the viewport height of '
+          '${viewportDimension.height}. This will prevent unpinned rows '
+          'from being visible.',
+        );
+      } else if (_pinnedRowsExtent == viewportDimension.height) {
+        final bool hasUnpinnedRows =
+            delegate.rowCount == null ||
+            delegate.rowCount! > delegate.pinnedRowCount;
+        if (hasUnpinnedRows) {
+          debugPrint(
+            'TableView has pinned rows that fully consume the viewport height. '
+            'Unpinned rows will not be visible.',
+          );
+        }
+      }
+      return true;
+    }());
+  }
 
   @override
   TableViewParentData parentDataOf(RenderBox child) =>
@@ -892,6 +928,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _updateColumnMetrics();
       _updateRowMetrics();
       _updateScrollBounds();
+      _debugCheckPinnedExtent();
     } else {
       // Updates the visible cells based on cached table metrics.
       _updateFirstAndLastVisibleCell();

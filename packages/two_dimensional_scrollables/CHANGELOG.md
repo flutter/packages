@@ -1,3 +1,7 @@
+## 0.4.1
+
+* Adds warnings for TableView pinned rows and columns that exceed the viewport dimensions.
+
 ## 0.4.0
 
 * Added `alignment` property to `TableView` and `TreeView` to align content within the viewport when it is smaller than the viewport extent.
