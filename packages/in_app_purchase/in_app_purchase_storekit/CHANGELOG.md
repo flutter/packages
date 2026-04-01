@@ -1,3 +1,7 @@
+## 0.4.8+2
+
+* Add support for offer codes in StoreKit 2.
+
 ## 0.4.8+1
 
 * Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
