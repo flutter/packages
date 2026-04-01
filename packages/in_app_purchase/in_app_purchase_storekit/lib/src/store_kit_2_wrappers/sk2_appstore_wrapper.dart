@@ -22,7 +22,7 @@ final class AppStore {
     return hostApi2.sync();
   }
 
-  /// fuck
+  /// Presents a sheet that enables users to redeem subscription offer codes.
   Future<void> presentOfferCodeRedeemSheet() {
     return hostApi2.presentOfferCodeRedeemSheet();
   }

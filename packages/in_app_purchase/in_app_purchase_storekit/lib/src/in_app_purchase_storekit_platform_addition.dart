@@ -24,7 +24,7 @@ class InAppPurchaseStoreKitPlatformAddition
   /// Available on devices running iOS 14 and iPadOS 14 and later.
   /// Available for StoreKit 1 and 2
   Future<void> presentCodeRedemptionSheet() {
-    if (InAppPurchaseStoreKitPlatform().isStoreKit2Enabled) {
+    if (InAppPurchaseStoreKitPlatform.isStoreKit2Enabled) {
       return AppStore().presentOfferCodeRedeemSheet();
     }
     return SKPaymentQueueWrapper().presentCodeRedemptionSheet();
