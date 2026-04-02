@@ -674,10 +674,10 @@ void main() {
       verify(playerApi.play());
     });
 
-    test('seekTo(0) after completion is skipped (replay pre-seek path) '
+    test('seekTo(0) after completion is forwarded to native replay path '
         '(regression: flutter/flutter#170737)', () async {
       // VideoPlayerController.play() calls seekTo(0) first when position ==
-      // duration. This path is skipped to avoid native seek-from-ended delays.
+      // duration. This should be forwarded so native code can reset replay.
       const playerId = 1;
       final (
         AndroidVideoPlayer player,
@@ -703,7 +703,7 @@ void main() {
 
       await player.seekTo(playerId, Duration.zero);
 
-      verifyNever(playerApi.seekTo(0));
+      verify(playerApi.seekTo(0));
     });
 
     test('getPosition', () async {

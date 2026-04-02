@@ -8,7 +8,6 @@ import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 import static androidx.media3.common.Player.STATE_ENDED;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -95,62 +94,21 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
         !isMixMode);
   }
 
-  private static String playbackStateName(int state) {
-    switch (state) {
-      case androidx.media3.common.Player.STATE_IDLE:
-        return "IDLE";
-      case androidx.media3.common.Player.STATE_BUFFERING:
-        return "BUFFERING";
-      case androidx.media3.common.Player.STATE_READY:
-        return "READY";
-      case STATE_ENDED:
-        return "ENDED";
-      default:
-        return "UNKNOWN(" + state + ")";
-    }
-  }
-
   @Override
   public void play() {
     final int stateBefore = exoPlayer.getPlaybackState();
-    Log.d(
-        "VP_ANDROID",
-        "[VideoPlayer] play() — state="
-            + playbackStateName(stateBefore)
-            + " pos="
-            + exoPlayer.getCurrentPosition()
-            + "ms"
-            + " playWhenReady="
-            + exoPlayer.getPlayWhenReady());
     if (stateBefore == STATE_ENDED) {
       // Reset the player pipeline before replay. Seeking from ENDED can enter a
       // very long buffering state on some physical devices.
-      Log.d(
-          "VP_ANDROID",
-          "[VideoPlayer] play() — state=ENDED, calling stop()+seekToDefaultPosition()+prepare() before play");
       exoPlayer.stop();
       exoPlayer.seekToDefaultPosition();
       exoPlayer.prepare();
-      Log.d(
-          "VP_ANDROID",
-          "[VideoPlayer] play() — after stop()+prepare(), state="
-              + playbackStateName(exoPlayer.getPlaybackState())
-              + " pos="
-              + exoPlayer.getCurrentPosition()
-              + "ms");
     }
     exoPlayer.play();
   }
 
   @Override
   public void pause() {
-    Log.d(
-        "VP_ANDROID",
-        "[VideoPlayer] pause() — state="
-            + playbackStateName(exoPlayer.getPlaybackState())
-            + " pos="
-            + exoPlayer.getCurrentPosition()
-            + "ms");
     exoPlayer.pause();
   }
 
@@ -188,48 +146,19 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   public void seekTo(long position) {
     int stateBefore = exoPlayer.getPlaybackState();
     if (stateBefore == STATE_ENDED) {
-      Log.d(
-          "VP_ANDROID",
-          "[VideoPlayer] seekTo("
-              + position
-              + "ms) — state=ENDED, calling stop()"
-              + (position <= 0 ? "+seekToDefaultPosition()" : "")
-              + "+prepare() first");
       exoPlayer.stop();
       if (position <= 0) {
         exoPlayer.seekToDefaultPosition();
       }
       exoPlayer.prepare();
-      Log.d(
-          "VP_ANDROID",
-          "[VideoPlayer] stop()+prepare() returned — state now="
-              + playbackStateName(exoPlayer.getPlaybackState())
-              + " pos="
-              + exoPlayer.getCurrentPosition()
-              + "ms");
 
       // For replay-to-start, the stop reset has already positioned at default
       // position, so avoid an additional explicit seek call.
       if (position <= 0) {
-        Log.d(
-            "VP_ANDROID",
-            "[VideoPlayer] seekTo(" + position + "ms) — skipped explicit seek after reset");
         return;
       }
     }
-    Log.d(
-        "VP_ANDROID",
-        "[VideoPlayer] seekTo(" + position + "ms) — state=" + playbackStateName(stateBefore));
     exoPlayer.seekTo(position);
-    Log.d(
-        "VP_ANDROID",
-        "[VideoPlayer] seekTo("
-            + position
-            + "ms) done — state="
-            + playbackStateName(exoPlayer.getPlaybackState())
-            + " pos="
-            + exoPlayer.getCurrentPosition()
-            + "ms");
   }
 
   @NonNull
