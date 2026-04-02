@@ -6,6 +6,7 @@ package io.flutter.plugins.videoplayer;
 
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
+import static androidx.media3.common.Player.STATE_ENDED;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -135,6 +136,15 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   @Override
   public void seekTo(long position) {
+    if (exoPlayer.getPlaybackState() == STATE_ENDED) {
+      // On some physical Android devices, seeking from STATE_ENDED triggers
+      // a ~60-second STATE_BUFFERING before playback can resume. This is
+      // caused by ExoPlayer's codec/decoder needing full re-initialization
+      // after the stream has ended. Calling prepare() first resets the player
+      // through the normal IDLE→BUFFERING→READY path, which is fast because
+      // the media data is already cached.
+      exoPlayer.prepare();
+    }
     exoPlayer.seekTo(position);
   }
 
