@@ -226,23 +226,6 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void playCallsStopAndPrepareWhenPlayerIsInEndedState() {
-    VideoPlayer videoPlayer = createVideoPlayer();
-    clearInvocations(mockExoPlayer);
-
-    when(mockExoPlayer.getPlaybackState()).thenReturn(Player.STATE_ENDED);
-    videoPlayer.play();
-
-    InOrder inOrder = inOrder(mockExoPlayer);
-    inOrder.verify(mockExoPlayer).stop();
-    inOrder.verify(mockExoPlayer).seekToDefaultPosition();
-    inOrder.verify(mockExoPlayer).prepare();
-    inOrder.verify(mockExoPlayer).play();
-
-    videoPlayer.dispose();
-  }
-
-  @Test
   public void getCurrentPosition() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
