@@ -557,6 +557,122 @@ void main() {
       verify(playerApi.seekTo(positionMilliseconds));
     });
 
+    test(
+        'seekTo skips "park at end" seek after completion '
+        '(regression: flutter/flutter#170737)', () async {
+      // video_player.dart's completed handler calls seekTo(duration) to park
+      // at the last frame. On physical Android this causes ~60s STATE_BUFFERING.
+      // The seek is a no-op (ExoPlayer is already at the end in STATE_ENDED)
+      // and is skipped.
+      const playerId = 1;
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+        StreamController<PlatformVideoEvent> streamController,
+      ) = setUpMockPlayerWithStream(playerId: playerId);
+
+      const durationMs = 60000;
+      streamController.add(
+        InitializationEvent(
+          duration: durationMs,
+          width: 1280,
+          height: 720,
+          rotationCorrection: 0,
+        ),
+      );
+      streamController
+          .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+      // Flush async stream delivery so _durationMs and _isCompleted are set.
+      await pumpEventQueue();
+
+      // Simulate video_player.dart's completed handler: seekTo(duration).
+      await player.seekTo(
+        playerId,
+        const Duration(milliseconds: durationMs),
+      );
+
+      // The native seekTo should NOT have been called.
+      verifyNever(playerApi.seekTo(durationMs));
+    });
+
+    test(
+        'seekTo at duration is not skipped before completion', () async {
+      // Seeking to exactly the duration while the video is playing should work.
+      const playerId = 1;
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+        StreamController<PlatformVideoEvent> streamController,
+      ) = setUpMockPlayerWithStream(playerId: playerId);
+
+      const durationMs = 60000;
+      streamController.add(
+        InitializationEvent(
+          duration: durationMs,
+          width: 1280,
+          height: 720,
+          rotationCorrection: 0,
+        ),
+      );
+      // No STATE_ENDED emitted — video is still playing.
+      await pumpEventQueue();
+
+      await player.seekTo(
+        playerId,
+        const Duration(milliseconds: durationMs),
+      );
+
+      verify(playerApi.seekTo(durationMs));
+    });
+
+    test(
+        'play() after completion seeks to 0 before playing '
+        '(regression: flutter/flutter#170737)', () async {
+      // When play() is called after the video has completed, ExoPlayer is in
+      // STATE_ENDED. It must be seeked to position 0 before play() is issued;
+      // otherwise ExoPlayer stays in STATE_ENDED and does not start.
+      const playerId = 1;
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+        StreamController<PlatformVideoEvent> streamController,
+      ) = setUpMockPlayerWithStream(playerId: playerId);
+
+      streamController.add(
+        InitializationEvent(
+          duration: 60000,
+          width: 1280,
+          height: 720,
+          rotationCorrection: 0,
+        ),
+      );
+      streamController
+          .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+      // Flush async stream delivery so _isCompleted is set before play().
+      await pumpEventQueue();
+
+      await player.play(playerId);
+
+      verifyInOrder([playerApi.seekTo(0), playerApi.play()]);
+    });
+
+    test('play() without prior completion does not seek to 0', () async {
+      const playerId = 1;
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: playerId);
+
+      await player.play(playerId);
+
+      verifyNever(playerApi.seekTo(any));
+      verify(playerApi.play());
+    });
+
     test('getPosition', () async {
       final (
         AndroidVideoPlayer player,
@@ -769,13 +885,12 @@ void main() {
         );
       });
 
-      test('buffering suppressed after completed (regression: #170737)',
-          () async {
-        // After a video ends, video_player.dart calls seekTo(duration) which
-        // causes ExoPlayer to re-enter STATE_BUFFERING. On some physical Android
-        // devices this can take ~60 seconds, incorrectly showing a loading
-        // indicator. Buffering events should be suppressed after STATE_ENDED
-        // until ExoPlayer transitions to STATE_READY.
+      test(
+          'STATE_BUFFERING after completion is suppressed as safety net '
+          '(regression: flutter/flutter#170737)', () async {
+        // Safety net: if the "park at end" seekTo somehow is not skipped and
+        // ExoPlayer still re-enters STATE_BUFFERING, the buffering indicator
+        // should not be shown after video completion.
         const playerId = 1;
         final (
           AndroidVideoPlayer player,
@@ -786,10 +901,9 @@ void main() {
 
         final Stream<VideoEvent> eventStream = player.videoEventsFor(playerId);
 
-        // Video ends.
         streamController
             .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
-        // seekTo(duration) triggers buffering on physical devices.
+        // Simulate STATE_BUFFERING that would arrive on physical devices.
         streamController.add(
           PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
         );
@@ -797,37 +911,46 @@ void main() {
         expect(
           eventStream,
           emitsInOrder(<dynamic>[
-            // Emitted by ended.
             VideoEvent(eventType: VideoEventType.completed),
-            // No bufferingStart — buffering is suppressed after completed.
+            // No bufferingStart: suppressed while _isCompleted is true.
           ]),
         );
       });
 
-      test('buffering resumes after completed once STATE_READY is received',
-          () async {
-        // After the seekTo(duration) seek completes (STATE_READY), subsequent
-        // buffering events should be emitted normally (e.g. when the user
-        // seeks to a different position and plays again).
+      test(
+          'buffering resumes after play() resets completed state '
+          '(regression: flutter/flutter#170737)', () async {
+        // After play() is called, _isCompleted is reset to false, so
+        // subsequent STATE_BUFFERING events are forwarded normally.
         const playerId = 1;
         final (
           AndroidVideoPlayer player,
           _,
-          _,
+          MockVideoPlayerInstanceApi playerApi,
           StreamController<PlatformVideoEvent> streamController,
         ) = setUpMockPlayerWithStream(playerId: playerId);
 
         final Stream<VideoEvent> eventStream = player.videoEventsFor(playerId);
 
-        // Video ends, seek happens, player becomes ready again.
-        streamController
-            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+        // Emit initialization so _durationMs is set (required for seekTo skip).
         streamController.add(
-          PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
+          InitializationEvent(
+            duration: 60000,
+            width: 1280,
+            height: 720,
+            rotationCorrection: 0,
+          ),
         );
         streamController
-            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ready));
-        // Now a new buffering event (e.g. from seeking while playing).
+            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+        // Flush async stream delivery so _isCompleted is set before play().
+        await pumpEventQueue();
+
+        // Play after completion: should seekTo(0) then play.
+        await player.play(playerId);
+        verifyInOrder([playerApi.seekTo(0), playerApi.play()]);
+
+        // Buffering during the new playback should be forwarded.
         streamController.add(
           PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
         );
@@ -835,8 +958,14 @@ void main() {
         expect(
           eventStream,
           emitsInOrder(<dynamic>[
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(milliseconds: 60000),
+              size: const Size(1280, 720),
+              rotationCorrection: 0,
+            ),
             VideoEvent(eventType: VideoEventType.completed),
-            // Buffering after ready should be emitted normally.
+            // bufferingStart is now forwarded since play() reset _isCompleted.
             VideoEvent(eventType: VideoEventType.bufferingStart),
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
