@@ -1,7 +1,8 @@
 ## 2.9.6
 
-* Fixes `isBuffering` incorrectly remaining `true` for ~60 seconds after video
-  playback ends on physical Android devices.
+* Fixes replay after completion on some physical Android devices by resetting
+  ExoPlayer before seeks from `STATE_ENDED`, avoiding long buffering after a
+  completed video.
 
 ## 2.9.5
 
