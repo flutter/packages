@@ -41,8 +41,5 @@ gradle.projectsEvaluated {
         tasks.withType<JavaCompile> {
             options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
-        dependencies {
-            add("implementation", "com.google.code.findbugs:jsr305:3.0.2")
-        }
     }
 }
