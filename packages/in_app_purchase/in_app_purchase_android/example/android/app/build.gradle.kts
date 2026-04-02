@@ -63,14 +63,14 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             if (configured) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
-        getByName("release") {
+        release {
             if (configured) {
                 signingConfig = signingConfigs.getByName("release")
             } else {

@@ -5,8 +5,9 @@ plugins {
 }
 
 android {
-    namespace = "io.flutter.plugins.cameraexample"
+    namespace = "com.example.test_plugin_example"
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -17,37 +18,29 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
+    sourceSets {
+        getByName("main").java.srcDirs("src/main/kotlin")
+    }
+
     defaultConfig {
-        applicationId = "io.flutter.plugins.cameraexample"
+        applicationId = "com.example.test_plugin_example"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
-        create("profile") {
-            initWith(getByName("debug"))
-            matchingFallbacks.add("debug")
-            matchingFallbacks.add("release")
-        }
-    }
-    lint {
-        disable.add("InvalidPackage")
     }
 }
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.2.0")
-    androidTestImplementation("androidx.test:rules:1.2.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 }

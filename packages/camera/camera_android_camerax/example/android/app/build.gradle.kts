@@ -5,8 +5,9 @@ plugins {
 }
 
 android {
-    namespace = "io.flutter.plugins.cameraexample"
+    namespace = "io.flutter.plugins.cameraxexample"
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -18,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.flutter.plugins.cameraexample"
+        applicationId = "io.flutter.plugins.cameraxexample"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -30,14 +31,6 @@ android {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
-        create("profile") {
-            initWith(getByName("debug"))
-            matchingFallbacks.add("debug")
-            matchingFallbacks.add("release")
-        }
-    }
-    lint {
-        disable.add("InvalidPackage")
     }
 }
 
@@ -48,6 +41,6 @@ flutter {
 dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.2.0")
-    androidTestImplementation("androidx.test:rules:1.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    api("androidx.test:core:1.4.0")
 }
