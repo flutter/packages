@@ -38,8 +38,12 @@ tasks.register<Delete>("clean") {
 // builds with).
 gradle.projectsEvaluated {
     project(":google_maps_flutter_android") {
+        // Workaround for a warning when building that the above turns into
+        // an error:
+        //   Cannot find annotation method 'api()' in type 'RequiresApi': class
+        //   file for android.annotation.RequiresApi not found
         tasks.withType<JavaCompile> {
-            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+            options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror", "-Xlint:-classfile"))
         }
     }
 }
