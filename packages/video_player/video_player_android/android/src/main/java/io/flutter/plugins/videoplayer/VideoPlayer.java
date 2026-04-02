@@ -138,7 +138,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   public void seekTo(long position) {
     int stateBefore = exoPlayer.getPlaybackState();
     if (stateBefore == STATE_ENDED) {
-      // exoPlayer.stop();
+      exoPlayer.stop();
       exoPlayer.prepare();
     }
     exoPlayer.seekTo(position);
