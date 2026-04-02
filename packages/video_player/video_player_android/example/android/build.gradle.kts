@@ -41,6 +41,24 @@ gradle.projectsEvaluated {
         tasks.withType<JavaCompile> {
             options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
+        // Workaround for several warnings when building
+        // that the above turns into errors, coming from
+        // org.checkerframework.checker.nullness.qual and
+        // com.google.errorprone.annotations:
+        //
+        //   warning: Cannot find annotation method 'value()' in type
+        //   'EnsuresNonNull': class file for
+        //   org.checkerframework.checker.nullness.qual.EnsuresNonNull not found
+        //
+        //   warning: Cannot find annotation method 'replacement()' in type
+        //   'InlineMe': class file for
+        //   com.google.errorprone.annotations.InlineMe not found
+        //
+        // The dependency version are taken from:
+        // https://github.com/google/ExoPlayer/blob/r2.18.1/constants.gradle
+        //
+        // For future reference the dependencies are excluded here:
+        // https://github.com/google/ExoPlayer/blob/r2.18.1/library/common/build.gradle#L33-L34
         dependencies {
             add("implementation", "org.checkerframework:checker-qual:3.13.0")
             add("implementation", "com.google.errorprone:error_prone_annotations:2.10.0")
