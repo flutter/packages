@@ -22,10 +22,6 @@ android {
         baseline = file("lint-baseline.xml")
     }
 
-    sourceSets {
-        getByName("main").java.srcDirs("src/main/kotlin")
-    }
-
     defaultConfig {
         applicationId = "com.example.test_plugin_example"
         minSdk = flutter.minSdkVersion
