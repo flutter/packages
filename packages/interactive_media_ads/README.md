@@ -66,7 +66,7 @@ The IMA SDK requires library desugaring enabled, which you must do by setting
 android {
 // ···
     compileOptions {
-        coreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
         // ···
     }
     // ···
