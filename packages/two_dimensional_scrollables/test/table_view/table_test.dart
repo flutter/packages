@@ -4203,8 +4203,6 @@ void main() {
                 rowBuilder: (int index) =>
                     const TableSpan(extent: FixedTableSpanExtent(50)),
                 cellBuilder: (BuildContext context, TableVicinity vicinity) {
-                  // Merged cell spanning columns 1, 2, and 3.
-                  // ONLY providing merge info for column 1, which is what the user reported.
                   final isColumn1 = vicinity.column == 1;
                   return TableViewCell(
                     columnMergeStart: isColumn1 ? 1 : null,
