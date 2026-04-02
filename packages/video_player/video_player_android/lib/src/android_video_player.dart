@@ -313,19 +313,6 @@ class _PlayerInstance {
   Timer? _bufferPollingTimer;
   int _lastBufferPosition = -1;
   bool _isBuffering = false;
-  // The video duration in milliseconds, set when the player is initialized.
-  // Used to detect and skip the "park at end" seek issued by video_player.dart
-  // after video completion.
-  int? _durationMs;
-  // Tracks whether the video has reached STATE_ENDED. When true:
-  //   - seekTo(position >= duration) is skipped: it is the "park at end" seek
-  //     from video_player.dart's completed handler that on physical Android
-  //     devices causes ExoPlayer to enter STATE_BUFFERING for up to 60 seconds,
-  //     blocking subsequent play(). ExoPlayer is already at the end in
-  //     STATE_ENDED so the seek is a no-op and can be safely skipped.
-  //   - STATE_BUFFERING events are suppressed as a safety net in case the seek
-  //     was not skipped (e.g. duration is unknown).
-  bool _isCompleted = false;
   Completer<void>? _audioTrackSelectionCompleter;
 
   final VideoPlayerViewState viewState;
@@ -334,10 +321,7 @@ class _PlayerInstance {
     return _api.setLooping(looping);
   }
 
-  Future<void> play() async {
-    if (_isCompleted) {
-      _isCompleted = false;
-    }
+  Future<void> play() {
     return _api.play();
   }
 
@@ -354,20 +338,6 @@ class _PlayerInstance {
   }
 
   Future<void> seekTo(Duration position) {
-    if (_isCompleted) {
-      final int? duration = _durationMs;
-      if (duration != null && position.inMilliseconds >= duration) {
-        // Skip the "park at end" seek from video_player.dart's completed
-        // handler. ExoPlayer is already at the end in STATE_ENDED, so the seek
-        // is a no-op visually but causes a ~60-second STATE_BUFFERING on
-        // physical Android devices.
-        return Future.value();
-      }
-
-      // User is deliberately seeking to a specific position after completion.
-      // Reset completed state so buffering events flow normally again.
-      _isCompleted = false;
-    }
     return _api.seekTo(position.inMilliseconds);
   }
 
@@ -458,7 +428,6 @@ class _PlayerInstance {
   void _onStreamEvent(PlatformVideoEvent event) {
     switch (event) {
       case InitializationEvent _:
-        _durationMs = event.duration;
         _eventStreamController.add(
           VideoEvent(
             eventType: VideoEventType.initialized,
@@ -491,22 +460,14 @@ class _PlayerInstance {
             // This is currently only used for buffering below.
             break;
           case PlatformPlaybackState.buffering:
-            // Suppress buffering events after video completion. When the video
-            // ends, video_player.dart calls seekTo(duration) which triggers
-            // ExoPlayer to re-enter STATE_BUFFERING. On some physical Android
-            // devices this buffering can persist for ~60 seconds, incorrectly
-            // showing a loading indicator after the video has already ended.
-            if (!_isCompleted) {
-              _setBuffering(true);
-            }
+            _setBuffering(true);
           case PlatformPlaybackState.ready:
             // On the Dart side, this is only used for buffering below. On the
             // native side it drives the 'initialized' event; that can't
             // currently be moved here since gathering the initialization state
             // should be synchronous with the state change.
-            _isCompleted = false;
+            break;
           case PlatformPlaybackState.ended:
-            _isCompleted = true;
             _eventStreamController.add(
               VideoEvent(eventType: VideoEventType.completed),
             );
