@@ -183,6 +183,97 @@ void main() {
     expect(opts.basePath, equals('./foo/'));
   });
 
+  test('parse args - app_directory', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--app_directory',
+      './foo/',
+    ]);
+    expect(opts.appDirectory, equals('./foo/'));
+  });
+
+  test('parse args - swift options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--swift_error_class_name',
+      'MyError',
+      '--no-swift_include_error_class',
+      '--swift_use_ffi',
+      '--swift_ffi_module_name',
+      'MyModule',
+      '--swift_app_directory',
+      './app/',
+      '--swift_apple_sdk_path',
+      '/path/to/sdk',
+      '--swift_apple_sdk_triple',
+      'arm64-apple-ios',
+    ]);
+    expect(opts.swiftOptions?.errorClassName, equals('MyError'));
+    expect(opts.swiftOptions?.includeErrorClass, isFalse);
+    expect(opts.swiftOptions?.useFfi, isTrue);
+    expect(opts.swiftOptions?.ffiModuleName, equals('MyModule'));
+    expect(opts.swiftOptions?.appDirectory, equals('./app/'));
+    expect(opts.swiftOptions?.appleSdkPath, equals('/path/to/sdk'));
+    expect(opts.swiftOptions?.appleSdkTriple, equals('arm64-apple-ios'));
+  });
+
+  test('parse args - java options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--java_class_name',
+      'MyClass',
+    ]);
+    expect(opts.javaOptions?.className, equals('MyClass'));
+  });
+
+  test('parse args - kotlin options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_use_jni',
+      '--kotlin_app_directory',
+      './app/',
+      '--kotlin_error_class_name',
+      'MyError',
+      '--no-kotlin_include_error_class',
+      '--kotlin_file_specific_class_name_component',
+      'MyComponent',
+    ]);
+    expect(opts.kotlinOptions?.useJni, isTrue);
+    expect(opts.kotlinOptions?.appDirectory, equals('./app/'));
+    expect(opts.kotlinOptions?.errorClassName, equals('MyError'));
+    expect(opts.kotlinOptions?.includeErrorClass, isFalse);
+    expect(
+      opts.kotlinOptions?.fileSpecificClassNameComponent,
+      equals('MyComponent'),
+    );
+  });
+
+  test('parse args - cpp options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--cpp_header_include_path',
+      'foo.h',
+      '--cpp_header_out_path',
+      'out.h',
+    ]);
+    expect(opts.cppOptions?.headerIncludePath, equals('foo.h'));
+    expect(opts.cppOptions?.headerOutPath, equals('out.h'));
+  });
+
+  test('parse args - gobject options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--gobject_header_include_path',
+      'foo.h',
+      '--gobject_header_out_path',
+      'out.h',
+    ]);
+    expect(opts.gobjectOptions?.headerIncludePath, equals('foo.h'));
+    expect(opts.gobjectOptions?.headerOutPath, equals('out.h'));
+  });
+
+  test('parse args - objc options', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--objc_header_include_path',
+      'foo.h',
+    ]);
+    expect(opts.objcOptions?.headerIncludePath, equals('foo.h'));
+  });
+
   test('simple parse api', () {
     const code = '''
 class Input1 {

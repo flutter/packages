@@ -1,6 +1,7 @@
 ## 26.4.0
 
 * [swift] [kotlin] Adds support for FFI and JNI.
+* Expose missing PigeonOptions and language-specific configurations as command-line arguments.
 
 ## 26.3.3
 

@@ -526,6 +526,11 @@ ${_argParser.usage}''';
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
     ..addOption(
+      'app_directory',
+      help:
+          'The directory that the app exists in, this is required for Jni and Ffi APIs.',
+    )
+    ..addOption(
       'dart_out',
       help:
           'Path to generated Dart source file (.dart). '
@@ -551,9 +556,42 @@ ${_argParser.usage}''';
       help: 'Adds the java.annotation.Generated annotation to the output.',
     )
     ..addOption(
+      'java_class_name',
+      help:
+          'The name of the class that will house all the generated classes in Java.',
+    )
+    ..addOption(
       'swift_out',
       help: 'Path to generated Swift file (.swift).',
       aliases: const <String>['experimental_swift_out'],
+    )
+    ..addOption(
+      'swift_error_class_name',
+      help:
+          'The name of the error class used for passing custom error parameters in Swift.',
+    )
+    ..addFlag(
+      'swift_include_error_class',
+      help: 'Whether to include the error class in Swift generation.',
+      defaultsTo: true,
+    )
+    ..addFlag('swift_use_ffi', help: 'Whether to use Ffi for Swift generation.')
+    ..addOption(
+      'swift_ffi_module_name',
+      help: 'The ffi module name for Swift generation.',
+    )
+    ..addOption(
+      'swift_app_directory',
+      help:
+          'The directory that the app exists in, this is required for Swift Ffi APIs.',
+    )
+    ..addOption(
+      'swift_apple_sdk_path',
+      help: 'The path to the apple sdk for Swift generation.',
+    )
+    ..addOption(
+      'swift_apple_sdk_triple',
+      help: 'The apple sdk triple for Swift generation.',
     )
     ..addOption(
       'kotlin_out',
@@ -568,6 +606,30 @@ ${_argParser.usage}''';
     ..addFlag(
       'kotlin_use_generated_annotation',
       help: 'Adds javax.annotation.Generated annotation to the output.',
+    )
+    ..addFlag(
+      'kotlin_use_jni',
+      help: 'Whether to use Jni for Kotlin generation.',
+    )
+    ..addOption(
+      'kotlin_app_directory',
+      help:
+          'The directory that the app exists in, this is required for Kotlin Jni APIs.',
+    )
+    ..addOption(
+      'kotlin_error_class_name',
+      help:
+          'The name of the error class used for passing custom error parameters in Kotlin.',
+    )
+    ..addFlag(
+      'kotlin_include_error_class',
+      help: 'Whether to include the error class in Kotlin generation.',
+      defaultsTo: true,
+    )
+    ..addOption(
+      'kotlin_file_specific_class_name_component',
+      help:
+          'A String to augment class names to avoid cross file collisions in Kotlin.',
     )
     ..addOption(
       'cpp_header_out',
@@ -584,6 +646,15 @@ ${_argParser.usage}''';
       help: 'The namespace that generated C++ code will be in.',
     )
     ..addOption(
+      'cpp_header_include_path',
+      help:
+          'The path to the header that will get placed in the C++ source file.',
+    )
+    ..addOption(
+      'cpp_header_out_path',
+      help: 'The path to the output header file location for C++.',
+    )
+    ..addOption(
       'gobject_header_out',
       help: 'Path to generated GObject header file (.h).',
       aliases: const <String>['experimental_gobject_header_out'],
@@ -598,12 +669,26 @@ ${_argParser.usage}''';
       help: 'The module that generated GObject code will be in.',
     )
     ..addOption(
+      'gobject_header_include_path',
+      help:
+          'The path to the header that will get placed in the GObject source file.',
+    )
+    ..addOption(
+      'gobject_header_out_path',
+      help: 'The path to the output header file location for GObject.',
+    )
+    ..addOption(
       'objc_header_out',
       help: 'Path to generated Objective-C header file (.h).',
     )
     ..addOption(
       'objc_prefix',
       help: 'Prefix for generated Objective-C classes and protocols.',
+    )
+    ..addOption(
+      'objc_header_include_path',
+      help:
+          'The path to the header that will get placed in the ObjC source file.',
     )
     ..addOption(
       'copyright_header',
@@ -654,31 +739,59 @@ ${_argParser.usage}''';
 
     final opts = PigeonOptions(
       input: results['input'] as String?,
+      appDirectory: results['app_directory'] as String?,
       dartOut: results['dart_out'] as String?,
       dartTestOut: results['dart_test_out'] as String?,
       objcHeaderOut: results['objc_header_out'] as String?,
       objcSourceOut: results['objc_source_out'] as String?,
-      objcOptions: ObjcOptions(prefix: results['objc_prefix'] as String?),
+      objcOptions: ObjcOptions(
+        prefix: results['objc_prefix'] as String?,
+        headerIncludePath: results['objc_header_include_path'] as String?,
+      ),
       javaOut: results['java_out'] as String?,
       javaOptions: JavaOptions(
         package: results['java_package'] as String?,
         useGeneratedAnnotation:
             results['java_use_generated_annotation'] as bool?,
+        className: results['java_class_name'] as String?,
       ),
       swiftOut: results['swift_out'] as String?,
+      swiftOptions: SwiftOptions(
+        errorClassName: results['swift_error_class_name'] as String?,
+        includeErrorClass:
+            results['swift_include_error_class'] as bool? ?? true,
+        useFfi: results['swift_use_ffi'] as bool? ?? false,
+        ffiModuleName: results['swift_ffi_module_name'] as String?,
+        appDirectory: results['swift_app_directory'] as String?,
+        appleSdkPath: results['swift_apple_sdk_path'] as String?,
+        appleSdkTriple: results['swift_apple_sdk_triple'] as String?,
+      ),
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,
         useGeneratedAnnotation:
             results['kotlin_use_generated_annotation'] as bool? ?? false,
+        useJni: results['kotlin_use_jni'] as bool? ?? false,
+        appDirectory: results['kotlin_app_directory'] as String?,
+        errorClassName: results['kotlin_error_class_name'] as String?,
+        includeErrorClass:
+            results['kotlin_include_error_class'] as bool? ?? true,
+        fileSpecificClassNameComponent:
+            results['kotlin_file_specific_class_name_component'] as String?,
       ),
       cppHeaderOut: results['cpp_header_out'] as String?,
       cppSourceOut: results['cpp_source_out'] as String?,
-      cppOptions: CppOptions(namespace: results['cpp_namespace'] as String?),
+      cppOptions: CppOptions(
+        namespace: results['cpp_namespace'] as String?,
+        headerIncludePath: results['cpp_header_include_path'] as String?,
+        headerOutPath: results['cpp_header_out_path'] as String?,
+      ),
       gobjectHeaderOut: results['gobject_header_out'] as String?,
       gobjectSourceOut: results['gobject_source_out'] as String?,
       gobjectOptions: GObjectOptions(
         module: results['gobject_module'] as String?,
+        headerIncludePath: results['gobject_header_include_path'] as String?,
+        headerOutPath: results['gobject_header_out_path'] as String?,
       ),
       copyrightHeader: results['copyright_header'] as String?,
       astOut: results['ast_out'] as String?,
@@ -815,6 +928,7 @@ ${_argParser.usage}''';
 
     final bool useJni = options.kotlinOptions?.useJni ?? false;
     final bool shouldRunJniMultiStep = useJni && options.kotlinOut != null;
+    bool jniStepFailed = false;
     final bool useFfi = options.swiftOptions?.useFfi ?? false;
     final String? swiftAppDir = options.swiftOptions?.appDirectory;
 
@@ -840,19 +954,21 @@ ${_argParser.usage}''';
           dartExecutable.contains('dart-sdk')) {
         final Directory dartBin = Directory(dartExecutable).parent;
         var dir = dartBin;
-        // Go up: bin -> dart-sdk -> cache -> bin
-        for (var i = 0; i < 4; i++) {
+        // Walk up up to 10 levels to find a directory containing bin/flutter
+        for (var i = 0; i < 10; i++) {
+          final String checkPath = path.join(
+            dir.path,
+            'bin',
+            Platform.isWindows ? 'flutter.bat' : 'flutter',
+          );
+          if (File(checkPath).existsSync()) {
+            flutterExecutable = checkPath;
+            break;
+          }
           if (dir.parent == dir) {
             break; // Root reached!
           }
           dir = dir.parent;
-        }
-        final String flutterPath = path.join(
-          dir.path,
-          Platform.isWindows ? 'flutter.bat' : 'flutter',
-        );
-        if (File(flutterPath).existsSync()) {
-          flutterExecutable = flutterPath;
         }
       }
     }
@@ -886,7 +1002,7 @@ ${_argParser.usage}''';
       final String appDir = options.appDirectory ?? '';
       if (appDir.isEmpty) {
         print('Error: appDirectory is required for JNI multi-step generation.');
-        return 1;
+        jniStepFailed = true;
       }
 
       // Construct environment map
@@ -926,48 +1042,56 @@ ${_argParser.usage}''';
         print('Adding $dartDir to PATH for JNIgen due to missing path!');
       }
 
-      // Step 2: Build APK
-      print('JNI Multi-step: Building APK in $appDir...');
-      try {
-        final ProcessResult apkResult = await Process.run(
-          flutterExecutable,
-          ['build', 'apk', '--debug'],
+      if (!jniStepFailed) {
+        // Step 2: Build APK
+        print('JNI Multi-step: Building APK in $appDir...');
+        try {
+          final ProcessResult apkResult = await Process.run(
+            flutterExecutable,
+            ['build', 'apk'],
+            workingDirectory: appDir,
+            environment: env,
+          );
+          if (apkResult.exitCode != 0) {
+            print('Error building APK: ${apkResult.stderr}');
+            print(
+              'JNI Multi-step: APK build failed. If you have modified the pigeon file, please ensure that your Kotlin implementation matches the newly generated interface before running pigeon again. JNIgen requires a successful build of the Kotlin code to generate Dart bindings.',
+            );
+            jniStepFailed = true;
+          } else {
+            print('JNI Multi-step: APK built successfully.');
+          }
+        } on ProcessException catch (e) {
+          if (flutterExecutable == 'flutter') {
+            print('Error: Flutter executable not found in PATH.');
+            print(
+              'Please ensure Flutter is installed and in your PATH, or set the FLUTTER_ROOT environment variable.',
+            );
+          } else {
+            print(
+              'Error running Flutter at "$flutterExecutable": ${e.message}',
+            );
+          }
+          jniStepFailed = true;
+        }
+      }
+
+      if (!jniStepFailed) {
+        // Step 3: Run JNIgen
+        print('JNI Multi-step: Running JNIgen in $appDir...');
+        final ProcessResult jnigenResult = await Process.run(
+          dartExecutable,
+          ['run', 'jnigen_config.dart'],
           workingDirectory: appDir,
           environment: env,
         );
-        if (apkResult.exitCode != 0) {
-          print('Error building APK: ${apkResult.stderr}');
-          print(
-            'JNI Multi-step: APK build failed. If you have modified the pigeon file, please ensure that your Kotlin implementation matches the newly generated interface before running pigeon again. JNIgen requires a successful build of the Kotlin code to generate Dart bindings.',
-          );
-          return 1;
-        }
-      } on ProcessException catch (e) {
-        if (flutterExecutable == 'flutter') {
-          print('Error: Flutter executable not found in PATH.');
-          print(
-            'Please ensure Flutter is installed and in your PATH, or set the FLUTTER_ROOT environment variable.',
-          );
+        if (jnigenResult.exitCode != 0) {
+          print('Error running JNIgen: ${jnigenResult.stderr}');
+          jniStepFailed = true;
         } else {
-          print('Error running Flutter at "$flutterExecutable": ${e.message}');
+          print('JNI Multi-step: JNIgen completed successfully.');
         }
-        return 1;
       }
-      print('JNI Multi-step: APK built successfully.');
-
-      // Step 3: Run JNIgen
-      print('JNI Multi-step: Running JNIgen in $appDir...');
-      final ProcessResult jnigenResult = await Process.run(
-        dartExecutable,
-        ['run', 'jnigen_config.dart'],
-        workingDirectory: appDir,
-        environment: env,
-      );
-      if (jnigenResult.exitCode != 0) {
-        print('Error running JNIgen: ${jnigenResult.stderr}');
-        return 1;
-      }
-      print('JNI Multi-step: JNIgen completed successfully.');
 
       // Phase 2: Run remaining adapters
       for (final adapter in safeGeneratorAdapters) {
@@ -1032,7 +1156,7 @@ ${_argParser.usage}''';
       }
     }
 
-    return 0;
+    return jniStepFailed ? 1 : 0;
   }
 
   /// Print a list of errors to stderr.
