@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -198,9 +199,8 @@ public final class VideoPlayerTest {
 
     InOrder inOrder = inOrder(mockExoPlayer);
     inOrder.verify(mockExoPlayer).stop();
-    inOrder.verify(mockExoPlayer).seekToDefaultPosition();
     inOrder.verify(mockExoPlayer).prepare();
-    verify(mockExoPlayer, never()).seekTo(0L);
+    inOrder.verify(mockExoPlayer).seekTo(0L);
 
     videoPlayer.dispose();
   }
