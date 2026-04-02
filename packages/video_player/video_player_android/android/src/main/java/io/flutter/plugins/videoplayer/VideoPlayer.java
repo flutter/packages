@@ -96,14 +96,6 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   @Override
   public void play() {
-    final int stateBefore = exoPlayer.getPlaybackState();
-    if (stateBefore == STATE_ENDED) {
-      // Reset the player pipeline before replay. Seeking from ENDED can enter a
-      // very long buffering state on some physical devices.
-      exoPlayer.stop();
-      exoPlayer.seekToDefaultPosition();
-      exoPlayer.prepare();
-    }
     exoPlayer.play();
   }
 
