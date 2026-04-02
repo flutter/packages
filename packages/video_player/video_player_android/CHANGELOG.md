@@ -1,3 +1,8 @@
+## 2.9.6
+
+* Fixes `isBuffering` incorrectly remaining `true` for ~60 seconds after video
+  playback ends on physical Android devices.
+
 ## 2.9.5
 
 * Updates build files from Groovy to Kotlin.

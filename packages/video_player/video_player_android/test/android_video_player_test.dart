@@ -769,6 +769,85 @@ void main() {
         );
       });
 
+      test('buffering suppressed after completed (regression: #170737)',
+          () async {
+        // After a video ends, video_player.dart calls seekTo(duration) which
+        // causes ExoPlayer to re-enter STATE_BUFFERING. On some physical Android
+        // devices this can take ~60 seconds, incorrectly showing a loading
+        // indicator. Buffering events should be suppressed after STATE_ENDED
+        // until ExoPlayer transitions to STATE_READY.
+        const playerId = 1;
+        final (
+          AndroidVideoPlayer player,
+          _,
+          _,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(playerId: playerId);
+
+        final Stream<VideoEvent> eventStream = player.videoEventsFor(playerId);
+
+        // Video ends.
+        streamController
+            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+        // seekTo(duration) triggers buffering on physical devices.
+        streamController.add(
+          PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            // Emitted by ended.
+            VideoEvent(eventType: VideoEventType.completed),
+            // No bufferingStart — buffering is suppressed after completed.
+          ]),
+        );
+      });
+
+      test('buffering resumes after completed once STATE_READY is received',
+          () async {
+        // After the seekTo(duration) seek completes (STATE_READY), subsequent
+        // buffering events should be emitted normally (e.g. when the user
+        // seeks to a different position and plays again).
+        const playerId = 1;
+        final (
+          AndroidVideoPlayer player,
+          _,
+          _,
+          StreamController<PlatformVideoEvent> streamController,
+        ) = setUpMockPlayerWithStream(playerId: playerId);
+
+        final Stream<VideoEvent> eventStream = player.videoEventsFor(playerId);
+
+        // Video ends, seek happens, player becomes ready again.
+        streamController
+            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ended));
+        streamController.add(
+          PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
+        );
+        streamController
+            .add(PlaybackStateChangeEvent(state: PlatformPlaybackState.ready));
+        // Now a new buffering event (e.g. from seeking while playing).
+        streamController.add(
+          PlaybackStateChangeEvent(state: PlatformPlaybackState.buffering),
+        );
+
+        expect(
+          eventStream,
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.completed),
+            // Buffering after ready should be emitted normally.
+            VideoEvent(eventType: VideoEventType.bufferingStart),
+            VideoEvent(
+              eventType: VideoEventType.bufferingUpdate,
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
+            ),
+          ]),
+        );
+      });
+
       test('playback start', () async {
         final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(
           <PlatformVideoEvent>[IsPlayingStateEvent(isPlaying: true)],
