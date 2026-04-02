@@ -213,7 +213,6 @@ public final class VideoPlayerTest {
     // prepare() should only be called when exiting STATE_ENDED, not during
     // normal playback seeking.
     VideoPlayer videoPlayer = createVideoPlayer();
-    // Clear the prepare() call that happens during construction.
     clearInvocations(mockExoPlayer);
 
     when(mockExoPlayer.getPlaybackState()).thenReturn(Player.STATE_READY);
