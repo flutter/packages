@@ -209,21 +209,36 @@ class DateInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final String digits = newValue.text.replaceAll(RegExp(r'\D'), '');
-    final int maxLength = formatType.fieldLengths.fold<int>(
-      0,
-      (int a, int b) => a + b,
-    );
+    final int maxLength = formatType.fieldLengths.fold<int>(0, (a, b) => a + b);
 
     if (digits.length > maxLength) {
       return oldValue;
     }
 
     final String formatted = _applyMask(digits);
+
+    int digitsBefore = _countDigits(
+      newValue.text.substring(0, newValue.selection.baseOffset),
+    );
+
+    final digitIndices = <int>[];
+    for (int i = 0; i < formatted.length; i++) {
+      if (RegExp(r'\d').hasMatch(formatted[i])) digitIndices.add(i);
+    }
+
+    int newOffset = digitsBefore == 0 ? 0 : digitIndices[digitsBefore - 1] + 1;
+
+    if (newOffset < formatted.length && formatted[newOffset] == separator) {
+      newOffset++;
+    }
+
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
+      selection: TextSelection.collapsed(offset: newOffset),
     );
   }
+
+  int _countDigits(String text) => text.replaceAll(RegExp(r'\D'), '').length;
 
   String _applyMask(String digits) {
     final StringBuffer buffer = StringBuffer();

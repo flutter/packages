@@ -159,12 +159,8 @@ class InputDatePickerFormField extends StatefulWidget {
   /// enforcing a specific date mask (e.g., `MM/dd/yyyy`), limiting allowed
   /// characters, or automatically inserting date separators.
   ///
-  /// For date input and validation to function correctly, these formatters
-  /// must be consistent with the [CalendarDelegate.dateHelpText],
-  /// [CalendarDelegate.formatCompactDate], and [CalendarDelegate.parseCompactDate]
-  /// methods. While [CalendarDelegate.dateHelpText] provides the hint text
-  /// orienting the user, [CalendarDelegate.formatCompactDate] defines how a
-  /// selected date is initially displayed in the text field.
+  /// The functionality of date input and validation relies on consistency between these formatters and the [CalendarDelegate] methods: [CalendarDelegate.dateHelpText],
+  /// [CalendarDelegate.formatCompactDate], and [CalendarDelegate.parseCompactDate].
   ///
   /// Input formatters only affect the visual entry of text and do not perform
   /// validation or parsing. The conversion of user-entered text depends
