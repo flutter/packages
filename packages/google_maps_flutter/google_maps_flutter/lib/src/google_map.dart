@@ -144,6 +144,7 @@ class GoogleMap extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.markerType = GoogleMapMarkerType.marker,
+    this.colorScheme,
     String? mapId,
     @Deprecated('cloudMapId is deprecated. Use mapId instead.')
     String? cloudMapId,
@@ -401,15 +402,24 @@ class GoogleMap extends StatefulWidget {
   ///
   /// [AdvancedMarker] and [Marker]s classes might not be related to each other
   /// in the platform implementation. It's important to set the correct
-  /// [MarkerType] so that the platform implementation can handle the markers:
-  /// * If [MarkerType.advancedMarker] is used, all markers must be of type
-  /// [AdvancedMarker].
-  /// * If [MarkerType.marker] is used, markers cannot be of type
-  /// [AdvancedMarker].
+  /// [GoogleMapMarkerType] so that the platform implementation can handle the
+  /// markers:
+  /// * If [GoogleMapMarkerType.advancedMarker] is used, all markers must be of
+  ///   type [AdvancedMarker].
+  /// * If [GoogleMapMarkerType.marker] is used, markers cannot be of type
+  ///   [AdvancedMarker].
   ///
   /// While some features work with either type, using the incorrect type
   /// may result in unexpected behavior.
   final GoogleMapMarkerType markerType;
+
+  /// Color scheme for the cloud-style map. Web only.
+  ///
+  /// The colorScheme option can only be set when the map is initialized;
+  /// setting this option after the map is created will have no effect.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
+  final MapColorScheme? colorScheme;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -767,6 +777,7 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
     markerType: mapConfigurationMarkerType,
+    colorScheme: map.colorScheme,
     // A null mapId in the widget means no map ID, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     mapId: map.mapId ?? '',

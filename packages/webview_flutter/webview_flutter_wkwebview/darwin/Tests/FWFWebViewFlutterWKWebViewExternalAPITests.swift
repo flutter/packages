@@ -97,71 +97,69 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
   }
 }
 
-// TODO(stuartmorgan): This is temporarily disabled on iOS in favor of Stubs.h/m,
-// because FlutterSceneLifeCycleDelegate isn't available on stable, and Swift doesn't
-// allow using looser types (like Any) for protocol conformance. Once that
-// protocol reaches stable, this #if should be removed, as should Stubs.*.
-#if os(macOS)
-  class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
-    var plugin: WebViewFlutterPlugin? = nil
+class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var plugin: WebViewFlutterPlugin? = nil
 
-    #if os(iOS)
-      var viewController: UIViewController?
+  #if os(iOS)
+    var viewController: UIViewController?
 
-      func messenger() -> FlutterBinaryMessenger {
-        return TestBinaryMessenger()
-      }
-
-      func textures() -> FlutterTextureRegistry {
-        return TestFlutterTextureRegistry()
-      }
-
-      func addApplicationDelegate(_ delegate: FlutterPlugin) {
-
-      }
-
-      func register(
-        _ factory: FlutterPlatformViewFactory, withId factoryId: String,
-        gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
-      ) {
-      }
-
-      func addSceneDelegate(_ delegate: any FlutterSceneLifeCycleDelegate) {
-      }
-    #elseif os(macOS)
-      var view: NSView?
-      var viewController: NSViewController?
-
-      var messenger: FlutterBinaryMessenger {
-        return TestBinaryMessenger()
-      }
-
-      var textures: FlutterTextureRegistry {
-        return TestFlutterTextureRegistry()
-      }
-
-      func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {
-
-      }
-    #endif
-
-    func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {
+    func messenger() -> FlutterBinaryMessenger {
+      return TestBinaryMessenger()
     }
 
-    func publish(_ value: NSObject) {
-      plugin = (value as! WebViewFlutterPlugin)
+    func textures() -> FlutterTextureRegistry {
+      return TestFlutterTextureRegistry()
     }
 
-    func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {
 
     }
 
-    func lookupKey(forAsset asset: String) -> String {
-      return ""
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {
     }
 
-    func lookupKey(forAsset asset: String, fromPackage package: String) -> String {
-      return ""
+    func addSceneDelegate(_ delegate: any FlutterSceneLifeCycleDelegate) {
     }
+  #elseif os(macOS)
+    var view: NSView?
+    var viewController: NSViewController?
+
+    var messenger: FlutterBinaryMessenger {
+      return TestBinaryMessenger()
+    }
+
+    var textures: FlutterTextureRegistry {
+      return TestFlutterTextureRegistry()
+    }
+
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {
+
+    }
+  #endif
+
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {
   }
-#endif
+
+  func publish(_ value: NSObject) {
+    plugin = (value as! WebViewFlutterPlugin)
+  }
+
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {
+
+  }
+
+  func lookupKey(forAsset asset: String) -> String {
+    return ""
+  }
+
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String {
+    return ""
+  }
+
+  func valuePublished(byPlugin: String) -> NSObject? {
+    return nil
+  }
+}

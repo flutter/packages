@@ -2,7 +2,7 @@
 
 A Dart library to parse and render [mustache templates](https://mustache.github.io/).
 
-See the [mustache manual](http://mustache.github.com/mustache.5.html) for detailed usage information.
+See the [mustache manual](https://mustache.github.io/mustache.5.html) for detailed usage information.
 
 This library passes all [mustache specification](https://github.com/mustache/spec/tree/master/specs) tests.
 
