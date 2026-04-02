@@ -1,3 +1,4 @@
+<?code-excerpt path-base="example/app"?>
 # Pigeon Native Interop (FFI & JNI) Guide
 
 This guide describes the new Native Interop feature in Pigeon, which allows for direct communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift and **JNI (Java Native Interface)** for Kotlin/Java, bypassing the traditional MethodChannel communication.
@@ -59,6 +60,7 @@ To use the Native Interop feature, both your environment and the external tools 
 
 To enable Native Interop, configure the `PigeonOptions` in your Pigeon file:
 
+<?code-excerpt "pigeons/native_interop_example.dart (config)"?>
 ```dart
 @ConfigurePigeon(
   PigeonOptions(
@@ -69,28 +71,16 @@ To enable Native Interop, configure the `PigeonOptions` in your Pigeon file:
 )
 ```
 
-### Step 2: The "Chicken-and-Egg" Build Workaround for JNI
+### Step 2: Automated Interop Generation
 
-Generating code with `useJni` requires resolving classpaths from a built app, but applying the generated Pigeon code may cause build failures before the JNI bindings have been created. This chicken-and-egg problem is easiest to deal with currently via this workaround:
+Pigeon automatically handles running `jnigen` and `ffigen` as part of the generation process!
 
-1.  Undo the generation of the Dart code (comment out or revert).
-2.  **Build your app** (e.g., `flutter build apk`) once so Android dependencies and classpaths can be resolved.
-3.  Comment/revert the clean state back to use generation.
-4.  Run `jnigen` to generate the JNI bindings.
-5.  Run Pigeon to regenerate the final files.
-
-### Step 3: Run the Config Scripts
-
-Running Pigeon with these options enabled creates standard code files as well as intermediate config scripts (e.g., `jnigen_config.dart` or `ffigen_config.dart`).
-Run these generated files to output the actual `.jni.dart` and `.ffi.dart` bindings:
-
-```bash
-# Example for Android
-dart run lib/pigeons/jnigen_config.dart
-
-# Example for iOS
-dart run lib/pigeons/ffigen_config.dart
-```
+- **For JNI (Android)**: When `kotlinOptions.useJni` is enabled and `kotlinOut` is specified, Pigeon handles a multi-step flow to resolve classpaths:
+  1. Generates Kotlin code and `jnigen_config.dart`.
+  2. Invokes `flutter build apk --debug` to resolve Android dependencies.
+  3. Runs `jnigen` to create JNI Dart bindings.
+  4. Generates the final files.
+- **For FFI (iOS/macOS)**: When `swiftOptions.useFfi` is enabled and `swiftOptions.appDirectory` is specified, Pigeon will automatically run `ffigen` if `ffigen_config.dart` exists in that directory.
 
 ---
 
@@ -102,8 +92,8 @@ Moving from a traditional MethodChannel plugin to Native Interop involves shifti
 
 #### Before: Method Channel (Callback Style)
 
+<?code-excerpt "ios/Runner/NativeInteropExample.swift (callback-style)"?>
 ```swift
-// Swift
 func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) -> Void) {
   completion(.success(value))
 }
@@ -111,15 +101,15 @@ func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) ->
 
 #### After: Native Interop (Concurrency Style)
 
+<?code-excerpt "ios/Runner/NativeInteropExample.swift (concurrency-style)"?>
 ```swift
-// Swift
 func echoAsync(_ value: String) async throws -> String {
   return value
 }
 ```
 
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (concurrency-style)"?>
 ```kotlin
-// Kotlin
 suspend fun echoAsync(value: String): String {
   return value
 }

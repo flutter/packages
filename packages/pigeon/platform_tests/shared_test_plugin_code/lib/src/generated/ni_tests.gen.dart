@@ -139,13 +139,13 @@ class _PigeonJniCodec {
       return null;
     }
     if (value.isA<JLong>(JLong.type)) {
-      return (value.as(JLong.type)).longValue();
+      return value.as(JLong.type).longValue();
     } else if (value.isA<JDouble>(JDouble.type)) {
-      return (value.as(JDouble.type)).doubleValue();
+      return value.as(JDouble.type).doubleValue();
     } else if (value.isA<JString>(JString.type)) {
-      return (value.as(JString.type)).toDartString();
+      return value.as(JString.type).toDartString();
     } else if (value.isA<JBoolean>(JBoolean.type)) {
-      return (value.as(JBoolean.type)).booleanValue();
+      return value.as(JBoolean.type).booleanValue();
     } else if (value.isA<JByteArray>(JByteArray.type)) {
       final JByteArray array = value.as(JByteArray.type);
       return array.getRange(0, array.length).buffer.asUint8List();
@@ -527,7 +527,7 @@ class _PigeonFfiCodec {
 
       return numValue.longValue;
     } else if (NSString.isA(value)) {
-      return (NSString.as(value)).toDartString();
+      return NSString.as(value).toDartString();
     } else if (ffi_bridge.NiTestsPigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(
         value as ffi_bridge.NiTestsPigeonTypedData,
@@ -1499,14 +1499,13 @@ class NIAllTypes {
             anInt64: jniClass.anInt64,
             aDouble: jniClass.aDouble,
             aByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aByteArray)! as Uint8List),
+                _PigeonJniCodec.readValue(jniClass.aByteArray)! as Uint8List,
             a4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.a4ByteArray)! as Int32List),
+                _PigeonJniCodec.readValue(jniClass.a4ByteArray)! as Int32List,
             a8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.a8ByteArray)! as Int64List),
+                _PigeonJniCodec.readValue(jniClass.a8ByteArray)! as Int64List,
             aFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.aFloatArray)!
-                    as Float64List),
+                _PigeonJniCodec.readValue(jniClass.aFloatArray)! as Float64List,
             anEnum: NIAnEnum.fromJni(jniClass.anEnum)!,
             anotherEnum: NIAnotherEnum.fromJni(jniClass.anotherEnum)!,
             aString: jniClass.aString.toDartString(releaseOriginal: true),
@@ -1580,14 +1579,13 @@ class NIAllTypes {
             anInt64: ffiClass.anInt64,
             aDouble: ffiClass.aDouble,
             aByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aByteArray)! as Uint8List),
+                _PigeonFfiCodec.readValue(ffiClass.aByteArray)! as Uint8List,
             a4ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.a4ByteArray)! as Int32List),
+                _PigeonFfiCodec.readValue(ffiClass.a4ByteArray)! as Int32List,
             a8ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.a8ByteArray)! as Int64List),
+                _PigeonFfiCodec.readValue(ffiClass.a8ByteArray)! as Int64List,
             aFloatArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aFloatArray)!
-                    as Float64List),
+                _PigeonFfiCodec.readValue(ffiClass.aFloatArray)! as Float64List,
             anEnum: NIAnEnum.values[ffiClass.anEnum.index],
             anotherEnum: NIAnotherEnum.values[ffiClass.anotherEnum.index],
             aString: ffiClass.aString.toDartString(),
@@ -1889,11 +1887,11 @@ class NIAllNullableTypes {
       _PigeonJniCodec.writeValue<JIntArray?>(aNullable4ByteArray),
       _PigeonJniCodec.writeValue<JLongArray?>(aNullable8ByteArray),
       _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloatArray),
-      aNullableEnum == null ? null : aNullableEnum!.toJni(),
-      anotherNullableEnum == null ? null : anotherNullableEnum!.toJni(),
+      aNullableEnum?.toJni(),
+      anotherNullableEnum?.toJni(),
       _PigeonJniCodec.writeValue<JString?>(aNullableString),
       _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
-      allNullableTypes == null ? null : allNullableTypes!.toJni(),
+      allNullableTypes?.toJni(),
       _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
       _PigeonJniCodec.writeValue<JList<JString?>?>(stringList),
       _PigeonJniCodec.writeValue<JList<JLong?>?>(intList),
@@ -1956,9 +1954,7 @@ class NIAllNullableTypes {
         aNullableObject,
         generic: true,
       ),
-      allNullableTypes: allNullableTypes == null
-          ? null
-          : allNullableTypes!.toFfi(),
+      allNullableTypes: allNullableTypes?.toFfi(),
       list: _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
       stringList: _PigeonFfiCodec.writeValue<NSMutableArray?>(stringList),
       intList: _PigeonFfiCodec.writeValue<NSMutableArray?>(intList),
@@ -2005,17 +2001,17 @@ class NIAllNullableTypes {
               releaseOriginal: true,
             ),
             aNullableByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullableByteArray)
-                    as Uint8List?),
+                _PigeonJniCodec.readValue(jniClass.aNullableByteArray)
+                    as Uint8List?,
             aNullable4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
-                    as Int32List?),
+                _PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
+                    as Int32List?,
             aNullable8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
-                    as Int64List?),
+                _PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
+                    as Int64List?,
             aNullableFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
-                    as Float64List?),
+                _PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
+                    as Float64List?,
             aNullableEnum: NIAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NIAnotherEnum.fromJni(
               jniClass.anotherNullableEnum,
@@ -2108,17 +2104,17 @@ class NIAllNullableTypes {
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
             aNullableByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
-                    as Uint8List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
+                    as Uint8List?,
             aNullable4ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
-                    as Int32List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
+                    as Int32List?,
             aNullable8ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
-                    as Int64List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
+                    as Int64List?,
             aNullableFloatArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
-                    as Float64List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
+                    as Float64List?,
             aNullableEnum: ffiClass.aNullableEnum == null
                 ? null
                 : NIAnEnum.values[ffiClass.aNullableEnum!.longValue],
@@ -2432,8 +2428,8 @@ class NIAllNullableTypesWithoutRecursion {
       _PigeonJniCodec.writeValue<JIntArray?>(aNullable4ByteArray),
       _PigeonJniCodec.writeValue<JLongArray?>(aNullable8ByteArray),
       _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloatArray),
-      aNullableEnum == null ? null : aNullableEnum!.toJni(),
-      anotherNullableEnum == null ? null : anotherNullableEnum!.toJni(),
+      aNullableEnum?.toJni(),
+      anotherNullableEnum?.toJni(),
       _PigeonJniCodec.writeValue<JString?>(aNullableString),
       _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
       _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
@@ -2539,17 +2535,17 @@ class NIAllNullableTypesWithoutRecursion {
               releaseOriginal: true,
             ),
             aNullableByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullableByteArray)
-                    as Uint8List?),
+                _PigeonJniCodec.readValue(jniClass.aNullableByteArray)
+                    as Uint8List?,
             aNullable4ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
-                    as Int32List?),
+                _PigeonJniCodec.readValue(jniClass.aNullable4ByteArray)
+                    as Int32List?,
             aNullable8ByteArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
-                    as Int64List?),
+                _PigeonJniCodec.readValue(jniClass.aNullable8ByteArray)
+                    as Int64List?,
             aNullableFloatArray:
-                (_PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
-                    as Float64List?),
+                _PigeonJniCodec.readValue(jniClass.aNullableFloatArray)
+                    as Float64List?,
             aNullableEnum: NIAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NIAnotherEnum.fromJni(
               jniClass.anotherNullableEnum,
@@ -2631,17 +2627,17 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
             aNullableByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
-                    as Uint8List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
+                    as Uint8List?,
             aNullable4ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
-                    as Int32List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
+                    as Int32List?,
             aNullable8ByteArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
-                    as Int64List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
+                    as Int64List?,
             aNullableFloatArray:
-                (_PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
-                    as Float64List?),
+                _PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
+                    as Float64List?,
             aNullableEnum: ffiClass.aNullableEnum == null
                 ? null
                 : NIAnEnum.values[ffiClass.aNullableEnum!.longValue],
@@ -2848,10 +2844,8 @@ class NIAllClassesWrapper {
   jni_bridge.NIAllClassesWrapper toJni() {
     return jni_bridge.NIAllClassesWrapper(
       allNullableTypes.toJni(),
-      allNullableTypesWithoutRecursion == null
-          ? null
-          : allNullableTypesWithoutRecursion!.toJni(),
-      allTypes == null ? null : allTypes!.toJni(),
+      allNullableTypesWithoutRecursion?.toJni(),
+      allTypes?.toJni(),
       _PigeonJniCodec.writeValue<JList<jni_bridge.NIAllTypes?>>(classList),
       _PigeonJniCodec.writeValue<
         JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>?
@@ -2869,11 +2863,9 @@ class NIAllClassesWrapper {
     return ffi_bridge.NIAllClassesWrapperBridge.alloc()
         .initWithAllNullableTypes(
           allNullableTypes.toFfi(),
-          allNullableTypesWithoutRecursion:
-              allNullableTypesWithoutRecursion == null
-              ? null
-              : allNullableTypesWithoutRecursion!.toFfi(),
-          allTypes: allTypes == null ? null : allTypes!.toFfi(),
+          allNullableTypesWithoutRecursion: allNullableTypesWithoutRecursion
+              ?.toFfi(),
+          allTypes: allTypes?.toFfi(),
           classList: _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           nullableClassList: _PigeonFfiCodec.writeValue<NSMutableArray?>(
             nullableClassList,
@@ -3299,7 +3291,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
         );
         final Uint8List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Uint8List);
+            _PigeonJniCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -3312,7 +3304,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Uint8List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Uint8List);
+            _PigeonFfiCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -3329,7 +3321,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
         );
         final Int32List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int32List);
+            _PigeonJniCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -3342,7 +3334,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int32List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Int32List);
+            _PigeonFfiCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -3359,7 +3351,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
         );
         final Int64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int64List);
+            _PigeonJniCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -3372,7 +3364,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int64List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Int64List);
+            _PigeonFfiCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -3389,7 +3381,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
         );
         final Float64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Float64List);
+            _PigeonJniCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -3402,7 +3394,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Float64List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Float64List);
+            _PigeonFfiCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4017,7 +4009,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnEnum dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum);
+            _PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4043,7 +4035,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnotherEnum dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+            _PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4124,7 +4116,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypes? res = _jniApi.echoAllNullableTypes(
-          everything == null ? null : everything.toJni(),
+          everything?.toJni(),
         );
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
@@ -4132,7 +4124,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesBridge? res = _ffiApi
             .echoAllNullableTypesWithEverything(
-              everything == null ? null : everything.toFfi(),
+              everything?.toFfi(),
               wrappedError: error,
             );
         _throwIfFfiError(error);
@@ -4152,9 +4144,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypesWithoutRecursion? res = _jniApi
-            .echoAllNullableTypesWithoutRecursion(
-              everything == null ? null : everything.toJni(),
-            );
+            .echoAllNullableTypesWithoutRecursion(everything?.toJni());
         final NIAllNullableTypesWithoutRecursion? dartTypeRes =
             NIAllNullableTypesWithoutRecursion.fromJni(res);
         return dartTypeRes;
@@ -4162,7 +4152,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res = _ffiApi
             .echoAllNullableTypesWithoutRecursionWithEverything(
-              everything == null ? null : everything.toFfi(),
+              everything?.toFfi(),
               wrappedError: error,
             );
         _throwIfFfiError(error);
@@ -4416,7 +4406,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray?>(aNullableUint8List),
         );
         final Uint8List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Uint8List?);
+            _PigeonJniCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4429,7 +4419,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Uint8List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Uint8List?);
+            _PigeonFfiCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4446,7 +4436,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray?>(aNullableInt32List),
         );
         final Int32List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int32List?);
+            _PigeonJniCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4459,7 +4449,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int32List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Int32List?);
+            _PigeonFfiCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4476,7 +4466,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray?>(aNullableInt64List),
         );
         final Int64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int64List?);
+            _PigeonJniCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4489,7 +4479,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int64List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Int64List?);
+            _PigeonFfiCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4506,7 +4496,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloat64List),
         );
         final Float64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Float64List?);
+            _PigeonJniCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -4519,7 +4509,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Float64List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Float64List?);
+            _PigeonFfiCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5002,7 +4992,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnEnum? res = _jniApi.echoNullableEnum(
-          anEnum == null ? null : anEnum.toJni(),
+          anEnum?.toJni(),
         );
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
@@ -5014,7 +5004,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnEnum? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?);
+            _PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5028,7 +5018,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnotherEnum? res = _jniApi.echoAnotherNullableEnum(
-          anotherEnum == null ? null : anotherEnum.toJni(),
+          anotherEnum?.toJni(),
         );
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
@@ -5040,7 +5030,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnotherEnum? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?);
+            _PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5260,7 +5250,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
         );
         final Uint8List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Uint8List);
+            _PigeonJniCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5278,7 +5268,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Uint8List),
+                    _PigeonFfiCodec.readValue(res)! as Uint8List,
                   );
                 }
               }),
@@ -5299,7 +5289,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
         );
         final Int32List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int32List);
+            _PigeonJniCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5317,7 +5307,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Int32List),
+                    _PigeonFfiCodec.readValue(res)! as Int32List,
                   );
                 }
               }),
@@ -5338,7 +5328,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
         );
         final Int64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int64List);
+            _PigeonJniCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5356,7 +5346,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Int64List),
+                    _PigeonFfiCodec.readValue(res)! as Int64List,
                   );
                 }
               }),
@@ -5377,7 +5367,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
         );
         final Float64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Float64List);
+            _PigeonJniCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -5395,7 +5385,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Float64List),
+                    _PigeonFfiCodec.readValue(res)! as Float64List,
                   );
                 }
               }),
@@ -5793,7 +5783,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum),
+                _PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum,
               );
             }
           }),
@@ -5828,8 +5818,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)!
-                    as NIAnotherEnum),
+                _PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum,
               );
             }
           }),
@@ -5969,9 +5958,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypes? res = await _jniApi
-            .echoAsyncNullableNIAllNullableTypes(
-              everything == null ? null : everything.toJni(),
-            );
+            .echoAsyncNullableNIAllNullableTypes(everything?.toJni());
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
@@ -5979,7 +5966,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Completer<NIAllNullableTypes?> completer =
             Completer<NIAllNullableTypes?>();
         _ffiApi.echoAsyncNullableNIAllNullableTypesWithEverything(
-          everything == null ? null : everything.toFfi(),
+          everything?.toFfi(),
           wrappedError: error,
           completionHandler:
               ffi_bridge.ObjCBlock_ffiVoid_NIAllNullableTypesBridge.listener((
@@ -6009,7 +5996,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypesWithoutRecursion? res = await _jniApi
             .echoAsyncNullableNIAllNullableTypesWithoutRecursion(
-              everything == null ? null : everything.toJni(),
+              everything?.toJni(),
             );
         final NIAllNullableTypesWithoutRecursion? dartTypeRes =
             NIAllNullableTypesWithoutRecursion.fromJni(res);
@@ -6019,7 +6006,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Completer<NIAllNullableTypesWithoutRecursion?> completer =
             Completer<NIAllNullableTypesWithoutRecursion?>();
         _ffiApi.echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything(
-          everything == null ? null : everything.toFfi(),
+          everything?.toFfi(),
           wrappedError: error,
           completionHandler:
               ffi_bridge
@@ -6183,7 +6170,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray?>(aUint8List),
         );
         final Uint8List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Uint8List?);
+            _PigeonJniCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6201,7 +6188,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Uint8List?),
+                    _PigeonFfiCodec.readValue(res) as Uint8List?,
                   );
                 }
               }),
@@ -6222,7 +6209,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray?>(aInt32List),
         );
         final Int32List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int32List?);
+            _PigeonJniCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6240,7 +6227,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Int32List?),
+                    _PigeonFfiCodec.readValue(res) as Int32List?,
                   );
                 }
               }),
@@ -6261,7 +6248,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray?>(aInt64List),
         );
         final Int64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int64List?);
+            _PigeonJniCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6279,7 +6266,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Int64List?),
+                    _PigeonFfiCodec.readValue(res) as Int64List?,
                   );
                 }
               }),
@@ -6302,7 +6289,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray?>(aFloat64List),
         );
         final Float64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Float64List?);
+            _PigeonJniCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -6320,7 +6307,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Float64List?),
+                    _PigeonFfiCodec.readValue(res) as Float64List?,
                   );
                 }
               }),
@@ -6712,7 +6699,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnEnum? res = await _jniApi.echoAsyncNullableEnum(
-          anEnum == null ? null : anEnum.toJni(),
+          anEnum?.toJni(),
         );
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
@@ -6729,7 +6716,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?),
+                _PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?,
               );
             }
           }),
@@ -6749,9 +6736,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnotherEnum? res = await _jniApi
-            .echoAnotherAsyncNullableEnum(
-              anotherEnum == null ? null : anotherEnum.toJni(),
-            );
+            .echoAnotherAsyncNullableEnum(anotherEnum?.toJni());
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
@@ -6767,8 +6752,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)
-                    as NIAnotherEnum?),
+                _PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?,
               );
             }
           }),
@@ -6870,16 +6854,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypes? res = _jniApi
-            .callFlutterEchoNIAllNullableTypes(
-              everything == null ? null : everything.toJni(),
-            );
+            .callFlutterEchoNIAllNullableTypes(everything?.toJni());
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesBridge? res = _ffiApi
             .callFlutterEchoNIAllNullableTypesWithEverything(
-              everything == null ? null : everything.toFfi(),
+              everything?.toFfi(),
               wrappedError: error,
             );
         _throwIfFfiError(error);
@@ -6938,7 +6920,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypesWithoutRecursion? res = _jniApi
             .callFlutterEchoNIAllNullableTypesWithoutRecursion(
-              everything == null ? null : everything.toJni(),
+              everything?.toJni(),
             );
         final NIAllNullableTypesWithoutRecursion? dartTypeRes =
             NIAllNullableTypesWithoutRecursion.fromJni(res);
@@ -6947,7 +6929,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res = _ffiApi
             .callFlutterEchoNIAllNullableTypesWithoutRecursionWithEverything(
-              everything == null ? null : everything.toFfi(),
+              everything?.toFfi(),
               wrappedError: error,
             );
         _throwIfFfiError(error);
@@ -7097,7 +7079,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray>(list),
         );
         final Uint8List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Uint8List);
+            _PigeonJniCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7110,7 +7092,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Uint8List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Uint8List);
+            _PigeonFfiCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7127,7 +7109,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray>(list),
         );
         final Int32List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int32List);
+            _PigeonJniCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7140,7 +7122,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int32List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Int32List);
+            _PigeonFfiCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7157,7 +7139,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray>(list),
         );
         final Int64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int64List);
+            _PigeonJniCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7170,7 +7152,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int64List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Int64List);
+            _PigeonFfiCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7187,7 +7169,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray>(list),
         );
         final Float64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Float64List);
+            _PigeonJniCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7200,7 +7182,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Float64List dartTypeRes =
-            (_PigeonFfiCodec.readValue(res)! as Float64List);
+            _PigeonFfiCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7672,7 +7654,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnEnum dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum);
+            _PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7698,7 +7680,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final NIAnotherEnum dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+            _PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7815,7 +7797,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray?>(list),
         );
         final Uint8List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Uint8List?);
+            _PigeonJniCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7828,7 +7810,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Uint8List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Uint8List?);
+            _PigeonFfiCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7845,7 +7827,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray?>(list),
         );
         final Int32List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int32List?);
+            _PigeonJniCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7858,7 +7840,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int32List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Int32List?);
+            _PigeonFfiCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7875,7 +7857,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray?>(list),
         );
         final Int64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int64List?);
+            _PigeonJniCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7888,7 +7870,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Int64List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Int64List?);
+            _PigeonFfiCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -7905,7 +7887,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray?>(list),
         );
         final Float64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Float64List?);
+            _PigeonJniCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -7918,7 +7900,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final Float64List? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res) as Float64List?);
+            _PigeonFfiCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8396,7 +8378,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnEnum? res = _jniApi.callFlutterEchoNullableEnum(
-          anEnum == null ? null : anEnum.toJni(),
+          anEnum?.toJni(),
         );
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
@@ -8408,7 +8390,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         );
         _throwIfFfiError(error);
         final NIAnEnum? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?);
+            _PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8424,9 +8406,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnotherEnum? res = _jniApi
-            .callFlutterEchoAnotherNullableEnum(
-              anotherEnum == null ? null : anotherEnum.toJni(),
-            );
+            .callFlutterEchoAnotherNullableEnum(anotherEnum?.toJni());
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
@@ -8438,7 +8418,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             );
         _throwIfFfiError(error);
         final NIAnotherEnum? dartTypeRes =
-            (_PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?);
+            _PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8516,7 +8496,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypes? res = await _jniApi
             .callFlutterEchoAsyncNullableNIAllNullableTypes(
-              everything == null ? null : everything.toJni(),
+              everything?.toJni(),
             );
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
@@ -8525,7 +8505,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Completer<NIAllNullableTypes?> completer =
             Completer<NIAllNullableTypes?>();
         _ffiApi.callFlutterEchoAsyncNullableNIAllNullableTypesWithEverything(
-          everything == null ? null : everything.toFfi(),
+          everything?.toFfi(),
           wrappedError: error,
           completionHandler:
               ffi_bridge.ObjCBlock_ffiVoid_NIAllNullableTypesBridge.listener((
@@ -8555,7 +8535,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         final jni_bridge.NIAllNullableTypesWithoutRecursion? res = await _jniApi
             .callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
-              everything == null ? null : everything.toJni(),
+              everything?.toJni(),
             );
         final NIAllNullableTypesWithoutRecursion? dartTypeRes =
             NIAllNullableTypesWithoutRecursion.fromJni(res);
@@ -8565,7 +8545,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Completer<NIAllNullableTypesWithoutRecursion?> completer =
             Completer<NIAllNullableTypesWithoutRecursion?>();
         _ffiApi.callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything(
-          everything == null ? null : everything.toFfi(),
+          everything?.toFfi(),
           wrappedError: error,
           completionHandler:
               ffi_bridge
@@ -8723,7 +8703,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JByteArray>(list),
         );
         final Uint8List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Uint8List);
+            _PigeonJniCodec.readValue(res)! as Uint8List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8739,7 +8719,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Uint8List),
+                    _PigeonFfiCodec.readValue(res)! as Uint8List,
                   );
                 }
               }),
@@ -8760,7 +8740,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JIntArray>(list),
         );
         final Int32List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int32List);
+            _PigeonJniCodec.readValue(res)! as Int32List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8776,7 +8756,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Int32List),
+                    _PigeonFfiCodec.readValue(res)! as Int32List,
                   );
                 }
               }),
@@ -8797,7 +8777,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JLongArray>(list),
         );
         final Int64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Int64List);
+            _PigeonJniCodec.readValue(res)! as Int64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8813,7 +8793,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Int64List),
+                    _PigeonFfiCodec.readValue(res)! as Int64List,
                   );
                 }
               }),
@@ -8834,7 +8814,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonJniCodec.writeValue<JDoubleArray>(list),
         );
         final Float64List dartTypeRes =
-            (_PigeonJniCodec.readValue(res)! as Float64List);
+            _PigeonJniCodec.readValue(res)! as Float64List;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -8850,7 +8830,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res)! as Float64List),
+                    _PigeonFfiCodec.readValue(res)! as Float64List,
                   );
                 }
               }),
@@ -9342,7 +9322,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum),
+                _PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum,
               );
             }
           }),
@@ -9378,8 +9358,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)!
-                    as NIAnotherEnum),
+                _PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum,
               );
             }
           }),
@@ -9535,7 +9514,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonJniCodec.writeValue<JByteArray?>(list),
             );
         final Uint8List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Uint8List?);
+            _PigeonJniCodec.readValue(res) as Uint8List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9551,7 +9530,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Uint8List?),
+                    _PigeonFfiCodec.readValue(res) as Uint8List?,
                   );
                 }
               }),
@@ -9575,7 +9554,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonJniCodec.writeValue<JIntArray?>(list),
             );
         final Int32List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int32List?);
+            _PigeonJniCodec.readValue(res) as Int32List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9591,7 +9570,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Int32List?),
+                    _PigeonFfiCodec.readValue(res) as Int32List?,
                   );
                 }
               }),
@@ -9615,7 +9594,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonJniCodec.writeValue<JLongArray?>(list),
             );
         final Int64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Int64List?);
+            _PigeonJniCodec.readValue(res) as Int64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9631,7 +9610,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Int64List?),
+                    _PigeonFfiCodec.readValue(res) as Int64List?,
                   );
                 }
               }),
@@ -9655,7 +9634,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonJniCodec.writeValue<JDoubleArray?>(list),
             );
         final Float64List? dartTypeRes =
-            (_PigeonJniCodec.readValue(res) as Float64List?);
+            _PigeonJniCodec.readValue(res) as Float64List?;
         return dartTypeRes;
       } else if (_ffiApi != null) {
         final error = ffi_bridge.NiTestsError();
@@ -9671,7 +9650,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.completeError(_wrapFfiError(error));
                 } else {
                   completer.complete(
-                    (_PigeonFfiCodec.readValue(res) as Float64List?),
+                    _PigeonFfiCodec.readValue(res) as Float64List?,
                   );
                 }
               }),
@@ -10184,9 +10163,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnEnum? res = await _jniApi
-            .callFlutterEchoAsyncNullableEnum(
-              anEnum == null ? null : anEnum.toJni(),
-            );
+            .callFlutterEchoAsyncNullableEnum(anEnum?.toJni());
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
@@ -10202,7 +10179,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?),
+                _PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?,
               );
             }
           }),
@@ -10222,9 +10199,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
     try {
       if (_jniApi != null) {
         final jni_bridge.NIAnotherEnum? res = await _jniApi
-            .callFlutterEchoAnotherAsyncNullableEnum(
-              anotherEnum == null ? null : anotherEnum.toJni(),
-            );
+            .callFlutterEchoAnotherAsyncNullableEnum(anotherEnum?.toJni());
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
@@ -10240,8 +10215,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.completeError(_wrapFfiError(error));
             } else {
               completer.complete(
-                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)
-                    as NIAnotherEnum?),
+                _PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?,
               );
             }
           }),
@@ -16423,7 +16397,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
                     .echoNIAllNullableTypes(
                       NIAllNullableTypes.fromFfi(everything),
                     );
-                return response == null ? null : response.toFfi();
+                return response?.toFfi();
               } else {
                 _reportFfiError(
                   errorOut,
@@ -16479,7 +16453,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
                     .echoNIAllNullableTypesWithoutRecursion(
                       NIAllNullableTypesWithoutRecursion.fromFfi(everything),
                     );
-                return response == null ? null : response.toFfi();
+                return response?.toFfi();
               } else {
                 _reportFfiError(
                   errorOut,
@@ -16628,7 +16602,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Uint8List response = dartApi!.echoUint8List(
-                  (_PigeonFfiCodec.readValue(list)! as Uint8List),
+                  _PigeonFfiCodec.readValue(list)! as Uint8List,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData
@@ -16655,7 +16629,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Int32List response = dartApi!.echoInt32List(
-                  (_PigeonFfiCodec.readValue(list)! as Int32List),
+                  _PigeonFfiCodec.readValue(list)! as Int32List,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData
@@ -16682,7 +16656,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Int64List response = dartApi!.echoInt64List(
-                  (_PigeonFfiCodec.readValue(list)! as Int64List),
+                  _PigeonFfiCodec.readValue(list)! as Int64List,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData
@@ -16709,7 +16683,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Float64List response = dartApi!.echoFloat64List(
-                  (_PigeonFfiCodec.readValue(list)! as Float64List),
+                  _PigeonFfiCodec.readValue(list)! as Float64List,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData
@@ -17114,7 +17088,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final NIAnEnum response = dartApi!.echoEnum(
-                  (_PigeonFfiCodec.readValue(anEnum, NIAnEnum)! as NIAnEnum),
+                  _PigeonFfiCodec.readValue(anEnum, NIAnEnum)! as NIAnEnum,
                 );
                 return _PigeonFfiCodec.writeValue<NSNumber>(response);
               } else {
@@ -17139,8 +17113,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final NIAnotherEnum response = dartApi!.echoNIAnotherEnum(
-                  (_PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)!
-                      as NIAnotherEnum),
+                  _PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)!
+                      as NIAnotherEnum,
                 );
                 return _PigeonFfiCodec.writeValue<NSNumber>(response);
               } else {
@@ -17265,7 +17239,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Uint8List? response = dartApi!.echoNullableUint8List(
-                  (_PigeonFfiCodec.readValue(list) as Uint8List?),
+                  _PigeonFfiCodec.readValue(list) as Uint8List?,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData?
@@ -17292,7 +17266,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Int32List? response = dartApi!.echoNullableInt32List(
-                  (_PigeonFfiCodec.readValue(list) as Int32List?),
+                  _PigeonFfiCodec.readValue(list) as Int32List?,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData?
@@ -17319,7 +17293,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Int64List? response = dartApi!.echoNullableInt64List(
-                  (_PigeonFfiCodec.readValue(list) as Int64List?),
+                  _PigeonFfiCodec.readValue(list) as Int64List?,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData?
@@ -17346,7 +17320,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final Float64List? response = dartApi!.echoNullableFloat64List(
-                  (_PigeonFfiCodec.readValue(list) as Float64List?),
+                  _PigeonFfiCodec.readValue(list) as Float64List?,
                 );
                 return _PigeonFfiCodec.writeValue<
                   ffi_bridge.NiTestsPigeonTypedData?
@@ -17758,7 +17732,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             try {
               if (dartApi != null) {
                 final NIAnEnum? response = dartApi!.echoNullableEnum(
-                  (_PigeonFfiCodec.readValue(anEnum, NIAnEnum) as NIAnEnum?),
+                  _PigeonFfiCodec.readValue(anEnum, NIAnEnum) as NIAnEnum?,
                 );
                 return _PigeonFfiCodec.writeValue<NSNumber?>(response);
               } else {
@@ -17784,8 +17758,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 final NIAnotherEnum? response = dartApi!
                     .echoAnotherNullableEnum(
-                      (_PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)
-                          as NIAnotherEnum?),
+                      _PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)
+                          as NIAnotherEnum?,
                     );
                 return _PigeonFfiCodec.writeValue<NSNumber?>(response);
               } else {
@@ -17951,7 +17925,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
                       (response) {
                         ffi_bridge.ObjCBlock_ffiVoid_NIAllNullableTypesBridge$CallExtension(
                           completionHandler,
-                        ).call(response == null ? null : response.toFfi());
+                        ).call(response?.toFfi());
                       },
                       onError: (Object e) {
                         _reportFfiError(errorOut, e);
@@ -18002,7 +17976,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
                       (response) {
                         ffi_bridge.ObjCBlock_ffiVoid_NIAllNullableTypesWithoutRecursionBridge$CallExtension(
                           completionHandler,
-                        ).call(response == null ? null : response.toFfi());
+                        ).call(response?.toFfi());
                       },
                       onError: (Object e) {
                         _reportFfiError(errorOut, e);
@@ -18219,7 +18193,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncUint8List(
-                      (_PigeonFfiCodec.readValue(list)! as Uint8List),
+                      _PigeonFfiCodec.readValue(list)! as Uint8List,
                     )
                     .then(
                       (response) {
@@ -18270,7 +18244,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncInt32List(
-                      (_PigeonFfiCodec.readValue(list)! as Int32List),
+                      _PigeonFfiCodec.readValue(list)! as Int32List,
                     )
                     .then(
                       (response) {
@@ -18321,7 +18295,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncInt64List(
-                      (_PigeonFfiCodec.readValue(list)! as Int64List),
+                      _PigeonFfiCodec.readValue(list)! as Int64List,
                     )
                     .then(
                       (response) {
@@ -18372,7 +18346,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncFloat64List(
-                      (_PigeonFfiCodec.readValue(list)! as Float64List),
+                      _PigeonFfiCodec.readValue(list)! as Float64List,
                     )
                     .then(
                       (response) {
@@ -18967,8 +18941,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncEnum(
-                      (_PigeonFfiCodec.readValue(anEnum, NIAnEnum)!
-                          as NIAnEnum),
+                      _PigeonFfiCodec.readValue(anEnum, NIAnEnum)! as NIAnEnum,
                     )
                     .then(
                       (response) {
@@ -19014,8 +18987,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAnotherAsyncEnum(
-                      (_PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)!
-                          as NIAnotherEnum),
+                      _PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)!
+                          as NIAnotherEnum,
                     )
                     .then(
                       (response) {
@@ -19238,7 +19211,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncNullableUint8List(
-                      (_PigeonFfiCodec.readValue(list) as Uint8List?),
+                      _PigeonFfiCodec.readValue(list) as Uint8List?,
                     )
                     .then(
                       (response) {
@@ -19289,7 +19262,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncNullableInt32List(
-                      (_PigeonFfiCodec.readValue(list) as Int32List?),
+                      _PigeonFfiCodec.readValue(list) as Int32List?,
                     )
                     .then(
                       (response) {
@@ -19340,7 +19313,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncNullableInt64List(
-                      (_PigeonFfiCodec.readValue(list) as Int64List?),
+                      _PigeonFfiCodec.readValue(list) as Int64List?,
                     )
                     .then(
                       (response) {
@@ -19391,7 +19364,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncNullableFloat64List(
-                      (_PigeonFfiCodec.readValue(list) as Float64List?),
+                      _PigeonFfiCodec.readValue(list) as Float64List?,
                     )
                     .then(
                       (response) {
@@ -19988,8 +19961,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAsyncNullableEnum(
-                      (_PigeonFfiCodec.readValue(anEnum, NIAnEnum)
-                          as NIAnEnum?),
+                      _PigeonFfiCodec.readValue(anEnum, NIAnEnum) as NIAnEnum?,
                     )
                     .then(
                       (response) {
@@ -20035,8 +20007,8 @@ final class NIFlutterIntegrationCoreApiRegistrar
               if (dartApi != null) {
                 dartApi!
                     .echoAnotherAsyncNullableEnum(
-                      (_PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)
-                          as NIAnotherEnum?),
+                      _PigeonFfiCodec.readValue(anotherEnum, NIAnotherEnum)
+                          as NIAnotherEnum?,
                     )
                     .then(
                       (response) {
@@ -20143,7 +20115,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
       final NIAllNullableTypes? response = dartApi!.echoNIAllNullableTypes(
         NIAllNullableTypes.fromJni(everything),
       );
-      return response == null ? null : response.toJni();
+      return response?.toJni();
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
     }
@@ -20177,7 +20149,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
           .echoNIAllNullableTypesWithoutRecursion(
             NIAllNullableTypesWithoutRecursion.fromJni(everything),
           );
-      return response == null ? null : response.toJni();
+      return response?.toJni();
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
     }
@@ -20249,7 +20221,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JByteArray echoUint8List(JByteArray list) {
     if (dartApi != null) {
       final Uint8List response = dartApi!.echoUint8List(
-        (_PigeonJniCodec.readValue(list)! as Uint8List),
+        _PigeonJniCodec.readValue(list)! as Uint8List,
       );
       return _PigeonJniCodec.writeValue<JByteArray>(response);
     } else {
@@ -20261,7 +20233,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JIntArray echoInt32List(JIntArray list) {
     if (dartApi != null) {
       final Int32List response = dartApi!.echoInt32List(
-        (_PigeonJniCodec.readValue(list)! as Int32List),
+        _PigeonJniCodec.readValue(list)! as Int32List,
       );
       return _PigeonJniCodec.writeValue<JIntArray>(response);
     } else {
@@ -20273,7 +20245,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JLongArray echoInt64List(JLongArray list) {
     if (dartApi != null) {
       final Int64List response = dartApi!.echoInt64List(
-        (_PigeonJniCodec.readValue(list)! as Int64List),
+        _PigeonJniCodec.readValue(list)! as Int64List,
       );
       return _PigeonJniCodec.writeValue<JLongArray>(response);
     } else {
@@ -20285,7 +20257,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JDoubleArray echoFloat64List(JDoubleArray list) {
     if (dartApi != null) {
       final Float64List response = dartApi!.echoFloat64List(
-        (_PigeonJniCodec.readValue(list)! as Float64List),
+        _PigeonJniCodec.readValue(list)! as Float64List,
       );
       return _PigeonJniCodec.writeValue<JDoubleArray>(response);
     } else {
@@ -20581,7 +20553,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JByteArray? echoNullableUint8List(JByteArray? list) {
     if (dartApi != null) {
       final Uint8List? response = dartApi!.echoNullableUint8List(
-        (_PigeonJniCodec.readValue(list) as Uint8List?),
+        _PigeonJniCodec.readValue(list) as Uint8List?,
       );
       return _PigeonJniCodec.writeValue<JByteArray?>(response);
     } else {
@@ -20593,7 +20565,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JIntArray? echoNullableInt32List(JIntArray? list) {
     if (dartApi != null) {
       final Int32List? response = dartApi!.echoNullableInt32List(
-        (_PigeonJniCodec.readValue(list) as Int32List?),
+        _PigeonJniCodec.readValue(list) as Int32List?,
       );
       return _PigeonJniCodec.writeValue<JIntArray?>(response);
     } else {
@@ -20605,7 +20577,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JLongArray? echoNullableInt64List(JLongArray? list) {
     if (dartApi != null) {
       final Int64List? response = dartApi!.echoNullableInt64List(
-        (_PigeonJniCodec.readValue(list) as Int64List?),
+        _PigeonJniCodec.readValue(list) as Int64List?,
       );
       return _PigeonJniCodec.writeValue<JLongArray?>(response);
     } else {
@@ -20617,7 +20589,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   JDoubleArray? echoNullableFloat64List(JDoubleArray? list) {
     if (dartApi != null) {
       final Float64List? response = dartApi!.echoNullableFloat64List(
-        (_PigeonJniCodec.readValue(list) as Float64List?),
+        _PigeonJniCodec.readValue(list) as Float64List?,
       );
       return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
     } else {
@@ -20850,7 +20822,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
       final NIAnEnum? response = dartApi!.echoNullableEnum(
         NIAnEnum.fromJni(anEnum),
       );
-      return response == null ? null : response.toJni();
+      return response?.toJni();
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
     }
@@ -20864,7 +20836,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
       final NIAnotherEnum? response = dartApi!.echoAnotherNullableEnum(
         NIAnotherEnum.fromJni(anotherEnum),
       );
-      return response == null ? null : response.toJni();
+      return response?.toJni();
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
     }
@@ -20917,7 +20889,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             NIAllNullableTypes.fromJni(everything),
           )
           .then((response) {
-            return response == null ? null : response.toJni();
+            return response?.toJni();
           });
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
@@ -20935,7 +20907,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
             NIAllNullableTypesWithoutRecursion.fromJni(everything),
           )
           .then((response) {
-            return response == null ? null : response.toJni();
+            return response?.toJni();
           });
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
@@ -20992,7 +20964,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JByteArray> echoAsyncUint8List(JByteArray list) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncUint8List((_PigeonJniCodec.readValue(list)! as Uint8List))
+          .echoAsyncUint8List(_PigeonJniCodec.readValue(list)! as Uint8List)
           .then((response) {
             return _PigeonJniCodec.writeValue<JByteArray>(response);
           });
@@ -21005,7 +20977,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JIntArray> echoAsyncInt32List(JIntArray list) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncInt32List((_PigeonJniCodec.readValue(list)! as Int32List))
+          .echoAsyncInt32List(_PigeonJniCodec.readValue(list)! as Int32List)
           .then((response) {
             return _PigeonJniCodec.writeValue<JIntArray>(response);
           });
@@ -21018,7 +20990,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JLongArray> echoAsyncInt64List(JLongArray list) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncInt64List((_PigeonJniCodec.readValue(list)! as Int64List))
+          .echoAsyncInt64List(_PigeonJniCodec.readValue(list)! as Int64List)
           .then((response) {
             return _PigeonJniCodec.writeValue<JLongArray>(response);
           });
@@ -21031,9 +21003,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
   Future<JDoubleArray> echoAsyncFloat64List(JDoubleArray list) {
     if (dartApi != null) {
       return dartApi!
-          .echoAsyncFloat64List(
-            (_PigeonJniCodec.readValue(list)! as Float64List),
-          )
+          .echoAsyncFloat64List(_PigeonJniCodec.readValue(list)! as Float64List)
           .then((response) {
             return _PigeonJniCodec.writeValue<JDoubleArray>(response);
           });
@@ -21327,7 +21297,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
     if (dartApi != null) {
       return dartApi!
           .echoAsyncNullableUint8List(
-            (_PigeonJniCodec.readValue(list) as Uint8List?),
+            _PigeonJniCodec.readValue(list) as Uint8List?,
           )
           .then((response) {
             return _PigeonJniCodec.writeValue<JByteArray?>(response);
@@ -21342,7 +21312,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
     if (dartApi != null) {
       return dartApi!
           .echoAsyncNullableInt32List(
-            (_PigeonJniCodec.readValue(list) as Int32List?),
+            _PigeonJniCodec.readValue(list) as Int32List?,
           )
           .then((response) {
             return _PigeonJniCodec.writeValue<JIntArray?>(response);
@@ -21357,7 +21327,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
     if (dartApi != null) {
       return dartApi!
           .echoAsyncNullableInt64List(
-            (_PigeonJniCodec.readValue(list) as Int64List?),
+            _PigeonJniCodec.readValue(list) as Int64List?,
           )
           .then((response) {
             return _PigeonJniCodec.writeValue<JLongArray?>(response);
@@ -21372,7 +21342,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
     if (dartApi != null) {
       return dartApi!
           .echoAsyncNullableFloat64List(
-            (_PigeonJniCodec.readValue(list) as Float64List?),
+            _PigeonJniCodec.readValue(list) as Float64List?,
           )
           .then((response) {
             return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
@@ -21600,7 +21570,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
       return dartApi!.echoAsyncNullableEnum(NIAnEnum.fromJni(anEnum)).then((
         response,
       ) {
-        return response == null ? null : response.toJni();
+        return response?.toJni();
       });
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');
@@ -21615,7 +21585,7 @@ final class NIFlutterIntegrationCoreApiRegistrar
       return dartApi!
           .echoAnotherAsyncNullableEnum(NIAnotherEnum.fromJni(anotherEnum))
           .then((response) {
-            return response == null ? null : response.toJni();
+            return response?.toJni();
           });
     } else {
       throw ArgumentError('NIFlutterIntegrationCoreApi was not registered.');

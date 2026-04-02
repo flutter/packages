@@ -370,7 +370,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
         castCall =
             '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
     }
-    return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object')}$castCall';
+    return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object' && castCall.isNotEmpty)}$castCall';
   }
 
   String getToFfiCall(
@@ -381,12 +381,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     bool forceNonNull = false,
   }) {
     if (type.isClass) {
-      return _wrapInNullCheckIfNullable(
-        nullable: type.isNullable,
-        varName: name,
-        code:
-            '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
-      );
+      return '$name${_getNullableSymbol(type.isNullable)}.toFfi()';
     }
     if (type.isEnum && !type.isNullable) {
       return 'ffi_bridge.${type.baseName}.values[$name]';
@@ -551,7 +546,7 @@ class _JniType extends _NativeInteropType<_JniType> {
         castCall =
             '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
     }
-    return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object')}$castCall';
+    return '${wrapConditionally('$codecCall$asType', '(', ')', type.baseName != 'Object' && castCall.isNotEmpty)}$castCall';
   }
 
   String getToJniCall(
@@ -561,12 +556,7 @@ class _JniType extends _NativeInteropType<_JniType> {
     bool forceNonNull = false,
   }) {
     if (type.isClass || type.isEnum) {
-      return _wrapInNullCheckIfNullable(
-        nullable: type.isNullable,
-        varName: name,
-        code:
-            '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()',
-      );
+      return '$name${_getNullableSymbol(type.isNullable)}.toJni()';
     } else if (!type.isNullable &&
         (type.baseName == 'int' ||
             type.baseName == 'double' ||
@@ -1004,16 +994,20 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeToJni(Indent indent, Class classDefinition) {
     indent.writeScoped('jni_bridge.${classDefinition.name} toJni() {', '}', () {
-      indent.writeScoped('return jni_bridge.${classDefinition.name} (', ');', () {
-        for (final NamedType field in getFieldsInSerializationOrder(
-          classDefinition,
-        )) {
-          final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
-          indent.writeln(
-            '${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},',
-          );
-        }
-      });
+      indent.writeScoped(
+        'return jni_bridge.${classDefinition.name} (',
+        ');',
+        () {
+          for (final NamedType field in getFieldsInSerializationOrder(
+            classDefinition,
+          )) {
+            final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+            indent.writeln(
+              '${jniType.getToJniCall(field.type, field.name, jniType)},',
+            );
+          }
+        },
+      );
     });
   }
 
@@ -1031,7 +1025,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           for (final field in fields) {
             final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
             indent.writeln(
-              '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(field.type, '${field.name}${ffiType.type.isEnum ? '${_getNullableSymbol(ffiType.type.isNullable)}.index' : ''}', ffiType, forceNonNull: true, classField: true)},',
+              '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(field.type, '${field.name}${ffiType.type.isEnum ? '${_getNullableSymbol(ffiType.type.isNullable)}.index' : ''}', ffiType, classField: true)},',
             );
             needsName = true;
           }
@@ -2613,13 +2607,13 @@ class _PigeonJniCodec {
       return null;
     }
     if (value.isA<JLong>(JLong.type)) {
-      return (value.as(JLong.type)).longValue();
+      return value.as(JLong.type).longValue();
     } else if (value.isA<JDouble>(JDouble.type)) {
-      return (value.as(JDouble.type)).doubleValue();
+      return value.as(JDouble.type).doubleValue();
     } else if (value.isA<JString>(JString.type)) {
-      return (value.as(JString.type)).toDartString();
+      return value.as(JString.type).toDartString();
     } else if (value.isA<JBoolean>(JBoolean.type)) {
-      return (value.as(JBoolean.type)).booleanValue();
+      return value.as(JBoolean.type).booleanValue();
     } else if (value.isA<JByteArray>(JByteArray.type)) {
       final JByteArray array = value.as(JByteArray.type);
       return array.getRange(0, array.length).buffer.asUint8List();
@@ -2839,7 +2833,7 @@ class _PigeonFfiCodec {
 
       return numValue.longValue;
     } else if (NSString.isA(value)) {
-      return (NSString.as(value)).toDartString();
+      return NSString.as(value).toDartString();
     } else if (ffi_bridge.${_classNamePrefix}PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.${_classNamePrefix}PigeonTypedData);
     } else if (NSArray.isA(value)) {
