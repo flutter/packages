@@ -720,6 +720,17 @@ final class DefaultCamera: NSObject, Camera {
       fileExtension = "heif"
     } else {
       fileExtension = "jpg"
+      if imageQuality < 100 {
+        settings = AVCapturePhotoSettings(format: [
+          AVVideoCodecKey: AVVideoCodecType.jpeg,
+          AVVideoCompressionPropertiesKey: [
+            AVVideoQualityKey: CGFloat(imageQuality) / 100.0
+          ],
+        ])
+        if mediaSettings.resolutionPreset == .max {
+          settings.isHighResolutionPhotoEnabled = true
+        }
+      }
     }
 
     if flashMode != .torch {
@@ -740,7 +751,6 @@ final class DefaultCamera: NSObject, Camera {
     let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
-      imageQuality: fileFormat == .jpeg && imageQuality < 100 ? imageQuality : nil,
       completionHandler: { [weak self] path, error in
         guard let strongSelf = self else { return }
 
