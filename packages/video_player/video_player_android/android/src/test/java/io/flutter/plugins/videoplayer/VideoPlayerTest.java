@@ -201,6 +201,7 @@ public final class VideoPlayerTest {
 
     InOrder inOrder = inOrder(mockExoPlayer);
     inOrder.verify(mockExoPlayer).stop();
+    inOrder.verify(mockExoPlayer).seekToDefaultPosition();
     inOrder.verify(mockExoPlayer).prepare();
     verify(mockExoPlayer, never()).seekTo(0L);
 
@@ -234,6 +235,7 @@ public final class VideoPlayerTest {
 
     InOrder inOrder = inOrder(mockExoPlayer);
     inOrder.verify(mockExoPlayer).stop();
+    inOrder.verify(mockExoPlayer).seekToDefaultPosition();
     inOrder.verify(mockExoPlayer).prepare();
     inOrder.verify(mockExoPlayer).play();
 

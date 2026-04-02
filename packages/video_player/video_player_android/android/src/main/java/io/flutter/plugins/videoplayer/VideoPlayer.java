@@ -126,8 +126,10 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
       // Reset the player pipeline before replay. Seeking from ENDED can enter a
       // very long buffering state on some physical devices.
       Log.d(
-          "VP_ANDROID", "[VideoPlayer] play() — state=ENDED, calling stop()+prepare() before play");
+          "VP_ANDROID",
+          "[VideoPlayer] play() — state=ENDED, calling stop()+seekToDefaultPosition()+prepare() before play");
       exoPlayer.stop();
+      exoPlayer.seekToDefaultPosition();
       exoPlayer.prepare();
       Log.d(
           "VP_ANDROID",
@@ -188,8 +190,15 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     if (stateBefore == STATE_ENDED) {
       Log.d(
           "VP_ANDROID",
-          "[VideoPlayer] seekTo(" + position + "ms) — state=ENDED, calling stop()+prepare() first");
+          "[VideoPlayer] seekTo("
+              + position
+              + "ms) — state=ENDED, calling stop()"
+              + (position <= 0 ? "+seekToDefaultPosition()" : "")
+              + "+prepare() first");
       exoPlayer.stop();
+      if (position <= 0) {
+        exoPlayer.seekToDefaultPosition();
+      }
       exoPlayer.prepare();
       Log.d(
           "VP_ANDROID",
