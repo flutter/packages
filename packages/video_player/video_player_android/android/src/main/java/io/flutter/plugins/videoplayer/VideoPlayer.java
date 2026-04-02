@@ -144,6 +144,20 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   @Override
   public void seekTo(long position) {
+    int stateBefore = exoPlayer.getPlaybackState();
+    if (stateBefore == STATE_ENDED) {
+      exoPlayer.stop();
+      if (position <= 0) {
+        exoPlayer.seekToDefaultPosition();
+      }
+      exoPlayer.prepare();
+
+      // For replay-to-start, the stop reset has already positioned at default
+      // position, so avoid an additional explicit seek call.
+      if (position <= 0) {
+        return;
+      }
+    }
     exoPlayer.seekTo(position);
   }
 
