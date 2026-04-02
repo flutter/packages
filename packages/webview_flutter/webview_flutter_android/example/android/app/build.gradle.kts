@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "io.flutter.plugins.webviewflutterexample"
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

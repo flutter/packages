@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "dev.flutter.plugins.shared_preferences_example"
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
