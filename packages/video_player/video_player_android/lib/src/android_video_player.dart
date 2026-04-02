@@ -11,6 +11,9 @@ import 'messages.g.dart' hide videoEvents;
 import 'messages.g.dart' as pigeon show videoEvents;
 import 'platform_view_player.dart';
 
+// ignore: avoid_print
+void _vpLog(String msg) => print('[VP_DART] $msg');
+
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
   return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
@@ -323,10 +326,16 @@ class _PlayerInstance {
   //     devices causes ExoPlayer to enter STATE_BUFFERING for up to 60 seconds,
   //     blocking subsequent play(). ExoPlayer is already at the end in
   //     STATE_ENDED so the seek is a no-op and can be safely skipped.
-  //   - play() seeks to 0 before playing to transition out of STATE_ENDED.
+  //   - seekTo(0) from the replay path is skipped to avoid native
+  //     seek-from-ended behavior; replay reset happens in native play().
   //   - STATE_BUFFERING events are suppressed as a safety net in case the seek
   //     was not skipped (e.g. duration is unknown).
   bool _isCompleted = false;
+  // Set when a seekTo(0) is requested after completion (the replay path from
+  // VideoPlayerController.play). The native seek is skipped and replay happens
+  // via play() to avoid slow seek-from-ended behavior on affected Android
+  // devices.
+  bool _hasPendingReplay = false;
   Completer<void>? _audioTrackSelectionCompleter;
 
   final VideoPlayerViewState viewState;
@@ -336,12 +345,15 @@ class _PlayerInstance {
   }
 
   Future<void> play() async {
+    _vpLog(
+      'play() — _isCompleted=$_isCompleted _hasPendingReplay=$_hasPendingReplay _isBuffering=$_isBuffering _durationMs=$_durationMs',
+    );
     if (_isCompleted) {
+      _vpLog(
+        'play() — completed state replay; forwarding play() without explicit seek',
+      );
       _isCompleted = false;
-      // ExoPlayer is in STATE_ENDED with no pending seek (the "park at end"
-      // seekTo(duration) was skipped). Seek to 0 first to transition out of
-      // STATE_ENDED; otherwise ExoPlayer will not start playing.
-      await _api.seekTo(0);
+      _hasPendingReplay = false;
     }
     return _api.play();
   }
@@ -359,6 +371,9 @@ class _PlayerInstance {
   }
 
   Future<void> seekTo(Duration position) {
+    _vpLog(
+      'seekTo(${position.inMilliseconds}ms) — _isCompleted=$_isCompleted _durationMs=$_durationMs',
+    );
     if (_isCompleted) {
       final int? duration = _durationMs;
       if (duration != null && position.inMilliseconds >= duration) {
@@ -366,11 +381,30 @@ class _PlayerInstance {
         // handler. ExoPlayer is already at the end in STATE_ENDED, so the seek
         // is a no-op visually but causes a ~60-second STATE_BUFFERING on
         // physical Android devices.
+        _vpLog(
+          'seekTo(${position.inMilliseconds}ms) — SKIPPED (park-at-end seek after completion)',
+        );
         return Future.value();
       }
+
+      if (position == Duration.zero) {
+        // Replay path (VideoPlayerController.play at end of video). Skip native
+        // seek from STATE_ENDED and let play() perform replay, as seeking from
+        // ended is what causes the long buffering delay on affected devices.
+        _hasPendingReplay = true;
+        _vpLog(
+          'seekTo(${position.inMilliseconds}ms) — SKIPPED (replay seek after completion)',
+        );
+        return Future.value();
+      }
+
       // User is deliberately seeking to a specific position after completion.
       // Reset completed state so buffering events flow normally again.
+      _vpLog(
+        'seekTo(${position.inMilliseconds}ms) — resetting _isCompleted, forwarding to native',
+      );
       _isCompleted = false;
+      _hasPendingReplay = false;
     }
     return _api.seekTo(position.inMilliseconds);
   }
@@ -426,6 +460,9 @@ class _PlayerInstance {
 
   void _setBuffering(bool buffering) {
     if (buffering != _isBuffering) {
+      _vpLog(
+        '_setBuffering($buffering) — changed (was $_isBuffering) _isCompleted=$_isCompleted',
+      );
       _isBuffering = buffering;
 
       _eventStreamController.add(
@@ -509,6 +546,7 @@ class _PlayerInstance {
             // currently be moved here since gathering the initialization state
             // should be synchronous with the state change.
             _isCompleted = false;
+            _hasPendingReplay = false;
           case PlatformPlaybackState.ended:
             _isCompleted = true;
             _eventStreamController.add(

@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.videoplayer;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.C;
@@ -53,12 +54,15 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
+    String stateName;
     PlatformPlaybackState platformState = PlatformPlaybackState.UNKNOWN;
     switch (playbackState) {
       case Player.STATE_BUFFERING:
+        stateName = "BUFFERING";
         platformState = PlatformPlaybackState.BUFFERING;
         break;
       case Player.STATE_READY:
+        stateName = "READY";
         platformState = PlatformPlaybackState.READY;
         if (!isInitialized) {
           isInitialized = true;
@@ -66,17 +70,36 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         }
         break;
       case Player.STATE_ENDED:
+        stateName = "ENDED";
         platformState = PlatformPlaybackState.ENDED;
         break;
       case Player.STATE_IDLE:
+        stateName = "IDLE";
         platformState = PlatformPlaybackState.IDLE;
         break;
+      default:
+        stateName = "UNKNOWN(" + playbackState + ")";
     }
+    Log.d(
+        "VP_ANDROID",
+        "[ExoPlayerEventListener] onPlaybackStateChanged → "
+            + stateName
+            + " pos="
+            + exoPlayer.getCurrentPosition()
+            + "ms"
+            + " playWhenReady="
+            + exoPlayer.getPlayWhenReady());
     events.onPlaybackStateChanged(platformState);
   }
 
   @Override
   public void onPlayerError(@NonNull final PlaybackException error) {
+    Log.e(
+        "VP_ANDROID",
+        "[ExoPlayerEventListener] onPlayerError: code="
+            + error.errorCode
+            + " msg="
+            + error.getMessage());
     if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
       // See
       // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
@@ -89,6 +112,15 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   @Override
   public void onIsPlayingChanged(boolean isPlaying) {
+    Log.d(
+        "VP_ANDROID",
+        "[ExoPlayerEventListener] onIsPlayingChanged → "
+            + isPlaying
+            + " state="
+            + exoPlayer.getPlaybackState()
+            + " pos="
+            + exoPlayer.getCurrentPosition()
+            + "ms");
     events.onIsPlayingStateUpdate(isPlaying);
   }
 

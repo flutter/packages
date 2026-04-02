@@ -189,19 +189,20 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void seekToCallsPrepareFirstWhenPlayerIsInEndedState() {
+  public void seekToZeroCallsStopAndPrepareWhenPlayerIsInEndedState() {
     // Regression test for https://github.com/flutter/flutter/issues/170737.
-    // Seeking from STATE_ENDED causes ~60-second STATE_BUFFERING on physical
-    // Android devices. Calling prepare() first resets through the fast
-    // IDLE→BUFFERING→READY path.
+    // Seeking from STATE_ENDED can cause ~60-second buffering on physical
+    // Android devices. Resetting via stop()+prepare() and skipping explicit
+    // seek-to-zero avoids the problematic seek path.
     VideoPlayer videoPlayer = createVideoPlayer();
 
     when(mockExoPlayer.getPlaybackState()).thenReturn(Player.STATE_ENDED);
     videoPlayer.seekTo(0L);
 
     InOrder inOrder = inOrder(mockExoPlayer);
+    inOrder.verify(mockExoPlayer).stop();
     inOrder.verify(mockExoPlayer).prepare();
-    inOrder.verify(mockExoPlayer).seekTo(0L);
+    verify(mockExoPlayer, never()).seekTo(0L);
 
     videoPlayer.dispose();
   }
@@ -219,6 +220,22 @@ public final class VideoPlayerTest {
 
     verify(mockExoPlayer, never()).prepare();
     verify(mockExoPlayer).seekTo(5000L);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void playCallsStopAndPrepareWhenPlayerIsInEndedState() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+    clearInvocations(mockExoPlayer);
+
+    when(mockExoPlayer.getPlaybackState()).thenReturn(Player.STATE_ENDED);
+    videoPlayer.play();
+
+    InOrder inOrder = inOrder(mockExoPlayer);
+    inOrder.verify(mockExoPlayer).stop();
+    inOrder.verify(mockExoPlayer).prepare();
+    inOrder.verify(mockExoPlayer).play();
 
     videoPlayer.dispose();
   }
