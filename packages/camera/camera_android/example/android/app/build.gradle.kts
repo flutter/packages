@@ -30,10 +30,8 @@ android {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
-        create("profile") {
-            initWith(getByName("debug"))
-            matchingFallbacks.add("debug")
-            matchingFallbacks.add("release")
+        getByName("profile") {
+            matchingFallbacks += listOf("debug", "release")
         }
     }
     lint {
