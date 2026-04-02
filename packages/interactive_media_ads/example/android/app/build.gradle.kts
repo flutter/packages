@@ -13,7 +13,7 @@ android {
 
     // #docregion android_desugaring
     compileOptions {
-        coreLibraryDesugaringEnabled = true
+        isCoreLibraryDesugaringEnabled = true
         // #enddocregion android_desugaring
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
