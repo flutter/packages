@@ -707,8 +707,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'No new changelog files found in the pending_changelogs folder.\n'
             '$useOverrideChangelogLabel'
             'Otherwise, please add a changelog entry with version:skip in the pending_changelogs folder as described in '
-            'the contributing guide.\n'
-            'current label: ${_getPRLabels()}\n',
+            'the contributing guide.\n',
           );
         } else {
           printError(
@@ -778,7 +777,8 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
       printError(
         'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
-        'Instead, create a pending changelog file in pending_changelogs folder.',
+        'Instead, create a pending changelog file in pending_changelogs folder.\n'
+        'Current label: ${_getPRLabels()}',
       );
       errors.add('CHANGELOG.md changed');
     }
@@ -786,7 +786,8 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       if (versionState != _CurrentVersionState.unchanged) {
         printError(
           'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
-          'Instead, create a pending changelog file in pending_changelogs folder.',
+          'Instead, create a pending changelog file in pending_changelogs folder.\n'
+          'Current label: ${_getPRLabels()}',
         );
         errors.add('pubspec.yaml version changed');
       }
