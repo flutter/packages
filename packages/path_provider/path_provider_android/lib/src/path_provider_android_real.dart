@@ -76,9 +76,13 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<List<String>?> getExternalStoragePaths({
     StorageDirectory? type,
   }) async {
+    final JString? directory = type != null
+        ? _toNativeStorageDirectory(type)
+        : null;
     final JArray<File?>? files = _applicationContext.getExternalFilesDirs(
-      type != null ? _toNativeStorageDirectory(type) : null,
+      directory,
     );
+    directory?.release();
     if (files != null) {
       final List<String> paths = _toStringList(files);
       files.release();
@@ -93,11 +97,7 @@ class PathProviderAndroid extends PathProviderPlatform {
     final List<String>? paths = await getExternalStoragePaths(
       type: StorageDirectory.downloads,
     );
-    if (paths != null && paths.isNotEmpty) {
-      return paths.first;
-    }
-
-    return null;
+    return paths?.firstOrNull;
   }
 }
 
