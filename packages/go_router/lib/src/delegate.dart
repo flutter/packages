@@ -124,7 +124,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     while (walker is ShellRouteMatch) {
       final NavigatorState potentialCandidate =
           walker.navigatorKey.currentState!;
-
       final ModalRoute<dynamic>? modalRoute = ModalRoute.of(
         potentialCandidate.context,
       );

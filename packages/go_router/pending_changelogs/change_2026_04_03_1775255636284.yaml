@@ -1,0 +1,3 @@
+changelog: |
+  - Fix StatefulShellRoute PopScope behavior to orchestrate back button pops to the root branch when inner navigators cannot pop.
+version: patch

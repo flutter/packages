@@ -1569,7 +1569,15 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         )
         .toList();
 
-    return widget.containerBuilder(context, widget, children);
+    return PopScope(
+      canPop: widget.currentIndex == 0,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (!didPop && widget.currentIndex != 0) {
+          goBranch(0);
+        }
+      },
+      child: widget.containerBuilder(context, widget, children),
+    );
   }
 }
 
