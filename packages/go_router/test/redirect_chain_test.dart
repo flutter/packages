@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -575,6 +577,256 @@ void main() {
         startsWith('redirect loop detected'),
       );
     });
+
+    testWidgets('async top-level redirect into route-level redirect', (
+      WidgetTester tester,
+    ) async {
+      // Async top-level: / -> /mid (async)
+      // Route-level on /mid: /mid -> /final (sync)
+      // Exercises the async boundary between top-level and route-level
+      // processing, and verifies route-level uses the post-top-level match.
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/mid',
+            builder: (BuildContext context, GoRouterState state) =>
+                const DummyScreen(),
+            redirect: (BuildContext context, GoRouterState state) => '/final',
+          ),
+          GoRoute(
+            path: '/final',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen(),
+          ),
+        ],
+        tester,
+        redirect: (BuildContext context, GoRouterState state) async {
+          await Future<void>.delayed(Duration.zero);
+          if (state.matchedLocation == '/') {
+            return '/mid';
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/final',
+      );
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets('async route-level redirect into sync top-level chain', (
+      WidgetTester tester,
+    ) async {
+      // Route-level on /src: /src -> /dst (async)
+      // Top-level: /dst -> /final (sync)
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'src',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+                redirect: (BuildContext context, GoRouterState state) async {
+                  await Future<void>.delayed(Duration.zero);
+                  return '/dst';
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/dst',
+            builder: (BuildContext context, GoRouterState state) =>
+                const DummyScreen(),
+          ),
+          GoRoute(
+            path: '/final',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen(),
+          ),
+        ],
+        tester,
+        initialLocation: '/src',
+        redirect: (BuildContext context, GoRouterState state) {
+          if (state.matchedLocation == '/dst') {
+            return '/final';
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/final',
+      );
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets('sync route-level redirect into async top-level chain', (
+      WidgetTester tester,
+    ) async {
+      // Route-level on /src: /src -> /dst (sync)
+      // Top-level: /dst -> /final (async)
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const HomeScreen(),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'src',
+                builder: (BuildContext context, GoRouterState state) =>
+                    const DummyScreen(),
+                redirect: (BuildContext context, GoRouterState state) => '/dst',
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/dst',
+            builder: (BuildContext context, GoRouterState state) =>
+                const DummyScreen(),
+          ),
+          GoRoute(
+            path: '/final',
+            builder: (BuildContext context, GoRouterState state) =>
+                const LoginScreen(),
+          ),
+        ],
+        tester,
+        initialLocation: '/src',
+        redirect: (BuildContext context, GoRouterState state) async {
+          await Future<void>.delayed(Duration.zero);
+          if (state.matchedLocation == '/dst') {
+            return '/final';
+          }
+          return null;
+        },
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        '/final',
+      );
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets(
+      'context disposal during async top-level redirect does not crash',
+      (WidgetTester tester) async {
+        // Simulate context disposal while an async top-level redirect is
+        // in flight. The router should handle this gracefully — not navigate
+        // to /target after the context is unmounted.
+        final redirectStarted = Completer<void>();
+        final proceedRedirect = Completer<void>();
+
+        final router = GoRouter(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const HomeScreen(),
+            ),
+            GoRoute(
+              path: '/target',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+            ),
+          ],
+          redirect: (BuildContext context, GoRouterState state) async {
+            if (state.matchedLocation == '/') {
+              redirectStarted.complete();
+              await proceedRedirect.future;
+              return '/target';
+            }
+            return null;
+          },
+          errorBuilder: (BuildContext context, GoRouterState state) =>
+              TestErrorScreen(state.error!),
+        );
+        addTearDown(router.dispose);
+
+        // Mount the router.
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pump();
+
+        // Wait for the redirect to start.
+        await redirectStarted.future;
+
+        // Unmount the MaterialApp.router, which disposes the router context.
+        await tester.pumpWidget(const SizedBox.shrink());
+
+        // Let the redirect complete after context is unmounted.
+        proceedRedirect.complete();
+        await tester.pumpAndSettle();
+
+        // The router should NOT have navigated to /target.
+        expect(find.byType(LoginScreen), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'context disposal during async route-level redirect does not crash',
+      (WidgetTester tester) async {
+        // Same as above but for route-level async redirects.
+        final redirectStarted = Completer<void>();
+        final proceedRedirect = Completer<void>();
+
+        final router = GoRouter(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const HomeScreen(),
+              redirect: (BuildContext context, GoRouterState state) async {
+                redirectStarted.complete();
+                await proceedRedirect.future;
+                return '/target';
+              },
+            ),
+            GoRoute(
+              path: '/target',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const LoginScreen(),
+            ),
+          ],
+          errorBuilder: (BuildContext context, GoRouterState state) =>
+              TestErrorScreen(state.error!),
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pump();
+
+        await redirectStarted.future;
+
+        // Unmount the MaterialApp.router.
+        await tester.pumpWidget(const SizedBox.shrink());
+
+        // Let the redirect complete after context is unmounted.
+        proceedRedirect.complete();
+        await tester.pumpAndSettle();
+
+        // The router should NOT have navigated to /target.
+        expect(find.byType(LoginScreen), findsNothing);
+      },
+    );
 
     testWidgets('top-level redirect chain works with router.go()', (
       WidgetTester tester,
