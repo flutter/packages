@@ -3,13 +3,14 @@
 // found in the LICENSE file.
 
 import 'package:jni/jni.dart';
+import 'package:jni_flutter/jni_flutter.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
 import 'path_provider.g.dart';
 
 /// The Android implementation of [PathProviderPlatform].
 class PathProviderAndroid extends PathProviderPlatform {
-  late final Context _applicationContext = Jni.androidApplicationContext.as(
+  late final Context _applicationContext = androidApplicationContext.as(
     Context.type,
   );
 
@@ -39,8 +40,8 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final File? file = _applicationContext.getCacheDir();
-    final String? path = file?.getPath()?.toDartString(releaseOriginal: true);
+    final File? file = _applicationContext.cacheDir;
+    final String? path = file?.path?.toDartString(releaseOriginal: true);
     file?.release();
     return path;
   }
@@ -49,7 +50,7 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<String?> getExternalStoragePath() async {
     final File? dir = _applicationContext.getExternalFilesDir(null);
     if (dir != null) {
-      final String? path = dir.getAbsolutePath()?.toDartString(
+      final String? path = dir.absolutePath?.toDartString(
         releaseOriginal: true,
       );
       dir.release();
@@ -61,7 +62,7 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<List<String>?> getExternalCachePaths() async {
-    final JArray<File?>? files = _applicationContext.getExternalCacheDirs();
+    final JArray<File?>? files = _applicationContext.externalCacheDirs;
     if (files != null) {
       final List<String> paths = _toStringList(files);
       files.release();
@@ -126,16 +127,16 @@ JString _toNativeStorageDirectory(StorageDirectory directory) {
 }
 
 List<String> _toStringList(JArray<File?> files) {
+  final List<File?> dartList = files.asDart();
   final paths = <String>[];
-  for (final file in files) {
+  for (final file in dartList) {
     if (file != null) {
-      final String? path = file.getAbsolutePath()?.toDartString(
+      final String? path = file.absolutePath?.toDartString(
         releaseOriginal: true,
       );
       if (path != null) {
         paths.add(path);
       }
-
       file.release();
     }
   }
