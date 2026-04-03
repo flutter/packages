@@ -58,23 +58,22 @@ Add the user permissions required by the IMA SDK for requesting ads in
 The IMA SDK requires library desugaring enabled, which you must do by setting
 `coreLibraryDesugaringEnabled true` and adding
 `coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'` as a dependency in the
-`android/app/build.gradle` file. For more details, see
+`android/app/build.gradle.kts` file. For more details, see
 [Java 11+ APIs available through desugaring with the nio specification](https://developer.android.com/studio/write/java11-nio-support-table).
 
-<?code-excerpt "example/android/app/build.gradle (android_desugaring)"?>
-```groovy
+<?code-excerpt "example/android/app/build.gradle.kts (android_desugaring)"?>
+```kotlin
 android {
 // ···
     compileOptions {
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
+        // ···
     }
     // ···
 }
 // ···
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     // ···
 }
 ```

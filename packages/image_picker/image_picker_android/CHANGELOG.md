@@ -1,8 +1,12 @@
-## 0.8.13+16
-
+## 0.8.13+17
 * Fixes gallery image/video selection on Android API 36+ returning no paths when
   `useAndroidPhotoPicker` was false. The plugin now uses the Android Photo Picker on API 36 and
   above regardless of that flag, avoiding a broken `ACTION_GET_CONTENT` result from the system UI.
+
+
+## 0.8.13+16
+
+* Bumps androidx.core:core from 1.17.0 to 1.18.0.
 
 ## 0.8.13+15
 
