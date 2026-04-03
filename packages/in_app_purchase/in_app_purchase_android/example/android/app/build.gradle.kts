@@ -16,13 +16,13 @@ try {
     logger.error("Release signing information not found.")
 }
 
-val appId: String = if (configured) keystoreProperties.getProperty("appId") ?: "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_USE" else "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_USE"
+val appId: String = keystoreProperties.getProperty("appId") ?: "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_USE"
 val keystoreStoreFile: File? = if (configured) rootProject.file(keystoreProperties.getProperty("storeFile")) else null
 val keystoreStorePassword = keystoreProperties.getProperty("storePassword")
 val keystoreKeyAlias = keystoreProperties.getProperty("keyAlias")
 val keystoreKeyPassword = keystoreProperties.getProperty("keyPassword")
-val vCode: Int = if (configured) (keystoreProperties.getProperty("versionCode")?.toInt() ?: 1) else 1
-val vName: String = if (configured) keystoreProperties.getProperty("versionName") ?: "0.0.1" else "0.0.1"
+val vCode: Int = keystoreProperties.getProperty("versionCode")?.toInt() ?: 1
+val vName: String = keystoreProperties.getProperty("versionName") ?: "0.0.1"
 
 if (appId == "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_USE") {
     configured = false
