@@ -1,3 +1,7 @@
+## 26.3.3
+
+* Updates `analyzer` dependency to support versions 10 through 12.
+
 ## 26.3.2
 
 * Updates `analyzer` dependency to support version 10.

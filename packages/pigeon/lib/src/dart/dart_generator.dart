@@ -159,10 +159,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       // in our own checked-in generated files.
       indent.writeln(
         '// ignore_for_file: public_member_api_docs, '
-        'non_constant_identifier_names, avoid_as, unnecessary_parenthesis, '
-        'prefer_null_aware_operators, omit_local_variable_types, '
-        'omit_obvious_local_variable_types, unnecessary_import, '
-        'no_leading_underscores_for_local_identifiers',
+        'non_constant_identifier_names, avoid_as, omit_local_variable_types, '
+        'omit_obvious_local_variable_types',
       );
     }
     indent.newln();
