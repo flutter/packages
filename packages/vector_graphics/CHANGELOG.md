@@ -1,6 +1,11 @@
-## NEXT
+## 1.1.21
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Corrected width/height parameter documentation in VectorGraphic widget.
+
+## 1.1.20
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Respect BoxFit parameter when viewbox is specified.
 
 ## 1.1.19
 

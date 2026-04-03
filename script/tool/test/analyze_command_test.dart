@@ -613,7 +613,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Unable to downgrade dependencies'),
+          contains('Unable to resolve downgraded dependencies'),
         ]),
       );
     });
@@ -758,7 +758,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
                 ),
@@ -1064,7 +1064,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 packages/package_a/lib/foo.dart
 ''',
@@ -1093,44 +1093,6 @@ packages/package_a/lib/foo.dart
   });
 
   group('Xcode analyze', () {
-    test('temporarily disables Swift Package Manager', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        platformSupport: <String, PlatformDetails>{
-          platformIOS: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-
-      final RepositoryPackage example = plugin.getExamples().first;
-      final String originalPubspecContents = example.pubspecFile
-          .readAsStringSync();
-      String? buildTimePubspecContents;
-      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(), <String>[], () {
-          buildTimePubspecContents = example.pubspecFile.readAsStringSync();
-        }),
-      ];
-
-      await runCapturingPrint(runner, <String>[
-        'analyze',
-        '--no-dart',
-        '--ios',
-      ]);
-
-      // Ensure that SwiftPM was disabled for the package.
-      expect(
-        originalPubspecContents,
-        isNot(contains('enable-swift-package-manager: false')),
-      );
-      expect(
-        buildTimePubspecContents,
-        contains('enable-swift-package-manager: false'),
-      );
-      // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
-    });
-
     group('iOS', () {
       test('skip if iOS is not supported', () async {
         createFakePlugin(
@@ -1707,7 +1669,7 @@ packages/package_a/$file
 .gemini/config.yaml
 AGENTS.md
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 packages/package_a/lib/foo.dart
 ''',

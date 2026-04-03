@@ -1,6 +1,6 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
@@ -191,7 +191,6 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 ## 5.1.0
 
 * Add reAuthenticate option to signInSilently to allow re-authentication to be requested
-
 * Updated Android lint settings.
 
 ## 5.0.7

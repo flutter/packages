@@ -1,3 +1,11 @@
+## 7.2.10
+
+* Updates build files from Groovy to Kotlin.
+
+## 7.2.9
+
+* Simplifies internal code for Kotlin/Java interoperability.
+
 ## 7.2.8
 
 * Bumps kotlin_version to 2.3.0.

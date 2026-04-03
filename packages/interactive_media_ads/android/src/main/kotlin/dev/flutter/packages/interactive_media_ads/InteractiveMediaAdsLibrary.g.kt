@@ -1532,7 +1532,7 @@ abstract class PigeonApiAdsManagerLoadedEvent(
    */
   abstract fun manager(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
-  ): com.google.ads.interactivemedia.v3.api.AdsManager
+  ): com.google.ads.interactivemedia.v3.api.AdsManager?
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdsManagerLoadedEvent and attaches it to [pigeon_instanceArg]. */
@@ -5569,7 +5569,7 @@ abstract class PigeonApiAdsRenderingSettings(
   /** The SDK will prioritize the media with MIME type on the list. */
   abstract fun getMimeTypes(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
-  ): List<String>
+  ): List<String>?
 
   /**
    * Maximum recommended bitrate.

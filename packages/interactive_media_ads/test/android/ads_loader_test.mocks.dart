@@ -608,18 +608,6 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
 class MockAdsManagerLoadedEvent extends _i1.Mock
     implements _i2.AdsManagerLoadedEvent {
   @override
-  _i2.AdsManager get manager =>
-      (super.noSuchMethod(
-            Invocation.getter(#manager),
-            returnValue: _FakeAdsManager_6(this, Invocation.getter(#manager)),
-            returnValueForMissingStub: _FakeAdsManager_6(
-              this,
-              Invocation.getter(#manager),
-            ),
-          )
-          as _i2.AdsManager);
-
-  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),

@@ -1,3 +1,7 @@
+## 2.5.5
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 2.5.4
 
 * Updates dependencies for the `shared_preferences_tool` DevTools extension and fixes related deprecations.

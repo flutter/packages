@@ -42,8 +42,15 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
         continue;
       }
 
-      builder.setCaptureRequestOption(
-          (CaptureRequest.Key<Object>) option.getKey(), option.getValue());
+      // Because Pigeon isn't down-casting from Dart num to Java Int,
+      // it needs to be done below.
+      var key = option.getKey();
+      var value = option.getValue();
+      if (CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE == key) {
+        value = ((Long) value).intValue();
+      }
+
+      builder.setCaptureRequestOption((CaptureRequest.Key<Object>) key, value);
     }
 
     return builder.build();

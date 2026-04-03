@@ -22,7 +22,7 @@ class CompanionAdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.height.toLong()
   }
 
-  override fun resourceValue(pigeon_instance: CompanionAd): String {
+  override fun resourceValue(pigeon_instance: CompanionAd): String? {
     return pigeon_instance.resourceValue
   }
 

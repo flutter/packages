@@ -17,8 +17,8 @@
 @property(nonatomic, assign) CVDisplayLinkRef displayLink;
 // A dispatch source to move display link callbacks to the main thread.
 @property(nonatomic, strong) dispatch_source_t displayLinkSource;
-// The plugin registrar, to get screen information.
-@property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+// The view provider, to get screen information.
+@property(nonatomic, weak) NSObject<FVPViewProvider> *viewProvider;
 @end
 
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
@@ -32,11 +32,11 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 @implementation FVPCoreVideoDisplayLink
 
-- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                         callback:(void (^)(void))callback {
+- (instancetype)initWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                            callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
-    _registrar = registrar;
+    _viewProvider = viewProvider;
     // Create and start the main-thread dispatch queue to drive frameUpdater.
     _displayLinkSource =
         dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
@@ -74,7 +74,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
     // TODO(stuartmorgan): Move this to init + a screen change listener; this won't correctly
     // handle windows being dragged to another screen until the next pause/play cycle. That will
     // likely require new plugin registrar APIs.
-    NSScreen *screen = self.registrar.view.window.screen;
+    NSScreen *screen = self.viewProvider.view.window.screen;
     if (screen) {
       CGDirectDisplayID viewDisplayID =
           (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue];

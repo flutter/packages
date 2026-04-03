@@ -529,20 +529,28 @@ class _OnEnterHandler {
         }
 
         if (callback != null) {
-          try {
-            await Future<void>.sync(callback);
-          } catch (error, stack) {
-            // Log error but don't crash - navigation already committed
-            log('Error in then callback: $error');
-            FlutterError.reportError(
-              FlutterErrorDetails(
-                exception: error,
-                stack: stack,
-                library: 'go_router',
-                context: ErrorDescription('while executing then callback'),
-              ),
-            );
-          }
+          // Defer the callback to a microtask so that router.go() (or
+          // similar) inside it does not trigger a re-entrant
+          // _processRouteInformation while the current parse is still
+          // in-flight. Without this, Flutter's Router mints a new
+          // transaction token for the re-entrant parse and silently
+          // discards the result due to token churn.
+          scheduleMicrotask(() async {
+            try {
+              await callback();
+            } catch (error, stack) {
+              // Log error but don't crash - navigation already committed
+              log('Error in then callback: $error');
+              FlutterError.reportError(
+                FlutterErrorDetails(
+                  exception: error,
+                  stack: stack,
+                  library: 'go_router',
+                  context: ErrorDescription('while executing then callback'),
+                ),
+              );
+            }
+          });
         }
 
         return matchList;

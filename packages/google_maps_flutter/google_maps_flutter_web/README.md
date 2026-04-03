@@ -32,7 +32,7 @@ Modify the `<head>` tag of your `web/index.html` to load the Google Maps JavaScr
 The Google Maps Web SDK splits some of its functionality in [separate libraries](https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import).
 
 If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
-circles or markers on a map), include it like this:
+circles or legacy markers on a map), include it like this:
 
 ```html
 <script
@@ -44,11 +44,25 @@ To request multiple libraries, separate them with commas:
 
 ```html
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,visualization,places">
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
 </script>
 ```
 
 Now you should be able to use the Google Maps plugin normally.
+
+## Advanced Markers
+
+The Google Maps SDK provides Advanced Markers, which replace the older legacy markers. Advanced Markers offer improved performance, richer customization (including scalable pins, custom HTML-like content, and styling options), and better behavior on vector maps such as collision management and altitude control. Legacy Marker APIs are deprecated, and new features will only be available through the Advanced Marker system. 
+
+If your app uses Advanced Markers, include `marker` library like this:
+```html
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=marker">
+</script>
+```
+
+For full details, see Google's official documentation:
+https://developers.google.com/maps/documentation/javascript/advanced-markers/overview
 
 ## Marker clustering
 

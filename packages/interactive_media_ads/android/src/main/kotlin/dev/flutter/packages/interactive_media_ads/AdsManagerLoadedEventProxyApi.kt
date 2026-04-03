@@ -15,7 +15,7 @@ import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
  */
 class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsManagerLoadedEvent(pigeonRegistrar) {
-  override fun manager(pigeon_instance: AdsManagerLoadedEvent): AdsManager {
+  override fun manager(pigeon_instance: AdsManagerLoadedEvent): AdsManager? {
     return pigeon_instance.adsManager
   }
 }

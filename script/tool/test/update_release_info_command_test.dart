@@ -779,4 +779,235 @@ packages/a_package/test/plugin_test.dart
       );
     });
   });
+
+  group('batch release', () {
+    test('creates pending changelog for bugfix', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
+      package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
+      const originalChangelog = '''
+## 1.0.0
+
+* Previous changes.
+''';
+      package.changelogFile.writeAsStringSync(originalChangelog);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--version=bugfix',
+        '--changelog',
+        'A change.',
+      ]);
+
+      final String version = package.parsePubspec().version?.toString() ?? '';
+      expect(version, '1.0.0');
+      expect(package.changelogFile.readAsStringSync(), originalChangelog);
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Created pending changelog entry: change_'),
+        ]),
+      );
+
+      final List<File> pendingFiles = package.pendingChangelogsDirectory
+          .listSync()
+          .whereType<File>()
+          .toList();
+      expect(pendingFiles, hasLength(1));
+      final String content = pendingFiles.first.readAsStringSync();
+      expect(content, contains('changelog: |\n  - A change.'));
+      expect(content, contains('version: patch'));
+    });
+
+    test('creates pending changelog for minor', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
+      package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--version=minor',
+        '--changelog',
+        'A change.',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Created pending changelog entry: change_'),
+        ]),
+      );
+
+      final List<File> pendingFiles = package.pendingChangelogsDirectory
+          .listSync()
+          .whereType<File>()
+          .toList();
+      expect(pendingFiles, hasLength(1));
+      final String content = pendingFiles.first.readAsStringSync();
+      expect(content, contains('version: minor'));
+    });
+
+    test('creates pending changelog for next (skip)', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
+      package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--version=next',
+        '--changelog',
+        'A change.',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Created pending changelog entry: change_'),
+        ]),
+      );
+
+      final List<File> pendingFiles = package.pendingChangelogsDirectory
+          .listSync()
+          .whereType<File>()
+          .toList();
+      expect(pendingFiles, hasLength(1));
+      final String content = pendingFiles.first.readAsStringSync();
+      expect(content, contains('version: skip'));
+    });
+
+    test(
+      'creates pending changelog for minimal with publish-worthy changes',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '1.0.0',
+        );
+        package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+        package.pendingChangelogsDirectory.createSync();
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
+packages/a_package/lib/plugin.dart
+''',
+                ),
+              ),
+            ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=minimal',
+          '--changelog',
+          'A change.',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              RegExp(
+                r'  Created pending changelog entry: change_\d{4}_\d{2}_\d{2}_\d+\.yaml',
+              ),
+            ),
+          ]),
+        );
+
+        final List<File> pendingFiles = package.pendingChangelogsDirectory
+            .listSync()
+            .whereType<File>()
+            .toList();
+        expect(pendingFiles, hasLength(1));
+        final String content = pendingFiles.first.readAsStringSync();
+        expect(content, contains('version: patch'));
+      },
+    );
+
+    test('skips for minimal with no changes (batch mode)', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
+      package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
+packages/different_package/lib/foo.dart
+''',
+              ),
+            ),
+          ];
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-release-info',
+        '--version=minimal',
+        '--changelog',
+        'A change.',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No changes to package'),
+          contains('Skipped 1 package'),
+        ]),
+      );
+      // No pending changelog should be created.
+      expect(package.pendingChangelogsDirectory.existsSync(), isFalse);
+    });
+
+    test('fails for pre-release version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0-dev.1',
+      );
+      package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      const originalChangelog = '''
+## 1.0.0-dev.1
+
+* Previous changes.
+''';
+      package.changelogFile.writeAsStringSync(originalChangelog);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>[
+          'update-release-info',
+          '--version=bugfix',
+          '--changelog',
+          'A change.',
+        ],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output.join('\n'),
+        contains(
+          'This command does not support batch releases packages with pre-release versions.\n'
+          '    Pre-release version: 1.0.0-dev.1',
+        ),
+      );
+    });
+  });
 }

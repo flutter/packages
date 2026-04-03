@@ -1,3 +1,7 @@
+## 6.4.1
+
+* Updates example app to current APIs.
+
 ## 6.4.0
 
 * Improves compatibility with `UIScene`.

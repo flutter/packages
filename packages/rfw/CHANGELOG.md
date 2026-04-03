@@ -1,3 +1,11 @@
+## 1.1.3
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 1.1.2
+
+* Removes outdated call for feedback from the README.
+
 ## 1.1.1
 
 * Removes obsolete scripting language integration section in README.md.

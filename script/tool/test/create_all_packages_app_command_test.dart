@@ -11,6 +11,7 @@ import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
+import 'package:yaml/yaml.dart';
 
 import 'mocks.dart';
 import 'util.dart';
@@ -491,9 +492,37 @@ android {
         everyElement(
           (String line) =>
               !line.contains('IPHONEOS_DEPLOYMENT_TARGET') ||
-              line.contains('14.0'),
+              line.contains('15.0'),
         ),
       );
+    });
+
+    test('disables Swift Package Manager if requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--no-swift-package-manager',
+      ]);
+
+      final Pubspec pubspec = command.app.parsePubspec();
+      final flutterConfig = pubspec.flutter?['config'] as YamlMap?;
+      expect(flutterConfig?['enable-swift-package-manager'], false);
+    });
+
+    test('enables Swift Package Manager if requested', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>[
+        'create-all-packages-app',
+        '--swift-package-manager',
+      ]);
+
+      final Pubspec pubspec = command.app.parsePubspec();
+      final flutterConfig = pubspec.flutter?['config'] as YamlMap?;
+      expect(flutterConfig?['enable-swift-package-manager'], true);
     });
 
     test('calls flutter pub get', () async {
@@ -653,6 +682,32 @@ platform :osx, '10.11'
           everyElement(
             (String line) =>
                 !line.contains('platform :osx') || line.contains("'10.15'"),
+          ),
+        );
+      },
+      // Podfile is only generated (and thus only edited) on macOS.
+      skip: !io.Platform.isMacOS,
+    );
+
+    test(
+      'macOS skips change to Podfile if file does not exist',
+      () async {
+        writeFakeFlutterCreateOutput(testRoot);
+        createFakePlugin('plugina', packagesDir);
+
+        final File podfileFile = RepositoryPackage(
+          command.packagesDir.parent.childDirectory(allPackagesProjectName),
+        ).platformDirectory(FlutterPlatform.macos).childFile('Podfile');
+        podfileFile.deleteSync();
+        expect(podfileFile.existsSync(), isFalse);
+
+        final List<String> prints = await runCapturingPrint(runner, <String>[
+          'create-all-packages-app',
+        ]);
+        expect(
+          prints,
+          contains(
+            'Unable to find ${podfileFile.path} for updating. Skipping.',
           ),
         );
       },

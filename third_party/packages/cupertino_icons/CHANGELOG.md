@@ -1,6 +1,7 @@
-## NEXT
+## 1.0.9
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Removes empty Dart file.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 1.0.8
 

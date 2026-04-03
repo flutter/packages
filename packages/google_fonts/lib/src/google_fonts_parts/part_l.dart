@@ -4677,22 +4677,57 @@ class PartL {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '49d67b6c3953d003d1e6d90205fd1402430e9449a11e76e17b7cb0247620122f',
-        101016,
+        '61bc993b7cb718c9783207e6d3fac74d629933bb226c775a6afc9269aeb9c6b8',
+        106704,
       ),
       const GoogleFontsVariant(
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c16e5ba1d326f7a315dff98c2fb0eeb43428e065ebe50d5d4641a7bacfbc4323',
-        108140,
+        'd26bd908687ce2ea8f49da4c8c3901a12296bf01c9039733bb8428b8422b8d57',
+        106856,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '74be949099703f0b733ab2814436c0c442b75a4783d1b0e375d333db06ff5187',
+        106824,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fb2cb8822753fcaee51da5acee4913832af2fd1277c480ab26315d15f33d1af5',
-        100788,
+        '7a36d00655348c5478a3d3097d0c712503d1aa33fb9df8787c4d1f4ca9e4e4e7',
+        106728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '6b02899f6595f645e1e2eac3d5db757e223fa4177af4cd4ad1403e7ae906a6ae',
+        109724,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '58f70fe426368a8231980dd49e4b3514c47ab618208ce47b9252e36bb5cc6b22',
+        110056,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'f0a6d542fad1c0017a203378c23247b9e23492856d9b5d4a23dcded8e3e54d59',
+        110156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '576fadc740609d9c091ba38a74087b4fb48d09bad40f3f68a71096fd07ee6427',
+        110008,
       ),
     };
 
@@ -5462,6 +5497,184 @@ class PartL {
       labelLarge: lifeSavers(textStyle: textTheme.labelLarge),
       labelMedium: lifeSavers(textStyle: textTheme.labelMedium),
       labelSmall: lifeSavers(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Lilex font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Lilex
+  static TextStyle lilex({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b99f24a5b03de63a46b12b6a782bef7bf5c7d7fd8703940486dd31a6e126225d',
+        125384,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f6bcae54f4f161c3036318990a15279a85a3066abc10d3616445f26ef4b47457',
+        125400,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4a73c904717317ee1f04ef9b007c5cb8e60dcbf881c75c1c8ac386262ac6add8',
+        125228,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd13db5cb95b89b9cf17aaba16bd6eff20234fa5a36bbe7171845833abb718c45',
+        125132,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '665b957d9f9017921d00a0576f9f3c508383519d2c0cb7e717e5590ee890c206',
+        125088,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '55d03e426a51015e42d2f995912a0201be6e1d390e3a191a61656a293829ed11',
+        125068,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '88ba76240295022e24ebf9b23d63e09fbec5603c4e88ad8927f23c135ca406a2',
+        124828,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c8345662572856f246d73f5de0b0da0db79cd48b9f541cbae72333a68e7e0e54',
+        128696,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '1fa7b14c8a17c2ffc9880c2a579da57a816b6c71b5829ce2d029b36a26c20bd4',
+        128772,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4e6afa0b0d2b3b93c5c110fc1dbfc4103358eed5ecffe1c67c4e114d30cfc3fb',
+        128648,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '063782c31c02abc4bdbe3ddce0f09e1a970ca23bd95baf37ee8ef17fde97edcf',
+        128512,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c097c3ff2fab7dfd6c3079371934aecc811d1af3e97eca140670d250822f4884',
+        128588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'a8cf7c01d6fd0bfc862aecd10bc1b84adf2cb655a572803d00beacc399ae08a1',
+        128552,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '04016f81d08ea76ec84641fa9e03e657990015a46ae58519f5381b8b858e8e56',
+        128320,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Lilex',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Lilex font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Lilex
+  static TextTheme lilexTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: lilex(textStyle: textTheme.displayLarge),
+      displayMedium: lilex(textStyle: textTheme.displayMedium),
+      displaySmall: lilex(textStyle: textTheme.displaySmall),
+      headlineLarge: lilex(textStyle: textTheme.headlineLarge),
+      headlineMedium: lilex(textStyle: textTheme.headlineMedium),
+      headlineSmall: lilex(textStyle: textTheme.headlineSmall),
+      titleLarge: lilex(textStyle: textTheme.titleLarge),
+      titleMedium: lilex(textStyle: textTheme.titleMedium),
+      titleSmall: lilex(textStyle: textTheme.titleSmall),
+      bodyLarge: lilex(textStyle: textTheme.bodyLarge),
+      bodyMedium: lilex(textStyle: textTheme.bodyMedium),
+      bodySmall: lilex(textStyle: textTheme.bodySmall),
+      labelLarge: lilex(textStyle: textTheme.labelLarge),
+      labelMedium: lilex(textStyle: textTheme.labelMedium),
+      labelSmall: lilex(textStyle: textTheme.labelSmall),
     );
   }
 

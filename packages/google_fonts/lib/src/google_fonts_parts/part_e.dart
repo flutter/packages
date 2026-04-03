@@ -2569,6 +2569,212 @@ class PartE {
     );
   }
 
+  /// Applies the Elms Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Elms+Sans
+  static TextStyle elmsSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '28f9865d37e4bf3aff9a7bcce2531906091a48ac86c242b9ef049cab9235267d',
+        92556,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '36bc1ca4531f2df69f5264816debcfbff3bbcc58c84027a2da8cb743e6ca1207',
+        92676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a7f679e28cd4fdde44362ac96448e87fa1506815ef36466bd677ac6c4f5b82ac',
+        92636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5905751d375a363b74f4209b0752310cc483bd60e0d1e9f06c6412340c62f6dc',
+        92752,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '77b5781062d34f2795d9b94798b33b583894e0da0f625d8aefad763823bfe791',
+        92500,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '96e3a57150190d3a9a329f4a430c1c106a3c773e1b47b37f08058604618146ea',
+        92600,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e24c5f5d321dc3c55ac17f5e18b06afa850766ae012de266d978ec3b1840ce15',
+        92572,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c6184128d8272d0595db7e863f2ec40ce9e0cc4f47fb807df24b2ca1c447df5a',
+        92572,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '35592732d58b57ae9b61d4b3896608af94220648c02164c2f121394133c88455',
+        92308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '0cb04dc5fcc305142ac0c38156558009ba33e609065551d36d9c8def1d26b68d',
+        95196,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ece9b2e87047da263a8553d38c2842e8aa92b8bc16fe99d4dff7e47dfd06fc9f',
+        95408,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '9bd624cadfc59da7ffdd2f170ebf18cf3a97a9d8248ac6a77cc32b427a140305',
+        95308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'd2c3ae84e4097c17f954643cb7080afb8625d3a90349fa8c481076e75185f810',
+        95312,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '541ea0bbcb342d49b27eb3a49ce73f0377ffb988bc3694ac86a548e0e20747b0',
+        95168,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4035083bdc9ec4ab63f8a28f85730c9fc12d025b7c0c648c63294cbd9e2b15e3',
+        95364,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'faa8daab9de95eb58e791950b95cbe535ebb6e08cf844b26427634ce7d146d1e',
+        95220,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '9f2c706d903bae5ec11b7fda2f46269234ea5c4be6fc7277ae6f67ba770a5fea',
+        95208,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e858340de7eed67714fab471869f629edf90eeb2673cfc9f8f894eecfc79b6e0',
+        94860,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ElmsSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Elms Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Elms+Sans
+  static TextTheme elmsSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: elmsSans(textStyle: textTheme.displayLarge),
+      displayMedium: elmsSans(textStyle: textTheme.displayMedium),
+      displaySmall: elmsSans(textStyle: textTheme.displaySmall),
+      headlineLarge: elmsSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: elmsSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: elmsSans(textStyle: textTheme.headlineSmall),
+      titleLarge: elmsSans(textStyle: textTheme.titleLarge),
+      titleMedium: elmsSans(textStyle: textTheme.titleMedium),
+      titleSmall: elmsSans(textStyle: textTheme.titleSmall),
+      bodyLarge: elmsSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: elmsSans(textStyle: textTheme.bodyMedium),
+      bodySmall: elmsSans(textStyle: textTheme.bodySmall),
+      labelLarge: elmsSans(textStyle: textTheme.labelLarge),
+      labelMedium: elmsSans(textStyle: textTheme.labelMedium),
+      labelSmall: elmsSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Elsie font family from Google Fonts to the
   /// given [textStyle].
   ///
