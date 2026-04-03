@@ -26,8 +26,8 @@ jobs:
       # In that case, the workflow will exit and complete successfully.
       - name: create batch release branch
         run: |
-          git config --global user.name ${{ secrets.USER_NAME }}
-          git config --global user.email ${{ secrets.USER_EMAIL }}
+          git config --global user.name "flutteractionsbot"
+          git config --global user.email "fluttergithubbot@gmail.com"
           dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE} --branch=${BRANCH_NAME} --remote=origin
         env:
           GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
@@ -57,7 +57,7 @@ jobs:
           ref: ${{ env.BRANCH_NAME }}
       - name: Create batch release PR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
         run: |
           gh pr create \
             --base "release-${{ github.event.client_payload.package }}" \
