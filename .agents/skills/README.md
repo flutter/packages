@@ -4,7 +4,7 @@ Welcome to the `.agent/skills` directory. This directory contains agent skills d
 
 ## Base guidance
 
-flutter/packages follows the same guidenace that flutter/flutter uses.
+flutter/packages follows the same guidance that flutter/flutter uses.
 https://github.com/flutter/flutter/blob/master/.agents/skills/README.md
 
 ## Packages specific guidance
