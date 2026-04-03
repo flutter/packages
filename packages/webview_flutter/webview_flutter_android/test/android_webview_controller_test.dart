@@ -2072,21 +2072,23 @@ void main() {
       mockWebView: mockWebView,
     );
 
-    await controller.setInsetsForWebContentToIgnore(<AndroidWebViewInsets>[
-      AndroidWebViewInsets.systemBars,
-      AndroidWebViewInsets.displayCutout,
-    ]);
+    for (final AndroidWebViewInsets inset in AndroidWebViewInsets.values) {
+      await controller.setInsetsForWebContentToIgnore(<AndroidWebViewInsets>[
+        inset,
+      ]);
 
-    verify(
-      mockWebView.setInsetListenerToSetInsetsToZero(
-        argThat(
-          containsAll(<android_webview.WindowInsetsType>[
-            android_webview.WindowInsetsType.systemBars,
-            android_webview.WindowInsetsType.displayCutout,
-          ]),
+      verify(
+        mockWebView.setInsetListenerToSetInsetsToZero(
+          <android_webview.WindowInsetsType>[
+            android_webview.WindowInsetsType.values.firstWhere((
+              android_webview.WindowInsetsType nativeInset,
+            ) {
+              return nativeInset.name == inset.name;
+            }),
+          ],
         ),
-      ),
-    ).called(1);
+      ).called(1);
+    }
   });
 
   group('AndroidWebViewWidget', () {
