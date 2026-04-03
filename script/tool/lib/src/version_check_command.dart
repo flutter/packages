@@ -251,6 +251,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
       'post-release-${pubspec.name}',
     );
     bool versionChanged;
+    printError('_prLabels $_prLabels\n\n\n\n');
 
     if (usesBatchRelease && !hasPostReleaseLabel) {
       versionChanged = await _validatePendingChangeForBatchReleasePackage(
@@ -778,7 +779,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       printError(
         'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
         'Instead, create a pending changelog file in pending_changelogs folder.\n'
-        'Current label: ${_getPRLabels()}',
+        'Current label: ${_prLabels}',
       );
       errors.add('CHANGELOG.md changed');
     }
@@ -787,7 +788,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         printError(
           'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
           'Instead, create a pending changelog file in pending_changelogs folder.\n'
-          'Current label: ${_getPRLabels()}',
+          'Current label: ${_prLabels}',
         );
         errors.add('pubspec.yaml version changed');
       }
