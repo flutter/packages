@@ -707,7 +707,8 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'No new changelog files found in the pending_changelogs folder.\n'
             '$useOverrideChangelogLabel'
             'Otherwise, please add a changelog entry with version:skip in the pending_changelogs folder as described in '
-            'the contributing guide.\n',
+            'the contributing guide.\n'
+            'current label: ${_getPRLabels()}\n',
           );
         } else {
           printError(
