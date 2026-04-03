@@ -789,7 +789,9 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     // This checks for android/ rather than using pluginSupportsPlatform because
     // Dart-only implementations (e.g., usin jnigen) won't have this
     // configuration since there's no native plugin code to check.
-    if (!enclosingPackage.directory.childDirectory('android').existsSync()) {
+    if (!enclosingPackage
+        .platformDirectory(FlutterPlatform.android)
+        .existsSync()) {
       return true;
     }
     final String enclosingPackageName = enclosingPackage.directory.basename;
