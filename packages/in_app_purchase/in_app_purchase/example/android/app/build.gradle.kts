@@ -19,7 +19,7 @@ val keystoreStoreFile = if (configured) rootProject.file(keystoreProperties.getP
 val keystoreStorePassword = keystoreProperties.getProperty("storePassword")
 val keystoreKeyAlias = keystoreProperties.getProperty("keyAlias")
 val keystoreKeyPassword = keystoreProperties.getProperty("keyPassword")
-val versionCodeVal = keystoreProperties.getProperty("versionCode").toInt() ?: 1
+val versionCodeVal = keystoreProperties.getProperty("versionCode")?.toInt() ?: 1
 val versionNameVal = keystoreProperties.getProperty("versionName") ?: "0.0.1"
 
 if (appId == "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_USE") {

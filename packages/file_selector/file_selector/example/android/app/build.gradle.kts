@@ -18,12 +18,6 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    sourceSets {
-        named("main") {
-            java.srcDirs("src/main/kotlin")
-        }
-    }
-
     defaultConfig {
         applicationId = "dev.flutter.plugins.file_selector_example"
         minSdk = flutter.minSdkVersion

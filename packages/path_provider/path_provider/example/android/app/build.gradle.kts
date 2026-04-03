@@ -46,6 +46,4 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1")
 }
