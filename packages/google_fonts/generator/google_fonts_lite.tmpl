@@ -20,10 +20,7 @@ class GoogleFontsLite {
     {{/fontEntries}}
   };
   
-  static void loadFont(String fontFamily) {
-    googleFontsTextStyle(
-      fontFamily: fontFamily,
-      fonts: fontsMap[fontFamily]!,
-    );
+  static TextStyle getFont(String fontFamily) {
+    return googleFontsTextStyle(fontFamily: fontFamily, fonts: fontsMap[fontFamily]!);
   }
 }
