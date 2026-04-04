@@ -3,6 +3,7 @@ description: A Flutter package to use fonts from fonts.google.com. Supports HTTP
 repository: https://github.com/flutter/packages/tree/main/packages/google_fonts
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_fonts%22
 version: 8.2.1
+publish_to: none
 
 environment:
   sdk: ^3.10.0

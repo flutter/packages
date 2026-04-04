@@ -33,7 +33,7 @@ const int _fakeResponseLengthInBytes = 28;
 // Computed by converting _fakeResponse to bytes and getting sha 256 hash.
 const String _fakeResponseHash = '1194f6ffe4d2f05258573616a77932c38041f3102763096c19437c3db1818a04';
 
-final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
+const GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
   _fakeResponseHash,
   _fakeResponseLengthInBytes,
 );
