@@ -12,6 +12,285 @@ import '../google_fonts_variant.dart';
 
 /// Methods for fonts starting with 'S'.
 class PartS {
+  /// Applies the SN Pro font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/SN+Pro
+  static TextStyle snPro({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9409e35dfcf1a51a31ff0a80fc16fa4a5c87d28d7257a7459b252caf7e1cf7a7',
+        148400,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '99c2289292563c2a70c1d0553f4a7991f972fa7e6131dad7935c0283d2936cf1',
+        148660,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1f94e2544969f54ffed528695746875430562458b52d3cf1d055c3fc45e2d954',
+        148624,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f4d76159dc58e2b30abc7cbfab2cb179df1d086ceafceca1850e0c9a17e86d18',
+        148464,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3c3d634046c9b5773a6d4616d2090918cbce7b6d011c3ea20fcc44a1ea572d54',
+        148468,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '78dcff8946c0b1cf789a43f0ae42fbe9e18b18bf97b463a0c03991ba8c2c7c7f',
+        148416,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e63b2682966c9ee5a43024c9067278cd774da3e933870dab7bcb456e4ccee3bc',
+        148468,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e163fb41740852b1749568176b55d3f18ec67b2528a351a4f4cee9c9604dc262',
+        148020,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '0a91f03ac802c2a3cab00349ed4bbe0b6bf5d243ef1fb91c4e008da7cdaf0a75',
+        151612,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'a90a0bb800bb7aa0c1f6381bc40f6b1ae516d3145a45d0e38786d0419f21b3ea',
+        151844,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'b190679c371b8e964a8819eeb3a8a17080564276ab6cb8dcfe1f704e1bd77bf9',
+        151792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'b2313ba8ee891246d4e0087feb520fa1150cf8f68c40664a39cd0259fc6f4f3c',
+        151808,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '6ea77677015099a2c1a86e3f1b04a3ddf6febce8144f792911d7bd1f57810f0f',
+        151804,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '688491fde29a59a664a3ac8f66cf94301f0dd8351e2ba126ed166b5a40c6fb8e',
+        151712,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '52027b3c8748381067d432024c6c1a5819420f0f94150b450cb77da6268879da',
+        151776,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '6ea9e3d94e7c335bab0c33d6c5f17b99be0a4598f0a03a82e5b22c2980a01d0e',
+        151324,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'SNPro',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the SN Pro font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/SN+Pro
+  static TextTheme snProTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: snPro(textStyle: textTheme.displayLarge),
+      displayMedium: snPro(textStyle: textTheme.displayMedium),
+      displaySmall: snPro(textStyle: textTheme.displaySmall),
+      headlineLarge: snPro(textStyle: textTheme.headlineLarge),
+      headlineMedium: snPro(textStyle: textTheme.headlineMedium),
+      headlineSmall: snPro(textStyle: textTheme.headlineSmall),
+      titleLarge: snPro(textStyle: textTheme.titleLarge),
+      titleMedium: snPro(textStyle: textTheme.titleMedium),
+      titleSmall: snPro(textStyle: textTheme.titleSmall),
+      bodyLarge: snPro(textStyle: textTheme.bodyLarge),
+      bodyMedium: snPro(textStyle: textTheme.bodyMedium),
+      bodySmall: snPro(textStyle: textTheme.bodySmall),
+      labelLarge: snPro(textStyle: textTheme.labelLarge),
+      labelMedium: snPro(textStyle: textTheme.labelMedium),
+      labelSmall: snPro(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the STIX Two Math font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/STIX+Two+Math
+  static TextStyle stixTwoMath({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e96503fbe1726c39cb6c3437bb239b40afc1262997dd33eda69397b6708631b5',
+        732256,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'STIXTwoMath',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the STIX Two Math font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/STIX+Two+Math
+  static TextTheme stixTwoMathTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: stixTwoMath(textStyle: textTheme.displayLarge),
+      displayMedium: stixTwoMath(textStyle: textTheme.displayMedium),
+      displaySmall: stixTwoMath(textStyle: textTheme.displaySmall),
+      headlineLarge: stixTwoMath(textStyle: textTheme.headlineLarge),
+      headlineMedium: stixTwoMath(textStyle: textTheme.headlineMedium),
+      headlineSmall: stixTwoMath(textStyle: textTheme.headlineSmall),
+      titleLarge: stixTwoMath(textStyle: textTheme.titleLarge),
+      titleMedium: stixTwoMath(textStyle: textTheme.titleMedium),
+      titleSmall: stixTwoMath(textStyle: textTheme.titleSmall),
+      bodyLarge: stixTwoMath(textStyle: textTheme.bodyLarge),
+      bodyMedium: stixTwoMath(textStyle: textTheme.bodyMedium),
+      bodySmall: stixTwoMath(textStyle: textTheme.bodySmall),
+      labelLarge: stixTwoMath(textStyle: textTheme.labelLarge),
+      labelMedium: stixTwoMath(textStyle: textTheme.labelMedium),
+      labelSmall: stixTwoMath(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the STIX Two Text font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -664,15 +943,15 @@ class PartS {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6696154ab5f0bb3179449135fef6eba68202e27c6ba62ae0b8f300dd40dec950',
-        161600,
+        '0ed1bafb09fca4e41240eadf9d922201bb198cb515db107a834d8f33ea2e1653',
+        160880,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '96da399cad53ca8da35ae947702a78424754e7e616abcfa7d56da8da9d5abac2',
-        161516,
+        '606b2075181ddcf99482c394284d584451696d8ca079cd7f03cc6d16c0845384',
+        160768,
       ),
     };
 
@@ -1020,12 +1299,12 @@ class PartS {
     );
   }
 
-  /// Applies the Saira Stencil One font family from Google Fonts to the
+  /// Applies the Saira Stencil font family from Google Fonts to the
   /// given [textStyle].
   ///
   /// See:
-  ///  * https://fonts.google.com/specimen/Saira+Stencil+One
-  static TextStyle sairaStencilOne({
+  ///  * https://fonts.google.com/specimen/Saira+Stencil
+  static TextStyle sairaStencil({
     TextStyle? textStyle,
     Color? color,
     Color? backgroundColor,
@@ -1048,17 +1327,136 @@ class PartS {
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bc98cf4576b65e13329ca0f9386fef355aa624a569d3563f4b2fb0928792f756',
+        69204,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '59771faaa6ba833cd26866f9a1b52cdef1bb48592056f5d5c812d0b2dc758e2c',
+        69152,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f1651de2adccde4cf96e42a9eebdc9678c3e18d75e821bb63075e7b763094c3f',
+        69064,
+      ),
+      const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b1e3f7ae150fbe7ee82028bd1f61c1cfe28f94350fff5e95246547ecf3b4ec60',
-        67460,
+        '794214e8cbd46cc3aaec33791126eb1b8e22528190cb50ee99587a643f9aec68',
+        70784,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'acf1b13b7e20b37805fb88d4722a1e066fa6bb3cb0e859ab80cec84b4a06b017',
+        70824,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8075cf07282d6edeab70c2729cb759bbea9db117f4fd9666f751dc52c287af85',
+        71044,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '03c87e3625a67750ee5d65227f1e6463ccc30ed0e1a4b614487b3bd4ba884d1b',
+        71016,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6412ca0449a8fc48a5cb5b128795879580a1efc42ce7551a0dc48b184145eadd',
+        71060,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2f0ca061ef164342be9b94c1bf734297a1e59d02bc431a33c0f4386795539a01',
+        70632,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4b8967666edb7d13cbeba68e95bdfcafd3c01133fd1b2743f99404d676a50a0e',
+        70636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '8a459221c38a2a66472a99ac7c82d947fd5c733b9b0ef35e5f1cf25510312dd7',
+        71040,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '84d56a042ff00bede955f4852568d4423c8531e84920b4b6f14d2dbb501801ae',
+        70920,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'befcb90b9aec1dafd8dd732a0bbdc446db90d79ff71d9e45bb49a345076f6410',
+        72500,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '733e4485bb39e3562dd08bbb14ef02725286758cc8d7f0627b696f8c8e88ca03',
+        72608,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'bbf9205022b775dda7c3d6e65853070d536b53e79241872cf1922ecbdb3fbef2',
+        72884,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2daff91b79b5c6ea5b09182b1efa9cc2a285278e149eafb60dc5f1901e104382',
+        72728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '7771015b568ea5a8e5f714d1f22fcf2ac41cac4d244b7155b0f3abefa41a87af',
+        72684,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '201810d55424f24a201b392d86d6f61112f6d6167350e7379076382357e71767',
+        72144,
       ),
     };
 
     return googleFontsTextStyle(
       textStyle: textStyle,
-      fontFamily: 'SairaStencilOne',
+      fontFamily: 'SairaStencil',
       color: color,
       backgroundColor: backgroundColor,
       fontSize: fontSize,
@@ -1081,29 +1479,29 @@ class PartS {
     );
   }
 
-  /// Applies the Saira Stencil One font family from Google Fonts to every
+  /// Applies the Saira Stencil font family from Google Fonts to every
   /// [TextStyle] in the given [textTheme].
   ///
   /// See:
-  ///  * https://fonts.google.com/specimen/Saira+Stencil+One
-  static TextTheme sairaStencilOneTextTheme([TextTheme? textTheme]) {
+  ///  * https://fonts.google.com/specimen/Saira+Stencil
+  static TextTheme sairaStencilTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
     return TextTheme(
-      displayLarge: sairaStencilOne(textStyle: textTheme.displayLarge),
-      displayMedium: sairaStencilOne(textStyle: textTheme.displayMedium),
-      displaySmall: sairaStencilOne(textStyle: textTheme.displaySmall),
-      headlineLarge: sairaStencilOne(textStyle: textTheme.headlineLarge),
-      headlineMedium: sairaStencilOne(textStyle: textTheme.headlineMedium),
-      headlineSmall: sairaStencilOne(textStyle: textTheme.headlineSmall),
-      titleLarge: sairaStencilOne(textStyle: textTheme.titleLarge),
-      titleMedium: sairaStencilOne(textStyle: textTheme.titleMedium),
-      titleSmall: sairaStencilOne(textStyle: textTheme.titleSmall),
-      bodyLarge: sairaStencilOne(textStyle: textTheme.bodyLarge),
-      bodyMedium: sairaStencilOne(textStyle: textTheme.bodyMedium),
-      bodySmall: sairaStencilOne(textStyle: textTheme.bodySmall),
-      labelLarge: sairaStencilOne(textStyle: textTheme.labelLarge),
-      labelMedium: sairaStencilOne(textStyle: textTheme.labelMedium),
-      labelSmall: sairaStencilOne(textStyle: textTheme.labelSmall),
+      displayLarge: sairaStencil(textStyle: textTheme.displayLarge),
+      displayMedium: sairaStencil(textStyle: textTheme.displayMedium),
+      displaySmall: sairaStencil(textStyle: textTheme.displaySmall),
+      headlineLarge: sairaStencil(textStyle: textTheme.headlineLarge),
+      headlineMedium: sairaStencil(textStyle: textTheme.headlineMedium),
+      headlineSmall: sairaStencil(textStyle: textTheme.headlineSmall),
+      titleLarge: sairaStencil(textStyle: textTheme.titleLarge),
+      titleMedium: sairaStencil(textStyle: textTheme.titleMedium),
+      titleSmall: sairaStencil(textStyle: textTheme.titleSmall),
+      bodyLarge: sairaStencil(textStyle: textTheme.bodyLarge),
+      bodyMedium: sairaStencil(textStyle: textTheme.bodyMedium),
+      bodySmall: sairaStencil(textStyle: textTheme.bodySmall),
+      labelLarge: sairaStencil(textStyle: textTheme.labelLarge),
+      labelMedium: sairaStencil(textStyle: textTheme.labelMedium),
+      labelSmall: sairaStencil(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -3023,29 +3421,29 @@ class PartS {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4a677e83d20e81eb656ec0b8703a03677cfd4ef654ad7fabcc6853e0211b7132',
-        263044,
+        '95186f6feb92f3921c9c117828df57781e26ddc189c44c424ce78d76623fb15b',
+        263256,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '03b4ff3f503275044bb7f40e3f7aa0ee37bc49f4afb8591be3e7e232f828d794',
-        513440,
+        '4f134587ae5d6f4a25804fa89220c3c0e8f13150fda64167196d4761a19e8f39',
+        513652,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4deed5c41485b9641664bfa78f6ad3162d45685ed2b6aa0a2110e9acb32d5602',
-        520576,
+        '2aa95844eea9817a2ff2cce0b8ee6f4e1ccdf5d9e32b38a73b40f95cdc2f52d5',
+        520784,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6fa3a618ece97c2a0bdf5320ff0cb52da6ef5e13f2b134eacdec588bab229ab5',
-        523008,
+        'a53d81e66741a39ff986433cb45648cb7c205045ba9668096f8215a3c1a4698e',
+        523220,
       ),
     };
 
@@ -14659,6 +15057,128 @@ class PartS {
       labelLarge: strait(textStyle: textTheme.labelLarge),
       labelMedium: strait(textStyle: textTheme.labelMedium),
       labelSmall: strait(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Strichpunkt Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Strichpunkt+Sans
+  static TextStyle strichpunktSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '58da87553c2b780436ee9efea4b7ef6c611dbc319aae50671d7de95c8e455d3d',
+        85372,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '340de1e0c2de16c8e3efa1d01b126e943ec396600bb457a552be2caa86cace5a',
+        86336,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '94c1ee6cf19931ff8849018e44d52c5bdfc227453d91f0c07c2c17429d521c39',
+        86368,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7940e2f1950ad2006c71489b11be6ded4256ffa37e98c4f91f177575197f6b2f',
+        86292,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6c122f6e18850d3644b71f6a2f5521e13f6b8ae8e46aadf97f447af4ad8a166a',
+        86272,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e6e7cbb7f56d614818d399c983ec9313f08512a4fb577ed5337ce62204c9f92d',
+        86248,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'StrichpunktSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Strichpunkt Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Strichpunkt+Sans
+  static TextTheme strichpunktSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: strichpunktSans(textStyle: textTheme.displayLarge),
+      displayMedium: strichpunktSans(textStyle: textTheme.displayMedium),
+      displaySmall: strichpunktSans(textStyle: textTheme.displaySmall),
+      headlineLarge: strichpunktSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: strichpunktSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: strichpunktSans(textStyle: textTheme.headlineSmall),
+      titleLarge: strichpunktSans(textStyle: textTheme.titleLarge),
+      titleMedium: strichpunktSans(textStyle: textTheme.titleMedium),
+      titleSmall: strichpunktSans(textStyle: textTheme.titleSmall),
+      bodyLarge: strichpunktSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: strichpunktSans(textStyle: textTheme.bodyMedium),
+      bodySmall: strichpunktSans(textStyle: textTheme.bodySmall),
+      labelLarge: strichpunktSans(textStyle: textTheme.labelLarge),
+      labelMedium: strichpunktSans(textStyle: textTheme.labelMedium),
+      labelSmall: strichpunktSans(textStyle: textTheme.labelSmall),
     );
   }
 

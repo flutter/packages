@@ -2767,4 +2767,178 @@ class PartY {
       labelSmall: yuseiMagic(textStyle: textTheme.labelSmall),
     );
   }
+
+  /// Applies the Yuyu font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yuyu
+  static TextStyle yuyu({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4fab225a33e60220f4f4f5df7579830cfcfab868325c1cff136c7865cb05048e',
+        40152,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Yuyu',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yuyu font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yuyu
+  static TextTheme yuyuTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yuyu(textStyle: textTheme.displayLarge),
+      displayMedium: yuyu(textStyle: textTheme.displayMedium),
+      displaySmall: yuyu(textStyle: textTheme.displaySmall),
+      headlineLarge: yuyu(textStyle: textTheme.headlineLarge),
+      headlineMedium: yuyu(textStyle: textTheme.headlineMedium),
+      headlineSmall: yuyu(textStyle: textTheme.headlineSmall),
+      titleLarge: yuyu(textStyle: textTheme.titleLarge),
+      titleMedium: yuyu(textStyle: textTheme.titleMedium),
+      titleSmall: yuyu(textStyle: textTheme.titleSmall),
+      bodyLarge: yuyu(textStyle: textTheme.bodyLarge),
+      bodyMedium: yuyu(textStyle: textTheme.bodyMedium),
+      bodySmall: yuyu(textStyle: textTheme.bodySmall),
+      labelLarge: yuyu(textStyle: textTheme.labelLarge),
+      labelMedium: yuyu(textStyle: textTheme.labelMedium),
+      labelSmall: yuyu(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Yuyu Short font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yuyu+Short
+  static TextStyle yuyuShort({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '728a77b735b0b9231b15deb4ac50f4028062c789645197b134789b523951b322',
+        36088,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'YuyuShort',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yuyu Short font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yuyu+Short
+  static TextTheme yuyuShortTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yuyuShort(textStyle: textTheme.displayLarge),
+      displayMedium: yuyuShort(textStyle: textTheme.displayMedium),
+      displaySmall: yuyuShort(textStyle: textTheme.displaySmall),
+      headlineLarge: yuyuShort(textStyle: textTheme.headlineLarge),
+      headlineMedium: yuyuShort(textStyle: textTheme.headlineMedium),
+      headlineSmall: yuyuShort(textStyle: textTheme.headlineSmall),
+      titleLarge: yuyuShort(textStyle: textTheme.titleLarge),
+      titleMedium: yuyuShort(textStyle: textTheme.titleMedium),
+      titleSmall: yuyuShort(textStyle: textTheme.titleSmall),
+      bodyLarge: yuyuShort(textStyle: textTheme.bodyLarge),
+      bodyMedium: yuyuShort(textStyle: textTheme.bodyMedium),
+      bodySmall: yuyuShort(textStyle: textTheme.bodySmall),
+      labelLarge: yuyuShort(textStyle: textTheme.labelLarge),
+      labelMedium: yuyuShort(textStyle: textTheme.labelMedium),
+      labelSmall: yuyuShort(textStyle: textTheme.labelSmall),
+    );
+  }
 }

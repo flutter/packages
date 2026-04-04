@@ -1263,6 +1263,149 @@ class PartD {
     );
   }
 
+  /// Applies the Datatype font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Datatype
+  static TextStyle datatype({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '833b1b75f2563d8f7452149336262954d1e988b7036be1034790959a64a87a7a',
+        1532716,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'af240ff1c8ecb37bca0543d8c1afa3b17011afa00bbf7603675bbf717b31c59f',
+        1532848,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '17c78d07b045b11c8fe719d4cc1bcc513af8a2f4aa39d8bc073a115048e6faee',
+        1532916,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7f5a842a657cb3f5d220098bcab41f73cf65eb93034478850eb4e788da252904',
+        1533096,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '64a128adff2af9e35661523b85299606bcb14dcbaa790554c74a18e63f8c30b8',
+        1533136,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b678c593b050409a176f9938ff858c6cb540fae18c9d6930d65ecd42e96be5f4',
+        1533152,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ad5c229bc5d3432737c2f3a400dab42cf7883d4c1e01907265376e70607edab8',
+        1533372,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '76412d878d5c8a99970f1e40743be7d730c273e2e917b2c089450acf15e044e4',
+        1533604,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '84827a48bd1c854c95ef7cd73ec262d7900b798eb32fb06b891ef0c9d350648e',
+        1533600,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Datatype',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Datatype font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Datatype
+  static TextTheme datatypeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: datatype(textStyle: textTheme.displayLarge),
+      displayMedium: datatype(textStyle: textTheme.displayMedium),
+      displaySmall: datatype(textStyle: textTheme.displaySmall),
+      headlineLarge: datatype(textStyle: textTheme.headlineLarge),
+      headlineMedium: datatype(textStyle: textTheme.headlineMedium),
+      headlineSmall: datatype(textStyle: textTheme.headlineSmall),
+      titleLarge: datatype(textStyle: textTheme.titleLarge),
+      titleMedium: datatype(textStyle: textTheme.titleMedium),
+      titleSmall: datatype(textStyle: textTheme.titleSmall),
+      bodyLarge: datatype(textStyle: textTheme.bodyLarge),
+      bodyMedium: datatype(textStyle: textTheme.bodyMedium),
+      bodySmall: datatype(textStyle: textTheme.bodySmall),
+      labelLarge: datatype(textStyle: textTheme.labelLarge),
+      labelMedium: datatype(textStyle: textTheme.labelMedium),
+      labelSmall: datatype(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the David Libre font family from Google Fonts to the
   /// given [textStyle].
   ///

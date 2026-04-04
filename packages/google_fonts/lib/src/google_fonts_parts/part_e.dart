@@ -43,71 +43,71 @@ class PartE {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '819316ad1be484e76ced5b6d58682e6a476116d26e5eb236cc8615d227080ffc',
-        446108,
+        '60975354018c959c84280622e63519a325076ee334e96c65e312a18fb1f83655',
+        389744,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '441d45e6797db8b91d3eb0527adf96d27d4a94bc4a7025e8ba787e84dc13164d',
-        448388,
+        '9b408dc094c639224808ab4724bb1457e6f229639c983cf291f50b0605ba2623',
+        391940,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3712fbb28842abd7600f63b82edf012231b26e02aebaadc86fd42706483e0920',
-        448656,
+        '7dba36d791895e4e5804592c5cb3e75e27ea9f2b10f469deadf1d3b9e5240f18',
+        392204,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '614975a480b637fc0008ab623b14878e5a84410f7a5dac91b5b0b22618bdc560',
-        448340,
+        'f934ebea05b9d0e36b24005a7e902356ad2a6149acb9c75e5db1f01a11789aeb',
+        391916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4cd257307200007ee0ed4637de09290035377b801330175dc4149654d0fcbcc5',
-        447996,
+        '6d9e5c8d63a99c710c712d516bad12dfa61e69192061f232a616e6c5432506f9',
+        391580,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '6f4a609be1f9d184b812223aa9bbf09a3c94d1ddd9e9ff7d48245814b7653d3e',
-        375212,
+        'f223c36ac5c9d8579631ddaba078b745cb0ee521a7770e0adcc4a04eb6c05e4e',
+        339076,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '19657d7a0e0c1c0a0f0f8ddc1f40698ac9cb17c2632a7fb379afca99a8e33621',
-        377632,
+        '0911bfbe2c620eef03875bf949271e2fe6b3c39d1c1cff4a6a0cf5246ec050cf',
+        341616,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '751b898dff841a62d7923143586187f807b10a9e055c5839bd5e785ae9546adb',
-        378252,
+        '44cc729489e666ce60a1610328a8bc7593d75814326a51aa20218dcb23953f41',
+        342168,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '885d91253e5f97056bc213bc4977b30321735b0e4bb302be9c54cc9598e01b12',
-        378072,
+        '2b88e5a4afc31d9d31703022b08de6ec5bbbb00ea29c4b9fb7019dc635cb15fd',
+        341892,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'b92573b981faaea36aef8a38ff086901f9964bcdec19c15d2b8d07f0523d011a',
-        377364,
+        '218250c58700e3cf2c669ad2012d542738e3bd0e39e5e4106f130bdd7685ba7e',
+        341412,
       ),
     };
 
@@ -4525,6 +4525,149 @@ class PartE {
       labelLarge: esteban(textStyle: textTheme.labelLarge),
       labelMedium: esteban(textStyle: textTheme.labelMedium),
       labelSmall: esteban(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Estedad font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Estedad
+  static TextStyle estedad({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fea3d29daca1043bcbbcd6595628cba897e82322fbb90f4fbc8b53f6dfe61ebe',
+        132308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd48c48fc847bf56b620323bc6c898087d038413eb4cbb932b343e948901c34d0',
+        132576,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7b857b96cfe7607645c70a359d92876641ff4d90864b83fbe5029834a470cb75',
+        132628,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8769464cbc69dff5a88669ef6045b537f6b53105d4ab3f4934bac274695a4448',
+        132584,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '27bd3e50b7eb20b5f0f85a8ccea6edfc3261d21d90789b8a7fcd6ca3c55f7221',
+        132636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd2e1257b98dc78d4f02881b73bc4feee2a25f71d7817b8b2ec32fe84f146f568',
+        133036,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e15643138ec91b3264e83aeee9932ac2f3fdec24ea26fd418003e1749cd5195d',
+        132984,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a2f1a90da753ce23d782df0dddecb993a8521c16d83f2cf0c64b2171e0d1ca50',
+        133016,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a014790e7cfa64d6ca2dd380ddf9d509cef1562e49d75f7401b20aa383425f66',
+        132828,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Estedad',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Estedad font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Estedad
+  static TextTheme estedadTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: estedad(textStyle: textTheme.displayLarge),
+      displayMedium: estedad(textStyle: textTheme.displayMedium),
+      displaySmall: estedad(textStyle: textTheme.displaySmall),
+      headlineLarge: estedad(textStyle: textTheme.headlineLarge),
+      headlineMedium: estedad(textStyle: textTheme.headlineMedium),
+      headlineSmall: estedad(textStyle: textTheme.headlineSmall),
+      titleLarge: estedad(textStyle: textTheme.titleLarge),
+      titleMedium: estedad(textStyle: textTheme.titleMedium),
+      titleSmall: estedad(textStyle: textTheme.titleSmall),
+      bodyLarge: estedad(textStyle: textTheme.bodyLarge),
+      bodyMedium: estedad(textStyle: textTheme.bodyMedium),
+      bodySmall: estedad(textStyle: textTheme.bodySmall),
+      labelLarge: estedad(textStyle: textTheme.labelLarge),
+      labelMedium: estedad(textStyle: textTheme.labelMedium),
+      labelSmall: estedad(textStyle: textTheme.labelSmall),
     );
   }
 

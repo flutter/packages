@@ -708,8 +708,8 @@ class PartO {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '896ba4dca76eb29e1b70254dcfdd67e4471a2c321f69931b5cf85ae02a4251e3',
-        104388,
+        '2247f39d3381d64f80d4ec40b7791fbad4546f6e24b9a0d2527c22c0f3abb98d',
+        104464,
       ),
     };
 
@@ -1464,7 +1464,7 @@ class PartO {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '25045d62a4a6782039dfcb7493ebcfd4f4f84fa801598125440dbd774fed53f6',
+        '25a4c7e69c443a8d6dd00207133dfbe3492c9a27878094dc0172ed3fafdb47d8',
         424200,
       ),
     };

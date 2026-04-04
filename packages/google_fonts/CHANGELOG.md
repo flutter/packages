@@ -1,3 +1,46 @@
+## 8.3.0
+
+- Adds the `GoogleFontsLite` class to allow tree-shaking unused font code.
+- Added fonts:
+  - `Akt`
+  - `Alien Block`
+  - `Allkin`
+  - `Alyamama`
+  - `BJCree`
+  - `Betania Patmos`
+  - `Betania Patmos GDL`
+  - `Betania Patmos In`
+  - `Betania Patmos In GDL`
+  - `Bpmf Huninn`
+  - `Bpmf Iansui`
+  - `Bpmf Zihi Kai Std`
+  - `Datatype`
+  - `Estedad`
+  - `Finlandica Headline`
+  - `Finlandica Text`
+  - `Geist Pixel`
+  - `Gveret Levin`
+  - `Idiqlat`
+  - `Iosevka Charon`
+  - `Iosevka Charon Mono`
+  - `LINE Seed JP`
+  - `M PLUS U`
+  - `Miranda Sans`
+  - `Montenegrin Gothic One`
+  - `Playwrite NZ Basic`
+  - `Playwrite NZ Basic Guides`
+  - `Pliant`
+  - `Ramsina`
+  - `SN Pro`
+  - `STIX Two Math`
+  - `Saira Stencil`
+  - `Strichpunkt Sans`
+  - `Yuyu`
+  - `Yuyu Short`
+- Removed fonts:
+  - `Finlandica`
+  - `Saira Stencil One`
+
 ## 8.2.1
 
 - Fixes `pendingFonts()` retaining failed font loads.

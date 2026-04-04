@@ -6492,8 +6492,8 @@ class PartK {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '80fdb704b1c95fa9732497e5badbffd2fde355472c91867e867e7371b1e264cc',
-        137008,
+        '02e2b0352be82fa6b2e51b457c3098e1faceceafb9668bc4d1a3f9c309176c21',
+        138224,
       ),
     };
 

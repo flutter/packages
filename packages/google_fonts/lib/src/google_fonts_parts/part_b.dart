@@ -865,6 +865,114 @@ class PartB {
     );
   }
 
+  /// Applies the BJCree font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BJCree
+  static TextStyle bJCree({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '19bae18e850c757f28bd7be7a65c35a34e959bc00bc5b20e011ae3b425ebb1be',
+        96848,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '75caaf650ef92ae0af34005e5452799d65f92d5a474ce7c145e75310a3738134',
+        96384,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eb7ddf99be8a39bf1f9a03ee5f891c25a0eed5e72fe1c302770b1afa80bb775a',
+        96108,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f46beeefbbe4660dfffcbbdb5cfea6ed6c61665e46baadf6868e806bd15d4fae',
+        96988,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BJCree',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the BJCree font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BJCree
+  static TextTheme bJCreeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bJCree(textStyle: textTheme.displayLarge),
+      displayMedium: bJCree(textStyle: textTheme.displayMedium),
+      displaySmall: bJCree(textStyle: textTheme.displaySmall),
+      headlineLarge: bJCree(textStyle: textTheme.headlineLarge),
+      headlineMedium: bJCree(textStyle: textTheme.headlineMedium),
+      headlineSmall: bJCree(textStyle: textTheme.headlineSmall),
+      titleLarge: bJCree(textStyle: textTheme.titleLarge),
+      titleMedium: bJCree(textStyle: textTheme.titleMedium),
+      titleSmall: bJCree(textStyle: textTheme.titleSmall),
+      bodyLarge: bJCree(textStyle: textTheme.bodyLarge),
+      bodyMedium: bJCree(textStyle: textTheme.bodyMedium),
+      bodySmall: bJCree(textStyle: textTheme.bodySmall),
+      labelLarge: bJCree(textStyle: textTheme.labelLarge),
+      labelMedium: bJCree(textStyle: textTheme.labelMedium),
+      labelSmall: bJCree(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Babylonica font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -6304,6 +6412,354 @@ class PartB {
     );
   }
 
+  /// Applies the Betania Patmos font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos
+  static TextStyle betaniaPatmos({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '024e4f5971a82a86f7bbcf14481801dec67ed3f66da9e881cc6125ef55dfa429',
+        135636,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BetaniaPatmos',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Betania Patmos font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos
+  static TextTheme betaniaPatmosTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: betaniaPatmos(textStyle: textTheme.displayLarge),
+      displayMedium: betaniaPatmos(textStyle: textTheme.displayMedium),
+      displaySmall: betaniaPatmos(textStyle: textTheme.displaySmall),
+      headlineLarge: betaniaPatmos(textStyle: textTheme.headlineLarge),
+      headlineMedium: betaniaPatmos(textStyle: textTheme.headlineMedium),
+      headlineSmall: betaniaPatmos(textStyle: textTheme.headlineSmall),
+      titleLarge: betaniaPatmos(textStyle: textTheme.titleLarge),
+      titleMedium: betaniaPatmos(textStyle: textTheme.titleMedium),
+      titleSmall: betaniaPatmos(textStyle: textTheme.titleSmall),
+      bodyLarge: betaniaPatmos(textStyle: textTheme.bodyLarge),
+      bodyMedium: betaniaPatmos(textStyle: textTheme.bodyMedium),
+      bodySmall: betaniaPatmos(textStyle: textTheme.bodySmall),
+      labelLarge: betaniaPatmos(textStyle: textTheme.labelLarge),
+      labelMedium: betaniaPatmos(textStyle: textTheme.labelMedium),
+      labelSmall: betaniaPatmos(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Betania Patmos GDL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+GDL
+  static TextStyle betaniaPatmosGdl({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9b5c31325e528fceca2c4d0ef925bfa3c5b6eff48d286bb27f3946271a17ea32',
+        168948,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BetaniaPatmosGDL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Betania Patmos GDL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+GDL
+  static TextTheme betaniaPatmosGdlTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: betaniaPatmosGdl(textStyle: textTheme.displayLarge),
+      displayMedium: betaniaPatmosGdl(textStyle: textTheme.displayMedium),
+      displaySmall: betaniaPatmosGdl(textStyle: textTheme.displaySmall),
+      headlineLarge: betaniaPatmosGdl(textStyle: textTheme.headlineLarge),
+      headlineMedium: betaniaPatmosGdl(textStyle: textTheme.headlineMedium),
+      headlineSmall: betaniaPatmosGdl(textStyle: textTheme.headlineSmall),
+      titleLarge: betaniaPatmosGdl(textStyle: textTheme.titleLarge),
+      titleMedium: betaniaPatmosGdl(textStyle: textTheme.titleMedium),
+      titleSmall: betaniaPatmosGdl(textStyle: textTheme.titleSmall),
+      bodyLarge: betaniaPatmosGdl(textStyle: textTheme.bodyLarge),
+      bodyMedium: betaniaPatmosGdl(textStyle: textTheme.bodyMedium),
+      bodySmall: betaniaPatmosGdl(textStyle: textTheme.bodySmall),
+      labelLarge: betaniaPatmosGdl(textStyle: textTheme.labelLarge),
+      labelMedium: betaniaPatmosGdl(textStyle: textTheme.labelMedium),
+      labelSmall: betaniaPatmosGdl(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Betania Patmos In font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+In
+  static TextStyle betaniaPatmosIn({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '83cd5cd5eee8d6c443da0cc20ae7329ffda9f177f6a131500fe5a4793a961157',
+        136120,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BetaniaPatmosIn',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Betania Patmos In font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+In
+  static TextTheme betaniaPatmosInTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: betaniaPatmosIn(textStyle: textTheme.displayLarge),
+      displayMedium: betaniaPatmosIn(textStyle: textTheme.displayMedium),
+      displaySmall: betaniaPatmosIn(textStyle: textTheme.displaySmall),
+      headlineLarge: betaniaPatmosIn(textStyle: textTheme.headlineLarge),
+      headlineMedium: betaniaPatmosIn(textStyle: textTheme.headlineMedium),
+      headlineSmall: betaniaPatmosIn(textStyle: textTheme.headlineSmall),
+      titleLarge: betaniaPatmosIn(textStyle: textTheme.titleLarge),
+      titleMedium: betaniaPatmosIn(textStyle: textTheme.titleMedium),
+      titleSmall: betaniaPatmosIn(textStyle: textTheme.titleSmall),
+      bodyLarge: betaniaPatmosIn(textStyle: textTheme.bodyLarge),
+      bodyMedium: betaniaPatmosIn(textStyle: textTheme.bodyMedium),
+      bodySmall: betaniaPatmosIn(textStyle: textTheme.bodySmall),
+      labelLarge: betaniaPatmosIn(textStyle: textTheme.labelLarge),
+      labelMedium: betaniaPatmosIn(textStyle: textTheme.labelMedium),
+      labelSmall: betaniaPatmosIn(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Betania Patmos In GDL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+In+GDL
+  static TextStyle betaniaPatmosInGdl({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '338457ea38cbec1de1a748c395eee391c89b2f75e6b43e9904fb30e078d8316d',
+        171236,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BetaniaPatmosInGDL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Betania Patmos In GDL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Betania+Patmos+In+GDL
+  static TextTheme betaniaPatmosInGdlTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: betaniaPatmosInGdl(textStyle: textTheme.displayLarge),
+      displayMedium: betaniaPatmosInGdl(textStyle: textTheme.displayMedium),
+      displaySmall: betaniaPatmosInGdl(textStyle: textTheme.displaySmall),
+      headlineLarge: betaniaPatmosInGdl(textStyle: textTheme.headlineLarge),
+      headlineMedium: betaniaPatmosInGdl(textStyle: textTheme.headlineMedium),
+      headlineSmall: betaniaPatmosInGdl(textStyle: textTheme.headlineSmall),
+      titleLarge: betaniaPatmosInGdl(textStyle: textTheme.titleLarge),
+      titleMedium: betaniaPatmosInGdl(textStyle: textTheme.titleMedium),
+      titleSmall: betaniaPatmosInGdl(textStyle: textTheme.titleSmall),
+      bodyLarge: betaniaPatmosInGdl(textStyle: textTheme.bodyLarge),
+      bodyMedium: betaniaPatmosInGdl(textStyle: textTheme.bodyMedium),
+      bodySmall: betaniaPatmosInGdl(textStyle: textTheme.bodySmall),
+      labelLarge: betaniaPatmosInGdl(textStyle: textTheme.labelLarge),
+      labelMedium: betaniaPatmosInGdl(textStyle: textTheme.labelMedium),
+      labelSmall: betaniaPatmosInGdl(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Beth Ellen font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -11591,6 +12047,267 @@ class PartB {
       labelLarge: bowlbyOneSc(textStyle: textTheme.labelLarge),
       labelMedium: bowlbyOneSc(textStyle: textTheme.labelMedium),
       labelSmall: bowlbyOneSc(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Bpmf Huninn font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Huninn
+  static TextStyle bpmfHuninn({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '92ba1d62c50a2552dd18c5dec34901182134a1d2261f9e776aca0504c4ea0dc6',
+        4735428,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BpmfHuninn',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Bpmf Huninn font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Huninn
+  static TextTheme bpmfHuninnTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bpmfHuninn(textStyle: textTheme.displayLarge),
+      displayMedium: bpmfHuninn(textStyle: textTheme.displayMedium),
+      displaySmall: bpmfHuninn(textStyle: textTheme.displaySmall),
+      headlineLarge: bpmfHuninn(textStyle: textTheme.headlineLarge),
+      headlineMedium: bpmfHuninn(textStyle: textTheme.headlineMedium),
+      headlineSmall: bpmfHuninn(textStyle: textTheme.headlineSmall),
+      titleLarge: bpmfHuninn(textStyle: textTheme.titleLarge),
+      titleMedium: bpmfHuninn(textStyle: textTheme.titleMedium),
+      titleSmall: bpmfHuninn(textStyle: textTheme.titleSmall),
+      bodyLarge: bpmfHuninn(textStyle: textTheme.bodyLarge),
+      bodyMedium: bpmfHuninn(textStyle: textTheme.bodyMedium),
+      bodySmall: bpmfHuninn(textStyle: textTheme.bodySmall),
+      labelLarge: bpmfHuninn(textStyle: textTheme.labelLarge),
+      labelMedium: bpmfHuninn(textStyle: textTheme.labelMedium),
+      labelSmall: bpmfHuninn(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Bpmf Iansui font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Iansui
+  static TextStyle bpmfIansui({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fd73d18edbb3d1a6691e25cad3fd4f36400b568138db1c08a1766f2d508d29d5',
+        7623852,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BpmfIansui',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Bpmf Iansui font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Iansui
+  static TextTheme bpmfIansuiTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bpmfIansui(textStyle: textTheme.displayLarge),
+      displayMedium: bpmfIansui(textStyle: textTheme.displayMedium),
+      displaySmall: bpmfIansui(textStyle: textTheme.displaySmall),
+      headlineLarge: bpmfIansui(textStyle: textTheme.headlineLarge),
+      headlineMedium: bpmfIansui(textStyle: textTheme.headlineMedium),
+      headlineSmall: bpmfIansui(textStyle: textTheme.headlineSmall),
+      titleLarge: bpmfIansui(textStyle: textTheme.titleLarge),
+      titleMedium: bpmfIansui(textStyle: textTheme.titleMedium),
+      titleSmall: bpmfIansui(textStyle: textTheme.titleSmall),
+      bodyLarge: bpmfIansui(textStyle: textTheme.bodyLarge),
+      bodyMedium: bpmfIansui(textStyle: textTheme.bodyMedium),
+      bodySmall: bpmfIansui(textStyle: textTheme.bodySmall),
+      labelLarge: bpmfIansui(textStyle: textTheme.labelLarge),
+      labelMedium: bpmfIansui(textStyle: textTheme.labelMedium),
+      labelSmall: bpmfIansui(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Bpmf Zihi Kai Std font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Zihi+Kai+Std
+  static TextStyle bpmfZihiKaiStd({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fc01c6be98b4f5e2bb93c58a6845ae3ae72f6382b5462404c2f528c8b0e6213a',
+        17385700,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BpmfZihiKaiStd',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Bpmf Zihi Kai Std font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Bpmf+Zihi+Kai+Std
+  static TextTheme bpmfZihiKaiStdTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bpmfZihiKaiStd(textStyle: textTheme.displayLarge),
+      displayMedium: bpmfZihiKaiStd(textStyle: textTheme.displayMedium),
+      displaySmall: bpmfZihiKaiStd(textStyle: textTheme.displaySmall),
+      headlineLarge: bpmfZihiKaiStd(textStyle: textTheme.headlineLarge),
+      headlineMedium: bpmfZihiKaiStd(textStyle: textTheme.headlineMedium),
+      headlineSmall: bpmfZihiKaiStd(textStyle: textTheme.headlineSmall),
+      titleLarge: bpmfZihiKaiStd(textStyle: textTheme.titleLarge),
+      titleMedium: bpmfZihiKaiStd(textStyle: textTheme.titleMedium),
+      titleSmall: bpmfZihiKaiStd(textStyle: textTheme.titleSmall),
+      bodyLarge: bpmfZihiKaiStd(textStyle: textTheme.bodyLarge),
+      bodyMedium: bpmfZihiKaiStd(textStyle: textTheme.bodyMedium),
+      bodySmall: bpmfZihiKaiStd(textStyle: textTheme.bodySmall),
+      labelLarge: bpmfZihiKaiStd(textStyle: textTheme.labelLarge),
+      labelMedium: bpmfZihiKaiStd(textStyle: textTheme.labelMedium),
+      labelSmall: bpmfZihiKaiStd(textStyle: textTheme.labelSmall),
     );
   }
 
