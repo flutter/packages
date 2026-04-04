@@ -114,6 +114,9 @@ return MaterialApp(
 );
 ```
 
+### Lower build size
+The `GoogleFontsLite` class is a replacement for the `GoogleFonts` class containing only a map of all fonts and the `getFont` function. Using *only* `GoogleFontsLite` allows the Dart compiler to tree-shake most of the package's code, yielding a significant reduction in build size.
+
 ### Visual font swapping
 To avoid visual font swaps that occur when a font is loading, use [FutureBuilder](https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html) and [GoogleFonts.pendingFonts()](https://pub.dev/documentation/google_fonts/latest/google_fonts/GoogleFonts/pendingFonts.html).
 

@@ -1,3 +1,7 @@
+## 8.3.0
+
+- Add a `GoogleFontsLite` class. Using only this class and not the regular `GoogleFonts` allows the compiler to tree-shake most of the package's code.
+
 ## 8.2.1
 
 - Fixes `pendingFonts()` retaining failed font loads.
