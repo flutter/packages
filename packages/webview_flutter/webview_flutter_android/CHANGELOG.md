@@ -1,3 +1,11 @@
+## 4.10.15
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 4.10.14
+
+* Updates build files from Groovy to Kotlin.
+
 ## 4.10.13
 
 * Bumps androidx.webkit:webkit from 1.14.0 to 1.15.0.
