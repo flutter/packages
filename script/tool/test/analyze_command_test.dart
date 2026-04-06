@@ -57,9 +57,6 @@ void main() {
           platformMacOS: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       // Simulate Android analysis failure only.
       final String gradlewPath = plugin
@@ -796,9 +793,6 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       final Directory androidDir = plugin.getExamples().first.platformDirectory(
         FlutterPlatform.android,
@@ -842,9 +836,6 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       final Iterable<Directory> exampleAndroidDirs = plugin.getExamples().map(
         (RepositoryPackage example) =>
@@ -884,9 +875,6 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       final Directory androidDir = plugin.getExamples().first.platformDirectory(
         FlutterPlatform.android,
@@ -922,16 +910,13 @@ packages/package_a/CHANGELOG.md
     });
 
     test('fails if gradlew generation fails', () async {
-      final RepositoryPackage plugin = createFakePlugin(
+      createFakePlugin(
         'plugin1',
         packagesDir,
         platformSupport: <String, PlatformDetails>{
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       processRunner.mockProcessesForExecutable[getFlutterCommand(
         mockPlatform,
@@ -966,9 +951,6 @@ packages/package_a/CHANGELOG.md
           platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
-      plugin
-          .platformDirectory(FlutterPlatform.android)
-          .createSync(recursive: true);
 
       final String gradlewPath = plugin
           .getExamples()
@@ -1023,31 +1005,6 @@ packages/package_a/CHANGELOG.md
         packagesDir,
         platformSupport: <String, PlatformDetails>{
           platformAndroid: const PlatformDetails(PlatformSupport.federated),
-        },
-      );
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'analyze',
-        '--android',
-        '--no-dart',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains(
-            'SKIPPING: Package does not contain native Android plugin code',
-          ),
-        ]),
-      );
-    });
-
-    test('skips Dart-only plugins', () async {
-      createFakePlugin(
-        'plugin1',
-        packagesDir,
-        platformSupport: <String, PlatformDetails>{
-          platformAndroid: const PlatformDetails(PlatformSupport.inline),
         },
       );
 

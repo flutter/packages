@@ -1,7 +1,3 @@
-## 2.3.0
-
-* Changes internal implementation to use JNI.
-
 ## 2.2.23
 
 * Updates build files from Groovy to Kotlin.
