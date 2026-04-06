@@ -383,9 +383,7 @@ flutter {
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains(javaIncompatabilityIndicator),
-        ]),
+        containsAllInOrder(<Matcher>[contains(javaIncompatabilityIndicator)]),
       );
     },
   );
@@ -413,9 +411,7 @@ flutter {
       expect(commandError, isA<ToolExit>());
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains(javaIncompatabilityIndicator),
-        ]),
+        containsAllInOrder(<Matcher>[contains(javaIncompatabilityIndicator)]),
       );
     },
   );
@@ -618,9 +614,7 @@ flutter {
     expect(commandError, isA<ToolExit>());
     expect(
       output,
-      containsAllInOrder(<Matcher>[
-        contains(javaIncompatabilityIndicator),
-      ]),
+      containsAllInOrder(<Matcher>[contains(javaIncompatabilityIndicator)]),
     );
   });
 
@@ -649,9 +643,7 @@ flutter {
     expect(commandError, isA<ToolExit>());
     expect(
       output,
-      containsAllInOrder(<Matcher>[
-        contains(javaIncompatabilityIndicator),
-      ]),
+      containsAllInOrder(<Matcher>[contains(javaIncompatabilityIndicator)]),
     );
   });
 
@@ -1070,9 +1062,7 @@ flutter {
       );
       expect(
         output,
-        isNot(
-          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
-        ),
+        isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
       );
     });
 

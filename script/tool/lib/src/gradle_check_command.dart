@@ -150,11 +150,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
     var succeeded = true;
-    if (!_validateNamespace(
-      package,
-      contents,
-      isExample: false,
-    )) {
+    if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
     if (!_validateCompatibilityVersions(lines)) {
@@ -391,8 +387,7 @@ plugins {
     );
 
     if (nameSpaceRegexMatch == null) {
-      const errorMessage =
-          '''
+      const errorMessage = '''
 build.gradle.kts must set a "namespace":
 
     android {
@@ -570,8 +565,7 @@ If build.gradle.kts sets jvmTarget then it must use JavaVersion syntax.
     if (javaVersions.isNotEmpty) {
       final int version = int.parse(javaVersions.first);
       if (!javaVersions.every((String element) => element == '$version')) {
-        const javaVersionAlignmentError =
-            '''
+        const javaVersionAlignmentError = '''
 If build.gradle.kts uses JavaVersion.* versions must be the same.
 ''';
         printError(
