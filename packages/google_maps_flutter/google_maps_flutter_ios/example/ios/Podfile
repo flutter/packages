@@ -39,5 +39,13 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    # Suppress -Wenum-enum-conversion for Google-Maps-iOS-Utils, which OR's
+    # CGBitmapInfo and CGImageAlphaInfo enums in GMUHeatmapTileLayer.m:345.
+    # This is valid usage but flagged as an error under Xcode 26+ / Clang 16+.
+    if target.name == 'Google-Maps-iOS-Utils'
+      target.build_configurations.each do |config|
+        config.build_settings['OTHER_CFLAGS'] = '$(inherited) -Wno-enum-enum-conversion'
+      end
+    end
   end
 end
