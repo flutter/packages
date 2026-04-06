@@ -1,3 +1,11 @@
+## 2.3.1
+
+* Temporarily reverts changes introduced in version 2.3.0.
+
+## 2.3.0
+
+* Changes internal implementation to use JNI.
+
 ## 2.2.23
 
 * Updates build files from Groovy to Kotlin.
