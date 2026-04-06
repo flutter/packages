@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,7 +7,7 @@ plugins {
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = java.util.Properties()
+val keystoreProperties = Properties()
 var configured = true
 try {
     keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
@@ -33,6 +35,7 @@ if (!configured) {
 
 android {
     namespace = "io.flutter.plugins.inapppurchaseexample"
+    compileSdk = flutter.compileSdkVersion
     
     signingConfigs {
         create("release") {
@@ -42,8 +45,6 @@ android {
             keyPassword = keystoreKeyPassword
         }
     }
-
-    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
