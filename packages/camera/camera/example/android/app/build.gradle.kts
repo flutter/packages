@@ -30,7 +30,7 @@ android {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
-        create("profile") {
+        getByName("profile") {
             matchingFallbacks.addAll(listOf("debug", "release"))
         }
     }
