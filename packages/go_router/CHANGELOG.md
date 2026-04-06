@@ -1,3 +1,8 @@
+## 17.2.0
+
+- Fixes `Block.then()` and `Allow.then()` navigation callbacks being silently lost when triggered by `refreshListenable` due to re-entrant route processing.
+- Adds `encoder`, `decoder` and `compare` parameters to `TypedQueryParameter` annotation for custom encoding, decoding and comparison of query parameters in `TypedGoRoute` constructors.
+
 ## 17.1.0
 
 - Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.
