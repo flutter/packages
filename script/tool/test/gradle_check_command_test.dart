@@ -151,9 +151,10 @@ dependencies {
         .childFile('build.gradle.kts');
     buildGradle.createSync(recursive: true);
 
-    const warningConfig = '''
+    final warningConfig =
+        '''
 gradle.projectsEvaluated {
-    project(":camera_android_camerax") {
+    project(":$pluginName") {
         tasks.withType<JavaCompile> {
             options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
         }
@@ -512,7 +513,7 @@ flutter {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains('Validating android/build.gradle'),
+        contains('Validating android/build.gradle.kts'),
       ]),
     );
   });
@@ -539,7 +540,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     },
@@ -561,16 +562,17 @@ flutter {
     expect(
       output,
       containsAllInOrder(<Matcher>[
-        contains('Validating android/build.gradle'),
+        contains('Validating android/build.gradle.kts'),
       ]),
     );
   });
 
   test('does not require java version in examples', () async {
     const pluginName = 'a_plugin';
-    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
-    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package);
+    final RepositoryPackage package = createFakePackage(
+      pluginName,
+      packagesDir,
+    );
     final RepositoryPackage example = package.getExamples().first;
     writeFakeExampleBuildGradles(example, pluginName: pluginName);
     writeFakeManifest(example, isApp: true);
@@ -583,7 +585,7 @@ flutter {
       output,
       containsAllInOrder(<Matcher>[
         contains('Validating android/build.gradle.kts'),
-        contains('Ran for 2 package(s)'),
+        contains('Ran for 1 package(s)'),
       ]),
     );
   });
@@ -1113,8 +1115,6 @@ flutter {
         'a_package',
         packagesDir,
       );
-      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
-      writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
       writeFakeManifest(example, isApp: true);
@@ -1126,7 +1126,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
@@ -1137,8 +1137,6 @@ flutter {
         'a_package',
         packagesDir,
       );
-      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
-      writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(
         example,
@@ -1154,7 +1152,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
@@ -1165,8 +1163,6 @@ flutter {
         'a_package',
         packagesDir,
       );
-      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
-      writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(
         example,
@@ -1182,7 +1178,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
@@ -1193,8 +1189,6 @@ flutter {
         'a_package',
         packagesDir,
       );
-      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
-      writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(
         example,
@@ -1255,7 +1249,7 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Validating android/build.gradle'),
+            contains('Validating android/build.gradle.kts'),
           ]),
         );
       },
@@ -1288,7 +1282,7 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Validating android/build.gradle'),
+            contains('Validating android/build.gradle.kts'),
           ]),
         );
       },
@@ -1404,7 +1398,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
@@ -1429,7 +1423,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
@@ -1454,7 +1448,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Validating android/build.gradle'),
+          contains('Validating android/build.gradle.kts'),
         ]),
       );
     });
