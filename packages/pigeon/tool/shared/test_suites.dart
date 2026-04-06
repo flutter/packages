@@ -4,7 +4,6 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:ffi';
 import 'dart:io' show Directory, File;
 
 import 'package:meta/meta.dart';
@@ -410,33 +409,28 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
     return compileCode;
   }
 
+  // Depending on the Flutter version, the build output path may be different.
+  // To handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/114349
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts.
+  // TODO(gustl22): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/114349, and just construct the
+  // version of the path with the current architecture.
   const buildDirBase = '$examplePath/build/linux';
   const buildRelativeBinaryPath = 'debug/plugins/test_plugin/test_plugin_test';
-
-  final abi = Abi.current();
-  final String? arch = switch (abi) {
-    Abi.linuxArm64 => 'arm64',
-    Abi.linuxX64 => 'x64',
-    Abi.linuxRiscv64 => 'riscv64',
-    _ => null,
-  };
-
-  if (arch == null) {
-    print(
-      'The host platform and architecture "$abi" is not supported for Linux test suite.',
-    );
-    return 1;
-  }
-
-  final binaryPath = '$buildDirBase/$arch/$buildRelativeBinaryPath';
+  const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  final testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;
   if (ciMode) {
     // To avoid having all custom tests in the repo run under xvfb, xvfb-run is
     // done here rather than at the CI config level. Ideally, Pigeon tests
     // should be incorporated into the repo tooling's standard runs, at which
     // point this won't be necessary.
-    return runProcess('xvfb-run', <String>[binaryPath]);
+    return runProcess('xvfb-run', <String>[testBinary]);
   } else {
-    return runProcess(binaryPath, <String>[]);
+    return runProcess(testBinary, <String>[]);
   }
 }
 
@@ -461,26 +455,25 @@ Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
     return compileCode;
   }
 
+  // Depending on the Flutter version, the build output path may be different.
+  // To handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/129807
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts.
+  // TODO(stuartmorgan): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/129807, and just construct the
+  // version of the path with the current architecture.
   const buildDirBase = '$examplePath/build/windows';
   const buildRelativeBinaryPath =
       'plugins/test_plugin/Debug/test_plugin_test.exe';
-
-  final abi = Abi.current();
-  final String? arch = switch (abi) {
-    Abi.windowsArm64 => 'arm64',
-    Abi.windowsX64 => 'x64',
-    _ => null,
-  };
-
-  if (arch == null) {
-    print(
-      'The host platform and architecture "$abi" is not supported for Windows test suite.',
-    );
-    return 1;
+  const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  if (File(arm64Path).existsSync()) {
+    return runProcess(arm64Path, <String>[]);
+  } else {
+    return runProcess(x64Path, <String>[]);
   }
-
-  final binaryPath = '$buildDirBase/$arch/$buildRelativeBinaryPath';
-  return runProcess(binaryPath, <String>[]);
 }
 
 Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {

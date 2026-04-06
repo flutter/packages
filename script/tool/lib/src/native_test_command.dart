@@ -677,12 +677,19 @@ this command.
     final testBinaries = <File>[];
     var hasMissingBuild = false;
     var buildFailed = false;
-
-    final String? arch = switch (_abi) {
-      Abi.windowsX64 || Abi.linuxX64 => 'x64',
-      Abi.windowsArm64 || Abi.linuxArm64 => 'arm64',
-      _ => null,
-    };
+    String? arch;
+    if (platform.isWindows) {
+      arch = switch (_abi) {
+        Abi.windowsX64 => 'x64',
+        Abi.windowsArm64 => 'arm64',
+        _ => null,
+      };
+    } else if (platform.isLinux) {
+      // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
+      // CI configuration for the repository.
+      // See: https://github.com/flutter/flutter/issues/114349
+      arch = 'x64';
+    }
 
     if (arch == null) {
       return _PlatformResult(
