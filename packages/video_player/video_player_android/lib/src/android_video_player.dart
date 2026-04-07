@@ -210,6 +210,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
+    if (!_players.containsKey(playerId)) {
+      return Container();
+    }
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
