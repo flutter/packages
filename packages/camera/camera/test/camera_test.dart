@@ -904,7 +904,7 @@ void main() {
     });
 
     test(
-      'setJpegImageQuality() throws $CameraException on $PlatformException',
+      'setJpegImageQuality() throws CameraException on PlatformException',
       () async {
         final cameraController = CameraController(
           const CameraDescription(
