@@ -519,6 +519,14 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
+  Future<void> setJpegImageQuality(int cameraId, int quality) {
+    return _channel.invokeMethod<void>('setJpegImageQuality', <String, dynamic>{
+      'cameraId': cameraId,
+      'quality': quality,
+    });
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
   }
