@@ -9,10 +9,8 @@ import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// The lowest `ext.kotlin_version` that example apps are allowed to use.
@@ -788,11 +786,12 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     List<String> gradleLines,
   ) {
     final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
-    if (!pluginSupportsPlatform(
-      platformAndroid,
-      enclosingPackage,
-      requiredMode: PlatformSupport.inline,
-    )) {
+    // This checks for android/ rather than using pluginSupportsPlatform because
+    // Dart-only implementations (e.g., usin jnigen) won't have this
+    // configuration since there's no native plugin code to check.
+    if (!enclosingPackage
+        .platformDirectory(FlutterPlatform.android)
+        .existsSync()) {
       return true;
     }
     final String enclosingPackageName = enclosingPackage.directory.basename;
