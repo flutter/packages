@@ -885,7 +885,7 @@ void main() {
       },
     );
 
-    test('setJpegImageQuality() calls $CameraPlatform', () async {
+    test('setJpegImageQuality() calls CameraPlatform', () async {
       final cameraController = CameraController(
         const CameraDescription(
           name: 'cam',
