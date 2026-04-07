@@ -520,6 +520,7 @@ class MethodChannelCamera extends CameraPlatform {
 
   @override
   Future<void> setJpegImageQuality(int cameraId, int quality) {
+    assert(quality >= 1 && quality <= 100);
     return _channel.invokeMethod<void>('setJpegImageQuality', <String, dynamic>{
       'cameraId': cameraId,
       'quality': quality,
