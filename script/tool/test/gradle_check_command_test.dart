@@ -881,9 +881,10 @@ flutter {
 
   test('does not require java version in examples - groovy', () async {
     const pluginName = 'a_plugin';
-    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
-    writeFakeGroovyPluginBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package);
+    final RepositoryPackage package = createFakePackage(
+      pluginName,
+      packagesDir,
+    );
     final RepositoryPackage example = package.getExamples().first;
     writeFakeGroovyExampleBuildGradles(example, pluginName: pluginName);
     writeFakeManifest(example, isApp: true);
@@ -896,16 +897,17 @@ flutter {
       output,
       containsAllInOrder(<Matcher>[
         contains('Validating android/build.gradle'),
-        contains('Ran for 2 package(s)'),
+        contains('Ran for 1 package(s)'),
       ]),
     );
   });
 
   test('does not require java version in examples - kotlin', () async {
     const pluginName = 'a_plugin';
-    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
-    writeFakeKotlinPluginBuildGradle(package, includeLanguageVersion: true);
-    writeFakeManifest(package);
+    final RepositoryPackage package = createFakePackage(
+      pluginName,
+      packagesDir,
+    );
     final RepositoryPackage example = package.getExamples().first;
     writeFakeKotlinExampleBuildGradles(example, pluginName: pluginName);
     writeFakeManifest(example, isApp: true);
@@ -918,7 +920,7 @@ flutter {
       output,
       containsAllInOrder(<Matcher>[
         contains('Validating android/build.gradle.kts'),
-        contains('Ran for 2 package(s)'),
+        contains('Ran for 1 package(s)'),
       ]),
     );
   });

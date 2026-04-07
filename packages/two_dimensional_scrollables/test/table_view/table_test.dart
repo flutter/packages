@@ -4177,6 +4177,132 @@ void main() {
   );
 
   testWidgets(
+    'Merged cells should not unmerge when the first cell is overlaid by a pinned column',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/174862
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                horizontalDetails: ScrollableDetails.horizontal(
+                  controller: horizontalController,
+                ),
+                pinnedColumnCount: 1,
+                columnCount: 10,
+                rowCount: 10,
+                columnBuilder: (int index) => TableSpan(
+                  extent: FixedTableSpanExtent(index == 0 ? 100 : 50),
+                ),
+                rowBuilder: (int index) =>
+                    const TableSpan(extent: FixedTableSpanExtent(50)),
+                cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                  final isColumn1 = vicinity.column == 1;
+                  return TableViewCell(
+                    columnMergeStart: isColumn1 ? 1 : null,
+                    columnMergeSpan: isColumn1 ? 3 : null,
+                    child: Center(
+                      child: Text('Cell ${vicinity.column},${vicinity.row}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Initially, column 1 is visible next to pinned column 0.
+      expect(find.text('Cell 1,0'), findsOneWidget);
+      // Column 2 and 3 should be part of the merge, so they are not built.
+      expect(find.text('Cell 2,0'), findsNothing);
+      expect(find.text('Cell 3,0'), findsNothing);
+
+      // Scroll horizontally so that column 1 is entirely behind pinned column 0.
+      // Pinned column 0 is 0 to 100.
+      // Unpinned content starts at 100 (Column 1).
+      // Scroll 100 pixels.
+      // Content at 0 (start of column 1) moves to absolute 100 - 100 = 0.
+      // Content at 50 (end of column 1) moves to absolute 100 + (50 - 100) = 50.
+      // So column 1 (0 to 50) is entirely covered by pinned column 0.
+      // Column 2 (50 to 100) is also covered.
+      // Column 3 (100 to 150) is the first visible in unpinned area.
+      horizontalController.jumpTo(100);
+      await tester.pump();
+
+      // With the fix, column 1 is still built because it is under the pinned area.
+      // Since column 1 is built, its merge info is found and applied to columns 2 and 3.
+      expect(find.text('Cell 1,0'), findsOneWidget);
+      expect(find.text('Cell 2,0'), findsNothing);
+      expect(find.text('Cell 3,0'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Merged cells should not unmerge when the first cell is overlaid by a pinned row',
+    (WidgetTester tester) async {
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                verticalDetails: ScrollableDetails.vertical(
+                  controller: verticalController,
+                ),
+                pinnedRowCount: 1,
+                columnCount: 10,
+                rowCount: 10,
+                columnBuilder: (int index) =>
+                    const TableSpan(extent: FixedTableSpanExtent(50)),
+                rowBuilder: (int index) => TableSpan(
+                  extent: FixedTableSpanExtent(index == 0 ? 100 : 50),
+                ),
+                cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                  // Merged cell spanning rows 1, 2, and 3.
+                  final isRow1 = vicinity.row == 1;
+                  return TableViewCell(
+                    rowMergeStart: isRow1 ? 1 : null,
+                    rowMergeSpan: isRow1 ? 3 : null,
+                    child: Center(
+                      child: Text('Cell ${vicinity.column},${vicinity.row}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Initially, row 1 is visible below pinned row 0.
+      expect(find.text('Cell 0,1'), findsOneWidget);
+      expect(find.text('Cell 0,2'), findsNothing);
+      expect(find.text('Cell 0,3'), findsNothing);
+
+      // Scroll vertically so that row 1 is entirely behind pinned row 0.
+      verticalController.jumpTo(100);
+      await tester.pump();
+
+      // Row 1 should still be built, maintaining the merge.
+      expect(find.text('Cell 0,1'), findsOneWidget);
+      expect(find.text('Cell 0,2'), findsNothing);
+      expect(find.text('Cell 0,3'), findsNothing);
+    },
+  );
+
+  testWidgets(
     'Table does not crash when focusing outside of the table while focused text field is not in the view',
     (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/137112
