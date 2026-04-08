@@ -17,9 +17,21 @@ class ImagePickerAndroid extends ImagePickerPlatform {
 
   final ImagePickerApi _hostApi;
 
-  /// Sets [ImagePickerAndroid] to use Android 13 Photo Picker.
+  /// Whether gallery picks use the Android Photo Picker instead of the legacy
+  /// document picker (`ACTION_GET_CONTENT`).
   ///
-  /// Currently defaults to false, but the default is subject to change.
+  /// Defaults to `false` (the default may change in a future release). When `true`,
+  /// the plugin uses the Photo Picker on Android versions where it is available for
+  /// the requested operation.
+  ///
+  /// **Android 16** (API level 36) and higher: the plugin always uses the Photo Picker
+  /// for gallery image, video, and mixed-media selection. This field is **not**
+  /// respected for opting out on those versions, because the legacy flow can return
+  /// success without a usable file URI. See
+  /// https://github.com/flutter/flutter/issues/182071
+  ///
+  /// Must be `true` to use the multi-select `limit` parameter on Android 13 and
+  /// above, where that feature is implemented via the Photo Picker.
   bool useAndroidPhotoPicker = false;
 
   /// Registers this class as the default platform implementation.
