@@ -1,3 +1,8 @@
+## 2.0.5
+
+* Adds example app.
+
+
 ## 2.0.4
 
 * Fixes a broken README link to the Mustache manual.
