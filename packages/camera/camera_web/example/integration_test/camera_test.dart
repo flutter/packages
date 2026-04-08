@@ -1546,12 +1546,12 @@ void main() {
         final VideoElement videoElement = getVideoElementWithBlankStream(
           const Size(10, 10),
         );
-        final Camera camera = Camera(
+        final camera = Camera(
           textureId: textureId,
           cameraService: cameraService,
         )..videoElement = videoElement;
 
-        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
+        for (final supportsOffscreenCanvas in <bool>[true, false]) {
           when(
             cameraService.hasPropertyOffScreenCanvas(),
           ).thenReturn(supportsOffscreenCanvas);
@@ -1570,8 +1570,9 @@ void main() {
             ),
           );
 
-          final CameraImageData cameraImageData =
-              await camera.cameraFrameStream().first;
+          final CameraImageData cameraImageData = await camera
+              .cameraFrameStream()
+              .first;
 
           expect(
             cameraImageData,

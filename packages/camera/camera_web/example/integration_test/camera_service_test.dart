@@ -983,12 +983,12 @@ void main() {
       });
       testWidgets('returns true if broswer has OffscreenCanvas '
           'otherwise false', (WidgetTester widgetTester) async {
-        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
+        for (final supportsOffscreenCanvas in <bool>[true, false]) {
           when(
             jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
           ).thenReturn(supportsOffscreenCanvas);
-          final bool hasOffScreenCanvas =
-              cameraService.hasPropertyOffScreenCanvas();
+          final bool hasOffScreenCanvas = cameraService
+              .hasPropertyOffScreenCanvas();
           expect(
             hasOffScreenCanvas,
             supportsOffscreenCanvas ? isTrue : isFalse,
@@ -1000,8 +1000,8 @@ void main() {
           'regardless of OffscreenCanvas support', (
         WidgetTester widgetTester,
       ) async {
-        const Size size = Size(10, 10);
-        final Completer<void> completer = Completer<void>();
+        const size = Size(10, 10);
+        final completer = Completer<void>();
         final web.VideoElement videoElement =
             getVideoElementWithBlankStream(size)
               ..onLoadedMetadata.listen((_) {
@@ -1009,7 +1009,7 @@ void main() {
               })
               ..load();
         await completer.future;
-        for (final bool supportsOffscreenCanvas in <bool>[true, false]) {
+        for (final supportsOffscreenCanvas in <bool>[true, false]) {
           when(
             jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS),
           ).thenReturn(supportsOffscreenCanvas);
