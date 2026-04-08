@@ -1258,6 +1258,10 @@ class DropdownButton<T> extends StatefulWidget {
   /// By default this button's inner width is the minimum size of its contents.
   /// If [isExpanded] is true, the inner width is expanded to fill its
   /// surrounding container.
+  /// See also:
+  ///
+  ///  * [DropdownButton.isVerticallyExpanded], which expands the inner height of the
+  ///    dropdown to fill the available vertical space.
   final bool isExpanded;
 
   /// If null, then the menu item heights will vary according to each menu item's
