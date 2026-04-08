@@ -1,6 +1,7 @@
 ## 2.0.5
 
-* Adds example app.
+* Adds example app demonstrating basic variable rendering, sections,
+  inverted sections, and lambdas.
 
 
 ## 2.0.4
