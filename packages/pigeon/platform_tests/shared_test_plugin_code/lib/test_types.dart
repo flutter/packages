@@ -39,6 +39,8 @@ final List<List<Object>> nonNullListList = <List<Object>>[
   nonNullEnumList,
 ];
 
+final List<List<bool>> nonNullBoolListList = <List<bool>>[nonNullBoolList];
+
 final Map<Object, Object> nonNullMap = <Object, Object>{
   'a': 1,
   'b': 2.0,
@@ -80,6 +82,10 @@ final Map<int, List<Object>> nonNullListMap = <int, List<Object>>{
   6: nonNullEnumList,
 };
 
+final Map<int, List<bool>> nonNullBoolListMap = <int, List<bool>>{
+  0: nonNullBoolList,
+};
+
 final Map<int, Map<Object, Object>> nonNullMapMap = <int, Map<Object, Object>>{
   0: nonNullMap,
   1: nonNullStringMap,
@@ -96,6 +102,10 @@ final List<Map<Object, Object>> nonNullMapList = <Map<Object, Object>>[
   nonNullIntMap,
   nonNullBoolMap,
   nonNullEnumMap,
+];
+
+final List<Map<int, bool>> nonNullBoolMapList = <Map<int, bool>>[
+  nonNullBoolMap,
 ];
 
 final List<Object?> list = <Object?>['Thing 1', 2, true, 3.14, null];
@@ -271,7 +281,9 @@ final AllTypes genericAllTypes = AllTypes(
   enumList: nonNullEnumList,
   objectList: nonNullList,
   listList: nonNullListList,
+  boolListList: nonNullBoolListList,
   mapList: nonNullMapList,
+  boolMapList: nonNullBoolMapList,
   map: nonNullMap,
   stringMap: nonNullStringMap,
   intMap: nonNullIntMap,
@@ -280,6 +292,7 @@ final AllTypes genericAllTypes = AllTypes(
   enumMap: nonNullEnumMap,
   objectMap: nonNullMap,
   listMap: nonNullListMap,
+  boolListMap: nonNullBoolListMap,
   mapMap: nonNullMapMap,
 );
 

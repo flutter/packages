@@ -74,13 +74,16 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                      enumList:(NSArray<FLTAnEnumBox *> *)enumList
                    objectList:(NSArray<id> *)objectList
                      listList:(NSArray<NSArray<id> *> *)listList
+                 boolListList:(NSArray<NSArray<NSNumber *> *> *)boolListList
                       mapList:(NSArray<NSDictionary<id, id> *> *)mapList
+                  boolMapList:(NSArray<NSDictionary<NSNumber *, NSNumber *> *> *)boolMapList
                           map:(NSDictionary *)map
                     stringMap:(NSDictionary<NSString *, NSString *> *)stringMap
                        intMap:(NSDictionary<NSNumber *, NSNumber *> *)intMap
                       enumMap:(NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                     objectMap:(NSDictionary<id, id> *)objectMap
                       listMap:(NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+                  boolListMap:(NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)boolListMap
                        mapMap:(NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
@@ -102,13 +105,16 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
 @property(nonatomic, copy) NSArray<id> *objectList;
 @property(nonatomic, copy) NSArray<NSArray<id> *> *listList;
+@property(nonatomic, copy) NSArray<NSArray<NSNumber *> *> *boolListList;
 @property(nonatomic, copy) NSArray<NSDictionary<id, id> *> *mapList;
+@property(nonatomic, copy) NSArray<NSDictionary<NSNumber *, NSNumber *> *> *boolMapList;
 @property(nonatomic, copy) NSDictionary *map;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *stringMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSNumber *> *intMap;
 @property(nonatomic, copy) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
 @property(nonatomic, copy) NSDictionary<id, id> *objectMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
+@property(nonatomic, copy) NSDictionary<NSNumber *, NSArray<NSNumber *> *> *boolListMap;
 @property(nonatomic, copy) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @end
 
@@ -136,6 +142,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                  enumList:(nullable NSArray<FLTAnEnumBox *> *)enumList
                objectList:(nullable NSArray<id> *)objectList
                  listList:(nullable NSArray<NSArray<id> *> *)listList
+             boolListList:(nullable NSArray<NSArray<NSNumber *> *> *)boolListList
                   mapList:(nullable NSArray<NSDictionary<id, id> *> *)mapList
        recursiveClassList:(nullable NSArray<FLTAllNullableTypes *> *)recursiveClassList
                       map:(nullable NSDictionary *)map
@@ -144,6 +151,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
                   enumMap:(nullable NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *)enumMap
                 objectMap:(nullable NSDictionary<id, id> *)objectMap
                   listMap:(nullable NSDictionary<NSNumber *, NSArray<id> *> *)listMap
+              boolListMap:(nullable NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)boolListMap
                    mapMap:(nullable NSDictionary<NSNumber *, NSDictionary<id, id> *> *)mapMap
         recursiveClassMap:
             (nullable NSDictionary<NSNumber *, FLTAllNullableTypes *> *)recursiveClassMap;
@@ -168,6 +176,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSArray<FLTAnEnumBox *> *enumList;
 @property(nonatomic, copy, nullable) NSArray<id> *objectList;
 @property(nonatomic, copy, nullable) NSArray<NSArray<id> *> *listList;
+@property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *boolListList;
 @property(nonatomic, copy, nullable) NSArray<NSDictionary<id, id> *> *mapList;
 @property(nonatomic, copy, nullable) NSArray<FLTAllNullableTypes *> *recursiveClassList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
@@ -176,6 +185,7 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 @property(nonatomic, copy, nullable) NSDictionary<FLTAnEnumBox *, FLTAnEnumBox *> *enumMap;
 @property(nonatomic, copy, nullable) NSDictionary<id, id> *objectMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSArray<id> *> *listMap;
+@property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSArray<NSNumber *> *> *boolListMap;
 @property(nonatomic, copy, nullable) NSDictionary<NSNumber *, NSDictionary<id, id> *> *mapMap;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSNumber *, FLTAllNullableTypes *> *recursiveClassMap;
@@ -355,6 +365,12 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (nullable NSArray<FLTAllNullableTypes *> *)
     echoNonNullClassList:(NSArray<FLTAllNullableTypes *> *)classList
                    error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed list, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<NSArray<NSNumber *> *> *)
+    echoNonNullBoolListList:(NSArray<NSArray<NSNumber *> *> *)list
+                      error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed map, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.

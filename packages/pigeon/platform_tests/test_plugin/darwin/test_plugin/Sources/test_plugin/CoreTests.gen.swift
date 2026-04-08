@@ -249,13 +249,16 @@ struct AllTypes: Hashable {
   var enumList: [AnEnum]
   var objectList: [Any]
   var listList: [[Any?]]
+  var boolListList: [[Bool]]
   var mapList: [[AnyHashable?: Any?]]
+  var boolMapList: [[Int64: Bool]]
   var map: [AnyHashable?: Any?]
   var stringMap: [String: String]
   var intMap: [Int64: Int64]
   var enumMap: [AnEnum: AnEnum]
   var objectMap: [AnyHashable: Any]
   var listMap: [Int64: [Any?]]
+  var boolListMap: [Int64: [Bool]]
   var mapMap: [Int64: [AnyHashable?: Any?]]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -280,14 +283,17 @@ struct AllTypes: Hashable {
     let enumList = pigeonVar_list[17] as! [AnEnum]
     let objectList = pigeonVar_list[18] as! [Any]
     let listList = pigeonVar_list[19] as! [[Any?]]
-    let mapList = pigeonVar_list[20] as! [[AnyHashable?: Any?]]
-    let map = pigeonVar_list[21] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[22] as! [String: String]
-    let intMap = pigeonVar_list[23] as! [Int64: Int64]
-    let enumMap = pigeonVar_list[24] as? [AnEnum: AnEnum]
-    let objectMap = pigeonVar_list[25] as! [AnyHashable: Any]
-    let listMap = pigeonVar_list[26] as! [Int64: [Any?]]
-    let mapMap = pigeonVar_list[27] as! [Int64: [AnyHashable?: Any?]]
+    let boolListList = pigeonVar_list[20] as! [[Bool]]
+    let mapList = pigeonVar_list[21] as! [[AnyHashable?: Any?]]
+    let boolMapList = pigeonVar_list[22] as! [[Int64: Bool]]
+    let map = pigeonVar_list[23] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[24] as! [String: String]
+    let intMap = pigeonVar_list[25] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[26] as? [AnEnum: AnEnum]
+    let objectMap = pigeonVar_list[27] as! [AnyHashable: Any]
+    let listMap = pigeonVar_list[28] as! [Int64: [Any?]]
+    let boolListMap = pigeonVar_list[29] as! [Int64: [Bool]]
+    let mapMap = pigeonVar_list[30] as! [Int64: [AnyHashable?: Any?]]
 
     return AllTypes(
       aBool: aBool,
@@ -310,13 +316,16 @@ struct AllTypes: Hashable {
       enumList: enumList,
       objectList: objectList,
       listList: listList,
+      boolListList: boolListList,
       mapList: mapList,
+      boolMapList: boolMapList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
       enumMap: enumMap!,
       objectMap: objectMap,
       listMap: listMap,
+      boolListMap: boolListMap,
       mapMap: mapMap
     )
   }
@@ -342,13 +351,16 @@ struct AllTypes: Hashable {
       enumList,
       objectList,
       listList,
+      boolListList,
       mapList,
+      boolMapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
       listMap,
+      boolListMap,
       mapMap,
     ]
   }
@@ -374,12 +386,15 @@ struct AllTypes: Hashable {
       && deepEqualsCoreTests(lhs.enumList, rhs.enumList)
       && deepEqualsCoreTests(lhs.objectList, rhs.objectList)
       && deepEqualsCoreTests(lhs.listList, rhs.listList)
-      && deepEqualsCoreTests(lhs.mapList, rhs.mapList) && deepEqualsCoreTests(lhs.map, rhs.map)
-      && deepEqualsCoreTests(lhs.stringMap, rhs.stringMap)
+      && deepEqualsCoreTests(lhs.boolListList, rhs.boolListList)
+      && deepEqualsCoreTests(lhs.mapList, rhs.mapList)
+      && deepEqualsCoreTests(lhs.boolMapList, rhs.boolMapList)
+      && deepEqualsCoreTests(lhs.map, rhs.map) && deepEqualsCoreTests(lhs.stringMap, rhs.stringMap)
       && deepEqualsCoreTests(lhs.intMap, rhs.intMap)
       && deepEqualsCoreTests(lhs.enumMap, rhs.enumMap)
       && deepEqualsCoreTests(lhs.objectMap, rhs.objectMap)
       && deepEqualsCoreTests(lhs.listMap, rhs.listMap)
+      && deepEqualsCoreTests(lhs.boolListMap, rhs.boolListMap)
       && deepEqualsCoreTests(lhs.mapMap, rhs.mapMap)
   }
 
@@ -405,13 +420,16 @@ struct AllTypes: Hashable {
     deepHashCoreTests(value: enumList, hasher: &hasher)
     deepHashCoreTests(value: objectList, hasher: &hasher)
     deepHashCoreTests(value: listList, hasher: &hasher)
+    deepHashCoreTests(value: boolListList, hasher: &hasher)
     deepHashCoreTests(value: mapList, hasher: &hasher)
+    deepHashCoreTests(value: boolMapList, hasher: &hasher)
     deepHashCoreTests(value: map, hasher: &hasher)
     deepHashCoreTests(value: stringMap, hasher: &hasher)
     deepHashCoreTests(value: intMap, hasher: &hasher)
     deepHashCoreTests(value: enumMap, hasher: &hasher)
     deepHashCoreTests(value: objectMap, hasher: &hasher)
     deepHashCoreTests(value: listMap, hasher: &hasher)
+    deepHashCoreTests(value: boolListMap, hasher: &hasher)
     deepHashCoreTests(value: mapMap, hasher: &hasher)
   }
 }
@@ -442,6 +460,7 @@ class AllNullableTypes: Hashable {
     enumList: [AnEnum?]? = nil,
     objectList: [Any?]? = nil,
     listList: [[Any?]?]? = nil,
+    boolListList: [[Bool?]?]? = nil,
     mapList: [[AnyHashable?: Any?]?]? = nil,
     recursiveClassList: [AllNullableTypes?]? = nil,
     map: [AnyHashable?: Any?]? = nil,
@@ -450,6 +469,7 @@ class AllNullableTypes: Hashable {
     enumMap: [AnEnum?: AnEnum?]? = nil,
     objectMap: [AnyHashable?: Any?]? = nil,
     listMap: [Int64?: [Any?]?]? = nil,
+    boolListMap: [Int64?: [Bool?]?]? = nil,
     mapMap: [Int64?: [AnyHashable?: Any?]?]? = nil,
     recursiveClassMap: [Int64?: AllNullableTypes?]? = nil
   ) {
@@ -474,6 +494,7 @@ class AllNullableTypes: Hashable {
     self.enumList = enumList
     self.objectList = objectList
     self.listList = listList
+    self.boolListList = boolListList
     self.mapList = mapList
     self.recursiveClassList = recursiveClassList
     self.map = map
@@ -482,6 +503,7 @@ class AllNullableTypes: Hashable {
     self.enumMap = enumMap
     self.objectMap = objectMap
     self.listMap = listMap
+    self.boolListMap = boolListMap
     self.mapMap = mapMap
     self.recursiveClassMap = recursiveClassMap
   }
@@ -506,6 +528,7 @@ class AllNullableTypes: Hashable {
   var enumList: [AnEnum?]?
   var objectList: [Any?]?
   var listList: [[Any?]?]?
+  var boolListList: [[Bool?]?]?
   var mapList: [[AnyHashable?: Any?]?]?
   var recursiveClassList: [AllNullableTypes?]?
   var map: [AnyHashable?: Any?]?
@@ -514,6 +537,7 @@ class AllNullableTypes: Hashable {
   var enumMap: [AnEnum?: AnEnum?]?
   var objectMap: [AnyHashable?: Any?]?
   var listMap: [Int64?: [Any?]?]?
+  var boolListMap: [Int64?: [Bool?]?]?
   var mapMap: [Int64?: [AnyHashable?: Any?]?]?
   var recursiveClassMap: [Int64?: AllNullableTypes?]?
 
@@ -540,16 +564,18 @@ class AllNullableTypes: Hashable {
     let enumList: [AnEnum?]? = nilOrValue(pigeonVar_list[18])
     let objectList: [Any?]? = nilOrValue(pigeonVar_list[19])
     let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[20])
-    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[21])
-    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[22])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[23])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[24])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[25])
-    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[26] as? [AnEnum?: AnEnum?]
-    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[27])
-    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[28])
-    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[29])
-    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[30])
+    let boolListList: [[Bool?]?]? = nilOrValue(pigeonVar_list[21])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[22])
+    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[23])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[24])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[25])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[26])
+    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[27] as? [AnEnum?: AnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[28])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[29])
+    let boolListMap: [Int64?: [Bool?]?]? = nilOrValue(pigeonVar_list[30])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[31])
+    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[32])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -573,6 +599,7 @@ class AllNullableTypes: Hashable {
       enumList: enumList,
       objectList: objectList,
       listList: listList,
+      boolListList: boolListList,
       mapList: mapList,
       recursiveClassList: recursiveClassList,
       map: map,
@@ -581,6 +608,7 @@ class AllNullableTypes: Hashable {
       enumMap: enumMap,
       objectMap: objectMap,
       listMap: listMap,
+      boolListMap: boolListMap,
       mapMap: mapMap,
       recursiveClassMap: recursiveClassMap
     )
@@ -608,6 +636,7 @@ class AllNullableTypes: Hashable {
       enumList,
       objectList,
       listList,
+      boolListList,
       mapList,
       recursiveClassList,
       map,
@@ -616,6 +645,7 @@ class AllNullableTypes: Hashable {
       enumMap,
       objectMap,
       listMap,
+      boolListMap,
       mapMap,
       recursiveClassMap,
     ]
@@ -648,6 +678,7 @@ class AllNullableTypes: Hashable {
       && deepEqualsCoreTests(lhs.enumList, rhs.enumList)
       && deepEqualsCoreTests(lhs.objectList, rhs.objectList)
       && deepEqualsCoreTests(lhs.listList, rhs.listList)
+      && deepEqualsCoreTests(lhs.boolListList, rhs.boolListList)
       && deepEqualsCoreTests(lhs.mapList, rhs.mapList)
       && deepEqualsCoreTests(lhs.recursiveClassList, rhs.recursiveClassList)
       && deepEqualsCoreTests(lhs.map, rhs.map) && deepEqualsCoreTests(lhs.stringMap, rhs.stringMap)
@@ -655,6 +686,7 @@ class AllNullableTypes: Hashable {
       && deepEqualsCoreTests(lhs.enumMap, rhs.enumMap)
       && deepEqualsCoreTests(lhs.objectMap, rhs.objectMap)
       && deepEqualsCoreTests(lhs.listMap, rhs.listMap)
+      && deepEqualsCoreTests(lhs.boolListMap, rhs.boolListMap)
       && deepEqualsCoreTests(lhs.mapMap, rhs.mapMap)
       && deepEqualsCoreTests(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
@@ -682,6 +714,7 @@ class AllNullableTypes: Hashable {
     deepHashCoreTests(value: enumList, hasher: &hasher)
     deepHashCoreTests(value: objectList, hasher: &hasher)
     deepHashCoreTests(value: listList, hasher: &hasher)
+    deepHashCoreTests(value: boolListList, hasher: &hasher)
     deepHashCoreTests(value: mapList, hasher: &hasher)
     deepHashCoreTests(value: recursiveClassList, hasher: &hasher)
     deepHashCoreTests(value: map, hasher: &hasher)
@@ -690,6 +723,7 @@ class AllNullableTypes: Hashable {
     deepHashCoreTests(value: enumMap, hasher: &hasher)
     deepHashCoreTests(value: objectMap, hasher: &hasher)
     deepHashCoreTests(value: listMap, hasher: &hasher)
+    deepHashCoreTests(value: boolListMap, hasher: &hasher)
     deepHashCoreTests(value: mapMap, hasher: &hasher)
     deepHashCoreTests(value: recursiveClassMap, hasher: &hasher)
   }
@@ -1116,6 +1150,8 @@ protocol HostIntegrationCoreApi {
   func echoNonNull(enumList: [AnEnum]) throws -> [AnEnum]
   /// Returns the passed list, to test serialization and deserialization.
   func echoNonNull(classList: [AllNullableTypes]) throws -> [AllNullableTypes]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNonNull(boolListList list: [[Bool]]) throws -> [[Bool]]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?]
   /// Returns the passed map, to test serialization and deserialization.
@@ -1759,6 +1795,25 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoNonNullClassListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoNonNullBoolListListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNonNullBoolListList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNonNullBoolListListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let listArg = args[0] as! [[Bool]]
+        do {
+          let result = try api.echoNonNull(boolListList: listArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNonNullBoolListListChannel.setMessageHandler(nil)
     }
     /// Returns the passed map, to test serialization and deserialization.
     let echoMapChannel = FlutterBasicMessageChannel(

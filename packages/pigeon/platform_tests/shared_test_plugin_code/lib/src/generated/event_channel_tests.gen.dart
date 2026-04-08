@@ -241,8 +241,12 @@ class EventAllNullableTypes {
       boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[18] as List<Object?>?)?.cast<EventEnum?>(),
       objectList: result[19] as List<Object?>?,
-      listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
-      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      listList: (result[20] as List<Object?>?)
+          ?.map((e) => e as List<Object?>?)
+          .toList(),
+      mapList: (result[21] as List<Object?>?)
+          ?.map((e) => e as Map<Object?, Object?>?)
+          .toList(),
       recursiveClassList: (result[22] as List<Object?>?)
           ?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
@@ -252,10 +256,12 @@ class EventAllNullableTypes {
       enumMap: (result[26] as Map<Object?, Object?>?)
           ?.cast<EventEnum?, EventEnum?>(),
       objectMap: result[27] as Map<Object?, Object?>?,
-      listMap: (result[28] as Map<Object?, Object?>?)
-          ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)
-          ?.cast<int?, Map<Object?, Object?>?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as List<Object?>?),
+      ),
+      mapMap: (result[29] as Map<Object?, Object?>?)?.map(
+        (k, v) => MapEntry(k as int?, v as Map<Object?, Object?>?),
+      ),
       recursiveClassMap: (result[30] as Map<Object?, Object?>?)
           ?.cast<int?, EventAllNullableTypes?>(),
     );

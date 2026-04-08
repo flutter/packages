@@ -128,13 +128,16 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllTypes,
  * enum_list: field in this object.
  * object_list: field in this object.
  * list_list: field in this object.
+ * bool_list_list: field in this object.
  * map_list: field in this object.
+ * bool_map_list: field in this object.
  * map: field in this object.
  * string_map: field in this object.
  * int_map: field in this object.
  * enum_map: field in this object.
  * object_map: field in this object.
  * list_map: field in this object.
+ * bool_list_map: field in this object.
  * map_map: field in this object.
  *
  * Creates a new #AllTypes object.
@@ -151,9 +154,11 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
     FlValue* double_list, FlValue* bool_list, FlValue* enum_list,
-    FlValue* object_list, FlValue* list_list, FlValue* map_list, FlValue* map,
+    FlValue* object_list, FlValue* list_list, FlValue* bool_list_list,
+    FlValue* map_list, FlValue* bool_map_list, FlValue* map,
     FlValue* string_map, FlValue* int_map, FlValue* enum_map,
-    FlValue* object_map, FlValue* list_map, FlValue* map_map);
+    FlValue* object_map, FlValue* list_map, FlValue* bool_list_map,
+    FlValue* map_map);
 
 /**
  * core_tests_pigeon_test_all_types_get_a_bool
@@ -381,6 +386,17 @@ FlValue* core_tests_pigeon_test_all_types_get_list_list(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_types_get_bool_list_list
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the boolListList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_bool_list_list(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
  * core_tests_pigeon_test_all_types_get_map_list
  * @object: a #CoreTestsPigeonTestAllTypes.
  *
@@ -389,6 +405,17 @@ FlValue* core_tests_pigeon_test_all_types_get_list_list(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_types_get_map_list(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_bool_map_list
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the boolMapList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_bool_map_list(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -455,6 +482,17 @@ FlValue* core_tests_pigeon_test_all_types_get_object_map(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_types_get_list_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_bool_list_map
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the boolListMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_bool_list_map(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -528,6 +566,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * enum_list: field in this object.
  * object_list: field in this object.
  * list_list: field in this object.
+ * bool_list_list: field in this object.
  * map_list: field in this object.
  * recursive_class_list: field in this object.
  * map: field in this object.
@@ -536,6 +575,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * enum_map: field in this object.
  * object_map: field in this object.
  * list_map: field in this object.
+ * bool_list_map: field in this object.
  * map_map: field in this object.
  * recursive_class_map: field in this object.
  *
@@ -557,10 +597,10 @@ core_tests_pigeon_test_all_nullable_types_new(
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
     FlValue* bool_list, FlValue* enum_list, FlValue* object_list,
-    FlValue* list_list, FlValue* map_list, FlValue* recursive_class_list,
-    FlValue* map, FlValue* string_map, FlValue* int_map, FlValue* enum_map,
-    FlValue* object_map, FlValue* list_map, FlValue* map_map,
-    FlValue* recursive_class_map);
+    FlValue* list_list, FlValue* bool_list_list, FlValue* map_list,
+    FlValue* recursive_class_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map, FlValue* enum_map, FlValue* object_map, FlValue* list_map,
+    FlValue* bool_list_map, FlValue* map_map, FlValue* recursive_class_map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_get_a_nullable_bool
@@ -805,6 +845,17 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_list_list(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_get_bool_list_list
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the boolListList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list_list(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_get_map_list
  * @object: a #CoreTestsPigeonTestAllNullableTypes.
  *
@@ -890,6 +941,17 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_object_map(
  * Returns: the field value.
  */
 FlValue* core_tests_pigeon_test_all_nullable_types_get_list_map(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_get_bool_list_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the boolListMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list_map(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
@@ -2105,6 +2167,40 @@ core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_respon
  */
 CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullClassListResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_non_null_class_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_NON_NULL_BOOL_LIST_LIST_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoNonNullBoolListList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.echoNonNullBoolListList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_non_null_bool_list_list_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
@@ -3820,6 +3916,8 @@ typedef struct {
       *echo_non_null_enum_list)(FlValue* enum_list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullClassListResponse* (
       *echo_non_null_class_list)(FlValue* class_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNonNullBoolListListResponse* (
+      *echo_non_null_bool_list_list)(FlValue* list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoMapResponse* (*echo_map)(
       FlValue* map, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoStringMapResponse* (
