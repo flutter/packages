@@ -48,8 +48,10 @@ class Camera {
     required this.textureId,
     required CameraService cameraService,
     this.options = const CameraOptions(),
-    this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
-  }) : _cameraService = cameraService,
+    ({int? audioBitrate, int? videoBitrate})? recorderOptions,
+  }) : recorderOptions =
+           recorderOptions ?? (audioBitrate: null, videoBitrate: null),
+       _cameraService = cameraService,
        canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
 
   /// The texture id used to register the camera view.
