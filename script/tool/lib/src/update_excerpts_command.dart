@@ -148,6 +148,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                   case '':
                     language = 'txt';
                   case '.kt':
+                  case '.kts':
                     language = 'kotlin';
                   case '.cc':
                   case '.cpp':

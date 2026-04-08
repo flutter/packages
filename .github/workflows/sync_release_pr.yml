@@ -41,4 +41,4 @@ jobs:
             --head "${{ github.ref_name }}" \
             --title "Sync ${{ github.ref_name }} to main" \
             --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
-            --label "post-${{ github.ref_name }}"
+            --label "override: post-${{ github.ref_name }}"

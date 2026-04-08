@@ -308,6 +308,14 @@ class MarkersController {
   }
 
   /**
+   * Called when a cluster-managed marker's info window is tapped. Takes the Dart marker ID
+   * directly.
+   */
+  void onClusterItemInfoWindowTap(String markerId) {
+    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
+  }
+
+  /**
    * Called each time clusterManager adds new visible marker to the map. Creates markerController
    * for marker for realtime marker updates.
    */
