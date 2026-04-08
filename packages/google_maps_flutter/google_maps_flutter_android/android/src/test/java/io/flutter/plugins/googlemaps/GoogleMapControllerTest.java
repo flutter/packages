@@ -187,6 +187,21 @@ public class GoogleMapControllerTest {
 
   @Test
   @SuppressWarnings("unchecked")
+  public void OnMapReadySetsClusterItemInfoWindowClickListener() {
+    GoogleMapController googleMapController = getGoogleMapController();
+    GoogleMapController spyGoogleMapController = spy(googleMapController);
+    spyGoogleMapController.onMapReady(mockGoogleMap);
+
+    verify(spyGoogleMapController, times(1))
+        .setClusterItemInfoWindowClickListener(
+            any(ClusterManager.OnClusterItemInfoWindowClickListener.class));
+
+    spyGoogleMapController.dispose();
+    verify(spyGoogleMapController, times(1)).setClusterItemInfoWindowClickListener(null);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
   public void OnMapReadySetsClusterItemRenderedListener() {
     GoogleMapController googleMapController = getGoogleMapController();
     GoogleMapController spyGoogleMapController = spy(googleMapController);
@@ -233,6 +248,15 @@ public class GoogleMapControllerTest {
 
     googleMapController.onClusterItemClick(markerBuilder);
     verify(mockMarkersController, times(1)).onMarkerTap(markerBuilder.markerId());
+  }
+
+  @Test
+  public void OnClusterItemInfoWindowClickCallsMarkersController() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER);
+
+    googleMapController.onClusterItemInfoWindowClick(markerBuilder);
+    verify(mockMarkersController, times(1)).onClusterItemInfoWindowTap(markerBuilder.markerId());
   }
 
   @Test

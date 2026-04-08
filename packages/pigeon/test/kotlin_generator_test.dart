@@ -1983,6 +1983,45 @@ void main() {
     expect(code, isNot(contains('FlutterError')));
   });
 
+  test('error class inherits from RuntimeException', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'method',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains(': RuntimeException()'));
+  });
+
   test('do not generate duplicated entries in writeValue', () {
     final root = Root(
       apis: <Api>[

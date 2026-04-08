@@ -45,6 +45,9 @@
 - jni
 - jnigen
 - js
+- jni
+- jni_flutter
+- jnigen
 - json_serializable
 - leak_tracker
 - leak_tracker_flutter_testing

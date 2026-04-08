@@ -371,10 +371,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
     RepositoryPackage package,
   ) async {
     if (!pluginSupportsPlatform(
-      platformAndroid,
-      package,
-      requiredMode: PlatformSupport.inline,
-    )) {
+          platformAndroid,
+          package,
+          requiredMode: PlatformSupport.inline,
+        ) ||
+        !package.platformDirectory(FlutterPlatform.android).existsSync()) {
       return PackageResult.skip(
         'Package does not contain native Android plugin code',
       );

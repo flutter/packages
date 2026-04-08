@@ -1521,7 +1521,7 @@ class ${api.name}Registrar() {
       indent.writeln('override val message: String? = null,');
       indent.writeln('val details: Any? = null');
     }, addTrailingNewline: false);
-    indent.addln(' : Throwable()');
+    indent.addln(' : RuntimeException()');
   }
 
   void _writeCreateConnectionError(
