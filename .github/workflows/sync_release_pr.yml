@@ -3,7 +3,7 @@ name: "Sync Release to Main"
 on:
   push:
     branches:
-    # As packages opt into batched releases, they need to be added here
+      # As packages opt into batched releases, they need to be added here
       - 'release-go_router'
 
 jobs:
@@ -16,14 +16,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0 # Fetch history to allow branch comparison
 
       - name: Create Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
         run: |
+          # 1. Fetch main so the runner can see the difference
+          git fetch origin main
+
+          # 2. Verify there are actually new commits to sync
+          # This prevents the "GraphQL: No commits between main..." error
+          COMMITS_COUNT=$(git rev-list --count origin/main..HEAD)
+
+          if [ "$COMMITS_COUNT" -eq "0" ]; then
+            echo "No new commits found on ${{ github.ref_name }} compared to main. Nothing to sync."
+            exit 0
+          fi
+
+          # 3. Create the PR directly
           gh pr create \
             --base "main" \
             --head "${{ github.ref_name }}" \
             --title "Sync ${{ github.ref_name }} to main" \
             --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
-            --label "post-${{ github.ref_name }}"
+            --label "override: post-${{ github.ref_name }}"

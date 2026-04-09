@@ -62,6 +62,7 @@ import java.util.Set;
 class GoogleMapController
     implements ActivityPluginBinding.OnSaveInstanceStateListener,
         ClusterManager.OnClusterItemClickListener<MarkerBuilder>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<MarkerBuilder>,
         ClusterManagersController.OnClusterItemRendered<MarkerBuilder>,
         DefaultLifecycleObserver,
         GoogleMapListener,
@@ -223,6 +224,7 @@ class GoogleMapController
     groundOverlaysController.setGoogleMap(googleMap);
     setMarkerCollectionListener(this);
     setClusterItemClickListener(this);
+    setClusterItemInfoWindowClickListener(this);
     setClusterItemRenderedListener(this);
     updateInitialClusterManagers();
     updateInitialMarkers();
@@ -398,6 +400,7 @@ class GoogleMapController
     setGoogleMapListener(null);
     setMarkerCollectionListener(null);
     setClusterItemClickListener(null);
+    setClusterItemInfoWindowClickListener(null);
     setClusterItemRenderedListener(null);
     destroyMapViewIfNecessary();
     Lifecycle lifecycle = lifecycleProvider.getLifecycle();
@@ -443,6 +446,17 @@ class GoogleMapController
     }
 
     clusterManagersController.setClusterItemClickListener(listener);
+  }
+
+  @VisibleForTesting
+  public void setClusterItemInfoWindowClickListener(
+      @Nullable ClusterManager.OnClusterItemInfoWindowClickListener<MarkerBuilder> listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    clusterManagersController.setClusterItemInfoWindowClickListener(listener);
   }
 
   @VisibleForTesting
@@ -825,6 +839,11 @@ class GoogleMapController
   @Override
   public boolean onClusterItemClick(MarkerBuilder item) {
     return markersController.onMarkerTap(item.markerId());
+  }
+
+  @Override
+  public void onClusterItemInfoWindowClick(MarkerBuilder item) {
+    markersController.onClusterItemInfoWindowTap(item.markerId());
   }
 
   public void setMapStyle(@Nullable String style) {
