@@ -470,11 +470,7 @@ class RouteConfiguration {
         }
         // Recurse into redirect — top-level will be re-evaluated at the
         // top of the next cycle.
-        return redirect(
-          context,
-          newMatch,
-          redirectHistory: redirectHistory,
-        );
+        return redirect(context, newMatch, redirectHistory: redirectHistory);
       }
       return matchList;
     }
@@ -488,8 +484,12 @@ class RouteConfiguration {
     });
 
     try {
-      final FutureOr<String?> routeLevelRedirectResult =
-          _getRouteLevelRedirect(context, matchList, routeMatches, 0);
+      final FutureOr<String?> routeLevelRedirectResult = _getRouteLevelRedirect(
+        context,
+        matchList,
+        routeMatches,
+        0,
+      );
 
       if (routeLevelRedirectResult is String?) {
         return processRouteLevelRedirect(routeLevelRedirectResult);
