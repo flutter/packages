@@ -55,8 +55,7 @@ class NSErrorUserInfoKey {
   /// The URL which caused a load to fail.
   ///
   /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlerrorkey.
-  static const String NSURLErrorFailingURLErrorKey =
-      'NSErrorFailingURLKey';
+  static const String NSURLErrorFailingURLErrorKey = 'NSErrorFailingURLKey';
 }
 
 /// The authentication method used by the receiver.
