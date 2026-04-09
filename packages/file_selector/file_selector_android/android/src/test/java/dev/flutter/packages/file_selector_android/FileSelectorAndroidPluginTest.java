@@ -28,7 +28,6 @@ import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugins.googlesignin.ResultCompat;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
