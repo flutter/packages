@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.googlesignin
+package dev.flutter.packages.file_selector_android
 
 /** Wraps Kotlin Result for use in Java unit tests. */
 @Suppress("UNCHECKED_CAST")
