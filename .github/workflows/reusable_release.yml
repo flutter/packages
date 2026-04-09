@@ -76,9 +76,11 @@ jobs:
         if [ "${{ inputs.is-batch-release }}" = "true" ]; then
           BATCH_FLAG="--batch-release-branch=${INPUTS_BRANCH_NAME}"
         fi
+        
         dart ./script/tool/lib/src/main.dart publish \
           --all-changed \
           $BATCH_FLAG \
           --base-sha=HEAD~ \
-          --skip-confirmation
+          --skip-confirmation \
+          --remote=origin
       env: { PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}", INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}" }

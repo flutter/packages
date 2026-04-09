@@ -1,3 +1,8 @@
+## 26.3.4
+
+* [kotlin] Updates generated error class to inherit from `RuntimeException`
+  instead of `Throwable`, for better Java interoperability.
+
 ## 26.3.3
 
 * Updates `analyzer` dependency to support versions 10 through 12.

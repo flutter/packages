@@ -248,7 +248,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
     // PR with post release label is going to sync changelog.md and pubspec.yaml
     // change back to main branch. Proceed with regular version check.
     final bool hasPostReleaseLabel = _prLabels.contains(
-      'post-release-${pubspec.name}',
+      'override: post-release-${pubspec.name}',
     );
     bool versionChanged;
 
