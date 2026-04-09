@@ -1,3 +1,7 @@
+## 3.24.3
+
+* Adds support to get failing url from DNS errors on iOS 26+.
+
 ## 3.24.2
 
 * Fixes dartdoc comments that accidentally used HTML.
