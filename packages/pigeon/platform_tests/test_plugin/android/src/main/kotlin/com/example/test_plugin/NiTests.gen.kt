@@ -190,7 +190,7 @@ class NiTestsError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 
 const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
