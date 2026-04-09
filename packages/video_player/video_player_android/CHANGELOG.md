@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.
+
 ## 2.9.5
 
 * Updates build files from Groovy to Kotlin.

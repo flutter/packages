@@ -31,6 +31,15 @@ void main() {
       NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
     ),
   );
+  // Provide dummy values for video track types
+  provideDummy<NativeVideoTrackData>(
+    NativeVideoTrackData(exoPlayerTracks: <ExoPlayerVideoTrackData>[]),
+  );
+  provideDummy<Future<NativeVideoTrackData>>(
+    Future<NativeVideoTrackData>.value(
+      NativeVideoTrackData(exoPlayerTracks: <ExoPlayerVideoTrackData>[]),
+    ),
+  );
   provideDummy<Future<void>>(Future<void>.value());
 
   (AndroidVideoPlayer, MockAndroidVideoPlayerApi, MockVideoPlayerInstanceApi)
@@ -948,6 +957,161 @@ void main() {
         await selectionFuture;
 
         verify(api.selectAudioTrack(0, 1));
+      });
+    });
+
+    group('video tracks', () {
+      test('isVideoTrackSupportAvailable returns true', () {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(player.isVideoTrackSupportAvailable(), true);
+      });
+
+      test('getVideoTracks returns empty list when no tracks', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(
+          api.getVideoTracks(),
+        ).thenAnswer((_) async => NativeVideoTrackData());
+
+        final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+        expect(tracks, isEmpty);
+      });
+
+      test('getVideoTracks converts native tracks to VideoTrack', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(api.getVideoTracks()).thenAnswer(
+          (_) async => NativeVideoTrackData(
+            exoPlayerTracks: <ExoPlayerVideoTrackData>[
+              ExoPlayerVideoTrackData(
+                groupIndex: 0,
+                trackIndex: 0,
+                label: '1080p',
+                isSelected: true,
+                bitrate: 5000000,
+                width: 1920,
+                height: 1080,
+                frameRate: 30.0,
+                codec: 'avc1.64001f',
+              ),
+              ExoPlayerVideoTrackData(
+                groupIndex: 0,
+                trackIndex: 1,
+                label: '720p',
+                isSelected: false,
+                bitrate: 2500000,
+                width: 1280,
+                height: 720,
+                frameRate: 30.0,
+                codec: 'avc1.64001f',
+              ),
+            ],
+          ),
+        );
+
+        final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+        expect(tracks.length, 2);
+
+        expect(tracks[0].id, '0_0');
+        expect(tracks[0].label, '1080p');
+        expect(tracks[0].isSelected, true);
+        expect(tracks[0].bitrate, 5000000);
+        expect(tracks[0].width, 1920);
+        expect(tracks[0].height, 1080);
+        expect(tracks[0].frameRate, 30.0);
+        expect(tracks[0].codec, 'avc1.64001f');
+
+        expect(tracks[1].id, '0_1');
+        expect(tracks[1].label, '720p');
+        expect(tracks[1].isSelected, false);
+        expect(tracks[1].bitrate, 2500000);
+        expect(tracks[1].width, 1280);
+        expect(tracks[1].height, 720);
+      });
+
+      test(
+        'getVideoTracks generates label from resolution if not provided',
+        () async {
+          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+              setUpMockPlayer(playerId: 1);
+          when(api.getVideoTracks()).thenAnswer(
+            (_) async => NativeVideoTrackData(
+              exoPlayerTracks: <ExoPlayerVideoTrackData>[
+                ExoPlayerVideoTrackData(
+                  groupIndex: 0,
+                  trackIndex: 0,
+                  isSelected: true,
+                  width: 1920,
+                  height: 1080,
+                ),
+              ],
+            ),
+          );
+
+          final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+          expect(tracks.length, 1);
+          expect(tracks[0].label, '1080p');
+        },
+      );
+
+      test('getVideoTracks handles null exoPlayerTracks', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(
+          api.getVideoTracks(),
+        ).thenAnswer((_) async => NativeVideoTrackData());
+
+        final List<VideoTrack> tracks = await player.getVideoTracks(1);
+
+        expect(tracks, isEmpty);
+      });
+
+      test(
+        'selectVideoTrack with null clears override (auto quality)',
+        () async {
+          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+              setUpMockPlayer(playerId: 1);
+          when(api.enableAutoVideoQuality()).thenAnswer((_) async {});
+
+          await player.selectVideoTrack(1, null);
+
+          verify(api.enableAutoVideoQuality());
+        },
+      );
+
+      test('selectVideoTrack parses track id and calls API', () async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
+
+        const track = VideoTrack(id: '0_2', isSelected: false);
+        await player.selectVideoTrack(1, track);
+
+        verify(api.selectVideoTrack(0, 2));
+      });
+
+      test('selectVideoTrack throws on invalid track id format', () async {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        const track = VideoTrack(id: 'invalid', isSelected: false);
+        expect(
+          () => player.selectVideoTrack(1, track),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('selectVideoTrack throws on track id with too many parts', () async {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        const track = VideoTrack(id: '1_2_3', isSelected: false);
+        expect(
+          () => player.selectVideoTrack(1, track),
+          throwsA(isA<ArgumentError>()),
+        );
       });
     });
   });
