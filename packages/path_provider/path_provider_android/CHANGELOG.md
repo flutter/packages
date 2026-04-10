@@ -1,3 +1,8 @@
+## 2.3.1
+
+* Removes dependency on `PathUtils` to avoid a potential
+  `ClassNotFoundException` when running in release mode.
+
 ## 2.3.0
 
 * Changes internal implementation to use JNI.

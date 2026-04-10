@@ -26,16 +26,23 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    return PathUtils.getFilesDir(
-      _applicationContext,
-    ).toDartString(releaseOriginal: true);
+    final File? file = _applicationContext.filesDir;
+    final String? path = file?.path?.toDartString(releaseOriginal: true);
+    file?.release();
+    return path;
   }
 
   @override
   Future<String?> getApplicationDocumentsPath() async {
-    return PathUtils.getDataDirectory(
-      _applicationContext,
-    ).toDartString(releaseOriginal: true);
+    final JString directory = 'flutter'.toJString();
+    final File? file = _applicationContext.getDir(
+      directory,
+      Context.MODE_PRIVATE,
+    );
+    final String? path = file?.path?.toDartString(releaseOriginal: true);
+    file?.release();
+    directory.release();
+    return path;
   }
 
   @override
