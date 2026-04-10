@@ -29,7 +29,10 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
 
     let viewFactory = FlutterViewFactory(instanceManager: plugin.proxyApiRegistrar!.instanceManager)
 
-    registrar.addApplicationDelegate(plugin)
+    #if os(iOS)
+      registrar.addApplicationDelegate(plugin)
+    #endif
+
     registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
     registrar.publish(plugin)
   }
