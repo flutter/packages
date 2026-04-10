@@ -985,7 +985,9 @@ public class CameraTest {
         camera.createTriggerResetCallback(triggerKey, idleValue);
 
     callback.onCaptureCompleted(
-        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(TotalCaptureResult.class));
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
 
     verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
   }
@@ -1013,7 +1015,9 @@ public class CameraTest {
         camera.createTriggerResetCallback(triggerKey, idleValue);
 
     callback.onCaptureCompleted(
-        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(TotalCaptureResult.class));
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
 
     verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
   }
