@@ -10,7 +10,7 @@
   #error("Unsupported platform.")
 #endif
 
-public class WebViewFlutterPlugin: NSObject, FlutterPlugin, FlutterApplicationLifeCycleDelegate {
+public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
   var proxyApiRegistrar: ProxyAPIRegistrar?
 
   init(binaryMessenger: FlutterBinaryMessenger) {
@@ -38,13 +38,17 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin, FlutterApplicationLi
     tearDownProxyAPIRegistrar()
   }
 
-  public func applicationWillTerminate(_ application: UIApplication) {
-    tearDownProxyAPIRegistrar()
-  }
-
   private func tearDownProxyAPIRegistrar() {
     proxyApiRegistrar!.ignoreCallsToDart = true
     proxyApiRegistrar!.tearDown()
     proxyApiRegistrar = nil
   }
 }
+
+#if os(iOS)
+  extension WebViewFlutterPlugin: FlutterApplicationLifeCycleDelegate {
+    public func applicationWillTerminate(_ application: UIApplication) {
+      tearDownProxyAPIRegistrar()
+    }
+  }
+#endif
