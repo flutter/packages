@@ -24,9 +24,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugins.imagepicker.Messages.FlutterError;
-import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
-import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,12 +93,12 @@ public class ImagePickerDelegate
   private static class PendingCallState {
     public final @Nullable ImageSelectionOptions imageOptions;
     public final @Nullable VideoSelectionOptions videoOptions;
-    public final @NonNull Messages.Result<List<String>> result;
+    public final @NonNull Result<List<String>> result;
 
     PendingCallState(
         @Nullable ImageSelectionOptions imageOptions,
         @Nullable VideoSelectionOptions videoOptions,
-        @NonNull Messages.Result<List<String>> result) {
+        @NonNull Result<List<String>> result) {
       this.imageOptions = imageOptions;
       this.videoOptions = videoOptions;
       this.result = result;
@@ -198,7 +195,7 @@ public class ImagePickerDelegate
       final @NonNull ImageResizer imageResizer,
       final @Nullable ImageSelectionOptions pendingImageOptions,
       final @Nullable VideoSelectionOptions pendingVideoOptions,
-      final @Nullable Messages.Result<List<String>> result,
+      final @Nullable Result<List<String>> result,
       final @NonNull ImagePickerCache cache,
       final PermissionManager permissionManager,
       final FileUriResolver fileUriResolver,
@@ -247,45 +244,41 @@ public class ImagePickerDelegate
   }
 
   @Nullable
-  Messages.CacheRetrievalResult retrieveLostImage() {
+  CacheRetrievalResult retrieveLostImage() {
     Map<String, Object> cacheMap = cache.getCacheMap();
     if (cacheMap.isEmpty()) {
       return null;
     }
 
-    Messages.CacheRetrievalResult.Builder result = new Messages.CacheRetrievalResult.Builder();
-
-    Messages.CacheRetrievalType type =
-        (Messages.CacheRetrievalType) cacheMap.get(ImagePickerCache.MAP_KEY_TYPE);
-    if (type != null) {
-      result.setType(type);
-    }
-    result.setError((Messages.CacheRetrievalError) cacheMap.get(ImagePickerCache.MAP_KEY_ERROR));
+    CacheRetrievalType type = (CacheRetrievalType) cacheMap.get(ImagePickerCache.MAP_KEY_TYPE);
     @SuppressWarnings("unchecked")
     ArrayList<String> pathList =
         (ArrayList<String>) cacheMap.get(ImagePickerCache.MAP_KEY_PATH_LIST);
-    if (pathList != null) {
-      ArrayList<String> newPathList = new ArrayList<>();
-      for (String path : pathList) {
-        Double maxWidth = (Double) cacheMap.get(ImagePickerCache.MAP_KEY_MAX_WIDTH);
-        Double maxHeight = (Double) cacheMap.get(ImagePickerCache.MAP_KEY_MAX_HEIGHT);
-        Integer boxedImageQuality = (Integer) cacheMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
-        int imageQuality = boxedImageQuality == null ? 100 : boxedImageQuality;
+    if (type == null || pathList == null) {
+      // This should never happen, so if it does the cache is no longer valid.
+      cache.clear();
+      return null;
+    }
+    ArrayList<String> newPathList = new ArrayList<>();
+    for (String path : pathList) {
+      Double maxWidth = (Double) cacheMap.get(ImagePickerCache.MAP_KEY_MAX_WIDTH);
+      Double maxHeight = (Double) cacheMap.get(ImagePickerCache.MAP_KEY_MAX_HEIGHT);
+      Integer boxedImageQuality = (Integer) cacheMap.get(ImagePickerCache.MAP_KEY_IMAGE_QUALITY);
+      int imageQuality = boxedImageQuality == null ? 100 : boxedImageQuality;
 
-        newPathList.add(imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality));
-      }
-      result.setPaths(newPathList);
+      newPathList.add(imageResizer.resizeImageIfNeeded(path, maxWidth, maxHeight, imageQuality));
     }
 
     cache.clear();
 
-    return result.build();
+    return new CacheRetrievalResult(
+        type, (CacheRetrievalError) cacheMap.get(ImagePickerCache.MAP_KEY_ERROR), newPathList);
   }
 
   public void chooseMediaFromGallery(
-      @NonNull Messages.MediaSelectionOptions options,
-      @NonNull Messages.GeneralOptions generalOptions,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull MediaSelectionOptions options,
+      @NonNull GeneralOptions generalOptions,
+      @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options.getImageSelectionOptions(), null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -294,7 +287,7 @@ public class ImagePickerDelegate
     launchPickMediaFromGalleryIntent(generalOptions);
   }
 
-  private void launchPickMediaFromGalleryIntent(Messages.GeneralOptions generalOptions) {
+  private void launchPickMediaFromGalleryIntent(GeneralOptions generalOptions) {
     Intent pickMediaIntent;
     if (generalOptions.getUsePhotoPicker()) {
       if (generalOptions.getAllowMultiple()) {
@@ -331,7 +324,7 @@ public class ImagePickerDelegate
   public void chooseVideoFromGallery(
       @NonNull VideoSelectionOptions options,
       boolean usePhotoPicker,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -359,7 +352,7 @@ public class ImagePickerDelegate
   }
 
   public void takeVideoWithCamera(
-      @NonNull VideoSelectionOptions options, @NonNull Messages.Result<List<String>> result) {
+      @NonNull VideoSelectionOptions options, @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -417,7 +410,7 @@ public class ImagePickerDelegate
   public void chooseImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -430,7 +423,7 @@ public class ImagePickerDelegate
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
       int limit,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -479,7 +472,7 @@ public class ImagePickerDelegate
       @NonNull VideoSelectionOptions options,
       boolean usePhotoPicker,
       int limit,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(null, options, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -508,7 +501,7 @@ public class ImagePickerDelegate
   }
 
   public void takeImageWithCamera(
-      @NonNull ImageSelectionOptions options, @NonNull Messages.Result<List<String>> result) {
+      @NonNull ImageSelectionOptions options, @NonNull Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
@@ -909,7 +902,7 @@ public class ImagePickerDelegate
   private boolean setPendingOptionsAndResult(
       @Nullable ImageSelectionOptions imageOptions,
       @Nullable VideoSelectionOptions videoOptions,
-      @NonNull Messages.Result<List<String>> result) {
+      @NonNull Result<List<String>> result) {
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
         return false;
@@ -933,7 +926,7 @@ public class ImagePickerDelegate
       pathList.add(imagePath);
     }
 
-    Messages.Result<List<String>> localResult = null;
+    Result<List<String>> localResult = null;
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
         localResult = pendingCallState.result;
@@ -952,7 +945,7 @@ public class ImagePickerDelegate
   }
 
   private void finishWithListSuccess(ArrayList<String> imagePaths) {
-    Messages.Result<List<String>> localResult = null;
+    Result<List<String>> localResult = null;
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
         localResult = pendingCallState.result;
@@ -967,12 +960,12 @@ public class ImagePickerDelegate
     }
   }
 
-  private void finishWithAlreadyActiveError(Messages.Result<List<String>> result) {
+  private void finishWithAlreadyActiveError(Result<List<String>> result) {
     result.error(new FlutterError("already_active", "Image picker is already active", null));
   }
 
   private void finishWithError(String errorCode, String errorMessage) {
-    Messages.Result<List<String>> localResult = null;
+    Result<List<String>> localResult = null;
     synchronized (pendingCallStateLock) {
       if (pendingCallState != null) {
         localResult = pendingCallState.result;
