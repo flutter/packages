@@ -13,30 +13,32 @@ import XCTest
 
 class WebViewFlutterPluginTests: XCTestCase {
   #if os(iOS)
-  func testInstanceManagerIsDeallocatedInApplicationWillTerminate() {
-    let plugin = WebViewFlutterPlugin(binaryMessenger: TestBinaryMessenger())
-    plugin.proxyApiRegistrar!.setUp()
+    func testInstanceManagerIsDeallocatedInApplicationWillTerminate() {
+      let plugin = WebViewFlutterPlugin(binaryMessenger: TestBinaryMessenger())
+      plugin.proxyApiRegistrar!.setUp()
 
-    let view = UIView()
-    _ = plugin.proxyApiRegistrar!.instanceManager.addHostCreatedInstance(view)
+      let view = UIView()
+      _ = plugin.proxyApiRegistrar!.instanceManager.addHostCreatedInstance(view)
 
-    // Attaches an associated object to the InstanceManager to listen for when it is deallocated.
-    var finalizer: TestFinalizer? = TestFinalizer()
-    objc_setAssociatedObject(plugin.proxyApiRegistrar!.instanceManager, malloc(1), finalizer, .OBJC_ASSOCIATION_RETAIN)
+      // Attaches an associated object to the InstanceManager to listen for when it is deallocated.
+      var finalizer: TestFinalizer? = TestFinalizer()
+      objc_setAssociatedObject(
+        plugin.proxyApiRegistrar!.instanceManager, malloc(1), finalizer, .OBJC_ASSOCIATION_RETAIN)
 
-    let expectation = self.expectation(description: "Wait for InstanceManager to be deallocated.")
-    TestFinalizer.onDeinit = {
-      expectation.fulfill()
+      let expectation = self.expectation(description: "Wait for InstanceManager to be deallocated.")
+      TestFinalizer.onDeinit = {
+        expectation.fulfill()
+      }
+
+      // Ensure method is from `FlutterApplicationLifeCycleDelegate`.
+      (plugin as FlutterApplicationLifeCycleDelegate).applicationWillTerminate!(
+        UIApplication.shared)
+      XCTAssertNil(plugin.proxyApiRegistrar)
+
+      finalizer = nil
+      waitForExpectations(timeout: 5.0)
     }
-
-    // Ensure method is from `FlutterApplicationLifeCycleDelegate`.
-    (plugin as FlutterApplicationLifeCycleDelegate).applicationWillTerminate!(UIApplication.shared)
-    XCTAssertNil(plugin.proxyApiRegistrar)
-
-    finalizer = nil
-    waitForExpectations(timeout: 5.0)
-  }
-#endif
+  #endif
 }
 
 class TestFinalizer {
@@ -46,4 +48,3 @@ class TestFinalizer {
     Self.onDeinit?()
   }
 }
-
