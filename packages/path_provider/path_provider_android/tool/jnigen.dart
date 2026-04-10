@@ -22,7 +22,6 @@ void main() {
       ),
       classes: <String>[
         'android.content.Context',
-        'io.flutter.util.PathUtils',
         'java.io.File',
         'android.os.Environment',
       ],
