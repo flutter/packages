@@ -6,11 +6,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 final class CameraPluginInitializeCameraTests: XCTestCase {
   private func createCameraPlugin() -> (
     CameraPlugin, MockCamera, MockGlobalEventApi, DispatchQueue
@@ -44,9 +39,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       onFrameAvailableSet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -64,9 +59,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       dartAPISet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -78,9 +73,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   func testInitializeCamera_sendsDeviceOrientation() {
     let (cameraPlugin, _, mockGlobalEventApi, captureSessionQueue) = createCameraPlugin()
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
     }
 
     waitForQueueRoundTrip(with: captureSessionQueue)
@@ -97,9 +92,9 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       startCalled = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      let _ = self.assertSuccess(result)
       expectation.fulfill()
     }
 

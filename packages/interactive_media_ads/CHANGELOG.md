@@ -1,3 +1,20 @@
+## 0.3.0+14
+
+* Updates README to use Kotlin gradle rather than Groovy.
+
+## 0.3.0+13
+
+* Updates build files from Groovy to Kotlin.
+
+## 0.3.0+12
+
+* Bumps `androidx.core:core-ktx` from 1.13.0 to 1.18.0.
+
+## 0.3.0+11
+
+* Updates `README` to recommend that a single `AdsLoader` should be used per page not for the entire
+  application.
+
 ## 0.3.0+10
 
 * Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.38.0 to 3.39.0.

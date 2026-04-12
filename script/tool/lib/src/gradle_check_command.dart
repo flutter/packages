@@ -9,10 +9,8 @@ import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// The lowest `ext.kotlin_version` that example apps are allowed to use.
@@ -99,11 +97,24 @@ class GradleCheckCommand extends PackageLoopingCommand {
   }
 
   // Returns the gradle file in the given directory.
-  File _getBuildGradleFile(Directory dir) => dir.childFile('build.gradle');
+  File _getBuildGradleFile(Directory dir) {
+    const buildGradleBaseName = 'build.gradle';
+    const buildGradleKtsBaseName = '$buildGradleBaseName.kts';
+    if (dir.childFile(buildGradleKtsBaseName).existsSync()) {
+      return dir.childFile(buildGradleKtsBaseName);
+    }
+    return dir.childFile(buildGradleBaseName);
+  }
 
   // Returns the settings gradle file in the given directory.
-  File _getSettingsGradleFile(Directory dir) =>
-      dir.childFile('settings.gradle');
+  File _getSettingsGradleFile(Directory dir) {
+    const settingsGradleBaseName = 'settings.gradle';
+    const settingsGradleKtsBaseName = '$settingsGradleBaseName.kts';
+    if (dir.childFile(settingsGradleKtsBaseName).existsSync()) {
+      return dir.childFile(settingsGradleKtsBaseName);
+    }
+    return dir.childFile(settingsGradleBaseName);
+  }
 
   // Returns the main/AndroidManifest.xml file for the given package.
   File _getMainAndroidManifest(
@@ -149,7 +160,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
       succeeded = false;
     }
-    if (!_validateGradleDrivenLintConfig(package, lines)) {
+    if (!_validateGradleDrivenLintConfig(lines)) {
       succeeded = false;
     }
     if (!_validateCompileSdkUsage(package, lines)) {
@@ -163,16 +174,19 @@ class GradleCheckCommand extends PackageLoopingCommand {
   static const String artifactHubDocumentationString =
       r'https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure';
 
-  /// String printed as example of valid example root build.gradle repository
-  /// configuration that enables artifact hub env variable.
+  /// String printed as example of valid example root build.gradle.kts
+  /// repository configuration that enables artifact hub env variable.
   @visibleForTesting
   static const String exampleRootGradleArtifactHubString =
       '''
         // See $artifactHubDocumentationString for more info.
-        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
-        if (System.getenv().containsKey(artifactRepoKey)) {
-            println "Using artifact hub"
-            maven { url System.getenv(artifactRepoKey) }
+        val artifactRepoKey = "ARTIFACT_HUB_REPOSITORY"
+        val artifactRepoUrl = System.getenv(artifactRepoKey)
+        if (artifactRepoUrl != null) {
+            println("Using artifact hub")
+            maven {
+                url = uri(artifactRepoUrl)
+            }
         }
 ''';
 
@@ -186,20 +200,24 @@ class GradleCheckCommand extends PackageLoopingCommand {
   ) {
     // Gradle variable name used to hold environment variable string.
     const keyVariable = 'artifactRepoKey';
+    const urlVariable = 'artifactRepoUrl';
     final keyPresentRegex = RegExp(
       '$keyVariable'
-      r"\s+=\s+'ARTIFACT_HUB_REPOSITORY'",
+      r'''\s+=\s+["']ARTIFACT_HUB_REPOSITORY["']''',
     );
     final documentationPresentRegex = RegExp(
       r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure',
     );
     final keyReadRegex = RegExp(
-      r'if.*System\.getenv.*\.containsKey.*'
-      '$keyVariable',
+      '$urlVariable'
+      r'\s*=\s*System\.getenv\('
+      '$keyVariable'
+      r'\)',
     );
     final keyUsedRegex = RegExp(
-      r'maven.*url.*System\.getenv\('
-      '$keyVariable',
+      r'url = uri\('
+      '$urlVariable'
+      r'\)',
     );
 
     final bool keyPresent = gradleLines.any(
@@ -243,17 +261,20 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateArtifactHubSettingsUsage(package, lines)) {
       succeeded = false;
     }
+    if (!_validateKotlinVersion(package, lines)) {
+      succeeded = false;
+    }
     return succeeded;
   }
 
-  /// String printed as a valid example of settings.gradle repository
+  /// String printed as a valid example of settings.gradle.kts repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static String exampleSettingsArtifactHubString = '''
+  static const String exampleSettingsArtifactHubString = '''
 plugins {
-    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     // ...other plugins
-    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
+    id("com.google.cloud.artifactregistry.gradle-plugin") version "2.2.1"
 }
   ''';
 
@@ -299,8 +320,8 @@ plugins {
     return validArtifactConfiguration;
   }
 
-  /// Validates the top-level build.gradle for an example app (e.g.,
-  /// some_package/example/android/build.gradle).
+  /// Validates the top-level build.gradle(.kts) for an example app (e.g.,
+  /// some_package/example/android/build.gradle(.kts)).
   bool _validateExampleTopLevelBuildGradle(
     RepositoryPackage package,
     File gradleFile,
@@ -318,17 +339,14 @@ plugins {
     if (!_validateJavacLintConfig(package, lines)) {
       succeeded = false;
     }
-    if (!_validateKotlinVersion(package, lines)) {
-      succeeded = false;
-    }
     if (!_validateArtifactHubUsage(package, lines)) {
       succeeded = false;
     }
     return succeeded;
   }
 
-  /// Validates the app-level build.gradle for an example app (e.g.,
-  /// some_package/example/android/app/build.gradle).
+  /// Validates the app-level build.gradle(.kts) for an example app (e.g.,
+  /// some_package/example/android/app/build.gradle(.kts)).
   bool _validateExampleAppBuildGradle(
     RepositoryPackage package,
     File gradleFile,
@@ -368,7 +386,7 @@ plugins {
 
     if (nameSpaceRegexMatch == null) {
       const errorMessage = '''
-build.gradle must set a "namespace":
+build.gradle.kts must set a "namespace":
 
     android {
         namespace = "dev.flutter.foo"
@@ -411,10 +429,11 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       manifestContents,
     );
     if (packageMatch != null && namespace != packageMatch.group(1)) {
+      const buildGradleName = 'build.gradle.kts';
       final errorMessage =
           '''
-build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
-  build.gradle namespace: "$namespace"
+$buildGradleName "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
+  $buildGradleName namespace: "$namespace"
   AndroidMastifest.xml package: "${packageMatch.group(1)}"
 ''';
       printError(
@@ -451,7 +470,7 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
     if (!hasLanguageVersion && !hasCompabilityVersions) {
       const javaErrorMessage =
           '''
-build.gradle(.kts) must set an explicit Java compatibility version.
+build.gradle.kts must set an explicit Java compatibility version.
 
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
@@ -506,7 +525,7 @@ for more details.''';
       }
       final kotlinErrorMessage =
           '''
-If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
+If build.gradle.kts sets jvmTarget then it must use JavaVersion syntax.
   Good:
     android {
       kotlinOptions {
@@ -545,7 +564,7 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
       final int version = int.parse(javaVersions.first);
       if (!javaVersions.every((String element) => element == '$version')) {
         const javaVersionAlignmentError = '''
-If build.gradle(.kts) uses JavaVersion.* versions must be the same.
+If build.gradle.kts uses JavaVersion.* versions must be the same.
 ''';
         printError(
           '$indentation${javaVersionAlignmentError.split('\n').join('\n$indentation')}',
@@ -556,7 +575,7 @@ If build.gradle(.kts) uses JavaVersion.* versions must be the same.
       if (version < _minimumJavaVersion) {
         final minimumJavaVersionError =
             '''
-build.gradle(.kts) uses "JavaVersion.VERSION_$version".
+build.gradle.kts uses "JavaVersion.VERSION_$version".
 Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
 ''';
         printError(
@@ -572,19 +591,12 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
   /// Returns whether the given gradle content is configured to enable all
   /// Gradle-driven lints (those checked by ./gradlew lint) and treat them as
   /// errors.
-  bool _validateGradleDrivenLintConfig(
-    RepositoryPackage package,
-    List<String> gradleLines,
-  ) {
-    final List<String> gradleBuildContents = package
-        .platformDirectory(FlutterPlatform.android)
-        .childFile('build.gradle')
-        .readAsLinesSync();
-    if (!gradleBuildContents.any(
+  bool _validateGradleDrivenLintConfig(List<String> gradleLines) {
+    if (!gradleLines.any(
           (String line) =>
               line.contains('checkAllWarnings = true') && !_isCommented(line),
         ) ||
-        !gradleBuildContents.any(
+        !gradleLines.any(
           (String line) =>
               line.contains('warningsAsErrors = true') && !_isCommented(line),
         )) {
@@ -592,7 +604,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
         '${indentation}This package is not configured to enable all '
         'Gradle-driven lint warnings and treat them as errors. '
         'Please add the following to the lintOptions section of '
-        'android/build.gradle:',
+        'android/build.gradle.kts:',
       );
       print('''
         checkAllWarnings = true
@@ -703,11 +715,12 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
     List<String> gradleLines,
   ) {
     final RepositoryPackage enclosingPackage = example.getEnclosingPackage()!;
-    if (!pluginSupportsPlatform(
-      platformAndroid,
-      enclosingPackage,
-      requiredMode: PlatformSupport.inline,
-    )) {
+    // This checks for android/ rather than using pluginSupportsPlatform because
+    // Dart-only implementations (e.g., usin jnigen) won't have this
+    // configuration since there's no native plugin code to check.
+    if (!enclosingPackage
+        .platformDirectory(FlutterPlatform.android)
+        .existsSync()) {
       return true;
     }
     final String enclosingPackageName = enclosingPackage.directory.basename;
@@ -750,7 +763,9 @@ gradle.projectsEvaluated {
     RepositoryPackage example,
     List<String> gradleLines,
   ) {
-    final kotlinVersionRegex = RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
+    final kotlinVersionRegex = RegExp(
+      r'id\("org\.jetbrains\.kotlin\.android"\) version "([\d.]+)"',
+    );
     RegExpMatch? match;
     if (gradleLines.any((String line) {
       match = kotlinVersionRegex.firstMatch(line);
@@ -759,9 +774,10 @@ gradle.projectsEvaluated {
       final version = Version.parse(match!.group(1)!);
       if (version < minKotlinVersion) {
         printError(
-          'build.gradle sets "ext.kotlin_version" to "$version". The '
-          'minimum Kotlin version that can be specified is '
-          '$minKotlinVersion, for compatibility with modern dependencies.',
+          'settings.gradle.kts sets the "org.jetbrains.kotlin.android" '
+          'plugin version to "$version". The minimum Kotlin version that can '
+          'be specified is $minKotlinVersion, for compatibility with modern '
+          'dependencies.',
         );
         return false;
       }

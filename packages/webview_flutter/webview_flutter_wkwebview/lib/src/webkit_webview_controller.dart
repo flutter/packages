@@ -82,6 +82,7 @@ class WebKitWebViewControllerCreationParams
     },
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
+    this.javaScriptCanOpenWindowsAutomatically,
   }) {
     _configuration = WKWebViewConfiguration();
 
@@ -122,10 +123,13 @@ class WebKitWebViewControllerCreationParams
         },
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
+    bool? javaScriptCanOpenWindowsAutomatically,
   }) : this(
          mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
          allowsInlineMediaPlayback: allowsInlineMediaPlayback,
          limitsNavigationsToAppBoundDomains: limitsNavigationsToAppBoundDomains,
+         javaScriptCanOpenWindowsAutomatically:
+             javaScriptCanOpenWindowsAutomatically,
        );
 
   late final WKWebViewConfiguration _configuration;
@@ -147,6 +151,12 @@ class WebKitWebViewControllerCreationParams
   /// (Only available for iOS > 14.0)
   /// Defaults to false.
   final bool limitsNavigationsToAppBoundDomains;
+
+  /// Whether JavaScript can open windows without user interaction.
+  ///
+  /// When `null`, the platform's native default is used
+  /// (`false` on iOS, `true` on macOS).
+  final bool? javaScriptCanOpenWindowsAutomatically;
 }
 
 /// An implementation of [PlatformWebViewController] with the WebKit api.
@@ -293,6 +303,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     _webView.setUIDelegate(_uiDelegate);
   }
+
+  static const String _onConsoleMessageChannelName = 'fltConsoleMessage';
 
   /// The WebKit WebView being controlled.
   late final PlatformWebView _webView = PlatformWebView(
@@ -622,16 +634,36 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) {
+    const Color transparent = Colors.transparent;
     return Future.wait(<Future<void>>[
       _webView.setOpaque(false),
-      _webView.setBackgroundColor(Colors.transparent.toARGB32()),
+      _webView.setBackgroundColor(
+        UIColor(
+          red: transparent.r,
+          green: transparent.g,
+          blue: transparent.b,
+          alpha: transparent.a,
+        ),
+      ),
       // This method must be called last.
-      _webView.scrollView.setBackgroundColor(color.toARGB32()),
+      _webView.scrollView.setBackgroundColor(
+        UIColor(red: color.r, green: color.g, blue: color.b, alpha: color.a),
+      ),
     ]);
   }
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
+    final bool? javaScriptCanOpenWindowsAutomatically =
+        _webKitParams.javaScriptCanOpenWindowsAutomatically;
+    if (javaScriptCanOpenWindowsAutomatically != null) {
+      final WKPreferences preferences = await _webView.configuration
+          .getPreferences();
+      await preferences.setJavaScriptCanOpenWindowsAutomatically(
+        javaScriptCanOpenWindowsAutomatically,
+      );
+    }
+
     // Attempt to set the value that requires iOS 14+.
     try {
       final WKWebpagePreferences webpagePreferences = await _webView
@@ -700,11 +732,16 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<void> setOnConsoleMessage(
     void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
-  ) {
+  ) async {
     _onConsoleMessageCallback = onConsoleMessage;
 
+    // If channel name is already present, the callback is already registered.
+    if (_javaScriptChannelParams.containsKey(_onConsoleMessageChannelName)) {
+      return;
+    }
+
     final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
-      name: 'fltConsoleMessage',
+      name: _onConsoleMessageChannelName,
       onMessageReceived: (JavaScriptMessage message) {
         if (_onConsoleMessageCallback == null) {
           return;
@@ -736,7 +773,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
-    addJavaScriptChannel(channelParams);
+    await addJavaScriptChannel(channelParams);
     return _injectConsoleOverride();
   }
 
@@ -903,7 +940,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     // Therefore, the replacer parameter of JSON.stringify() is used and the
     // removeCyclicObject method is passed in to solve the error.
     final overrideScript = WKUserScript(
-      source: '''
+      source:
+          '''
 var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
   removeCyclicObject: function() {
     const traversalStack = [];
@@ -932,7 +970,7 @@ var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
       message: message
     };
 
-    window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+    window.webkit.messageHandlers.$_onConsoleMessageChannelName.postMessage(JSON.stringify(log));
   }
 };
 
@@ -1216,17 +1254,22 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
-      didFailProvisionalNavigation: (_, __, NSError error) {
+      didFailProvisionalNavigation: (_, __, NSError error) async {
+        var url =
+            error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLStringError]
+                as String?;
+
+        // On iOS 26+, the error is stored with `NSURLErrorFailingURLErrorKey`.
+        if (url == null) {
+          final nativeURL =
+              error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLErrorKey]
+                  as URL?;
+          url = await nativeURL?.getAbsoluteString();
+        }
+
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(
-              error,
-              isForMainFrame: true,
-              url:
-                  error.userInfo[NSErrorUserInfoKey
-                          .NSURLErrorFailingURLStringError]
-                      as String?,
-            ),
+            WebKitWebResourceError._(error, isForMainFrame: true, url: url),
           );
         }
       },

@@ -5,14 +5,9 @@
 import AVFoundation
 import UIKit
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// Gets AVCaptureFlashMode from FCPPlatformFlashMode.
+/// Gets AVCaptureFlashMode from PlatformFlashMode.
 /// mode - flash mode.
-func getAVCaptureFlashMode(for mode: FCPPlatformFlashMode) -> AVCaptureDevice.FlashMode {
+func getAVCaptureFlashMode(for mode: PlatformFlashMode) -> AVCaptureDevice.FlashMode {
   switch mode {
   case .off:
     return .off
@@ -32,7 +27,7 @@ func getAVCaptureFlashMode(for mode: FCPPlatformFlashMode) -> AVCaptureDevice.Fl
 /// Gets UIDeviceOrientation from its Pigeon representation.
 /// orientation - the Pigeon device orientation.
 func getUIDeviceOrientation(
-  for orientation: FCPPlatformDeviceOrientation
+  for orientation: PlatformDeviceOrientation
 ) -> UIDeviceOrientation {
   switch orientation {
   case .portraitDown:
@@ -53,7 +48,7 @@ func getUIDeviceOrientation(
 /// orientation - the UIDeviceOrientation.
 func getPigeonDeviceOrientation(
   for orientation: UIDeviceOrientation
-) -> FCPPlatformDeviceOrientation {
+) -> PlatformDeviceOrientation {
   switch orientation {
   case .portraitUpsideDown:
     return .portraitDown
@@ -70,7 +65,7 @@ func getPigeonDeviceOrientation(
 
 /// Gets pixel format from its Pigeon representation.
 /// imageFormat - the Pigeon image format.
-func getPixelFormat(for imageFormat: FCPPlatformImageFormatGroup) -> OSType {
+func getPixelFormat(for imageFormat: PlatformImageFormatGroup) -> OSType {
   switch imageFormat {
   case .bgra8888:
     return kCVPixelFormatType_32BGRA
@@ -85,7 +80,7 @@ func getPixelFormat(for imageFormat: FCPPlatformImageFormatGroup) -> OSType {
 /// Gets video stabilization mode from its Pigeon representation.
 /// videoStabilizationMode - the Pigeon video stabilization mode.
 func getAvCaptureVideoStabilizationMode(
-  _ videoStabilizationMode: FCPPlatformVideoStabilizationMode
+  _ videoStabilizationMode: PlatformVideoStabilizationMode
 ) -> AVCaptureVideoStabilizationMode {
 
   switch videoStabilizationMode {

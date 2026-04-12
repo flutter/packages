@@ -7,14 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
-    objcSourceOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FCP',
-      headerIncludePath: './include/camera_avfoundation/messages.g.h',
-    ),
+    swiftOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -122,6 +116,44 @@ class PlatformCameraState {
   final bool focusPointSupported;
 }
 
+// Pigeon version of the data needed for a CameraImageData.
+class PlatformCameraImageData {
+  PlatformCameraImageData({
+    required this.formatCode,
+    required this.width,
+    required this.height,
+    required this.planes,
+    required this.lensAperture,
+    required this.sensorExposureTimeNanoseconds,
+    required this.sensorSensitivity,
+  });
+
+  /// The FourCharCode of the image format.
+  final int formatCode;
+
+  final int width;
+  final int height;
+  final List<PlatformCameraImagePlane> planes;
+  final double lensAperture;
+  final int sensorExposureTimeNanoseconds;
+  final double sensorSensitivity;
+}
+
+// Pigeon version of the data needed for a CameraImagePlane.
+class PlatformCameraImagePlane {
+  const PlatformCameraImagePlane({
+    required this.bytes,
+    required this.bytesPerRow,
+    required this.width,
+    required this.height,
+  });
+
+  final Uint8List bytes;
+  final int bytesPerRow;
+  final int width;
+  final int height;
+}
+
 // Pigeon version of to MediaSettings.
 class PlatformMediaSettings {
   PlatformMediaSettings({
@@ -158,9 +190,6 @@ class PlatformSize {
 @HostApi()
 abstract class CameraApi {
   /// Returns the list of available cameras.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription> getAvailableCameras();
@@ -320,6 +349,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+}
+
+@EventChannelApi()
+abstract class CameraImageStreamEventApi {
+  PlatformCameraImageData imageDataStream();
 }
 
 /// Handler for native callbacks that are not tied to a specific camera ID.

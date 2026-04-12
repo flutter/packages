@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   let inputMock: MockAssetWriterInput
 
@@ -66,7 +61,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 }
 
-/// Includes test cases related to sample buffer handling for FLTCam class.
+/// Includes test cases related to sample buffer handling for Camera class.
 final class CameraSampleBufferTests: XCTestCase {
   private func createCamera() -> (
     DefaultCamera,
@@ -79,8 +74,8 @@ final class CameraSampleBufferTests: XCTestCase {
     let input = MockAssetWriterInput()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.mediaSettings = FCPPlatformMediaSettings.make(
-      with: .medium,
+    configuration.mediaSettings = PlatformMediaSettings(
+      resolutionPreset: .medium,
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,
@@ -124,7 +119,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let deliveredPixelBuffer = camera.copyPixelBuffer()?.takeRetainedValue()
     XCTAssertEqual(
       deliveredPixelBuffer, capturedPixelBuffer,
-      "FLTCam must deliver the latest captured pixel buffer to copyPixelBuffer API.")
+      "Camera must deliver the latest captured pixel buffer to copyPixelBuffer API.")
   }
 
   func testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording() {
@@ -300,7 +295,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
     var completionCalled = false
-    camera.stopVideoRecording(completion: { path, error in
+    camera.stopVideoRecording(completion: { result in
       completionCalled = true
     })
 
@@ -528,13 +523,18 @@ final class CameraSampleBufferTests: XCTestCase {
     let expectation = self.expectation(description: "Completion handler called with error")
 
     camera.startVideoRecording(
-      completion: { error in
-        XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, "IOError")
-        XCTAssertEqual(error?.message, "AVAssetWriter failed to start writing")
-        XCTAssertEqual(error?.details as? String, "Mock write error")
-        XCTAssertFalse(camera.isRecording)
-        expectation.fulfill()
+      completion: { result in
+        switch result {
+        case .failure(let error as PigeonError):
+          XCTAssertEqual(error.code, "IOError")
+          XCTAssertEqual(error.message, "AVAssetWriter failed to start writing")
+          XCTAssertEqual(error.details as? String, "Mock write error")
+          XCTAssertFalse(camera.isRecording)
+          expectation.fulfill()
+        default:
+          XCTFail("Expected PigeonError")
+        }
+
       }, messengerForStreaming: nil)
 
     waitForExpectations(timeout: 1.0, handler: nil)

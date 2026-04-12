@@ -6,12 +6,7 @@ import AVFoundation
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
+/// Mock implementation of `CaptureSession` protocol which allows injecting a custom
 /// implementation.
 final class MockCaptureSession: NSObject, CaptureSession {
   var setSessionPresetStub: ((AVCaptureSession.Preset) -> Void)?

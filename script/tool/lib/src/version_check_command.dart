@@ -248,7 +248,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
     // PR with post release label is going to sync changelog.md and pubspec.yaml
     // change back to main branch. Proceed with regular version check.
     final bool hasPostReleaseLabel = _prLabels.contains(
-      'post-release-${pubspec.name}',
+      'override: post-release-${pubspec.name}',
     );
     bool versionChanged;
 
@@ -537,6 +537,36 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       if (lines.any((String line) => nextRegex.hasMatch(line))) {
         printError(badNextErrorMessage);
         return false;
+      }
+    }
+
+    // Check for blank lines between list items in the version section.
+    var inList = false;
+    var seenBlankLineInList = false;
+    final listItemRegex = RegExp(r'^\s*[*+-]\s');
+    while (iterator.moveNext()) {
+      final String line = iterator.current;
+      final bool isListItem = listItemRegex.hasMatch(line);
+      final bool isBlank = line.trim().isEmpty;
+
+      if (isListItem) {
+        if (seenBlankLineInList) {
+          printError(
+            '${indentation}Blank lines found between list items in CHANGELOG.\n'
+            '${indentation}This creates multiple separate lists on pub.dev.\n'
+            '${indentation}Remove blank lines to keep all items in a single list.',
+          );
+          return false;
+        }
+        inList = true;
+      } else if (isBlank) {
+        if (inList) {
+          seenBlankLineInList = true;
+        }
+      } else {
+        // Any other non-blank, non-list line resets the state (e.g. new headers, text).
+        inList = false;
+        seenBlankLineInList = false;
       }
     }
 

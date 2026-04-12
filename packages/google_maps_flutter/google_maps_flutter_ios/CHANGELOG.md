@@ -1,3 +1,15 @@
+## 2.18.1
+
+* Removes conditional header logic that broke add-to-app builds.
+
+## 2.18.0
+
+* Adds support for advanced markers.
+ 
+## 2.17.5
+
+* Adds UIScene compatibility.
+
 ## 2.17.4
 
 * Standardizes Objective-C class names.

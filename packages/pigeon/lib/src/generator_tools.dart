@@ -15,7 +15,10 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '26.1.7';
+const String pigeonVersion = '26.3.4';
+
+/// Default plugin package name.
+const String defaultPluginPackageName = 'dev.flutter.pigeon';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -31,13 +34,13 @@ String readStdin() {
 /// True if the generator line number should be printed out at the end of newlines.
 bool debugGenerators = false;
 
-/// A helper class for managing indentation, wrapping a [StringSink].
+/// A helper class for managing indentation, wrapping a [StringBuffer].
 class Indent {
-  /// Constructor which takes a [StringSink] [Indent] will wrap.
-  Indent(this._sink);
-
   int _count = 0;
-  final StringSink _sink;
+  final StringBuffer _buffer = StringBuffer();
+
+  @override
+  String toString() => _buffer.toString();
 
   /// String used for newlines (ex "\n").
   String get newline {
@@ -71,10 +74,12 @@ class Indent {
     return result;
   }
 
-  /// Replaces the newlines and tabs of input and adds it to the stream.
+  /// Replaces the newlines and tabs of [input] and adds the result to the
+  /// stream.
   ///
-  /// [trimIndentation] flag finds the line with the fewest leading empty
-  /// spaces and trims the beginning of all lines by this number.
+  /// If the [trimIndentation] parameter is true, this function also finds the
+  /// smallest leading space count and trims the beginning of all lines by this
+  /// number.
   void format(
     String input, {
     bool leadingSpace = true,
@@ -112,27 +117,27 @@ class Indent {
   void addScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
     if (begin != null) {
-      _sink.write(begin + newline);
+      _buffer.write(begin + newline);
     }
     nest(nestCount, func);
     if (end != null && end.isNotEmpty) {
-      _sink.write(str() + end);
+      _buffer.write(str() + end);
       if (addTrailingNewline) {
-        _sink.write(newline);
+        _buffer.write(newline);
       }
     }
   }
 
-  /// Like `addScoped` but writes the current indentation level.
+  /// Like [addScoped] but writes the current indentation.
   void writeScoped(
     String? begin,
     String? end,
-    Function func, {
+    void Function() func, {
     int nestCount = 1,
     bool addTrailingNewline = true,
   }) {
@@ -148,40 +153,40 @@ class Indent {
   /// Scoped increase of the indent level.
   ///
   /// For the execution of [func] the indentation will be incremented by the given amount.
-  void nest(int count, Function func) {
+  void nest(int count, void Function() func) {
     inc(count);
-    func(); // ignore: avoid_dynamic_calls
+    func();
     dec(count);
   }
 
   /// Add [text] with indentation and a newline.
   void writeln(String text) {
     if (text.isEmpty) {
-      _sink.write(newline);
+      _buffer.write(newline);
     } else {
-      _sink.write(str() + text + newline);
+      _buffer.write(str() + text + newline);
     }
   }
 
   /// Add [text] with indentation.
   void write(String text) {
-    _sink.write(str() + text);
+    _buffer.write(str() + text);
   }
 
   /// Add [text] with a newline.
   void addln(String text) {
-    _sink.write(text + newline);
+    _buffer.write(text + newline);
   }
 
   /// Just adds [text].
   void add(String text) {
-    _sink.write(text);
+    _buffer.write(text);
   }
 
   /// Adds [lines] number of newlines.
   void newln([int lines = 1]) {
     for (; lines > 0; lines--) {
-      _sink.write(newline);
+      _buffer.write(newline);
     }
   }
 }

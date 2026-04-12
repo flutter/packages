@@ -1651,4 +1651,26 @@ void main() {
       PlatformMarkerType.marker,
     );
   });
+
+  test('marker type defaults to legacy if unset', () async {
+    final maps = GoogleMapsFlutterAndroid();
+    final Widget widget = maps.buildViewWithConfiguration(
+      1,
+      (int _) {},
+      widgetConfiguration: const MapWidgetConfiguration(
+        initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
+        textDirection: TextDirection.ltr,
+      ),
+    );
+
+    expect(widget, isA<AndroidView>());
+    final dynamic creationParams = (widget as AndroidView).creationParams;
+    expect(creationParams, isA<PlatformMapViewCreationParams>());
+    expect(
+      (creationParams as PlatformMapViewCreationParams)
+          .mapConfiguration
+          .markerType,
+      PlatformMarkerType.marker,
+    );
+  });
 }

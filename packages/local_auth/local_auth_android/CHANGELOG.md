@@ -1,3 +1,15 @@
+## 2.0.7
+
+* Updates build files from Groovy to Kotlin.
+
+## 2.0.6
+
+* Bumps androidx.core:core from 1.17.0 to 1.18.0.
+
+## 2.0.5
+
+* Adds platform-specific setup instructions to README.
+
 ## 2.0.4
 
 * Bumps androidx.core:core from 1.13.1 to 1.17.0.

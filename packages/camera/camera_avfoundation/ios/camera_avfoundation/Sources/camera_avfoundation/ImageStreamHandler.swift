@@ -5,7 +5,7 @@
 import Flutter
 
 /// Handles streaming of camera image data to Dart via Flutter event channels.
-protocol ImageStreamHandler: FlutterStreamHandler {
+protocol ImageStreamHandler: ImageDataStreamStreamHandler {
   /// The queue on which `eventSink` property should be accessed.
   var captureSessionQueue: DispatchQueue { get }
 
@@ -13,13 +13,13 @@ protocol ImageStreamHandler: FlutterStreamHandler {
   ///
   /// The property should only be accessed on `captureSessionQueue`.
   /// The block itself should be invoked on the main queue.
-  var eventSink: FlutterEventSink? { get set }
+  var eventSink: PigeonEventSink<PlatformCameraImageData>? { get set }
 }
 
 /// Default implementation of ImageStreamHandler.
-class DefaultImageStreamHandler: NSObject, ImageStreamHandler {
+class DefaultImageStreamHandler: ImageDataStreamStreamHandler, ImageStreamHandler {
   let captureSessionQueue: DispatchQueue
-  var eventSink: FlutterEventSink?
+  var eventSink: PigeonEventSink<PlatformCameraImageData>?
 
   /// Initialize an image stream handler.
   /// captureSessionQueue - the queue on which the event sink should be accessed.
@@ -28,19 +28,17 @@ class DefaultImageStreamHandler: NSObject, ImageStreamHandler {
     super.init()
   }
 
-  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-    -> FlutterError?
-  {
+  override func onListen(
+    withArguments arguments: Any?, sink: PigeonEventSink<PlatformCameraImageData>
+  ) {
     captureSessionQueue.async { [weak self] in
-      self?.eventSink = events
+      self?.eventSink = sink
     }
-    return nil
   }
 
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+  override func onCancel(withArguments arguments: Any?) {
     captureSessionQueue.async { [weak self] in
       self?.eventSink = nil
     }
-    return nil
   }
 }

@@ -47,6 +47,10 @@ class ClusterManagersController
   private ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener;
 
   @Nullable
+  private ClusterManager.OnClusterItemInfoWindowClickListener<MarkerBuilder>
+      clusterItemInfoWindowClickListener;
+
+  @Nullable
   private ClusterManagersController.OnClusterItemRendered<MarkerBuilder>
       clusterItemRenderedListener;
 
@@ -71,6 +75,12 @@ class ClusterManagersController
     initListenersForClusterManagers();
   }
 
+  void setClusterItemInfoWindowClickListener(
+      @Nullable ClusterManager.OnClusterItemInfoWindowClickListener<MarkerBuilder> listener) {
+    clusterItemInfoWindowClickListener = listener;
+    initListenersForClusterManagers();
+  }
+
   void setClusterItemRenderedListener(
       @Nullable ClusterManagersController.OnClusterItemRendered<MarkerBuilder> listener) {
     clusterItemRenderedListener = listener;
@@ -79,16 +89,21 @@ class ClusterManagersController
   private void initListenersForClusterManagers() {
     for (Map.Entry<String, ClusterManager<MarkerBuilder>> entry :
         clusterManagerIdToManager.entrySet()) {
-      initListenersForClusterManager(entry.getValue(), this, clusterItemClickListener);
+      initListenersForClusterManager(
+          entry.getValue(), this, clusterItemClickListener, clusterItemInfoWindowClickListener);
     }
   }
 
   private void initListenersForClusterManager(
       ClusterManager<MarkerBuilder> clusterManager,
       @Nullable ClusterManager.OnClusterClickListener<MarkerBuilder> clusterClickListener,
-      @Nullable ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener) {
+      @Nullable ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener,
+      @Nullable
+          ClusterManager.OnClusterItemInfoWindowClickListener<MarkerBuilder>
+              clusterItemInfoWindowClickListener) {
     clusterManager.setOnClusterClickListener(clusterClickListener);
     clusterManager.setOnClusterItemClickListener(clusterItemClickListener);
+    clusterManager.setOnClusterItemInfoWindowClickListener(clusterItemInfoWindowClickListener);
   }
 
   /** Adds new ClusterManagers to the controller. */
@@ -123,7 +138,8 @@ class ClusterManagersController
         break;
     }
     clusterManager.setRenderer(clusterRenderer);
-    initListenersForClusterManager(clusterManager, this, clusterItemClickListener);
+    initListenersForClusterManager(
+        clusterManager, this, clusterItemClickListener, clusterItemInfoWindowClickListener);
   }
 
   /** Removes ClusterManagers by given cluster manager IDs from the controller. */
@@ -145,7 +161,7 @@ class ClusterManagersController
     if (clusterManager == null) {
       return;
     }
-    initListenersForClusterManager(clusterManager, null, null);
+    initListenersForClusterManager(clusterManager, null, null, null);
     clusterManager.clearItems();
     clusterManager.cluster();
   }
@@ -160,12 +176,30 @@ class ClusterManagersController
     }
   }
 
+  /** Adds multiple items to the ClusterManager with the given ID. */
+  public void addItems(String clusterManagerId, @NonNull List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.addItems(items);
+      clusterManager.cluster();
+    }
+  }
+
   /** Removes item from the ClusterManager it belongs to. */
   public void removeItem(MarkerBuilder item) {
     ClusterManager<MarkerBuilder> clusterManager =
         clusterManagerIdToManager.get(item.clusterManagerId());
     if (clusterManager != null) {
       clusterManager.removeItem(item);
+      clusterManager.cluster();
+    }
+  }
+
+  /** Removes multiple items from the ClusterManager with the given ID. */
+  public void removeItems(String clusterManagerId, @NonNull List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.removeItems(items);
       clusterManager.cluster();
     }
   }
