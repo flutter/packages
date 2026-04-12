@@ -3,8 +3,11 @@
 ## Specifications
 
 `mustache_test.dart` and `mustache_specs.dart` generate tests for all mustache specifications,
-except for those disabled by `mustache_test.dart`'s `UNSUPPORTED_SPECS` constant.
+except for those disabled by `mustache_test.dart`'s `unsupportedSpecs` constant.
 `dart test mustache_test.dart` runs all of the generated tests.
+
+Each generated specification file contains the mustache commit hash from which it was generated,
+and the date when it was generated.
 
 ### Updating specifications
 
