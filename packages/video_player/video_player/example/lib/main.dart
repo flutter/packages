@@ -464,9 +464,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               aspectRatio: _controller.value.aspectRatio,
               child: Stack(
                 alignment: Alignment.center,
-                children: <Widget>[
-                  _Video(_controller),
-                ],
+                children: <Widget>[_Video(_controller)],
               ),
             ),
           ),
@@ -518,6 +516,23 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               );
             },
             child: const Text('Load bee'),
+          ),
+          TextButton(
+            onPressed: () {
+              _controller.dispose();
+              _controller = VideoPlayerController.asset(
+                'assets/hdr.MOV',
+                videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+                viewType: VideoViewType.platformView,
+              );
+              _controller.addListener(() {
+                setState(() {});
+              });
+              _controller.setLooping(true);
+              _controller.initialize();
+              _controller.play();
+            },
+            child: const Text('Create new player for HDR'),
           ),
           TextButton(
             onPressed: () {
