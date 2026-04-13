@@ -275,6 +275,21 @@ class AllClassesWrapper {
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+enum AcronymsEnum { HTTPResponse, JSONParser }
+
+class AcronymsAndTestCase {
+  AcronymsAndTestCase({
+    this.httpResponse = '',
+    this.jsonParser = '',
+    this.xmlNode = '',
+    this.acronymsEnum,
+  });
+  String httpResponse;
+  String jsonParser;
+  String xmlNode;
+  AcronymsEnum? acronymsEnum;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -407,6 +422,19 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   AllClassesWrapper echoClassWrapper(AllClassesWrapper wrapper);
+
+  /// Returns the passed acronyms object.
+  @ObjCSelector('echoAcronyms:')
+  @SwiftFunction('echo(_:)')
+  AcronymsAndTestCase echoAcronyms(AcronymsAndTestCase acronyms);
+
+  @ObjCSelector('hostHTTPResponse:')
+  @SwiftFunction('hostHTTPResponse(_:)')
+  AcronymsAndTestCase hostHTTPResponse(AcronymsAndTestCase acronyms);
+
+  @ObjCSelector('sendJSONParser:')
+  @SwiftFunction('sendJSONParser(_:)')
+  AcronymsAndTestCase sendJSONParser(AcronymsAndTestCase acronyms);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')

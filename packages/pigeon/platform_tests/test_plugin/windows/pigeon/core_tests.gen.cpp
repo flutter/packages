@@ -2576,6 +2576,106 @@ size_t AllClassesWrapper::Hash() const {
 
 size_t PigeonInternalDeepHash(const AllClassesWrapper& v) { return v.Hash(); }
 
+// AcronymsAndTestCase
+
+AcronymsAndTestCase::AcronymsAndTestCase(const std::string& http_response,
+                                         const std::string& json_parser,
+                                         const std::string& xml_node)
+    : http_response_(http_response),
+      json_parser_(json_parser),
+      xml_node_(xml_node) {}
+
+AcronymsAndTestCase::AcronymsAndTestCase(const std::string& http_response,
+                                         const std::string& json_parser,
+                                         const std::string& xml_node,
+                                         const AcronymsEnum* acronyms_enum)
+    : http_response_(http_response),
+      json_parser_(json_parser),
+      xml_node_(xml_node),
+      acronyms_enum_(acronyms_enum ? std::optional<AcronymsEnum>(*acronyms_enum)
+                                   : std::nullopt) {}
+
+const std::string& AcronymsAndTestCase::http_response() const {
+  return http_response_;
+}
+
+void AcronymsAndTestCase::set_http_response(std::string_view value_arg) {
+  http_response_ = value_arg;
+}
+
+const std::string& AcronymsAndTestCase::json_parser() const {
+  return json_parser_;
+}
+
+void AcronymsAndTestCase::set_json_parser(std::string_view value_arg) {
+  json_parser_ = value_arg;
+}
+
+const std::string& AcronymsAndTestCase::xml_node() const { return xml_node_; }
+
+void AcronymsAndTestCase::set_xml_node(std::string_view value_arg) {
+  xml_node_ = value_arg;
+}
+
+const AcronymsEnum* AcronymsAndTestCase::acronyms_enum() const {
+  return acronyms_enum_ ? &(*acronyms_enum_) : nullptr;
+}
+
+void AcronymsAndTestCase::set_acronyms_enum(const AcronymsEnum* value_arg) {
+  acronyms_enum_ =
+      value_arg ? std::optional<AcronymsEnum>(*value_arg) : std::nullopt;
+}
+
+void AcronymsAndTestCase::set_acronyms_enum(const AcronymsEnum& value_arg) {
+  acronyms_enum_ = value_arg;
+}
+
+EncodableList AcronymsAndTestCase::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(4);
+  list.push_back(EncodableValue(http_response_));
+  list.push_back(EncodableValue(json_parser_));
+  list.push_back(EncodableValue(xml_node_));
+  list.push_back(acronyms_enum_ ? CustomEncodableValue(*acronyms_enum_)
+                                : EncodableValue());
+  return list;
+}
+
+AcronymsAndTestCase AcronymsAndTestCase::FromEncodableList(
+    const EncodableList& list) {
+  AcronymsAndTestCase decoded(std::get<std::string>(list[0]),
+                              std::get<std::string>(list[1]),
+                              std::get<std::string>(list[2]));
+  auto& encodable_acronyms_enum = list[3];
+  if (!encodable_acronyms_enum.IsNull()) {
+    decoded.set_acronyms_enum(std::any_cast<const AcronymsEnum&>(
+        std::get<CustomEncodableValue>(encodable_acronyms_enum)));
+  }
+  return decoded;
+}
+
+bool AcronymsAndTestCase::operator==(const AcronymsAndTestCase& other) const {
+  return PigeonInternalDeepEquals(http_response_, other.http_response_) &&
+         PigeonInternalDeepEquals(json_parser_, other.json_parser_) &&
+         PigeonInternalDeepEquals(xml_node_, other.xml_node_) &&
+         PigeonInternalDeepEquals(acronyms_enum_, other.acronyms_enum_);
+}
+
+bool AcronymsAndTestCase::operator!=(const AcronymsAndTestCase& other) const {
+  return !(*this == other);
+}
+
+size_t AcronymsAndTestCase::Hash() const {
+  size_t result = 1;
+  result = result * 31 + PigeonInternalDeepHash(http_response_);
+  result = result * 31 + PigeonInternalDeepHash(json_parser_);
+  result = result * 31 + PigeonInternalDeepHash(xml_node_);
+  result = result * 31 + PigeonInternalDeepHash(acronyms_enum_);
+  return result;
+}
+
+size_t PigeonInternalDeepHash(const AcronymsAndTestCase& v) { return v.Hash(); }
+
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -2652,27 +2752,40 @@ EncodableValue PigeonInternalCodecSerializer::ReadValueOfType(
                        static_cast<AnotherEnum>(enum_arg_value));
     }
     case 131: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(
+                       static_cast<AcronymsEnum>(enum_arg_value));
+    }
+    case 132: {
       return CustomEncodableValue(UnusedClass::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 132: {
+    case 133: {
       return CustomEncodableValue(AllTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 133: {
+    case 134: {
       return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 134: {
+    case 135: {
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
     }
-    case 135: {
+    case 136: {
       return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
-    case 136: {
+    case 137: {
+      return CustomEncodableValue(AcronymsAndTestCase::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    }
+    case 138: {
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     }
@@ -2699,8 +2812,15 @@ void PigeonInternalCodecSerializer::WriteValue(
                  stream);
       return;
     }
-    if (custom_value->type() == typeid(UnusedClass)) {
+    if (custom_value->type() == typeid(AcronymsEnum)) {
       stream->WriteByte(131);
+      WriteValue(EncodableValue(static_cast<int>(
+                     std::any_cast<AcronymsEnum>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(UnusedClass)) {
+      stream->WriteByte(132);
       WriteValue(
           EncodableValue(
               std::any_cast<UnusedClass>(*custom_value).ToEncodableList()),
@@ -2708,14 +2828,14 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(132);
+      stream->WriteByte(133);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(133);
+      stream->WriteByte(134);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -2723,7 +2843,7 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(134);
+      stream->WriteByte(135);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -2731,14 +2851,22 @@ void PigeonInternalCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(135);
+      stream->WriteByte(136);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
+    if (custom_value->type() == typeid(AcronymsAndTestCase)) {
+      stream->WriteByte(137);
+      WriteValue(
+          EncodableValue(std::any_cast<AcronymsAndTestCase>(*custom_value)
+                             .ToEncodableList()),
+          stream);
+      return;
+    }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(136);
+      stream->WriteByte(138);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
@@ -3653,6 +3781,120 @@ void HostIntegrationCoreApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                   std::get<CustomEncodableValue>(encodable_wrapper_arg));
               ErrorOr<AllClassesWrapper> output =
                   api->EchoClassWrapper(wrapper_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.echoAcronyms" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_acronyms_arg = args.at(0);
+              if (encodable_acronyms_arg.IsNull()) {
+                reply(WrapError("acronyms_arg unexpectedly null."));
+                return;
+              }
+              const auto& acronyms_arg =
+                  std::any_cast<const AcronymsAndTestCase&>(
+                      std::get<CustomEncodableValue>(encodable_acronyms_arg));
+              ErrorOr<AcronymsAndTestCase> output =
+                  api->EchoAcronyms(acronyms_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.hostHTTPResponse" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_acronyms_arg = args.at(0);
+              if (encodable_acronyms_arg.IsNull()) {
+                reply(WrapError("acronyms_arg unexpectedly null."));
+                return;
+              }
+              const auto& acronyms_arg =
+                  std::any_cast<const AcronymsAndTestCase&>(
+                      std::get<CustomEncodableValue>(encodable_acronyms_arg));
+              ErrorOr<AcronymsAndTestCase> output =
+                  api->HostHTTPResponse(acronyms_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  CustomEncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_integration_tests."
+                                  "HostIntegrationCoreApi.sendJSONParser" +
+                                      prepended_suffix,
+                                  &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const ::flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_acronyms_arg = args.at(0);
+              if (encodable_acronyms_arg.IsNull()) {
+                reply(WrapError("acronyms_arg unexpectedly null."));
+                return;
+              }
+              const auto& acronyms_arg =
+                  std::any_cast<const AcronymsAndTestCase&>(
+                      std::get<CustomEncodableValue>(encodable_acronyms_arg));
+              ErrorOr<AcronymsAndTestCase> output =
+                  api->SendJSONParser(acronyms_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;

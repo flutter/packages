@@ -120,6 +120,12 @@ class TestPlugin : public flutter::Plugin,
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
   EchoClassWrapper(
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AcronymsAndTestCase>
+  HostHTTPResponse(
+      const core_tests_pigeontest::AcronymsAndTestCase& acronyms) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AcronymsAndTestCase>
+  SendJSONParser(
+      const core_tests_pigeontest::AcronymsAndTestCase& acronyms) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> EchoEnum(
       const core_tests_pigeontest::AnEnum& an_enum) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnotherEnum>

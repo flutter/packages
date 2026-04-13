@@ -113,6 +113,7 @@ class InternalGObjectOptions extends InternalOptions {
   final String? module;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// The path to the output header file location.

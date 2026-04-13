@@ -22,25 +22,6 @@ class CoreTestsTest;
 
 // Generated class from Pigeon.
 
-class FlutterError {
- public:
-  explicit FlutterError(const std::string& code) : code_(code) {}
-  explicit FlutterError(const std::string& code, const std::string& message)
-      : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message,
-                        const ::flutter::EncodableValue& details)
-      : code_(code), message_(message), details_(details) {}
-
-  const std::string& code() const { return code_; }
-  const std::string& message() const { return message_; }
-  const ::flutter::EncodableValue& details() const { return details_; }
-
- private:
-  std::string code_;
-  std::string message_;
-  ::flutter::EncodableValue details_;
-};
-
 template <class T>
 class ErrorOr {
  public:
@@ -65,6 +46,25 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
+class FlutterError {
+ public:
+  explicit FlutterError(const std::string& code) : code_(code) {}
+  explicit FlutterError(const std::string& code, const std::string& message)
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const ::flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
+
+  const std::string& code() const { return code_; }
+  const std::string& message() const { return message_; }
+  const ::flutter::EncodableValue& details() const { return details_; }
+
+ private:
+  std::string code_;
+  std::string message_;
+  ::flutter::EncodableValue details_;
+};
+
 enum class AnEnum {
   kOne = 0,
   kTwo = 1,
@@ -74,6 +74,8 @@ enum class AnEnum {
 };
 
 enum class AnotherEnum { kJustInCase = 0 };
+
+enum class AcronymsEnum { kHTTPResponse = 0, kJSONParser = 1 };
 
 // Generated class from Pigeon that represents data sent in messages.
 class UnusedClass {
@@ -770,6 +772,56 @@ class AllClassesWrapper {
   std::optional<::flutter::EncodableMap> nullable_class_map_;
 };
 
+// Generated class from Pigeon that represents data sent in messages.
+class AcronymsAndTestCase {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  explicit AcronymsAndTestCase(const std::string& http_response,
+                               const std::string& json_parser,
+                               const std::string& xml_node);
+
+  // Constructs an object setting all fields.
+  explicit AcronymsAndTestCase(const std::string& http_response,
+                               const std::string& json_parser,
+                               const std::string& xml_node,
+                               const AcronymsEnum* acronyms_enum);
+
+  const std::string& http_response() const;
+  void set_http_response(std::string_view value_arg);
+
+  const std::string& json_parser() const;
+  void set_json_parser(std::string_view value_arg);
+
+  const std::string& xml_node() const;
+  void set_xml_node(std::string_view value_arg);
+
+  const AcronymsEnum* acronyms_enum() const;
+  void set_acronyms_enum(const AcronymsEnum* value_arg);
+  void set_acronyms_enum(const AcronymsEnum& value_arg);
+
+  bool operator==(const AcronymsAndTestCase& other) const;
+  bool operator!=(const AcronymsAndTestCase& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
+  size_t Hash() const;
+
+ private:
+  static AcronymsAndTestCase FromEncodableList(
+      const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonInternalCodecSerializer;
+  friend class CoreTestsTest;
+  std::string http_response_;
+  std::string json_parser_;
+  std::string xml_node_;
+  std::optional<AcronymsEnum> acronyms_enum_;
+};
+
 // A data class containing a List, used in unit tests.
 //
 // Generated class from Pigeon that represents data sent in messages.
@@ -903,6 +955,13 @@ class HostIntegrationCoreApi {
   // deserialization.
   virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
       const AllClassesWrapper& wrapper) = 0;
+  // Returns the passed acronyms object.
+  virtual ErrorOr<AcronymsAndTestCase> EchoAcronyms(
+      const AcronymsAndTestCase& acronyms) = 0;
+  virtual ErrorOr<AcronymsAndTestCase> HostHTTPResponse(
+      const AcronymsAndTestCase& acronyms) = 0;
+  virtual ErrorOr<AcronymsAndTestCase> SendJSONParser(
+      const AcronymsAndTestCase& acronyms) = 0;
   // Returns the passed enum to test serialization and deserialization.
   virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
   // Returns the passed enum to test serialization and deserialization.

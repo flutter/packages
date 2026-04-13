@@ -12,12 +12,9 @@ import '../generator_tools.dart';
 import '../types/task_queue.dart';
 import 'templates.dart';
 
-/// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
-
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
-    DocumentCommentSpecification(_docCommentPrefix);
+    tripleSlashStyleDocCommentSpec;
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
@@ -103,6 +100,7 @@ class InternalSwiftOptions extends InternalOptions {
        includeErrorClass = options.includeErrorClass;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// Path to the swift file that will be generated.
@@ -193,11 +191,12 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// ${getGeneratedCodeWarning()}');
-    indent.writeln('// $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
   }
 
@@ -246,7 +245,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
           member.documentationComments,
           _docCommentSpec,
         );
-        indent.writeln('case ${_camelCase(member.name)} = $index');
+        indent.writeln('case ${toLowerCamelCase(member.name)} = $index');
       });
     });
   }
@@ -466,6 +465,11 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     List<EnumeratedType> types, {
     required String dartPackageName,
   }) {
+    if (types.length <= totalCustomCodecKeysAllowed) {
+      return;
+    }
+    indent.newln();
+
     final overflowInt = NamedType(
       name: 'type',
       type: const TypeDeclaration(baseName: 'Int', isNullable: false),
@@ -479,7 +483,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       name: _overflowClassName,
       fields: overflowFields,
     );
-    indent.newln();
+
     _writeDataClassSignature(
       indent,
       overflowClass,
@@ -515,25 +519,22 @@ static func fromList(_ ${varNamePrefix}list: [Any?]) -> Any? {
 if (wrapped == nil) {
   return nil;
 }
-    ''');
+''');
         indent.writeScoped('switch type {', '}', () {
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.writeScoped(
-              'case ${i - totalCustomCodecKeysAllowed}:',
-              '',
-              () {
-                if (types[i].type == CustomTypes.customClass) {
-                  indent.writeln(
-                    'return ${types[i].name}.fromList(wrapped as! [Any?]);',
-                  );
-                } else if (types[i].type == CustomTypes.customEnum) {
-                  indent.writeln(
-                    'return ${types[i].name}(rawValue: wrapped as! Int);',
-                  );
-                }
-              },
-              addTrailingNewline: false,
-            );
+            final int caseIndex = i - totalCustomCodecKeysAllowed;
+            final EnumeratedType type = types[i];
+            indent.writeScoped('case $caseIndex:', '', () {
+              if (type.type == CustomTypes.customClass) {
+                indent.writeln(
+                  'return ${type.name}.fromList(wrapped as! [Any?]);',
+                );
+              } else if (type.type == CustomTypes.customEnum) {
+                indent.writeln(
+                  'return ${type.name}(rawValue: wrapped as! Int);',
+                );
+              }
+            }, addTrailingNewline: false);
           }
           indent.writeScoped('default: ', '', () {
             indent.writeln('return nil');
@@ -917,7 +918,7 @@ if (wrapped == nil) {
 
     indent.newln();
     indent.writeln(
-      '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
+      '/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
     );
     indent.write('class ${apiName}Setup ');
     indent.addScoped('{', '}', () {
@@ -925,7 +926,7 @@ if (wrapped == nil) {
         'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }',
       );
       indent.writeln(
-        '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.',
+        '/// Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.',
       );
       indent.write(
         'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
@@ -1634,10 +1635,6 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.includeErrorClass) {
-      _writePigeonError(generatorOptions, indent);
-    }
-
     if (root.containsHostApi || root.containsProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
@@ -1650,6 +1647,48 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
     _writeNilOrValue(indent);
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(generatorOptions, indent);
+    }
+  }
+
+  @override
+  void writeErrorClass(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (generatorOptions.includeErrorClass) {
+      indent.newln();
+      indent.writeln(
+        '/// Error class for passing custom error details to Dart side.',
+      );
+      indent.writeScoped(
+        'final class ${_getErrorClassName(generatorOptions)}: Error {',
+        '}',
+        () {
+          indent.writeln('let code: String');
+          indent.writeln('let message: String?');
+          indent.writeln('let details: Sendable?');
+          indent.newln();
+          indent.writeScoped(
+            'init(code: String, message: String?, details: Sendable?) {',
+            '}',
+            () {
+              indent.writeln('self.code = code');
+              indent.writeln('self.message = message');
+              indent.writeln('self.details = details');
+            },
+          );
+          indent.newln();
+          indent.writeScoped('var localizedDescription: String {', '}', () {
+            indent.writeScoped('return', '', () {
+              indent.writeln(
+                '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"',
+              );
+            }, addTrailingNewline: false);
+          });
+        },
+      );
     }
   }
 
@@ -2815,40 +2854,6 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
     }
   }
 
-  void _writePigeonError(InternalSwiftOptions generatorOptions, Indent indent) {
-    indent.newln();
-    indent.writeln(
-      '/// Error class for passing custom error details to Dart side.',
-    );
-    indent.writeScoped(
-      'final class ${_getErrorClassName(generatorOptions)}: Error {',
-      '}',
-      () {
-        indent.writeln('let code: String');
-        indent.writeln('let message: String?');
-        indent.writeln('let details: Sendable?');
-        indent.newln();
-        indent.writeScoped(
-          'init(code: String, message: String?, details: Sendable?) {',
-          '}',
-          () {
-            indent.writeln('self.code = code');
-            indent.writeln('self.message = message');
-            indent.writeln('self.details = details');
-          },
-        );
-        indent.newln();
-        indent.writeScoped('var localizedDescription: String {', '}', () {
-          indent.writeScoped('return', '', () {
-            indent.writeln(
-              '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"',
-            );
-          }, addTrailingNewline: false);
-        });
-      },
-    );
-  }
-
   void _writeProxyApiImports(Indent indent, Iterable<AstProxyApi> apis) {
     final apisOfImports = <String, List<AstProxyApi>>{};
     for (final proxyApi in apis) {
@@ -3000,13 +3005,6 @@ String _getArgumentName(int count, NamedType argument) {
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) {
   return '${_getArgumentName(count, argument)}Arg';
-}
-
-String _camelCase(String text) {
-  final String pascal = text.split('_').map((String part) {
-    return part.isEmpty ? '' : part[0].toUpperCase() + part.substring(1);
-  }).join();
-  return pascal[0].toLowerCase() + pascal.substring(1);
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be

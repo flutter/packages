@@ -15,24 +15,6 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-/// Error class for passing custom error details to Dart side.
-final class PigeonError: Error {
-  let code: String
-  let message: String?
-  let details: Sendable?
-
-  init(code: String, message: String?, details: Sendable?) {
-    self.code = code
-    self.message = message
-    self.details = details
-  }
-
-  var localizedDescription: String {
-    return
-      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
-}
-
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -183,6 +165,24 @@ func deepHashCoreTests(value: Any?, hasher: inout Hasher) {
   }
 }
 
+/// Error class for passing custom error details to Dart side.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Sendable?
+
+  init(code: String, message: String?, details: Sendable?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 enum AnEnum: Int {
   case one = 0
   case two = 1
@@ -193,6 +193,11 @@ enum AnEnum: Int {
 
 enum AnotherEnum: Int {
   case justInCase = 0
+}
+
+enum AcronymsEnum: Int {
+  case hTTPResponse = 0
+  case jSONParser = 1
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -967,6 +972,54 @@ struct AllClassesWrapper: Hashable {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct AcronymsAndTestCase: Hashable {
+  var httpResponse: String
+  var jsonParser: String
+  var xmlNode: String
+  var acronymsEnum: AcronymsEnum? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> AcronymsAndTestCase? {
+    let httpResponse = pigeonVar_list[0] as! String
+    let jsonParser = pigeonVar_list[1] as! String
+    let xmlNode = pigeonVar_list[2] as! String
+    let acronymsEnum: AcronymsEnum? = nilOrValue(pigeonVar_list[3])
+
+    return AcronymsAndTestCase(
+      httpResponse: httpResponse,
+      jsonParser: jsonParser,
+      xmlNode: xmlNode,
+      acronymsEnum: acronymsEnum
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      httpResponse,
+      jsonParser,
+      xmlNode,
+      acronymsEnum,
+    ]
+  }
+  static func == (lhs: AcronymsAndTestCase, rhs: AcronymsAndTestCase) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsCoreTests(lhs.httpResponse, rhs.httpResponse)
+      && deepEqualsCoreTests(lhs.jsonParser, rhs.jsonParser)
+      && deepEqualsCoreTests(lhs.xmlNode, rhs.xmlNode)
+      && deepEqualsCoreTests(lhs.acronymsEnum, rhs.acronymsEnum)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("AcronymsAndTestCase")
+    deepHashCoreTests(value: httpResponse, hasher: &hasher)
+    deepHashCoreTests(value: jsonParser, hasher: &hasher)
+    deepHashCoreTests(value: xmlNode, hasher: &hasher)
+    deepHashCoreTests(value: acronymsEnum, hasher: &hasher)
+  }
+}
+
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -1015,16 +1068,24 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 131:
-      return UnusedClass.fromList(self.readValue() as! [Any?])
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
+      if let enumResultAsInt = enumResultAsInt {
+        return AcronymsEnum(rawValue: enumResultAsInt)
+      }
+      return nil
     case 132:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return UnusedClass.fromList(self.readValue() as! [Any?])
     case 133:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
+      return AllTypes.fromList(self.readValue() as! [Any?])
     case 134:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+      return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 135:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 136:
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+    case 137:
+      return AcronymsAndTestCase.fromList(self.readValue() as! [Any?])
+    case 138:
       return TestMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -1040,23 +1101,29 @@ private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AnotherEnum {
       super.writeByte(130)
       super.writeValue(value.rawValue)
-    } else if let value = value as? UnusedClass {
+    } else if let value = value as? AcronymsEnum {
       super.writeByte(131)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? UnusedClass {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+    } else if let value = value as? AllTypes {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(136)
+      super.writeValue(value.toList())
+    } else if let value = value as? AcronymsAndTestCase {
+      super.writeByte(137)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(138)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -1136,6 +1203,10 @@ protocol HostIntegrationCoreApi {
   func echoNonNull(classMap: [Int64: AllNullableTypes]) throws -> [Int64: AllNullableTypes]
   /// Returns the passed class to test nested class serialization and deserialization.
   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
+  /// Returns the passed acronyms object.
+  func echo(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase
+  func hostHTTPResponse(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase
+  func sendJSONParser(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnum: AnEnum) throws -> AnEnum
   /// Returns the passed enum to test serialization and deserialization.
@@ -1949,6 +2020,61 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoClassWrapperChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed acronyms object.
+    let echoAcronymsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAcronyms\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAcronymsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let acronymsArg = args[0] as! AcronymsAndTestCase
+        do {
+          let result = try api.echo(acronymsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoAcronymsChannel.setMessageHandler(nil)
+    }
+    let hostHTTPResponseChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.hostHTTPResponse\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      hostHTTPResponseChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let acronymsArg = args[0] as! AcronymsAndTestCase
+        do {
+          let result = try api.hostHTTPResponse(acronymsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      hostHTTPResponseChannel.setMessageHandler(nil)
+    }
+    let sendJSONParserChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendJSONParser\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      sendJSONParserChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let acronymsArg = args[0] as! AcronymsAndTestCase
+        do {
+          let result = try api.sendJSONParser(acronymsArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      sendJSONParserChannel.setMessageHandler(nil)
     }
     /// Returns the passed enum to test serialization and deserialization.
     let echoEnumChannel = FlutterBasicMessageChannel(

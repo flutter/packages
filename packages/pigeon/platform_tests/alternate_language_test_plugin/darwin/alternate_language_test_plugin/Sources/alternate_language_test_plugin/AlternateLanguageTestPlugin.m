@@ -398,6 +398,52 @@
   return aNullableString;
 }
 
+// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+- (nullable FLTAcronymsAndTestCase *)hostHTTPResponse:(FLTAcronymsAndTestCase *)acronyms
+                                                error:(FlutterError *_Nullable *_Nonnull)error {
+  FLTAcronymsEnumBox *enumBox = nil;
+  if (acronyms.acronymsEnum) {
+    FLTAcronymsEnum enumVal;
+    switch (acronyms.acronymsEnum.value) {
+      case FLTAcronymsEnumHTTPResponse:
+        enumVal = FLTAcronymsEnumHTTPResponse;
+        break;
+      case FLTAcronymsEnumJSONParser:
+        enumVal = FLTAcronymsEnumJSONParser;
+        break;
+    }
+    enumBox = [[FLTAcronymsEnumBox alloc] initWithValue:enumVal];
+  }
+  return [FLTAcronymsAndTestCase
+      makeWithHttpResponse:acronyms.httpResponse
+                jsonParser:acronyms.jsonParser
+                   xmlNode:acronyms.xmlNode
+              acronymsEnum:enumBox];
+}
+
+// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+- (nullable FLTAcronymsAndTestCase *)sendJSONParser:(FLTAcronymsAndTestCase *)acronyms
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
+  FLTAcronymsEnumBox *enumBox = nil;
+  if (acronyms.acronymsEnum) {
+    FLTAcronymsEnum enumVal;
+    switch (acronyms.acronymsEnum.value) {
+      case FLTAcronymsEnumHTTPResponse:
+        enumVal = FLTAcronymsEnumHTTPResponse;
+        break;
+      case FLTAcronymsEnumJSONParser:
+        enumVal = FLTAcronymsEnumJSONParser;
+        break;
+    }
+    enumBox = [[FLTAcronymsEnumBox alloc] initWithValue:enumVal];
+  }
+  return [FLTAcronymsAndTestCase
+      makeWithHttpResponse:acronyms.httpResponse
+                jsonParser:acronyms.jsonParser
+                   xmlNode:acronyms.xmlNode
+              acronymsEnum:enumBox];
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

@@ -185,22 +185,6 @@ public class Messages {
     return value.hashCode();
   }
 
-  /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
-  public static class FlutterError extends RuntimeException {
-
-    /** The error code. */
-    public final String code;
-
-    /** The error details. Must be a datatype supported by the api codec. */
-    public final Object details;
-
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
-      super(message);
-      this.code = code;
-      this.details = details;
-    }
-  }
-
   @NonNull
   protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     ArrayList<Object> errorList = new ArrayList<>(3);
@@ -227,6 +211,22 @@ public class Messages {
   @Target(METHOD)
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
+
+  /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
+  public static class FlutterError extends RuntimeException {
+
+    /** The error code. */
+    public final String code;
+
+    /** The error details. Must be a datatype supported by the api codec. */
+    public final Object details;
+
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
+      super(message);
+      this.code = code;
+      this.details = details;
+    }
+  }
 
   public enum Code {
     ONE(0),

@@ -147,6 +147,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTAcronymsEnumBox
+- (instancetype)initWithValue:(FLTAcronymsEnum)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FLTUnusedClass ()
 + (FLTUnusedClass *)fromList:(NSArray<id> *)list;
 + (nullable FLTUnusedClass *)nullableFromList:(NSArray<id> *)list;
@@ -174,6 +184,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FLTAllClassesWrapper ()
 + (FLTAllClassesWrapper *)fromList:(NSArray<id> *)list;
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTAcronymsAndTestCase ()
++ (FLTAcronymsAndTestCase *)fromList:(NSArray<id> *)list;
++ (nullable FLTAcronymsAndTestCase *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -919,6 +935,61 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTAcronymsAndTestCase
++ (instancetype)makeWithHttpResponse:(NSString *)httpResponse
+                          jsonParser:(NSString *)jsonParser
+                             xmlNode:(NSString *)xmlNode
+                        acronymsEnum:(nullable FLTAcronymsEnumBox *)acronymsEnum {
+  FLTAcronymsAndTestCase *pigeonResult = [[FLTAcronymsAndTestCase alloc] init];
+  pigeonResult.httpResponse = httpResponse;
+  pigeonResult.jsonParser = jsonParser;
+  pigeonResult.xmlNode = xmlNode;
+  pigeonResult.acronymsEnum = acronymsEnum;
+  return pigeonResult;
+}
++ (FLTAcronymsAndTestCase *)fromList:(NSArray<id> *)list {
+  FLTAcronymsAndTestCase *pigeonResult = [[FLTAcronymsAndTestCase alloc] init];
+  pigeonResult.httpResponse = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.jsonParser = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.xmlNode = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.acronymsEnum = GetNullableObjectAtIndex(list, 3);
+  return pigeonResult;
+}
++ (nullable FLTAcronymsAndTestCase *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTAcronymsAndTestCase fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.httpResponse ?: [NSNull null],
+    self.jsonParser ?: [NSNull null],
+    self.xmlNode ?: [NSNull null],
+    self.acronymsEnum ?: [NSNull null],
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTAcronymsAndTestCase *other = (FLTAcronymsAndTestCase *)object;
+  return FLTPigeonDeepEquals(self.httpResponse, other.httpResponse) &&
+         FLTPigeonDeepEquals(self.jsonParser, other.jsonParser) &&
+         FLTPigeonDeepEquals(self.xmlNode, other.xmlNode) &&
+         FLTPigeonDeepEquals(self.acronymsEnum, other.acronymsEnum);
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.httpResponse);
+  result = result * 31 + FLTPigeonDeepHash(self.jsonParser);
+  result = result * 31 + FLTPigeonDeepHash(self.xmlNode);
+  result = result * 31 + FLTPigeonDeepHash(self.acronymsEnum);
+  return result;
+}
+@end
+
 @implementation FLTTestMessage
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
@@ -972,17 +1043,25 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  ? nil
                  : [[FLTAnotherEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
-    case 131:
-      return [FLTUnusedClass fromList:[self readValue]];
+    case 131: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTAcronymsEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     case 132:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTUnusedClass fromList:[self readValue]];
     case 133:
-      return [FLTAllNullableTypes fromList:[self readValue]];
+      return [FLTAllTypes fromList:[self readValue]];
     case 134:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
+      return [FLTAllNullableTypes fromList:[self readValue]];
     case 135:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 136:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 137:
+      return [FLTAcronymsAndTestCase fromList:[self readValue]];
+    case 138:
       return [FLTTestMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1002,23 +1081,30 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     FLTAnotherEnumBox *box = (FLTAnotherEnumBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FLTUnusedClass class]]) {
+  } else if ([value isKindOfClass:[FLTAcronymsEnumBox class]]) {
+    FLTAcronymsEnumBox *box = (FLTAcronymsEnumBox *)value;
     [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTUnusedClass class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:136];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTAcronymsAndTestCase class]]) {
+    [self writeByte:137];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:138];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1707,6 +1793,79 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         FLTAllClassesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         FLTAllClassesWrapper *output = [api echoClassWrapper:arg_wrapper error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed acronyms object.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.echoAcronyms",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoAcronyms:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoAcronyms:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAcronymsAndTestCase *arg_acronyms = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAcronymsAndTestCase *output = [api echoAcronyms:arg_acronyms error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.hostHTTPResponse",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(hostHTTPResponse:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(hostHTTPResponse:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAcronymsAndTestCase *arg_acronyms = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAcronymsAndTestCase *output = [api hostHTTPResponse:arg_acronyms error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.sendJSONParser",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(sendJSONParser:error:)],
+          @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(sendJSONParser:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAcronymsAndTestCase *arg_acronyms = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAcronymsAndTestCase *output = [api sendJSONParser:arg_acronyms error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

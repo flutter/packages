@@ -241,6 +241,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(classWrapper, receivedClassWrapper);
     });
 
+    testWidgets('acronyms serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+      final acronyms = AcronymsAndTestCase(
+        httpResponse: 'HTTP_RESPONSE',
+        jsonParser: 'JSON_PARSER',
+        xmlNode: 'XML_NODE',
+      );
+      final AcronymsAndTestCase received = await api.echoAcronyms(acronyms);
+      expect(received.httpResponse, acronyms.httpResponse);
+      expect(received.jsonParser, acronyms.jsonParser);
+      expect(received.xmlNode, acronyms.xmlNode);
+    });
+
+    testWidgets('acronyms methods and enums work correctly', (
+      WidgetTester _,
+    ) async {
+      final api = HostIntegrationCoreApi();
+      final acronyms = AcronymsAndTestCase(
+        httpResponse: 'HTTP_RESPONSE',
+        jsonParser: 'JSON_PARSER',
+        xmlNode: 'XML_NODE',
+        acronymsEnum: AcronymsEnum.HTTPResponse,
+      );
+
+      final AcronymsAndTestCase receivedHttp = await api.hostHTTPResponse(
+        acronyms,
+      );
+      expect(receivedHttp.httpResponse, acronyms.httpResponse);
+      expect(receivedHttp.acronymsEnum, acronyms.acronymsEnum);
+
+      final AcronymsAndTestCase receivedJson = await api.sendJSONParser(
+        acronyms,
+      );
+      expect(receivedJson.jsonParser, acronyms.jsonParser);
+      expect(receivedJson.acronymsEnum, acronyms.acronymsEnum);
+    });
+
     testWidgets('nested null classes can serialize and deserialize correctly', (
       WidgetTester _,
     ) async {

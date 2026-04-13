@@ -7,6 +7,8 @@ package com.example.alternate_language_test_plugin;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.example.alternate_language_test_plugin.CoreTests.AcronymsAndTestCase;
+import com.example.alternate_language_test_plugin.CoreTests.AcronymsEnum;
 import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWithoutRecursion;
@@ -406,6 +408,56 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable String echoNamedNullableString(@Nullable String aNullableString) {
     return aNullableString;
+  }
+
+  // This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  @Override
+  public @NonNull AcronymsAndTestCase hostHTTPResponse(@NonNull AcronymsAndTestCase acronyms) {
+    AcronymsEnum enumVal = null;
+    AcronymsEnum incomingEnum = acronyms.getAcronymsEnum();
+    if (incomingEnum != null) {
+      switch (incomingEnum) {
+        case HTTP_RESPONSE:
+          enumVal = AcronymsEnum.HTTP_RESPONSE;
+          break;
+        case JSON_PARSER:
+          enumVal = AcronymsEnum.JSON_PARSER;
+          break;
+        default:
+          throw new IllegalArgumentException("Unexpected enum value: " + incomingEnum);
+      }
+    }
+    return new AcronymsAndTestCase.Builder()
+        .setHttpResponse(acronyms.getHttpResponse())
+        .setJsonParser(acronyms.getJsonParser())
+        .setXmlNode(acronyms.getXmlNode())
+        .setAcronymsEnum(enumVal)
+        .build();
+  }
+
+  // This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  @Override
+  public @NonNull AcronymsAndTestCase sendJSONParser(@NonNull AcronymsAndTestCase acronyms) {
+    AcronymsEnum enumVal = null;
+    AcronymsEnum incomingEnum = acronyms.getAcronymsEnum();
+    if (incomingEnum != null) {
+      switch (incomingEnum) {
+        case HTTP_RESPONSE:
+          enumVal = AcronymsEnum.HTTP_RESPONSE;
+          break;
+        case JSON_PARSER:
+          enumVal = AcronymsEnum.JSON_PARSER;
+          break;
+        default:
+          throw new IllegalArgumentException("Unexpected enum value: " + incomingEnum);
+      }
+    }
+    return new AcronymsAndTestCase.Builder()
+        .setHttpResponse(acronyms.getHttpResponse())
+        .setJsonParser(acronyms.getJsonParser())
+        .setXmlNode(acronyms.getXmlNode())
+        .setAcronymsEnum(enumVal)
+        .build();
   }
 
   @Override

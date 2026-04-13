@@ -10,12 +10,9 @@ import '../generator.dart';
 import '../generator_tools.dart';
 import '../pigeon_lib.dart';
 
-/// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
-
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
-    DocumentCommentSpecification(_docCommentPrefix);
+    tripleSlashStyleDocCommentSpec;
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
@@ -139,6 +136,7 @@ class InternalObjcOptions extends InternalOptions {
   final String? prefix;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// A String to augment class names to avoid cross file collisions.
@@ -188,11 +186,12 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// ${getGeneratedCodeWarning()}');
-    indent.writeln('// $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
   }
 
@@ -319,7 +318,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.writeln('$_docCommentPrefix The codec used by all APIs.');
+    indent.writeln('/// The codec used by all APIs.');
     indent.writeln(
       'NSObject<FlutterMessageCodec> *${generatorOptions.prefix}Get${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}Codec(void);',
     );
@@ -495,11 +494,12 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// ${getGeneratedCodeWarning()}');
-    indent.writeln('// $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
   }
 
@@ -766,6 +766,16 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     List<EnumeratedType> types, {
     required String dartPackageName,
   }) {
+    if (types.length <= totalCustomCodecKeysAllowed) {
+      return;
+    }
+    indent.newln();
+
+    final String className = _className(
+      generatorOptions.prefix,
+      _overflowClassName,
+    );
+
     _writeObjcSourceDataClassExtension(
       generatorOptions,
       indent,
@@ -774,16 +784,14 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       isOverflowClass: true,
     );
     indent.newln();
-    indent.writeln(
-      '@implementation ${_className(generatorOptions.prefix, _overflowClassName)}',
-    );
+    indent.writeln('@implementation $className');
 
     _writeObjcSourceClassInitializer(
       generatorOptions,
       root,
       indent,
       _overflowClass,
-      _className(generatorOptions.prefix, _overflowClassName),
+      className,
     );
     writeClassEncode(
       generatorOptions,
@@ -795,7 +803,7 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
 
     indent.format('''
 + (id)fromList:(NSArray<id> *)list {
-  ${_className(generatorOptions.prefix, _overflowClassName)} *wrapper = [[${_className(generatorOptions.prefix, _overflowClassName)} alloc] init];
+  $className *wrapper = [[$className alloc] init];
   wrapper.type = [GetNullableObjectAtIndex(list, 0) integerValue];
   wrapper.wrapped = GetNullableObjectAtIndex(list, 1);
   return [wrapper unwrap];
@@ -807,13 +815,15 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
 if (self.wrapped == nil) {
   return nil;
 }
-    ''');
+''');
       indent.writeScoped('switch (self.type) {', '}', () {
         for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-          indent.write('case ${i - totalCustomCodecKeysAllowed}:');
+          final int caseIndex = i - totalCustomCodecKeysAllowed;
+          final EnumeratedType type = types[i];
+          indent.write('case $caseIndex:');
           _writeCodecDecode(
             indent,
-            types[i],
+            type,
             generatorOptions.prefix ?? '',
             isOverflowClass: true,
           );
@@ -2123,7 +2133,7 @@ void _writeDataClassDeclaration(
       classDefinition,
     ).map((NamedType e) => !e.type.isNullable).any((bool e) => e)) {
       indent.writeln(
-        '$_docCommentPrefix `init` unavailable to enforce nonnull fields, see the `make` class method.',
+        '/// `init` unavailable to enforce nonnull fields, see the `make` class method.',
       );
       indent.writeln('- (instancetype)init NS_UNAVAILABLE;');
     }

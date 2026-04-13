@@ -684,6 +684,22 @@ bool customTypeOverflowCheck(Root root) {
       maximumCodecFieldKey - minimumCodecFieldKey;
 }
 
+/// Documentation comment specification for C-style comments (/** ... */).
+const DocumentCommentSpecification cStyleDocCommentSpec =
+    DocumentCommentSpecification(
+      '/**',
+      closeCommentToken: ' */',
+      blockContinuationToken: ' *',
+    );
+
+/// Documentation comment specification for slash-style comments (/// ...).
+const DocumentCommentSpecification tripleSlashStyleDocCommentSpec =
+    DocumentCommentSpecification('///');
+
+/// Documentation comment specification for slash-slash-style comments (// ...).
+const DocumentCommentSpecification doubleSlashStyleDocCommentSpec =
+    DocumentCommentSpecification('//');
+
 /// Describes how to format a document comment.
 class DocumentCommentSpecification {
   /// Constructor for [DocumentationCommentSpecification]
@@ -838,6 +854,9 @@ class OutputFileOptions<T extends InternalOptions> extends InternalOptions {
 
   /// Options for specified language across all file types.
   T languageOptions;
+
+  @override
+  Iterable<String>? get copyrightHeader => languageOptions.copyrightHeader;
 }
 
 /// Converts strings to Upper Camel Case.
@@ -870,10 +889,20 @@ String toLowerCamelCase(String text) {
 String toScreamingSnakeCase(String string) {
   return string
       .replaceAllMapped(
-        RegExp(r'(?<=[a-z])[A-Z]'),
+        RegExp(r'(?<=[a-z0-9])[A-Z]|(?<=[A-Z])[A-Z](?=[a-z])'),
         (Match m) => '_${m.group(0)}',
       )
       .toUpperCase();
+}
+
+/// Converts string to snake_case.
+String toSnakeCase(String string) {
+  return string
+      .replaceAllMapped(
+        RegExp(r'(?<=[a-z0-9])[A-Z]|(?<=[A-Z])[A-Z](?=[a-z])'),
+        (Match m) => '_${m.group(0)}',
+      )
+      .toLowerCase();
 }
 
 /// The channel name for the `removeStrongReference` method of the

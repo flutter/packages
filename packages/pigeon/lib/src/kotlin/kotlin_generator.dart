@@ -11,22 +11,8 @@ import '../generator_tools.dart';
 import '../types/task_queue.dart';
 import 'templates.dart';
 
-/// Documentation open symbol.
-const String _docCommentPrefix = '/**';
-
-/// Documentation continuation symbol.
-const String _docCommentContinuation = ' *';
-
-/// Documentation close symbol.
-const String _docCommentSuffix = ' */';
-
 /// Documentation comment spec.
-const DocumentCommentSpecification _docCommentSpec =
-    DocumentCommentSpecification(
-      _docCommentPrefix,
-      closeCommentToken: _docCommentSuffix,
-      blockContinuationToken: _docCommentContinuation,
-    );
+const DocumentCommentSpecification _docCommentSpec = cStyleDocCommentSpec;
 
 const String _codecName = 'PigeonCodec';
 
@@ -144,6 +130,7 @@ class InternalKotlinOptions extends InternalOptions {
   final String kotlinOut;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// The name of the error class used for passing custom error parameters.
@@ -205,11 +192,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// ${getGeneratedCodeWarning()}');
-    indent.writeln('// $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.writeln('@file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")');
     if (generatorOptions.useGeneratedAnnotation) {
       indent.writeln(kotlinGeneratedAnnotation);
@@ -641,6 +629,11 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     List<EnumeratedType> types, {
     required String dartPackageName,
   }) {
+    if (types.length <= totalCustomCodecKeysAllowed) {
+      return;
+    }
+    indent.newln();
+
     final overflowInt = NamedType(
       name: 'type',
       type: const TypeDeclaration(baseName: 'int', isNullable: false),
@@ -650,9 +643,10 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       type: const TypeDeclaration(baseName: 'Object', isNullable: true),
     );
     final overflowFields = <NamedType>[overflowInt, overflowObject];
+    final overflowClassName =
+        '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName';
     final overflowClass = Class(
-      name:
-          '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName',
+      name: overflowClassName,
       fields: overflowFields,
     );
 
@@ -669,7 +663,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.format('''
 companion object {
   fun fromList(${varNamePrefix}list: List<Any?>): Any? {
-    val wrapper = ${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName(
+    val wrapper = $overflowClassName(
       type = ${varNamePrefix}list[0] as Long,
       wrapped = ${varNamePrefix}list[1],
     );
@@ -683,17 +677,19 @@ companion object {
 if (wrapped == null) {
   return null
 }
-    ''');
+''');
         indent.writeScoped('when (type.toInt()) {', '}', () {
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.writeScoped('${i - totalCustomCodecKeysAllowed} ->', '', () {
-              if (types[i].type == CustomTypes.customClass) {
+            final int caseIndex = i - totalCustomCodecKeysAllowed;
+            final EnumeratedType type = types[i];
+            indent.writeScoped('$caseIndex ->', '', () {
+              if (type.type == CustomTypes.customClass) {
                 indent.writeln(
-                  'return ${types[i].name}.fromList(wrapped as List<Any?>)',
+                  'return ${type.name}.fromList(wrapped as List<Any?>)',
                 );
-              } else if (types[i].type == CustomTypes.customEnum) {
+              } else if (type.type == CustomTypes.customEnum) {
                 indent.writeln(
-                  'return ${types[i].name}.ofRaw((wrapped as Long).toInt())',
+                  'return ${type.name}.ofRaw((wrapped as Long).toInt())',
                 );
               }
             });
@@ -1332,27 +1328,6 @@ if (wrapped == null) {
     });
   }
 
-  void _writeErrorClass(InternalKotlinOptions generatorOptions, Indent indent) {
-    indent.newln();
-    indent.writeln('/**');
-    indent.writeln(
-      ' * Error class for passing custom error details to Flutter via a thrown PlatformException.',
-    );
-    indent.writeln(' * @property code The error code.');
-    indent.writeln(' * @property message The error message.');
-    indent.writeln(
-      ' * @property details The error details. Must be a datatype supported by the api codec.',
-    );
-    indent.writeln(' */');
-    indent.write('class ${_getErrorClassName(generatorOptions)} ');
-    indent.addScoped('(', ')', () {
-      indent.writeln('val code: String,');
-      indent.writeln('override val message: String? = null,');
-      indent.writeln('val details: Any? = null');
-    }, addTrailingNewline: false);
-    indent.addln(' : RuntimeException()');
-  }
-
   void _writeCreateConnectionError(
     InternalKotlinOptions generatorOptions,
     Indent indent,
@@ -1550,9 +1525,34 @@ fun floatHash(f: Float): Int {
         }
       },
     );
+  }
 
+  @override
+  void writeErrorClass(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.includeErrorClass) {
-      _writeErrorClass(generatorOptions, indent);
+      indent.newln();
+      indent.writeln('/**');
+      indent.writeln(
+        ' * Error class for passing custom error details to Flutter via a thrown PlatformException.',
+      );
+      indent.writeln(' * @property code The error code.');
+      indent.writeln(' * @property message The error message.');
+      indent.writeln(
+        ' * @property details The error details. Must be a datatype supported by the api codec.',
+      );
+      indent.writeln(' */');
+      indent.write('class ${_getErrorClassName(generatorOptions)} ');
+      indent.addScoped('(', ')', () {
+        indent.writeln('val code: String,');
+        indent.writeln('override val message: String? = null,');
+        indent.writeln('val details: Any? = null');
+      }, addTrailingNewline: false);
+      indent.addln(' : RuntimeException()');
     }
   }
 

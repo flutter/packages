@@ -17,7 +17,7 @@ const String _voidType = 'void';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
-    DocumentCommentSpecification(_commentPrefix);
+    doubleSlashStyleDocCommentSpec;
 
 /// The default serializer for Flutter.
 const String _standardCodecSerializer = '::flutter::StandardCodecSerializer';
@@ -142,6 +142,7 @@ class InternalCppOptions extends InternalOptions {
   final String? namespace;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// The path to the output header file location.
@@ -195,11 +196,12 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
   }
 
@@ -233,7 +235,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     indent.newln();
     if (generatorOptions.namespace?.endsWith('_pigeontest') ?? false) {
       final testFixtureClass =
-          '${_pascalCaseFromSnakeCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
+          '${toUpperCamelCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
       indent.writeln('class $testFixtureClass;');
     }
     indent.newln();
@@ -262,7 +264,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           member.documentationComments,
           _docCommentSpec,
         );
-        final valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
+        final valueName = 'k${toUpperCamelCase(member.name)}';
         indent.writeln(
           '$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}',
         );
@@ -277,7 +279,6 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    _writeFlutterError(indent);
     if (root.containsHostApi) {
       _writeErrorOr(
         indent,
@@ -286,6 +287,35 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
             .map((Api api) => api.name),
       );
     }
+  }
+
+  @override
+  void writeErrorClass(
+    InternalCppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format('''
+
+class FlutterError {
+ public:
+\texplicit FlutterError(const std::string& code)
+\t\t: code_(code) {}
+\texplicit FlutterError(const std::string& code, const std::string& message)
+\t\t: code_(code), message_(message) {}
+\texplicit FlutterError(const std::string& code, const std::string& message, const ::flutter::EncodableValue& details)
+\t\t: code_(code), message_(message), details_(details) {}
+
+\tconst std::string& code() const { return code_; }
+\tconst std::string& message() const { return message_; }
+\tconst ::flutter::EncodableValue& details() const { return details_; }
+
+ private:
+\tstd::string code_;
+\tstd::string message_;
+\t::flutter::EncodableValue details_;
+};''');
   }
 
   @override
@@ -329,7 +359,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     String? testFixtureClass;
     if (generatorOptions.namespace?.endsWith('_pigeontest') ?? false) {
       testFixtureClass =
-          '${_pascalCaseFromSnakeCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
+          '${toUpperCamelCase(generatorOptions.namespace!.replaceAll('_pigeontest', ''))}Test';
     }
     indent.newln();
 
@@ -854,29 +884,6 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     indent.newln();
   }
 
-  void _writeFlutterError(Indent indent) {
-    indent.format('''
-
-class FlutterError {
- public:
-\texplicit FlutterError(const std::string& code)
-\t\t: code_(code) {}
-\texplicit FlutterError(const std::string& code, const std::string& message)
-\t\t: code_(code), message_(message) {}
-\texplicit FlutterError(const std::string& code, const std::string& message, const ::flutter::EncodableValue& details)
-\t\t: code_(code), message_(message), details_(details) {}
-
-\tconst std::string& code() const { return code_; }
-\tconst std::string& message() const { return message_; }
-\tconst ::flutter::EncodableValue& details() const { return details_; }
-
- private:
-\tstd::string code_;
-\tstd::string message_;
-\t::flutter::EncodableValue details_;
-};''');
-  }
-
   void _writeErrorOr(
     Indent indent, {
     Iterable<String> friends = const <String>[],
@@ -934,11 +941,12 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
     indent.addln('#undef _HAS_EXCEPTIONS');
     indent.newln();
@@ -1476,6 +1484,11 @@ size_t PigeonInternalDeepHash(const ::flutter::EncodableValue& v) {
     List<EnumeratedType> types, {
     required String dartPackageName,
   }) {
+    if (types.length <= totalCustomCodecKeysAllowed) {
+      return;
+    }
+    indent.newln();
+
     _writeClassConstructor(root, indent, _overflowClass, _overflowFields);
     // Getters and setters.
     for (final NamedType field in _overflowFields) {
@@ -1589,31 +1602,33 @@ EncodableValue $_overflowClassName::FromEncodableList(
       ],
       isConst: true,
       body: () {
+        const readValueCall =
+            'return $_standardCodecSerializer::ReadValueOfType(type, stream);';
         if (enumeratedTypes.isNotEmpty) {
-          indent.writeln('switch (type) {');
-          indent.inc();
-          for (final customType in enumeratedTypes) {
-            if (customType.enumeration < maximumCodecFieldKey) {
-              indent.write('case ${customType.enumeration}: ');
-              indent.nest(1, () {
-                _writeCodecDecode(indent, customType, 'ReadValue(stream)');
-              });
+          indent.writeScoped('switch (type) {', '}', () {
+            for (final customType in enumeratedTypes) {
+              if (customType.enumeration < maximumCodecFieldKey) {
+                indent.write('case ${customType.enumeration}: ');
+                indent.nest(1, () {
+                  _writeCodecDecode(indent, customType, 'ReadValue(stream)');
+                });
+              }
             }
-          }
-          if (root.requiresOverflowClass) {
-            indent.write('case $maximumCodecFieldKey:');
-            _writeCodecDecode(indent, _enumeratedOverflow, 'ReadValue(stream)');
-          }
-          indent.writeln('default:');
-          indent.inc();
-        }
-        indent.writeln(
-          'return $_standardCodecSerializer::ReadValueOfType(type, stream);',
-        );
-        if (enumeratedTypes.isNotEmpty) {
-          indent.dec();
-          indent.writeln('}');
-          indent.dec();
+            if (root.requiresOverflowClass) {
+              indent.write('case $maximumCodecFieldKey:');
+              _writeCodecDecode(
+                indent,
+                _enumeratedOverflow,
+                'ReadValue(stream)',
+              );
+            }
+            indent.writeln('default:');
+            indent.nest(1, () {
+              indent.writeln(readValueCall);
+            });
+          });
+        } else {
+          indent.writeln(readValueCall);
         }
       },
     );
@@ -2418,33 +2433,13 @@ HostDatatype _nonNullableType(HostDatatype type) {
   );
 }
 
-String _pascalCaseFromCamelCase(String camelCase) =>
-    camelCase[0].toUpperCase() + camelCase.substring(1);
+String _makeMethodName(Method method) => toUpperCamelCase(method.name);
 
-String _snakeCaseFromCamelCase(String camelCase) {
-  return camelCase.replaceAllMapped(
-    RegExp(r'[A-Z]'),
-    (Match m) => '${m.start == 0 ? '' : '_'}${m[0]!.toLowerCase()}',
-  );
-}
+String _makeGetterName(NamedType field) => toSnakeCase(field.name);
 
-String _pascalCaseFromSnakeCase(String snakeCase) {
-  final String camelCase = snakeCase.replaceAllMapped(
-    RegExp(r'_([a-z])'),
-    (Match m) => m[1]!.toUpperCase(),
-  );
-  return _pascalCaseFromCamelCase(camelCase);
-}
+String _makeSetterName(NamedType field) => 'set_${toSnakeCase(field.name)}';
 
-String _makeMethodName(Method method) => _pascalCaseFromCamelCase(method.name);
-
-String _makeGetterName(NamedType field) => _snakeCaseFromCamelCase(field.name);
-
-String _makeSetterName(NamedType field) =>
-    'set_${_snakeCaseFromCamelCase(field.name)}';
-
-String _makeVariableName(NamedType field) =>
-    _snakeCaseFromCamelCase(field.name);
+String _makeVariableName(NamedType field) => toSnakeCase(field.name);
 
 String _makeInstanceVariableName(NamedType field) =>
     '${_makeVariableName(field)}_';

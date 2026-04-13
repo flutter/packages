@@ -14,9 +14,6 @@ import '../generator_tools.dart';
 import 'proxy_api_generator_helper.dart' as proxy_api_helper;
 import 'templates.dart';
 
-/// Documentation comment open symbol.
-const String _docCommentPrefix = '///';
-
 /// Name of the variable that contains the message channel suffix for APIs.
 const String _suffixVarName = '${varNamePrefix}messageChannelSuffix';
 
@@ -28,7 +25,7 @@ const String pigeonChannelCodec = 'pigeonChannelCodec';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification docCommentSpec =
-    DocumentCommentSpecification(_docCommentPrefix);
+    tripleSlashStyleDocCommentSpec;
 
 /// The custom codec used for all pigeon APIs.
 const String _pigeonMessageCodec = '_PigeonCodec';
@@ -117,6 +114,7 @@ class InternalDartOptions extends InternalOptions {
        _ignoreLints = options._ignoreLints;
 
   /// A copyright header that will get prepended to generated code.
+  @override
   final Iterable<String>? copyrightHeader;
 
   /// Path to output generated Dart file.
@@ -146,11 +144,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.copyrightHeader != null) {
-      addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
-    }
-    indent.writeln('// ${getGeneratedCodeWarning()}');
-    indent.writeln('// $seeAlsoWarning');
+    super.writeFilePrologue(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.writeln('// ignore_for_file: unused_import, unused_shown_name');
     if (generatorOptions._ignoreLints) {
       indent.writeln('// ignore_for_file: type=lint');
@@ -1287,7 +1286,11 @@ Object? _extractReplyValueOrThrow(
   }
 
   void _writeCodecOverflowUtilities(Indent indent, List<EnumeratedType> types) {
+    if (types.length <= totalCustomCodecKeysAllowed) {
+      return;
+    }
     indent.newln();
+
     indent.writeln('// ignore: camel_case_types');
     indent.writeScoped('class $_overflowClassName {', '}', () {
       indent.format('''
@@ -1308,6 +1311,7 @@ static $_overflowClassName decode(Object result) {
   );
 }
 ''');
+
       indent.writeScoped('Object? unwrap() {', '}', () {
         indent.format('''
 if (wrapped == null) {
@@ -1315,28 +1319,21 @@ if (wrapped == null) {
 }
 ''');
         indent.writeScoped('switch (type) {', '}', () {
-          var nonSerializedClassCount = 0;
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            if (types[i].associatedClass?.isSealed ?? false) {
-              nonSerializedClassCount++;
-            } else {
-              indent.writeScoped(
-                'case ${i - nonSerializedClassCount - totalCustomCodecKeysAllowed}:',
-                '',
-                () {
-                  if (types[i].type == CustomTypes.customClass) {
-                    indent.writeln('return ${types[i].name}.decode(wrapped!);');
-                  } else if (types[i].type == CustomTypes.customEnum) {
-                    indent.writeln(
-                      'return ${types[i].name}.values[wrapped! as int];',
-                    );
-                  }
-                },
-              );
-            }
+            final int caseIndex = i - totalCustomCodecKeysAllowed;
+            final EnumeratedType type = types[i];
+            indent.writeScoped('case $caseIndex:', '', () {
+              if (type.type == CustomTypes.customClass) {
+                indent.writeln('return ${type.name}.decode(wrapped!);');
+              } else if (type.type == CustomTypes.customEnum) {
+                indent.writeln('return ${type.name}.values[wrapped! as int];');
+              }
+            });
           }
+          indent.writeScoped('default:', '', () {
+            indent.writeln('return null;');
+          });
         });
-        indent.writeln('return null;');
       });
     });
   }
@@ -1408,33 +1405,31 @@ if (wrapped == null) {
 
     // If the message call is not made inside of an async method, this creates
     // an anonymous function to handle the send future.
-    if (!insideAsyncMethod) {
-      indent.writeln('() async {');
-      indent.inc();
-    }
-
-    indent.format('''
+    void writeBody() {
+      indent.format('''
 final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 ''');
-    final extractCall =
-        '''
+      final extractCall =
+          '''
 _extractReplyValueOrThrow(
 \t\t${varNamePrefix}replyList,
 \t\t${varNamePrefix}channelName,
 \t\tisNullValid: ${returnType.isNullable || returnType.isVoid},
 )
 ''';
-    if (returnType.isVoid) {
-      indent.format('$extractCall;');
-    } else {
-      const accessor = '${varNamePrefix}replyValue';
-      indent.format('final Object? $accessor = $extractCall;');
-      indent.format('return ${_castValue(accessor, returnType)};');
+      if (returnType.isVoid) {
+        indent.format('$extractCall;');
+      } else {
+        const accessor = '${varNamePrefix}replyValue';
+        indent.format('final Object? $accessor = $extractCall;');
+        indent.format('return ${_castValue(accessor, returnType)};');
+      }
     }
 
     if (!insideAsyncMethod) {
-      indent.dec();
-      indent.writeln('}();');
+      indent.writeScoped('() async {', '}();', writeBody);
+    } else {
+      writeBody();
     }
   }
 

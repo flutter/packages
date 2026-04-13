@@ -188,22 +188,6 @@ public class CoreTests {
     return value.hashCode();
   }
 
-  /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
-  public static class FlutterError extends RuntimeException {
-
-    /** The error code. */
-    public final String code;
-
-    /** The error details. Must be a datatype supported by the api codec. */
-    public final Object details;
-
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
-      super(message);
-      this.code = code;
-      this.details = details;
-    }
-  }
-
   @NonNull
   protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     ArrayList<Object> errorList = new ArrayList<>(3);
@@ -231,6 +215,22 @@ public class CoreTests {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
+  /** Error class for passing custom error details to Flutter via a thrown PlatformException. */
+  public static class FlutterError extends RuntimeException {
+
+    /** The error code. */
+    public final String code;
+
+    /** The error details. Must be a datatype supported by the api codec. */
+    public final Object details;
+
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
+      super(message);
+      this.code = code;
+      this.details = details;
+    }
+  }
+
   public enum AnEnum {
     ONE(0),
     TWO(1),
@@ -251,6 +251,17 @@ public class CoreTests {
     final int index;
 
     AnotherEnum(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum AcronymsEnum {
+    HTTP_RESPONSE(0),
+    JSON_PARSER(1);
+
+    final int index;
+
+    AcronymsEnum(final int index) {
       this.index = index;
     }
   }
@@ -2871,6 +2882,149 @@ public class CoreTests {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AcronymsAndTestCase {
+    private @NonNull String httpResponse;
+
+    public @NonNull String getHttpResponse() {
+      return httpResponse;
+    }
+
+    public void setHttpResponse(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"httpResponse\" is null.");
+      }
+      this.httpResponse = setterArg;
+    }
+
+    private @NonNull String jsonParser;
+
+    public @NonNull String getJsonParser() {
+      return jsonParser;
+    }
+
+    public void setJsonParser(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"jsonParser\" is null.");
+      }
+      this.jsonParser = setterArg;
+    }
+
+    private @NonNull String xmlNode;
+
+    public @NonNull String getXmlNode() {
+      return xmlNode;
+    }
+
+    public void setXmlNode(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"xmlNode\" is null.");
+      }
+      this.xmlNode = setterArg;
+    }
+
+    private @Nullable AcronymsEnum acronymsEnum;
+
+    public @Nullable AcronymsEnum getAcronymsEnum() {
+      return acronymsEnum;
+    }
+
+    public void setAcronymsEnum(@Nullable AcronymsEnum setterArg) {
+      this.acronymsEnum = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AcronymsAndTestCase() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AcronymsAndTestCase that = (AcronymsAndTestCase) o;
+      return pigeonDeepEquals(httpResponse, that.httpResponse)
+          && pigeonDeepEquals(jsonParser, that.jsonParser)
+          && pigeonDeepEquals(xmlNode, that.xmlNode)
+          && pigeonDeepEquals(acronymsEnum, that.acronymsEnum);
+    }
+
+    @Override
+    public int hashCode() {
+      Object[] fields = new Object[] {getClass(), httpResponse, jsonParser, xmlNode, acronymsEnum};
+      return pigeonDeepHashCode(fields);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String httpResponse;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHttpResponse(@NonNull String setterArg) {
+        this.httpResponse = setterArg;
+        return this;
+      }
+
+      private @Nullable String jsonParser;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJsonParser(@NonNull String setterArg) {
+        this.jsonParser = setterArg;
+        return this;
+      }
+
+      private @Nullable String xmlNode;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setXmlNode(@NonNull String setterArg) {
+        this.xmlNode = setterArg;
+        return this;
+      }
+
+      private @Nullable AcronymsEnum acronymsEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAcronymsEnum(@Nullable AcronymsEnum setterArg) {
+        this.acronymsEnum = setterArg;
+        return this;
+      }
+
+      public @NonNull AcronymsAndTestCase build() {
+        AcronymsAndTestCase pigeonReturn = new AcronymsAndTestCase();
+        pigeonReturn.setHttpResponse(httpResponse);
+        pigeonReturn.setJsonParser(jsonParser);
+        pigeonReturn.setXmlNode(xmlNode);
+        pigeonReturn.setAcronymsEnum(acronymsEnum);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(4);
+      toListResult.add(httpResponse);
+      toListResult.add(jsonParser);
+      toListResult.add(xmlNode);
+      toListResult.add(acronymsEnum);
+      return toListResult;
+    }
+
+    static @NonNull AcronymsAndTestCase fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      AcronymsAndTestCase pigeonResult = new AcronymsAndTestCase();
+      Object httpResponse = pigeonVar_list.get(0);
+      pigeonResult.setHttpResponse((String) httpResponse);
+      Object jsonParser = pigeonVar_list.get(1);
+      pigeonResult.setJsonParser((String) jsonParser);
+      Object xmlNode = pigeonVar_list.get(2);
+      pigeonResult.setXmlNode((String) xmlNode);
+      Object acronymsEnum = pigeonVar_list.get(3);
+      pigeonResult.setAcronymsEnum((AcronymsEnum) acronymsEnum);
+      return pigeonResult;
+    }
+  }
+
   /**
    * A data class containing a List, used in unit tests.
    *
@@ -2956,16 +3110,23 @@ public class CoreTests {
             return value == null ? null : AnotherEnum.values()[((Long) value).intValue()];
           }
         case (byte) 131:
-          return UnusedClass.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AcronymsEnum.values()[((Long) value).intValue()];
+          }
         case (byte) 132:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return UnusedClass.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return AcronymsAndTestCase.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -2980,23 +3141,29 @@ public class CoreTests {
       } else if (value instanceof AnotherEnum) {
         stream.write(130);
         writeValue(stream, value == null ? null : ((AnotherEnum) value).index);
-      } else if (value instanceof UnusedClass) {
+      } else if (value instanceof AcronymsEnum) {
         stream.write(131);
+        writeValue(stream, value == null ? null : ((AcronymsEnum) value).index);
+      } else if (value instanceof UnusedClass) {
+        stream.write(132);
         writeValue(stream, ((UnusedClass) value).toList());
       } else if (value instanceof AllTypes) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof AllNullableTypes) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
       } else if (value instanceof AllClassesWrapper) {
-        stream.write(135);
-        writeValue(stream, ((AllClassesWrapper) value).toList());
-      } else if (value instanceof TestMessage) {
         stream.write(136);
+        writeValue(stream, ((AllClassesWrapper) value).toList());
+      } else if (value instanceof AcronymsAndTestCase) {
+        stream.write(137);
+        writeValue(stream, ((AcronymsAndTestCase) value).toList());
+      } else if (value instanceof TestMessage) {
+        stream.write(138);
         writeValue(stream, ((TestMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -3113,6 +3280,15 @@ public class CoreTests {
     /** Returns the passed class to test nested class serialization and deserialization. */
     @NonNull
     AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper);
+    /** Returns the passed acronyms object. */
+    @NonNull
+    AcronymsAndTestCase echoAcronyms(@NonNull AcronymsAndTestCase acronyms);
+
+    @NonNull
+    AcronymsAndTestCase hostHTTPResponse(@NonNull AcronymsAndTestCase acronyms);
+
+    @NonNull
+    AcronymsAndTestCase sendJSONParser(@NonNull AcronymsAndTestCase acronyms);
     /** Returns the passed enum to test serialization and deserialization. */
     @NonNull
     AnEnum echoEnum(@NonNull AnEnum anEnum);
@@ -4163,6 +4339,81 @@ public class CoreTests {
                 AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   AllClassesWrapper output = api.echoClassWrapper(wrapperArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAcronyms"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
+                try {
+                  AcronymsAndTestCase output = api.echoAcronyms(acronymsArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.hostHTTPResponse"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
+                try {
+                  AcronymsAndTestCase output = api.hostHTTPResponse(acronymsArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendJSONParser"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
+                try {
+                  AcronymsAndTestCase output = api.sendJSONParser(acronymsArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

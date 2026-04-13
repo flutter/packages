@@ -220,6 +220,17 @@ enum class AnotherEnum(val raw: Int) {
   }
 }
 
+enum class AcronymsEnum(val raw: Int) {
+  HTTP_RESPONSE(0),
+  JSON_PARSER(1);
+
+  companion object {
+    fun ofRaw(raw: Int): AcronymsEnum? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class UnusedClass(val aField: Any? = null) {
   companion object {
@@ -959,6 +970,56 @@ data class AllClassesWrapper(
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AcronymsAndTestCase(
+    val httpResponse: String,
+    val jsonParser: String,
+    val xmlNode: String,
+    val acronymsEnum: AcronymsEnum? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): AcronymsAndTestCase {
+      val httpResponse = pigeonVar_list[0] as String
+      val jsonParser = pigeonVar_list[1] as String
+      val xmlNode = pigeonVar_list[2] as String
+      val acronymsEnum = pigeonVar_list[3] as AcronymsEnum?
+      return AcronymsAndTestCase(httpResponse, jsonParser, xmlNode, acronymsEnum)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        httpResponse,
+        jsonParser,
+        xmlNode,
+        acronymsEnum,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as AcronymsAndTestCase
+    return CoreTestsPigeonUtils.deepEquals(this.httpResponse, other.httpResponse) &&
+        CoreTestsPigeonUtils.deepEquals(this.jsonParser, other.jsonParser) &&
+        CoreTestsPigeonUtils.deepEquals(this.xmlNode, other.xmlNode) &&
+        CoreTestsPigeonUtils.deepEquals(this.acronymsEnum, other.acronymsEnum)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.httpResponse)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.jsonParser)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.xmlNode)
+    result = 31 * result + CoreTestsPigeonUtils.deepHash(this.acronymsEnum)
+    return result
+  }
+}
+
 /**
  * A data class containing a List, used in unit tests.
  *
@@ -1006,23 +1067,29 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { AnotherEnum.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
+        return (readValue(buffer) as Long?)?.let { AcronymsEnum.ofRaw(it.toInt()) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { UnusedClass.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
       }
       134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           AllNullableTypesWithoutRecursion.fromList(it)
         }
       }
-      135.toByte() -> {
+      136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
-      136.toByte() -> {
+      137.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AcronymsAndTestCase.fromList(it) }
+      }
+      138.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -1039,28 +1106,36 @@ private open class CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.raw.toLong())
       }
-      is UnusedClass -> {
+      is AcronymsEnum -> {
         stream.write(131)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw.toLong())
       }
-      is AllTypes -> {
+      is UnusedClass -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypes -> {
+      is AllTypes -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AllNullableTypes -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllClassesWrapper -> {
         stream.write(136)
+        writeValue(stream, value.toList())
+      }
+      is AcronymsAndTestCase -> {
+        stream.write(137)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(138)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1127,6 +1202,12 @@ interface HostIntegrationCoreApi {
   fun echoNonNullClassMap(classMap: Map<Long, AllNullableTypes>): Map<Long, AllNullableTypes>
   /** Returns the passed class to test nested class serialization and deserialization. */
   fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
+  /** Returns the passed acronyms object. */
+  fun echoAcronyms(acronyms: AcronymsAndTestCase): AcronymsAndTestCase
+
+  fun hostHTTPResponse(acronyms: AcronymsAndTestCase): AcronymsAndTestCase
+
+  fun sendJSONParser(acronyms: AcronymsAndTestCase): AcronymsAndTestCase
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: AnEnum): AnEnum
   /** Returns the passed enum to test serialization and deserialization. */
@@ -2116,6 +2197,72 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.echoClassWrapper(wrapperArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAcronyms$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val acronymsArg = args[0] as AcronymsAndTestCase
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAcronyms(acronymsArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.hostHTTPResponse$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val acronymsArg = args[0] as AcronymsAndTestCase
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.hostHTTPResponse(acronymsArg))
+                } catch (exception: Throwable) {
+                  CoreTestsPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendJSONParser$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val acronymsArg = args[0] as AcronymsAndTestCase
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.sendJSONParser(acronymsArg))
                 } catch (exception: Throwable) {
                   CoreTestsPigeonUtils.wrapError(exception)
                 }

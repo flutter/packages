@@ -3315,6 +3315,170 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
   return result;
 }
 
+struct _CoreTestsPigeonTestAcronymsAndTestCase {
+  GObject parent_instance;
+
+  gchar* http_response;
+  gchar* json_parser;
+  gchar* xml_node;
+  CoreTestsPigeonTestAcronymsEnum* acronyms_enum;
+};
+
+G_DEFINE_TYPE(CoreTestsPigeonTestAcronymsAndTestCase,
+              core_tests_pigeon_test_acronyms_and_test_case, G_TYPE_OBJECT)
+
+static void core_tests_pigeon_test_acronyms_and_test_case_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestAcronymsAndTestCase* self =
+      CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(object);
+  g_clear_pointer(&self->http_response, g_free);
+  g_clear_pointer(&self->json_parser, g_free);
+  g_clear_pointer(&self->xml_node, g_free);
+  g_clear_pointer(&self->acronyms_enum, g_free);
+  G_OBJECT_CLASS(core_tests_pigeon_test_acronyms_and_test_case_parent_class)
+      ->dispose(object);
+}
+
+static void core_tests_pigeon_test_acronyms_and_test_case_init(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {}
+
+static void core_tests_pigeon_test_acronyms_and_test_case_class_init(
+    CoreTestsPigeonTestAcronymsAndTestCaseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_acronyms_and_test_case_dispose;
+}
+
+CoreTestsPigeonTestAcronymsAndTestCase*
+core_tests_pigeon_test_acronyms_and_test_case_new(
+    const gchar* http_response, const gchar* json_parser, const gchar* xml_node,
+    CoreTestsPigeonTestAcronymsEnum* acronyms_enum) {
+  CoreTestsPigeonTestAcronymsAndTestCase* self =
+      CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(g_object_new(
+          core_tests_pigeon_test_acronyms_and_test_case_get_type(), nullptr));
+  self->http_response = g_strdup(http_response);
+  self->json_parser = g_strdup(json_parser);
+  self->xml_node = g_strdup(xml_node);
+  if (acronyms_enum != nullptr) {
+    self->acronyms_enum = static_cast<CoreTestsPigeonTestAcronymsEnum*>(
+        malloc(sizeof(CoreTestsPigeonTestAcronymsEnum)));
+    *self->acronyms_enum = *acronyms_enum;
+  } else {
+    self->acronyms_enum = nullptr;
+  }
+  return self;
+}
+
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_http_response(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ACRONYMS_AND_TEST_CASE(self),
+                       nullptr);
+  return self->http_response;
+}
+
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_json_parser(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ACRONYMS_AND_TEST_CASE(self),
+                       nullptr);
+  return self->json_parser;
+}
+
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_xml_node(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ACRONYMS_AND_TEST_CASE(self),
+                       nullptr);
+  return self->xml_node;
+}
+
+CoreTestsPigeonTestAcronymsEnum*
+core_tests_pigeon_test_acronyms_and_test_case_get_acronyms_enum(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ACRONYMS_AND_TEST_CASE(self),
+                       nullptr);
+  return self->acronyms_enum;
+}
+
+static FlValue* core_tests_pigeon_test_acronyms_and_test_case_to_list(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  FlValue* values = fl_value_new_list();
+  fl_value_append_take(values, fl_value_new_string(self->http_response));
+  fl_value_append_take(values, fl_value_new_string(self->json_parser));
+  fl_value_append_take(values, fl_value_new_string(self->xml_node));
+  fl_value_append_take(
+      values,
+      self->acronyms_enum != nullptr
+          ? fl_value_new_custom(core_tests_pigeon_test_acronyms_enum_type_id,
+                                fl_value_new_int(*self->acronyms_enum),
+                                (GDestroyNotify)fl_value_unref)
+          : fl_value_new_null());
+  return values;
+}
+
+static CoreTestsPigeonTestAcronymsAndTestCase*
+core_tests_pigeon_test_acronyms_and_test_case_new_from_list(FlValue* values) {
+  FlValue* value0 = fl_value_get_list_value(values, 0);
+  const gchar* http_response = fl_value_get_string(value0);
+  FlValue* value1 = fl_value_get_list_value(values, 1);
+  const gchar* json_parser = fl_value_get_string(value1);
+  FlValue* value2 = fl_value_get_list_value(values, 2);
+  const gchar* xml_node = fl_value_get_string(value2);
+  FlValue* value3 = fl_value_get_list_value(values, 3);
+  CoreTestsPigeonTestAcronymsEnum* acronyms_enum = nullptr;
+  CoreTestsPigeonTestAcronymsEnum acronyms_enum_value;
+  if (fl_value_get_type(value3) != FL_VALUE_TYPE_NULL) {
+    acronyms_enum_value = static_cast<CoreTestsPigeonTestAcronymsEnum>(
+        fl_value_get_int(reinterpret_cast<FlValue*>(
+            const_cast<gpointer>(fl_value_get_custom_value(value3)))));
+    acronyms_enum = &acronyms_enum_value;
+  }
+  return core_tests_pigeon_test_acronyms_and_test_case_new(
+      http_response, json_parser, xml_node, acronyms_enum);
+}
+
+gboolean core_tests_pigeon_test_acronyms_and_test_case_equals(
+    CoreTestsPigeonTestAcronymsAndTestCase* a,
+    CoreTestsPigeonTestAcronymsAndTestCase* b) {
+  if (a == b) {
+    return TRUE;
+  }
+  if (a == nullptr || b == nullptr) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->http_response, b->http_response) != 0) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->json_parser, b->json_parser) != 0) {
+    return FALSE;
+  }
+  if (g_strcmp0(a->xml_node, b->xml_node) != 0) {
+    return FALSE;
+  }
+  if ((a->acronyms_enum == nullptr) != (b->acronyms_enum == nullptr)) {
+    return FALSE;
+  }
+  if (a->acronyms_enum != nullptr && *a->acronyms_enum != *b->acronyms_enum) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+guint core_tests_pigeon_test_acronyms_and_test_case_hash(
+    CoreTestsPigeonTestAcronymsAndTestCase* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ACRONYMS_AND_TEST_CASE(self),
+                       0);
+  guint result = 0;
+  result =
+      result * 31 +
+      (self->http_response != nullptr ? g_str_hash(self->http_response) : 0);
+  result = result * 31 +
+           (self->json_parser != nullptr ? g_str_hash(self->json_parser) : 0);
+  result = result * 31 +
+           (self->xml_node != nullptr ? g_str_hash(self->xml_node) : 0);
+  result = result * 31 + (self->acronyms_enum != nullptr
+                              ? static_cast<guint>(*self->acronyms_enum)
+                              : 0);
+  return result;
+}
+
 struct _CoreTestsPigeonTestTestMessage {
   GObject parent_instance;
 
@@ -3409,13 +3573,15 @@ G_DEFINE_TYPE(CoreTestsPigeonTestMessageCodec,
 
 const int core_tests_pigeon_test_an_enum_type_id = 129;
 const int core_tests_pigeon_test_another_enum_type_id = 130;
-const int core_tests_pigeon_test_unused_class_type_id = 131;
-const int core_tests_pigeon_test_all_types_type_id = 132;
-const int core_tests_pigeon_test_all_nullable_types_type_id = 133;
+const int core_tests_pigeon_test_acronyms_enum_type_id = 131;
+const int core_tests_pigeon_test_unused_class_type_id = 132;
+const int core_tests_pigeon_test_all_types_type_id = 133;
+const int core_tests_pigeon_test_all_nullable_types_type_id = 134;
 const int core_tests_pigeon_test_all_nullable_types_without_recursion_type_id =
-    134;
-const int core_tests_pigeon_test_all_classes_wrapper_type_id = 135;
-const int core_tests_pigeon_test_test_message_type_id = 136;
+    135;
+const int core_tests_pigeon_test_all_classes_wrapper_type_id = 136;
+const int core_tests_pigeon_test_acronyms_and_test_case_type_id = 137;
+const int core_tests_pigeon_test_test_message_type_id = 138;
 
 static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
@@ -3431,6 +3597,15 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_another_enum(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
   uint8_t type = core_tests_pigeon_test_another_enum_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  return fl_standard_message_codec_write_value(codec, buffer, value, error);
+}
+
+static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_acronyms_enum(
+    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
+    GError** error) {
+  uint8_t type = core_tests_pigeon_test_acronyms_enum_type_id;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   return fl_standard_message_codec_write_value(codec, buffer, value, error);
 }
@@ -3493,6 +3668,17 @@ core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_classes_wr
 }
 
 static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_acronyms_and_test_case(
+    FlStandardMessageCodec* codec, GByteArray* buffer,
+    CoreTestsPigeonTestAcronymsAndTestCase* value, GError** error) {
+  uint8_t type = core_tests_pigeon_test_acronyms_and_test_case_type_id;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  g_autoptr(FlValue) values =
+      core_tests_pigeon_test_acronyms_and_test_case_to_list(value);
+  return fl_standard_message_codec_write_value(codec, buffer, values, error);
+}
+
+static gboolean
 core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestTestMessage* value, GError** error) {
@@ -3516,6 +3702,12 @@ static gboolean core_tests_pigeon_test_message_codec_write_value(
             error);
       case core_tests_pigeon_test_another_enum_type_id:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_another_enum(
+            codec, buffer,
+            reinterpret_cast<FlValue*>(
+                const_cast<gpointer>(fl_value_get_custom_value(value))),
+            error);
+      case core_tests_pigeon_test_acronyms_enum_type_id:
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_acronyms_enum(
             codec, buffer,
             reinterpret_cast<FlValue*>(
                 const_cast<gpointer>(fl_value_get_custom_value(value))),
@@ -3550,6 +3742,12 @@ static gboolean core_tests_pigeon_test_message_codec_write_value(
             CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
                 fl_value_get_custom_value_object(value)),
             error);
+      case core_tests_pigeon_test_acronyms_and_test_case_type_id:
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_acronyms_and_test_case(
+            codec, buffer,
+            CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(
+                fl_value_get_custom_value_object(value)),
+            error);
       case core_tests_pigeon_test_test_message_type_id:
         return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
             codec, buffer,
@@ -3580,6 +3778,16 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_another_enum(
     GError** error) {
   return fl_value_new_custom(
       core_tests_pigeon_test_another_enum_type_id,
+      fl_standard_message_codec_read_value(codec, buffer, offset, error),
+      (GDestroyNotify)fl_value_unref);
+}
+
+static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_acronyms_enum(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  return fl_value_new_custom(
+      core_tests_pigeon_test_acronyms_enum_type_id,
       fl_standard_message_codec_read_value(codec, buffer, offset, error),
       (GDestroyNotify)fl_value_unref);
 }
@@ -3697,6 +3905,28 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wra
 }
 
 static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_acronyms_and_test_case(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  g_autoptr(FlValue) values =
+      fl_standard_message_codec_read_value(codec, buffer, offset, error);
+  if (values == nullptr) {
+    return nullptr;
+  }
+
+  g_autoptr(CoreTestsPigeonTestAcronymsAndTestCase) value =
+      core_tests_pigeon_test_acronyms_and_test_case_new_from_list(values);
+  if (value == nullptr) {
+    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
+                "Invalid data received for MessageData");
+    return nullptr;
+  }
+
+  return fl_value_new_custom_object(
+      core_tests_pigeon_test_acronyms_and_test_case_type_id, G_OBJECT(value));
+}
+
+static FlValue*
 core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
@@ -3728,6 +3958,9 @@ static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
     case core_tests_pigeon_test_another_enum_type_id:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_another_enum(
           codec, buffer, offset, error);
+    case core_tests_pigeon_test_acronyms_enum_type_id:
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_acronyms_enum(
+          codec, buffer, offset, error);
     case core_tests_pigeon_test_unused_class_type_id:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_unused_class(
           codec, buffer, offset, error);
@@ -3742,6 +3975,9 @@ static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
           codec, buffer, offset, error);
     case core_tests_pigeon_test_all_classes_wrapper_type_id:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
+          codec, buffer, offset, error);
+    case core_tests_pigeon_test_acronyms_and_test_case_type_id:
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_acronyms_and_test_case(
           codec, buffer, offset, error);
     case core_tests_pigeon_test_test_message_type_id:
       return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
@@ -5487,6 +5723,209 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_CLASS_WRAPPER_RESPONSE(
           g_object_new(
               core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ACRONYMS_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ACRONYMS_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(
+      self->value, fl_value_new_custom_object(
+                       core_tests_pigeon_test_acronyms_and_test_case_type_id,
+                       G_OBJECT(return_value)));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_ACRONYMS_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse,
+    core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_HOST_H_T_T_P_RESPONSE_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_HOST_H_T_T_P_RESPONSE_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(
+      self->value, fl_value_new_custom_object(
+                       core_tests_pigeon_test_acronyms_and_test_case_type_id,
+                       G_OBJECT(return_value)));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_HOST_H_T_T_P_RESPONSE_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse,
+    core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_SEND_J_S_O_N_PARSER_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_SEND_J_S_O_N_PARSER_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(
+      self->value, fl_value_new_custom_object(
+                       core_tests_pigeon_test_acronyms_and_test_case_type_id,
+                       G_OBJECT(return_value)));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_SEND_J_S_O_N_PARSER_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
@@ -15763,6 +16202,99 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_cb(
   }
 }
 
+static void core_tests_pigeon_test_host_integration_core_api_echo_acronyms_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_acronyms == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAcronymsAndTestCase* acronyms =
+      CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse)
+      response = self->vtable->echo_acronyms(acronyms, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoAcronyms");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoAcronyms", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->host_h_t_t_p_response == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAcronymsAndTestCase* acronyms =
+      CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse)
+      response = self->vtable->host_h_t_t_p_response(acronyms, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "hostHTTPResponse");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "hostHTTPResponse", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->send_j_s_o_n_parser == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAcronymsAndTestCase* acronyms =
+      CORE_TESTS_PIGEON_TEST_ACRONYMS_AND_TEST_CASE(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse)
+      response = self->vtable->send_j_s_o_n_parser(acronyms, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "sendJSONParser");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "sendJSONParser", error->message);
+  }
+}
+
 static void core_tests_pigeon_test_host_integration_core_api_echo_enum_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -19323,6 +19855,40 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_class_wrapper_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_acronyms_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAcronyms%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_acronyms_channel =
+      fl_basic_message_channel_new(messenger, echo_acronyms_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_acronyms_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_acronyms_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* host_h_t_t_p_response_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "hostHTTPResponse%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) host_h_t_t_p_response_channel =
+      fl_basic_message_channel_new(messenger,
+                                   host_h_t_t_p_response_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      host_h_t_t_p_response_channel,
+      core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* send_j_s_o_n_parser_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "sendJSONParser%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_j_s_o_n_parser_channel =
+      fl_basic_message_channel_new(messenger, send_j_s_o_n_parser_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      send_j_s_o_n_parser_channel,
+      core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoEnum%s",
@@ -21206,6 +21772,34 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
       fl_basic_message_channel_new(messenger, echo_class_wrapper_channel_name,
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_class_wrapper_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_acronyms_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAcronyms%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_acronyms_channel =
+      fl_basic_message_channel_new(messenger, echo_acronyms_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_acronyms_channel, nullptr,
+                                               nullptr, nullptr);
+  g_autofree gchar* host_h_t_t_p_response_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "hostHTTPResponse%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) host_h_t_t_p_response_channel =
+      fl_basic_message_channel_new(messenger,
+                                   host_h_t_t_p_response_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(host_h_t_t_p_response_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* send_j_s_o_n_parser_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "sendJSONParser%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_j_s_o_n_parser_channel =
+      fl_basic_message_channel_new(messenger, send_j_s_o_n_parser_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(send_j_s_o_n_parser_channel,
                                                nullptr, nullptr, nullptr);
   g_autofree gchar* echo_enum_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."

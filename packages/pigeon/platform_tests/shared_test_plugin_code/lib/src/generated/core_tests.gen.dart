@@ -119,6 +119,8 @@ enum AnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 
 enum AnotherEnum { justInCase }
 
+enum AcronymsEnum { HTTPResponse, JSONParser }
+
 class UnusedClass {
   UnusedClass({this.aField});
 
@@ -885,6 +887,60 @@ class AllClassesWrapper {
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
+class AcronymsAndTestCase {
+  AcronymsAndTestCase({
+    this.httpResponse = '',
+    this.jsonParser = '',
+    this.xmlNode = '',
+    this.acronymsEnum,
+  });
+
+  String httpResponse;
+
+  String jsonParser;
+
+  String xmlNode;
+
+  AcronymsEnum? acronymsEnum;
+
+  List<Object?> _toList() {
+    return <Object?>[httpResponse, jsonParser, xmlNode, acronymsEnum];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AcronymsAndTestCase decode(Object result) {
+    result as List<Object?>;
+    return AcronymsAndTestCase(
+      httpResponse: result[0]! as String,
+      jsonParser: result[1]! as String,
+      xmlNode: result[2]! as String,
+      acronymsEnum: result[3] as AcronymsEnum?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AcronymsAndTestCase || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(httpResponse, other.httpResponse) &&
+        _deepEquals(jsonParser, other.jsonParser) &&
+        _deepEquals(xmlNode, other.xmlNode) &&
+        _deepEquals(acronymsEnum, other.acronymsEnum);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+}
+
 /// A data class containing a List, used in unit tests.
 class TestMessage {
   TestMessage({this.testList});
@@ -934,23 +990,29 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is AnotherEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is UnusedClass) {
+    } else if (value is AcronymsEnum) {
       buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+      writeValue(buffer, value.index);
+    } else if (value is UnusedClass) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    } else if (value is AllTypes) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is AcronymsAndTestCase) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -967,16 +1029,21 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : AnotherEnum.values[value];
       case 131:
-        return UnusedClass.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : AcronymsEnum.values[value];
       case 132:
-        return AllTypes.decode(readValue(buffer)!);
+        return UnusedClass.decode(readValue(buffer)!);
       case 133:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllTypes.decode(readValue(buffer)!);
       case 134:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 135:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 136:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 137:
+        return AcronymsAndTestCase.decode(readValue(buffer)!);
+      case 138:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1586,6 +1653,74 @@ class HostIntegrationCoreApi {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as AllClassesWrapper;
+  }
+
+  /// Returns the passed acronyms object.
+  Future<AcronymsAndTestCase> echoAcronyms(AcronymsAndTestCase acronyms) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAcronyms$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[acronyms],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as AcronymsAndTestCase;
+  }
+
+  Future<AcronymsAndTestCase> hostHTTPResponse(
+    AcronymsAndTestCase acronyms,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.hostHTTPResponse$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[acronyms],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as AcronymsAndTestCase;
+  }
+
+  Future<AcronymsAndTestCase> sendJSONParser(
+    AcronymsAndTestCase acronyms,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendJSONParser$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[acronyms],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as AcronymsAndTestCase;
   }
 
   /// Returns the passed enum to test serialization and deserialization.
