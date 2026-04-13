@@ -115,6 +115,10 @@
 
 #pragma mark - Overrides
 
+- (BOOL)shouldApplyVideoCompositionForTransform {
+  return YES;
+}
+
 - (void)updatePlayingState {
   [super updatePlayingState];
 

@@ -34,6 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Indicates whether the video player is currently loading a new asset.
 @property(nonatomic) BOOL loadingNewAsset;
 
+/// Returns whether the player should apply a video composition to handle rotation.
+/// The base implementation returns NO (platform view players let AVPlayerLayer handle rotation
+/// natively, which preserves HDR metadata). FVPTextureBasedVideoPlayer overrides this to return
+/// YES since pixel buffers need explicit rotation via video composition.
+- (BOOL)shouldApplyVideoCompositionForTransform;
+
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 

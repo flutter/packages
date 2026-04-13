@@ -108,6 +108,11 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
               if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
                 return;
               }
+              // Platform view players let AVPlayerLayer handle rotation natively,
+              // which preserves HDR metadata that video composition would strip.
+              if (![self shouldApplyVideoCompositionForTransform]) {
+                return;
+              }
               // Note:
               // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
               // Video composition can only be used with file-based media and is not supported for
@@ -239,6 +244,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Output degrees in between [0, 360]
   return degrees;
 };
+
+- (BOOL)shouldApplyVideoCompositionForTransform {
+  return NO;
+}
 
 - (AVMutableVideoComposition *)getVideoCompositionWithTransform:(CGAffineTransform)transform
                                                       withAsset:(AVAsset *)asset
