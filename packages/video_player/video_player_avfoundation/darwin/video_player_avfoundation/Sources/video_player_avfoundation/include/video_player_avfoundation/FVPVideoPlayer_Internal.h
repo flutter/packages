@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Interface intended for use by subclasses, but not other callers.
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
-@property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
+@property(nonatomic) AVPlayerItemVideoOutput *videoOutput;
 /// The view provider, to obtain view information from.
 @property(nonatomic, readonly, nullable) NSObject<FVPViewProvider> *viewProvider;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.

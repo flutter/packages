@@ -52,6 +52,14 @@
   self = [super initWithPlayerItem:item avFactory:avFactory viewProvider:viewProvider];
 
   if (self) {
+    // Configure video output for texture-based rendering.
+    // Platform view players (base class) don't need this since AVPlayerLayer renders directly.
+    NSDictionary *pixBuffAttributes = @{
+      (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+      (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+    };
+    self.videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+
     _frameUpdater = frameUpdater;
     _displayLink = displayLink;
     _frameUpdater.displayLink = _displayLink;

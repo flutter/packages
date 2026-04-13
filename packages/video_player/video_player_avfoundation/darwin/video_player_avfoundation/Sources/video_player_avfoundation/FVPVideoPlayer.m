@@ -155,13 +155,6 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   _player = [avFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
-  // Configure output.
-  NSDictionary *pixBuffAttributes = @{
-    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-  };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
-
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
   return self;
@@ -330,7 +323,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       break;
     case AVPlayerItemStatusReadyToPlay:
       if (!_isInitialized || _loadingNewAsset) {
-        [item addOutput:_videoOutput];
+        if (_videoOutput) {
+          [item addOutput:_videoOutput];
+        }
         if (_loadingNewAsset) {
           [self finishLoadingNewAsset];
         } else {
@@ -503,7 +498,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 
   AVPlayerItem *previousItem = _player.currentItem;
-  [previousItem removeOutput:_videoOutput];
+  if (_videoOutput) {
+    [previousItem removeOutput:_videoOutput];
+  }
 
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
@@ -515,7 +512,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                                    object:previousItem];
   }
 
-  [item addOutput:_videoOutput];
+  if (_videoOutput) {
+    [item addOutput:_videoOutput];
+  }
   [_player replaceCurrentItemWithPlayerItem:item];
 
   if (!_listenersRegistered) {
