@@ -7,7 +7,6 @@ import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,16 +16,15 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 // Mock data
 const int mockCameraId = 42;
 
-CameraInitializedEvent get mockInitializedEvent =>
-    const CameraInitializedEvent(
-      mockCameraId,
-      1920,
-      1080,
-      ExposureMode.auto,
-      true,
-      FocusMode.auto,
-      true,
-    );
+CameraInitializedEvent get mockInitializedEvent => const CameraInitializedEvent(
+  mockCameraId,
+  1920,
+  1080,
+  ExposureMode.auto,
+  true,
+  FocusMode.auto,
+  true,
+);
 
 CameraErrorEvent get mockErrorEvent =>
     const CameraErrorEvent(mockCameraId, 'test error description');
@@ -94,9 +92,10 @@ class TestMockCameraPlatform extends Mock
   Future<void> prepareForVideoRecording() async {}
 
   @override
-  Future<void> startVideoRecording(int cameraId,
-      {Duration? maxVideoDuration}) async =>
-      startVideoCapturing(VideoCaptureOptions(cameraId));
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+  }) async => startVideoCapturing(VideoCaptureOptions(cameraId));
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {}
@@ -106,8 +105,10 @@ class TestMockCameraPlatform extends Mock
       throw PlatformException(code: 'UNAVAILABLE');
 
   @override
-  Future<void> lockCaptureOrientation(int? cameraId,
-      DeviceOrientation? orientation) async {}
+  Future<void> lockCaptureOrientation(
+    int? cameraId,
+    DeviceOrientation? orientation,
+  ) async {}
 
   @override
   Future<void> unlockCaptureOrientation(int? cameraId) async {}
@@ -156,39 +157,34 @@ class TestMockCameraPlatform extends Mock
 
   @override
   Future<void> setDescriptionWhileRecording(
-      CameraDescription description) async {}
+    CameraDescription description,
+  ) async {}
 
   @override
-  Future<void> startImageStream(int? cameraId,
-      {required Future<void> Function(CameraImageData imageData)
-          onFrameAvailable}) async {}
-
-  @override
-  Future<void> stopImageStream(int? cameraId) async {}
-
-  @override
-  Future<Iterable<VideoStabilizationMode>>
-      getSupportedVideoStabilizationModes(int? cameraId) async =>
-          <VideoStabilizationMode>[VideoStabilizationMode.off];
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+    int? cameraId,
+  ) async => <VideoStabilizationMode>[VideoStabilizationMode.off];
 
   @override
   Future<void> setVideoStabilizationMode(
-      int? cameraId, VideoStabilizationMode? mode) async {}
+    int? cameraId,
+    VideoStabilizationMode? mode,
+  ) async {}
 
   @override
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) =>
-      Stream<CameraImageData>.empty();
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) => const Stream<CameraImageData>.empty();
 
   @override
-  Widget buildPreview(int cameraId) => SizedBox.shrink();
+  Widget buildPreview(int cameraId) => const SizedBox.shrink();
 }
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  group('CameraController - Dispose During Initialization (Issue #184959)',
-      () {
+  group('CameraController - Dispose During Initialization (Issue #184959)', () {
     late TestMockCameraPlatform mockPlatform;
 
     setUp(() {
@@ -199,17 +195,19 @@ void main() {
     test(
       'disposed controller should not throw on orientation listener events',
       () async {
-        final cameraDescription = const CameraDescription(
+        const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 90,
         );
 
-        final controller =
-            CameraController(cameraDescription, ResolutionPreset.max);
+        final controller = CameraController(
+          cameraDescription,
+          ResolutionPreset.max,
+        );
 
         // Start initialization - this sets up the orientation listener
-        final initFuture = controller.initialize();
+        final Future<void> initFuture = controller.initialize();
 
         // Immediately dispose - this should cancel the listener
         await controller.dispose();
@@ -233,17 +231,19 @@ void main() {
     test(
       'disposed controller should not throw on error listener events',
       () async {
-        final cameraDescription = const CameraDescription(
+        const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 90,
         );
 
-        final controller =
-            CameraController(cameraDescription, ResolutionPreset.max);
+        final controller = CameraController(
+          cameraDescription,
+          ResolutionPreset.max,
+        );
 
         // Start initialization - this sets up the error listener
-        final initFuture = controller.initialize();
+        final Future<void> initFuture = controller.initialize();
 
         // Immediately dispose
         await controller.dispose();
@@ -264,17 +264,19 @@ void main() {
     test(
       'disposed controller should not update value on async callbacks',
       () async {
-        final cameraDescription = const CameraDescription(
+        const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 90,
         );
 
-        final controller =
-            CameraController(cameraDescription, ResolutionPreset.max);
+        final controller = CameraController(
+          cameraDescription,
+          ResolutionPreset.max,
+        );
 
         // Start initialization
-        final initFuture = controller.initialize();
+        final Future<void> initFuture = controller.initialize();
 
         // Dispose before initialization completes
         await controller.dispose();
@@ -293,47 +295,48 @@ void main() {
       },
     );
 
-    test(
-      'multiple dispose calls should not cause issues',
-      () async {
-        final cameraDescription = const CameraDescription(
-          name: 'cam',
-          lensDirection: CameraLensDirection.back,
-          sensorOrientation: 90,
-        );
+    test('multiple dispose calls should not cause issues', () async {
+      const cameraDescription = CameraDescription(
+        name: 'cam',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
 
-        final controller =
-            CameraController(cameraDescription, ResolutionPreset.max);
+      final controller = CameraController(
+        cameraDescription,
+        ResolutionPreset.max,
+      );
 
-        // Start initialization
-        final initFuture = controller.initialize();
+      // Start initialization
+      final Future<void> initFuture = controller.initialize();
 
-        // Multiple consecutive dispose calls
-        await controller.dispose();
-        await controller.dispose();
-        await controller.dispose();
+      // Multiple consecutive dispose calls
+      await controller.dispose();
+      await controller.dispose();
+      await controller.dispose();
 
-        try {
-          await initFuture;
-        } catch (e) {
-          // Expected - initialization failed after dispose
-        }
+      try {
+        await initFuture;
+      } catch (e) {
+        // Expected - initialization failed after dispose
+      }
 
-        expect(true, isTrue); // If we got here, the fix is working
-      },
-    );
+      expect(true, isTrue); // If we got here, the fix is working
+    });
 
     test(
       'initialization should complete successfully when not disposed',
       () async {
-        final cameraDescription = const CameraDescription(
+        const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 90,
         );
 
-        final controller =
-            CameraController(cameraDescription, ResolutionPreset.max);
+        final controller = CameraController(
+          cameraDescription,
+          ResolutionPreset.max,
+        );
 
         // Initialize without disposing
         await controller.initialize();
