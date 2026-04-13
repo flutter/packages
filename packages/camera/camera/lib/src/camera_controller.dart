@@ -341,7 +341,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       _deviceOrientationSubscription ??= CameraPlatform.instance
           .onDeviceOrientationChanged()
           .listen((DeviceOrientationChangedEvent event) {
-            value = value.copyWith(deviceOrientation: event.orientation);
+            if (!_isDisposed) {
+              value = value.copyWith(deviceOrientation: event.orientation);
+            }
           });
 
       _cameraId = await CameraPlatform.instance.createCameraWithSettings(
@@ -361,7 +363,9 @@ class CameraController extends ValueNotifier<CameraValue> {
         CameraPlatform.instance.onCameraError(_cameraId).first.then((
           CameraErrorEvent event,
         ) {
-          value = value.copyWith(errorDescription: event.description);
+          if (!_isDisposed) {
+            value = value.copyWith(errorDescription: event.description);
+          }
         }),
       );
 
@@ -370,26 +374,28 @@ class CameraController extends ValueNotifier<CameraValue> {
         imageFormatGroup: imageFormatGroup ?? ImageFormatGroup.unknown,
       );
 
-      value = value.copyWith(
-        isInitialized: true,
-        description: description,
-        previewSize: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) =>
-              Size(event.previewWidth, event.previewHeight),
-        ),
-        exposureMode: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.exposureMode,
-        ),
-        focusMode: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.focusMode,
-        ),
-        exposurePointSupported: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.exposurePointSupported,
-        ),
-        focusPointSupported: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.focusPointSupported,
-        ),
-      );
+      if (!_isDisposed) {
+        value = value.copyWith(
+          isInitialized: true,
+          description: description,
+          previewSize: await initializeCompleter.future.then(
+            (CameraInitializedEvent event) =>
+                Size(event.previewWidth, event.previewHeight),
+          ),
+          exposureMode: await initializeCompleter.future.then(
+            (CameraInitializedEvent event) => event.exposureMode,
+          ),
+          focusMode: await initializeCompleter.future.then(
+            (CameraInitializedEvent event) => event.focusMode,
+          ),
+          exposurePointSupported: await initializeCompleter.future.then(
+            (CameraInitializedEvent event) => event.exposurePointSupported,
+          ),
+          focusPointSupported: await initializeCompleter.future.then(
+            (CameraInitializedEvent event) => event.focusPointSupported,
+          ),
+        );
+      }
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     } finally {
