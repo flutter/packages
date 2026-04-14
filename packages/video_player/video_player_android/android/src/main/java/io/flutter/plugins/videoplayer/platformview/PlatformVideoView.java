@@ -50,6 +50,7 @@ public final class PlatformVideoView implements PlatformView {
               @Override
               public void surfaceCreated(@NonNull SurfaceHolder holder) {
                 bindPlayerToSurface(exoPlayer, holder.getSurface());
+                forceFirstFrameForAndroid9(exoPlayer);
               }
 
               @Override
@@ -65,30 +66,28 @@ public final class PlatformVideoView implements PlatformView {
   }
 
   /**
-   * Binds the ExoPlayer to the provided surface and performs a seek operation to ensure the video
-   * frame is rendered. Includes special handling for Android 9.
+   * Binds the ExoPlayer to the provided surface.
    */
   private static void bindPlayerToSurface(@NonNull ExoPlayer exoPlayer, @NonNull Surface surface) {
     if (surface.isValid()) {
       exoPlayer.setVideoSurface(surface);
-
-      // Workaround for a rendering bug on Android 9 (API 28) where the decoder does not
-      // flush its output buffer when a new surface is attached while the player is paused,
-      // resulting in a black frame. A seek forces the codec to produce and display a frame.
-      if (!exoPlayer.getPlayWhenReady()) {
-        long current = exoPlayer.getCurrentPosition();
-        if (current == 0 && Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
-          exoPlayer.seekTo(1);
-        } else {
-          exoPlayer.seekTo(current);
-        }
-      }
     }
   }
 
   /**
-   * A custom SurfaceView that handles visibility changes to ensure video rendering is restored
-   * during route transitions (e.g., returning from a full-screen view).
+   * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
+   * output buffer when a new surface is attached while the player is paused.
+   */
+  private static void forceFirstFrameForAndroid9(@NonNull ExoPlayer exoPlayer) {
+    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
+      long position = exoPlayer.getCurrentPosition();
+      exoPlayer.seekTo(position == 0 ? 1 : position);
+    }
+  }
+
+  /**
+   * A custom SurfaceView that re-attaches the player surface when the view becomes visible again,
+   * such as after returning from a full-screen route transition.
    */
   private static class VideoSurfaceView extends SurfaceView {
     private final ExoPlayer exoPlayer;
@@ -101,7 +100,7 @@ public final class PlatformVideoView implements PlatformView {
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
       super.onVisibilityChanged(changedView, visibility);
-      // When the view becomes visible again, ensure the ExoPlayer is re-attached to the surface.
+      // When the view becomes visible again, re-attach the current surface.
       if (visibility == View.VISIBLE && isShown()) {
         bindPlayerToSurface(exoPlayer, getHolder().getSurface());
       }

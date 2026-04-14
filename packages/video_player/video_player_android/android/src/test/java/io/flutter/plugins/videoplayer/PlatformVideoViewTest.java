@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.Shadows;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowSurfaceView;
 
 /** Unit tests for {@link PlatformVideoView}. */
@@ -30,9 +32,10 @@ import org.robolectric.shadows.ShadowSurfaceView;
 public class PlatformVideoViewTest {
 
   @Test
-  public void createsSurfaceViewAndSetsItForExoPlayer() throws Exception {
+  @Config(sdk = 34)
+  public void surfaceCreatedBindsSurfaceWithoutSeekOutsideAndroid9() throws Exception {
     final Context context = ApplicationProvider.getApplicationContext();
-    final ExoPlayer exoPlayer = spy(new ExoPlayer.Builder(context).build());
+    final ExoPlayer exoPlayer = mock(ExoPlayer.class);
 
     final PlatformVideoView view = new PlatformVideoView(context, exoPlayer);
 
@@ -45,7 +48,7 @@ public class PlatformVideoViewTest {
     ShadowSurfaceView shadowView = Shadows.shadowOf(surfaceView);
     Iterable<SurfaceHolder.Callback> callbacks = shadowView.getFakeSurfaceHolder().getCallbacks();
     assertNotNull("SurfaceCallbacks should not be null", callbacks);
-    
+
     SurfaceHolder.Callback callback = callbacks.iterator().next();
     assertNotNull("Callback must exist", callback);
 
@@ -59,17 +62,45 @@ public class PlatformVideoViewTest {
 
     // Verify it used the manual surface mechanism instead of setVideoSurfaceView()
     verify(exoPlayer).setVideoSurface(mockSurface);
-
-    // For Android 9 bug workaround
-    verify(exoPlayer).seekTo(anyLong());
-
-    exoPlayer.release();
+    verify(exoPlayer, never()).seekTo(anyLong());
   }
 
   @Test
+  @Config(sdk = Build.VERSION_CODES.P)
+  public void surfaceCreatedSeeksOnAndroid9() throws Exception {
+    final Context context = ApplicationProvider.getApplicationContext();
+    final ExoPlayer exoPlayer = mock(ExoPlayer.class);
+    final PlatformVideoView view = new PlatformVideoView(context, exoPlayer);
+
+    final Field field = PlatformVideoView.class.getDeclaredField("surfaceView");
+    field.setAccessible(true);
+    final SurfaceView surfaceView = (SurfaceView) field.get(view);
+
+    ShadowSurfaceView shadowView = Shadows.shadowOf(surfaceView);
+    Iterable<SurfaceHolder.Callback> callbacks = shadowView.getFakeSurfaceHolder().getCallbacks();
+    assertNotNull("SurfaceCallbacks should not be null", callbacks);
+
+    SurfaceHolder.Callback callback = callbacks.iterator().next();
+    assertNotNull("Callback must exist", callback);
+
+    Surface mockSurface = mock(Surface.class);
+    when(mockSurface.isValid()).thenReturn(true);
+    SurfaceHolder mockHolder = mock(SurfaceHolder.class);
+    when(mockHolder.getSurface()).thenReturn(mockSurface);
+    when(exoPlayer.getPlayWhenReady()).thenReturn(false);
+    when(exoPlayer.getCurrentPosition()).thenReturn(0L);
+
+    callback.surfaceCreated(mockHolder);
+
+    verify(exoPlayer).setVideoSurface(mockSurface);
+    verify(exoPlayer).seekTo(1);
+  }
+
+  @Test
+  @Config(sdk = 34)
   public void rebindsSurfaceWhenVisibilityChangesToVisible() throws Exception {
     final Context context = ApplicationProvider.getApplicationContext();
-    final ExoPlayer exoPlayer = spy(new ExoPlayer.Builder(context).build());
+    final ExoPlayer exoPlayer = mock(ExoPlayer.class);
     final PlatformVideoView view = new PlatformVideoView(context, exoPlayer);
 
     final Field field = PlatformVideoView.class.getDeclaredField("surfaceView");
@@ -87,13 +118,9 @@ public class PlatformVideoViewTest {
     // Trigger visibility changed
     Method method = View.class.getDeclaredMethod("onVisibilityChanged", View.class, int.class);
     method.setAccessible(true);
-    
-    reset(exoPlayer);
     method.invoke(surfaceView, surfaceView, View.VISIBLE);
 
     verify(exoPlayer).setVideoSurface(mockSurface);
-    verify(exoPlayer).seekTo(anyLong());
-
-    exoPlayer.release();
+    verify(exoPlayer, never()).seekTo(anyLong());
   }
 }
