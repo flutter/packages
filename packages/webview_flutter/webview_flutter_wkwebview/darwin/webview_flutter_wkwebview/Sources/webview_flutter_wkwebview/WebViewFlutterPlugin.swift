@@ -42,8 +42,9 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
   }
 
   private func tearDownProxyAPIRegistrar() {
-    proxyApiRegistrar!.ignoreCallsToDart = true
-    proxyApiRegistrar!.tearDown()
+    proxyApiRegistrar?.ignoreCallsToDart = true
+    proxyApiRegistrar?.tearDown()
+    try? proxyApiRegistrar?.instanceManager.removeAllObjects()
     proxyApiRegistrar = nil
   }
 }

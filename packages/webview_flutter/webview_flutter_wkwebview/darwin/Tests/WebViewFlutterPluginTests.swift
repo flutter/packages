@@ -22,9 +22,13 @@ class WebViewFlutterPluginTests: XCTestCase {
 
       // Attaches an associated object to the InstanceManager to listen for when it is deallocated.
       var finalizer: TestFinalizer? = TestFinalizer()
-      objc_setAssociatedObject(
-        plugin.proxyApiRegistrar!.instanceManager, malloc(1), finalizer, .OBJC_ASSOCIATION_RETAIN)
 
+      let key = malloc(1)!
+      defer {
+        free(key)
+      }
+      objc_setAssociatedObject(
+        plugin.proxyApiRegistrar!.instanceManager, key, finalizer, .OBJC_ASSOCIATION_RETAIN)
       let expectation = self.expectation(description: "Wait for InstanceManager to be deallocated.")
       TestFinalizer.onDeinit = {
         expectation.fulfill()
