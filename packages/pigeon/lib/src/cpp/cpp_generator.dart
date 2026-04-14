@@ -1561,7 +1561,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
             indent.write(
               'case ${types[i].enumeration - maximumCodecFieldKey}: ',
             );
-            _writeCodecDecode(indent, types[i], 'wrapped_');
+            _writeDecodeLogic(indent, types[i], 'wrapped_');
           }
         });
         indent.writeln('return EncodableValue();');
@@ -1569,7 +1569,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
     );
   }
 
-  void _writeCodecDecode(
+  void _writeDecodeLogic(
     Indent indent,
     EnumeratedType customType,
     String value,
@@ -1642,13 +1642,13 @@ EncodableValue $_overflowClassName::FromEncodableList(
               if (customType.enumeration < maximumCodecFieldKey) {
                 indent.write('case ${customType.enumeration}: ');
                 indent.nest(1, () {
-                  _writeCodecDecode(indent, customType, 'ReadValue(stream)');
+                  _writeDecodeLogic(indent, customType, 'ReadValue(stream)');
                 });
               }
             }
             if (root.requiresOverflowClass) {
               indent.write('case $maximumCodecFieldKey:');
-              _writeCodecDecode(
+              _writeDecodeLogic(
                 indent,
                 _enumeratedOverflow,
                 'ReadValue(stream)',
@@ -1680,7 +1680,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
             'if (const CustomEncodableValue* custom_value = std::get_if<CustomEncodableValue>(&value)) ',
           );
           indent.addScoped('{', '}', () {
-            for (final customType in enumeratedTypes) {
+            void writeEncodeLogic(EnumeratedType customType) {
               final encodeString = customType.type == CustomTypes.customClass
                   ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
                   : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
@@ -1707,6 +1707,8 @@ EncodableValue $_overflowClassName::FromEncodableList(
                 indent.writeln('return;');
               });
             }
+
+            enumeratedTypes.forEach(writeEncodeLogic);
           });
         }
         indent.writeln('$_standardCodecSerializer::WriteValue(value, stream);');

@@ -292,6 +292,28 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       });
     }
 
+    void writeEncodeLogic(EnumeratedType customType) {
+      indent.add('if let value = value as? ${customType.name} ');
+      indent.addScoped('{', '} else ', () {
+        final encodeString = customType.type == CustomTypes.customClass
+            ? 'toList()'
+            : 'rawValue';
+        final valueString = customType.enumeration < maximumCodecFieldKey
+            ? 'value.$encodeString'
+            : 'wrap.toList()';
+        final int enumeration = customType.enumeration < maximumCodecFieldKey
+            ? customType.enumeration
+            : maximumCodecFieldKey;
+        if (customType.enumeration >= maximumCodecFieldKey) {
+          indent.writeln(
+            'let wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value.$encodeString)',
+          );
+        }
+        indent.writeln('super.writeByte($enumeration)');
+        indent.writeln('super.writeValue($valueString)');
+      }, addTrailingNewline: false);
+    }
+
     final overflowClass = EnumeratedType(
       _overflowClassName,
       maximumCodecFieldKey,
@@ -343,28 +365,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
         indent.write('override func writeValue(_ value: Any) ');
         indent.addScoped('{', '}', () {
           indent.write('');
-          for (final customType in enumeratedTypes) {
-            indent.add('if let value = value as? ${customType.name} ');
-            indent.addScoped('{', '} else ', () {
-              final encodeString = customType.type == CustomTypes.customClass
-                  ? 'toList()'
-                  : 'rawValue';
-              final valueString = customType.enumeration < maximumCodecFieldKey
-                  ? 'value.$encodeString'
-                  : 'wrap.toList()';
-              final int enumeration =
-                  customType.enumeration < maximumCodecFieldKey
-                  ? customType.enumeration
-                  : maximumCodecFieldKey;
-              if (customType.enumeration >= maximumCodecFieldKey) {
-                indent.writeln(
-                  'let wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value.$encodeString)',
-                );
-              }
-              indent.writeln('super.writeByte($enumeration)');
-              indent.writeln('super.writeValue($valueString)');
-            }, addTrailingNewline: false);
-          }
+          enumeratedTypes.forEach(writeEncodeLogic);
           indent.addScoped('{', '}', () {
             indent.writeln('super.writeValue(value)');
           });

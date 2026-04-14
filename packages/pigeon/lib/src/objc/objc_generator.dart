@@ -821,7 +821,7 @@ if (self.wrapped == nil) {
           final int caseIndex = i - totalCustomCodecKeysAllowed;
           final EnumeratedType type = types[i];
           indent.write('case $caseIndex:');
-          _writeCodecDecode(
+          _writeDecodeLogic(
             indent,
             type,
             generatorOptions.prefix ?? '',
@@ -836,7 +836,7 @@ if (self.wrapped == nil) {
     indent.writeln('@end');
   }
 
-  void _writeCodecDecode(
+  void _writeDecodeLogic(
     Indent indent,
     EnumeratedType customType,
     String? prefix, {
@@ -912,7 +912,7 @@ if (self.wrapped == nil) {
         for (final customType in enumeratedTypes) {
           if (customType.enumeration < maximumCodecFieldKey) {
             indent.write('case ${customType.enumeration}: ');
-            _writeCodecDecode(
+            _writeDecodeLogic(
               indent,
               customType,
               generatorOptions.prefix ?? '',
@@ -921,7 +921,7 @@ if (self.wrapped == nil) {
         }
         if (root.requiresOverflowClass) {
           indent.write('case $maximumCodecFieldKey: ');
-          _writeCodecDecode(
+          _writeDecodeLogic(
             indent,
             _enumeratedOverflow,
             generatorOptions.prefix,
@@ -941,7 +941,7 @@ if (self.wrapped == nil) {
     indent.write('- (void)writeValue:(id)value ');
     indent.addScoped('{', '}', () {
       indent.write('');
-      for (final customType in enumeratedTypes) {
+      void writeEncodeLogic(EnumeratedType customType) {
         final encodeString = customType.type == CustomTypes.customClass
             ? '[value toList]'
             : '(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])';
@@ -977,6 +977,8 @@ if (self.wrapped == nil) {
           addTrailingNewline: false,
         );
       }
+
+      enumeratedTypes.forEach(writeEncodeLogic);
       indent.addScoped('{', '}', () {
         indent.writeln('[super writeValue:value];');
       });
