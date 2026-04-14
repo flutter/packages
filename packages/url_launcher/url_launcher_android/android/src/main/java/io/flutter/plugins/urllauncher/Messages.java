@@ -296,12 +296,14 @@ public class Messages {
     /** Returns true if the URL can definitely be launched. */
     @NonNull
     Boolean canLaunchUrl(@NonNull String url);
+
     /** Opens the URL externally, returning true if successful. */
     @NonNull
     Boolean launchUrl(
         @NonNull String url,
         @NonNull Map<String, String> headers,
         @NonNull Boolean requireNonBrowser);
+
     /**
      * Opens the URL in an in-app Custom Tab or WebView, returning true if it opens successfully.
      */
@@ -314,6 +316,7 @@ public class Messages {
 
     @NonNull
     Boolean supportsCustomTabs();
+
     /** Closes the view opened by [openUrlInSafariViewController]. */
     void closeWebView();
 
@@ -321,6 +324,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable UrlLauncherApi api) {
       setUp(binaryMessenger, "", api);

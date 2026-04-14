@@ -19,7 +19,8 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
   static final String PROXY_PACKAGE_KEY = "PROXY_PACKAGE";
   // The proxy value has to match the <package> value in library's AndroidManifest.xml.
   // This is important that the <package> is not changed, so we hard code the value here then having
-  // a unit test to make sure. If there is a strong reason to change the <package> value, please inform the
+  // a unit test to make sure. If there is a strong reason to change the <package> value, please
+  // inform the
   // code owner of this package.
   static final String PROXY_VALUE = "io.flutter.plugins.inapppurchase";
 
@@ -61,7 +62,7 @@ public class InAppPurchasePlugin implements FlutterPlugin, ActivityAware {
     Messages.InAppPurchaseCallbackApi handler = new Messages.InAppPurchaseCallbackApi(messenger);
     methodCallHandler =
         new MethodCallHandlerImpl(
-            /*activity=*/ null, context, handler, new BillingClientFactoryImpl());
+            /* activity= */ null, context, handler, new BillingClientFactoryImpl());
     Messages.InAppPurchaseApi.setUp(messenger, methodCallHandler);
   }
 

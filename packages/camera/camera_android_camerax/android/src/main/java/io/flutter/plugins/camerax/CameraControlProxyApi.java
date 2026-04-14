@@ -74,8 +74,10 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
           @Override
           public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
-              // Operation was canceled due to camera being closed or a new request was submitted, which
-              // is not actionable and should not block a new value from potentially being submitted.
+              // Operation was canceled due to camera being closed or a new request was submitted,
+              // which
+              // is not actionable and should not block a new value from potentially being
+              // submitted.
               ResultCompat.success(null, callback);
               return;
             }
@@ -105,8 +107,10 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
           @Override
           public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
-              // Operation was canceled due to camera being closed or a new request was submitted, which
-              // is not actionable and should not block a new value from potentially being submitted.
+              // Operation was canceled due to camera being closed or a new request was submitted,
+              // which
+              // is not actionable and should not block a new value from potentially being
+              // submitted.
               ResultCompat.success(null, callback);
               return;
             }
@@ -158,8 +162,10 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
           @Override
           public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
-              // Operation was canceled due to camera being closed or a new request was submitted, which
-              // is not actionable and should not block a new value from potentially being submitted.
+              // Operation was canceled due to camera being closed or a new request was submitted,
+              // which
+              // is not actionable and should not block a new value from potentially being
+              // submitted.
               ResultCompat.success(null, callback);
               return;
             }

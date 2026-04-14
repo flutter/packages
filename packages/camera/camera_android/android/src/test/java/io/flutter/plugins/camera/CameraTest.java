@@ -1219,11 +1219,11 @@ public class CameraTest {
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = true;
 
-    //region These parameters should be set in android MediaRecorder.
+    // region These parameters should be set in android MediaRecorder.
     final int fps = 15;
     final int videoBitrate = 200000;
     final int audioBitrate = 32000;
-    //endregion
+    // endregion
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
 
@@ -1303,7 +1303,7 @@ public class CameraTest {
 
       camera.startVideoRecording(null);
 
-      //region Check that FPS parameter affects AE range at which the camera captures frames.
+      // region Check that FPS parameter affects AE range at which the camera captures frames.
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getUpper(), Integer.valueOf(fps));
 
@@ -1312,15 +1312,15 @@ public class CameraTest {
               eq(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE),
               argThat(
                   (Range<Integer> range) -> range.getLower() == fps && range.getUpper() == fps));
-      //endregion
+      // endregion
 
       final MediaRecorder recorder = camera.mediaRecorder;
 
-      //region Check that parameters affects movies, written by MediaRecorder.
+      // region Check that parameters affects movies, written by MediaRecorder.
       verify(recorder).setVideoFrameRate(fps);
       verify(recorder).setAudioEncodingBitRate(audioBitrate);
       verify(recorder).setVideoEncodingBitRate(videoBitrate);
-      //endregion
+      // endregion
     }
   }
 
