@@ -1,3 +1,9 @@
+## 27.0.0
+
+* **BREAKING CHANGE**: Adds support for acronyms in snake_case conversion in generators. This may change the generated output for symbols containing acronyms.
+* Refactors response handling across all generators to use a single `wrapResponse` method instead of `wrapResult` and `wrapError`.
+* Cleans up repeated code and adds an error class and prologue to the base `Generator` class.
+
 ## 26.3.4
 
 * [kotlin] Updates generated error class to inherit from `RuntimeException`
