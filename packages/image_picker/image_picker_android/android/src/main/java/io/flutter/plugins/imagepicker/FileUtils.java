@@ -65,8 +65,7 @@ class FileUtils {
       File targetDirectory = new File(context.getCacheDir(), uuid);
       targetDirectory.mkdir();
       // TODO(SynSzakala) according to the docs, `deleteOnExit` does not work reliably on Android;
-      // we should preferably
-      //  just clear the picked files after the app startup.
+      // we should preferably just clear the picked files after the app startup.
       targetDirectory.deleteOnExit();
       String fileName = getImageName(context, uri);
       String extension = getImageExtension(context, uri);

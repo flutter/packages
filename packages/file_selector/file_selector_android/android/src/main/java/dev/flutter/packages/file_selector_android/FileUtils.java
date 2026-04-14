@@ -66,8 +66,8 @@ public class FileUtils {
       String[] uriDocumentIdSplit = uriDocumentId.split(":");
 
       if (uriDocumentIdSplit.length < 2) {
-        // We expect the URI document ID to contain its storage volume and name to determine its
-        // path.
+        // We expect the URI document ID to contain its storage volume and name to
+        // determine its path.
         throw new UnsupportedOperationException(
             "Retrieving the path of a document with an unknown storage volume or name is"
                 + " unsupported by this plugin.");
