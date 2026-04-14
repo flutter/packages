@@ -40,7 +40,9 @@ public class LocalAuthTest {
   static final AuthStrings dummyStrings =
       new AuthStrings("a reason", "a hint", "cancel", "sign in");
 
-  static final AuthOptions defaultOptions = new AuthOptions(false, false, false);
+  static final AuthOptions defaultOptions =
+      new AuthOptions(
+          /* biometricOnly */ false, /* sensitiveTransaction */ false, /* sticky */ false);
 
   @Test
   public void authenticate_returnsErrorWhenAuthInProgress() {
@@ -132,7 +134,10 @@ public class LocalAuthTest {
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
             any(AuthCompletionHandler.class));
-    final AuthOptions options = new AuthOptions(true, false, false);
+    final AuthOptions options =
+        new AuthOptions(
+            /* biometricOnly */ true, /* sensitiveTransaction */ false, /* sticky */ false);
+    ;
     plugin.authenticate(
         options,
         dummyStrings,

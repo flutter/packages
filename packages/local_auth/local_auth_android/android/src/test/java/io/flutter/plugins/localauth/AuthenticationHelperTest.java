@@ -25,7 +25,9 @@ public class AuthenticationHelperTest {
   static final AuthStrings dummyStrings =
       new AuthStrings("a reason", "a hint", "cancel", "sign in");
 
-  static final AuthOptions defaultOptions = new AuthOptions(false, false, false);
+  static final AuthOptions defaultOptions =
+      new AuthOptions(
+          /* biometricOnly */ false, /* sensitiveTransaction */ false, /* sticky */ false);
 
   @Test
   public void onAuthenticationError_returnsUserCanceled() {
