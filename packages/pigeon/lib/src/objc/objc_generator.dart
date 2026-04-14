@@ -382,7 +382,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
       );
 
       indent.writeln(
-        '${_makeObjcSignature(func: func, options: generatorOptions, returnType: 'void', lastArgName: 'completion', lastArgType: callbackType)};',
+        '${_getMethodSignature(func: func, options: generatorOptions, returnType: 'void', lastArgName: 'completion', lastArgType: callbackType)};',
       );
     }
     indent.writeln('@end');
@@ -460,7 +460,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
         generatorComments: generatorComments,
       );
 
-      final String signature = _makeObjcSignature(
+      final String signature = _getMethodSignature(
         func: func,
         options: generatorOptions,
         returnType: returnType,
@@ -1134,7 +1134,12 @@ if (self.wrapped == nil) {
     required String dartPackageName,
   }) {
     if (root.containsHostApi) {
-      _writeWrapError(indent);
+      writeWrapResponse(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
       indent.newln();
     }
     if (root.containsFlutterApi) {
@@ -1156,15 +1161,21 @@ if (self.wrapped == nil) {
     }
   }
 
-  void _writeWrapError(Indent indent) {
+  @override
+  void writeWrapResponse(
+    InternalObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.format('''
 static NSArray<id> *wrapResult(id result, FlutterError *error) {
-\tif (error) {
-\t\treturn @[
-\t\t\terror.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
-\t\t];
-\t}
-\treturn @[ result ?: [NSNull null] ];
+	if (error) {
+		return @[
+			error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
+		];
+	}
+	return @[ result ?: [NSNull null] ];
 }''');
   }
 
@@ -1491,7 +1502,7 @@ void _writeMethod(
         '@[${func.parameters.map(makeVarOrNSNullExpression).join(', ')}]';
   }
   indent.write(
-    _makeObjcSignature(
+    _getMethodSignature(
       func: func,
       options: languageOptions,
       returnType: 'void',
@@ -1963,7 +1974,7 @@ Iterable<String> _getSelectorComponents(
 /// arguments that don't exist in the pigeon file but are required in the objc
 /// output.  [argNameFunc] is the function used to generate the argument name
 /// [func.parameters].
-String _makeObjcSignature({
+String _getMethodSignature({
   required Method func,
   required InternalObjcOptions options,
   required String returnType,

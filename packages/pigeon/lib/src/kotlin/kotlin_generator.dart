@@ -1294,36 +1294,39 @@ if (wrapped == null) {
     }
   }
 
-  void _writeWrapResult(Indent indent) {
+  @override
+  void writeWrapResponse(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.newln();
-    indent.write('fun wrapResult(result: Any?): List<Any?> ');
+    indent.write(
+      'fun wrapResponse(result: Any?, error: Throwable?): List<Any?> ',
+    );
     indent.addScoped('{', '}', () {
-      indent.writeln('return listOf(result)');
-    });
-  }
-
-  void _writeWrapError(InternalKotlinOptions generatorOptions, Indent indent) {
-    indent.newln();
-    indent.write('fun wrapError(exception: Throwable): List<Any?> ');
-    indent.addScoped('{', '}', () {
-      indent.write(
-        'return if (exception is ${_getErrorClassName(generatorOptions)}) ',
-      );
-      indent.addScoped('{', '}', () {
-        indent.writeScoped('listOf(', ')', () {
-          indent.writeln('exception.code,');
-          indent.writeln('exception.message,');
-          indent.writeln('exception.details');
+      indent.writeScoped('return if (error != null) {', '}', () {
+        indent.write('if (error is ${_getErrorClassName(generatorOptions)}) ');
+        indent.addScoped('{', '}', () {
+          indent.writeScoped('listOf(', ')', () {
+            indent.writeln('error.code,');
+            indent.writeln('error.message,');
+            indent.writeln('error.details');
+          });
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          indent.writeScoped('listOf(', ')', () {
+            indent.writeln('error.javaClass.simpleName,');
+            indent.writeln('error.toString(),');
+            indent.writeln(
+              '"Cause: " + error.cause + ", Stacktrace: " + Log.getStackTraceString(error)',
+            );
+          });
         });
-      }, addTrailingNewline: false);
+      });
       indent.addScoped(' else {', '}', () {
-        indent.writeScoped('listOf(', ')', () {
-          indent.writeln('exception.javaClass.simpleName,');
-          indent.writeln('exception.toString(),');
-          indent.writeln(
-            '"Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)',
-          );
-        });
+        indent.writeln('listOf(result)');
       });
     });
   }
@@ -1515,8 +1518,12 @@ fun floatHash(f: Float): Int {
           _writeCreateConnectionError(generatorOptions, indent);
         }
         if (root.containsHostApi || root.containsProxyApi) {
-          _writeWrapResult(indent);
-          _writeWrapError(generatorOptions, indent);
+          writeWrapResponse(
+            generatorOptions,
+            root,
+            indent,
+            dartPackageName: dartPackageName,
+          );
         }
         if (root.classes.isNotEmpty) {
           _writeNumberHelpers(indent);
@@ -1556,13 +1563,11 @@ fun floatHash(f: Float): Int {
     }
   }
 
-  static void _writeMethodDeclaration(
-    Indent indent, {
+  /// Returns the method signature for a Kotlin method.
+  static String _getMethodSignature({
     required String name,
     required TypeDeclaration returnType,
     required List<Parameter> parameters,
-    List<String> documentationComments = const <String>[],
-    int? minApiRequirement,
     bool isAsynchronous = false,
     bool isOpen = false,
     bool isAbstract = false,
@@ -1587,6 +1592,33 @@ fun floatHash(f: Float): Int {
         : _nullSafeKotlinTypeForDartType(returnType);
 
     final resultType = returnType.isVoid ? 'Unit' : returnTypeString;
+
+    final openKeyword = isOpen ? 'open ' : '';
+    final abstractKeyword = isAbstract ? 'abstract ' : '';
+
+    if (isAsynchronous) {
+      argSignature.add('callback: (Result<$resultType>) -> Unit');
+      return '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})';
+    } else if (returnType.isVoid) {
+      return '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})';
+    } else {
+      return '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString';
+    }
+  }
+
+  static void _writeMethodDeclaration(
+    Indent indent, {
+    required String name,
+    required TypeDeclaration returnType,
+    required List<Parameter> parameters,
+    List<String> documentationComments = const <String>[],
+    int? minApiRequirement,
+    bool isAsynchronous = false,
+    bool isOpen = false,
+    bool isAbstract = false,
+    String Function(int index, NamedType type) getArgumentName =
+        _getArgumentName,
+  }) {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
 
     if (minApiRequirement != null) {
@@ -1595,23 +1627,17 @@ fun floatHash(f: Float): Int {
       );
     }
 
-    final openKeyword = isOpen ? 'open ' : '';
-    final abstractKeyword = isAbstract ? 'abstract ' : '';
-
-    if (isAsynchronous) {
-      argSignature.add('callback: (Result<$resultType>) -> Unit');
-      indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
-      );
-    } else if (returnType.isVoid) {
-      indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
-      );
-    } else {
-      indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
-      );
-    }
+    indent.writeln(
+      _getMethodSignature(
+        name: name,
+        returnType: returnType,
+        parameters: parameters,
+        isAsynchronous: isAsynchronous,
+        isOpen: isOpen,
+        isAbstract: isAbstract,
+        getArgumentName: getArgumentName,
+      ),
+    );
   }
 
   void _writeHostMethodMessageHandler(
@@ -1671,18 +1697,18 @@ fun floatHash(f: Float): Int {
               indent.writeln('val error = result.exceptionOrNull()');
               indent.writeScoped('if (error != null) {', '}', () {
                 indent.writeln(
-                  'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapError(error))',
+                  'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(null, error))',
                 );
               }, addTrailingNewline: false);
               indent.addScoped(' else {', '}', () {
                 if (returnType.isVoid) {
                   indent.writeln(
-                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResult(null))',
+                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(null, null))',
                   );
                 } else {
                   indent.writeln('val data = result.getOrNull()');
                   indent.writeln(
-                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResult(data))',
+                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(data, null))',
                   );
                 }
               });
@@ -1691,15 +1717,19 @@ fun floatHash(f: Float): Int {
             indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
               if (returnType.isVoid) {
                 indent.writeln(call);
-                indent.writeln('listOf(null)');
+                indent.writeln(
+                  '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, null)',
+                );
               } else {
-                indent.writeln('listOf($call)');
+                indent.writeln(
+                  '${_getUtilsClassName(generatorOptions)}.wrapResponse($call, null)',
+                );
               }
             }, addTrailingNewline: false);
             indent.add(' catch (exception: Throwable) ');
             indent.addScoped('{', '}', () {
               indent.writeln(
-                '${_getUtilsClassName(generatorOptions)}.wrapError(exception)',
+                '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, exception)',
               );
             });
             indent.writeln('reply.reply(wrapped)');
@@ -2103,7 +2133,7 @@ fun floatHash(f: Float): Int {
                 )
                 if (api != null) {
                   channel.setMessageHandler { _, reply ->
-                    reply.reply(${_getUtilsClassName(generatorOptions)}.wrapError(UnsupportedOperationException(
+                    reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(null, UnsupportedOperationException(
                       "Call references class `$className`, which requires api version $apiRequirement."
                     )))
                   }

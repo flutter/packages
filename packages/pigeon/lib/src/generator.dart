@@ -161,6 +161,14 @@ abstract class StructuredGenerator<T extends InternalOptions>
     required String dartPackageName,
   });
 
+  /// Writes the helper method to wrap responses (success and error).
+  void writeWrapResponse(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {}
+
   /// Writes code to [indent] that opens file namespace if needed.
   ///
   /// This method is not required, and does not need to be overridden.

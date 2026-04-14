@@ -177,13 +177,15 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return acronyms
   }
 
-  // This uses a when statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  // This uses a when statement to explicitly map the enum value to verify that all generated enum
+  // constants are valid and usable.
   override fun hostHTTPResponse(acronyms: AcronymsAndTestCase): AcronymsAndTestCase {
-    val enumVal = when (acronyms.acronymsEnum) {
-      AcronymsEnum.HTTP_RESPONSE -> AcronymsEnum.HTTP_RESPONSE
-      AcronymsEnum.JSON_PARSER -> AcronymsEnum.JSON_PARSER
-      null -> null
-    }
+    val enumVal =
+        when (acronyms.acronymsEnum) {
+          AcronymsEnum.HTTP_RESPONSE -> AcronymsEnum.HTTP_RESPONSE
+          AcronymsEnum.JSON_PARSER -> AcronymsEnum.JSON_PARSER
+          null -> null
+        }
     return AcronymsAndTestCase(
         httpResponse = acronyms.httpResponse,
         jsonParser = acronyms.jsonParser,
@@ -191,13 +193,15 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
         acronymsEnum = enumVal)
   }
 
-  // This uses a when statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  // This uses a when statement to explicitly map the enum value to verify that all generated enum
+  // constants are valid and usable.
   override fun sendJSONParser(acronyms: AcronymsAndTestCase): AcronymsAndTestCase {
-    val enumVal = when (acronyms.acronymsEnum) {
-      AcronymsEnum.HTTP_RESPONSE -> AcronymsEnum.HTTP_RESPONSE
-      AcronymsEnum.JSON_PARSER -> AcronymsEnum.JSON_PARSER
-      null -> null
-    }
+    val enumVal =
+        when (acronyms.acronymsEnum) {
+          AcronymsEnum.HTTP_RESPONSE -> AcronymsEnum.HTTP_RESPONSE
+          AcronymsEnum.JSON_PARSER -> AcronymsEnum.JSON_PARSER
+          null -> null
+        }
     return AcronymsAndTestCase(
         httpResponse = acronyms.httpResponse,
         jsonParser = acronyms.jsonParser,

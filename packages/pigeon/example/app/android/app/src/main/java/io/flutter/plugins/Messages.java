@@ -186,20 +186,25 @@ public class Messages {
   }
 
   @NonNull
-  protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<>(3);
-    if (exception instanceof FlutterError) {
-      FlutterError error = (FlutterError) exception;
-      errorList.add(error.code);
-      errorList.add(error.getMessage());
-      errorList.add(error.details);
+  protected static ArrayList<Object> wrapResponse(
+      @Nullable Object result, @Nullable Throwable error) {
+    ArrayList<Object> response = new ArrayList<>();
+    if (error != null) {
+      if (error instanceof FlutterError) {
+        FlutterError flutterError = (FlutterError) error;
+        response.add(flutterError.code);
+        response.add(flutterError.getMessage());
+        response.add(flutterError.details);
+      } else {
+        response.add(error.toString());
+        response.add(error.getClass().getSimpleName());
+        response.add(
+            "Cause: " + error.getCause() + ", Stacktrace: " + Log.getStackTraceString(error));
+      }
     } else {
-      errorList.add(exception.toString());
-      errorList.add(exception.getClass().getSimpleName());
-      errorList.add(
-          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+      response.add(result);
     }
-    return errorList;
+    return response;
   }
 
   @NonNull
@@ -472,14 +477,12 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   String output = api.getHostLanguage();
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -495,17 +498,15 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long aArg = (Long) args.get(0);
                 Long bArg = (Long) args.get(1);
                 try {
                   Long output = api.add(aArg, bArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -521,19 +522,16 @@ public class Messages {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 MessageData messageArg = (MessageData) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 

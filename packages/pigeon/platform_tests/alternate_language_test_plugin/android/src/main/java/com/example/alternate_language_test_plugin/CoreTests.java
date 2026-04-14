@@ -189,20 +189,25 @@ public class CoreTests {
   }
 
   @NonNull
-  protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-    ArrayList<Object> errorList = new ArrayList<>(3);
-    if (exception instanceof FlutterError) {
-      FlutterError error = (FlutterError) exception;
-      errorList.add(error.code);
-      errorList.add(error.getMessage());
-      errorList.add(error.details);
+  protected static ArrayList<Object> wrapResponse(
+      @Nullable Object result, @Nullable Throwable error) {
+    ArrayList<Object> response = new ArrayList<>();
+    if (error != null) {
+      if (error instanceof FlutterError) {
+        FlutterError flutterError = (FlutterError) error;
+        response.add(flutterError.code);
+        response.add(flutterError.getMessage());
+        response.add(flutterError.details);
+      } else {
+        response.add(error.toString());
+        response.add(error.getClass().getSimpleName());
+        response.add(
+            "Cause: " + error.getCause() + ", Stacktrace: " + Log.getStackTraceString(error));
+      }
     } else {
-      errorList.add(exception.toString());
-      errorList.add(exception.getClass().getSimpleName());
-      errorList.add(
-          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+      response.add(result);
     }
-    return errorList;
+    return response;
   }
 
   @NonNull
@@ -3717,14 +3722,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.noop();
-                  wrapped.add(0, null);
+                  reply.reply(wrapResponse(null, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3740,16 +3743,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 try {
                   AllTypes output = api.echoAllTypes(everythingArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3765,14 +3766,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Object output = api.throwError();
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3788,14 +3787,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.throwErrorFromVoid();
-                  wrapped.add(0, null);
+                  reply.reply(wrapResponse(null, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3811,14 +3808,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Object output = api.throwFlutterError();
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3834,16 +3829,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 try {
                   Long output = api.echoInt(anIntArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3859,16 +3852,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoDouble(aDoubleArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3884,16 +3875,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 try {
                   Boolean output = api.echoBool(aBoolArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3909,16 +3898,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 try {
                   String output = api.echoString(aStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3934,16 +3921,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 try {
                   byte[] output = api.echoUint8List(aUint8ListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3959,16 +3944,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 try {
                   Object output = api.echoObject(anObjectArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -3984,16 +3967,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoList(listArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4009,16 +3990,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 try {
                   List<AnEnum> output = api.echoEnumList(enumListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4034,16 +4013,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 try {
                   List<AllNullableTypes> output = api.echoClassList(classListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4059,16 +4036,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 try {
                   List<AnEnum> output = api.echoNonNullEnumList(enumListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4084,16 +4059,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 try {
                   List<AllNullableTypes> output = api.echoNonNullClassList(classListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4109,16 +4082,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
                   Map<Object, Object> output = api.echoMap(mapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4134,16 +4105,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 try {
                   Map<String, String> output = api.echoStringMap(stringMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4159,16 +4128,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 try {
                   Map<Long, Long> output = api.echoIntMap(intMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4184,16 +4151,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 try {
                   Map<AnEnum, AnEnum> output = api.echoEnumMap(enumMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4209,16 +4174,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 try {
                   Map<Long, AllNullableTypes> output = api.echoClassMap(classMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4234,16 +4197,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 try {
                   Map<String, String> output = api.echoNonNullStringMap(stringMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4259,16 +4220,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 try {
                   Map<Long, Long> output = api.echoNonNullIntMap(intMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4284,16 +4243,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 try {
                   Map<AnEnum, AnEnum> output = api.echoNonNullEnumMap(enumMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4309,16 +4266,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 try {
                   Map<Long, AllNullableTypes> output = api.echoNonNullClassMap(classMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4334,16 +4289,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   AllClassesWrapper output = api.echoClassWrapper(wrapperArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4359,16 +4312,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
                 try {
                   AcronymsAndTestCase output = api.echoAcronyms(acronymsArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4384,16 +4335,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
                 try {
                   AcronymsAndTestCase output = api.hostHTTPResponse(acronymsArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4409,16 +4358,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AcronymsAndTestCase acronymsArg = (AcronymsAndTestCase) args.get(0);
                 try {
                   AcronymsAndTestCase output = api.sendJSONParser(acronymsArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4434,16 +4381,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoEnum(anEnumArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4459,16 +4404,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 try {
                   AnotherEnum output = api.echoAnotherEnum(anotherEnumArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4484,16 +4427,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNamedDefaultString(aStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4509,16 +4450,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoOptionalDefaultDouble(aDoubleArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4534,16 +4473,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 try {
                   Long output = api.echoRequiredInt(anIntArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4559,17 +4496,15 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes aArg = (AllNullableTypes) args.get(0);
                 AllNullableTypes bArg = (AllNullableTypes) args.get(1);
                 try {
                   Boolean output = api.areAllNullableTypesEqual(aArg, bArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4585,16 +4520,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes valueArg = (AllNullableTypes) args.get(0);
                 try {
                   Long output = api.getAllNullableTypesHash(valueArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4610,17 +4543,15 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion valueArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
                 try {
                   Long output = api.getAllNullableTypesWithoutRecursionHash(valueArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4636,16 +4567,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 try {
                   AllNullableTypes output = api.echoAllNullableTypes(everythingArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4661,18 +4590,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
                 try {
                   AllNullableTypesWithoutRecursion output =
                       api.echoAllNullableTypesWithoutRecursion(everythingArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4688,16 +4615,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllClassesWrapper wrapperArg = (AllClassesWrapper) args.get(0);
                 try {
                   String output = api.extractNestedNullableString(wrapperArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4713,16 +4638,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String nullableStringArg = (String) args.get(0);
                 try {
                   AllClassesWrapper output = api.createNestedNullableString(nullableStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4738,7 +4661,6 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Long aNullableIntArg = (Long) args.get(1);
@@ -4747,11 +4669,10 @@ public class CoreTests {
                   AllNullableTypes output =
                       api.sendMultipleNullableTypes(
                           aNullableBoolArg, aNullableIntArg, aNullableStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4767,7 +4688,6 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Long aNullableIntArg = (Long) args.get(1);
@@ -4776,11 +4696,10 @@ public class CoreTests {
                   AllNullableTypesWithoutRecursion output =
                       api.sendMultipleNullableTypesWithoutRecursion(
                           aNullableBoolArg, aNullableIntArg, aNullableStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4796,16 +4715,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long aNullableIntArg = (Long) args.get(0);
                 try {
                   Long output = api.echoNullableInt(aNullableIntArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4821,16 +4738,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aNullableDoubleArg = (Double) args.get(0);
                 try {
                   Double output = api.echoNullableDouble(aNullableDoubleArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4846,16 +4761,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 try {
                   Boolean output = api.echoNullableBool(aNullableBoolArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4871,16 +4784,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aNullableStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNullableString(aNullableStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4896,16 +4807,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aNullableUint8ListArg = (byte[]) args.get(0);
                 try {
                   byte[] output = api.echoNullableUint8List(aNullableUint8ListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4921,16 +4830,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object aNullableObjectArg = args.get(0);
                 try {
                   Object output = api.echoNullableObject(aNullableObjectArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4946,16 +4853,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> aNullableListArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoNullableList(aNullableListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4971,16 +4876,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 try {
                   List<AnEnum> output = api.echoNullableEnumList(enumListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -4996,16 +4899,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 try {
                   List<AllNullableTypes> output = api.echoNullableClassList(classListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5021,16 +4922,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 try {
                   List<AnEnum> output = api.echoNullableNonNullEnumList(enumListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5046,16 +4945,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 try {
                   List<AllNullableTypes> output = api.echoNullableNonNullClassList(classListArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5071,16 +4968,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 try {
                   Map<Object, Object> output = api.echoNullableMap(mapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5096,16 +4991,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 try {
                   Map<String, String> output = api.echoNullableStringMap(stringMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5121,16 +5014,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 try {
                   Map<Long, Long> output = api.echoNullableIntMap(intMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5146,16 +5037,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 try {
                   Map<AnEnum, AnEnum> output = api.echoNullableEnumMap(enumMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5171,16 +5060,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 try {
                   Map<Long, AllNullableTypes> output = api.echoNullableClassMap(classMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5196,16 +5083,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 try {
                   Map<String, String> output = api.echoNullableNonNullStringMap(stringMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5221,16 +5106,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 try {
                   Map<Long, Long> output = api.echoNullableNonNullIntMap(intMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5246,16 +5129,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 try {
                   Map<AnEnum, AnEnum> output = api.echoNullableNonNullEnumMap(enumMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5271,16 +5152,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 try {
                   Map<Long, AllNullableTypes> output = api.echoNullableNonNullClassMap(classMapArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5296,16 +5175,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoNullableEnum(anEnumArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5321,16 +5198,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 try {
                   AnotherEnum output = api.echoAnotherNullableEnum(anotherEnumArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5346,16 +5221,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long aNullableIntArg = (Long) args.get(0);
                 try {
                   Long output = api.echoOptionalNullableInt(aNullableIntArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5371,16 +5244,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aNullableStringArg = (String) args.get(0);
                 try {
                   String output = api.echoNamedNullableString(aNullableStringArg);
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -5396,17 +5267,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(null, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5426,19 +5294,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5458,19 +5323,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
                     new Result<Double>() {
                       public void success(Double result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5490,19 +5352,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5522,19 +5381,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5554,19 +5410,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
                       public void success(byte[] result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5586,19 +5439,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 Result<Object> resultCallback =
                     new Result<Object>() {
                       public void success(Object result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5618,19 +5468,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5650,19 +5497,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 Result<List<AnEnum>> resultCallback =
                     new Result<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5682,19 +5526,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 Result<List<AllNullableTypes>> resultCallback =
                     new Result<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5714,19 +5555,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 Result<Map<Object, Object>> resultCallback =
                     new Result<Map<Object, Object>>() {
                       public void success(Map<Object, Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5746,19 +5584,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 Result<Map<String, String>> resultCallback =
                     new Result<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5778,19 +5613,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 Result<Map<Long, Long>> resultCallback =
                     new Result<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5810,19 +5642,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 Result<Map<AnEnum, AnEnum>> resultCallback =
                     new Result<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5842,19 +5671,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 Result<Map<Long, AllNullableTypes>> resultCallback =
                     new Result<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5874,19 +5700,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5906,19 +5729,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 Result<AnotherEnum> resultCallback =
                     new Result<AnotherEnum>() {
                       public void success(AnotherEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5938,17 +5758,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5968,17 +5785,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(null, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -5998,17 +5812,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6028,19 +5839,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 Result<AllTypes> resultCallback =
                     new Result<AllTypes>() {
                       public void success(AllTypes result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6060,19 +5868,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 NullableResult<AllNullableTypes> resultCallback =
                     new NullableResult<AllNullableTypes>() {
                       public void success(AllNullableTypes result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6092,20 +5897,17 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
                 NullableResult<AllNullableTypesWithoutRecursion> resultCallback =
                     new NullableResult<AllNullableTypesWithoutRecursion>() {
                       public void success(AllNullableTypesWithoutRecursion result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6126,19 +5928,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 NullableResult<Long> resultCallback =
                     new NullableResult<Long>() {
                       public void success(Long result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6158,19 +5957,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 NullableResult<Double> resultCallback =
                     new NullableResult<Double>() {
                       public void success(Double result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6190,19 +5986,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 NullableResult<Boolean> resultCallback =
                     new NullableResult<Boolean>() {
                       public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6222,19 +6015,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 NullableResult<String> resultCallback =
                     new NullableResult<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6254,19 +6044,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
                 NullableResult<byte[]> resultCallback =
                     new NullableResult<byte[]>() {
                       public void success(byte[] result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6286,19 +6073,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6318,19 +6102,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
                     new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6350,19 +6131,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 NullableResult<List<AnEnum>> resultCallback =
                     new NullableResult<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6382,19 +6160,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 NullableResult<List<AllNullableTypes>> resultCallback =
                     new NullableResult<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6414,19 +6189,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 NullableResult<Map<Object, Object>> resultCallback =
                     new NullableResult<Map<Object, Object>>() {
                       public void success(Map<Object, Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6446,19 +6218,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 NullableResult<Map<String, String>> resultCallback =
                     new NullableResult<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6478,19 +6247,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 NullableResult<Map<Long, Long>> resultCallback =
                     new NullableResult<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6510,19 +6276,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 NullableResult<Map<AnEnum, AnEnum>> resultCallback =
                     new NullableResult<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6542,19 +6305,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 NullableResult<Map<Long, AllNullableTypes>> resultCallback =
                     new NullableResult<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6574,19 +6334,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
                     new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6606,19 +6363,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 NullableResult<AnotherEnum> resultCallback =
                     new NullableResult<AnotherEnum>() {
                       public void success(AnotherEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6638,14 +6392,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Boolean output = api.defaultIsMainThread();
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -6662,14 +6414,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   Boolean output = api.taskQueueIsBackgroundThread();
-                  wrapped.add(0, output);
+                  reply.reply(wrapResponse(output, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -6685,17 +6435,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(null, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6715,17 +6462,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 NullableResult<Object> resultCallback =
                     new NullableResult<Object>() {
                       public void success(Object result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6745,17 +6489,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(null, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6775,19 +6516,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllTypes everythingArg = (AllTypes) args.get(0);
                 Result<AllTypes> resultCallback =
                     new Result<AllTypes>() {
                       public void success(AllTypes result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6807,19 +6545,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
                 NullableResult<AllNullableTypes> resultCallback =
                     new NullableResult<AllNullableTypes>() {
                       public void success(AllNullableTypes result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6839,7 +6574,6 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Long aNullableIntArg = (Long) args.get(1);
@@ -6847,13 +6581,11 @@ public class CoreTests {
                 Result<AllNullableTypes> resultCallback =
                     new Result<AllNullableTypes>() {
                       public void success(AllNullableTypes result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6874,20 +6606,17 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypesWithoutRecursion everythingArg =
                     (AllNullableTypesWithoutRecursion) args.get(0);
                 NullableResult<AllNullableTypesWithoutRecursion> resultCallback =
                     new NullableResult<AllNullableTypesWithoutRecursion>() {
                       public void success(AllNullableTypesWithoutRecursion result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6907,7 +6636,6 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aNullableBoolArg = (Boolean) args.get(0);
                 Long aNullableIntArg = (Long) args.get(1);
@@ -6915,13 +6643,11 @@ public class CoreTests {
                 Result<AllNullableTypesWithoutRecursion> resultCallback =
                     new Result<AllNullableTypesWithoutRecursion>() {
                       public void success(AllNullableTypesWithoutRecursion result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6942,19 +6668,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 Result<Boolean> resultCallback =
                     new Result<Boolean>() {
                       public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -6974,19 +6697,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 Result<Long> resultCallback =
                     new Result<Long>() {
                       public void success(Long result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7006,19 +6726,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 Result<Double> resultCallback =
                     new Result<Double>() {
                       public void success(Double result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7038,19 +6755,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7070,19 +6784,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] listArg = (byte[]) args.get(0);
                 Result<byte[]> resultCallback =
                     new Result<byte[]>() {
                       public void success(byte[] result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7102,19 +6813,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 Result<List<Object>> resultCallback =
                     new Result<List<Object>>() {
                       public void success(List<Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7134,19 +6842,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 Result<List<AnEnum>> resultCallback =
                     new Result<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7166,19 +6871,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 Result<List<AllNullableTypes>> resultCallback =
                     new Result<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7198,19 +6900,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 Result<List<AnEnum>> resultCallback =
                     new Result<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7230,19 +6929,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 Result<List<AllNullableTypes>> resultCallback =
                     new Result<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7262,19 +6958,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 Result<Map<Object, Object>> resultCallback =
                     new Result<Map<Object, Object>>() {
                       public void success(Map<Object, Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7294,19 +6987,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 Result<Map<String, String>> resultCallback =
                     new Result<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7326,19 +7016,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 Result<Map<Long, Long>> resultCallback =
                     new Result<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7358,19 +7045,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 Result<Map<AnEnum, AnEnum>> resultCallback =
                     new Result<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7390,19 +7074,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 Result<Map<Long, AllNullableTypes>> resultCallback =
                     new Result<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7422,19 +7103,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 Result<Map<String, String>> resultCallback =
                     new Result<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7454,19 +7132,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 Result<Map<Long, Long>> resultCallback =
                     new Result<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7486,19 +7161,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 Result<Map<AnEnum, AnEnum>> resultCallback =
                     new Result<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7518,19 +7190,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 Result<Map<Long, AllNullableTypes>> resultCallback =
                     new Result<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7550,19 +7219,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7582,19 +7248,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 Result<AnotherEnum> resultCallback =
                     new Result<AnotherEnum>() {
                       public void success(AnotherEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7614,19 +7277,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
                 NullableResult<Boolean> resultCallback =
                     new NullableResult<Boolean>() {
                       public void success(Boolean result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7646,19 +7306,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long anIntArg = (Long) args.get(0);
                 NullableResult<Long> resultCallback =
                     new NullableResult<Long>() {
                       public void success(Long result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7678,19 +7335,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
                 NullableResult<Double> resultCallback =
                     new NullableResult<Double>() {
                       public void success(Double result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7710,19 +7364,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 NullableResult<String> resultCallback =
                     new NullableResult<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7742,19 +7393,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] listArg = (byte[]) args.get(0);
                 NullableResult<byte[]> resultCallback =
                     new NullableResult<byte[]>() {
                       public void success(byte[] result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7774,19 +7422,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> listArg = (List<Object>) args.get(0);
                 NullableResult<List<Object>> resultCallback =
                     new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7806,19 +7451,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 NullableResult<List<AnEnum>> resultCallback =
                     new NullableResult<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7838,19 +7480,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 NullableResult<List<AllNullableTypes>> resultCallback =
                     new NullableResult<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7870,19 +7509,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AnEnum> enumListArg = (List<AnEnum>) args.get(0);
                 NullableResult<List<AnEnum>> resultCallback =
                     new NullableResult<List<AnEnum>>() {
                       public void success(List<AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7902,19 +7538,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<AllNullableTypes> classListArg = (List<AllNullableTypes>) args.get(0);
                 NullableResult<List<AllNullableTypes>> resultCallback =
                     new NullableResult<List<AllNullableTypes>>() {
                       public void success(List<AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7934,19 +7567,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Object, Object> mapArg = (Map<Object, Object>) args.get(0);
                 NullableResult<Map<Object, Object>> resultCallback =
                     new NullableResult<Map<Object, Object>>() {
                       public void success(Map<Object, Object> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7966,19 +7596,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 NullableResult<Map<String, String>> resultCallback =
                     new NullableResult<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -7998,19 +7625,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 NullableResult<Map<Long, Long>> resultCallback =
                     new NullableResult<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8030,19 +7654,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 NullableResult<Map<AnEnum, AnEnum>> resultCallback =
                     new NullableResult<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8062,19 +7683,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 NullableResult<Map<Long, AllNullableTypes>> resultCallback =
                     new NullableResult<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8094,19 +7712,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, String> stringMapArg = (Map<String, String>) args.get(0);
                 NullableResult<Map<String, String>> resultCallback =
                     new NullableResult<Map<String, String>>() {
                       public void success(Map<String, String> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8126,19 +7741,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, Long> intMapArg = (Map<Long, Long>) args.get(0);
                 NullableResult<Map<Long, Long>> resultCallback =
                     new NullableResult<Map<Long, Long>>() {
                       public void success(Map<Long, Long> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8158,19 +7770,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<AnEnum, AnEnum> enumMapArg = (Map<AnEnum, AnEnum>) args.get(0);
                 NullableResult<Map<AnEnum, AnEnum>> resultCallback =
                     new NullableResult<Map<AnEnum, AnEnum>>() {
                       public void success(Map<AnEnum, AnEnum> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8190,19 +7799,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<Long, AllNullableTypes> classMapArg = (Map<Long, AllNullableTypes>) args.get(0);
                 NullableResult<Map<Long, AllNullableTypes>> resultCallback =
                     new NullableResult<Map<Long, AllNullableTypes>>() {
                       public void success(Map<Long, AllNullableTypes> result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8222,19 +7828,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
                     new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8254,19 +7857,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnotherEnum anotherEnumArg = (AnotherEnum) args.get(0);
                 NullableResult<AnotherEnum> resultCallback =
                     new NullableResult<AnotherEnum>() {
                       public void success(AnotherEnum result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -8286,19 +7886,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -9937,14 +9534,12 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 try {
                   api.noop();
-                  wrapped.add(0, null);
+                  reply.reply(wrapResponse(null, null));
                 } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
+                  reply.reply(wrapResponse(null, exception));
                 }
-                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -9987,19 +9582,16 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
                 Result<String> resultCallback =
                     new Result<String>() {
                       public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(result, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 
@@ -10019,17 +9611,14 @@ public class CoreTests {
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
                 VoidResult resultCallback =
                     new VoidResult() {
                       public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
+                        reply.reply(wrapResponse(null, null));
                       }
 
                       public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
+                        reply.reply(wrapResponse(null, error));
                       }
                     };
 

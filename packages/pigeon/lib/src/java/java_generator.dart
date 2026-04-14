@@ -1017,7 +1017,6 @@ if (wrapped == null) {
       });
 
       for (final Method func in api.methods) {
-        final String resultType = _getResultType(func.returnType);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -1028,18 +1027,8 @@ if (wrapped == null) {
           _docCommentSpec,
         );
         if (func.parameters.isEmpty) {
-          indent.write(
-            'public void ${func.name}(@NonNull $resultType result) ',
-          );
           sendArgument = 'null';
         } else {
-          final Iterable<String> argTypes = func.parameters.map(
-            (NamedType e) => _nullsafeJavaTypeForDartType(e.type),
-          );
-          final Iterable<String> argNames = indexMap(
-            func.parameters,
-            _getSafeArgumentName,
-          );
           final Iterable<String> enumSafeArgNames = indexMap(
             func.parameters,
             getSafeArgumentExpression,
@@ -1051,15 +1040,8 @@ if (wrapped == null) {
             sendArgument =
                 'new ArrayList<>(Arrays.asList(${enumSafeArgNames.join(', ')}))';
           }
-          final String argsSignature = map2(
-            argTypes,
-            argNames,
-            (String x, String y) => '$x $y',
-          ).join(', ');
-          indent.write(
-            'public void ${func.name}($argsSignature, @NonNull $resultType result) ',
-          );
         }
+        indent.write('public ${_getMethodSignature(func, isHostApi: false)} ');
         indent.addScoped('{', '}', () {
           const channel = 'channel';
           indent.writeln(
@@ -1243,30 +1225,6 @@ if (wrapped == null) {
     Api api,
     final Method method,
   ) {
-    final String resultType = _getResultType(method.returnType);
-    final String nullableType = method.isAsynchronous
-        ? ''
-        : _nullabilityAnnotationFromType(method.returnType);
-    final String returnType = method.isAsynchronous
-        ? 'void'
-        : _javaTypeForDartType(method.returnType);
-    final argSignature = <String>[];
-    if (method.parameters.isNotEmpty) {
-      final Iterable<String> argTypes = method.parameters.map(
-        (NamedType e) => _nullsafeJavaTypeForDartType(e.type),
-      );
-      final Iterable<String> argNames = method.parameters.map(
-        (NamedType e) => e.name,
-      );
-      argSignature.addAll(
-        map2(argTypes, argNames, (String argType, String argName) {
-          return '$argType $argName';
-        }),
-      );
-    }
-    if (method.isAsynchronous) {
-      argSignature.add('@NonNull $resultType result');
-    }
     if (method.documentationComments.isNotEmpty) {
       addDocumentationComments(
         indent,
@@ -1276,10 +1234,7 @@ if (wrapped == null) {
     } else {
       indent.newln();
     }
-    if (nullableType != '') {
-      indent.writeln(nullableType);
-    }
-    indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
+    indent.writeln('${_getMethodSignature(method, isHostApi: true)};');
   }
 
   /// Write a single method's handler for the setUp function.
@@ -1318,7 +1273,6 @@ if (wrapped == null) {
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
-            indent.writeln('ArrayList<Object> wrapped = new ArrayList<>();');
             final methodArgument = <String>[];
             if (method.parameters.isNotEmpty) {
               indent.writeln(
@@ -1348,17 +1302,15 @@ if (wrapped == null) {
               const resultName = 'resultCallback';
               indent.format('''
 $resultType $resultName =
-\t\tnew $resultType() {
-\t\t\tpublic void success($resultParam) {
-\t\t\t\twrapped.add(0, $addResultArg);
-\t\t\t\treply.reply(wrapped);
-\t\t\t}
+		new $resultType() {
+			public void success($resultParam) {
+				reply.reply(wrapResponse($addResultArg, null));
+			}
 
-\t\t\tpublic void error(Throwable error) {
-\t\t\t\tArrayList<Object> wrappedError = wrapError(error);
-\t\t\t\treply.reply(wrappedError);
-\t\t\t}
-\t\t};
+			public void error(Throwable error) {
+				reply.reply(wrapResponse(null, error));
+			}
+		};
 ''');
               methodArgument.add(resultName);
             }
@@ -1370,21 +1322,16 @@ $resultType $resultName =
               indent.addScoped('{', '}', () {
                 if (method.returnType.isVoid) {
                   indent.writeln('$call;');
-                  indent.writeln('wrapped.add(0, null);');
+                  indent.writeln('reply.reply(wrapResponse(null, null));');
                 } else {
                   indent.writeln('$returnType output = $call;');
-                  indent.writeln('wrapped.add(0, output);');
+                  indent.writeln('reply.reply(wrapResponse(output, null));');
                 }
               });
               indent.add(' catch (Throwable exception) ');
               indent.addScoped('{', '}', () {
-                if (method.isAsynchronous) {
-                  indent.writeln('reply.reply(wrapError(exception));');
-                } else {
-                  indent.writeln('wrapped = wrapError(exception);');
-                }
+                indent.writeln('reply.reply(wrapResponse(null, exception));');
               });
-              indent.writeln('reply.reply(wrapped);');
             }
           });
         });
@@ -1445,23 +1392,33 @@ $resultType $resultName =
     });
   }
 
-  void _writeWrapError(Indent indent) {
+  @override
+  void writeWrapResponse(
+    InternalJavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.format('''
 @NonNull
-protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
-\tArrayList<Object> errorList = new ArrayList<>(3);
-\tif (exception instanceof FlutterError) {
-\t\tFlutterError error = (FlutterError) exception;
-\t\terrorList.add(error.code);
-\t\terrorList.add(error.getMessage());
-\t\terrorList.add(error.details);
+protected static ArrayList<Object> wrapResponse(@Nullable Object result, @Nullable Throwable error) {
+\tArrayList<Object> response = new ArrayList<>();
+\tif (error != null) {
+\t\tif (error instanceof FlutterError) {
+\t\t\tFlutterError flutterError = (FlutterError) error;
+\t\t\tresponse.add(flutterError.code);
+\t\t\tresponse.add(flutterError.getMessage());
+\t\t\tresponse.add(flutterError.details);
+\t\t} else {
+\t\t\tresponse.add(error.toString());
+\t\t\tresponse.add(error.getClass().getSimpleName());
+\t\t\tresponse.add(
+\t\t\t\t"Cause: " + error.getCause() + ", Stacktrace: " + Log.getStackTraceString(error));
+\t\t}
 \t} else {
-\t\terrorList.add(exception.toString());
-\t\terrorList.add(exception.getClass().getSimpleName());
-\t\terrorList.add(
-\t\t\t"Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+\t\tresponse.add(result);
 \t}
-\treturn errorList;
+\treturn response;
 }''');
   }
 
@@ -1501,7 +1458,12 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
   }) {
     if (root.containsHostApi) {
       indent.newln();
-      _writeWrapError(indent);
+      writeWrapResponse(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
     }
     if (root.containsFlutterApi) {
       indent.newln();
@@ -1562,6 +1524,43 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 String _intToEnum(String expression, String enumName, bool nullable) {
   final toEnum = '$enumName.values()[((Long) $expression).intValue()]';
   return nullable ? '$expression == null ? null : $toEnum' : toEnum;
+}
+
+/// Returns the method signature for [method].
+String _getMethodSignature(Method method, {required bool isHostApi}) {
+  final String resultType = _getResultType(method.returnType);
+  final String nullableType =
+      method.isAsynchronous || !isHostApi || method.returnType.isVoid
+      ? ''
+      : _nullabilityAnnotationFromType(method.returnType);
+  final String returnType = method.isAsynchronous || !isHostApi
+      ? 'void'
+      : _javaTypeForDartType(method.returnType);
+
+  final argSignature = <String>[];
+  if (method.parameters.isNotEmpty) {
+    final Iterable<String> argTypes = method.parameters.map(
+      (NamedType e) => _nullsafeJavaTypeForDartType(e.type),
+    );
+    final Iterable<String> argNames = indexMap(
+      method.parameters,
+      (int index, Parameter e) => isHostApi
+          ? _getArgumentName(index, e)
+          : _getSafeArgumentName(index, e),
+    );
+    argSignature.addAll(
+      map2(argTypes, argNames, (String argType, String argName) {
+        return '$argType $argName';
+      }),
+    );
+  }
+
+  if (method.isAsynchronous || !isHostApi) {
+    argSignature.add('@NonNull $resultType result');
+  }
+
+  final nullablePrefix = nullableType.isNotEmpty ? '$nullableType ' : '';
+  return '$nullablePrefix$returnType ${method.name}(${argSignature.join(', ')})';
 }
 
 String _getArgumentName(int count, NamedType argument) =>

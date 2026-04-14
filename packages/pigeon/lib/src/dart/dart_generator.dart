@@ -575,14 +575,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           docCommentSpec,
         );
 
-        final bool isAsync = func.isAsynchronous;
-        final String returnType = isAsync
-            ? 'Future<${addGenericTypes(func.returnType)}>'
-            : addGenericTypes(func.returnType);
-        final String argSignature = _getMethodParameterSignature(
-          func.parameters,
+        indent.writeln(
+          '${_getMethodSignature(name: func.name, parameters: func.parameters, returnType: func.returnType, isAsynchronous: func.isAsynchronous)};',
         );
-        indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
       indent.write(
@@ -1146,7 +1141,12 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     if (root.containsFlutterApi ||
         root.containsProxyApi ||
         generatorOptions.testOut != null) {
-      _writeWrapResponse(generatorOptions, root, indent);
+      writeWrapResponse(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
     }
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
@@ -1161,8 +1161,13 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     }
   }
 
-  /// Writes the `wrapResponse` method.
-  void _writeWrapResponse(InternalDartOptions opt, Root root, Indent indent) {
+  @override
+  void writeWrapResponse(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     indent.writeScoped(
       'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
@@ -1348,9 +1353,8 @@ if (wrapped == null) {
     required bool addSuffixVariable,
   }) {
     addDocumentationComments(indent, documentationComments, docCommentSpec);
-    final String argSignature = _getMethodParameterSignature(parameters);
     indent.write(
-      'Future<${addGenericTypes(returnType)}> $name($argSignature) async ',
+      '${_getMethodSignature(name: name, parameters: parameters, returnType: returnType, isAsynchronous: true)} async ',
     );
     indent.addScoped('{', '}', () {
       writeHostMethodMessageCall(
@@ -1600,6 +1604,20 @@ String _castValue(String value, TypeDeclaration type) {
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : 'arg_${field.name}';
+
+/// Returns the method signature for a Dart method.
+String _getMethodSignature({
+  required String name,
+  required Iterable<Parameter> parameters,
+  required TypeDeclaration returnType,
+  bool isAsynchronous = false,
+}) {
+  final String returnTypeString = isAsynchronous
+      ? 'Future<${addGenericTypes(returnType)}>'
+      : addGenericTypes(returnType);
+  final String argSignature = _getMethodParameterSignature(parameters);
+  return '$returnTypeString $name($argSignature)';
+}
 
 /// Generates a parameter name if one isn't defined.
 String getParameterName(int count, NamedType field) =>

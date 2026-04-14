@@ -20,18 +20,18 @@ private object MessagesPigeonUtils {
         "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
 
-  fun wrapResult(result: Any?): List<Any?> {
-    return listOf(result)
-  }
-
-  fun wrapError(exception: Throwable): List<Any?> {
-    return if (exception is FlutterError) {
-      listOf(exception.code, exception.message, exception.details)
+  fun wrapResponse(result: Any?, error: Throwable?): List<Any?> {
+    return if (error != null) {
+      if (error is FlutterError) {
+        listOf(error.code, error.message, error.details)
+      } else {
+        listOf(
+            error.javaClass.simpleName,
+            error.toString(),
+            "Cause: " + error.cause + ", Stacktrace: " + Log.getStackTraceString(error))
+      }
     } else {
-      listOf(
-          exception.javaClass.simpleName,
-          exception.toString(),
-          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+      listOf(result)
     }
   }
 
@@ -312,9 +312,9 @@ interface ExampleHostApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.getHostLanguage())
+                  MessagesPigeonUtils.wrapResponse(api.getHostLanguage(), null)
                 } catch (exception: Throwable) {
-                  MessagesPigeonUtils.wrapError(exception)
+                  MessagesPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -335,9 +335,9 @@ interface ExampleHostApi {
             val bArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.add(aArg, bArg))
+                  MessagesPigeonUtils.wrapResponse(api.add(aArg, bArg), null)
                 } catch (exception: Throwable) {
-                  MessagesPigeonUtils.wrapError(exception)
+                  MessagesPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -358,10 +358,10 @@ interface ExampleHostApi {
             api.sendMessage(messageArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(MessagesPigeonUtils.wrapError(error))
+                reply.reply(MessagesPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(MessagesPigeonUtils.wrapResult(data))
+                reply.reply(MessagesPigeonUtils.wrapResponse(data, null))
               }
             }
           }

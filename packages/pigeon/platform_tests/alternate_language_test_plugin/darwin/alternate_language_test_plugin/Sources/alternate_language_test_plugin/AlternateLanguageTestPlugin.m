@@ -398,7 +398,8 @@
   return aNullableString;
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that all generated enum
+// constants are valid and usable.
 - (nullable FLTAcronymsAndTestCase *)hostHTTPResponse:(FLTAcronymsAndTestCase *)acronyms
                                                 error:(FlutterError *_Nullable *_Nonnull)error {
   FLTAcronymsEnumBox *enumBox = nil;
@@ -414,14 +415,14 @@
     }
     enumBox = [[FLTAcronymsEnumBox alloc] initWithValue:enumVal];
   }
-  return [FLTAcronymsAndTestCase
-      makeWithHttpResponse:acronyms.httpResponse
-                jsonParser:acronyms.jsonParser
-                   xmlNode:acronyms.xmlNode
-              acronymsEnum:enumBox];
+  return [FLTAcronymsAndTestCase makeWithHttpResponse:acronyms.httpResponse
+                                           jsonParser:acronyms.jsonParser
+                                              xmlNode:acronyms.xmlNode
+                                         acronymsEnum:enumBox];
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that all generated enum
+// constants are valid and usable.
 - (nullable FLTAcronymsAndTestCase *)sendJSONParser:(FLTAcronymsAndTestCase *)acronyms
                                               error:(FlutterError *_Nullable *_Nonnull)error {
   FLTAcronymsEnumBox *enumBox = nil;
@@ -437,11 +438,10 @@
     }
     enumBox = [[FLTAcronymsEnumBox alloc] initWithValue:enumVal];
   }
-  return [FLTAcronymsAndTestCase
-      makeWithHttpResponse:acronyms.httpResponse
-                jsonParser:acronyms.jsonParser
-                   xmlNode:acronyms.xmlNode
-              acronymsEnum:enumBox];
+  return [FLTAcronymsAndTestCase makeWithHttpResponse:acronyms.httpResponse
+                                           jsonParser:acronyms.jsonParser
+                                              xmlNode:acronyms.xmlNode
+                                         acronymsEnum:enumBox];
 }
 
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {

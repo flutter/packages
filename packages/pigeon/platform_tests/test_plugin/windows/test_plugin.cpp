@@ -226,7 +226,8 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
   return wrapper;
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
 ErrorOr<AcronymsAndTestCase> TestPlugin::HostHTTPResponse(
     const AcronymsAndTestCase& acronyms) {
   AcronymsAndTestCase result(acronyms.http_response(), acronyms.json_parser(),
@@ -244,7 +245,8 @@ ErrorOr<AcronymsAndTestCase> TestPlugin::HostHTTPResponse(
   return result;
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
 ErrorOr<AcronymsAndTestCase> TestPlugin::SendJSONParser(
     const AcronymsAndTestCase& acronyms) {
   AcronymsAndTestCase result(acronyms.http_response(), acronyms.json_parser(),

@@ -1440,43 +1440,48 @@ if (wrapped == nil) {
     });
   }
 
-  void _writeWrapResult(Indent indent) {
+  @override
+  void writeWrapResponse(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.newln();
-    indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
+    indent.write(
+      'private func wrapResponse(_ result: Any?, _ error: Any?) -> [Any?] ',
+    );
     indent.addScoped('{', '}', () {
-      indent.writeln('return [result]');
-    });
-  }
-
-  void _writeWrapError(InternalSwiftOptions generatorOptions, Indent indent) {
-    indent.newln();
-    indent.write('private func wrapError(_ error: Any) -> [Any?] ');
-    indent.addScoped('{', '}', () {
-      indent.write(
-        'if let pigeonError = error as? ${_getErrorClassName(generatorOptions)} ',
-      );
-      indent.addScoped('{', '}', () {
+      indent.writeScoped('if let error = error {', '}', () {
+        indent.write(
+          'if let pigeonError = error as? ${_getErrorClassName(generatorOptions)} ',
+        );
+        indent.addScoped('{', '}', () {
+          indent.write('return ');
+          indent.addScoped('[', ']', () {
+            indent.writeln('pigeonError.code,');
+            indent.writeln('pigeonError.message,');
+            indent.writeln('pigeonError.details,');
+          });
+        });
+        indent.write('if let flutterError = error as? FlutterError ');
+        indent.addScoped('{', '}', () {
+          indent.write('return ');
+          indent.addScoped('[', ']', () {
+            indent.writeln('flutterError.code,');
+            indent.writeln('flutterError.message,');
+            indent.writeln('flutterError.details,');
+          });
+        });
         indent.write('return ');
         indent.addScoped('[', ']', () {
-          indent.writeln('pigeonError.code,');
-          indent.writeln('pigeonError.message,');
-          indent.writeln('pigeonError.details,');
+          indent.writeln(r'"\(error)",');
+          indent.writeln(r'"\(Swift.type(of: error))",');
+          indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)",');
         });
       });
-      indent.write('if let flutterError = error as? FlutterError ');
-      indent.addScoped('{', '}', () {
-        indent.write('return ');
-        indent.addScoped('[', ']', () {
-          indent.writeln('flutterError.code,');
-          indent.writeln('flutterError.message,');
-          indent.writeln('flutterError.details,');
-        });
-      });
-      indent.write('return ');
-      indent.addScoped('[', ']', () {
-        indent.writeln(r'"\(error)",');
-        indent.writeln(r'"\(Swift.type(of: error))",');
-        indent.writeln(r'"Stacktrace: \(Thread.callStackSymbols)",');
+      indent.addScoped(' else {', '}', () {
+        indent.writeln('return [result]');
       });
     });
   }
@@ -1636,8 +1641,12 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
     required String dartPackageName,
   }) {
     if (root.containsHostApi || root.containsProxyApi) {
-      _writeWrapResult(indent);
-      _writeWrapError(generatorOptions, indent);
+      writeWrapResponse(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
     }
     if (root.containsFlutterApi || root.containsProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
@@ -1997,11 +2006,11 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
             indent.addScoped('{', '}', nestCount: 0, () {
               indent.writeln('case .success$successVariableInit:');
               indent.nest(1, () {
-                indent.writeln('reply(wrapResult($resultName))');
+                indent.writeln('reply(wrapResponse($resultName, nil))');
               });
               indent.writeln('case .failure(let error):');
               indent.nest(1, () {
-                indent.writeln('reply(wrapError(error))');
+                indent.writeln('reply(wrapResponse(nil, error))');
               });
             });
           });
@@ -2010,14 +2019,14 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
           indent.addScoped('{', '}', () {
             if (returnType.isVoid) {
               indent.writeln(call);
-              indent.writeln('reply(wrapResult(nil))');
+              indent.writeln('reply(wrapResponse(nil, nil))');
             } else {
               indent.writeln('let result = $call');
-              indent.writeln('reply(wrapResult(result))');
+              indent.writeln('reply(wrapResponse(result, nil))');
             }
           }, addTrailingNewline: false);
           indent.addScoped(' catch {', '}', () {
-            indent.writeln('reply(wrapError(error))');
+            indent.writeln('reply(wrapResponse(nil, error))');
           });
         }
       });

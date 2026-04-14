@@ -15,30 +15,30 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-private func wrapResult(_ result: Any?) -> [Any?] {
-  return [result]
-}
-
-private func wrapError(_ error: Any) -> [Any?] {
-  if let pigeonError = error as? PigeonError {
+private func wrapResponse(_ result: Any?, _ error: Any?) -> [Any?] {
+  if let error = error {
+    if let pigeonError = error as? PigeonError {
+      return [
+        pigeonError.code,
+        pigeonError.message,
+        pigeonError.details,
+      ]
+    }
+    if let flutterError = error as? FlutterError {
+      return [
+        flutterError.code,
+        flutterError.message,
+        flutterError.details,
+      ]
+    }
     return [
-      pigeonError.code,
-      pigeonError.message,
-      pigeonError.details,
+      "\(error)",
+      "\(Swift.type(of: error))",
+      "Stacktrace: \(Thread.callStackSymbols)",
     ]
+  } else {
+    return [result]
   }
-  if let flutterError = error as? FlutterError {
-    return [
-      flutterError.code,
-      flutterError.message,
-      flutterError.details,
-    ]
-  }
-  return [
-    "\(error)",
-    "\(Swift.type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)",
-  ]
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
@@ -1544,9 +1544,9 @@ class HostIntegrationCoreApiSetup {
       noopChannel.setMessageHandler { _, reply in
         do {
           try api.noop()
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1563,9 +1563,9 @@ class HostIntegrationCoreApiSetup {
         let everythingArg = args[0] as! AllTypes
         do {
           let result = try api.echo(everythingArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1580,9 +1580,9 @@ class HostIntegrationCoreApiSetup {
       throwErrorChannel.setMessageHandler { _, reply in
         do {
           let result = try api.throwError()
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1597,9 +1597,9 @@ class HostIntegrationCoreApiSetup {
       throwErrorFromVoidChannel.setMessageHandler { _, reply in
         do {
           try api.throwErrorFromVoid()
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1614,9 +1614,9 @@ class HostIntegrationCoreApiSetup {
       throwFlutterErrorChannel.setMessageHandler { _, reply in
         do {
           let result = try api.throwFlutterError()
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1633,9 +1633,9 @@ class HostIntegrationCoreApiSetup {
         let anIntArg = args[0] as! Int64
         do {
           let result = try api.echo(anIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1652,9 +1652,9 @@ class HostIntegrationCoreApiSetup {
         let aDoubleArg = args[0] as! Double
         do {
           let result = try api.echo(aDoubleArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1671,9 +1671,9 @@ class HostIntegrationCoreApiSetup {
         let aBoolArg = args[0] as! Bool
         do {
           let result = try api.echo(aBoolArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1690,9 +1690,9 @@ class HostIntegrationCoreApiSetup {
         let aStringArg = args[0] as! String
         do {
           let result = try api.echo(aStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1709,9 +1709,9 @@ class HostIntegrationCoreApiSetup {
         let aUint8ListArg = args[0] as! FlutterStandardTypedData
         do {
           let result = try api.echo(aUint8ListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1728,9 +1728,9 @@ class HostIntegrationCoreApiSetup {
         let anObjectArg = args[0]!
         do {
           let result = try api.echo(anObjectArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1747,9 +1747,9 @@ class HostIntegrationCoreApiSetup {
         let listArg = args[0] as! [Any?]
         do {
           let result = try api.echo(listArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1766,9 +1766,9 @@ class HostIntegrationCoreApiSetup {
         let enumListArg = args[0] as! [AnEnum?]
         do {
           let result = try api.echo(enumList: enumListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1785,9 +1785,9 @@ class HostIntegrationCoreApiSetup {
         let classListArg = args[0] as! [AllNullableTypes?]
         do {
           let result = try api.echo(classList: classListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1804,9 +1804,9 @@ class HostIntegrationCoreApiSetup {
         let enumListArg = args[0] as! [AnEnum]
         do {
           let result = try api.echoNonNull(enumList: enumListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1823,9 +1823,9 @@ class HostIntegrationCoreApiSetup {
         let classListArg = args[0] as! [AllNullableTypes]
         do {
           let result = try api.echoNonNull(classList: classListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1842,9 +1842,9 @@ class HostIntegrationCoreApiSetup {
         let mapArg = args[0] as! [AnyHashable?: Any?]
         do {
           let result = try api.echo(mapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1861,9 +1861,9 @@ class HostIntegrationCoreApiSetup {
         let stringMapArg = args[0] as! [String?: String?]
         do {
           let result = try api.echo(stringMap: stringMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1880,9 +1880,9 @@ class HostIntegrationCoreApiSetup {
         let intMapArg = args[0] as! [Int64?: Int64?]
         do {
           let result = try api.echo(intMap: intMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1899,9 +1899,9 @@ class HostIntegrationCoreApiSetup {
         let enumMapArg = args[0] as? [AnEnum?: AnEnum?]
         do {
           let result = try api.echo(enumMap: enumMapArg!)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1918,9 +1918,9 @@ class HostIntegrationCoreApiSetup {
         let classMapArg = args[0] as! [Int64?: AllNullableTypes?]
         do {
           let result = try api.echo(classMap: classMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1937,9 +1937,9 @@ class HostIntegrationCoreApiSetup {
         let stringMapArg = args[0] as! [String: String]
         do {
           let result = try api.echoNonNull(stringMap: stringMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1956,9 +1956,9 @@ class HostIntegrationCoreApiSetup {
         let intMapArg = args[0] as! [Int64: Int64]
         do {
           let result = try api.echoNonNull(intMap: intMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1975,9 +1975,9 @@ class HostIntegrationCoreApiSetup {
         let enumMapArg = args[0] as? [AnEnum: AnEnum]
         do {
           let result = try api.echoNonNull(enumMap: enumMapArg!)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1994,9 +1994,9 @@ class HostIntegrationCoreApiSetup {
         let classMapArg = args[0] as! [Int64: AllNullableTypes]
         do {
           let result = try api.echoNonNull(classMap: classMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2013,9 +2013,9 @@ class HostIntegrationCoreApiSetup {
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
           let result = try api.echo(wrapperArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2032,9 +2032,9 @@ class HostIntegrationCoreApiSetup {
         let acronymsArg = args[0] as! AcronymsAndTestCase
         do {
           let result = try api.echo(acronymsArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2050,9 +2050,9 @@ class HostIntegrationCoreApiSetup {
         let acronymsArg = args[0] as! AcronymsAndTestCase
         do {
           let result = try api.hostHTTPResponse(acronymsArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2068,9 +2068,9 @@ class HostIntegrationCoreApiSetup {
         let acronymsArg = args[0] as! AcronymsAndTestCase
         do {
           let result = try api.sendJSONParser(acronymsArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2087,9 +2087,9 @@ class HostIntegrationCoreApiSetup {
         let anEnumArg = args[0] as! AnEnum
         do {
           let result = try api.echo(anEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2106,9 +2106,9 @@ class HostIntegrationCoreApiSetup {
         let anotherEnumArg = args[0] as! AnotherEnum
         do {
           let result = try api.echo(anotherEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2125,9 +2125,9 @@ class HostIntegrationCoreApiSetup {
         let aStringArg = args[0] as! String
         do {
           let result = try api.echoNamedDefault(aStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2144,9 +2144,9 @@ class HostIntegrationCoreApiSetup {
         let aDoubleArg = args[0] as! Double
         do {
           let result = try api.echoOptionalDefault(aDoubleArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2163,9 +2163,9 @@ class HostIntegrationCoreApiSetup {
         let anIntArg = args[0] as! Int64
         do {
           let result = try api.echoRequired(anIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2183,9 +2183,9 @@ class HostIntegrationCoreApiSetup {
         let bArg = args[1] as! AllNullableTypes
         do {
           let result = try api.areAllNullableTypesEqual(a: aArg, b: bArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2202,9 +2202,9 @@ class HostIntegrationCoreApiSetup {
         let valueArg = args[0] as! AllNullableTypes
         do {
           let result = try api.getAllNullableTypesHash(value: valueArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2221,9 +2221,9 @@ class HostIntegrationCoreApiSetup {
         let valueArg = args[0] as! AllNullableTypesWithoutRecursion
         do {
           let result = try api.getAllNullableTypesWithoutRecursionHash(value: valueArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2240,9 +2240,9 @@ class HostIntegrationCoreApiSetup {
         let everythingArg: AllNullableTypes? = nilOrValue(args[0])
         do {
           let result = try api.echo(everythingArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2259,9 +2259,9 @@ class HostIntegrationCoreApiSetup {
         let everythingArg: AllNullableTypesWithoutRecursion? = nilOrValue(args[0])
         do {
           let result = try api.echo(everythingArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2279,9 +2279,9 @@ class HostIntegrationCoreApiSetup {
         let wrapperArg = args[0] as! AllClassesWrapper
         do {
           let result = try api.extractNestedNullableString(from: wrapperArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2299,9 +2299,9 @@ class HostIntegrationCoreApiSetup {
         let nullableStringArg: String? = nilOrValue(args[0])
         do {
           let result = try api.createNestedObject(with: nullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2321,9 +2321,9 @@ class HostIntegrationCoreApiSetup {
         do {
           let result = try api.sendMultipleNullableTypes(
             aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2343,9 +2343,9 @@ class HostIntegrationCoreApiSetup {
         do {
           let result = try api.sendMultipleNullableTypesWithoutRecursion(
             aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2362,9 +2362,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2381,9 +2381,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableDoubleArg: Double? = nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableDoubleArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2400,9 +2400,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableBoolArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2419,9 +2419,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2438,9 +2438,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[0])
         do {
           let result = try api.echo(aNullableUint8ListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2457,9 +2457,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableObjectArg: Any? = args[0]
         do {
           let result = try api.echo(aNullableObjectArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2476,9 +2476,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableListArg: [Any?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(aNullableListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2495,9 +2495,9 @@ class HostIntegrationCoreApiSetup {
         let enumListArg: [AnEnum?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(enumList: enumListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2514,9 +2514,9 @@ class HostIntegrationCoreApiSetup {
         let classListArg: [AllNullableTypes?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(classList: classListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2533,9 +2533,9 @@ class HostIntegrationCoreApiSetup {
         let enumListArg: [AnEnum]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullableNonNull(enumList: enumListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2552,9 +2552,9 @@ class HostIntegrationCoreApiSetup {
         let classListArg: [AllNullableTypes]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullableNonNull(classList: classListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2571,9 +2571,9 @@ class HostIntegrationCoreApiSetup {
         let mapArg: [AnyHashable?: Any?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(mapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2590,9 +2590,9 @@ class HostIntegrationCoreApiSetup {
         let stringMapArg: [String?: String?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(stringMap: stringMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2609,9 +2609,9 @@ class HostIntegrationCoreApiSetup {
         let intMapArg: [Int64?: Int64?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(intMap: intMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2628,9 +2628,9 @@ class HostIntegrationCoreApiSetup {
         let enumMapArg: [AnEnum?: AnEnum?]? = args[0] as? [AnEnum?: AnEnum?]
         do {
           let result = try api.echoNullable(enumMap: enumMapArg!)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2647,9 +2647,9 @@ class HostIntegrationCoreApiSetup {
         let classMapArg: [Int64?: AllNullableTypes?]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(classMap: classMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2666,9 +2666,9 @@ class HostIntegrationCoreApiSetup {
         let stringMapArg: [String: String]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullableNonNull(stringMap: stringMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2685,9 +2685,9 @@ class HostIntegrationCoreApiSetup {
         let intMapArg: [Int64: Int64]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullableNonNull(intMap: intMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2704,9 +2704,9 @@ class HostIntegrationCoreApiSetup {
         let enumMapArg: [AnEnum: AnEnum]? = args[0] as? [AnEnum: AnEnum]
         do {
           let result = try api.echoNullableNonNull(enumMap: enumMapArg!)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2723,9 +2723,9 @@ class HostIntegrationCoreApiSetup {
         let classMapArg: [Int64: AllNullableTypes]? = nilOrValue(args[0])
         do {
           let result = try api.echoNullableNonNull(classMap: classMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2741,9 +2741,9 @@ class HostIntegrationCoreApiSetup {
         let anEnumArg: AnEnum? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(anEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2759,9 +2759,9 @@ class HostIntegrationCoreApiSetup {
         let anotherEnumArg: AnotherEnum? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(anotherEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2778,9 +2778,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableIntArg: Int64? = nilOrValue(args[0])
         do {
           let result = try api.echoOptional(aNullableIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2797,9 +2797,9 @@ class HostIntegrationCoreApiSetup {
         let aNullableStringArg: String? = nilOrValue(args[0])
         do {
           let result = try api.echoNamed(aNullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2816,9 +2816,9 @@ class HostIntegrationCoreApiSetup {
         api.noopAsync { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2837,9 +2837,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(anIntArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2858,9 +2858,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(aDoubleArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2879,9 +2879,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(aBoolArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2900,9 +2900,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2921,9 +2921,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(aUint8ListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2942,9 +2942,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(anObjectArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2963,9 +2963,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2984,9 +2984,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3005,9 +3005,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3026,9 +3026,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(mapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3047,9 +3047,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3068,9 +3068,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3089,9 +3089,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3110,9 +3110,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3131,9 +3131,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3152,9 +3152,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(anotherEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3171,9 +3171,9 @@ class HostIntegrationCoreApiSetup {
         api.throwAsyncError { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3190,9 +3190,9 @@ class HostIntegrationCoreApiSetup {
         api.throwAsyncErrorFromVoid { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3209,9 +3209,9 @@ class HostIntegrationCoreApiSetup {
         api.throwAsyncFlutterError { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3230,9 +3230,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3251,9 +3251,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3272,9 +3272,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3293,9 +3293,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(anIntArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3314,9 +3314,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(aDoubleArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3335,9 +3335,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(aBoolArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3356,9 +3356,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3377,9 +3377,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(aUint8ListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3398,9 +3398,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(anObjectArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3419,9 +3419,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3440,9 +3440,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3461,9 +3461,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3482,9 +3482,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(mapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3503,9 +3503,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3524,9 +3524,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3545,9 +3545,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3566,9 +3566,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3587,9 +3587,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3608,9 +3608,9 @@ class HostIntegrationCoreApiSetup {
         api.echoAsyncNullable(anotherEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3627,9 +3627,9 @@ class HostIntegrationCoreApiSetup {
       defaultIsMainThreadChannel.setMessageHandler { _, reply in
         do {
           let result = try api.defaultIsMainThread()
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -3651,9 +3651,9 @@ class HostIntegrationCoreApiSetup {
       taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
         do {
           let result = try api.taskQueueIsBackgroundThread()
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -3668,9 +3668,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterNoop { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3686,9 +3686,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterThrowError { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3704,9 +3704,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterThrowErrorFromVoid { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3724,9 +3724,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3744,9 +3744,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3768,9 +3768,9 @@ class HostIntegrationCoreApiSetup {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3788,9 +3788,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(everythingArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3813,9 +3813,9 @@ class HostIntegrationCoreApiSetup {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3833,9 +3833,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(aBoolArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3853,9 +3853,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(anIntArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3873,9 +3873,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(aDoubleArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3893,9 +3893,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3913,9 +3913,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3933,9 +3933,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3953,9 +3953,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3973,9 +3973,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -3993,9 +3993,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4013,9 +4013,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4033,9 +4033,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(mapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4053,9 +4053,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4073,9 +4073,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4093,9 +4093,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4113,9 +4113,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4133,9 +4133,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4153,9 +4153,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4173,9 +4173,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4193,9 +4193,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNonNull(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4213,9 +4213,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4233,9 +4233,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEcho(anotherEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4253,9 +4253,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(aBoolArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4273,9 +4273,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(anIntArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4293,9 +4293,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(aDoubleArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4313,9 +4313,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4333,9 +4333,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4353,9 +4353,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4373,9 +4373,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4393,9 +4393,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4413,9 +4413,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(enumList: enumListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4433,9 +4433,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(classList: classListArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4453,9 +4453,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(mapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4473,9 +4473,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4493,9 +4493,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4513,9 +4513,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4533,9 +4533,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4553,9 +4553,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(stringMap: stringMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4573,9 +4573,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(intMap: intMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4593,9 +4593,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(enumMap: enumMapArg!) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4613,9 +4613,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullableNonNull(classMap: classMapArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4633,9 +4633,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4653,9 +4653,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterEchoNullable(anotherEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4673,9 +4673,9 @@ class HostIntegrationCoreApiSetup {
         api.callFlutterSmallApiEcho(aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -6315,9 +6315,9 @@ class HostTrivialApiSetup {
       noopChannel.setMessageHandler { _, reply in
         do {
           try api.noop()
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -6351,9 +6351,9 @@ class HostSmallApiSetup {
         api.echo(aString: aStringArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -6368,9 +6368,9 @@ class HostSmallApiSetup {
         api.voidVoid { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }

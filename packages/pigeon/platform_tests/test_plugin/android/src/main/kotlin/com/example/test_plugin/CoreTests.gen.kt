@@ -23,18 +23,18 @@ private object CoreTestsPigeonUtils {
         "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
 
-  fun wrapResult(result: Any?): List<Any?> {
-    return listOf(result)
-  }
-
-  fun wrapError(exception: Throwable): List<Any?> {
-    return if (exception is FlutterError) {
-      listOf(exception.code, exception.message, exception.details)
+  fun wrapResponse(result: Any?, error: Throwable?): List<Any?> {
+    return if (error != null) {
+      if (error is FlutterError) {
+        listOf(error.code, error.message, error.details)
+      } else {
+        listOf(
+            error.javaClass.simpleName,
+            error.toString(),
+            "Cause: " + error.cause + ", Stacktrace: " + Log.getStackTraceString(error))
+      }
     } else {
-      listOf(
-          exception.javaClass.simpleName,
-          exception.toString(),
-          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+      listOf(result)
     }
   }
 
@@ -1651,9 +1651,9 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   api.noop()
-                  listOf(null)
+                  CoreTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1673,9 +1673,9 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllTypes
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAllTypes(everythingArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoAllTypes(everythingArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1693,9 +1693,9 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.throwError())
+                  CoreTestsPigeonUtils.wrapResponse(api.throwError(), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1714,9 +1714,9 @@ interface HostIntegrationCoreApi {
             val wrapped: List<Any?> =
                 try {
                   api.throwErrorFromVoid()
-                  listOf(null)
+                  CoreTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1734,9 +1734,9 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.throwFlutterError())
+                  CoreTestsPigeonUtils.wrapResponse(api.throwFlutterError(), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1756,9 +1756,9 @@ interface HostIntegrationCoreApi {
             val anIntArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoInt(anIntArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoInt(anIntArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1778,9 +1778,9 @@ interface HostIntegrationCoreApi {
             val aDoubleArg = args[0] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoDouble(aDoubleArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoDouble(aDoubleArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1800,9 +1800,9 @@ interface HostIntegrationCoreApi {
             val aBoolArg = args[0] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoBool(aBoolArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoBool(aBoolArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1822,9 +1822,9 @@ interface HostIntegrationCoreApi {
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoString(aStringArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoString(aStringArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1844,9 +1844,9 @@ interface HostIntegrationCoreApi {
             val aUint8ListArg = args[0] as ByteArray
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoUint8List(aUint8ListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoUint8List(aUint8ListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1866,9 +1866,9 @@ interface HostIntegrationCoreApi {
             val anObjectArg = args[0] as Any
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoObject(anObjectArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoObject(anObjectArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1888,9 +1888,9 @@ interface HostIntegrationCoreApi {
             val listArg = args[0] as List<Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoList(listArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoList(listArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1910,9 +1910,9 @@ interface HostIntegrationCoreApi {
             val enumListArg = args[0] as List<AnEnum?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoEnumList(enumListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoEnumList(enumListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1932,9 +1932,9 @@ interface HostIntegrationCoreApi {
             val classListArg = args[0] as List<AllNullableTypes?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoClassList(classListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoClassList(classListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1954,9 +1954,9 @@ interface HostIntegrationCoreApi {
             val enumListArg = args[0] as List<AnEnum>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullEnumList(enumListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullEnumList(enumListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1976,9 +1976,9 @@ interface HostIntegrationCoreApi {
             val classListArg = args[0] as List<AllNullableTypes>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullClassList(classListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullClassList(classListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1998,9 +1998,9 @@ interface HostIntegrationCoreApi {
             val mapArg = args[0] as Map<Any?, Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoMap(mapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoMap(mapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2020,9 +2020,9 @@ interface HostIntegrationCoreApi {
             val stringMapArg = args[0] as Map<String?, String?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoStringMap(stringMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoStringMap(stringMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2042,9 +2042,9 @@ interface HostIntegrationCoreApi {
             val intMapArg = args[0] as Map<Long?, Long?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoIntMap(intMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoIntMap(intMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2064,9 +2064,9 @@ interface HostIntegrationCoreApi {
             val enumMapArg = args[0] as Map<AnEnum?, AnEnum?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoEnumMap(enumMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoEnumMap(enumMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2086,9 +2086,9 @@ interface HostIntegrationCoreApi {
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoClassMap(classMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoClassMap(classMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2108,9 +2108,9 @@ interface HostIntegrationCoreApi {
             val stringMapArg = args[0] as Map<String, String>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullStringMap(stringMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullStringMap(stringMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2130,9 +2130,9 @@ interface HostIntegrationCoreApi {
             val intMapArg = args[0] as Map<Long, Long>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullIntMap(intMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullIntMap(intMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2152,9 +2152,9 @@ interface HostIntegrationCoreApi {
             val enumMapArg = args[0] as Map<AnEnum, AnEnum>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullEnumMap(enumMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullEnumMap(enumMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2174,9 +2174,9 @@ interface HostIntegrationCoreApi {
             val classMapArg = args[0] as Map<Long, AllNullableTypes>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNonNullClassMap(classMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNonNullClassMap(classMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2196,9 +2196,9 @@ interface HostIntegrationCoreApi {
             val wrapperArg = args[0] as AllClassesWrapper
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoClassWrapper(wrapperArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoClassWrapper(wrapperArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2218,9 +2218,9 @@ interface HostIntegrationCoreApi {
             val acronymsArg = args[0] as AcronymsAndTestCase
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAcronyms(acronymsArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoAcronyms(acronymsArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2240,9 +2240,9 @@ interface HostIntegrationCoreApi {
             val acronymsArg = args[0] as AcronymsAndTestCase
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.hostHTTPResponse(acronymsArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.hostHTTPResponse(acronymsArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2262,9 +2262,9 @@ interface HostIntegrationCoreApi {
             val acronymsArg = args[0] as AcronymsAndTestCase
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.sendJSONParser(acronymsArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.sendJSONParser(acronymsArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2284,9 +2284,9 @@ interface HostIntegrationCoreApi {
             val anEnumArg = args[0] as AnEnum
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoEnum(anEnumArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoEnum(anEnumArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2306,9 +2306,9 @@ interface HostIntegrationCoreApi {
             val anotherEnumArg = args[0] as AnotherEnum
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAnotherEnum(anotherEnumArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoAnotherEnum(anotherEnumArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2328,9 +2328,9 @@ interface HostIntegrationCoreApi {
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNamedDefaultString(aStringArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNamedDefaultString(aStringArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2350,9 +2350,9 @@ interface HostIntegrationCoreApi {
             val aDoubleArg = args[0] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoOptionalDefaultDouble(aDoubleArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoOptionalDefaultDouble(aDoubleArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2372,9 +2372,9 @@ interface HostIntegrationCoreApi {
             val anIntArg = args[0] as Long
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoRequiredInt(anIntArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoRequiredInt(anIntArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2395,9 +2395,9 @@ interface HostIntegrationCoreApi {
             val bArg = args[1] as AllNullableTypes
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.areAllNullableTypesEqual(aArg, bArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.areAllNullableTypesEqual(aArg, bArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2417,9 +2417,9 @@ interface HostIntegrationCoreApi {
             val valueArg = args[0] as AllNullableTypes
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.getAllNullableTypesHash(valueArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.getAllNullableTypesHash(valueArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2439,9 +2439,10 @@ interface HostIntegrationCoreApi {
             val valueArg = args[0] as AllNullableTypesWithoutRecursion
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.getAllNullableTypesWithoutRecursionHash(valueArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.getAllNullableTypesWithoutRecursionHash(valueArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2461,9 +2462,9 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllNullableTypes?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAllNullableTypes(everythingArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoAllNullableTypes(everythingArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2483,9 +2484,10 @@ interface HostIntegrationCoreApi {
             val everythingArg = args[0] as AllNullableTypesWithoutRecursion?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAllNullableTypesWithoutRecursion(everythingArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoAllNullableTypesWithoutRecursion(everythingArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2505,9 +2507,10 @@ interface HostIntegrationCoreApi {
             val wrapperArg = args[0] as AllClassesWrapper
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.extractNestedNullableString(wrapperArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.extractNestedNullableString(wrapperArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2527,9 +2530,10 @@ interface HostIntegrationCoreApi {
             val nullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.createNestedNullableString(nullableStringArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.createNestedNullableString(nullableStringArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2551,11 +2555,12 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[2] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(
+                  CoreTestsPigeonUtils.wrapResponse(
                       api.sendMultipleNullableTypes(
-                          aNullableBoolArg, aNullableIntArg, aNullableStringArg))
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg),
+                      null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2577,11 +2582,12 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[2] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(
+                  CoreTestsPigeonUtils.wrapResponse(
                       api.sendMultipleNullableTypesWithoutRecursion(
-                          aNullableBoolArg, aNullableIntArg, aNullableStringArg))
+                          aNullableBoolArg, aNullableIntArg, aNullableStringArg),
+                      null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2601,9 +2607,9 @@ interface HostIntegrationCoreApi {
             val aNullableIntArg = args[0] as Long?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableInt(aNullableIntArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableInt(aNullableIntArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2623,9 +2629,10 @@ interface HostIntegrationCoreApi {
             val aNullableDoubleArg = args[0] as Double?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableDouble(aNullableDoubleArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableDouble(aNullableDoubleArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2645,9 +2652,9 @@ interface HostIntegrationCoreApi {
             val aNullableBoolArg = args[0] as Boolean?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableBool(aNullableBoolArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableBool(aNullableBoolArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2667,9 +2674,10 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableString(aNullableStringArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableString(aNullableStringArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2689,9 +2697,10 @@ interface HostIntegrationCoreApi {
             val aNullableUint8ListArg = args[0] as ByteArray?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableUint8List(aNullableUint8ListArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableUint8List(aNullableUint8ListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2711,9 +2720,10 @@ interface HostIntegrationCoreApi {
             val aNullableObjectArg = args[0]
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableObject(aNullableObjectArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableObject(aNullableObjectArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2733,9 +2743,9 @@ interface HostIntegrationCoreApi {
             val aNullableListArg = args[0] as List<Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableList(aNullableListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableList(aNullableListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2755,9 +2765,9 @@ interface HostIntegrationCoreApi {
             val enumListArg = args[0] as List<AnEnum?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableEnumList(enumListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableEnumList(enumListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2777,9 +2787,9 @@ interface HostIntegrationCoreApi {
             val classListArg = args[0] as List<AllNullableTypes?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableClassList(classListArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableClassList(classListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2799,9 +2809,10 @@ interface HostIntegrationCoreApi {
             val enumListArg = args[0] as List<AnEnum>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullEnumList(enumListArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableNonNullEnumList(enumListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2821,9 +2832,10 @@ interface HostIntegrationCoreApi {
             val classListArg = args[0] as List<AllNullableTypes>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullClassList(classListArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableNonNullClassList(classListArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2843,9 +2855,9 @@ interface HostIntegrationCoreApi {
             val mapArg = args[0] as Map<Any?, Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableMap(mapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableMap(mapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2865,9 +2877,9 @@ interface HostIntegrationCoreApi {
             val stringMapArg = args[0] as Map<String?, String?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableStringMap(stringMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableStringMap(stringMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2887,9 +2899,9 @@ interface HostIntegrationCoreApi {
             val intMapArg = args[0] as Map<Long?, Long?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableIntMap(intMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableIntMap(intMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2909,9 +2921,9 @@ interface HostIntegrationCoreApi {
             val enumMapArg = args[0] as Map<AnEnum?, AnEnum?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableEnumMap(enumMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableEnumMap(enumMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2931,9 +2943,9 @@ interface HostIntegrationCoreApi {
             val classMapArg = args[0] as Map<Long?, AllNullableTypes?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableClassMap(classMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableClassMap(classMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2953,9 +2965,10 @@ interface HostIntegrationCoreApi {
             val stringMapArg = args[0] as Map<String, String>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullStringMap(stringMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableNonNullStringMap(stringMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2975,9 +2988,9 @@ interface HostIntegrationCoreApi {
             val intMapArg = args[0] as Map<Long, Long>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullIntMap(intMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableNonNullIntMap(intMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2997,9 +3010,10 @@ interface HostIntegrationCoreApi {
             val enumMapArg = args[0] as Map<AnEnum, AnEnum>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullEnumMap(enumMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableNonNullEnumMap(enumMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3019,9 +3033,10 @@ interface HostIntegrationCoreApi {
             val classMapArg = args[0] as Map<Long, AllNullableTypes>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableNonNullClassMap(classMapArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNullableNonNullClassMap(classMapArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3041,9 +3056,9 @@ interface HostIntegrationCoreApi {
             val anEnumArg = args[0] as AnEnum?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableEnum(anEnumArg))
+                  CoreTestsPigeonUtils.wrapResponse(api.echoNullableEnum(anEnumArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3063,9 +3078,10 @@ interface HostIntegrationCoreApi {
             val anotherEnumArg = args[0] as AnotherEnum?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoAnotherNullableEnum(anotherEnumArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoAnotherNullableEnum(anotherEnumArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3085,9 +3101,10 @@ interface HostIntegrationCoreApi {
             val aNullableIntArg = args[0] as Long?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoOptionalNullableInt(aNullableIntArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoOptionalNullableInt(aNullableIntArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3107,9 +3124,10 @@ interface HostIntegrationCoreApi {
             val aNullableStringArg = args[0] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNamedNullableString(aNullableStringArg))
+                  CoreTestsPigeonUtils.wrapResponse(
+                      api.echoNamedNullableString(aNullableStringArg), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -3128,9 +3146,9 @@ interface HostIntegrationCoreApi {
             api.noopAsync { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(CoreTestsPigeonUtils.wrapResult(null))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -3151,10 +3169,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncInt(anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3175,10 +3193,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncDouble(aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3199,10 +3217,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncBool(aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3223,10 +3241,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncString(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3247,10 +3265,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncUint8List(aUint8ListArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3271,10 +3289,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncObject(anObjectArg) { result: Result<Any> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3295,10 +3313,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncList(listArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3319,10 +3337,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncEnumList(enumListArg) { result: Result<List<AnEnum?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3343,10 +3361,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncClassList(classListArg) { result: Result<List<AllNullableTypes?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3367,10 +3385,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncMap(mapArg) { result: Result<Map<Any?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3391,10 +3409,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncStringMap(stringMapArg) { result: Result<Map<String?, String?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3415,10 +3433,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncIntMap(intMapArg) { result: Result<Map<Long?, Long?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3439,10 +3457,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncEnumMap(enumMapArg) { result: Result<Map<AnEnum?, AnEnum?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3463,10 +3481,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncClassMap(classMapArg) { result: Result<Map<Long?, AllNullableTypes?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3487,10 +3505,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncEnum(anEnumArg) { result: Result<AnEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3511,10 +3529,10 @@ interface HostIntegrationCoreApi {
             api.echoAnotherAsyncEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3533,10 +3551,10 @@ interface HostIntegrationCoreApi {
             api.throwAsyncError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3555,9 +3573,9 @@ interface HostIntegrationCoreApi {
             api.throwAsyncErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(CoreTestsPigeonUtils.wrapResult(null))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -3576,10 +3594,10 @@ interface HostIntegrationCoreApi {
             api.throwAsyncFlutterError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3600,10 +3618,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncAllTypes(everythingArg) { result: Result<AllTypes> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3625,10 +3643,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3650,10 +3668,10 @@ interface HostIntegrationCoreApi {
                 result: Result<AllNullableTypesWithoutRecursion?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3674,10 +3692,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableInt(anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3698,10 +3716,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableDouble(aDoubleArg) { result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3722,10 +3740,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableBool(aBoolArg) { result: Result<Boolean?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3746,10 +3764,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableString(aStringArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3770,10 +3788,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableUint8List(aUint8ListArg) { result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3794,10 +3812,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableObject(anObjectArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3818,10 +3836,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableList(listArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3842,10 +3860,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableEnumList(enumListArg) { result: Result<List<AnEnum?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3867,10 +3885,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3891,10 +3909,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableMap(mapArg) { result: Result<Map<Any?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3915,10 +3933,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableStringMap(stringMapArg) { result: Result<Map<String?, String?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3939,10 +3957,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableIntMap(intMapArg) { result: Result<Map<Long?, Long?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3963,10 +3981,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableEnumMap(enumMapArg) { result: Result<Map<AnEnum?, AnEnum?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3988,10 +4006,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<Long?, AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4012,10 +4030,10 @@ interface HostIntegrationCoreApi {
             api.echoAsyncNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4036,10 +4054,10 @@ interface HostIntegrationCoreApi {
             api.echoAnotherAsyncNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4057,9 +4075,9 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.defaultIsMainThread())
+                  CoreTestsPigeonUtils.wrapResponse(api.defaultIsMainThread(), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -4078,9 +4096,9 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.taskQueueIsBackgroundThread())
+                  CoreTestsPigeonUtils.wrapResponse(api.taskQueueIsBackgroundThread(), null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -4099,9 +4117,9 @@ interface HostIntegrationCoreApi {
             api.callFlutterNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(CoreTestsPigeonUtils.wrapResult(null))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -4120,10 +4138,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterThrowError { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4142,9 +4160,9 @@ interface HostIntegrationCoreApi {
             api.callFlutterThrowErrorFromVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(CoreTestsPigeonUtils.wrapResult(null))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -4165,10 +4183,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoAllTypes(everythingArg) { result: Result<AllTypes> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4190,10 +4208,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4218,10 +4236,10 @@ interface HostIntegrationCoreApi {
                     result: Result<AllNullableTypes> ->
                   val error = result.exceptionOrNull()
                   if (error != null) {
-                    reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                    reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
                   } else {
                     val data = result.getOrNull()
-                    reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                    reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
                   }
                 }
           }
@@ -4243,10 +4261,10 @@ interface HostIntegrationCoreApi {
                 result: Result<AllNullableTypesWithoutRecursion?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4271,10 +4289,10 @@ interface HostIntegrationCoreApi {
                     result: Result<AllNullableTypesWithoutRecursion> ->
                   val error = result.exceptionOrNull()
                   if (error != null) {
-                    reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                    reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
                   } else {
                     val data = result.getOrNull()
-                    reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                    reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
                   }
                 }
           }
@@ -4295,10 +4313,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoBool(aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4319,10 +4337,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoInt(anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4343,10 +4361,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoDouble(aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4367,10 +4385,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoString(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4391,10 +4409,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoUint8List(listArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4415,10 +4433,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoList(listArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4439,10 +4457,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoEnumList(enumListArg) { result: Result<List<AnEnum?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4463,10 +4481,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoClassList(classListArg) { result: Result<List<AllNullableTypes?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4487,10 +4505,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNonNullEnumList(enumListArg) { result: Result<List<AnEnum>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4512,10 +4530,10 @@ interface HostIntegrationCoreApi {
                 result: Result<List<AllNullableTypes>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4536,10 +4554,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoMap(mapArg) { result: Result<Map<Any?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4560,10 +4578,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoStringMap(stringMapArg) { result: Result<Map<String?, String?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4584,10 +4602,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoIntMap(intMapArg) { result: Result<Map<Long?, Long?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4608,10 +4626,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoEnumMap(enumMapArg) { result: Result<Map<AnEnum?, AnEnum?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4633,10 +4651,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4658,10 +4676,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4682,10 +4700,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNonNullIntMap(intMapArg) { result: Result<Map<Long, Long>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4706,10 +4724,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNonNullEnumMap(enumMapArg) { result: Result<Map<AnEnum, AnEnum>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4731,10 +4749,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<Long, AllNullableTypes>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4755,10 +4773,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoEnum(anEnumArg) { result: Result<AnEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4779,10 +4797,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoAnotherEnum(anotherEnumArg) { result: Result<AnotherEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4803,10 +4821,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableBool(aBoolArg) { result: Result<Boolean?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4827,10 +4845,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableInt(anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4851,10 +4869,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableDouble(aDoubleArg) { result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4875,10 +4893,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableString(aStringArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4899,10 +4917,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableUint8List(listArg) { result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4923,10 +4941,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableList(listArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4947,10 +4965,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableEnumList(enumListArg) { result: Result<List<AnEnum?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4972,10 +4990,10 @@ interface HostIntegrationCoreApi {
                 result: Result<List<AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4997,10 +5015,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5022,10 +5040,10 @@ interface HostIntegrationCoreApi {
                 result: Result<List<AllNullableTypes>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5046,10 +5064,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableMap(mapArg) { result: Result<Map<Any?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5071,10 +5089,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<String?, String?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5095,10 +5113,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableIntMap(intMapArg) { result: Result<Map<Long?, Long?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5120,10 +5138,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5145,10 +5163,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<Long?, AllNullableTypes?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5170,10 +5188,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<String, String>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5195,10 +5213,10 @@ interface HostIntegrationCoreApi {
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5220,10 +5238,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<AnEnum, AnEnum>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5245,10 +5263,10 @@ interface HostIntegrationCoreApi {
                 result: Result<Map<Long, AllNullableTypes>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5269,10 +5287,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5293,10 +5311,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterEchoAnotherNullableEnum(anotherEnumArg) { result: Result<AnotherEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -5317,10 +5335,10 @@ interface HostIntegrationCoreApi {
             api.callFlutterSmallApiEchoString(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -6679,9 +6697,9 @@ interface HostTrivialApi {
             val wrapped: List<Any?> =
                 try {
                   api.noop()
-                  listOf(null)
+                  CoreTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  CoreTestsPigeonUtils.wrapError(exception)
+                  CoreTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -6727,10 +6745,10 @@ interface HostSmallApi {
             api.echo(aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(CoreTestsPigeonUtils.wrapResult(data))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -6749,9 +6767,9 @@ interface HostSmallApi {
             api.voidVoid { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(CoreTestsPigeonUtils.wrapError(error))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(CoreTestsPigeonUtils.wrapResult(null))
+                reply.reply(CoreTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }

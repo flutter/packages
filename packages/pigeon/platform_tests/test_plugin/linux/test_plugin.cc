@@ -213,7 +213,8 @@ echo_class_wrapper(CoreTestsPigeonTestAllClassesWrapper* wrapper,
       wrapper);
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
 static CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
 host_h_t_t_p_response(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
                       gpointer user_data) {
@@ -250,7 +251,8 @@ host_h_t_t_p_response(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
       result);
 }
 
-// This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
 static CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
 send_j_s_o_n_parser(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
                     gpointer user_data) {

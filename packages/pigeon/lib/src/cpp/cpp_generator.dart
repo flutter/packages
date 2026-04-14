@@ -953,6 +953,32 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
   }
 
   @override
+  void writeWrapResponse(
+    InternalCppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    indent.format('''
+static EncodableValue WrapResponse(const EncodableValue* result, const FlutterError* error) {
+\tif (error) {
+\t\treturn EncodableValue(EncodableList{
+\t\t\tEncodableValue(error->code()),
+\t\t\tEncodableValue(error->message()),
+\t\t\terror->details()
+\t\t});
+\t}
+\tif (result) {
+\t\treturn EncodableValue(EncodableList{
+\t\t\t*result
+\t\t});
+\t}
+\treturn EncodableValue(EncodableList{EncodableValue()});
+}''');
+  }
+
+  @override
   void writeFileImports(
     InternalCppOptions generatorOptions,
     Root root,
@@ -1008,6 +1034,13 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
     for (final using in usingDirectives) {
       indent.writeln('using $using;');
     }
+    indent.newln();
+    writeWrapResponse(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
     indent.newln();
     _writeFunctionDefinition(
       indent,
@@ -1932,7 +1965,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
                           '}',
                           () {
                             indent.writeln(
-                              'reply(WrapError("$argName unexpectedly null."));',
+                              'FlutterError error("Error", "$argName unexpectedly null.", EncodableValue());',
+                            );
+                            indent.writeln(
+                              'reply(WrapResponse(nullptr, &error));',
                             );
                             indent.writeln('return;');
                           },
@@ -1986,7 +2022,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
                   // side of potential double-call rather than no call (which is
                   // also an API violation) so that unexpected errors have a better
                   // chance of being caught and handled in a useful way.
-                  indent.writeln('reply(WrapError(exception.what()));');
+                  indent.writeln(
+                    'FlutterError error("Error", exception.what(), EncodableValue());',
+                  );
+                  indent.writeln('reply(WrapResponse(nullptr, &error));');
                 });
               });
             });
@@ -2223,55 +2262,50 @@ return EncodableValue(EncodableList{
     TypeDeclaration returnType, {
     String prefix = '',
   }) {
-    final String nonErrorPath;
-    final String errorCondition;
-    final String errorGetter;
-
-    const nullValue = 'EncodableValue()';
+    // Ideally this code would use an initializer list to create
+    // an EncodableList inline, which would be less code. However,
+    // that would always copy the element, so the slightly more
+    // verbose create-and-push approach is used instead.
     if (returnType.isVoid) {
-      nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
-      errorCondition = 'output.has_value()';
-      errorGetter = 'value';
+      return '''
+${prefix}if (output.has_value()) {
+$prefix\treply(WrapResponse(nullptr, &output.value()));
+$prefix\treturn;
+$prefix}
+${prefix}reply(WrapResponse(nullptr, nullptr));''';
     } else {
       final HostDatatype hostType = getHostDatatype(
         returnType,
         _shortBaseCppTypeForBuiltinDartType,
       );
-
       const extractedValue = 'std::move(output).TakeValue()';
       final wrapperType = hostType.isBuiltin
           ? 'EncodableValue'
           : 'CustomEncodableValue';
+
       if (returnType.isNullable) {
-        // The value is a std::optional, so needs an extra layer of
-        // handling.
-        nonErrorPath =
-            '''
-${prefix}auto output_optional = $extractedValue;
-${prefix}if (output_optional) {
-$prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
-$prefix} else {
-$prefix\twrapped.push_back($nullValue);
-$prefix}''';
-      } else {
-        nonErrorPath =
-            '${prefix}wrapped.push_back($wrapperType($extractedValue));';
-      }
-      errorCondition = 'output.has_error()';
-      errorGetter = 'error';
-    }
-    // Ideally this code would use an initializer list to create
-    // an EncodableList inline, which would be less code. However,
-    // that would always copy the element, so the slightly more
-    // verbose create-and-push approach is used instead.
-    return '''
-${prefix}if ($errorCondition) {
-$prefix\treply(WrapError(output.$errorGetter()));
+        return '''
+${prefix}if (output.has_error()) {
+$prefix\treply(WrapResponse(nullptr, &output.error()));
 $prefix\treturn;
 $prefix}
-${prefix}EncodableList wrapped;
-$nonErrorPath
-${prefix}reply(EncodableValue(std::move(wrapped)));''';
+${prefix}auto output_optional = $extractedValue;
+${prefix}if (output_optional) {
+$prefix\tEncodableValue result_value($wrapperType(std::move(output_optional).value()));
+$prefix\treply(WrapResponse(&result_value, nullptr));
+$prefix} else {
+$prefix\treply(WrapResponse(nullptr, nullptr));
+$prefix}''';
+      } else {
+        return '''
+${prefix}if (output.has_error()) {
+$prefix\treply(WrapResponse(nullptr, &output.error()));
+$prefix\treturn;
+$prefix}
+${prefix}EncodableValue result_value($wrapperType($extractedValue));
+${prefix}reply(WrapResponse(&result_value, nullptr));''';
+      }
+    }
   }
 
   @override
