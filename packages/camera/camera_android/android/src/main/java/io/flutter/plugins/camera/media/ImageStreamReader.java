@@ -264,8 +264,47 @@ public class ImageStreamReader {
     imageReader.setOnImageAvailableListener(null, handler);
   }
 
+  /**
+   * Drains all pending frames from the ImageReader to prevent orphaned callbacks.
+   * This must be called before closing the ImageReader.
+   */
+  public void drainPendingFrames() {
+    if (imageReader == null) {
+      return;
+    }
+
+    try {
+      while (true) {
+        Image image = imageReader.acquireLatestImage();
+        if (image == null) {
+          break;
+        }
+        image.close();
+      }
+      Log.i(TAG, "MY_FIX_TEST: Successfully drained all pending frames from ImageReader");
+    } catch (Exception e) {
+      Log.w(TAG, "Error draining pending frames: " + e.getMessage());
+    }
+  }
+
   /** Closes the image reader. */
   public void close() {
-    imageReader.close();
+    Log.i(TAG, "close");
+
+    try {
+      imageReader.setOnImageAvailableListener(null, null);
+      Log.d(TAG, "Removed ImageReader listener");
+    } catch (Exception e) {
+      Log.w(TAG, "Error removing ImageReader listener: " + e.getMessage());
+    }
+
+    drainPendingFrames();
+
+    try {
+      imageReader.close();
+      Log.d(TAG, "Closed ImageReader");
+    } catch (Exception e) {
+      Log.w(TAG, "Error closing ImageReader: " + e.getMessage());
+    }
   }
 }
