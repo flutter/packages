@@ -22,6 +22,25 @@ class CoreTestsTest;
 
 // Generated class from Pigeon.
 
+class FlutterError {
+ public:
+  explicit FlutterError(const std::string& code) : code_(code) {}
+  explicit FlutterError(const std::string& code, const std::string& message)
+      : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message,
+                        const ::flutter::EncodableValue& details)
+      : code_(code), message_(message), details_(details) {}
+
+  const std::string& code() const { return code_; }
+  const std::string& message() const { return message_; }
+  const ::flutter::EncodableValue& details() const { return details_; }
+
+ private:
+  std::string code_;
+  std::string message_;
+  ::flutter::EncodableValue details_;
+};
+
 template <class T>
 class ErrorOr {
  public:
@@ -44,25 +63,6 @@ class ErrorOr {
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
   std::variant<T, FlutterError> v_;
-};
-
-class FlutterError {
- public:
-  explicit FlutterError(const std::string& code) : code_(code) {}
-  explicit FlutterError(const std::string& code, const std::string& message)
-      : code_(code), message_(message) {}
-  explicit FlutterError(const std::string& code, const std::string& message,
-                        const ::flutter::EncodableValue& details)
-      : code_(code), message_(message), details_(details) {}
-
-  const std::string& code() const { return code_; }
-  const std::string& message() const { return message_; }
-  const ::flutter::EncodableValue& details() const { return details_; }
-
- private:
-  std::string code_;
-  std::string message_;
-  ::flutter::EncodableValue details_;
 };
 
 enum class AnEnum {

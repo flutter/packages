@@ -278,16 +278,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
     Root root,
     Indent indent, {
     required String dartPackageName,
-  }) {
-    if (root.containsHostApi) {
-      _writeErrorOr(
-        indent,
-        friends: root.apis
-            .where((Api api) => api is AstFlutterApi || api is AstHostApi)
-            .map((Api api) => api.name),
-      );
-    }
-  }
+  }) {}
 
   @override
   void writeErrorClass(
@@ -316,6 +307,14 @@ class FlutterError {
 \tstd::string message_;
 \t::flutter::EncodableValue details_;
 };''');
+    if (root.containsHostApi) {
+      _writeErrorOr(
+        indent,
+        friends: root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)
+            .map((Api api) => api.name),
+      );
+    }
   }
 
   @override

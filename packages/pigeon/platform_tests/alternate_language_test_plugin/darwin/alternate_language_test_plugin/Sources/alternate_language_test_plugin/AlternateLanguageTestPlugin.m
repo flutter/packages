@@ -444,6 +444,11 @@
                                          acronymsEnum:enumBox];
 }
 
+- (nullable FLTAcronymsAndTestCase *)echoAcronyms:(FLTAcronymsAndTestCase *)acronyms
+                                            error:(FlutterError *_Nullable *_Nonnull)error {
+  return acronyms;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

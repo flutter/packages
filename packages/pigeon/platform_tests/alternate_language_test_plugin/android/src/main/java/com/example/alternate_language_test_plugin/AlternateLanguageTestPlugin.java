@@ -461,6 +461,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull AcronymsAndTestCase echoAcronyms(@NonNull AcronymsAndTestCase acronyms) {
+    return acronyms;
+  }
+
+  @Override
   public void noopAsync(@NonNull VoidResult result) {
     result.success();
   }

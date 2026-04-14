@@ -2469,10 +2469,10 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
                   binaryMessenger: binaryMessenger, codec: codec)
                 if api != nil {
                   $varChannelName.setMessageHandler { message, reply in
-                    reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
-                                                 message: "Call to $methodName requires @$availableAnnotation.",
-                                                 details: nil
-                                                )))
+                    reply(wrapResponse(nil, FlutterError(code: "PigeonUnsupportedOperationError",
+                                                         message: "Call to $methodName requires @$availableAnnotation.",
+                                                         details: nil
+                                                        )))
                   }
                 } else {
                   $varChannelName.setMessageHandler(nil)

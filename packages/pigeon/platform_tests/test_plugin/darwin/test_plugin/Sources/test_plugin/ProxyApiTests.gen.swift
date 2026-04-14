@@ -4304,7 +4304,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       if api != nil {
         pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
           reply(
-            wrapError(
+            wrapResponse(
+              nil,
               FlutterError(
                 code: "PigeonUnsupportedOperationError",
                 message:
@@ -4341,7 +4342,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       if api != nil {
         aMethodChannel.setMessageHandler { message, reply in
           reply(
-            wrapError(
+            wrapResponse(
+              nil,
               FlutterError(
                 code: "PigeonUnsupportedOperationError",
                 message: "Call to aMethod requires @available(iOS 15.0.0, macOS 10.0.0, *).",
