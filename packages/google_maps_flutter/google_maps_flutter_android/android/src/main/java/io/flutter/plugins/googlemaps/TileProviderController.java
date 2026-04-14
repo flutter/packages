@@ -87,8 +87,7 @@ class TileProviderController implements TileProvider {
 
     @Override
     public void error(@NonNull Throwable error) {
-      if (error instanceof FlutterError) {
-        FlutterError flutterError = (FlutterError) error;
+      if (error instanceof FlutterError flutterError) {
         Log.e(
             TAG,
             "Can't get tile: errorCode = "

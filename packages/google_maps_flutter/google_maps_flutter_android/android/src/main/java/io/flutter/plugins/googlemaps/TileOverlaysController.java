@@ -103,9 +103,4 @@ class TileOverlaysController {
       tileOverlayIdToController.remove(tileOverlayId);
     }
   }
-
-  @SuppressWarnings("unchecked")
-  private static String getTileOverlayId(Map<String, ?> tileOverlay) {
-    return (String) tileOverlay.get("tileOverlayId");
-  }
 }

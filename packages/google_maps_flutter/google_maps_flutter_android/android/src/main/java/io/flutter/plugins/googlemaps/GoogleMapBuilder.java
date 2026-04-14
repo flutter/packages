@@ -16,7 +16,7 @@ import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.List;
 
 class GoogleMapBuilder implements GoogleMapOptionsSink {
-  private final GoogleMapOptions options = new GoogleMapOptions();
+  private final @NonNull GoogleMapOptions options = new GoogleMapOptions();
   private boolean trackCameraPosition = false;
   private boolean myLocationEnabled = false;
   private boolean myLocationButtonEnabled = false;

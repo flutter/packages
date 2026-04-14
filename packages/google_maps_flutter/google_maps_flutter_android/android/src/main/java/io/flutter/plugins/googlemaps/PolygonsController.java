@@ -88,8 +88,4 @@ class PolygonsController {
       Convert.interpretPolygonOptions(polygon, polygonController);
     }
   }
-
-  private static String getPolygonId(Map<String, ?> polygon) {
-    return (String) polygon.get("polygonId");
-  }
 }

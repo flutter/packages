@@ -28,7 +28,7 @@ class MarkersController {
   private final AssetManager assetManager;
   private final float density;
   private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
-  private @NonNull PlatformMarkerType markerType;
+  private @NonNull final PlatformMarkerType markerType;
 
   MarkersController(
       @NonNull MapsCallbackApi flutterApi,

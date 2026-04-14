@@ -14,10 +14,10 @@ import com.google.maps.android.clustering.ClusterItem;
 import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 
 class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
-  private final MarkerOptions markerOptions;
+  @NonNull private final MarkerOptions markerOptions;
   @Nullable private final AdvancedMarkerOptions advancedMarkerOptions;
-  private String clusterManagerId;
-  private String markerId;
+  private final String clusterManagerId;
+  private final String markerId;
   private boolean consumeTapEvents;
 
   MarkerBuilder(String markerId, String clusterManagerId, @NonNull PlatformMarkerType markerType) {
@@ -138,7 +138,7 @@ class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
   }
 
   @Override
-  public LatLng getPosition() {
+  public @NonNull LatLng getPosition() {
     return markerOptions.getPosition();
   }
 

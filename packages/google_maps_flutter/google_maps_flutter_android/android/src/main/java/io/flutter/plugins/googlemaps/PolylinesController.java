@@ -94,8 +94,4 @@ class PolylinesController {
       Convert.interpretPolylineOptions(polyline, polylineController, assetManager, density);
     }
   }
-
-  private static String getPolylineId(Map<String, ?> polyline) {
-    return (String) polyline.get("polylineId");
-  }
 }

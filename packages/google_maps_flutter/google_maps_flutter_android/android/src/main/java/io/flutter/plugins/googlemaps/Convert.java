@@ -45,7 +45,6 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
 import io.flutter.plugins.googlemaps.Messages.FlutterError;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,9 +65,7 @@ class Convert {
       float density,
       BitmapDescriptorFactoryWrapper wrapper) {
     Object bitmap = platformBitmap.getBitmap();
-    if (bitmap instanceof Messages.PlatformBitmapDefaultMarker) {
-      Messages.PlatformBitmapDefaultMarker typedBitmap =
-          (Messages.PlatformBitmapDefaultMarker) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapDefaultMarker typedBitmap) {
       if (typedBitmap.getHue() == null) {
         return BitmapDescriptorFactory.defaultMarker();
       } else {
@@ -76,8 +73,7 @@ class Convert {
         return BitmapDescriptorFactory.defaultMarker(hue);
       }
     }
-    if (bitmap instanceof Messages.PlatformBitmapAsset) {
-      Messages.PlatformBitmapAsset typedBitmap = (Messages.PlatformBitmapAsset) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapAsset typedBitmap) {
       final String assetPath = typedBitmap.getName();
       final String assetPackage = typedBitmap.getPkg();
       if (assetPackage == null) {
@@ -90,27 +86,22 @@ class Convert {
                 .getLookupKeyForAsset(assetPath, assetPackage));
       }
     }
-    if (bitmap instanceof Messages.PlatformBitmapAssetImage) {
-      Messages.PlatformBitmapAssetImage typedBitmap = (Messages.PlatformBitmapAssetImage) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapAssetImage typedBitmap) {
       final String assetImagePath = typedBitmap.getName();
       return BitmapDescriptorFactory.fromAsset(
           FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
     }
-    if (bitmap instanceof Messages.PlatformBitmapBytes) {
-      Messages.PlatformBitmapBytes typedBitmap = (Messages.PlatformBitmapBytes) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapBytes typedBitmap) {
       return getBitmapFromBytesLegacy(typedBitmap);
     }
-    if (bitmap instanceof Messages.PlatformBitmapAssetMap) {
-      Messages.PlatformBitmapAssetMap typedBitmap = (Messages.PlatformBitmapAssetMap) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapAssetMap typedBitmap) {
       return getBitmapFromAsset(
           typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
     }
-    if (bitmap instanceof Messages.PlatformBitmapBytesMap) {
-      Messages.PlatformBitmapBytesMap typedBitmap = (Messages.PlatformBitmapBytesMap) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapBytesMap typedBitmap) {
       return getBitmapFromBytes(typedBitmap, density, wrapper);
     }
-    if (bitmap instanceof Messages.PlatformBitmapPinConfig) {
-      Messages.PlatformBitmapPinConfig pinConfigBitmap = (Messages.PlatformBitmapPinConfig) bitmap;
+    if (bitmap instanceof Messages.PlatformBitmapPinConfig pinConfigBitmap) {
       return getBitmapFromPinConfigBuilder(pinConfigBitmap, assetManager, density, wrapper);
     }
     throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
@@ -158,11 +149,11 @@ class Convert {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
             int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
 
-            if (width != null && height == null) {
+            if (height == null) {
               // If only width is provided, calculate height based on aspect ratio.
               double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
               targetHeight = (int) (targetWidth * aspectRatio);
-            } else if (height != null && width == null) {
+            } else if (width == null) {
               // If only height is provided, calculate width based on aspect ratio.
               double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
               targetWidth = (int) (targetHeight * aspectRatio);
@@ -288,20 +279,18 @@ class Convert {
       case AUTO:
         final Double width = assetMap.getWidth();
         final Double height = assetMap.getHeight();
-        InputStream inputStream = null;
-        try {
-          inputStream = assetManager.open(assetKey);
+        try (InputStream inputStream = assetManager.open(assetKey)) {
           Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
           if (width != null || height != null) {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
             int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
 
-            if (width != null && height == null) {
+            if (height == null) {
               // If only width is provided, calculate height based on aspect ratio.
               double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
               targetHeight = (int) (targetWidth * aspectRatio);
-            } else if (height != null && width == null) {
+            } else if (width == null) {
               // If only height is provided, calculate width based on aspect ratio.
               double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
               targetWidth = (int) (targetHeight * aspectRatio);
@@ -315,14 +304,6 @@ class Convert {
           }
         } catch (Exception e) {
           throw new IllegalArgumentException("'asset' cannot open asset: " + assetName, e);
-        } finally {
-          if (inputStream != null) {
-            try {
-              inputStream.close();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
         }
       case NONE:
         break;
@@ -343,51 +324,36 @@ class Convert {
 
   static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
     Object cameraUpdate = update.getCameraUpdate();
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition) {
-      Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition =
-          (Messages.PlatformCameraUpdateNewCameraPosition) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition) {
       return CameraUpdateFactory.newCameraPosition(
           cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng) {
-      Messages.PlatformCameraUpdateNewLatLng newLatLng =
-          (Messages.PlatformCameraUpdateNewLatLng) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng newLatLng) {
       return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom) {
-      Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom =
-          (Messages.PlatformCameraUpdateNewLatLngZoom) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom) {
       return CameraUpdateFactory.newLatLngZoom(
           latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
-      Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds =
-          (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds) {
       return CameraUpdateFactory.newLatLngBounds(
           latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
           (int) (newLatLngBounds.getPadding() * density));
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy) {
-      Messages.PlatformCameraUpdateScrollBy scrollBy =
-          (Messages.PlatformCameraUpdateScrollBy) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy scrollBy) {
       return CameraUpdateFactory.scrollBy(
           scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy) {
-      Messages.PlatformCameraUpdateZoomBy zoomBy =
-          (Messages.PlatformCameraUpdateZoomBy) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy zoomBy) {
       final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
       return (focus != null)
           ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
           : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo) {
-      Messages.PlatformCameraUpdateZoomTo zoomTo =
-          (Messages.PlatformCameraUpdateZoomTo) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo zoomTo) {
       return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
     }
-    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom) {
-      Messages.PlatformCameraUpdateZoom zoom = (Messages.PlatformCameraUpdateZoom) cameraUpdate;
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom zoom) {
       return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
     }
     throw new IllegalArgumentException(
@@ -404,19 +370,13 @@ class Convert {
   }
 
   static int toMapType(@NonNull Messages.PlatformMapType type) {
-    switch (type) {
-      case NONE:
-        return MAP_TYPE_NONE;
-      case NORMAL:
-        return MAP_TYPE_NORMAL;
-      case SATELLITE:
-        return MAP_TYPE_SATELLITE;
-      case TERRAIN:
-        return MAP_TYPE_TERRAIN;
-      case HYBRID:
-        return MAP_TYPE_HYBRID;
-    }
-    return MAP_TYPE_NORMAL;
+    return switch (type) {
+      case NONE -> MAP_TYPE_NONE;
+      case NORMAL -> MAP_TYPE_NORMAL;
+      case SATELLITE -> MAP_TYPE_SATELLITE;
+      case TERRAIN -> MAP_TYPE_TERRAIN;
+      case HYBRID -> MAP_TYPE_HYBRID;
+    };
   }
 
   // For now, suppress the deprecation warning for LEGACY; in theory using it
@@ -432,13 +392,10 @@ class Convert {
     if (type == null) {
       return null;
     }
-    switch (type) {
-      case LATEST:
-        return MapsInitializer.Renderer.LATEST;
-      case LEGACY:
-        return MapsInitializer.Renderer.LEGACY;
-    }
-    return null;
+    return switch (type) {
+      case LATEST -> MapsInitializer.Renderer.LATEST;
+      case LEGACY -> MapsInitializer.Renderer.LEGACY;
+    };
   }
 
   static @NonNull Messages.PlatformCameraPosition cameraPositionToPigeon(
@@ -684,15 +641,11 @@ class Convert {
   }
 
   static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
-    switch (jointType) {
-      case MITERED:
-        return JointType.DEFAULT;
-      case BEVEL:
-        return JointType.BEVEL;
-      case ROUND:
-        return JointType.ROUND;
-    }
-    return JointType.DEFAULT;
+    return switch (jointType) {
+      case MITERED -> JointType.DEFAULT;
+      case BEVEL -> JointType.BEVEL;
+      case ROUND -> JointType.ROUND;
+    };
   }
 
   /**
@@ -704,16 +657,13 @@ class Convert {
    */
   static int collisionBehaviorFromPigeon(
       @NonNull Messages.PlatformMarkerCollisionBehavior collisionBehavior) {
-    switch (collisionBehavior) {
-      case REQUIRED_DISPLAY:
-        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
-      case OPTIONAL_AND_HIDES_LOWER_PRIORITY:
-        return AdvancedMarkerOptions.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
-      case REQUIRED_AND_HIDES_OPTIONAL:
-        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
-      default:
-        return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
-    }
+    return switch (collisionBehavior) {
+      case REQUIRED_DISPLAY -> AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
+      case OPTIONAL_AND_HIDES_LOWER_PRIORITY ->
+          AdvancedMarkerOptions.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
+      case REQUIRED_AND_HIDES_OPTIONAL ->
+          AdvancedMarkerOptions.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
+    };
   }
 
   static String interpretPolylineOptions(
@@ -750,19 +700,7 @@ class Convert {
   /**
    * Set the options in the given heatmap object to the given sink.
    *
-   * @param data the object expected to be a Map containing the heatmap options. The options map is
-   *     expected to have the following structure:
-   *     <pre>{@code
-   * {
-   *   "heatmapId": String,
-   *   "data": List, // List of serialized weighted lat/lng
-   *   "gradient": Map, // Serialized heatmap gradient
-   *   "maxIntensity": Double,
-   *   "opacity": Double,
-   *   "radius": Integer
-   * }
-   * }</pre>
-   *
+   * @param heatmap the heatmap object to read settings from.
    * @param sink the HeatmapOptionsSink where the options will be set.
    * @return the heatmapId.
    * @throws IllegalArgumentException if heatmapId is null.
@@ -865,22 +803,19 @@ class Convert {
 
   private static Cap capFromPigeon(
       Messages.PlatformCap cap, AssetManager assetManager, float density) {
-    switch (cap.getType()) {
-      case BUTT_CAP:
-        return new ButtCap();
-      case ROUND_CAP:
-        return new RoundCap();
-      case SQUARE_CAP:
-        return new SquareCap();
-      case CUSTOM_CAP:
+    return switch (cap.getType()) {
+      case BUTT_CAP -> new ButtCap();
+      case ROUND_CAP -> new RoundCap();
+      case SQUARE_CAP -> new SquareCap();
+      case CUSTOM_CAP -> {
         if (cap.getRefWidth() == null) {
           throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
         }
-        return new CustomCap(
+        yield new CustomCap(
             toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
             cap.getRefWidth().floatValue());
-    }
-    throw new IllegalArgumentException("Unrecognized PlatformCap type: " + cap.getType());
+      }
+    };
   }
 
   static String interpretTileOverlayOptions(

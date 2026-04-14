@@ -41,7 +41,7 @@ class ClusterManagersController
   @NonNull private final MapsCallbackApi flutterApi;
   @Nullable private MarkerManager markerManager;
   @Nullable private GoogleMap googleMap;
-  @NonNull private PlatformMarkerType markerType;
+  @NonNull private final PlatformMarkerType markerType;
 
   @Nullable
   private ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener;
@@ -116,7 +116,7 @@ class ClusterManagersController
   /** Adds new ClusterManager to the controller. */
   void addClusterManager(String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager =
-        new ClusterManager<MarkerBuilder>(context, googleMap, markerManager);
+        new ClusterManager<>(context, googleMap, markerManager);
     initializeRenderer(clusterManager);
     clusterManagerIdToManager.put(clusterManagerId, clusterManager);
   }
@@ -126,17 +126,12 @@ class ClusterManagersController
    * advanced markers and MarkerClusterRenderer is used for default markers.
    */
   private void initializeRenderer(ClusterManager<MarkerBuilder> clusterManager) {
-    final ClusterRenderer<MarkerBuilder> clusterRenderer;
-    switch (markerType) {
-      case ADVANCED_MARKER:
-        clusterRenderer =
-            new AdvancedMarkerClusterRenderer<>(context, googleMap, clusterManager, this);
-        break;
-      case MARKER:
-      default:
-        clusterRenderer = new MarkerClusterRenderer<>(context, googleMap, clusterManager, this);
-        break;
-    }
+    final ClusterRenderer<MarkerBuilder> clusterRenderer =
+        switch (markerType) {
+          case ADVANCED_MARKER ->
+              new AdvancedMarkerClusterRenderer<>(context, googleMap, clusterManager, this);
+          default -> new MarkerClusterRenderer<>(context, googleMap, clusterManager, this);
+        };
     clusterManager.setRenderer(clusterRenderer);
     initListenersForClusterManager(
         clusterManager, this, clusterItemClickListener, clusterItemInfoWindowClickListener);
@@ -154,7 +149,7 @@ class ClusterManagersController
    * to this cluster manager is removed from the clusterManagerIdToManager and it will be garbage
    * collected later.
    */
-  private void removeClusterManager(Object clusterManagerId) {
+  private void removeClusterManager(String clusterManagerId) {
     // Remove the cluster manager from the hash map to allow it to be garbage collected.
     final ClusterManager<MarkerBuilder> clusterManager =
         clusterManagerIdToManager.remove(clusterManagerId);
@@ -211,15 +206,6 @@ class ClusterManagersController
     if (clusterItemRenderedListener != null) {
       clusterItemRenderedListener.onClusterItemRendered(item, marker);
     }
-  }
-
-  /** Reads clusterManagerId from object data. */
-  @SuppressWarnings("unchecked")
-  private static String getClusterManagerId(Object clusterManagerData) {
-    Map<String, Object> clusterMap = (Map<String, Object>) clusterManagerData;
-    // Ref: google_maps_flutter_platform_interface/lib/src/types/cluster_manager.dart
-    // ClusterManager.toJson() method.
-    return (String) clusterMap.get("clusterManagerId");
   }
 
   /**
