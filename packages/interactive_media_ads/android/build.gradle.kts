@@ -4,7 +4,7 @@ group = "dev.flutter.packages.interactive_media_ads"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    val kotlinVersion = "2.3.0"
+    val kotlinVersion = "2.3.20"
     repositories {
         google()
         mavenCentral()

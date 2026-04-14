@@ -4,7 +4,7 @@ group = "com.example.test_plugin"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    val kotlinVersion = "2.3.0"
+    val kotlinVersion = "2.3.20"
     repositories {
         google()
         mavenCentral()
