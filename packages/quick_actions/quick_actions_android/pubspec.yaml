@@ -20,12 +20,13 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.10.0
   quick_actions_platform_interface: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^26.1.0
+  pigeon: ^26.3.4
   plugin_platform_interface: ^2.1.7
 
 topics:
