@@ -14,8 +14,8 @@ const CameraPosition _kInitialPosition = CameraPosition(
 );
 
 class MapCoordinatesPage extends GoogleMapExampleAppPage {
-  const MapCoordinatesPage({Key? key})
-    : super(const Icon(Icons.map), 'Map coordinates', key: key);
+  const MapCoordinatesPage({super.key})
+    : super(const Icon(Icons.map), 'Map coordinates');
 
   @override
   Widget build(BuildContext context) {
