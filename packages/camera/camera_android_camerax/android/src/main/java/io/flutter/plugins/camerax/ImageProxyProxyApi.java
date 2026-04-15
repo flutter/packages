@@ -43,6 +43,6 @@ class ImageProxyProxyApi extends PigeonApiImageProxy {
 
   @Override
   public void close(ImageProxy pigeonInstance) {
-      pigeonInstance.close();
+    pigeonInstance.close();
   }
 }
