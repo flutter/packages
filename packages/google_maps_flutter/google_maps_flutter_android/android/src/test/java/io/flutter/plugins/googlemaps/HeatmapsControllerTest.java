@@ -41,14 +41,10 @@ public class HeatmapsControllerTest {
     final HeatmapTileProvider heatmap = mock(HeatmapTileProvider.class);
 
     final String googleHeatmapId = "abc123";
-    final List<Messages.PlatformWeightedLatLng> heatmapData =
+    final List<PlatformWeightedLatLng> heatmapData =
         List.of(
-            new Messages.PlatformWeightedLatLng.Builder()
-                .setPoint(
-                    new Messages.PlatformLatLng.Builder()
-                        .setLatitude(1.1)
-                        .setLongitude(2.2)
-                        .build())
+            new PlatformWeightedLatLng.Builder()
+                .setPoint(new PlatformLatLng.Builder().setLatitude(1.1).setLongitude(2.2).build())
                 .setWeight(3.3)
                 .build());
     final long radius = 20;
@@ -57,15 +53,15 @@ public class HeatmapsControllerTest {
     doReturn(heatmap).when(controller).buildHeatmap(any(HeatmapBuilder.class));
 
     final double opacity1 = 0.1f;
-    final Messages.PlatformHeatmap heatmapOptions1 =
-        new Messages.PlatformHeatmap.Builder()
+    final PlatformHeatmap heatmapOptions1 =
+        new PlatformHeatmap.Builder()
             .setHeatmapId(googleHeatmapId)
             .setData(heatmapData)
             .setOpacity(opacity1)
             .setRadius(radius)
             .build();
 
-    final List<Messages.PlatformHeatmap> heatmaps = Collections.singletonList(heatmapOptions1);
+    final List<PlatformHeatmap> heatmaps = Collections.singletonList(heatmapOptions1);
     controller.addHeatmaps(heatmaps);
 
     Mockito.verify(googleMap, times(1))
@@ -73,16 +69,15 @@ public class HeatmapsControllerTest {
             Mockito.argThat(argument -> argument.getTileProvider() instanceof HeatmapTileProvider));
 
     final double opacity2 = 0.2f;
-    final Messages.PlatformHeatmap heatmapOptions2 =
-        new Messages.PlatformHeatmap.Builder()
+    final PlatformHeatmap heatmapOptions2 =
+        new PlatformHeatmap.Builder()
             .setHeatmapId(googleHeatmapId)
             .setData(heatmapData)
             .setOpacity(opacity2)
             .setRadius(radius)
             .build();
 
-    final List<Messages.PlatformHeatmap> heatmapUpdates =
-        Collections.singletonList(heatmapOptions2);
+    final List<PlatformHeatmap> heatmapUpdates = Collections.singletonList(heatmapOptions2);
 
     controller.changeHeatmaps(heatmapUpdates);
     Mockito.verify(heatmap, times(1)).setOpacity(opacity2);

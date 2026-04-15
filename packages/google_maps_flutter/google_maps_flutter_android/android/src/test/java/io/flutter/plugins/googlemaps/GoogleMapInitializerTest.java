@@ -40,11 +40,10 @@ public class GoogleMapInitializerTest {
   public void initializer_OnMapsSdkInitializedWithLatestRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LATEST);
     @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
-    googleMapInitializer.initializeWithPreferredRenderer(
-        Messages.PlatformRendererType.LATEST, result);
+    Result<PlatformRendererType> result = mock(Result.class);
+    googleMapInitializer.initializeWithPreferredRenderer(PlatformRendererType.LATEST, result);
     googleMapInitializer.onMapsSdkInitialized(Renderer.LATEST);
-    verify(result, times(1)).success(Messages.PlatformRendererType.LATEST);
+    verify(result, times(1)).success(PlatformRendererType.LATEST);
     verify(result, never()).error(any());
   }
 
@@ -53,11 +52,10 @@ public class GoogleMapInitializerTest {
   public void initializer_OnMapsSdkInitializedWithLegacyRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);
     @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
-    googleMapInitializer.initializeWithPreferredRenderer(
-        Messages.PlatformRendererType.LEGACY, result);
+    Result<PlatformRendererType> result = mock(Result.class);
+    googleMapInitializer.initializeWithPreferredRenderer(PlatformRendererType.LEGACY, result);
     googleMapInitializer.onMapsSdkInitialized(Renderer.LEGACY);
-    verify(result, times(1)).success(Messages.PlatformRendererType.LEGACY);
+    verify(result, times(1)).success(PlatformRendererType.LEGACY);
     verify(result, never()).error(any());
   }
 
@@ -65,7 +63,7 @@ public class GoogleMapInitializerTest {
   public void initializer_onMethodCallWithNoRendererPreference() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(null);
     @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    Result<PlatformRendererType> result = mock(Result.class);
     googleMapInitializer.initializeWithPreferredRenderer(null, result);
     verify(result, never()).error(any());
   }

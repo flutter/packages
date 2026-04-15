@@ -10,8 +10,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,12 +50,12 @@ class MarkersController {
     this.markerCollection = markerCollection;
   }
 
-  void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
+  void addMarkers(@NonNull List<PlatformMarker> markersToAdd) {
     // Group markers by cluster manager ID for batch operations
     Map<String, List<MarkerBuilder>> markersByCluster = new HashMap<>();
     List<MarkerBuilder> nonClusteredMarkers = new ArrayList<>();
 
-    for (Messages.PlatformMarker markerToAdd : markersToAdd) {
+    for (PlatformMarker markerToAdd : markersToAdd) {
       String markerId = markerToAdd.getMarkerId();
       String clusterManagerId = markerToAdd.getClusterManagerId();
       MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId, markerType);
@@ -87,12 +85,12 @@ class MarkersController {
     }
   }
 
-  void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
+  void changeMarkers(@NonNull List<PlatformMarker> markersToChange) {
     // Collect markers that need cluster manager changes for batch processing
     Map<String, List<MarkerBuilder>> markersToAddByCluster = new HashMap<>();
     Map<String, List<MarkerBuilder>> markersToRemoveByCluster = new HashMap<>();
 
-    for (Messages.PlatformMarker markerToChange : markersToChange) {
+    for (PlatformMarker markerToChange : markersToChange) {
       String markerId = markerToChange.getMarkerId();
       MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);
       if (markerBuilder == null) {
@@ -234,7 +232,7 @@ class MarkersController {
   void showMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController == null) {
-      throw new Messages.FlutterError(
+      throw new FlutterError(
           "Invalid markerId", "showInfoWindow called with invalid markerId", null);
     }
     markerController.showInfoWindow();
@@ -243,7 +241,7 @@ class MarkersController {
   void hideMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController == null) {
-      throw new Messages.FlutterError(
+      throw new FlutterError(
           "Invalid markerId", "hideInfoWindow called with invalid markerId", null);
     }
     markerController.hideInfoWindow();
@@ -252,7 +250,7 @@ class MarkersController {
   boolean isInfoWindowShown(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController == null) {
-      throw new Messages.FlutterError(
+      throw new FlutterError(
           "Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
     }
     return markerController.isInfoWindowShown();
@@ -326,7 +324,7 @@ class MarkersController {
     }
   }
 
-  private void addMarker(@NonNull Messages.PlatformMarker marker) {
+  private void addMarker(@NonNull PlatformMarker marker) {
     String markerId = marker.getMarkerId();
     String clusterManagerId = marker.getClusterManagerId();
     MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId, markerType);
@@ -367,7 +365,7 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeMarker(@NonNull Messages.PlatformMarker marker) {
+  private void changeMarker(@NonNull PlatformMarker marker) {
     String markerId = marker.getMarkerId();
 
     MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);

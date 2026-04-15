@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.MapCapabilities;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -52,7 +51,7 @@ public class GoogleMapControllerTest {
   AutoCloseable mockCloseable;
   @Mock BinaryMessenger mockMessenger;
   @Mock GoogleMap mockGoogleMap;
-  @Mock Messages.MapsCallbackApi flutterApi;
+  @Mock MapsCallbackApi flutterApi;
   @Mock ClusterManagersController mockClusterManagersController;
   @Mock MarkersController mockMarkersController;
   @Mock PolygonsController mockPolygonsController;
@@ -221,9 +220,9 @@ public class GoogleMapControllerTest {
   @Test
   public void SetInitialClusterManagers() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
-    Messages.PlatformClusterManager initialClusterManager =
-        new Messages.PlatformClusterManager.Builder().setIdentifier("cm_1").build();
-    List<Messages.PlatformClusterManager> initialClusterManagers = new ArrayList<>();
+    PlatformClusterManager initialClusterManager =
+        new PlatformClusterManager.Builder().setIdentifier("cm_1").build();
+    List<PlatformClusterManager> initialClusterManagers = new ArrayList<>();
     initialClusterManagers.add(initialClusterManager);
     googleMapController.setInitialClusterManagers(initialClusterManagers);
     googleMapController.onMapReady(mockGoogleMap);
@@ -264,7 +263,7 @@ public class GoogleMapControllerTest {
   public void SetInitialHeatmaps() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
 
-    List<Messages.PlatformHeatmap> initialHeatmaps = List.of(new Messages.PlatformHeatmap());
+    List<PlatformHeatmap> initialHeatmaps = List.of(new PlatformHeatmap());
     googleMapController.setInitialHeatmaps(initialHeatmaps);
     googleMapController.onMapReady(mockGoogleMap);
 
@@ -276,8 +275,8 @@ public class GoogleMapControllerTest {
   public void UpdateHeatmaps() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
 
-    final List<Messages.PlatformHeatmap> toAdd = List.of(new Messages.PlatformHeatmap());
-    final List<Messages.PlatformHeatmap> toChange = List.of(new Messages.PlatformHeatmap());
+    final List<PlatformHeatmap> toAdd = List.of(new PlatformHeatmap());
+    final List<PlatformHeatmap> toChange = List.of(new PlatformHeatmap());
     final List<String> idsToRemove = List.of("hm_1");
 
     googleMapController.updateHeatmaps(toAdd, toChange, idsToRemove);
@@ -292,10 +291,10 @@ public class GoogleMapControllerTest {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
     googleMapController.onMapReady(mockGoogleMap);
 
-    Messages.PlatformCameraUpdateZoomBy newCameraPosition =
-        new Messages.PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
-    Messages.PlatformCameraUpdate cameraUpdate =
-        new Messages.PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
+    PlatformCameraUpdateZoomBy newCameraPosition =
+        new PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
+    PlatformCameraUpdate cameraUpdate =
+        new PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
 
     try (MockedStatic<CameraUpdateFactory> mockedFactory = mockStatic(CameraUpdateFactory.class)) {
       mockedFactory
@@ -312,10 +311,10 @@ public class GoogleMapControllerTest {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
     googleMapController.onMapReady(mockGoogleMap);
 
-    Messages.PlatformCameraUpdateZoomBy newCameraPosition =
-        new Messages.PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
-    Messages.PlatformCameraUpdate cameraUpdate =
-        new Messages.PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
+    PlatformCameraUpdateZoomBy newCameraPosition =
+        new PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
+    PlatformCameraUpdate cameraUpdate =
+        new PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
 
     Long durationMilliseconds = 1000L;
 
@@ -338,7 +337,7 @@ public class GoogleMapControllerTest {
     CameraPosition cameraPosition = new CameraPosition(new LatLng(10.0, 20.0), 15.0f, 30.0f, 45.0f);
     when(mockGoogleMap.getCameraPosition()).thenReturn(cameraPosition);
 
-    Messages.PlatformCameraPosition result = googleMapController.getCameraPosition();
+    PlatformCameraPosition result = googleMapController.getCameraPosition();
 
     Assert.assertEquals(cameraPosition.target.latitude, result.getTarget().getLatitude(), 1e-15);
     Assert.assertEquals(cameraPosition.target.longitude, result.getTarget().getLongitude(), 1e-15);

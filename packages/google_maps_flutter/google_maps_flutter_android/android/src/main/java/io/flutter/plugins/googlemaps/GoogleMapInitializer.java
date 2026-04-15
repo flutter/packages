@@ -15,26 +15,24 @@ import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import io.flutter.plugin.common.BinaryMessenger;
 
 /** GoogleMaps initializer used to initialize the Google Maps SDK with preferred settings. */
-final class GoogleMapInitializer
-    implements OnMapsSdkInitializedCallback, Messages.MapsInitializerApi {
+final class GoogleMapInitializer implements OnMapsSdkInitializedCallback, MapsInitializerApi {
   private static final String TAG = "GoogleMapInitializer";
   private final Context context;
-  private static Messages.Result<Messages.PlatformRendererType> initializationResult;
+  private static Result<PlatformRendererType> initializationResult;
   private boolean rendererInitialized = false;
 
   GoogleMapInitializer(Context context, BinaryMessenger binaryMessenger) {
     this.context = context;
 
-    Messages.MapsInitializerApi.setUp(binaryMessenger, this);
+    MapsInitializerApi.setUp(binaryMessenger, this);
   }
 
   @Override
   public void initializeWithPreferredRenderer(
-      @Nullable Messages.PlatformRendererType type,
-      @NonNull Messages.Result<Messages.PlatformRendererType> result) {
+      @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result) {
     if (rendererInitialized || initializationResult != null) {
       result.error(
-          new Messages.FlutterError(
+          new FlutterError(
               "Renderer already initialized",
               "Renderer initialization called multiple times",
               null));
@@ -58,7 +56,7 @@ final class GoogleMapInitializer
       mv.onDestroy();
       Log.i(TAG, "Maps warmup complete.");
     } catch (Exception e) {
-      throw new Messages.FlutterError("Could not warm up", e.toString(), null);
+      throw new FlutterError("Could not warm up", e.toString(), null);
     }
   }
 
@@ -80,14 +78,14 @@ final class GoogleMapInitializer
     if (initializationResult != null) {
       switch (renderer) {
         case LATEST:
-          initializationResult.success(Messages.PlatformRendererType.LATEST);
+          initializationResult.success(PlatformRendererType.LATEST);
           break;
         case LEGACY:
-          initializationResult.success(Messages.PlatformRendererType.LEGACY);
+          initializationResult.success(PlatformRendererType.LEGACY);
           break;
         default:
           initializationResult.error(
-              new Messages.FlutterError(
+              new FlutterError(
                   "Unknown renderer type",
                   "Initialized with unknown renderer type",
                   renderer.name()));

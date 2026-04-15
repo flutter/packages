@@ -48,14 +48,14 @@ public class CirclesControllerTest {
 
     final String id = "a_circle";
 
-    final Messages.PlatformCircle.Builder builder = new Messages.PlatformCircle.Builder();
+    final PlatformCircle.Builder builder = new PlatformCircle.Builder();
     builder
         .setCircleId(id)
         .setConsumeTapEvents(false)
-        .setFillColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
-        .setCenter(new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
+        .setFillColor(new PlatformColor.Builder().setArgbValue(0L).build())
+        .setCenter(new PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
         .setRadius(1.0)
-        .setStrokeColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
+        .setStrokeColor(new PlatformColor.Builder().setArgbValue(0L).build())
         .setStrokeWidth(1L)
         .setVisible(true)
         .setZIndex(0.0);

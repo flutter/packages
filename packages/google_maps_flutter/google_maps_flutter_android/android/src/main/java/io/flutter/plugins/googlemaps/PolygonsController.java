@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +31,14 @@ class PolygonsController {
     this.googleMap = googleMap;
   }
 
-  void addPolygons(@NonNull List<Messages.PlatformPolygon> polygonsToAdd) {
-    for (Messages.PlatformPolygon polygonToAdd : polygonsToAdd) {
+  void addPolygons(@NonNull List<PlatformPolygon> polygonsToAdd) {
+    for (PlatformPolygon polygonToAdd : polygonsToAdd) {
       addPolygon(polygonToAdd);
     }
   }
 
-  void changePolygons(@NonNull List<Messages.PlatformPolygon> polygonsToChange) {
-    for (Messages.PlatformPolygon polygonToChange : polygonsToChange) {
+  void changePolygons(@NonNull List<PlatformPolygon> polygonsToChange) {
+    for (PlatformPolygon polygonToChange : polygonsToChange) {
       changePolygon(polygonToChange);
     }
   }
@@ -67,7 +66,7 @@ class PolygonsController {
     return false;
   }
 
-  private void addPolygon(@NonNull Messages.PlatformPolygon polygon) {
+  private void addPolygon(@NonNull PlatformPolygon polygon) {
     PolygonBuilder polygonBuilder = new PolygonBuilder(density);
     String polygonId = Convert.interpretPolygonOptions(polygon, polygonBuilder);
     PolygonOptions options = polygonBuilder.build();
@@ -82,7 +81,7 @@ class PolygonsController {
     googleMapsPolygonIdToDartPolygonId.put(polygon.getId(), polygonId);
   }
 
-  private void changePolygon(@NonNull Messages.PlatformPolygon polygon) {
+  private void changePolygon(@NonNull PlatformPolygon polygon) {
     PolygonController polygonController = polygonIdToController.get(polygon.getPolygonId());
     if (polygonController != null) {
       Convert.interpretPolygonOptions(polygon, polygonController);

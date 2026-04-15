@@ -9,7 +9,6 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +31,14 @@ class CirclesController {
     this.googleMap = googleMap;
   }
 
-  void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
-    for (Messages.PlatformCircle circleToAdd : circlesToAdd) {
+  void addCircles(@NonNull List<PlatformCircle> circlesToAdd) {
+    for (PlatformCircle circleToAdd : circlesToAdd) {
       addCircle(circleToAdd);
     }
   }
 
-  void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
-    for (Messages.PlatformCircle circleToChange : circlesToChange) {
+  void changeCircles(@NonNull List<PlatformCircle> circlesToChange) {
+    for (PlatformCircle circleToChange : circlesToChange) {
       changeCircle(circleToChange);
     }
   }
@@ -67,7 +66,7 @@ class CirclesController {
     return false;
   }
 
-  void addCircle(@NonNull Messages.PlatformCircle circle) {
+  void addCircle(@NonNull PlatformCircle circle) {
     CircleBuilder circleBuilder = new CircleBuilder(density);
     String circleId = Convert.interpretCircleOptions(circle, circleBuilder);
     CircleOptions options = circleBuilder.build();
@@ -81,7 +80,7 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeCircle(@NonNull Messages.PlatformCircle circle) {
+  private void changeCircle(@NonNull PlatformCircle circle) {
     String circleId = circle.getCircleId();
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +35,14 @@ class PolylinesController {
     this.googleMap = googleMap;
   }
 
-  void addPolylines(@NonNull List<Messages.PlatformPolyline> polylinesToAdd) {
-    for (Messages.PlatformPolyline polylineToAdd : polylinesToAdd) {
+  void addPolylines(@NonNull List<PlatformPolyline> polylinesToAdd) {
+    for (PlatformPolyline polylineToAdd : polylinesToAdd) {
       addPolyline(polylineToAdd);
     }
   }
 
-  void changePolylines(@NonNull List<Messages.PlatformPolyline> polylinesToChange) {
-    for (Messages.PlatformPolyline polylineToChange : polylinesToChange) {
+  void changePolylines(@NonNull List<PlatformPolyline> polylinesToChange) {
+    for (PlatformPolyline polylineToChange : polylinesToChange) {
       changePolyline(polylineToChange);
     }
   }
@@ -71,7 +70,7 @@ class PolylinesController {
     return false;
   }
 
-  private void addPolyline(@NonNull Messages.PlatformPolyline polyline) {
+  private void addPolyline(@NonNull PlatformPolyline polyline) {
     PolylineBuilder polylineBuilder = new PolylineBuilder(density);
     String polylineId =
         Convert.interpretPolylineOptions(polyline, polylineBuilder, assetManager, density);
@@ -87,7 +86,7 @@ class PolylinesController {
     googleMapsPolylineIdToDartPolylineId.put(polyline.getId(), polylineId);
   }
 
-  private void changePolyline(@NonNull Messages.PlatformPolyline polyline) {
+  private void changePolyline(@NonNull PlatformPolyline polyline) {
     String polylineId = polyline.getPolylineId();
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {

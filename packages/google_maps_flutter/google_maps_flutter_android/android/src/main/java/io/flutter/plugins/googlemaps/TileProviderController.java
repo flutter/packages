@@ -11,8 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
-import io.flutter.plugins.googlemaps.Messages.FlutterError;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.concurrent.CountDownLatch;
 
 class TileProviderController implements TileProvider {
@@ -34,13 +32,13 @@ class TileProviderController implements TileProvider {
     return worker.getTile();
   }
 
-  private final class Worker implements Messages.Result<Messages.PlatformTile> {
+  private final class Worker implements Result<PlatformTile> {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
     private final int x;
     private final int y;
     private final int zoom;
-    private @Nullable Messages.PlatformTile result;
+    private @Nullable PlatformTile result;
 
     Worker(int x, int y, int zoom) {
       this.x = x;
@@ -50,8 +48,8 @@ class TileProviderController implements TileProvider {
 
     @NonNull
     Tile getTile() {
-      final Messages.PlatformPoint location =
-          new Messages.PlatformPoint.Builder().setX((long) x).setY((long) y).build();
+      final PlatformPoint location =
+          new PlatformPoint.Builder().setX((long) x).setY((long) y).build();
       handler.post(() -> flutterApi.getTileOverlayTile(tileOverlayId, location, (long) zoom, this));
       try {
         // `flutterApi.getTileOverlayTile` is async, so use a `countDownLatch` to make it
@@ -80,7 +78,7 @@ class TileProviderController implements TileProvider {
     }
 
     @Override
-    public void success(@NonNull Messages.PlatformTile result) {
+    public void success(@NonNull PlatformTile result) {
       this.result = result;
       countDownLatch.countDown();
     }

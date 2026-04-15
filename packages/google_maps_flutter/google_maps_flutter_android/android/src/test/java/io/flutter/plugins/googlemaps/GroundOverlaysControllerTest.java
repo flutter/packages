@@ -45,15 +45,15 @@ public class GroundOverlaysControllerTest {
   private final String base64Image = TestImageUtils.generateBase64Image();
 
   @NonNull
-  private Messages.PlatformGroundOverlay.Builder defaultGroundOverlayBuilder() {
+  private PlatformGroundOverlay.Builder defaultGroundOverlayBuilder() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    return new Messages.PlatformGroundOverlay.Builder()
+    return new PlatformGroundOverlay.Builder()
         .setImage(
-            new Messages.PlatformBitmap.Builder()
+            new PlatformBitmap.Builder()
                 .setBitmap(
-                    new Messages.PlatformBitmapBytesMap.Builder()
-                        .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+                    new PlatformBitmapBytesMap.Builder()
+                        .setBitmapScaling(PlatformMapBitmapScaling.AUTO)
                         .setImagePixelRatio(2.0)
                         .setByteData(bmpData)
                         .setWidth(100.0)
@@ -71,8 +71,7 @@ public class GroundOverlaysControllerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     Context context = ApplicationProvider.getApplicationContext();
     AssetManager assetManager = context.getAssets();
-    Messages.MapsCallbackApi flutterApi =
-        spy(new Messages.MapsCallbackApi(mock(BinaryMessenger.class)));
+    MapsCallbackApi flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
     controller =
         spy(
             new GroundOverlaysController(

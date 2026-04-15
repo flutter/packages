@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
  *
  * <p>Longer term, any call using this is likely a good candidate to migrate to event channels.
  */
-public class NoOpVoidResult implements Messages.VoidResult {
+public class NoOpVoidResult implements VoidResult {
   @Override
   public void success() {}
 

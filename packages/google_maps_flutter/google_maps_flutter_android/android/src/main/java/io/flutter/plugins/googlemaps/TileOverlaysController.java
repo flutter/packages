@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +28,14 @@ class TileOverlaysController {
     this.googleMap = googleMap;
   }
 
-  void addTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToAdd) {
-    for (Messages.PlatformTileOverlay tileOverlayToAdd : tileOverlaysToAdd) {
+  void addTileOverlays(@NonNull List<PlatformTileOverlay> tileOverlaysToAdd) {
+    for (PlatformTileOverlay tileOverlayToAdd : tileOverlaysToAdd) {
       addTileOverlay(tileOverlayToAdd);
     }
   }
 
-  void changeTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToChange) {
-    for (Messages.PlatformTileOverlay tileOverlayToChange : tileOverlaysToChange) {
+  void changeTileOverlays(@NonNull List<PlatformTileOverlay> tileOverlaysToChange) {
+    for (PlatformTileOverlay tileOverlayToChange : tileOverlaysToChange) {
       changeTileOverlay(tileOverlayToChange);
     }
   }
@@ -75,7 +74,7 @@ class TileOverlaysController {
     return tileOverlayController.getTileOverlay();
   }
 
-  private void addTileOverlay(@NonNull Messages.PlatformTileOverlay platformTileOverlay) {
+  private void addTileOverlay(@NonNull PlatformTileOverlay platformTileOverlay) {
     TileOverlayBuilder tileOverlayOptionsBuilder = new TileOverlayBuilder();
     String tileOverlayId =
         Convert.interpretTileOverlayOptions(platformTileOverlay, tileOverlayOptionsBuilder);
@@ -88,7 +87,7 @@ class TileOverlaysController {
     tileOverlayIdToController.put(tileOverlayId, tileOverlayController);
   }
 
-  private void changeTileOverlay(@NonNull Messages.PlatformTileOverlay platformTileOverlay) {
+  private void changeTileOverlay(@NonNull PlatformTileOverlay platformTileOverlay) {
     String tileOverlayId = platformTileOverlay.getTileOverlayId();
     TileOverlayController tileOverlayController = tileOverlayIdToController.get(tileOverlayId);
     if (tileOverlayController != null) {
