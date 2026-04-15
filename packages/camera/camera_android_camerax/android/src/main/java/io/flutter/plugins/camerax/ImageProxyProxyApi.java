@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.ImageProxy.PlaneProxy;
@@ -16,6 +17,8 @@ import java.util.List;
  * class or an instance of that class.
  */
 class ImageProxyProxyApi extends PigeonApiImageProxy {
+  private static final String TAG = "ImageProxyProxyApi";
+
   ImageProxyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -43,6 +46,18 @@ class ImageProxyProxyApi extends PigeonApiImageProxy {
 
   @Override
   public void close(ImageProxy pigeonInstance) {
-    pigeonInstance.close();
+    try {
+      // Add a small delay to allow any pending operations to complete
+      // This helps prevent BufferQueue abandoned errors
+      Thread.sleep(5);
+    } catch (InterruptedException e) {
+      // Ignore
+    }
+    
+    try {
+      pigeonInstance.close();
+    } catch (Exception e) {
+      // Ignore
+    }
   }
 }

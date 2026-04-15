@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.ImageProxy;
@@ -15,6 +16,8 @@ import java.util.Objects;
  * class or an instance of that class.
  */
 class AnalyzerProxyApi extends PigeonApiAnalyzer {
+  private static final String TAG = "AnalyzerProxyApi";
+
   AnalyzerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -40,18 +43,32 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
               new ProxyApiRegistrar.FlutterMethodRunnable() {
                 @Override
                 public void run() {
-                  api.analyze(
-                      AnalyzerImpl.this,
-                      image,
-                      ResultCompat.asCompatCallback(
-                          result -> {
-                            if (result.isFailure()) {
-                              onFailure(
-                                  "Analyzer.analyze",
-                                  Objects.requireNonNull(result.exceptionOrNull()));
-                            }
-                            return null;
-                          }));
+                  try {
+                    Log.e(TAG, "ANALYZER_ANALYZE_START");
+                    
+                    api.analyze(
+                        AnalyzerImpl.this,
+                        image,
+                        ResultCompat.asCompatCallback(
+                            result -> {
+                              if (result.isFailure()) {
+                                onFailure(
+                                    "Analyzer.analyze",
+                                    Objects.requireNonNull(result.exceptionOrNull()));
+                              }
+                              return null;
+                            }));
+                  } finally {
+                    // Close the ImageProxy after analysis is complete
+                    // This prevents BufferQueue abandoned errors when camera is disposed
+                    try {
+                      Log.e(TAG, "ANALYZER_CLOSING_PROXY");
+                      image.close();
+                      Log.e(TAG, "ANALYZER_PROXY_CLOSED");
+                    } catch (Exception e) {
+                      Log.e(TAG, "ANALYZER_CLOSE_ERROR: " + e.getMessage());
+                    }
+                  }
                 }
               });
     }
