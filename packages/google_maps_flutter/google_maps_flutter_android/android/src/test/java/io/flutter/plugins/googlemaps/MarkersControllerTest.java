@@ -356,8 +356,7 @@ public class MarkersControllerTest {
             Mockito.argThat(
                 markerBuilders ->
                     markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                        && markerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
 
     // Verify addItem is never called (we're using batch operation)
@@ -398,8 +397,7 @@ public class MarkersControllerTest {
             Mockito.argThat(
                 markerBuilders ->
                     markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                        && markerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId))));
 
     // Verify removeItem is never called (we're using batch operation)
@@ -453,8 +451,7 @@ public class MarkersControllerTest {
             Mockito.argThat(
                 markerBuilders ->
                     markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                        && markerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId1))));
 
     // Verify addItems is called exactly once for cluster manager 2 with all 5 markers
@@ -464,8 +461,7 @@ public class MarkersControllerTest {
             Mockito.argThat(
                 markerBuilders ->
                     markerBuilders.size() == 5
-                        && markerBuilders
-                            .stream()
+                        && markerBuilders.stream()
                             .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId2))));
 
     // Verify individual operations are never called (we're using batch operations)
