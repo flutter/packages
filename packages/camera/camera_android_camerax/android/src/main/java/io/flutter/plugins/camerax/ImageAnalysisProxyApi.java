@@ -78,6 +78,15 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   @Override
   public void clearAnalyzer(ImageAnalysis pigeonInstance) {
     pigeonInstance.clearAnalyzer();
+    
+    // Add delay to allow ImageReader to drain pending frames
+    // This prevents "BufferQueue has been abandoned" errors when disposing camera
+    try {
+      Thread.sleep(100);  // 100ms delay for frame draining
+    } catch (InterruptedException e) {
+      Log.w("ImageAnalysisProxyApi", "clearAnalyzer interrupted during frame drain delay", e);
+    }
+    
     getPigeonRegistrar()
         .getInstanceManager()
         .setClearFinalizedWeakReferencesInterval(

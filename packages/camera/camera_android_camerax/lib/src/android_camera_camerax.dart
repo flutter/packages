@@ -521,28 +521,46 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
   }
 
-/// Releases the resources of the accessed camera with ID [cameraId].
+  /// Releases the resources of the accessed camera with ID [cameraId].
   @override
   Future<void> dispose(int cameraId) async {
     if (cameraId < 0) {
       return;
     }
-    
+
     // Clear analyzer first to stop ImageAnalysis callback thread
     // This prevents BufferQueue abandoned errors during camera close
-    await imageAnalysis?.clearAnalyzer();
-    
-    // Release surface provider - only if preview was initialized
-    try {
-      await preview?.releaseSurfaceProvider();
-    } catch (_) {
-      // Ignore if preview was never initialized
+    if (imageAnalysis != null) {
+      await imageAnalysis!.clearAnalyzer();
+      // Wait for frames to drain after clearing analyzer
+      // This is CRITICAL - gives pending frames time to be processed
+      await Future<void>.delayed(const Duration(milliseconds: 100));
     }
-    await liveCameraState?.removeObservers();
-    
+
     // Unbind all use cases - this triggers camera closure
-    await processCameraProvider?.unbindAll();
-    
+    if (processCameraProvider != null) {
+      await processCameraProvider!.unbindAll();
+
+      // Wait for camera to fully close after unbind
+      // This prevents issues when quickly opening new camera
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    }
+
+    // Release surface provider - only if preview was initialized
+    if (preview != null) {
+      try {
+        await preview!.releaseSurfaceProvider();
+      } catch (_) {
+        // Ignore if preview was never initialized
+      }
+    }
+
+    // Remove observers from camera state
+    if (liveCameraState != null) {
+      await liveCameraState!.removeObservers();
+    }
+
+    // Stop listening for device orientation changes
     await deviceOrientationManager.stopListeningForDeviceOrientationChange();
   }
 
