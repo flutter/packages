@@ -213,6 +213,82 @@ echo_class_wrapper(CoreTestsPigeonTestAllClassesWrapper* wrapper,
       wrapper);
 }
 
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
+static CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
+host_h_t_t_p_response(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
+                      gpointer user_data) {
+  const gchar* http_response =
+      core_tests_pigeon_test_acronyms_and_test_case_get_http_response(acronyms);
+  const gchar* json_parser =
+      core_tests_pigeon_test_acronyms_and_test_case_get_json_parser(acronyms);
+  const gchar* xml_node =
+      core_tests_pigeon_test_acronyms_and_test_case_get_xml_node(acronyms);
+
+  CoreTestsPigeonTestAcronymsEnum* incoming_enum =
+      core_tests_pigeon_test_acronyms_and_test_case_get_acronyms_enum(acronyms);
+  CoreTestsPigeonTestAcronymsEnum enum_val;
+  CoreTestsPigeonTestAcronymsEnum* enum_ptr = NULL;
+
+  if (incoming_enum) {
+    switch (*incoming_enum) {
+      case PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE:
+        enum_val = PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE;
+        enum_ptr = &enum_val;
+        break;
+      case PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER:
+        enum_val = PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER;
+        enum_ptr = &enum_val;
+        break;
+    }
+  }
+
+  g_autoptr(CoreTestsPigeonTestAcronymsAndTestCase) result =
+      core_tests_pigeon_test_acronyms_and_test_case_new(
+          http_response, json_parser, xml_node, enum_ptr);
+
+  return core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new(
+      result);
+}
+
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
+static CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
+send_j_s_o_n_parser(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
+                    gpointer user_data) {
+  const gchar* http_response =
+      core_tests_pigeon_test_acronyms_and_test_case_get_http_response(acronyms);
+  const gchar* json_parser =
+      core_tests_pigeon_test_acronyms_and_test_case_get_json_parser(acronyms);
+  const gchar* xml_node =
+      core_tests_pigeon_test_acronyms_and_test_case_get_xml_node(acronyms);
+
+  CoreTestsPigeonTestAcronymsEnum* incoming_enum =
+      core_tests_pigeon_test_acronyms_and_test_case_get_acronyms_enum(acronyms);
+  CoreTestsPigeonTestAcronymsEnum enum_val;
+  CoreTestsPigeonTestAcronymsEnum* enum_ptr = NULL;
+
+  if (incoming_enum) {
+    switch (*incoming_enum) {
+      case PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE:
+        enum_val = PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE;
+        enum_ptr = &enum_val;
+        break;
+      case PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER:
+        enum_val = PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER;
+        enum_ptr = &enum_val;
+        break;
+    }
+  }
+
+  g_autoptr(CoreTestsPigeonTestAcronymsAndTestCase) result =
+      core_tests_pigeon_test_acronyms_and_test_case_new(
+          http_response, json_parser, xml_node, enum_ptr);
+
+  return core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new(
+      result);
+}
+
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* echo_enum(
 
     CoreTestsPigeonTestAnEnum an_enum, gpointer user_data) {
@@ -3242,6 +3318,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_non_null_enum_map = echo_non_null_enum_map,
     .echo_non_null_class_map = echo_non_null_class_map,
     .echo_class_wrapper = echo_class_wrapper,
+    .host_h_t_t_p_response = host_h_t_t_p_response,
+    .send_j_s_o_n_parser = send_j_s_o_n_parser,
     .echo_enum = echo_enum,
     .echo_another_enum = echo_another_enum,
     .echo_named_default_string = echo_named_default_string,

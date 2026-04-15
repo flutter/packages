@@ -1008,7 +1008,9 @@ pigeon_example_package_message_flutter_api_flutter_method_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }

@@ -17,6 +17,8 @@
 
 namespace test_plugin {
 
+using core_tests_pigeontest::AcronymsAndTestCase;
+using core_tests_pigeontest::AcronymsEnum;
 using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
 using core_tests_pigeontest::AllNullableTypesWithoutRecursion;
@@ -222,6 +224,44 @@ ErrorOr<EncodableMap> TestPlugin::EchoNonNullClassMap(
 ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
     const AllClassesWrapper& wrapper) {
   return wrapper;
+}
+
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
+ErrorOr<AcronymsAndTestCase> TestPlugin::HostHTTPResponse(
+    const AcronymsAndTestCase& acronyms) {
+  AcronymsAndTestCase result(acronyms.http_response(), acronyms.json_parser(),
+                             acronyms.xml_node());
+  if (acronyms.acronyms_enum()) {
+    switch (*acronyms.acronyms_enum()) {
+      case AcronymsEnum::kHTTPResponse:
+        result.set_acronyms_enum(AcronymsEnum::kHTTPResponse);
+        break;
+      case AcronymsEnum::kJSONParser:
+        result.set_acronyms_enum(AcronymsEnum::kJSONParser);
+        break;
+    }
+  }
+  return result;
+}
+
+// This uses a switch statement to explicitly map the enum value to verify that
+// all generated enum constants are valid and usable.
+ErrorOr<AcronymsAndTestCase> TestPlugin::SendJSONParser(
+    const AcronymsAndTestCase& acronyms) {
+  AcronymsAndTestCase result(acronyms.http_response(), acronyms.json_parser(),
+                             acronyms.xml_node());
+  if (acronyms.acronyms_enum()) {
+    switch (*acronyms.acronyms_enum()) {
+      case AcronymsEnum::kHTTPResponse:
+        result.set_acronyms_enum(AcronymsEnum::kHTTPResponse);
+        break;
+      case AcronymsEnum::kJSONParser:
+        result.set_acronyms_enum(AcronymsEnum::kJSONParser);
+        break;
+    }
+  }
+  return result;
 }
 
 ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }

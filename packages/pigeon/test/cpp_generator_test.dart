@@ -2415,7 +2415,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
-    expect(code, contains('reply(EncodableValue('));
+    expect(code, contains('reply(WrapResponse('));
   });
 
   test('does not keep unowned references in async handlers', () {

@@ -199,7 +199,7 @@ void main() {
       code,
       contains(
         RegExp(
-          r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)',
+          r'@NonNull\s*protected static ArrayList<Object> wrapResponse\(@Nullable Object result, @Nullable Throwable error\)',
         ),
       ),
     );

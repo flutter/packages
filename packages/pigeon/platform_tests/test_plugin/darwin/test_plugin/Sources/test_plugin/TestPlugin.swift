@@ -188,6 +188,48 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return wrapper
   }
 
+  func echo(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase {
+    return acronyms
+  }
+
+  // This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  func hostHTTPResponse(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase {
+    let enumVal: AcronymsEnum?
+    switch acronyms.acronymsEnum {
+    case .hTTPResponse:
+      enumVal = .hTTPResponse
+    case .jSONParser:
+      enumVal = .jSONParser
+    case nil:
+      enumVal = nil
+    }
+    return AcronymsAndTestCase(
+      httpResponse: acronyms.httpResponse,
+      jsonParser: acronyms.jsonParser,
+      xmlNode: acronyms.xmlNode,
+      acronymsEnum: enumVal
+    )
+  }
+
+  // This uses a switch statement to explicitly map the enum value to verify that all generated enum constants are valid and usable.
+  func sendJSONParser(_ acronyms: AcronymsAndTestCase) throws -> AcronymsAndTestCase {
+    let enumVal: AcronymsEnum?
+    switch acronyms.acronymsEnum {
+    case .hTTPResponse:
+      enumVal = .hTTPResponse
+    case .jSONParser:
+      enumVal = .jSONParser
+    case nil:
+      enumVal = nil
+    }
+    return AcronymsAndTestCase(
+      httpResponse: acronyms.httpResponse,
+      jsonParser: acronyms.jsonParser,
+      xmlNode: acronyms.xmlNode,
+      acronymsEnum: enumVal
+    )
+  }
+
   func echo(_ anEnum: AnEnum) throws -> AnEnum {
     return anEnum
   }

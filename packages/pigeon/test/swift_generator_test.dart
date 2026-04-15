@@ -530,7 +530,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('func doSomething() throws -> Output'));
     expect(code, contains('let result = try api.doSomething()'));
-    expect(code, contains('reply(wrapResult(result))'));
+    expect(code, contains('reply(wrapResponse(result, nil))'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -766,7 +766,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('protocol Api'));
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
-    expect(code, contains('reply(wrapResult(res))'));
+    expect(code, contains('reply(wrapResponse(res, nil))'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -1089,7 +1089,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('func doit() throws -> [Int64?]'));
     expect(code, contains('let result = try api.doit()'));
-    expect(code, contains('reply(wrapResult(result))'));
+    expect(code, contains('reply(wrapResponse(result, nil))'));
   });
 
   test('flutter generics return', () {
@@ -1187,7 +1187,7 @@ void main() {
     expect(code, contains('let xArg = args[0] as! Int64'));
     expect(code, contains('let yArg = args[1] as! Int64'));
     expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
-    expect(code, contains('reply(wrapResult(result))'));
+    expect(code, contains('reply(wrapResponse(result, nil))'));
   });
 
   test('flutter multiple args', () {

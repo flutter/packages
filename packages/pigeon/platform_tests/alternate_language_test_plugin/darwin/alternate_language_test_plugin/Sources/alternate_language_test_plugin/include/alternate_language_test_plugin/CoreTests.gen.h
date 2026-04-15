@@ -38,11 +38,23 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
 - (instancetype)initWithValue:(FLTAnotherEnum)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FLTAcronymsEnum) {
+  FLTAcronymsEnumHTTPResponse = 0,
+  FLTAcronymsEnumJSONParser = 1,
+};
+
+/// Wrapper for FLTAcronymsEnum to allow for nullability.
+@interface FLTAcronymsEnumBox : NSObject
+@property(nonatomic, assign) FLTAcronymsEnum value;
+- (instancetype)initWithValue:(FLTAcronymsEnum)value;
+@end
+
 @class FLTUnusedClass;
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
+@class FLTAcronymsAndTestCase;
 @class FLTTestMessage;
 
 @interface FLTUnusedClass : NSObject
@@ -276,6 +288,19 @@ typedef NS_ENUM(NSUInteger, FLTAnotherEnum) {
     NSDictionary<NSNumber *, FLTAllNullableTypesWithoutRecursion *> *nullableClassMap;
 @end
 
+@interface FLTAcronymsAndTestCase : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithHttpResponse:(NSString *)httpResponse
+                          jsonParser:(NSString *)jsonParser
+                             xmlNode:(NSString *)xmlNode
+                        acronymsEnum:(nullable FLTAcronymsEnumBox *)acronymsEnum;
+@property(nonatomic, copy) NSString *httpResponse;
+@property(nonatomic, copy) NSString *jsonParser;
+@property(nonatomic, copy) NSString *xmlNode;
+@property(nonatomic, strong, nullable) FLTAcronymsEnumBox *acronymsEnum;
+@end
+
 /// A data class containing a List, used in unit tests.
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
@@ -412,6 +437,17 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable FLTAllClassesWrapper *)echoClassWrapper:(FLTAllClassesWrapper *)wrapper
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed acronyms object.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable FLTAcronymsAndTestCase *)echoAcronyms:(FLTAcronymsAndTestCase *)acronyms
+                                            error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable FLTAcronymsAndTestCase *)hostHTTPResponse:(FLTAcronymsAndTestCase *)acronyms
+                                                error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable FLTAcronymsAndTestCase *)sendJSONParser:(FLTAcronymsAndTestCase *)acronyms
                                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed enum to test serialization and deserialization.
 ///

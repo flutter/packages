@@ -26,6 +26,19 @@ using ::flutter::EncodableList;
 using ::flutter::EncodableMap;
 using ::flutter::EncodableValue;
 
+static EncodableValue WrapResponse(const EncodableValue* result,
+                                   const FlutterError* error) {
+  if (error) {
+    return EncodableValue(EncodableList{EncodableValue(error->code()),
+                                        EncodableValue(error->message()),
+                                        error->details()});
+  }
+  if (result) {
+    return EncodableValue(EncodableList{*result});
+  }
+  return EncodableValue(EncodableList{EncodableValue()});
+}
+
 FlutterError CreateConnectionError(const std::string channel_name) {
   return FlutterError(
       "channel-error",
@@ -410,14 +423,15 @@ void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
             try {
               ErrorOr<std::string> output = api->GetHostLanguage();
               if (output.has_error()) {
-                reply(WrapError(output.error()));
+                reply(WrapResponse(nullptr, &output.error()));
                 return;
               }
-              EncodableList wrapped;
-              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-              reply(EncodableValue(std::move(wrapped)));
+              EncodableValue result_value(
+                  EncodableValue(std::move(output).TakeValue()));
+              reply(WrapResponse(&result_value, nullptr));
             } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
+              FlutterError error("Error", exception.what(), EncodableValue());
+              reply(WrapResponse(nullptr, &error));
             }
           });
     } else {
@@ -438,26 +452,31 @@ void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_a_arg = args.at(0);
               if (encodable_a_arg.IsNull()) {
-                reply(WrapError("a_arg unexpectedly null."));
+                FlutterError error("Error", "a_arg unexpectedly null.",
+                                   EncodableValue());
+                reply(WrapResponse(nullptr, &error));
                 return;
               }
               const int64_t a_arg = encodable_a_arg.LongValue();
               const auto& encodable_b_arg = args.at(1);
               if (encodable_b_arg.IsNull()) {
-                reply(WrapError("b_arg unexpectedly null."));
+                FlutterError error("Error", "b_arg unexpectedly null.",
+                                   EncodableValue());
+                reply(WrapResponse(nullptr, &error));
                 return;
               }
               const int64_t b_arg = encodable_b_arg.LongValue();
               ErrorOr<int64_t> output = api->Add(a_arg, b_arg);
               if (output.has_error()) {
-                reply(WrapError(output.error()));
+                reply(WrapResponse(nullptr, &output.error()));
                 return;
               }
-              EncodableList wrapped;
-              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
-              reply(EncodableValue(std::move(wrapped)));
+              EncodableValue result_value(
+                  EncodableValue(std::move(output).TakeValue()));
+              reply(WrapResponse(&result_value, nullptr));
             } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
+              FlutterError error("Error", exception.what(), EncodableValue());
+              reply(WrapResponse(nullptr, &error));
             }
           });
     } else {
@@ -478,23 +497,25 @@ void ExampleHostApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_message_arg = args.at(0);
               if (encodable_message_arg.IsNull()) {
-                reply(WrapError("message_arg unexpectedly null."));
+                FlutterError error("Error", "message_arg unexpectedly null.",
+                                   EncodableValue());
+                reply(WrapResponse(nullptr, &error));
                 return;
               }
               const auto& message_arg = std::any_cast<const MessageData&>(
                   std::get<CustomEncodableValue>(encodable_message_arg));
               api->SendMessage(message_arg, [reply](ErrorOr<bool>&& output) {
                 if (output.has_error()) {
-                  reply(WrapError(output.error()));
+                  reply(WrapResponse(nullptr, &output.error()));
                   return;
                 }
-                EncodableList wrapped;
-                wrapped.push_back(
+                EncodableValue result_value(
                     EncodableValue(std::move(output).TakeValue()));
-                reply(EncodableValue(std::move(wrapped)));
+                reply(WrapResponse(&result_value, nullptr));
               });
             } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
+              FlutterError error("Error", exception.what(), EncodableValue());
+              reply(WrapResponse(nullptr, &error));
             }
           });
     } else {

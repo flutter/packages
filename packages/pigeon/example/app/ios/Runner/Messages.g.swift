@@ -14,48 +14,30 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-/// Error class for passing custom error details to Dart side.
-final class PigeonError: Error {
-  let code: String
-  let message: String?
-  let details: Sendable?
-
-  init(code: String, message: String?, details: Sendable?) {
-    self.code = code
-    self.message = message
-    self.details = details
-  }
-
-  var localizedDescription: String {
-    return
-      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
-}
-
-private func wrapResult(_ result: Any?) -> [Any?] {
-  return [result]
-}
-
-private func wrapError(_ error: Any) -> [Any?] {
-  if let pigeonError = error as? PigeonError {
+private func wrapResponse(_ result: Any?, _ error: Any?) -> [Any?] {
+  if let error = error {
+    if let pigeonError = error as? PigeonError {
+      return [
+        pigeonError.code,
+        pigeonError.message,
+        pigeonError.details,
+      ]
+    }
+    if let flutterError = error as? FlutterError {
+      return [
+        flutterError.code,
+        flutterError.message,
+        flutterError.details,
+      ]
+    }
     return [
-      pigeonError.code,
-      pigeonError.message,
-      pigeonError.details,
+      "\(error)",
+      "\(Swift.type(of: error))",
+      "Stacktrace: \(Thread.callStackSymbols)",
     ]
+  } else {
+    return [result]
   }
-  if let flutterError = error as? FlutterError {
-    return [
-      flutterError.code,
-      flutterError.message,
-      flutterError.details,
-    ]
-  }
-  return [
-    "\(error)",
-    "\(Swift.type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)",
-  ]
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
@@ -182,6 +164,24 @@ func deepHashMessages(value: Any?, hasher: inout Hasher) {
   }
 }
 
+/// Error class for passing custom error details to Dart side.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Sendable?
+
+  init(code: String, message: String?, details: Sendable?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 enum Code: Int {
   case one = 0
   case two = 1
@@ -302,9 +302,9 @@ class ExampleHostApiSetup {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
           let result = try api.getHostLanguage()
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -320,9 +320,9 @@ class ExampleHostApiSetup {
         let bArg = args[1] as! Int64
         do {
           let result = try api.add(aArg, to: bArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -338,9 +338,9 @@ class ExampleHostApiSetup {
         api.sendMessage(message: messageArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }

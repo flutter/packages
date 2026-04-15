@@ -515,4 +515,32 @@ void myMethod() {
 }
 ''');
   });
+
+  test('toScreamingSnakeCase handles acronyms', () {
+    expect(toScreamingSnakeCase('camelCase'), 'CAMEL_CASE');
+    expect(toScreamingSnakeCase('PascalCase'), 'PASCAL_CASE');
+    expect(toScreamingSnakeCase('HTTPResponse'), 'HTTP_RESPONSE');
+    expect(toScreamingSnakeCase('JSONParser'), 'JSON_PARSER');
+  });
+
+  test('toSnakeCase handles acronyms', () {
+    expect(toSnakeCase('camelCase'), 'camel_case');
+    expect(toSnakeCase('PascalCase'), 'pascal_case');
+    expect(toSnakeCase('HTTPResponse'), 'http_response');
+    expect(toSnakeCase('JSONParser'), 'json_parser');
+  });
+
+  test('toUpperCamelCase converts strings correctly', () {
+    expect(toUpperCamelCase('hello_world'), 'HelloWorld');
+    expect(toUpperCamelCase('hello world'), 'HelloWorld');
+    expect(toUpperCamelCase('hello-world'), 'HelloWorld');
+    expect(toUpperCamelCase('HelloWorld'), 'HelloWorld');
+  });
+
+  test('toLowerCamelCase converts strings correctly', () {
+    expect(toLowerCamelCase('hello_world'), 'helloWorld');
+    expect(toLowerCamelCase('hello world'), 'helloWorld');
+    expect(toLowerCamelCase('hello-world'), 'helloWorld');
+    expect(toLowerCamelCase('HelloWorld'), 'helloWorld');
+  });
 }

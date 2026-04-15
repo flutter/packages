@@ -263,9 +263,9 @@ void main() {
             val args = message as List<Any?>
             val inputArg = args[0] as Input
             val wrapped: List<Any?> = try {
-              listOf(api.doSomething(inputArg))
+              PigeonUtils.wrapResponse(api.doSomething(inputArg), null)
             } catch (exception: Throwable) {
-              PigeonUtils.wrapError(exception)
+              PigeonUtils.wrapResponse(null, exception)
             }
             reply.reply(wrapped)
           }
@@ -628,8 +628,8 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('listOf(api.doSomething())'));
-    expect(code, contains('wrapError(exception)'));
+    expect(code, contains('wrapResponse(api.doSomething(), null)'));
+    expect(code, contains('wrapResponse(null, exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -851,7 +851,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('api.doSomething(argArg) {'));
-    expect(code, contains('reply.reply(PigeonUtils.wrapResult(data))'));
+    expect(code, contains('reply.reply(PigeonUtils.wrapResponse(data, null))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -1215,7 +1215,7 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('listOf(api.doit())'));
+    expect(code, contains('wrapResponse(api.doit(), null)'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1306,7 +1306,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('fun add(x: Long, y: Long): Long'));
     expect(code, contains('val args = message as List<Any?>'));
-    expect(code, contains('listOf(api.add(xArg, yArg))'));
+    expect(code, contains('wrapResponse(api.add(xArg, yArg), null)'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1760,10 +1760,10 @@ void main() {
     );
     final code = sink.toString();
     expect(code, contains('class SomeError'));
-    expect(code, contains('if (exception is SomeError)'));
-    expect(code, contains('exception.code,'));
-    expect(code, contains('exception.message,'));
-    expect(code, contains('exception.details'));
+    expect(code, contains('if (error is SomeError)'));
+    expect(code, contains('error.code,'));
+    expect(code, contains('error.message,'));
+    expect(code, contains('error.details'));
   });
 
   test('connection error contains channel name', () {

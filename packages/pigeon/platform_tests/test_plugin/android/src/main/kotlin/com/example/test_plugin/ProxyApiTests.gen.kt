@@ -23,18 +23,18 @@ private object ProxyApiTestsPigeonUtils {
         "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
 
-  fun wrapResult(result: Any?): List<Any?> {
-    return listOf(result)
-  }
-
-  fun wrapError(exception: Throwable): List<Any?> {
-    return if (exception is ProxyApiTestsError) {
-      listOf(exception.code, exception.message, exception.details)
+  fun wrapResponse(result: Any?, error: Throwable?): List<Any?> {
+    return if (error != null) {
+      if (error is ProxyApiTestsError) {
+        listOf(error.code, error.message, error.details)
+      } else {
+        listOf(
+            error.javaClass.simpleName,
+            error.toString(),
+            "Cause: " + error.cause + ", Stacktrace: " + Log.getStackTraceString(error))
+      }
     } else {
-      listOf(
-          exception.javaClass.simpleName,
-          exception.toString(),
-          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+      listOf(result)
     }
   }
 }
@@ -324,9 +324,9 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
             val wrapped: List<Any?> =
                 try {
                   instanceManager.remove<Any?>(identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -345,9 +345,9 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
             val wrapped: List<Any?> =
                 try {
                   instanceManager.clear()
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1144,9 +1144,9 @@ abstract class PigeonApiProxyApiTestClass(
                           nullableEnumParamArg,
                           nullableProxyApiParamArg),
                       pigeon_identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1205,9 +1205,9 @@ abstract class PigeonApiProxyApiTestClass(
                           aNullableEnumArg,
                           aNullableProxyApiArg),
                       pigeon_identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1230,9 +1230,9 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1254,9 +1254,9 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.staticAttachedField(), pigeon_identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1277,9 +1277,9 @@ abstract class PigeonApiProxyApiTestClass(
             val wrapped: List<Any?> =
                 try {
                   api.noop(pigeon_instanceArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1299,9 +1299,9 @@ abstract class PigeonApiProxyApiTestClass(
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.throwError(pigeon_instanceArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(api.throwError(pigeon_instanceArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1322,9 +1322,9 @@ abstract class PigeonApiProxyApiTestClass(
             val wrapped: List<Any?> =
                 try {
                   api.throwErrorFromVoid(pigeon_instanceArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1344,9 +1344,10 @@ abstract class PigeonApiProxyApiTestClass(
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.throwFlutterError(pigeon_instanceArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.throwFlutterError(pigeon_instanceArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1367,9 +1368,10 @@ abstract class PigeonApiProxyApiTestClass(
             val anIntArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoInt(pigeon_instanceArg, anIntArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoInt(pigeon_instanceArg, anIntArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1390,9 +1392,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aDoubleArg = args[1] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoDouble(pigeon_instanceArg, aDoubleArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoDouble(pigeon_instanceArg, aDoubleArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1413,9 +1416,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aBoolArg = args[1] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoBool(pigeon_instanceArg, aBoolArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoBool(pigeon_instanceArg, aBoolArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1436,9 +1440,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aStringArg = args[1] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoString(pigeon_instanceArg, aStringArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoString(pigeon_instanceArg, aStringArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1459,9 +1464,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aUint8ListArg = args[1] as ByteArray
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoUint8List(pigeon_instanceArg, aUint8ListArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoUint8List(pigeon_instanceArg, aUint8ListArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1482,9 +1488,10 @@ abstract class PigeonApiProxyApiTestClass(
             val anObjectArg = args[1] as Any
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoObject(pigeon_instanceArg, anObjectArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoObject(pigeon_instanceArg, anObjectArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1505,9 +1512,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aListArg = args[1] as List<Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoList(pigeon_instanceArg, aListArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoList(pigeon_instanceArg, aListArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1528,9 +1536,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aListArg = args[1] as List<ProxyApiTestClass>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoProxyApiList(pigeon_instanceArg, aListArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoProxyApiList(pigeon_instanceArg, aListArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1551,9 +1560,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aMapArg = args[1] as Map<String?, Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoMap(pigeon_instanceArg, aMapArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoMap(pigeon_instanceArg, aMapArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1574,9 +1584,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aMapArg = args[1] as Map<String, ProxyApiTestClass>
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoProxyApiMap(pigeon_instanceArg, aMapArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1597,9 +1608,10 @@ abstract class PigeonApiProxyApiTestClass(
             val anEnumArg = args[1] as ProxyApiTestEnum
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoEnum(pigeon_instanceArg, anEnumArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoEnum(pigeon_instanceArg, anEnumArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1620,9 +1632,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aProxyApiArg = args[1] as com.example.test_plugin.ProxyApiSuperClass
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoProxyApi(pigeon_instanceArg, aProxyApiArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1643,9 +1656,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableIntArg = args[1] as Long?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableInt(pigeon_instanceArg, aNullableIntArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1666,9 +1680,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableDoubleArg = args[1] as Double?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1689,9 +1704,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableBoolArg = args[1] as Boolean?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1712,9 +1728,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableStringArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableString(pigeon_instanceArg, aNullableStringArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableString(pigeon_instanceArg, aNullableStringArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1735,9 +1752,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableUint8ListArg = args[1] as ByteArray?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1758,9 +1776,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableObjectArg = args[1]
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1781,9 +1800,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableListArg = args[1] as List<Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableList(pigeon_instanceArg, aNullableListArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableList(pigeon_instanceArg, aNullableListArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1804,9 +1824,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableMapArg = args[1] as Map<String?, Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableMap(pigeon_instanceArg, aNullableMapArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableMap(pigeon_instanceArg, aNullableMapArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1827,9 +1848,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableEnumArg = args[1] as ProxyApiTestEnum?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1850,9 +1872,10 @@ abstract class PigeonApiProxyApiTestClass(
             val aNullableProxyApiArg = args[1] as com.example.test_plugin.ProxyApiSuperClass?
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(
+                      api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -1873,9 +1896,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.noopAsync(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -1897,10 +1920,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -1922,10 +1945,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -1947,10 +1970,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -1972,10 +1995,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -1997,10 +2020,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncUint8List(pigeon_instanceArg, aUint8ListArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2022,10 +2045,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncObject(pigeon_instanceArg, anObjectArg) { result: Result<Any> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2047,10 +2070,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2072,10 +2095,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncMap(pigeon_instanceArg, aMapArg) { result: Result<Map<String?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2097,10 +2120,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncEnum(pigeon_instanceArg, anEnumArg) { result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2121,10 +2144,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2145,9 +2168,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -2168,10 +2191,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncFlutterError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2193,10 +2216,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2218,10 +2241,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2243,10 +2266,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2268,10 +2291,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableString(pigeon_instanceArg, aStringArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2294,10 +2317,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2319,10 +2342,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableObject(pigeon_instanceArg, anObjectArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2344,10 +2367,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2370,10 +2393,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2396,10 +2419,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2418,9 +2441,9 @@ abstract class PigeonApiProxyApiTestClass(
             val wrapped: List<Any?> =
                 try {
                   api.staticNoop()
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2440,9 +2463,9 @@ abstract class PigeonApiProxyApiTestClass(
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.echoStaticString(aStringArg))
+                  ProxyApiTestsPigeonUtils.wrapResponse(api.echoStaticString(aStringArg), null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -2461,9 +2484,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.staticAsyncNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -2484,9 +2507,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterNoop(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -2507,10 +2530,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterThrowError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2531,9 +2554,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterThrowErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -2555,10 +2578,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2580,10 +2603,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2605,10 +2628,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2630,10 +2653,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2656,10 +2679,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2681,10 +2704,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2707,10 +2730,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<List<ProxyApiTestClass?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2733,10 +2756,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2759,10 +2782,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, ProxyApiTestClass?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2785,10 +2808,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2811,10 +2834,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<com.example.test_plugin.ProxyApiSuperClass> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2837,10 +2860,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2862,10 +2885,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2888,10 +2911,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2914,10 +2937,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2940,10 +2963,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2966,10 +2989,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -2992,10 +3015,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3018,10 +3041,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3044,10 +3067,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<com.example.test_plugin.ProxyApiSuperClass?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -3068,9 +3091,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterNoopAsync(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, null))
               }
             }
           }
@@ -3093,10 +3116,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(null, error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResponse(data, null))
               }
             }
           }
@@ -4258,9 +4281,9 @@ abstract class PigeonApiProxyApiSuperClass(
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -4281,9 +4304,9 @@ abstract class PigeonApiProxyApiSuperClass(
             val wrapped: List<Any?> =
                 try {
                   api.aSuperMethod(pigeon_instanceArg)
-                  listOf(null)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                 } catch (exception: Throwable) {
-                  ProxyApiTestsPigeonUtils.wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                 }
             reply.reply(wrapped)
           }
@@ -4436,9 +4459,9 @@ abstract class PigeonApiClassWithApiRequirement(
                   try {
                     api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                         api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                    listOf(null)
+                    ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                   } catch (exception: Throwable) {
-                    ProxyApiTestsPigeonUtils.wrapError(exception)
+                    ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                   }
               reply.reply(wrapped)
             }
@@ -4455,7 +4478,8 @@ abstract class PigeonApiClassWithApiRequirement(
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             reply.reply(
-                ProxyApiTestsPigeonUtils.wrapError(
+                ProxyApiTestsPigeonUtils.wrapResponse(
+                    null,
                     UnsupportedOperationException(
                         "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
           }
@@ -4477,9 +4501,9 @@ abstract class PigeonApiClassWithApiRequirement(
               val wrapped: List<Any?> =
                   try {
                     api.aMethod(pigeon_instanceArg)
-                    listOf(null)
+                    ProxyApiTestsPigeonUtils.wrapResponse(null, null)
                   } catch (exception: Throwable) {
-                    ProxyApiTestsPigeonUtils.wrapError(exception)
+                    ProxyApiTestsPigeonUtils.wrapResponse(null, exception)
                   }
               reply.reply(wrapped)
             }
@@ -4496,7 +4520,8 @@ abstract class PigeonApiClassWithApiRequirement(
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             reply.reply(
-                ProxyApiTestsPigeonUtils.wrapError(
+                ProxyApiTestsPigeonUtils.wrapResponse(
+                    null,
                     UnsupportedOperationException(
                         "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
           }

@@ -39,6 +39,17 @@ typedef enum {
 } CoreTestsPigeonTestAnotherEnum;
 
 /**
+ * CoreTestsPigeonTestAcronymsEnum:
+ * PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE:
+ * PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER:
+ *
+ */
+typedef enum {
+  PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_H_T_T_P_RESPONSE = 0,
+  PIGEON_INTEGRATION_TESTS_ACRONYMS_ENUM_J_S_O_N_PARSER = 1
+} CoreTestsPigeonTestAcronymsEnum;
+
+/**
  * CoreTestsPigeonTestUnusedClass:
  *
  */
@@ -1517,6 +1528,100 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
     CoreTestsPigeonTestAllClassesWrapper* object);
 
 /**
+ * CoreTestsPigeonTestAcronymsAndTestCase:
+ *
+ */
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAcronymsAndTestCase,
+                     core_tests_pigeon_test_acronyms_and_test_case,
+                     CORE_TESTS_PIGEON_TEST, ACRONYMS_AND_TEST_CASE, GObject)
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_new:
+ * http_response: field in this object.
+ * json_parser: field in this object.
+ * xml_node: field in this object.
+ * acronyms_enum: field in this object.
+ *
+ * Creates a new #AcronymsAndTestCase object.
+ *
+ * Returns: a new #CoreTestsPigeonTestAcronymsAndTestCase
+ */
+CoreTestsPigeonTestAcronymsAndTestCase*
+core_tests_pigeon_test_acronyms_and_test_case_new(
+    const gchar* http_response, const gchar* json_parser, const gchar* xml_node,
+    CoreTestsPigeonTestAcronymsEnum* acronyms_enum);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_get_http_response
+ * @object: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Gets the value of the httpResponse field of @object.
+ *
+ * Returns: the field value.
+ */
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_http_response(
+    CoreTestsPigeonTestAcronymsAndTestCase* object);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_get_json_parser
+ * @object: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Gets the value of the jsonParser field of @object.
+ *
+ * Returns: the field value.
+ */
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_json_parser(
+    CoreTestsPigeonTestAcronymsAndTestCase* object);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_get_xml_node
+ * @object: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Gets the value of the xmlNode field of @object.
+ *
+ * Returns: the field value.
+ */
+const gchar* core_tests_pigeon_test_acronyms_and_test_case_get_xml_node(
+    CoreTestsPigeonTestAcronymsAndTestCase* object);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_get_acronyms_enum
+ * @object: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Gets the value of the acronymsEnum field of @object.
+ *
+ * Returns: the field value.
+ */
+CoreTestsPigeonTestAcronymsEnum*
+core_tests_pigeon_test_acronyms_and_test_case_get_acronyms_enum(
+    CoreTestsPigeonTestAcronymsAndTestCase* object);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_equals:
+ * @a: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ * @b: another #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Checks if two #CoreTestsPigeonTestAcronymsAndTestCase objects are equal.
+ *
+ * Returns: TRUE if @a and @b are equal.
+ */
+gboolean core_tests_pigeon_test_acronyms_and_test_case_equals(
+    CoreTestsPigeonTestAcronymsAndTestCase* a,
+    CoreTestsPigeonTestAcronymsAndTestCase* b);
+
+/**
+ * core_tests_pigeon_test_acronyms_and_test_case_hash:
+ * @object: a #CoreTestsPigeonTestAcronymsAndTestCase.
+ *
+ * Calculates a hash code for a #CoreTestsPigeonTestAcronymsAndTestCase object.
+ *
+ * Returns: the hash code.
+ */
+guint core_tests_pigeon_test_acronyms_and_test_case_hash(
+    CoreTestsPigeonTestAcronymsAndTestCase* object);
+
+/**
  * CoreTestsPigeonTestTestMessage:
  *
  * A data class containing a List, used in unit tests.
@@ -1585,12 +1690,14 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
  */
 extern const int core_tests_pigeon_test_an_enum_type_id;
 extern const int core_tests_pigeon_test_another_enum_type_id;
+extern const int core_tests_pigeon_test_acronyms_enum_type_id;
 extern const int core_tests_pigeon_test_unused_class_type_id;
 extern const int core_tests_pigeon_test_all_types_type_id;
 extern const int core_tests_pigeon_test_all_nullable_types_type_id;
 extern const int
     core_tests_pigeon_test_all_nullable_types_without_recursion_type_id;
 extern const int core_tests_pigeon_test_all_classes_wrapper_type_id;
+extern const int core_tests_pigeon_test_acronyms_and_test_case_type_id;
 extern const int core_tests_pigeon_test_test_message_type_id;
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
@@ -2427,6 +2534,103 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new
  */
 CoreTestsPigeonTestHostIntegrationCoreApiEchoClassWrapperResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_ACRONYMS_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoAcronyms.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoAcronyms.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_acronyms_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse,
+    core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_HOST_H_T_T_P_RESPONSE_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.hostHTTPResponse.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.hostHTTPResponse.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse*
+core_tests_pigeon_test_host_integration_core_api_host_h_t_t_p_response_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse,
+    core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_SEND_J_S_O_N_PARSER_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.sendJSONParser.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new(
+    CoreTestsPigeonTestAcronymsAndTestCase* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.sendJSONParser.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse*
+core_tests_pigeon_test_host_integration_core_api_send_j_s_o_n_parser_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
@@ -3841,6 +4045,15 @@ typedef struct {
   CoreTestsPigeonTestHostIntegrationCoreApiEchoClassWrapperResponse* (
       *echo_class_wrapper)(CoreTestsPigeonTestAllClassesWrapper* wrapper,
                            gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAcronymsResponse* (
+      *echo_acronyms)(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
+                      gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiHostHTTPResponseResponse* (
+      *host_h_t_t_p_response)(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
+                              gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiSendJSONParserResponse* (
+      *send_j_s_o_n_parser)(CoreTestsPigeonTestAcronymsAndTestCase* acronyms,
+                            gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* (*echo_enum)(
       CoreTestsPigeonTestAnEnum an_enum, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoAnotherEnumResponse* (

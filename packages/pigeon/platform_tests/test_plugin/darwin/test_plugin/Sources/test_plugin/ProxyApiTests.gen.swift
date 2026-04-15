@@ -15,48 +15,30 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-/// Error class for passing custom error details to Dart side.
-final class ProxyApiTestsError: Error {
-  let code: String
-  let message: String?
-  let details: Sendable?
-
-  init(code: String, message: String?, details: Sendable?) {
-    self.code = code
-    self.message = message
-    self.details = details
-  }
-
-  var localizedDescription: String {
-    return
-      "ProxyApiTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
-}
-
-private func wrapResult(_ result: Any?) -> [Any?] {
-  return [result]
-}
-
-private func wrapError(_ error: Any) -> [Any?] {
-  if let pigeonError = error as? ProxyApiTestsError {
+private func wrapResponse(_ result: Any?, _ error: Any?) -> [Any?] {
+  if let error = error {
+    if let pigeonError = error as? ProxyApiTestsError {
+      return [
+        pigeonError.code,
+        pigeonError.message,
+        pigeonError.details,
+      ]
+    }
+    if let flutterError = error as? FlutterError {
+      return [
+        flutterError.code,
+        flutterError.message,
+        flutterError.details,
+      ]
+    }
     return [
-      pigeonError.code,
-      pigeonError.message,
-      pigeonError.details,
+      "\(error)",
+      "\(Swift.type(of: error))",
+      "Stacktrace: \(Thread.callStackSymbols)",
     ]
+  } else {
+    return [result]
   }
-  if let flutterError = error as? FlutterError {
-    return [
-      flutterError.code,
-      flutterError.message,
-      flutterError.details,
-    ]
-  }
-  return [
-    "\(error)",
-    "\(Swift.type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)",
-  ]
 }
 
 private func createConnectionError(withChannelName channelName: String) -> ProxyApiTestsError {
@@ -74,6 +56,23 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+/// Error class for passing custom error details to Dart side.
+final class ProxyApiTestsError: Error {
+  let code: String
+  let message: String?
+  let details: Sendable?
+
+  init(code: String, message: String?, details: Sendable?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "ProxyApiTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
 /// Handles the callback when an object is deallocated.
 protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
@@ -328,9 +327,9 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
         let identifierArg = args[0] as! Int64
         do {
           let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -343,9 +342,9 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
       clearChannel.setMessageHandler { _, reply in
         do {
           try instanceManager.removeAllObjects()
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1147,9 +1146,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
               nullableEnumParam: nullableEnumParamArg,
               nullableProxyApiParam: nullableProxyApiParamArg),
             withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1191,9 +1190,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
               aNullableList: aNullableListArg, aNullableMap: aNullableMapArg,
               aNullableEnum: aNullableEnumArg, aNullableProxyApi: aNullableProxyApiArg),
             withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1211,9 +1210,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.attachedField(pigeonApi: api, pigeonInstance: pigeonInstanceArg),
             withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1230,9 +1229,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.staticAttachedField(pigeonApi: api),
             withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1247,9 +1246,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
           try api.pigeonDelegate.noop(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1265,9 +1264,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.throwError(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1283,9 +1282,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           try api.pigeonDelegate.throwErrorFromVoid(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1301,9 +1300,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.throwFlutterError(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1320,9 +1319,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoInt(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, anInt: anIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1339,9 +1338,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoDouble(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aDouble: aDoubleArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1358,9 +1357,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoBool(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1377,9 +1376,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoString(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aString: aStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1396,9 +1395,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoUint8List(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aUint8List: aUint8ListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1415,9 +1414,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoObject(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, anObject: anObjectArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1434,9 +1433,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1453,9 +1452,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoProxyApiList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1472,9 +1471,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoMap(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1491,9 +1490,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoProxyApiMap(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1510,9 +1509,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoEnum(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1529,9 +1528,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoProxyApi(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aProxyApi: aProxyApiArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1548,9 +1547,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableInt(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableInt: aNullableIntArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1567,9 +1566,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableDouble(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableDouble: aNullableDoubleArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1586,9 +1585,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableBool(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableBool: aNullableBoolArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1605,9 +1604,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableString(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableString: aNullableStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1625,9 +1624,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           let result = try api.pigeonDelegate.echoNullableUint8List(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg,
             aNullableUint8List: aNullableUint8ListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1644,9 +1643,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableObject(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableObject: aNullableObjectArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1663,9 +1662,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableList: aNullableListArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1682,9 +1681,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableMap(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableMap: aNullableMapArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1701,9 +1700,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         do {
           let result = try api.pigeonDelegate.echoNullableEnum(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableEnum: aNullableEnumArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1721,9 +1720,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           let result = try api.pigeonDelegate.echoNullableProxyApi(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg,
             aNullableProxyApi: aNullableProxyApiArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -1739,9 +1738,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         api.pigeonDelegate.noopAsync(pigeonApi: api, pigeonInstance: pigeonInstanceArg) { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1761,9 +1760,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1783,9 +1782,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1805,9 +1804,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1827,9 +1826,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1849,9 +1848,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1871,9 +1870,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1893,9 +1892,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1915,9 +1914,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1937,9 +1936,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1957,9 +1956,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1978,9 +1977,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -1998,9 +1997,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2020,9 +2019,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2042,9 +2041,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2064,9 +2063,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2086,9 +2085,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2109,9 +2108,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2131,9 +2130,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2153,9 +2152,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2175,9 +2174,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2197,9 +2196,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2213,9 +2212,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       staticNoopChannel.setMessageHandler { _, reply in
         do {
           try api.pigeonDelegate.staticNoop(pigeonApi: api)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2230,9 +2229,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let aStringArg = args[0] as! String
         do {
           let result = try api.pigeonDelegate.echoStaticString(pigeonApi: api, aString: aStringArg)
-          reply(wrapResult(result))
+          reply(wrapResponse(result, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -2246,9 +2245,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         api.pigeonDelegate.staticAsyncNoop(pigeonApi: api) { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2266,9 +2265,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2286,9 +2285,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2308,9 +2307,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2330,9 +2329,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2352,9 +2351,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2374,9 +2373,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2396,9 +2395,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2419,9 +2418,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2441,9 +2440,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2464,9 +2463,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2486,9 +2485,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2509,9 +2508,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2531,9 +2530,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2553,9 +2552,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2576,9 +2575,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2599,9 +2598,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2622,9 +2621,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2645,9 +2644,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2668,9 +2667,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2691,9 +2690,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2714,9 +2713,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2737,9 +2736,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2760,9 +2759,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2780,9 +2779,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           result in
           switch result {
           case .success:
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -2803,9 +2802,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res))
+            reply(wrapResponse(res, nil))
           case .failure(let error):
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       }
@@ -4078,9 +4077,9 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
             try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
             withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -4095,9 +4094,9 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
         let pigeonInstanceArg = args[0] as! ProxyApiSuperClass
         do {
           try api.pigeonDelegate.aSuperMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
+          reply(wrapResponse(nil, nil))
         } catch {
-          reply(wrapError(error))
+          reply(wrapResponse(nil, error))
         }
       }
     } else {
@@ -4289,9 +4288,9 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
             api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
               try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
               withIdentifier: pigeonIdentifierArg)
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           } catch {
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       } else {
@@ -4305,7 +4304,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       if api != nil {
         pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
           reply(
-            wrapError(
+            wrapResponse(
+              nil,
               FlutterError(
                 code: "PigeonUnsupportedOperationError",
                 message:
@@ -4327,9 +4327,9 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
           let pigeonInstanceArg = args[0] as! ClassWithApiRequirement
           do {
             try api.pigeonDelegate.aMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-            reply(wrapResult(nil))
+            reply(wrapResponse(nil, nil))
           } catch {
-            reply(wrapError(error))
+            reply(wrapResponse(nil, error))
           }
         }
       } else {
@@ -4342,7 +4342,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       if api != nil {
         aMethodChannel.setMessageHandler { message, reply in
           reply(
-            wrapError(
+            wrapResponse(
+              nil,
               FlutterError(
                 code: "PigeonUnsupportedOperationError",
                 message: "Call to aMethod requires @available(iOS 15.0.0, macOS 10.0.0, *).",
