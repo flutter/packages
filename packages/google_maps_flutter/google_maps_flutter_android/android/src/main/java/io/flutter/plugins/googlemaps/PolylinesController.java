@@ -12,6 +12,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kotlin.Result;
+import kotlin.Unit;
 
 class PolylinesController {
 
@@ -62,7 +64,7 @@ class PolylinesController {
     if (polylineId == null) {
       return false;
     }
-    flutterApi.onPolylineTap(polylineId, new NoOpVoidResult());
+    flutterApi.onPolylineTap(polylineId, (Result<Unit> result) -> Unit.INSTANCE);
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       return polylineController.consumeTapEvents();

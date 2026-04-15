@@ -12,6 +12,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kotlin.Result;
+import kotlin.Unit;
 
 class CirclesController {
   @VisibleForTesting final Map<String, CircleController> circleIdToController;
@@ -58,7 +60,7 @@ class CirclesController {
     if (circleId == null) {
       return false;
     }
-    flutterApi.onCircleTap(circleId, new NoOpVoidResult());
+    flutterApi.onCircleTap(circleId, (Result<Unit> result) -> Unit.INSTANCE);
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       return circleController.consumeTapEvents();

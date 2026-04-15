@@ -316,17 +316,17 @@ class GoogleMapController
 
   @Override
   public void onMapClick(@NonNull LatLng latLng) {
-    flutterApi.onTap(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
+    flutterApi.onTap(Convert.latLngToPigeon(latLng), (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   @Override
   public void onMapLongClick(@NonNull LatLng latLng) {
-    flutterApi.onLongPress(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
+    flutterApi.onLongPress(Convert.latLngToPigeon(latLng), (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   @Override
   public void onCameraMoveStarted(int reason) {
-    flutterApi.onCameraMoveStarted(new NoOpVoidResult());
+    flutterApi.onCameraMoveStarted((Result<Unit> result) -> Unit.INSTANCE);
   }
 
   @Override
@@ -340,13 +340,14 @@ class GoogleMapController
       return;
     }
     flutterApi.onCameraMove(
-        Convert.cameraPositionToPigeon(googleMap.getCameraPosition()), new NoOpVoidResult());
+        Convert.cameraPositionToPigeon(googleMap.getCameraPosition()),
+        (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   @Override
   public void onCameraIdle() {
     clusterManagersController.onCameraIdle();
-    flutterApi.onCameraIdle(new NoOpVoidResult());
+    flutterApi.onCameraIdle((Result<Unit> result) -> Unit.INSTANCE);
   }
 
   @Override

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import kotlin.Result;
+import kotlin.Unit;
 
 class MarkersController {
   private final HashMap<String, MarkerBuilder> markerIdToMarkerBuilder;
@@ -265,7 +267,7 @@ class MarkersController {
   }
 
   boolean onMarkerTap(String markerId) {
-    flutterApi.onMarkerTap(markerId, new NoOpVoidResult());
+    flutterApi.onMarkerTap(markerId, (Result<Unit> result) -> Unit.INSTANCE);
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       return markerController.consumeTapEvents();
@@ -278,7 +280,8 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
+    flutterApi.onMarkerDragStart(
+        markerId, Convert.latLngToPigeon(latLng), (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   void onMarkerDrag(String googleMarkerId, LatLng latLng) {
@@ -286,7 +289,8 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
+    flutterApi.onMarkerDrag(
+        markerId, Convert.latLngToPigeon(latLng), (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   void onMarkerDragEnd(String googleMarkerId, LatLng latLng) {
@@ -294,7 +298,8 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
+    flutterApi.onMarkerDragEnd(
+        markerId, Convert.latLngToPigeon(latLng), (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   void onInfoWindowTap(String googleMarkerId) {
@@ -302,7 +307,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
+    flutterApi.onInfoWindowTap(markerId, (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   /**
@@ -310,7 +315,7 @@ class MarkersController {
    * directly.
    */
   void onClusterItemInfoWindowTap(String markerId) {
-    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
+    flutterApi.onInfoWindowTap(markerId, (Result<Unit> result) -> Unit.INSTANCE);
   }
 
   /**
