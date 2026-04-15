@@ -320,7 +320,7 @@ class SrvResourceRecord extends ResourceRecord {
   }
 }
 
-/// A Text record, contianing additional textual data (DNS "TXT").
+/// A Text record, containing additional textual data (DNS "TXT").
 class TxtResourceRecord extends ResourceRecord {
   /// Creates a new text record.
   const TxtResourceRecord(String name, int validUntil, {required this.text})
