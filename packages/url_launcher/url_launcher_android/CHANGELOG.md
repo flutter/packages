@@ -1,3 +1,7 @@
+## 6.3.30
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 6.3.29
 
 * Updates build files from Groovy to Kotlin.

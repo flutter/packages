@@ -1,3 +1,8 @@
+## 17.2.1
+
+- Fixes chained top-level redirects not being fully resolved (e.g. `/ → /a → /b` stopping at `/a`).
+- Fixes route-level redirects not triggering top-level redirect re-evaluation on the new location.
+
 ## 17.2.0
 
 - Fixes `Block.then()` and `Allow.then()` navigation callbacks being silently lost when triggered by `refreshListenable` due to re-entrant route processing.
