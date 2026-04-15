@@ -36,4 +36,3 @@ flutter:
 dependency_overrides:
   camera_android_camerax: {path: ../../../../packages/camera/camera_android_camerax}
   camera_avfoundation: {path: ../../../../packages/camera/camera_avfoundation}
-  camera_platform_interface: {path: ../../../../packages/camera/camera_platform_interface}
