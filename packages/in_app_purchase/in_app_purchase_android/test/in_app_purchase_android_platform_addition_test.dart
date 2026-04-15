@@ -160,6 +160,27 @@ void main() {
     });
   });
 
+  group('showInAppMessages', () {
+    test('showInAppMessages success', () async {
+      const expected = InAppMessageResultWrapper(
+        responseCode: InAppMessageResponse.subscriptionStatusUpdated,
+        purchaseToken: 'dummy purchase token',
+      );
+
+      when(mockApi.showInAppMessages()).thenAnswer(
+        (_) async => PlatformInAppMessageResult(
+          responseCode: PlatformInAppMessageResponse.subscriptionStatusUpdated,
+          purchaseToken: expected.purchaseToken,
+        ),
+      );
+
+      final InAppMessageResultWrapper result = await iapAndroidPlatformAddition
+          .showInAppMessages();
+
+      expect(result, equals(expected));
+    });
+  });
+
   group('queryPastPurchase', () {
     group('queryPurchaseDetails', () {
       test('returns ProductDetailsResponseWrapper', () async {
