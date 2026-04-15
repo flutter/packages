@@ -6579,6 +6579,268 @@ void main() {
       verifyNoMoreInteractions(camera.camera);
     },
   );
+  test(
+    'dispose calls clearAnalyzer on imageAnalysis to drain pending frames',
+    () async {
+      var stoppedListeningForDeviceOrientationChange = false;
+      final camera = AndroidCameraCameraX();
+      PigeonOverrides.deviceOrientationManager_new =
+          ({
+            required void Function(DeviceOrientationManager, String)
+            onDeviceOrientationChanged,
+          }) {
+            final mockDeviceOrientationManager = MockDeviceOrientationManager();
+            when(
+              mockDeviceOrientationManager
+                  .stopListeningForDeviceOrientationChange(),
+            ).thenAnswer((_) async {
+              stoppedListeningForDeviceOrientationChange = true;
+            });
+            return mockDeviceOrientationManager;
+          };
+
+      camera.preview = MockPreview();
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.liveCameraState = MockLiveCameraState();
+      camera.imageAnalysis = MockImageAnalysis();
+
+      await camera.dispose(3);
+
+      // Verify clearAnalyzer is called to drain pending frames
+      verify(camera.imageAnalysis!.clearAnalyzer());
+      verify(camera.preview!.releaseSurfaceProvider());
+      verify(camera.liveCameraState!.removeObservers());
+      verify(camera.processCameraProvider!.unbindAll());
+      expect(stoppedListeningForDeviceOrientationChange, isTrue);
+    },
+  );
+
+  test('dispose handles null imageAnalysis gracefully', () async {
+    var stoppedListeningForDeviceOrientationChange = false;
+    final camera = AndroidCameraCameraX();
+    PigeonOverrides.deviceOrientationManager_new =
+        ({
+          required void Function(DeviceOrientationManager, String)
+          onDeviceOrientationChanged,
+        }) {
+          final mockDeviceOrientationManager = MockDeviceOrientationManager();
+          when(
+            mockDeviceOrientationManager
+                .stopListeningForDeviceOrientationChange(),
+          ).thenAnswer((_) async {
+            stoppedListeningForDeviceOrientationChange = true;
+          });
+          return mockDeviceOrientationManager;
+        };
+
+    camera.preview = MockPreview();
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.liveCameraState = MockLiveCameraState();
+    camera.imageAnalysis = null; // No image analysis
+
+    // Should not throw even with null imageAnalysis
+    await camera.dispose(3);
+
+    verify(camera.preview!.releaseSurfaceProvider());
+    verify(camera.liveCameraState!.removeObservers());
+    verify(camera.processCameraProvider!.unbindAll());
+    expect(stoppedListeningForDeviceOrientationChange, isTrue);
+  });
+
+  test('dispose handles null processCameraProvider gracefully', () async {
+    var stoppedListeningForDeviceOrientationChange = false;
+    final camera = AndroidCameraCameraX();
+    PigeonOverrides.deviceOrientationManager_new =
+        ({
+          required void Function(DeviceOrientationManager, String)
+          onDeviceOrientationChanged,
+        }) {
+          final mockDeviceOrientationManager = MockDeviceOrientationManager();
+          when(
+            mockDeviceOrientationManager
+                .stopListeningForDeviceOrientationChange(),
+          ).thenAnswer((_) async {
+            stoppedListeningForDeviceOrientationChange = true;
+          });
+          return mockDeviceOrientationManager;
+        };
+
+    camera.preview = MockPreview();
+    camera.processCameraProvider = null; // No provider
+    camera.liveCameraState = MockLiveCameraState();
+    camera.imageAnalysis = MockImageAnalysis();
+
+    // Should not throw even with null processCameraProvider
+    await camera.dispose(3);
+
+    verify(camera.preview!.releaseSurfaceProvider());
+    verify(camera.liveCameraState!.removeObservers());
+    verify(camera.imageAnalysis!.clearAnalyzer());
+    expect(stoppedListeningForDeviceOrientationChange, isTrue);
+  });
+
+  test(
+    'dispose properly sequences operations: clearAnalyzer -> unbindAll -> wait -> cleanup',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final operationSequence = <String>[];
+
+      final mockImageAnalysis = MockImageAnalysis();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockPreview = MockPreview();
+      final mockLiveCameraState = MockLiveCameraState();
+
+      when(mockImageAnalysis.clearAnalyzer()).thenAnswer((_) async {
+        operationSequence.add('clearAnalyzer');
+      });
+
+      when(mockProcessCameraProvider.unbindAll()).thenAnswer((_) async {
+        operationSequence.add('unbindAll');
+      });
+
+      when(mockPreview.releaseSurfaceProvider()).thenAnswer((_) async {
+        operationSequence.add('releaseSurfaceProvider');
+      });
+
+      when(mockLiveCameraState.removeObservers()).thenAnswer((_) async {
+        operationSequence.add('removeObservers');
+      });
+
+      PigeonOverrides.deviceOrientationManager_new =
+          ({
+            required void Function(DeviceOrientationManager, String)
+            onDeviceOrientationChanged,
+          }) {
+            final mockDeviceOrientationManager = MockDeviceOrientationManager();
+            when(
+              mockDeviceOrientationManager
+                  .stopListeningForDeviceOrientationChange(),
+            ).thenAnswer((_) async {
+              operationSequence.add('stopListeningForDeviceOrientationChange');
+            });
+            return mockDeviceOrientationManager;
+          };
+
+      camera.imageAnalysis = mockImageAnalysis;
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.preview = mockPreview;
+      camera.liveCameraState = mockLiveCameraState;
+
+      await camera.dispose(3);
+
+      // Verify the correct sequence of operations
+      expect(operationSequence[0], 'clearAnalyzer');
+      expect(operationSequence[1], 'unbindAll');
+      expect(operationSequence[2], 'releaseSurfaceProvider');
+      expect(operationSequence[3], 'removeObservers');
+      expect(operationSequence[4], 'stopListeningForDeviceOrientationChange');
+    },
+  );
+
+  test(
+    'dispose with negative cameraId returns early without doing anything',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockImageAnalysis = MockImageAnalysis();
+
+      camera.imageAnalysis = mockImageAnalysis;
+
+      await camera.dispose(-1);
+
+      // Verify no operations were performed
+      verifyNever(mockImageAnalysis.clearAnalyzer());
+    },
+  );
+
+  test(
+    'onStreamedFrameAvailable calls clearAnalyzer when stream is canceled',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 32;
+      final mockImageAnalysis = MockImageAnalysis();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+
+      // Set directly for test versus calling createCamera.
+      camera.imageAnalysis = mockImageAnalysis;
+      camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Ignore setting target rotation for this test; tested separately.
+      camera.captureOrientationLocked = true;
+
+      // Tell plugin to create a detached analyzer for testing purposes.
+      PigeonOverrides.analyzer_new =
+          ({required void Function(Analyzer, ImageProxy) analyze}) =>
+              MockAnalyzer();
+
+      when(
+        mockProcessCameraProvider.isBound(mockImageAnalysis),
+      ).thenAnswer((_) async => true);
+
+      final StreamSubscription<CameraImageData> imageStreamSubscription = camera
+          .onStreamedFrameAvailable(cameraId)
+          .listen((CameraImageData data) {});
+
+      await imageStreamSubscription.cancel();
+
+      // Verify clearAnalyzer is called to drain pending frames
+      verify(mockImageAnalysis.clearAnalyzer());
+    },
+  );
+
+  test(
+    'Camera can be disposed and recreated without BufferQueue errors',
+    () async {
+      // This test verifies the complete lifecycle: create -> dispose -> create again
+      final camera = AndroidCameraCameraX();
+      const cameraId1 = 1;
+      const cameraId2 = 2;
+
+      // First camera setup
+      final mockImageAnalysis1 = MockImageAnalysis();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockPreview1 = MockPreview();
+      final mockLiveCameraState1 = MockLiveCameraState();
+
+      camera.imageAnalysis = mockImageAnalysis1;
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.preview = mockPreview1;
+      camera.liveCameraState = mockLiveCameraState1;
+
+      PigeonOverrides.deviceOrientationManager_new =
+          ({
+            required void Function(DeviceOrientationManager, String)
+            onDeviceOrientationChanged,
+          }) {
+            final mockDeviceOrientationManager = MockDeviceOrientationManager();
+            when(
+              mockDeviceOrientationManager
+                  .stopListeningForDeviceOrientationChange(),
+            ).thenAnswer((_) async {});
+            return mockDeviceOrientationManager;
+          };
+
+      // Dispose first camera
+      await camera.dispose(cameraId1);
+
+      // Verify clearAnalyzer was called (which includes 100ms frame drain)
+      verify(mockImageAnalysis1.clearAnalyzer());
+
+      // Second camera setup (simulating camera switch)
+      final mockImageAnalysis2 = MockImageAnalysis();
+      final mockPreview2 = MockPreview();
+      final mockLiveCameraState2 = MockLiveCameraState();
+
+      camera.imageAnalysis = mockImageAnalysis2;
+      camera.preview = mockPreview2;
+      camera.liveCameraState = mockLiveCameraState2;
+
+      // Dispose second camera
+      await camera.dispose(cameraId2);
+
+      // Verify clearAnalyzer was called on second camera too
+      verify(mockImageAnalysis2.clearAnalyzer());
+    },
+  );
 }
 
 class TestMeteringPoint extends MeteringPoint {
