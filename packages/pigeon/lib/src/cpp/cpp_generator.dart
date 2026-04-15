@@ -1931,109 +1931,13 @@ EncodableValue $_overflowClassName::FromEncodableList(
             method,
             dartPackageName,
           );
-          indent.writeScoped('{', '}', () {
-            indent.writeln(
-              'BasicMessageChannel<> channel(binary_messenger, '
-              '"$channelName" + prepended_suffix, &GetCodec());',
-            );
-            indent.writeScoped('if (api != nullptr) {', '} else {', () {
-              indent.write(
-                'channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) ',
-              );
-              indent.addScoped('{', '});', () {
-                indent.writeScoped('try {', '}', () {
-                  final methodArgument = <String>[];
-                  if (method.parameters.isNotEmpty) {
-                    indent.writeln(
-                      'const auto& args = std::get<EncodableList>(message);',
-                    );
-
-                    enumerate(method.parameters, (int index, NamedType arg) {
-                      final HostDatatype hostType = getHostDatatype(
-                        arg.type,
-                        (TypeDeclaration x) =>
-                            _shortBaseCppTypeForBuiltinDartType(x),
-                      );
-                      final String argName = _getSafeArgumentName(index, arg);
-
-                      final encodableArgName = '${_encodablePrefix}_$argName';
-                      indent.writeln(
-                        'const auto& $encodableArgName = args.at($index);',
-                      );
-                      if (!arg.type.isNullable) {
-                        indent.writeScoped(
-                          'if ($encodableArgName.IsNull()) {',
-                          '}',
-                          () {
-                            indent.writeln(
-                              'FlutterError error("Error", "$argName unexpectedly null.", EncodableValue());',
-                            );
-                            indent.writeln(
-                              'reply(WrapResponse(nullptr, &error));',
-                            );
-                            indent.writeln('return;');
-                          },
-                        );
-                      }
-                      _writeEncodableValueArgumentUnwrapping(
-                        indent,
-                        root,
-                        hostType,
-                        argName: argName,
-                        encodableArgName: encodableArgName,
-                        apiType: ApiType.host,
-                      );
-                      final unwrapEnum = arg.type.isEnum && arg.type.isNullable
-                          ? ' ? &(*$argName) : nullptr'
-                          : '';
-                      methodArgument.add('$argName$unwrapEnum');
-                    });
-                  }
-
-                  final HostDatatype returnType = getHostDatatype(
-                    method.returnType,
-                    _shortBaseCppTypeForBuiltinDartType,
-                  );
-                  final String returnTypeName = _hostApiReturnType(returnType);
-                  if (method.isAsynchronous) {
-                    methodArgument.add(
-                      '[reply]($returnTypeName&& output) {${indent.newline}'
-                      '${_wrapResponse(indent, root, method.returnType, prefix: '\t')}${indent.newline}'
-                      '}',
-                    );
-                  }
-                  final call =
-                      'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
-                  if (method.isAsynchronous) {
-                    indent.format('$call;');
-                  } else {
-                    indent.writeln('$returnTypeName output = $call;');
-                    indent.format(
-                      _wrapResponse(indent, root, method.returnType),
-                    );
-                  }
-                }, addTrailingNewline: false);
-                indent.add(' catch (const std::exception& exception) ');
-                indent.addScoped('{', '}', () {
-                  // There is a potential here for `reply` to be called twice, which
-                  // is a violation of the API contract, because there's no way of
-                  // knowing whether or not the plugin code called `reply` before
-                  // throwing. Since use of `@async` suggests that the reply is
-                  // probably not sent within the scope of the stack, err on the
-                  // side of potential double-call rather than no call (which is
-                  // also an API violation) so that unexpected errors have a better
-                  // chance of being caught and handled in a useful way.
-                  indent.writeln(
-                    'FlutterError error("Error", exception.what(), EncodableValue());',
-                  );
-                  indent.writeln('reply(WrapResponse(nullptr, &error));');
-                });
-              });
-            });
-            indent.addScoped(null, '}', () {
-              indent.writeln('channel.SetMessageHandler(nullptr);');
-            });
-          });
+          _writeHostMethodMessageHandler(
+            indent,
+            root,
+            api,
+            method,
+            channelName,
+          );
         }
       },
     );
@@ -2068,6 +1972,105 @@ return EncodableValue(EncodableList{
 });''');
       },
     );
+  }
+
+  void _writeHostMethodMessageHandler(
+    Indent indent,
+    Root root,
+    AstHostApi api,
+    Method method,
+    String channelName,
+  ) {
+    indent.writeScoped('{', '}', () {
+      indent.writeln(
+        'BasicMessageChannel<> channel(binary_messenger, '
+        '"$channelName" + prepended_suffix, &GetCodec());',
+      );
+      indent.writeScoped('if (api != nullptr) {', '} else {', () {
+        indent.write(
+          'channel.SetMessageHandler([api](const EncodableValue& message, const ::flutter::MessageReply<EncodableValue>& reply) ',
+        );
+        indent.addScoped('{', '});', () {
+          indent.writeScoped('try {', '}', () {
+            final methodArgument = <String>[];
+            if (method.parameters.isNotEmpty) {
+              indent.writeln(
+                'const auto& args = std::get<EncodableList>(message);',
+              );
+
+              enumerate(method.parameters, (int index, NamedType arg) {
+                final HostDatatype hostType = getHostDatatype(
+                  arg.type,
+                  (TypeDeclaration x) => _shortBaseCppTypeForBuiltinDartType(x),
+                );
+                final String argName = _getSafeArgumentName(index, arg);
+
+                final encodableArgName = '${_encodablePrefix}_$argName';
+                indent.writeln(
+                  'const auto& $encodableArgName = args.at($index);',
+                );
+                if (!arg.type.isNullable) {
+                  indent.writeScoped(
+                    'if ($encodableArgName.IsNull()) {',
+                    '}',
+                    () {
+                      indent.writeln(
+                        'FlutterError error("Error", "$argName unexpectedly null.", EncodableValue());',
+                      );
+                      indent.writeln('reply(WrapResponse(nullptr, &error));');
+                      indent.writeln('return;');
+                    },
+                  );
+                }
+                _writeEncodableValueArgumentUnwrapping(
+                  indent,
+                  root,
+                  hostType,
+                  argName: argName,
+                  encodableArgName: encodableArgName,
+                  apiType: ApiType.host,
+                );
+                final unwrapEnum = arg.type.isEnum && arg.type.isNullable
+                    ? ' ? &(*$argName) : nullptr'
+                    : '';
+                methodArgument.add('$argName$unwrapEnum');
+              });
+            }
+
+            final HostDatatype returnType = getHostDatatype(
+              method.returnType,
+              _shortBaseCppTypeForBuiltinDartType,
+            );
+            final String returnTypeName = _hostApiReturnType(returnType);
+            if (method.isAsynchronous) {
+              methodArgument.add(
+                '[reply]($returnTypeName&& output) {${indent.newline}'
+                '${_wrapResponse(indent, root, method.returnType, prefix: '\t')}${indent.newline}'
+                '}',
+              );
+            }
+            final call =
+                'api->${_makeMethodName(method)}(${methodArgument.join(', ')})';
+            if (method.isAsynchronous) {
+              indent.format('$call;');
+            } else {
+              indent.writeln('$returnTypeName output = $call;');
+              indent.format(_wrapResponse(indent, root, method.returnType));
+            }
+          }, addTrailingNewline: false);
+          indent.add(' catch (const std::exception& exception) ');
+          indent.addScoped('{', '}', () {
+            indent.writeln(
+              'FlutterError error("Error", exception.what(), EncodableValue());',
+            );
+            indent.writeln('reply(WrapResponse(nullptr, &error));');
+          });
+        });
+      });
+      indent.addScoped(null, '}', () {
+        indent.writeln('channel.SetMessageHandler(nullptr);');
+      });
+    });
   }
 
   void _writeClassConstructor(

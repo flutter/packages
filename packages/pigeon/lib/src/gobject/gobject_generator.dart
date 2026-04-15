@@ -1273,9 +1273,15 @@ class GObjectSourceGenerator
             module,
             field.type.baseName,
           );
-          indent.writeln(
-            'result = result * 31 + ${fieldMethodPrefix}_hash(self->$fieldName);',
-          );
+          if (field.type.isNullable) {
+            indent.writeln(
+              'result = result * 31 + (self->$fieldName != nullptr ? ${fieldMethodPrefix}_hash(self->$fieldName) : 0);',
+            );
+          } else {
+            indent.writeln(
+              'result = result * 31 + ${fieldMethodPrefix}_hash(self->$fieldName);',
+            );
+          }
         } else if (field.type.isEnum) {
           if (field.type.isNullable) {
             indent.writeln(
@@ -1693,7 +1699,9 @@ class GObjectSourceGenerator
               indent.writeln(
                 'FlValue* value = fl_value_get_list_value(response, 0);',
               );
-              indent.writeln('self->return_value = fl_value_ref(value);');
+              indent.writeScoped('if (value != nullptr) {', '}', () {
+                indent.writeln('self->return_value = fl_value_ref(value);');
+              });
             });
           }
           indent.writeln('return self;');

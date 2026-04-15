@@ -1978,8 +1978,10 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
                               ? g_str_hash(self->a_nullable_string)
                               : 0);
   result = result * 31 + flpigeon_deep_hash(self->a_nullable_object);
-  result = result * 31 + core_tests_pigeon_test_all_nullable_types_hash(
-                             self->all_nullable_types);
+  result = result * 31 + (self->all_nullable_types != nullptr
+                              ? core_tests_pigeon_test_all_nullable_types_hash(
+                                    self->all_nullable_types)
+                              : 0);
   result = result * 31 + flpigeon_deep_hash(self->list);
   result = result * 31 + flpigeon_deep_hash(self->string_list);
   result = result * 31 + flpigeon_deep_hash(self->int_list);
@@ -3304,10 +3306,16 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
   guint result = 0;
   result = result * 31 + core_tests_pigeon_test_all_nullable_types_hash(
                              self->all_nullable_types);
+  result =
+      result * 31 +
+      (self->all_nullable_types_without_recursion != nullptr
+           ? core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
+                 self->all_nullable_types_without_recursion)
+           : 0);
   result = result * 31 +
-           core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
-               self->all_nullable_types_without_recursion);
-  result = result * 31 + core_tests_pigeon_test_all_types_hash(self->all_types);
+           (self->all_types != nullptr
+                ? core_tests_pigeon_test_all_types_hash(self->all_types)
+                : 0);
   result = result * 31 + flpigeon_deep_hash(self->class_list);
   result = result * 31 + flpigeon_deep_hash(self->nullable_class_list);
   result = result * 31 + flpigeon_deep_hash(self->class_map);
@@ -26439,7 +26447,9 @@ core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -26749,7 +26759,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -26916,7 +26928,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_resp
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27095,7 +27109,9 @@ core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27275,7 +27291,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_with
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27456,7 +27474,9 @@ core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27632,7 +27652,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27791,7 +27813,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -27951,7 +27975,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28111,7 +28137,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28271,7 +28299,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_new
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28436,7 +28466,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28596,7 +28628,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_enum_list_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28758,7 +28792,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_class_list_response_new
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -28922,7 +28958,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_enum_list_resp
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29091,7 +29129,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_class_list_res
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29257,7 +29297,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29417,7 +29459,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_string_map_response_new
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29579,7 +29623,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_int_map_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29740,7 +29786,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_enum_map_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -29902,7 +29950,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_class_map_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30066,7 +30116,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_string_map_res
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30234,7 +30286,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_int_map_respon
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30402,7 +30456,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_enum_map_respo
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30571,7 +30627,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_non_null_class_map_resp
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30737,7 +30795,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -30903,7 +30963,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_another_enum_response_n
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31072,7 +31134,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31246,7 +31310,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_n
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31415,7 +31481,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_respons
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31588,7 +31656,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_respons
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31761,7 +31831,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_res
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -31938,7 +32010,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32111,7 +32185,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_list_resp
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32284,7 +32360,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_class_list_res
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32458,7 +32536,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_enum_
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32632,7 +32712,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_class
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32804,7 +32886,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_n
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -32972,7 +33056,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_map_res
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -33144,7 +33230,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_map_respon
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -33317,7 +33405,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_map_respo
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -33490,7 +33580,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_class_map_resp
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -33664,7 +33756,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_strin
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -33838,7 +33932,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_int_m
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -34012,7 +34108,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_enum_
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -34186,7 +34284,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_non_null_class
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -34359,7 +34459,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -34540,7 +34642,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_another_nullable_enum_r
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -34860,7 +34964,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_response_n
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -35580,7 +35686,9 @@ core_tests_pigeon_test_flutter_small_api_echo_wrapped_list_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
@@ -35738,7 +35846,9 @@ core_tests_pigeon_test_flutter_small_api_echo_string_response_new(
     self->error = fl_value_ref(response);
   } else {
     FlValue* value = fl_value_get_list_value(response, 0);
-    self->return_value = fl_value_ref(value);
+    if (value != nullptr) {
+      self->return_value = fl_value_ref(value);
+    }
   }
   return self;
 }
