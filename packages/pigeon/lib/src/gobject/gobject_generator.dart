@@ -2109,86 +2109,24 @@ class GObjectSourceGenerator
 
           indent.newln();
           final methodArgs = <String>[];
-          for (var i = 0; i < method.parameters.length; i++) {
-            final Parameter param = method.parameters[i];
-            final String paramName = _snakeCaseFromCamelCase(param.name);
-            final String paramType = _getType(module, param.type);
-            indent.writeln(
-              'FlValue* value$i = fl_value_get_list_value(message_, $i);',
-            );
-            if (_isNullablePrimitiveType(param.type)) {
-              final String primitiveType = _getType(
-                module,
-                param.type,
-                primitive: true,
-              );
-              indent.writeln('$paramType $paramName = nullptr;');
-              indent.writeln('$primitiveType ${paramName}_value;');
-              indent.writeScoped(
-                'if (fl_value_get_type(value$i) != FL_VALUE_TYPE_NULL) {',
-                '}',
-                () {
-                  final String paramValue = _fromFlValue(
-                    module,
-                    method.parameters[i].type,
-                    'value$i',
-                  );
-                  indent.writeln('${paramName}_value = $paramValue;');
-                  indent.writeln('$paramName = &${paramName}_value;');
-                },
-              );
-            } else {
-              final String paramValue = _fromFlValue(
-                module,
-                method.parameters[i].type,
-                'value$i',
-              );
-              indent.writeln('$paramType $paramName = $paramValue;');
-            }
-            methodArgs.add(paramName);
-            if (_isNumericListType(method.parameters[i].type)) {
-              indent.writeln(
-                'size_t ${paramName}_length = fl_value_get_length(value$i);',
-              );
-              methodArgs.add('${paramName}_length');
-            }
-          }
-          if (method.isAsynchronous) {
-            final vfuncArgs = <String>[];
-            vfuncArgs.addAll(methodArgs);
-            vfuncArgs.addAll(<String>['handle', 'self->user_data']);
-            indent.writeln(
-              'g_autoptr(${className}ResponseHandle) handle = ${methodPrefix}_response_handle_new(channel, response_handle);',
-            );
-            indent.writeln(
-              "self->vtable->$methodName(${vfuncArgs.join(', ')});",
-            );
-          } else {
-            final vfuncArgs = <String>[];
-            vfuncArgs.addAll(methodArgs);
-            vfuncArgs.add('self->user_data');
-            indent.writeln(
-              "g_autoptr($responseClassName) response = self->vtable->$methodName(${vfuncArgs.join(', ')});",
-            );
-            indent.writeScoped('if (response == nullptr) {', '}', () {
-              indent.writeln(
-                'g_warning("No response returned to %s.%s", "${api.name}", "${method.name}");',
-              );
-              indent.writeln('return;');
-            });
+          _writeArgumentUnpacking(
+            indent,
+            root: root,
+            method: method,
+            module: module,
+            methodArgs: methodArgs,
+          );
 
-            indent.newln();
-            indent.writeln('g_autoptr(GError) error = NULL;');
-            indent.writeScoped(
-              'if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {',
-              '}',
-              () {
-                indent.writeln(
-                  'g_warning("Failed to send response to %s.%s: %s", "${api.name}", "${method.name}", error->message);',
-                );
-              },
-            );
-          }
+          _writeApiInvocation(
+            indent,
+            method: method,
+            module: module,
+            className: className,
+            methodPrefix: methodPrefix,
+            responseClassName: responseClassName,
+            methodArgs: methodArgs,
+            apiName: api.name,
+          );
         },
       );
     }
@@ -2327,6 +2265,107 @@ class GObjectSourceGenerator
                 'g_warning("Failed to send response to %s.%s: %s", "${api.name}", "${method.name}", error->message);',
               );
             },
+          );
+        },
+      );
+    }
+  }
+
+  void _writeArgumentUnpacking(
+    Indent indent, {
+    required Root root,
+    required Method method,
+    required String module,
+    required List<String> methodArgs,
+  }) {
+    for (var i = 0; i < method.parameters.length; i++) {
+      final Parameter param = method.parameters[i];
+      final String paramName = _snakeCaseFromCamelCase(param.name);
+      final String paramType = _getType(module, param.type);
+      indent.writeln(
+        'FlValue* value$i = fl_value_get_list_value(message_, $i);',
+      );
+      if (_isNullablePrimitiveType(param.type)) {
+        final String primitiveType = _getType(
+          module,
+          param.type,
+          primitive: true,
+        );
+        indent.writeln('$paramType $paramName = nullptr;');
+        indent.writeln('$primitiveType ${paramName}_value;');
+        indent.writeScoped(
+          'if (fl_value_get_type(value$i) != FL_VALUE_TYPE_NULL) {',
+          '}',
+          () {
+            final String paramValue = _fromFlValue(
+              module,
+              method.parameters[i].type,
+              'value$i',
+            );
+            indent.writeln('${paramName}_value = $paramValue;');
+            indent.writeln('$paramName = &${paramName}_value;');
+          },
+        );
+      } else {
+        final String paramValue = _fromFlValue(
+          module,
+          method.parameters[i].type,
+          'value$i',
+        );
+        indent.writeln('$paramType $paramName = $paramValue;');
+      }
+      methodArgs.add(paramName);
+      if (_isNumericListType(method.parameters[i].type)) {
+        indent.writeln(
+          'size_t ${paramName}_length = fl_value_get_length(value$i);',
+        );
+        methodArgs.add('${paramName}_length');
+      }
+    }
+  }
+
+  void _writeApiInvocation(
+    Indent indent, {
+    required Method method,
+    required String module,
+    required String className,
+    required String methodPrefix,
+    required String responseClassName,
+    required List<String> methodArgs,
+    required String apiName,
+  }) {
+    if (method.isAsynchronous) {
+      final vfuncArgs = <String>[];
+      vfuncArgs.addAll(methodArgs);
+      vfuncArgs.addAll(<String>['handle', 'self->user_data']);
+      indent.writeln(
+        'g_autoptr(${className}ResponseHandle) handle = ${methodPrefix}_response_handle_new(channel, response_handle);',
+      );
+      indent.writeln(
+        "self->vtable->${_getMethodName(method.name)}(${vfuncArgs.join(', ')});",
+      );
+    } else {
+      final vfuncArgs = <String>[];
+      vfuncArgs.addAll(methodArgs);
+      vfuncArgs.add('self->user_data');
+      indent.writeln(
+        'g_autoptr($responseClassName) response = self->vtable->${_getMethodName(method.name)}(${vfuncArgs.join(', ')});',
+      );
+      indent.writeScoped('if (response == nullptr) {', '}', () {
+        indent.writeln(
+          'g_warning("No response returned to %s.%s", "$apiName", "${method.name}");',
+        );
+        indent.writeln('return;');
+      });
+
+      indent.newln();
+      indent.writeln('g_autoptr(GError) error = NULL;');
+      indent.writeScoped(
+        'if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {',
+        '}',
+        () {
+          indent.writeln(
+            'g_warning("Failed to send response to %s.%s: %s", "$apiName", "${method.name}", error->message);',
           );
         },
       );

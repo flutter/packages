@@ -884,6 +884,17 @@ if (wrapped == nil) {
     AstHostApi api, {
     required String dartPackageName,
   }) {
+    _generateInterface(indent, api);
+    _generateSetupMethod(
+      generatorOptions,
+      root,
+      indent,
+      api,
+      dartPackageName: dartPackageName,
+    );
+  }
+
+  void _generateInterface(Indent indent, AstHostApi api) {
     final String apiName = api.name;
 
     const generatedComments = <String>[
@@ -916,7 +927,16 @@ if (wrapped == nil) {
         );
       }
     });
+  }
 
+  void _generateSetupMethod(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    final String apiName = api.name;
     indent.newln();
     indent.writeln(
       '/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.',
@@ -941,10 +961,6 @@ if (wrapped == nil) {
           (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
         )) {
           serialBackgroundQueue = 'taskQueue';
-          // TODO(stuartmorgan): Remove the ? once macOS supports task queues
-          // and this is no longer an optional protocol method.
-          // See https://github.com/flutter/flutter/issues/162613 for why this
-          // is an ifdef instead of just relying on the optionality check.
           indent.format('''
 #if os(iOS)
   let $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue?()
@@ -1922,13 +1938,57 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
     final baseArgs =
         'name: "$channelName", '
         'binaryMessenger: binaryMessenger, codec: codec';
-    // The version with taskQueue: is an optional protocol method that isn't
-    // implemented on macOS yet, so the call has to be conditionalized even
-    // though the taskQueue argument is nullable. The runtime branching can be
-    // removed once macOS supports task queues. The condition is on the task
-    // queue variable not being nil because the earlier code to set it will
-    // return nil on macOS where the optional parts of the protocol are not
-    // implemented.
+
+    _writeChannelAllocation(
+      indent,
+      varChannelName: varChannelName,
+      baseArgs: baseArgs,
+      serialBackgroundQueue: serialBackgroundQueue,
+    );
+
+    final messageVarName = parameters.isNotEmpty ? 'message' : '_';
+
+    _writeMessageHandlerRegistration(
+      indent,
+      varChannelName: varChannelName,
+      setHandlerCondition: setHandlerCondition,
+      messageVarName: messageVarName,
+      body: () {
+        final methodArgument = <String>[];
+        _writeArgumentUnpacking(
+          indent,
+          parameters: parameters,
+          arguments: components.arguments,
+          methodArgument: methodArgument,
+        );
+
+        final tryStatement = isAsynchronous ? '' : 'try ';
+        late final String call;
+        if (onCreateCall == null) {
+          final argumentString = methodArgument.isEmpty && isAsynchronous
+              ? ''
+              : '(${methodArgument.join(', ')})';
+          call = '${tryStatement}api.${components.name}$argumentString';
+        } else {
+          call = onCreateCall(methodArgument, apiVarName: 'api');
+        }
+
+        _writeApiInvocation(
+          indent,
+          isAsynchronous: isAsynchronous,
+          call: call,
+          returnType: returnType,
+        );
+      },
+    );
+  }
+
+  void _writeChannelAllocation(
+    Indent indent, {
+    required String varChannelName,
+    required String baseArgs,
+    required String? serialBackgroundQueue,
+  }) {
     final channelCreationWithoutTaskQueue =
         'FlutterBasicMessageChannel($baseArgs)';
     if (serialBackgroundQueue == null) {
@@ -1943,98 +2003,152 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
         indent.writeln(': $channelCreationWithTaskQueue');
       });
     }
+  }
 
+  void _writeMessageHandlerRegistration(
+    Indent indent, {
+    required String varChannelName,
+    required String setHandlerCondition,
+    required String messageVarName,
+    required void Function() body,
+  }) {
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
-      final messageVarName = parameters.isNotEmpty ? 'message' : '_';
       indent.addScoped('{ $messageVarName, reply in', '}', () {
-        final methodArgument = <String>[];
-        if (components.arguments.isNotEmpty) {
-          indent.writeln('let args = message as! [Any?]');
-          enumerate(components.arguments, (
-            int index,
-            _SwiftFunctionArgument arg,
-          ) {
-            final String argName = _getSafeArgumentName(index, arg.namedType);
-            final argIndex = 'args[$index]';
-            final String fieldType = _swiftTypeForDartType(arg.type);
-            // There is a swift bug with unwrapping maps of nullable Enums;
-            final enumMapForceUnwrap =
-                arg.type.baseName == 'Map' &&
-                    arg.type.typeArguments.any(
-                      (TypeDeclaration type) => type.isEnum,
-                    )
-                ? '!'
-                : '';
-
-            _writeGenericCasting(
-              indent: indent,
-              value: argIndex,
-              variableName: argName,
-              fieldType: fieldType,
-              type: arg.type,
-            );
-
-            if (arg.label == '_') {
-              methodArgument.add('$argName$enumMapForceUnwrap');
-            } else {
-              methodArgument.add(
-                '${arg.label ?? arg.name}: $argName$enumMapForceUnwrap',
-              );
-            }
-          });
-        }
-        final tryStatement = isAsynchronous ? '' : 'try ';
-        late final String call;
-        if (onCreateCall == null) {
-          // Empty parens are not required when calling a method whose only
-          // argument is a trailing closure.
-          final argumentString = methodArgument.isEmpty && isAsynchronous
-              ? ''
-              : '(${methodArgument.join(', ')})';
-          call = '${tryStatement}api.${components.name}$argumentString';
-        } else {
-          call = onCreateCall(methodArgument, apiVarName: 'api');
-        }
-        if (isAsynchronous) {
-          final resultName = returnType.isVoid ? 'nil' : 'res';
-          final successVariableInit = returnType.isVoid ? '' : '(let res)';
-          indent.write('$call ');
-
-          indent.addScoped('{ result in', '}', () {
-            indent.write('switch result ');
-            indent.addScoped('{', '}', nestCount: 0, () {
-              indent.writeln('case .success$successVariableInit:');
-              indent.nest(1, () {
-                indent.writeln('reply(wrapResponse($resultName, nil))');
-              });
-              indent.writeln('case .failure(let error):');
-              indent.nest(1, () {
-                indent.writeln('reply(wrapResponse(nil, error))');
-              });
-            });
-          });
-        } else {
-          indent.write('do ');
-          indent.addScoped('{', '}', () {
-            if (returnType.isVoid) {
-              indent.writeln(call);
-              indent.writeln('reply(wrapResponse(nil, nil))');
-            } else {
-              indent.writeln('let result = $call');
-              indent.writeln('reply(wrapResponse(result, nil))');
-            }
-          }, addTrailingNewline: false);
-          indent.addScoped(' catch {', '}', () {
-            indent.writeln('reply(wrapResponse(nil, error))');
-          });
-        }
+        body();
       });
     }, addTrailingNewline: false);
     indent.addScoped(' else {', '}', () {
       indent.writeln('$varChannelName.setMessageHandler(nil)');
     });
+  }
+
+  void _writeArgumentUnpacking(
+    Indent indent, {
+    required Iterable<Parameter> parameters,
+    required List<_SwiftFunctionArgument> arguments,
+    required List<String> methodArgument,
+  }) {
+    if (arguments.isNotEmpty) {
+      indent.writeln('let args = message as! [Any?]');
+      enumerate(arguments, (int index, _SwiftFunctionArgument arg) {
+        final String argName = _getSafeArgumentName(index, arg.namedType);
+        final argIndex = 'args[$index]';
+        final String fieldType = _swiftTypeForDartType(arg.type);
+        final enumMapForceUnwrap =
+            arg.type.baseName == 'Map' &&
+                arg.type.typeArguments.any(
+                  (TypeDeclaration type) => type.isEnum,
+                )
+            ? '!'
+            : '';
+
+        _writeGenericCasting(
+          indent: indent,
+          value: argIndex,
+          variableName: argName,
+          fieldType: fieldType,
+          type: arg.type,
+        );
+
+        if (arg.label == '_') {
+          methodArgument.add('$argName$enumMapForceUnwrap');
+        } else {
+          methodArgument.add(
+            '${arg.label ?? arg.name}: $argName$enumMapForceUnwrap',
+          );
+        }
+      });
+    }
+  }
+
+  void _writeApiInvocation(
+    Indent indent, {
+    required bool isAsynchronous,
+    required String call,
+    required TypeDeclaration returnType,
+  }) {
+    if (isAsynchronous) {
+      final resultName = returnType.isVoid ? 'nil' : 'res';
+      final successVariableInit = returnType.isVoid ? '' : '(let res)';
+      indent.write('$call ');
+
+      indent.addScoped('{ result in', '}', () {
+        indent.write('switch result ');
+        indent.addScoped('{', '}', nestCount: 0, () {
+          indent.writeln('case .success$successVariableInit:');
+          indent.nest(1, () {
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                resultName: resultName,
+                errorName: null,
+              ),
+            );
+          });
+          indent.writeln('case .failure(let error):');
+          indent.nest(1, () {
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                resultName: null,
+                errorName: 'error',
+              ),
+            );
+          });
+        });
+      });
+    } else {
+      indent.write('do ');
+      indent.addScoped('{', '}', () {
+        if (returnType.isVoid) {
+          indent.writeln(call);
+          _writeReplying(
+            indent,
+            response: _writeResultWrapping(
+              indent,
+              resultName: null,
+              errorName: null,
+            ),
+          );
+        } else {
+          indent.writeln('let result = $call');
+          _writeReplying(
+            indent,
+            response: _writeResultWrapping(
+              indent,
+              resultName: 'result',
+              errorName: null,
+            ),
+          );
+        }
+      }, addTrailingNewline: false);
+      indent.addScoped(' catch {', '}', () {
+        _writeReplying(
+          indent,
+          response: _writeResultWrapping(
+            indent,
+            resultName: null,
+            errorName: 'error',
+          ),
+        );
+      });
+    }
+  }
+
+  String _writeResultWrapping(
+    Indent indent, {
+    required String? resultName,
+    required String? errorName,
+  }) {
+    return 'wrapResponse(${resultName ?? 'nil'}, ${errorName ?? 'nil'})';
+  }
+
+  void _writeReplying(Indent indent, {required String response}) {
+    indent.writeln('reply($response)');
   }
 
   void _writeProxyApiRegistrar(

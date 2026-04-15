@@ -5277,7 +5277,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.noopAsync(resultCallback);
               });
         } else {
@@ -5306,7 +5305,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncInt(anIntArg, resultCallback);
               });
         } else {
@@ -5335,7 +5333,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncDouble(aDoubleArg, resultCallback);
               });
         } else {
@@ -5364,7 +5361,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncBool(aBoolArg, resultCallback);
               });
         } else {
@@ -5393,7 +5389,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncString(aStringArg, resultCallback);
               });
         } else {
@@ -5422,7 +5417,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncUint8List(aUint8ListArg, resultCallback);
               });
         } else {
@@ -5451,7 +5445,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncObject(anObjectArg, resultCallback);
               });
         } else {
@@ -5480,7 +5473,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncList(listArg, resultCallback);
               });
         } else {
@@ -5509,7 +5501,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -5538,7 +5529,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncClassList(classListArg, resultCallback);
               });
         } else {
@@ -5567,7 +5557,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncMap(mapArg, resultCallback);
               });
         } else {
@@ -5596,7 +5585,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -5625,7 +5613,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -5654,7 +5641,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -5683,7 +5669,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -5712,7 +5697,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncEnum(anEnumArg, resultCallback);
               });
         } else {
@@ -5741,7 +5725,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAnotherAsyncEnum(anotherEnumArg, resultCallback);
               });
         } else {
@@ -5768,7 +5751,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.throwAsyncError(resultCallback);
               });
         } else {
@@ -5795,7 +5777,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.throwAsyncErrorFromVoid(resultCallback);
               });
         } else {
@@ -5822,7 +5803,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.throwAsyncFlutterError(resultCallback);
               });
         } else {
@@ -5851,7 +5831,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncAllTypes(everythingArg, resultCallback);
               });
         } else {
@@ -5880,7 +5859,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableAllNullableTypes(everythingArg, resultCallback);
               });
         } else {
@@ -5910,7 +5888,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableAllNullableTypesWithoutRecursion(
                     everythingArg, resultCallback);
               });
@@ -5940,7 +5917,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableInt(anIntArg, resultCallback);
               });
         } else {
@@ -5969,7 +5945,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableDouble(aDoubleArg, resultCallback);
               });
         } else {
@@ -5998,7 +5973,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableBool(aBoolArg, resultCallback);
               });
         } else {
@@ -6027,7 +6001,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableString(aStringArg, resultCallback);
               });
         } else {
@@ -6056,7 +6029,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableUint8List(aUint8ListArg, resultCallback);
               });
         } else {
@@ -6085,7 +6057,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableObject(anObjectArg, resultCallback);
               });
         } else {
@@ -6114,7 +6085,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableList(listArg, resultCallback);
               });
         } else {
@@ -6143,7 +6113,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -6172,7 +6141,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableClassList(classListArg, resultCallback);
               });
         } else {
@@ -6201,7 +6169,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableMap(mapArg, resultCallback);
               });
         } else {
@@ -6230,7 +6197,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -6259,7 +6225,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -6288,7 +6253,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -6317,7 +6281,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -6346,7 +6309,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAsyncNullableEnum(anEnumArg, resultCallback);
               });
         } else {
@@ -6375,7 +6337,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echoAnotherAsyncNullableEnum(anotherEnumArg, resultCallback);
               });
         } else {
@@ -6445,7 +6406,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterNoop(resultCallback);
               });
         } else {
@@ -6472,7 +6432,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterThrowError(resultCallback);
               });
         } else {
@@ -6499,7 +6458,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterThrowErrorFromVoid(resultCallback);
               });
         } else {
@@ -6528,7 +6486,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoAllTypes(everythingArg, resultCallback);
               });
         } else {
@@ -6557,7 +6514,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoAllNullableTypes(everythingArg, resultCallback);
               });
         } else {
@@ -6588,7 +6544,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterSendMultipleNullableTypes(
                     aNullableBoolArg, aNullableIntArg, aNullableStringArg, resultCallback);
               });
@@ -6619,7 +6574,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoAllNullableTypesWithoutRecursion(everythingArg, resultCallback);
               });
         } else {
@@ -6650,7 +6604,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterSendMultipleNullableTypesWithoutRecursion(
                     aNullableBoolArg, aNullableIntArg, aNullableStringArg, resultCallback);
               });
@@ -6680,7 +6633,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoBool(aBoolArg, resultCallback);
               });
         } else {
@@ -6709,7 +6661,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoInt(anIntArg, resultCallback);
               });
         } else {
@@ -6738,7 +6689,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoDouble(aDoubleArg, resultCallback);
               });
         } else {
@@ -6767,7 +6717,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoString(aStringArg, resultCallback);
               });
         } else {
@@ -6796,7 +6745,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoUint8List(listArg, resultCallback);
               });
         } else {
@@ -6825,7 +6773,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoList(listArg, resultCallback);
               });
         } else {
@@ -6854,7 +6801,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -6883,7 +6829,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoClassList(classListArg, resultCallback);
               });
         } else {
@@ -6912,7 +6857,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -6941,7 +6885,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullClassList(classListArg, resultCallback);
               });
         } else {
@@ -6970,7 +6913,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoMap(mapArg, resultCallback);
               });
         } else {
@@ -6999,7 +6941,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -7028,7 +6969,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -7057,7 +6997,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -7086,7 +7025,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -7115,7 +7053,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -7144,7 +7081,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -7173,7 +7109,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -7202,7 +7137,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNonNullClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -7231,7 +7165,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoEnum(anEnumArg, resultCallback);
               });
         } else {
@@ -7260,7 +7193,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoAnotherEnum(anotherEnumArg, resultCallback);
               });
         } else {
@@ -7289,7 +7221,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableBool(aBoolArg, resultCallback);
               });
         } else {
@@ -7318,7 +7249,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableInt(anIntArg, resultCallback);
               });
         } else {
@@ -7347,7 +7277,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableDouble(aDoubleArg, resultCallback);
               });
         } else {
@@ -7376,7 +7305,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableString(aStringArg, resultCallback);
               });
         } else {
@@ -7405,7 +7333,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableUint8List(listArg, resultCallback);
               });
         } else {
@@ -7434,7 +7361,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableList(listArg, resultCallback);
               });
         } else {
@@ -7463,7 +7389,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -7492,7 +7417,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableClassList(classListArg, resultCallback);
               });
         } else {
@@ -7521,7 +7445,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullEnumList(enumListArg, resultCallback);
               });
         } else {
@@ -7550,7 +7473,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullClassList(classListArg, resultCallback);
               });
         } else {
@@ -7579,7 +7501,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableMap(mapArg, resultCallback);
               });
         } else {
@@ -7608,7 +7529,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -7637,7 +7557,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -7666,7 +7585,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -7695,7 +7613,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -7724,7 +7641,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullStringMap(stringMapArg, resultCallback);
               });
         } else {
@@ -7753,7 +7669,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullIntMap(intMapArg, resultCallback);
               });
         } else {
@@ -7782,7 +7697,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullEnumMap(enumMapArg, resultCallback);
               });
         } else {
@@ -7811,7 +7725,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableNonNullClassMap(classMapArg, resultCallback);
               });
         } else {
@@ -7840,7 +7753,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoNullableEnum(anEnumArg, resultCallback);
               });
         } else {
@@ -7869,7 +7781,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterEchoAnotherNullableEnum(anotherEnumArg, resultCallback);
               });
         } else {
@@ -7898,7 +7809,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.callFlutterSmallApiEchoString(aStringArg, resultCallback);
               });
         } else {
@@ -9594,7 +9504,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.echo(aStringArg, resultCallback);
               });
         } else {
@@ -9621,7 +9530,6 @@ public class CoreTests {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.voidVoid(resultCallback);
               });
         } else {

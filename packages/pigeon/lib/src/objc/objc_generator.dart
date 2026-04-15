@@ -1204,162 +1204,58 @@ static FlutterError *createConnectionError(NSString *channelName) {
     Method func,
     String channel,
   ) {
-    void unpackArgs(String variable) {
-      indent.writeln('NSArray<id> *args = $variable;');
-      var count = 0;
-      for (final NamedType arg in func.parameters) {
-        final String argName = _getSafeArgName(count, arg);
-        final valueGetter = 'GetNullableObjectAtIndex(args, $count)';
-        final String? primitiveExtractionMethod = _nsnumberExtractionMethod(
-          arg.type,
-        );
-        final _ObjcType objcArgType = _objcTypeForDartType(
-          generatorOptions.prefix,
-          arg.type,
-        );
-        final String ivarValueExpression;
-        String beforeString = objcArgType.beforeString;
-        if (arg.type.isEnum && !arg.type.isNullable) {
-          final varName =
-              'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}';
-          _writeEnumBoxToEnum(
-            indent,
-            arg,
-            varName,
-            valueGetter,
-            prefix: generatorOptions.prefix,
-          );
-          ivarValueExpression = '$varName.value';
-        } else if (primitiveExtractionMethod != null) {
-          ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
-        } else {
-          if (arg.type.isEnum) {
-            beforeString = _enumName(
-              arg.type.baseName,
-              prefix: generatorOptions.prefix,
-              box: true,
-              suffix: ' *',
-            );
-          }
-          ivarValueExpression = valueGetter;
-        }
-        indent.writeln('$beforeString$argName = $ivarValueExpression;');
-        count++;
-      }
-    }
-
-    void writeAsyncBindings(
-      Iterable<String> selectorComponents,
-      String callSignature,
-      _ObjcType returnType,
-    ) {
-      if (func.returnType.isVoid) {
-        const callback = 'callback(wrapResult(nil, error));';
-        if (func.parameters.isEmpty) {
-          indent.writeScoped(
-            '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
-            '}];',
-            () {
-              indent.writeln(callback);
-            },
-          );
-        } else {
-          indent.writeScoped(
-            '[api $callSignature ${selectorComponents.last}:^(FlutterError *_Nullable error) {',
-            '}];',
-            () {
-              indent.writeln(callback);
-            },
-          );
-        }
-      } else {
-        const callback = 'callback(wrapResult(output, error));';
-        var returnTypeString = '${returnType.beforeString}_Nullable output';
-
-        if (func.returnType.isEnum) {
-          returnTypeString =
-              '${_enumName(func.returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} output';
-        }
-        if (func.parameters.isEmpty) {
-          indent.writeScoped(
-            '[api ${selectorComponents.first}:^($returnTypeString, FlutterError *_Nullable error) {',
-            '}];',
-            () {
-              indent.writeln(callback);
-            },
-          );
-        } else {
-          indent.writeScoped(
-            '[api $callSignature ${selectorComponents.last}:^($returnTypeString, FlutterError *_Nullable error) {',
-            '}];',
-            () {
-              indent.writeln(callback);
-            },
-          );
-        }
-      }
-    }
-
-    void writeSyncBindings(String call, _ObjcType returnType) {
-      indent.writeln('FlutterError *error;');
-      if (func.returnType.isVoid) {
-        indent.writeln('$call;');
-        indent.writeln('callback(wrapResult(nil, error));');
-      } else {
-        if (func.returnType.isEnum) {
-          indent.writeln(
-            '${_enumName(func.returnType.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)} output = $call;',
-          );
-        } else {
-          indent.writeln('${returnType.beforeString}output = $call;');
-        }
-        indent.writeln('callback(wrapResult(output, error));');
-      }
-    }
-
     // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
     final lastSelectorComponent = func.isAsynchronous ? 'completion' : 'error';
     final String selector = _getSelector(func, lastSelectorComponent);
     indent.writeln(
       'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);',
     );
-    indent.write(
-      '[$channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ',
+
+    _writeMessageHandlerRegistration(
+      indent,
+      varChannelName: channel,
+      body: () {
+        final _ObjcType returnType = _objcTypeForDartType(
+          generatorOptions.prefix,
+          func.returnType,
+          // Nullability is required since the return must be nil if NSError is set.
+          forceBox: true,
+        );
+        final Iterable<String> selectorComponents = _getSelectorComponents(
+          func,
+          lastSelectorComponent,
+        );
+        final Iterable<String> argNames = indexMap(
+          func.parameters,
+          _getSafeArgName,
+        );
+        final String callSignature = map2(
+          selectorComponents.take(argNames.length),
+          argNames,
+          (String selectorComponent, String argName) {
+            return '$selectorComponent:$argName';
+          },
+        ).join(' ');
+
+        if (func.parameters.isNotEmpty) {
+          _writeArgumentUnpacking(
+            indent,
+            generatorOptions: generatorOptions,
+            func: func,
+            variable: 'message',
+          );
+        }
+
+        _writeApiInvocation(
+          indent,
+          generatorOptions: generatorOptions,
+          func: func,
+          returnType: returnType,
+          selectorComponents: selectorComponents,
+          callSignature: callSignature,
+        );
+      },
     );
-    indent.addScoped('{', '}];', () {
-      final _ObjcType returnType = _objcTypeForDartType(
-        generatorOptions.prefix,
-        func.returnType,
-        // Nullability is required since the return must be nil if NSError is set.
-        forceBox: true,
-      );
-      final Iterable<String> selectorComponents = _getSelectorComponents(
-        func,
-        lastSelectorComponent,
-      );
-      final Iterable<String> argNames = indexMap(
-        func.parameters,
-        _getSafeArgName,
-      );
-      final String callSignature = map2(
-        selectorComponents.take(argNames.length),
-        argNames,
-        (String selectorComponent, String argName) {
-          return '$selectorComponent:$argName';
-        },
-      ).join(' ');
-      if (func.parameters.isNotEmpty) {
-        unpackArgs('message');
-      }
-      if (func.isAsynchronous) {
-        writeAsyncBindings(selectorComponents, callSignature, returnType);
-      } else {
-        final syncCall = func.parameters.isEmpty
-            ? '[api ${selectorComponents.first}:&error]'
-            : '[api $callSignature error:&error]';
-        writeSyncBindings(syncCall, returnType);
-      }
-    });
   }
 
   void _writeChannelAllocation(
@@ -1400,6 +1296,175 @@ taskQueue:$taskQueue
         }
       });
     });
+  }
+
+  void _writeMessageHandlerRegistration(
+    Indent indent, {
+    required String varChannelName,
+    required void Function() body,
+  }) {
+    indent.write(
+      '[$varChannelName setMessageHandler:^(id _Nullable message, FlutterReply callback) ',
+    );
+    indent.addScoped('{', '}];', body);
+  }
+
+  void _writeArgumentUnpacking(
+    Indent indent, {
+    required InternalObjcOptions generatorOptions,
+    required Method func,
+    required String variable,
+  }) {
+    indent.writeln('NSArray<id> *args = $variable;');
+    var count = 0;
+    for (final NamedType arg in func.parameters) {
+      final String argName = _getSafeArgName(count, arg);
+      final valueGetter = 'GetNullableObjectAtIndex(args, $count)';
+      final String? primitiveExtractionMethod = _nsnumberExtractionMethod(
+        arg.type,
+      );
+      final _ObjcType objcArgType = _objcTypeForDartType(
+        generatorOptions.prefix,
+        arg.type,
+      );
+      final String ivarValueExpression;
+      String beforeString = objcArgType.beforeString;
+      if (arg.type.isEnum && !arg.type.isNullable) {
+        final varName =
+            'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}';
+        _writeEnumBoxToEnum(
+          indent,
+          arg,
+          varName,
+          valueGetter,
+          prefix: generatorOptions.prefix,
+        );
+        ivarValueExpression = '$varName.value';
+      } else if (primitiveExtractionMethod != null) {
+        ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
+      } else {
+        if (arg.type.isEnum) {
+          beforeString = _enumName(
+            arg.type.baseName,
+            prefix: generatorOptions.prefix,
+            box: true,
+            suffix: ' *',
+          );
+        }
+        ivarValueExpression = valueGetter;
+      }
+      indent.writeln('$beforeString$argName = $ivarValueExpression;');
+      count++;
+    }
+  }
+
+  void _writeApiInvocation(
+    Indent indent, {
+    required InternalObjcOptions generatorOptions,
+    required Method func,
+    required _ObjcType returnType,
+    required Iterable<String> selectorComponents,
+    required String callSignature,
+  }) {
+    if (func.isAsynchronous) {
+      _writeAsyncBindings(
+        indent,
+        generatorOptions: generatorOptions,
+        func: func,
+        returnType: returnType,
+        selectorComponents: selectorComponents,
+        callSignature: callSignature,
+      );
+    } else {
+      final syncCall = func.parameters.isEmpty
+          ? '[api ${selectorComponents.first}:&error]'
+          : '[api $callSignature error:&error]';
+      _writeSyncBindings(
+        indent,
+        func: func,
+        syncCall: syncCall,
+        returnType: returnType,
+        prefix: generatorOptions.prefix,
+      );
+    }
+  }
+
+  void _writeAsyncBindings(
+    Indent indent, {
+    required InternalObjcOptions generatorOptions,
+    required Method func,
+    required _ObjcType returnType,
+    required Iterable<String> selectorComponents,
+    required String callSignature,
+  }) {
+    if (func.returnType.isVoid) {
+      const callback = 'callback(wrapResult(nil, error));';
+      if (func.parameters.isEmpty) {
+        indent.writeScoped(
+          '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
+          '}];',
+          () {
+            indent.writeln(callback);
+          },
+        );
+      } else {
+        indent.writeScoped(
+          '[api $callSignature ${selectorComponents.last}:^(FlutterError *_Nullable error) {',
+          '}];',
+          () {
+            indent.writeln(callback);
+          },
+        );
+      }
+    } else {
+      const callback = 'callback(wrapResult(output, error));';
+      var returnTypeString = '${returnType.beforeString}_Nullable output';
+
+      if (func.returnType.isEnum) {
+        returnTypeString =
+            '${_enumName(func.returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} output';
+      }
+      if (func.parameters.isEmpty) {
+        indent.writeScoped(
+          '[api ${selectorComponents.first}:^($returnTypeString, FlutterError *_Nullable error) {',
+          '}];',
+          () {
+            indent.writeln(callback);
+          },
+        );
+      } else {
+        indent.writeScoped(
+          '[api $callSignature ${selectorComponents.last}:^($returnTypeString, FlutterError *_Nullable error) {',
+          '}];',
+          () {
+            indent.writeln(callback);
+          },
+        );
+      }
+    }
+  }
+
+  void _writeSyncBindings(
+    Indent indent, {
+    required Method func,
+    required String syncCall,
+    required _ObjcType returnType,
+    required String? prefix,
+  }) {
+    indent.writeln('FlutterError *error;');
+    if (func.returnType.isVoid) {
+      indent.writeln('$syncCall;');
+      indent.writeln('callback(wrapResult(nil, error));');
+    } else {
+      if (func.returnType.isEnum) {
+        indent.writeln(
+          '${_enumName(func.returnType.baseName, suffix: ' *', prefix: prefix, box: true)} output = $syncCall;',
+        );
+      } else {
+        indent.writeln('${returnType.beforeString}output = $syncCall;');
+      }
+      indent.writeln('callback(wrapResult(output, error));');
+    }
   }
 
   void _writeObjcSourceDataClassExtension(

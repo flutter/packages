@@ -1142,6 +1142,7 @@ if (wrapped == null) {
   ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
   /// }
   @override
+  @override
   void writeHostApi(
     InternalJavaOptions generatorOptions,
     Root root,
@@ -1149,6 +1150,24 @@ if (wrapped == null) {
     AstHostApi api, {
     required String dartPackageName,
   }) {
+    _generateInterface(generatorOptions, root, indent, api, () {
+      _generateSetupMethod(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+    });
+  }
+
+  void _generateInterface(
+    InternalJavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api,
+    void Function() body,
+  ) {
     const generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.',
     ];
@@ -1164,54 +1183,64 @@ if (wrapped == null) {
       for (final Method method in api.methods) {
         _writeInterfaceMethod(generatorOptions, root, indent, api, method);
       }
-      indent.newln();
-      indent.writeln('/** The codec used by ${api.name}. */');
-      indent.write('static @NonNull MessageCodec<Object> getCodec() ');
-      indent.addScoped('{', '}', () {
-        indent.writeln('return $_codecName.INSTANCE;');
-      });
+      body();
+    });
+  }
 
+  void _generateSetupMethod(
+    InternalJavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    indent.writeln('/** The codec used by ${api.name}. */');
+    indent.write('static @NonNull MessageCodec<Object> getCodec() ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('return $_codecName.INSTANCE;');
+    });
+
+    indent.writeln(
+      '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`. */',
+    );
+    indent.writeScoped(
+      'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) {',
+      '}',
+      () {
+        indent.writeln('setUp(binaryMessenger, "", api);');
+      },
+    );
+    indent.write(
+      'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ',
+    );
+    indent.addScoped('{', '}', () {
       indent.writeln(
-        '/** Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`. */',
+        'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;',
       );
-      indent.writeScoped(
-        'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) {',
-        '}',
-        () {
-          indent.writeln('setUp(binaryMessenger, "", api);');
-        },
-      );
-      indent.write(
-        'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ',
-      );
-      indent.addScoped('{', '}', () {
+      String? serialBackgroundQueue;
+      if (api.methods.any(
+        (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+      )) {
+        serialBackgroundQueue = 'taskQueue';
         indent.writeln(
-          'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;',
+          'BinaryMessenger.TaskQueue $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue();',
         );
-        String? serialBackgroundQueue;
-        if (api.methods.any(
-          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
-        )) {
-          serialBackgroundQueue = 'taskQueue';
-          indent.writeln(
-            'BinaryMessenger.TaskQueue $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue();',
-          );
-        }
-        for (final Method method in api.methods) {
-          _writeHostMethodMessageHandler(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            method,
-            dartPackageName: dartPackageName,
-            serialBackgroundQueue:
-                method.taskQueueType == TaskQueueType.serialBackgroundThread
-                ? serialBackgroundQueue
-                : null,
-          );
-        }
-      });
+      }
+      for (final Method method in api.methods) {
+        _writeHostMethodMessageHandler(
+          generatorOptions,
+          root,
+          indent,
+          api,
+          method,
+          dartPackageName: dartPackageName,
+          serialBackgroundQueue:
+              method.taskQueueType == TaskQueueType.serialBackgroundThread
+              ? serialBackgroundQueue
+              : null,
+        );
+      }
     });
   }
 
@@ -1250,96 +1279,209 @@ if (wrapped == null) {
     final String channelName = makeChannelName(api, method, dartPackageName);
     indent.write('');
     indent.addScoped('{', '}', () {
-      indent.writeln('BasicMessageChannel<Object> channel =');
-      indent.nest(2, () {
-        indent.writeln('new BasicMessageChannel<>(');
-        indent.nest(2, () {
-          indent.write(
-            'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()',
-          );
-          if (serialBackgroundQueue != null) {
-            indent.addln(', $serialBackgroundQueue);');
-          } else {
-            indent.addln(');');
-          }
-        });
-      });
-      indent.write('if (api != null) ');
-      indent.addScoped('{', '} else {', () {
-        indent.writeln('channel.setMessageHandler(');
-        indent.nest(2, () {
-          indent.write('(message, reply) -> ');
-          indent.addScoped('{', '});', () {
-            final String returnType = method.returnType.isVoid
-                ? 'Void'
-                : _javaTypeForDartType(method.returnType);
-            final methodArgument = <String>[];
-            if (method.parameters.isNotEmpty) {
-              indent.writeln(
-                'ArrayList<Object> args = (ArrayList<Object>) message;',
-              );
-              enumerate(method.parameters, (int index, NamedType arg) {
-                final String argType = _javaTypeForDartType(arg.type);
-                final String argName = _getSafeArgumentName(index, arg);
-                final argExpression = argName;
-                var accessor = 'args.get($index)';
-                if (argType != 'Object') {
-                  accessor = _cast(accessor, javaType: argType);
-                }
-                indent.writeln('$argType $argName = $accessor;');
-                methodArgument.add(argExpression);
-              });
-            }
-            if (method.isAsynchronous) {
-              final resultValue = method.returnType.isVoid ? 'null' : 'result';
-              final String resultType = _getResultType(method.returnType);
-              final resultParam = method.returnType.isVoid
-                  ? ''
-                  : '$returnType result';
-              final addResultArg = method.returnType.isVoid
-                  ? 'null'
-                  : resultValue;
-              const resultName = 'resultCallback';
-              indent.format('''
-$resultType $resultName =
-		new $resultType() {
-			public void success($resultParam) {
-				reply.reply(wrapResponse($addResultArg, null));
-			}
+      final varChannelName = 'channel';
+      _writeChannelAllocation(
+        indent,
+        varChannelName: varChannelName,
+        channelName: channelName,
+        serialBackgroundQueue: serialBackgroundQueue,
+      );
 
-			public void error(Throwable error) {
-				reply.reply(wrapResponse(null, error));
-			}
-		};
-''');
-              methodArgument.add(resultName);
-            }
-            final call = 'api.${method.name}(${methodArgument.join(', ')})';
-            if (method.isAsynchronous) {
-              indent.writeln('$call;');
-            } else {
-              indent.write('try ');
-              indent.addScoped('{', '}', () {
-                if (method.returnType.isVoid) {
-                  indent.writeln('$call;');
-                  indent.writeln('reply.reply(wrapResponse(null, null));');
-                } else {
-                  indent.writeln('$returnType output = $call;');
-                  indent.writeln('reply.reply(wrapResponse(output, null));');
-                }
-              });
-              indent.add(' catch (Throwable exception) ');
-              indent.addScoped('{', '}', () {
-                indent.writeln('reply.reply(wrapResponse(null, exception));');
-              });
-            }
-          });
-        });
-      });
-      indent.addScoped(null, '}', () {
-        indent.writeln('channel.setMessageHandler(null);');
+      final String returnType = method.returnType.isVoid
+          ? 'Void'
+          : _javaTypeForDartType(method.returnType);
+      _writeMessageHandlerRegistration(
+        indent,
+        varChannelName: varChannelName,
+        setHandlerCondition: 'api != null',
+        messageVarName: 'message',
+        body: () {
+          final methodArgument = <String>[];
+          _writeArgumentUnpacking(
+            indent,
+            parameters: method.parameters,
+            methodArgument: methodArgument,
+          );
+
+          final call = 'api.${method.name}(${methodArgument.join(', ')})';
+
+          _writeApiInvocation(
+            indent,
+            isAsynchronous: method.isAsynchronous,
+            call: call,
+            method: method,
+            returnType: returnType,
+            methodArgument: methodArgument,
+          );
+        },
+      );
+    });
+  }
+
+  void _writeChannelAllocation(
+    Indent indent, {
+    required String varChannelName,
+    required String channelName,
+    required String? serialBackgroundQueue,
+  }) {
+    indent.writeln('BasicMessageChannel<Object> $varChannelName =');
+    indent.nest(2, () {
+      indent.writeln('new BasicMessageChannel<>(');
+      indent.nest(2, () {
+        indent.write(
+          'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()',
+        );
+        if (serialBackgroundQueue != null) {
+          indent.addln(', $serialBackgroundQueue);');
+        } else {
+          indent.addln(');');
+        }
       });
     });
+  }
+
+  void _writeMessageHandlerRegistration(
+    Indent indent, {
+    required String varChannelName,
+    required String setHandlerCondition,
+    required String messageVarName,
+    required void Function() body,
+  }) {
+    indent.write('if ($setHandlerCondition) ');
+    indent.addScoped('{', '} else {', () {
+      indent.writeln('$varChannelName.setMessageHandler(');
+      indent.nest(2, () {
+        indent.write('($messageVarName, reply) -> ');
+        indent.addScoped('{', '});', () {
+          body();
+        });
+      });
+    });
+    indent.addScoped(null, '}', () {
+      indent.writeln('$varChannelName.setMessageHandler(null);');
+    });
+  }
+
+  void _writeArgumentUnpacking(
+    Indent indent, {
+    required List<Parameter> parameters,
+    required List<String> methodArgument,
+  }) {
+    if (parameters.isNotEmpty) {
+      indent.writeln('ArrayList<Object> args = (ArrayList<Object>) message;');
+      enumerate(parameters, (int index, NamedType arg) {
+        final String argType = _javaTypeForDartType(arg.type);
+        final String argName = _getSafeArgumentName(index, arg);
+        final argExpression = argName;
+        var accessor = 'args.get($index)';
+        if (argType != 'Object') {
+          accessor = _cast(accessor, javaType: argType);
+        }
+        indent.writeln('$argType $argName = $accessor;');
+        methodArgument.add(argExpression);
+      });
+    }
+  }
+
+  void _writeApiInvocation(
+    Indent indent, {
+    required bool isAsynchronous,
+    required String call,
+    required Method method,
+    required String returnType,
+    required List<String> methodArgument,
+  }) {
+    if (isAsynchronous) {
+      final resultValue = method.returnType.isVoid ? 'null' : 'result';
+      final String resultType = _getResultType(method.returnType);
+      final resultParam = method.returnType.isVoid ? '' : '$returnType result';
+      final addResultArg = method.returnType.isVoid ? 'null' : resultValue;
+      const resultName = 'resultCallback';
+
+      indent.writeln('$resultType $resultName =');
+      indent.nest(2, () {
+        indent.writeln('new $resultType() {');
+        indent.nest(2, () {
+          indent.writeln('public void success($resultParam) {');
+          indent.nest(2, () {
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                resultName: addResultArg,
+                errorName: null,
+              ),
+            );
+          });
+          indent.writeln('}');
+          indent.newln();
+          indent.writeln('public void error(Throwable error) {');
+          indent.nest(2, () {
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                resultName: null,
+                errorName: 'error',
+              ),
+            );
+          });
+          indent.writeln('}');
+        });
+        indent.writeln('};');
+      });
+
+      methodArgument.add(resultName);
+      indent.writeln('api.${method.name}(${methodArgument.join(', ')});');
+    } else {
+      indent.write('try ');
+      indent.addScoped('{', '}', () {
+        if (method.returnType.isVoid) {
+          indent.writeln('$call;');
+          _writeReplying(
+            indent,
+            response: _writeResultWrapping(
+              indent,
+              resultName: null,
+              errorName: null,
+            ),
+          );
+        } else {
+          indent.writeln('$returnType output = $call;');
+          _writeReplying(
+            indent,
+            response: _writeResultWrapping(
+              indent,
+              resultName: 'output',
+              errorName: null,
+            ),
+          );
+        }
+      });
+      indent.add(' catch (Throwable exception) ');
+      indent.addScoped('{', '}', () {
+        _writeReplying(
+          indent,
+          response: _writeResultWrapping(
+            indent,
+            resultName: null,
+            errorName: 'exception',
+          ),
+        );
+      });
+    }
+  }
+
+  String _writeResultWrapping(
+    Indent indent, {
+    required String? resultName,
+    required String? errorName,
+  }) {
+    return 'wrapResponse(${resultName ?? 'null'}, ${errorName ?? 'null'})';
+  }
+
+  void _writeReplying(Indent indent, {required String response}) {
+    indent.writeln('reply.reply($response);');
   }
 
   void _writeResultInterfaces(Indent indent) {

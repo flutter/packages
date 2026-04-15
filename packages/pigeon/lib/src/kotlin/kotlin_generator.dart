@@ -785,6 +785,7 @@ if (wrapped == null) {
   /// }
   ///
   @override
+  @override
   void writeHostApi(
     InternalKotlinOptions generatorOptions,
     Root root,
@@ -792,6 +793,18 @@ if (wrapped == null) {
     AstHostApi api, {
     required String dartPackageName,
   }) {
+    _generateInterface(indent, api, () {
+      _generateSetupMethod(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+    });
+  }
+
+  void _generateInterface(Indent indent, AstHostApi api, void Function() body) {
     final String apiName = api.name;
 
     const generatedMessages = <String>[
@@ -816,56 +829,65 @@ if (wrapped == null) {
           isAsynchronous: method.isAsynchronous,
         );
       }
+      body();
+    });
+  }
 
-      indent.newln();
-      indent.write('companion object ');
+  void _generateSetupMethod(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    final String apiName = api.name;
+    indent.newln();
+    indent.write('companion object ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('/** The codec used by $apiName. */');
+      indent.write('val codec: MessageCodec<Any?> by lazy ');
       indent.addScoped('{', '}', () {
-        indent.writeln('/** The codec used by $apiName. */');
-        indent.write('val codec: MessageCodec<Any?> by lazy ');
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-            '${generatorOptions.fileSpecificClassNameComponent}$_codecName()',
-          );
-        });
         indent.writeln(
-          '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */',
+          '${generatorOptions.fileSpecificClassNameComponent}$_codecName()',
         );
-        indent.writeln('@JvmOverloads');
-        indent.write(
-          'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
+      });
+      indent.writeln(
+        '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */',
+      );
+      indent.writeln('@JvmOverloads');
+      indent.write(
+        'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ',
+      );
+      indent.addScoped('{', '}', () {
+        indent.writeln(
+          r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""',
         );
-        indent.addScoped('{', '}', () {
+        String? serialBackgroundQueue;
+        if (api.methods.any(
+          (Method m) => m.taskQueueType == TaskQueueType.serialBackgroundThread,
+        )) {
+          serialBackgroundQueue = 'taskQueue';
           indent.writeln(
-            r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""',
+            'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()',
           );
-          String? serialBackgroundQueue;
-          if (api.methods.any(
-            (Method m) =>
-                m.taskQueueType == TaskQueueType.serialBackgroundThread,
-          )) {
-            serialBackgroundQueue = 'taskQueue';
-            indent.writeln(
-              'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()',
-            );
-          }
-          for (final Method method in api.methods) {
-            _writeHostMethodMessageHandler(
-              indent,
-              generatorOptions: generatorOptions,
-              name: method.name,
-              channelName:
-                  '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix',
-              taskQueueType: method.taskQueueType,
-              parameters: method.parameters,
-              returnType: method.returnType,
-              isAsynchronous: method.isAsynchronous,
-              serialBackgroundQueue:
-                  method.taskQueueType == TaskQueueType.serialBackgroundThread
-                  ? serialBackgroundQueue
-                  : null,
-            );
-          }
-        });
+        }
+        for (final Method method in api.methods) {
+          _writeHostMethodMessageHandler(
+            indent,
+            generatorOptions: generatorOptions,
+            name: method.name,
+            channelName:
+                '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix',
+            taskQueueType: method.taskQueueType,
+            parameters: method.parameters,
+            returnType: method.returnType,
+            isAsynchronous: method.isAsynchronous,
+            serialBackgroundQueue:
+                method.taskQueueType == TaskQueueType.serialBackgroundThread
+                ? serialBackgroundQueue
+                : null,
+          );
+        }
       });
     });
   }
@@ -1656,90 +1678,187 @@ fun floatHash(f: Float): Int {
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
-      indent.write(
-        'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
+      final varChannelName = 'channel';
+      _writeChannelAllocation(
+        indent,
+        varChannelName: varChannelName,
+        channelName: channelName,
+        serialBackgroundQueue: serialBackgroundQueue,
       );
 
-      if (serialBackgroundQueue != null) {
-        indent.addln(', $serialBackgroundQueue)');
-      } else {
-        indent.addln(')');
-      }
+      final messageVarName = parameters.isNotEmpty ? 'message' : '_';
 
-      indent.write('if ($setHandlerCondition) ');
-      indent.addScoped('{', '}', () {
-        final messageVarName = parameters.isNotEmpty ? 'message' : '_';
-
-        indent.write('channel.setMessageHandler ');
-        indent.addScoped('{ $messageVarName, reply ->', '}', () {
+      _writeMessageHandlerRegistration(
+        indent,
+        varChannelName: varChannelName,
+        setHandlerCondition: setHandlerCondition,
+        messageVarName: messageVarName,
+        body: () {
           final methodArguments = <String>[];
-          if (parameters.isNotEmpty) {
-            indent.writeln('val args = message as List<Any?>');
-            enumerate(parameters, (int index, NamedType arg) {
-              final String argName = _getSafeArgumentName(index, arg);
-              final argIndex = 'args[$index]';
-              indent.writeln(
-                'val $argName = ${_castForceUnwrap(argIndex, arg.type, indent)}',
-              );
-              methodArguments.add(argName);
-            });
-          }
+          _writeArgumentUnpacking(
+            indent,
+            parameters: parameters,
+            methodArguments: methodArguments,
+          );
+
           final String call = onCreateCall != null
               ? onCreateCall(methodArguments, apiVarName: 'api')
               : 'api.$name(${methodArguments.join(', ')})';
 
-          if (isAsynchronous) {
-            final String resultType = returnType.isVoid
-                ? 'Unit'
-                : _nullSafeKotlinTypeForDartType(returnType);
-            indent.write(methodArguments.isNotEmpty ? '$call ' : 'api.$name');
-            indent.addScoped('{ result: Result<$resultType> ->', '}', () {
-              indent.writeln('val error = result.exceptionOrNull()');
-              indent.writeScoped('if (error != null) {', '}', () {
-                indent.writeln(
-                  'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(null, error))',
-                );
-              }, addTrailingNewline: false);
-              indent.addScoped(' else {', '}', () {
-                if (returnType.isVoid) {
-                  indent.writeln(
-                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(null, null))',
-                  );
-                } else {
-                  indent.writeln('val data = result.getOrNull()');
-                  indent.writeln(
-                    'reply.reply(${_getUtilsClassName(generatorOptions)}.wrapResponse(data, null))',
-                  );
-                }
-              });
-            });
+          _writeApiInvocation(
+            indent,
+            generatorOptions: generatorOptions,
+            isAsynchronous: isAsynchronous,
+            call: call,
+            name: name,
+            returnType: returnType,
+            methodArguments: methodArguments,
+          );
+        },
+      );
+    });
+  }
+
+  void _writeChannelAllocation(
+    Indent indent, {
+    required String varChannelName,
+    required String channelName,
+    required String? serialBackgroundQueue,
+  }) {
+    indent.write(
+      'val $varChannelName = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
+    );
+
+    if (serialBackgroundQueue != null) {
+      indent.addln(', $serialBackgroundQueue)');
+    } else {
+      indent.addln(')');
+    }
+  }
+
+  void _writeMessageHandlerRegistration(
+    Indent indent, {
+    required String varChannelName,
+    required String setHandlerCondition,
+    required String messageVarName,
+    required void Function() body,
+  }) {
+    indent.write('if ($setHandlerCondition) ');
+    indent.addScoped('{', '}', () {
+      indent.write('$varChannelName.setMessageHandler ');
+      indent.addScoped('{ $messageVarName, reply ->', '}', () {
+        body();
+      });
+    }, addTrailingNewline: false);
+    indent.addScoped(' else {', '}', () {
+      indent.writeln('$varChannelName.setMessageHandler(null)');
+    });
+  }
+
+  void _writeArgumentUnpacking(
+    Indent indent, {
+    required List<Parameter> parameters,
+    required List<String> methodArguments,
+  }) {
+    if (parameters.isNotEmpty) {
+      indent.writeln('val args = message as List<Any?>');
+      enumerate(parameters, (int index, NamedType arg) {
+        final String argName = _getSafeArgumentName(index, arg);
+        final argIndex = 'args[$index]';
+        indent.writeln(
+          'val $argName = ${_castForceUnwrap(argIndex, arg.type, indent)}',
+        );
+        methodArguments.add(argName);
+      });
+    }
+  }
+
+  void _writeApiInvocation(
+    Indent indent, {
+    required InternalKotlinOptions generatorOptions,
+    required bool isAsynchronous,
+    required String call,
+    required String name,
+    required TypeDeclaration returnType,
+    required List<String> methodArguments,
+  }) {
+    if (isAsynchronous) {
+      final String resultType = returnType.isVoid
+          ? 'Unit'
+          : _nullSafeKotlinTypeForDartType(returnType);
+      indent.write(methodArguments.isNotEmpty ? '$call ' : 'api.$name');
+      indent.addScoped('{ result: Result<$resultType> ->', '}', () {
+        indent.writeln('val error = result.exceptionOrNull()');
+        indent.writeScoped('if (error != null) {', '}', () {
+          _writeReplying(
+            indent,
+            response: _writeResultWrapping(
+              indent,
+              generatorOptions: generatorOptions,
+              resultName: null,
+              errorName: 'error',
+            ),
+          );
+        }, addTrailingNewline: false);
+        indent.addScoped(' else {', '}', () {
+          if (returnType.isVoid) {
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                generatorOptions: generatorOptions,
+                resultName: null,
+                errorName: null,
+              ),
+            );
           } else {
-            indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
-              if (returnType.isVoid) {
-                indent.writeln(call);
-                indent.writeln(
-                  '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, null)',
-                );
-              } else {
-                indent.writeln(
-                  '${_getUtilsClassName(generatorOptions)}.wrapResponse($call, null)',
-                );
-              }
-            }, addTrailingNewline: false);
-            indent.add(' catch (exception: Throwable) ');
-            indent.addScoped('{', '}', () {
-              indent.writeln(
-                '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, exception)',
-              );
-            });
-            indent.writeln('reply.reply(wrapped)');
+            indent.writeln('val data = result.getOrNull()');
+            _writeReplying(
+              indent,
+              response: _writeResultWrapping(
+                indent,
+                generatorOptions: generatorOptions,
+                resultName: 'data',
+                errorName: null,
+              ),
+            );
           }
         });
-      }, addTrailingNewline: false);
-      indent.addScoped(' else {', '}', () {
-        indent.writeln('channel.setMessageHandler(null)');
       });
-    });
+    } else {
+      indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
+        if (returnType.isVoid) {
+          indent.writeln(call);
+          indent.writeln(
+            '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, null)',
+          );
+        } else {
+          indent.writeln(
+            '${_getUtilsClassName(generatorOptions)}.wrapResponse($call, null)',
+          );
+        }
+      }, addTrailingNewline: false);
+      indent.add(' catch (exception: Throwable) ');
+      indent.addScoped('{', '}', () {
+        indent.writeln(
+          '${_getUtilsClassName(generatorOptions)}.wrapResponse(null, exception)',
+        );
+      });
+      indent.writeln('reply.reply(wrapped)');
+    }
+  }
+
+  String _writeResultWrapping(
+    Indent indent, {
+    required InternalKotlinOptions generatorOptions,
+    required String? resultName,
+    required String? errorName,
+  }) {
+    return '${_getUtilsClassName(generatorOptions)}.wrapResponse(${resultName ?? 'null'}, ${errorName ?? 'null'})';
+  }
+
+  void _writeReplying(Indent indent, {required String response}) {
+    indent.writeln('reply.reply($response)');
   }
 
   void _writeFlutterMethod(

@@ -534,7 +534,6 @@ public class Messages {
                         reply.reply(wrapResponse(null, error));
                       }
                     };
-
                 api.sendMessage(messageArg, resultCallback);
               });
         } else {
