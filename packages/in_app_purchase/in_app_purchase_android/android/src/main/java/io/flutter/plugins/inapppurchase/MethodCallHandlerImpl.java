@@ -190,10 +190,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     }
     try {
       InAppMessageParams params =
-          InAppMessageParams.newBuilder()
-              .addInAppMessageCategoryToShow(
-                  InAppMessageParams.InAppMessageCategoryId.TRANSACTIONAL)
-              .build();
+          InAppMessageParams.newBuilder().addAllInAppMessageCategoriesToShow().build();
       billingClient.showInAppMessages(
           activity, params, billingResult -> result.success(fromInAppMessageResult(billingResult)));
     } catch (RuntimeException e) {
