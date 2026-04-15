@@ -1320,10 +1320,14 @@ class Camera
     stopAndReleaseCamera();
 
     if (pictureImageReader != null) {
+      pictureImageReader.setOnImageAvailableListener(null, backgroundHandler);
       pictureImageReader.close();
       pictureImageReader = null;
     }
     if (imageStreamReader != null) {
+      if (backgroundHandler != null) {
+        imageStreamReader.removeListener(backgroundHandler);
+      }
       imageStreamReader.close();
       imageStreamReader = null;
     }

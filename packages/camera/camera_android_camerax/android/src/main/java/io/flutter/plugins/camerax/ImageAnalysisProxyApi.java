@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
+import android.util.Log;
 import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
