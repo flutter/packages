@@ -36,43 +36,32 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
       this.api = api;
     }
 
-    @Override
-    public void analyze(@NonNull ImageProxy image) {
-      api.getPigeonRegistrar()
-          .runOnMainThread(
-              new ProxyApiRegistrar.FlutterMethodRunnable() {
-                @Override
-                public void run() {
-                  try {
-                    Log.e(TAG, "ANALYZER_ANALYZE_START");
-                    
-                    api.analyze(
-                        AnalyzerImpl.this,
-                        image,
-                        ResultCompat.asCompatCallback(
-                            result -> {
-                              if (result.isFailure()) {
-                                onFailure(
-                                    "Analyzer.analyze",
-                                    Objects.requireNonNull(result.exceptionOrNull()));
-                              }
-                              return null;
-                            }));
-                  } finally {
-                    // Close the ImageProxy after analysis is complete
-                    // This prevents BufferQueue abandoned errors when camera is disposed
-                    try {
-                      Log.e(TAG, "ANALYZER_CLOSING_PROXY");
-                      image.close();
-                      Log.e(TAG, "ANALYZER_PROXY_CLOSED");
-                    } catch (Exception e) {
-                      Log.e(TAG, "ANALYZER_CLOSE_ERROR: " + e.getMessage());
-                    }
-                  }
-                }
-              });
-    }
-  }
+ @Override
+public void analyze(@NonNull ImageProxy image) {
+  api.getPigeonRegistrar()
+      .runOnMainThread(
+          new ProxyApiRegistrar.FlutterMethodRunnable() {
+            @Override
+            public void run() {
+              try {
+                api.analyze(
+                    AnalyzerImpl.this,
+                    image,
+                    ResultCompat.asCompatCallback(
+                        result -> {
+                          if (result.isFailure()) {
+                            onFailure(
+                                "Analyzer.analyze",
+                                Objects.requireNonNull(result.exceptionOrNull()));
+                          }
+                          return null;
+                        }));
+              } catch (Exception e) {
+                Log.e(TAG, "Error in analyzer: " + e.getMessage());
+              }
+            }
+          });
+}
 
   @NonNull
   @Override
