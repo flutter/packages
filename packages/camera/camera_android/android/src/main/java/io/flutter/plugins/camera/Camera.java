@@ -1313,108 +1313,28 @@ class Camera
       captureSession = null;
     }
   }
-  /**
- * Drains all pending frames from an ImageReader to prevent orphaned callbacks.
- * This must be called before closing the ImageReader.
- *
- * @param reader the ImageReader to drain
- */
-private void drainImageReader(@Nullable ImageReader reader) {
-  if (reader == null) {
-    return;
-  }
-  
-  try {
-    while (true) {
-      Image image = reader.acquireLatestImage();
-      if (image == null) {
-        break;
-      }
-      image.close();  // Return buffer to pool
-    }
-  } catch (Exception e) {
-    Log.w(TAG, "Error draining ImageReader: " + e.getMessage());
-  }
-}
 
+  public void close() {
+    Log.i(TAG, "close");
 
-public void close() {
-  Log.i(TAG, "close");
+    stopAndReleaseCamera();
 
-  stopAndReleaseCamera();
-
-  // Step 1: Remove listeners to stop accepting new frames
-  if (pictureImageReader != null) {
-    try {
-      pictureImageReader.setOnImageAvailableListener(null, null);
-    } catch (Exception e) {
-      Log.w(TAG, "Error removing pictureImageReader listener: " + e.getMessage());
-    }
-  }
-
-  if (imageStreamReader != null) {
-    try {
-      imageStreamReader.removeListener(backgroundHandler);
-    } catch (Exception e) {
-      Log.w(TAG, "Error removing imageStreamReader listener: " + e.getMessage());
-    }
-  }
-
-  // Step 2: Drain all pending frames from ImageReaders
-  // This ensures buffers are returned to the pool and callbacks complete
-  drainImageReader(pictureImageReader);
-  
-  if (imageStreamReader != null) {
-    try {
-      imageStreamReader.drainPendingFrames();
-    } catch (Exception e) {
-      Log.w(TAG, "Error draining imageStreamReader: " + e.getMessage());
-    }
-  }
-
-  // Step 3: Wait for any pending callbacks to complete
-  // This gives the background thread time to process remaining callbacks
-  try {
-    Thread.sleep(50);  // Wait 50ms for callbacks to complete
-  } catch (InterruptedException e) {
-    Thread.currentThread().interrupt();
-  }
-
-  // Step 4: Close ImageReaders
-  if (pictureImageReader != null) {
-    try {
+    if (pictureImageReader != null) {
       pictureImageReader.close();
-    } catch (Exception e) {
-      Log.w(TAG, "Error closing pictureImageReader: " + e.getMessage());
+      pictureImageReader = null;
     }
-    pictureImageReader = null;
-  }
-
-  if (imageStreamReader != null) {
-    try {
+    if (imageStreamReader != null) {
       imageStreamReader.close();
-    } catch (Exception e) {
-      Log.w(TAG, "Error closing imageStreamReader: " + e.getMessage());
+      imageStreamReader = null;
     }
-    imageStreamReader = null;
-  }
-
-  // Step 5: Clean up media recorder
-  if (mediaRecorder != null) {
-    try {
+    if (mediaRecorder != null) {
       mediaRecorder.reset();
       mediaRecorder.release();
-    } catch (Exception e) {
-      Log.w(TAG, "Error releasing mediaRecorder: " + e.getMessage());
+      mediaRecorder = null;
     }
-    mediaRecorder = null;
+
+    stopBackgroundThread();
   }
-
-  // Step 6: Stop background thread
-  stopBackgroundThread();
-}
-
-
 
   private void stopAndReleaseCamera() {
     if (cameraDevice != null) {
@@ -1487,28 +1407,13 @@ public void close() {
     }
   }
 
-public void dispose() {
-  Log.i(TAG, "dispose");
+  public void dispose() {
+    Log.i(TAG, "dispose");
 
-  try {
-    // Close camera and all resources
     close();
-
-    // Release Flutter texture
-    if (flutterTexture != null) {
-      flutterTexture.release();
-    }
-
-    // Stop device orientation manager
-    DeviceOrientationManager orientationManager = getDeviceOrientationManager();
-    if (orientationManager != null) {
-      orientationManager.stop();
-    }
-  } catch (Exception e) {
-    Log.e(TAG, "Error during dispose: " + e.getMessage());
+    flutterTexture.release();
+    getDeviceOrientationManager().stop();
   }
-}
-
 
   /** Factory class that assists in creating a {@link HandlerThread} instance. */
   static class HandlerThreadFactory {
