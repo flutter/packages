@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,11 +11,7 @@ void main() {
     // The test validates the Flutter Gold integration. Any changes to the
     // golden file can be approved at any time.
     await tester.pumpWidget(
-      const CupertinoApp(
-        home: Center(
-          child: Text('Cupertino Goldens'),
-        ),
-      ),
+      const CupertinoApp(home: Center(child: Text('Cupertino Goldens'))),
     );
 
     await tester.pumpAndSettle();
