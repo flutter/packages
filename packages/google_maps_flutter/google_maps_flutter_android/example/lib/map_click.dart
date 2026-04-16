@@ -16,8 +16,7 @@ const CameraPosition _kInitialPosition = CameraPosition(
 );
 
 class MapClickPage extends GoogleMapExampleAppPage {
-  const MapClickPage({super.key})
-    : super(const Icon(Icons.mouse), 'Map click');
+  const MapClickPage({super.key}) : super(const Icon(Icons.mouse), 'Map click');
 
   @override
   Widget build(BuildContext context) {
