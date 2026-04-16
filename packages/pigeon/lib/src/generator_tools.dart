@@ -913,16 +913,40 @@ String wrapConditionally(String toWrap, String start, String end, bool wrap) {
   return wrap ? '$start$toWrap$end' : toWrap;
 }
 
-/// Sorts collections by how generic they are.
-int sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
-  var aTotal = 0;
-  var bTotal = 0;
-
-  aTotal += a.getFullName(withNullable: false).split('?').length;
-  bTotal += b.getFullName(withNullable: false).split('?').length;
-
-  aTotal += a.getFullName(withNullable: false).split('Object').length * 100;
-  bTotal += b.getFullName(withNullable: false).split('Object').length * 100;
-
-  return aTotal < bTotal ? -1 : 1;
+/// Compares [TypeDeclaration]s by how generic they are.
+///
+/// Generic-ness is approximated by counting the number of "Objects" and "?" in the
+/// type name, with "Object" being strongly weighted and "?" less so.
+int compareTypeDeclarationGenericness(TypeDeclaration a, TypeDeclaration b) {
+  return _calculateGenericScore(a, 0).compareTo(_calculateGenericScore(b, 0));
 }
+
+int _calculateGenericScore(TypeDeclaration type, int depth) {
+  var score = 0;
+
+  if (type.baseName == 'Object') {
+    score += 10000 >> depth;
+  }
+  if (type.isNullable) {
+    score += 1000 >> depth;
+  }
+
+  // Handle untyped collections by scoring their implicit 'Object?' arguments
+  if (type.typeArguments.isEmpty) {
+    if (type.baseName == 'List') {
+      score += 11000 >> (depth + 1);
+    }
+    if (type.baseName == 'Map') {
+      score += 22000 >> (depth + 1);
+    }
+  }
+
+  for (final TypeDeclaration arg in type.typeArguments) {
+    score += _calculateGenericScore(arg, depth + 1);
+  }
+  return score;
+}
+
+/// Alias for [compareTypeDeclarationGenericness] to maintain compatibility.
+const int Function(TypeDeclaration, TypeDeclaration) sortByObjectCount =
+    compareTypeDeclarationGenericness;

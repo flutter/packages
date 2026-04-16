@@ -12,6 +12,7 @@ import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:typed_data'
     show Float32List, Float64List, Int32List, Int64List, Int8List, TypedData;
+
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 import 'package:jni/jni.dart';
@@ -244,18 +245,18 @@ class _PigeonJniCodec {
       final JDoubleArray array = JDoubleArray(value.length);
       array.setRange(0, value.length, value);
       return array as T;
-    } else if (value is List<bool>) {
-      return value.map<JBoolean>((e) => writeValue<JBoolean>(e)).toJList() as T;
-    } else if (value is List<double>) {
-      return value.map<JDouble>((e) => writeValue<JDouble>(e)).toJList() as T;
-    } else if (value is List<int>) {
-      return value.map<JLong>((e) => writeValue<JLong>(e)).toJList() as T;
     } else if (value is List<String>) {
       return value.map<JString>((e) => writeValue<JString>(e)).toJList() as T;
-    } else if (value is List<NIAllNullableTypes>) {
+    } else if (value is List<int>) {
+      return value.map<JLong>((e) => writeValue<JLong>(e)).toJList() as T;
+    } else if (value is List<double>) {
+      return value.map<JDouble>((e) => writeValue<JDouble>(e)).toJList() as T;
+    } else if (value is List<bool>) {
+      return value.map<JBoolean>((e) => writeValue<JBoolean>(e)).toJList() as T;
+    } else if (value is List<NIAllTypes?>) {
       return value
-              .map<jni_bridge.NIAllNullableTypes>(
-                (e) => writeValue<jni_bridge.NIAllNullableTypes>(e),
+              .map<jni_bridge.NIAllTypes?>(
+                (e) => writeValue<jni_bridge.NIAllTypes?>(e),
               )
               .toJList()
           as T;
@@ -263,6 +264,36 @@ class _PigeonJniCodec {
       return value
               .map<jni_bridge.NIAnEnum>(
                 (e) => writeValue<jni_bridge.NIAnEnum>(e),
+              )
+              .toJList()
+          as T;
+    } else if (value is List<NIAllNullableTypes>) {
+      return value
+              .map<jni_bridge.NIAllNullableTypes>(
+                (e) => writeValue<jni_bridge.NIAllNullableTypes>(e),
+              )
+              .toJList()
+          as T;
+    } else if (value is List<String?>) {
+      return value.map<JString?>((e) => writeValue<JString?>(e)).toJList() as T;
+    } else if (value is List<int?>) {
+      return value.map<JLong?>((e) => writeValue<JLong?>(e)).toJList() as T;
+    } else if (value is List<double?>) {
+      return value.map<JDouble?>((e) => writeValue<JDouble?>(e)).toJList() as T;
+    } else if (value is List<bool?>) {
+      return value.map<JBoolean?>((e) => writeValue<JBoolean?>(e)).toJList()
+          as T;
+    } else if (value is List<NIAnEnum?>) {
+      return value
+              .map<jni_bridge.NIAnEnum?>(
+                (e) => writeValue<jni_bridge.NIAnEnum?>(e),
+              )
+              .toJList()
+          as T;
+    } else if (value is List<NIAllNullableTypes?>) {
+      return value
+              .map<jni_bridge.NIAllNullableTypes?>(
+                (e) => writeValue<jni_bridge.NIAllNullableTypes?>(e),
               )
               .toJList()
           as T;
@@ -276,36 +307,6 @@ class _PigeonJniCodec {
               )
               .toJList()
           as T;
-    } else if (value is List<NIAllTypes?>) {
-      return value
-              .map<jni_bridge.NIAllTypes?>(
-                (e) => writeValue<jni_bridge.NIAllTypes?>(e),
-              )
-              .toJList()
-          as T;
-    } else if (value is List<NIAllNullableTypes?>) {
-      return value
-              .map<jni_bridge.NIAllNullableTypes?>(
-                (e) => writeValue<jni_bridge.NIAllNullableTypes?>(e),
-              )
-              .toJList()
-          as T;
-    } else if (value is List<NIAnEnum?>) {
-      return value
-              .map<jni_bridge.NIAnEnum?>(
-                (e) => writeValue<jni_bridge.NIAnEnum?>(e),
-              )
-              .toJList()
-          as T;
-    } else if (value is List<bool?>) {
-      return value.map<JBoolean?>((e) => writeValue<JBoolean?>(e)).toJList()
-          as T;
-    } else if (value is List<double?>) {
-      return value.map<JDouble?>((e) => writeValue<JDouble?>(e)).toJList() as T;
-    } else if (value is List<int?>) {
-      return value.map<JLong?>((e) => writeValue<JLong?>(e)).toJList() as T;
-    } else if (value is List<String?>) {
-      return value.map<JString?>((e) => writeValue<JString?>(e)).toJList() as T;
     } else if (value is List<List<Object?>>) {
       return value
               .map<JList<JObject?>>((e) => writeValue<JList<JObject?>>(e))
@@ -334,13 +335,18 @@ class _PigeonJniCodec {
       return value.map<JObject>((e) => writeValue<JObject>(e)).toJList() as T;
     } else if (value is List) {
       return value.map<JObject?>((e) => writeValue<JObject?>(e)).toJList() as T;
-    } else if (value is Map<int, NIAllNullableTypes>) {
+    } else if (value is Map<String, String>) {
       return value
-              .map<JLong, jni_bridge.NIAllNullableTypes>(
-                (k, v) => MapEntry(
-                  writeValue<JLong>(k),
-                  writeValue<jni_bridge.NIAllNullableTypes>(v),
-                ),
+              .map<JString, JString>(
+                (k, v) =>
+                    MapEntry(writeValue<JString>(k), writeValue<JString>(v)),
+              )
+              .toJMap()
+          as T;
+    } else if (value is Map<int, int>) {
+      return value
+              .map<JLong, JLong>(
+                (k, v) => MapEntry(writeValue<JLong>(k), writeValue<JLong>(v)),
               )
               .toJMap()
           as T;
@@ -354,27 +360,12 @@ class _PigeonJniCodec {
               )
               .toJMap()
           as T;
-    } else if (value is Map<int, int>) {
+    } else if (value is Map<int, NIAllNullableTypes>) {
       return value
-              .map<JLong, JLong>(
-                (k, v) => MapEntry(writeValue<JLong>(k), writeValue<JLong>(v)),
-              )
-              .toJMap()
-          as T;
-    } else if (value is Map<String, String>) {
-      return value
-              .map<JString, JString>(
-                (k, v) =>
-                    MapEntry(writeValue<JString>(k), writeValue<JString>(v)),
-              )
-              .toJMap()
-          as T;
-    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?>) {
-      return value
-              .map<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>(
+              .map<JLong, jni_bridge.NIAllNullableTypes>(
                 (k, v) => MapEntry(
-                  writeValue<JLong?>(k),
-                  writeValue<jni_bridge.NIAllNullableTypesWithoutRecursion?>(v),
+                  writeValue<JLong>(k),
+                  writeValue<jni_bridge.NIAllNullableTypes>(v),
                 ),
               )
               .toJMap()
@@ -389,13 +380,19 @@ class _PigeonJniCodec {
               )
               .toJMap()
           as T;
-    } else if (value is Map<int?, NIAllNullableTypes?>) {
+    } else if (value is Map<String?, String?>) {
       return value
-              .map<JLong?, jni_bridge.NIAllNullableTypes?>(
-                (k, v) => MapEntry(
-                  writeValue<JLong?>(k),
-                  writeValue<jni_bridge.NIAllNullableTypes?>(v),
-                ),
+              .map<JString?, JString?>(
+                (k, v) =>
+                    MapEntry(writeValue<JString?>(k), writeValue<JString?>(v)),
+              )
+              .toJMap()
+          as T;
+    } else if (value is Map<int?, int?>) {
+      return value
+              .map<JLong?, JLong?>(
+                (k, v) =>
+                    MapEntry(writeValue<JLong?>(k), writeValue<JLong?>(v)),
               )
               .toJMap()
           as T;
@@ -409,19 +406,23 @@ class _PigeonJniCodec {
               )
               .toJMap()
           as T;
-    } else if (value is Map<int?, int?>) {
+    } else if (value is Map<int?, NIAllNullableTypes?>) {
       return value
-              .map<JLong?, JLong?>(
-                (k, v) =>
-                    MapEntry(writeValue<JLong?>(k), writeValue<JLong?>(v)),
+              .map<JLong?, jni_bridge.NIAllNullableTypes?>(
+                (k, v) => MapEntry(
+                  writeValue<JLong?>(k),
+                  writeValue<jni_bridge.NIAllNullableTypes?>(v),
+                ),
               )
               .toJMap()
           as T;
-    } else if (value is Map<String?, String?>) {
+    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?>) {
       return value
-              .map<JString?, JString?>(
-                (k, v) =>
-                    MapEntry(writeValue<JString?>(k), writeValue<JString?>(v)),
+              .map<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>(
+                (k, v) => MapEntry(
+                  writeValue<JLong?>(k),
+                  writeValue<jni_bridge.NIAllNullableTypesWithoutRecursion?>(v),
+                ),
               )
               .toJMap()
           as T;
@@ -613,9 +614,16 @@ class _PigeonFfiCodec {
       return NSString(value) as T;
     } else if (value is TypedData) {
       return toPigeonTypedData(value) as T;
-    } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<String> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final bool entry in value) {
+      for (final String entry in value) {
+        res.addObject(writeValue<NSString>(entry, generic: true));
+      }
+      return res as T;
+    } else if (value is List<int> && isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final int entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
@@ -626,47 +634,10 @@ class _PigeonFfiCodec {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
-    } else if (value is List<int> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final int entry in value) {
+      for (final bool entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
-      }
-      return res as T;
-    } else if (value is List<String> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
-      for (final String entry in value) {
-        res.addObject(writeValue<NSString>(entry, generic: true));
-      }
-      return res as T;
-    } else if (value is List<NIAllNullableTypes> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
-      for (final NIAllNullableTypes entry in value) {
-        res.addObject(
-          writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry, generic: true),
-        );
-      }
-      return res as T;
-    } else if (value is List<NIAnEnum> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
-      for (final NIAnEnum entry in value) {
-        res.addObject(writeValue<NSNumber>(entry, generic: true));
-      }
-      return res as T;
-    } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
-      for (final NIAllNullableTypesWithoutRecursion? entry in value) {
-        res.addObject(
-          entry == null
-              ? ffi_bridge.NiTestsPigeonInternalNull()
-              : writeValue<ffi_bridge.NIAllNullableTypesWithoutRecursionBridge>(
-                  entry,
-                  generic: true,
-                ),
-        );
       }
       return res as T;
     } else if (value is List<NIAllTypes?> &&
@@ -680,35 +651,36 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypes?> &&
+    } else if (value is List<NIAnEnum> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final NIAllNullableTypes? entry in value) {
+      for (final NIAnEnum entry in value) {
+        res.addObject(writeValue<NSNumber>(entry, generic: true));
+      }
+      return res as T;
+    } else if (value is List<NIAllNullableTypes> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NIAllNullableTypes entry in value) {
         res.addObject(
-          entry == null
-              ? ffi_bridge.NiTestsPigeonInternalNull()
-              : writeValue<ffi_bridge.NIAllNullableTypesBridge>(
-                  entry,
-                  generic: true,
-                ),
+          writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry, generic: true),
         );
       }
       return res as T;
-    } else if (value is List<NIAnEnum?> &&
+    } else if (value is List<String?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final NIAnEnum? entry in value) {
+      for (final String? entry in value) {
         res.addObject(
           entry == null
               ? ffi_bridge.NiTestsPigeonInternalNull()
-              : writeValue<NSNumber>(entry, generic: true),
+              : writeValue<NSString>(entry, generic: true),
         );
       }
       return res as T;
-    } else if (value is List<bool?> &&
-        isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<int?> && isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final bool? entry in value) {
+      for (final int? entry in value) {
         res.addObject(
           entry == null
               ? ffi_bridge.NiTestsPigeonInternalNull()
@@ -727,9 +699,10 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<int?> && isTypeOrNullableType<NSMutableArray>(T)) {
+    } else if (value is List<bool?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final int? entry in value) {
+      for (final bool? entry in value) {
         res.addObject(
           entry == null
               ? ffi_bridge.NiTestsPigeonInternalNull()
@@ -737,14 +710,42 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is List<String?> &&
+    } else if (value is List<NIAnEnum?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
-      for (final String? entry in value) {
+      for (final NIAnEnum? entry in value) {
         res.addObject(
           entry == null
               ? ffi_bridge.NiTestsPigeonInternalNull()
-              : writeValue<NSString>(entry, generic: true),
+              : writeValue<NSNumber>(entry, generic: true),
+        );
+      }
+      return res as T;
+    } else if (value is List<NIAllNullableTypes?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NIAllNullableTypes? entry in value) {
+        res.addObject(
+          entry == null
+              ? ffi_bridge.NiTestsPigeonInternalNull()
+              : writeValue<ffi_bridge.NIAllNullableTypesBridge>(
+                  entry,
+                  generic: true,
+                ),
+        );
+      }
+      return res as T;
+    } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NIAllNullableTypesWithoutRecursion? entry in value) {
+        res.addObject(
+          entry == null
+              ? ffi_bridge.NiTestsPigeonInternalNull()
+              : writeValue<ffi_bridge.NIAllNullableTypesWithoutRecursionBridge>(
+                  entry,
+                  generic: true,
+                ),
         );
       }
       return res as T;
@@ -794,20 +795,10 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int, NIAllNullableTypes> &&
+    } else if (value is Map<String, String> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<int, NIAllNullableTypes> entry in value.entries) {
-        res.setObject(
-          writeValue(entry.value, generic: true),
-          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
-        );
-      }
-      return res as T;
-    } else if (value is Map<NIAnEnum, NIAnEnum> &&
-        isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
+      for (final MapEntry<String, String> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
           forKey: NSCopying.as(writeValue(entry.key, generic: true)),
@@ -824,21 +815,20 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<String, String> &&
+    } else if (value is Map<NIAnEnum, NIAnEnum> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<String, String> entry in value.entries) {
+      for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
           forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
-    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
+    } else if (value is Map<int, NIAllNullableTypes> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
-          in value.entries) {
+      for (final MapEntry<int, NIAllNullableTypes> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
           forKey: NSCopying.as(writeValue(entry.key, generic: true)),
@@ -855,20 +845,10 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<int?, NIAllNullableTypes?> &&
+    } else if (value is Map<String?, String?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
-        res.setObject(
-          writeValue(entry.value, generic: true),
-          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
-        );
-      }
-      return res as T;
-    } else if (value is Map<NIAnEnum?, NIAnEnum?> &&
-        isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
+      for (final MapEntry<String?, String?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
           forKey: NSCopying.as(writeValue(entry.key, generic: true)),
@@ -885,10 +865,31 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
-    } else if (value is Map<String?, String?> &&
+    } else if (value is Map<NIAnEnum?, NIAnEnum?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
-      for (final MapEntry<String?, String?> entry in value.entries) {
+      for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
+        res.setObject(
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
+        );
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllNullableTypes?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
+        res.setObject(
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
+        );
+      }
+      return res as T;
+    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
+          in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
           forKey: NSCopying.as(writeValue(entry.key, generic: true)),

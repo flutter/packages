@@ -65,12 +65,9 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.objcOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent ??
-                  options.objcSourceOut
-                      ?.split('/')
-                      .lastOrNull
-                      ?.split('.')
-                      .firstOrNull ??
-                  '',
+                  (options.objcSourceOut == null
+                      ? ''
+                      : path.basename(options.objcSourceOut!).split('.').first),
               copyrightHeader: copyrightHeader,
             ),
       javaOptions = options.javaOut == null
@@ -138,19 +135,21 @@ class InternalPigeonOptions {
                   options.fileSpecificClassNameComponent ??
                   (options.swiftOptions?.useFfi ?? false
                       ? options.swiftOptions?.fileSpecificClassNameComponent ??
-                            options.swiftOut
-                                ?.split('/')
-                                .lastOrNull
-                                ?.split('.')
-                                .firstOrNull
+                            (options.swiftOut == null
+                                ? null
+                                : path
+                                      .basename(options.swiftOut!)
+                                      .split('.')
+                                      .first)
                       : null) ??
                   (options.kotlinOptions?.useJni ?? false
                       ? options.kotlinOptions?.fileSpecificClassNameComponent ??
-                            options.kotlinOut
-                                ?.split('/')
-                                .lastOrNull
-                                ?.split('.')
-                                .firstOrNull
+                            (options.kotlinOut == null
+                                ? null
+                                : path
+                                      .basename(options.kotlinOut!)
+                                      .split('.')
+                                      .first)
                       : null),
             ),
       copyrightHeader = options.copyrightHeader != null
@@ -562,17 +561,19 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
     Root root,
     FileType fileType,
   ) {
-    if (options.swiftOptions == null || options.dartOptions == null) {
+    final InternalSwiftOptions? swiftOptions = options.swiftOptions;
+    final InternalDartOptions? dartOptions = options.dartOptions;
+    if (swiftOptions == null || dartOptions == null) {
       return;
     }
     final generator = FfigenConfigGenerator();
 
     final ffigenYamlOptions = InternalFfigenConfigOptions(
-      options.dartOptions!,
-      options.swiftOptions!,
+      dartOptions,
+      swiftOptions,
       options.basePath,
-      options.dartOptions?.dartOut,
-      options.swiftOptions!.swiftOut,
+      dartOptions.dartOut,
+      swiftOptions.swiftOut,
     );
 
     generator.generate(

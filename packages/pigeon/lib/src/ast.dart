@@ -528,20 +528,23 @@ class TypeDeclaration {
 
   /// Returns the full annotated name of the type.
   String getFullName({bool withNullable = true}) {
-    if (baseName == 'List' || baseName == 'Map') {
-      return '$baseName<$typeArgumentsString>${isNullable && withNullable ? '?' : ''}';
-    }
-    return '$baseName${isNullable && withNullable ? '?' : ''}';
+    return '$baseName$typeArgumentsString${isNullable && withNullable ? '?' : ''}';
   }
 
   /// Returns the Type Arguments in annotation form.
   String get typeArgumentsString {
+    var typeArgumentString = '<';
     if (baseName == 'List') {
-      return typeArguments.firstOrNull?.getFullName() ?? 'Object?';
+      typeArgumentString +=
+          typeArguments.firstOrNull?.getFullName() ?? 'Object?';
     } else if (baseName == 'Map') {
-      return '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
+      typeArgumentString +=
+          '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
+    } else {
+      return '';
     }
-    return '';
+    typeArgumentString += '>';
+    return typeArgumentString;
   }
 
   @override

@@ -768,6 +768,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln(
       "import 'dart:typed_data' show ${typedDataClasses.join(', ')};",
     );
+    indent.newln();
     if (generatorOptions.useFfi) {
       indent.writeln("import 'package:ffi/ffi.dart';");
     }

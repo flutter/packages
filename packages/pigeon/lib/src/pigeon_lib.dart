@@ -272,7 +272,7 @@ class PigeonOptions {
   /// Path to the file which will be processed.
   final String? input;
 
-  /// The directory that the app exists in, this is required for Jni and Ffi APIs.
+  /// The directory that the app exists in, this is required for JNI and FFI APIs.
   final String? appDirectory;
 
   /// Path to the Dart file that will be generated.
@@ -348,7 +348,7 @@ class PigeonOptions {
   /// Whether to ignore lint violations in generated Dart code.
   final bool ignoreLints;
 
-  /// A String to augment class names to avoid cross file collisions.
+  /// A String to augment class names to avoid cross-file collisions.
   final String? fileSpecificClassNameComponent;
 
   /// Creates a [PigeonOptions] from a Map representation where:
@@ -928,50 +928,15 @@ ${_argParser.usage}''';
 
     final bool useJni = options.kotlinOptions?.useJni ?? false;
     final bool shouldRunJniMultiStep = useJni && options.kotlinOut != null;
-    bool jniStepFailed = false;
+    var jniStepFailed = false;
     final bool useFfi = options.swiftOptions?.useFfi ?? false;
     final String? swiftAppDir = options.swiftOptions?.appDirectory;
 
-    var flutterExecutable = 'flutter';
     final String dartExecutable = Platform.resolvedExecutable;
-
-    if (shouldRunJniMultiStep || (useFfi && swiftAppDir != null)) {
-      // 1. Check FLUTTER_ROOT environment variable.
-      final String? flutterRoot = Platform.environment['FLUTTER_ROOT'];
-      if (flutterRoot != null) {
-        final String flutterPath = path.join(
-          flutterRoot,
-          'bin',
-          Platform.isWindows ? 'flutter.bat' : 'flutter',
-        );
-        if (File(flutterPath).existsSync()) {
-          flutterExecutable = flutterPath;
-        }
-      }
-
-      // 2. Fallback to inference from Dart executable path.
-      if (flutterExecutable == 'flutter' &&
-          dartExecutable.contains('dart-sdk')) {
-        final Directory dartBin = Directory(dartExecutable).parent;
-        var dir = dartBin;
-        // Walk up up to 10 levels to find a directory containing bin/flutter
-        for (var i = 0; i < 10; i++) {
-          final String checkPath = path.join(
-            dir.path,
-            'bin',
-            Platform.isWindows ? 'flutter.bat' : 'flutter',
-          );
-          if (File(checkPath).existsSync()) {
-            flutterExecutable = checkPath;
-            break;
-          }
-          if (dir.parent == dir) {
-            break; // Root reached!
-          }
-          dir = dir.parent;
-        }
-      }
-    }
+    final String flutterExecutable =
+        (shouldRunJniMultiStep || (useFfi && swiftAppDir != null))
+        ? _findFlutterExecutable(dartExecutable)
+        : 'flutter';
 
     if (shouldRunJniMultiStep) {
       // Phase 1: Run Kotlin and jnigen_config adapters
@@ -1005,158 +970,176 @@ ${_argParser.usage}''';
         jniStepFailed = true;
       }
 
-      // Construct environment map
-      final env = <String, String>{};
+      final Map<String, String> env = await _getJniEnvironment(dartExecutable);
 
-      // Try to find Java 17 on macOS
-      if (Platform.isMacOS) {
-        final ProcessResult javaHomeResult = await Process.run(
-          '/usr/libexec/java_home',
-          ['-v', '17'],
-        );
-        if (javaHomeResult.exitCode == 0) {
-          final String javaHome = javaHomeResult.stdout.toString().trim();
-          if (javaHome.isNotEmpty) {
-            env['JAVA_HOME'] = javaHome;
-            print('JNI Multi-step: Using Java 17 from $javaHome');
-          }
-        }
-      }
-
-      // Fallback to current environment's JAVA_HOME if not set or lookup failed
-      if (!env.containsKey('JAVA_HOME')) {
-        final String? currentJavaHome = Platform.environment['JAVA_HOME'];
-        if (currentJavaHome != null && currentJavaHome.isNotEmpty) {
-          env['JAVA_HOME'] = currentJavaHome;
-          print(
-            'JNI Multi-step: Using default JAVA_HOME from environment: $currentJavaHome',
-          );
-        }
-      }
-
-      // Add dart to PATH if it was found via login shell or full path
-      if (dartExecutable != 'dart') {
-        final String dartDir = path.dirname(dartExecutable);
-        final String currentPath = Platform.environment['PATH'] ?? '';
-        env['PATH'] = '$dartDir:$currentPath';
-        print('Adding $dartDir to PATH for JNIgen due to missing path!');
+      if (!jniStepFailed) {
+        jniStepFailed = !await _buildApk(appDir, flutterExecutable, env);
       }
 
       if (!jniStepFailed) {
-        // Step 2: Build APK
-        print('JNI Multi-step: Building APK in $appDir...');
-        try {
-          final ProcessResult apkResult = await Process.run(
-            flutterExecutable,
-            ['build', 'apk'],
-            workingDirectory: appDir,
-            environment: env,
-          );
-          if (apkResult.exitCode != 0) {
-            print('Error building APK: ${apkResult.stderr}');
-            print(
-              'JNI Multi-step: APK build failed. If you have modified the pigeon file, please ensure that your Kotlin implementation matches the newly generated interface before running pigeon again. JNIgen requires a successful build of the Kotlin code to generate Dart bindings.',
-            );
-            jniStepFailed = true;
-          } else {
-            print('JNI Multi-step: APK built successfully.');
-          }
-        } on ProcessException catch (e) {
-          if (flutterExecutable == 'flutter') {
-            print('Error: Flutter executable not found in PATH.');
-            print(
-              'Please ensure Flutter is installed and in your PATH, or set the FLUTTER_ROOT environment variable.',
-            );
-          } else {
-            print(
-              'Error running Flutter at "$flutterExecutable": ${e.message}',
-            );
-          }
-          jniStepFailed = true;
-        }
+        jniStepFailed = !await _runJnigen(appDir, dartExecutable, env);
       }
-
-      if (!jniStepFailed) {
-        // Step 3: Run JNIgen
-        print('JNI Multi-step: Running JNIgen in $appDir...');
-        final ProcessResult jnigenResult = await Process.run(
-          dartExecutable,
-          ['run', 'jnigen_config.dart'],
-          workingDirectory: appDir,
-          environment: env,
-        );
-        if (jnigenResult.exitCode != 0) {
-          print('Error running JNIgen: ${jnigenResult.stderr}');
-          jniStepFailed = true;
-        } else {
-          print('JNI Multi-step: JNIgen completed successfully.');
-        }
-      }
-
-      // Phase 2: Run remaining adapters
-      for (final adapter in safeGeneratorAdapters) {
-        if (adapter is! KotlinGeneratorAdapter &&
-            adapter is! JnigenConfigGeneratorAdapter) {
-          for (final FileType fileType in adapter.fileTypeList) {
-            final IOSink? sink = adapter.shouldGenerate(
-              internalOptions,
-              fileType,
-            );
-            if (sink != null) {
-              adapter.generate(
-                sink,
-                internalOptions,
-                parseResults.root,
-                fileType,
-              );
-              await sink.flush();
-              await releaseSink(sink);
-            }
-          }
-        }
-      }
-    } else {
-      for (final adapter in safeGeneratorAdapters) {
-        for (final FileType fileType in adapter.fileTypeList) {
-          final IOSink? sink = adapter.shouldGenerate(
-            internalOptions,
-            fileType,
-          );
-          if (sink != null) {
-            adapter.generate(
-              sink,
-              internalOptions,
-              parseResults.root,
-              fileType,
-            );
-            await sink.flush();
-            await releaseSink(sink);
-          }
+    }
+    for (final adapter in safeGeneratorAdapters) {
+      for (final FileType fileType in adapter.fileTypeList) {
+        final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);
+        if (sink != null) {
+          adapter.generate(sink, internalOptions, parseResults.root, fileType);
+          await sink.flush();
+          await releaseSink(sink);
         }
       }
     }
 
     if (useFfi && swiftAppDir != null && swiftAppDir.isNotEmpty) {
-      final String configFile = path.join(swiftAppDir, 'ffigen_config.dart');
-      if (File(configFile).existsSync()) {
-        print('FFI Multi-step: Running ffigen in $swiftAppDir...');
-        final ProcessResult ffigenResult = await Process.run(dartExecutable, [
-          'run',
-          'ffigen_config.dart',
-        ], workingDirectory: swiftAppDir);
-        if (ffigenResult.exitCode != 0) {
-          print('Error running ffigen: ${ffigenResult.stderr}');
-          return 1;
-        }
-        print('FFI Multi-step: ffigen completed successfully.');
-      } else {
-        print(
-          'FFI Multi-step: skipping ffigen because $configFile does not exist.',
-        );
+      final int exitCode = await _runFfigen(swiftAppDir, dartExecutable);
+      if (exitCode != 0) {
+        return exitCode;
       }
     }
 
     return jniStepFailed ? 1 : 0;
+  }
+
+  /// Finds the Flutter executable based on FLUTTER_ROOT or Dart executable path.
+  static String _findFlutterExecutable(String dartExecutable) {
+    var flutterExecutable = 'flutter';
+    // 1. Check FLUTTER_ROOT environment variable.
+    final String? flutterRoot = Platform.environment['FLUTTER_ROOT'];
+    if (flutterRoot != null) {
+      final String flutterPath = path.join(
+        flutterRoot,
+        'bin',
+        Platform.isWindows ? 'flutter.bat' : 'flutter',
+      );
+      if (File(flutterPath).existsSync()) {
+        flutterExecutable = flutterPath;
+      }
+    }
+
+    // 2. Fallback to inference from Dart executable path.
+    if (flutterExecutable == 'flutter' && dartExecutable.contains('dart-sdk')) {
+      final Directory dartBin = Directory(dartExecutable).parent;
+      var dir = dartBin;
+      // Walk up up to 10 levels to find a directory containing bin/flutter
+      for (var i = 0; i < 10; i++) {
+        final String checkPath = path.join(
+          dir.path,
+          'bin',
+          Platform.isWindows ? 'flutter.bat' : 'flutter',
+        );
+        if (File(checkPath).existsSync()) {
+          flutterExecutable = checkPath;
+          break;
+        }
+        if (dir.parent == dir) {
+          break; // Root reached!
+        }
+        dir = dir.parent;
+      }
+    }
+    return flutterExecutable;
+  }
+
+  /// Gets the environment map for JNI multi-step generation.
+  static Future<Map<String, String>> _getJniEnvironment(
+    String dartExecutable,
+  ) async {
+    final env = <String, String>{};
+
+    // Try to find Java 17 on macOS
+    if (Platform.isMacOS) {
+      final ProcessResult javaHomeResult = await Process.run(
+        '/usr/libexec/java_home',
+        ['-v', '17'],
+      );
+      if (javaHomeResult.exitCode == 0) {
+        final String javaHome = javaHomeResult.stdout.toString().trim();
+        if (javaHome.isNotEmpty) {
+          env['JAVA_HOME'] = javaHome;
+          print('JNI Multi-step: Using Java 17 from $javaHome');
+        }
+      }
+    }
+
+    // Fallback to current environment's JAVA_HOME if not set or lookup failed
+    if (!env.containsKey('JAVA_HOME')) {
+      final String? currentJavaHome = Platform.environment['JAVA_HOME'];
+      if (currentJavaHome != null && currentJavaHome.isNotEmpty) {
+        env['JAVA_HOME'] = currentJavaHome;
+        print(
+          'JNI Multi-step: Using default JAVA_HOME from environment: $currentJavaHome',
+        );
+      }
+    }
+
+    // Add dart to PATH if it was found via login shell or full path
+    if (dartExecutable != 'dart') {
+      final String dartDir = path.dirname(dartExecutable);
+      final String currentPath = Platform.environment['PATH'] ?? '';
+      env['PATH'] = '$dartDir:$currentPath';
+      print('Adding $dartDir to PATH for JNIgen due to missing path!');
+    }
+    return env;
+  }
+
+  /// Builds APK in JNI multi-step generation.
+  static Future<bool> _buildApk(
+    String appDir,
+    String flutterExecutable,
+    Map<String, String> env,
+  ) async {
+    print('JNI Multi-step: Building APK in $appDir...');
+    try {
+      final ProcessResult apkResult = await Process.run(
+        flutterExecutable,
+        ['build', 'apk'],
+        workingDirectory: appDir,
+        environment: env,
+      );
+      if (apkResult.exitCode != 0) {
+        print('Error building APK: ${apkResult.stderr}');
+        print(
+          'JNI Multi-step: APK build failed. If you have modified the pigeon file, please ensure that your Kotlin implementation matches the newly generated interface before running pigeon again. JNIgen requires a successful build of the Kotlin code to generate Dart bindings.',
+        );
+        return false;
+      } else {
+        print('JNI Multi-step: APK built successfully.');
+        return true;
+      }
+    } on ProcessException catch (e) {
+      if (flutterExecutable == 'flutter') {
+        print('Error: Flutter executable not found in PATH.');
+        print(
+          'Please ensure Flutter is installed and in your PATH, or set the FLUTTER_ROOT environment variable.',
+        );
+      } else {
+        print('Error running Flutter at "$flutterExecutable": ${e.message}');
+      }
+      return false;
+    }
+  }
+
+  /// Runs JNIgen in JNI multi-step generation.
+  static Future<bool> _runJnigen(
+    String appDir,
+    String dartExecutable,
+    Map<String, String> env,
+  ) async {
+    print('JNI Multi-step: Running JNIgen in $appDir...');
+    final ProcessResult jnigenResult = await Process.run(
+      dartExecutable,
+      ['run', 'jnigen_config.dart'],
+      workingDirectory: appDir,
+      environment: env,
+    );
+    if (jnigenResult.exitCode != 0) {
+      print('Error running JNIgen: ${jnigenResult.stderr}');
+      return false;
+    } else {
+      print('JNI Multi-step: JNIgen completed successfully.');
+      return true;
+    }
   }
 
   /// Print a list of errors to stderr.
@@ -1173,6 +1156,32 @@ ${_argParser.usage}''';
       } else {
         stderr.writeln('Error: ${err.message}');
       }
+    }
+  }
+
+  /// Runs ffigen in FFI multi-step generation.
+  static Future<int> _runFfigen(
+    String swiftAppDir,
+    String dartExecutable,
+  ) async {
+    final String configFile = path.join(swiftAppDir, 'ffigen_config.dart');
+    if (File(configFile).existsSync()) {
+      print('FFI Multi-step: Running ffigen in $swiftAppDir...');
+      final ProcessResult ffigenResult = await Process.run(dartExecutable, [
+        'run',
+        'ffigen_config.dart',
+      ], workingDirectory: swiftAppDir);
+      if (ffigenResult.exitCode != 0) {
+        print('Error running ffigen: ${ffigenResult.stderr}');
+        return 1;
+      }
+      print('FFI Multi-step: ffigen completed successfully.');
+      return 0;
+    } else {
+      print(
+        'FFI Multi-step: skipping ffigen because $configFile does not exist.',
+      );
+      return 0;
     }
   }
 }
