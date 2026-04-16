@@ -2,6 +2,10 @@
 
 * Adds per-player Android renderer options for decoder fallback and MediaCodec asynchronous queueing.
 
+## 2.9.5
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.9.4
 
 * Updates `androidx.media3` to 1.9.2.

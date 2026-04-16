@@ -36,7 +36,8 @@ public class ZoomLevelFeature extends CameraFeature<Float> {
       hasSupport = false;
       return;
     }
-    // On Android 11+ CONTROL_ZOOM_RATIO_RANGE should be use to get the zoom ratio directly as minimum zoom does not have to be 1.0f.
+    // On Android 11+ CONTROL_ZOOM_RATIO_RANGE should be use to get the zoom ratio directly as
+    // minimum zoom does not have to be 1.0f.
     if (SdkCapabilityChecker.supportsZoomRatio()) {
       minimumZoomLevel = cameraProperties.getScalerMinZoomRatio();
       maximumZoomLevel = cameraProperties.getScalerMaxZoomRatio();

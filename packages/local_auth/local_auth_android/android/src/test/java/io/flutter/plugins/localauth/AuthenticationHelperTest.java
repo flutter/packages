@@ -13,10 +13,6 @@ import android.content.Context;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.FragmentActivity;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
-import io.flutter.plugins.localauth.Messages.AuthOptions;
-import io.flutter.plugins.localauth.Messages.AuthResult;
-import io.flutter.plugins.localauth.Messages.AuthResultCode;
-import io.flutter.plugins.localauth.Messages.AuthStrings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -27,19 +23,11 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class AuthenticationHelperTest {
   static final AuthStrings dummyStrings =
-      new AuthStrings.Builder()
-          .setReason("a reason")
-          .setSignInHint("a hint")
-          .setCancelButton("cancel")
-          .setSignInTitle("sign in")
-          .build();
+      new AuthStrings("a reason", "a hint", "cancel", "sign in");
 
   static final AuthOptions defaultOptions =
-      new AuthOptions.Builder()
-          .setBiometricOnly(false)
-          .setSensitiveTransaction(false)
-          .setSticky(false)
-          .build();
+      new AuthOptions(
+          /* biometricOnly */ false, /* sensitiveTransaction */ false, /* sticky */ false);
 
   @Test
   public void onAuthenticationError_returnsUserCanceled() {
@@ -55,12 +43,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.USER_CANCELED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.USER_CANCELED, ""));
   }
 
   @Test
@@ -77,12 +60,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NEGATIVE_BUTTON, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NEGATIVE_BUTTON)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.NEGATIVE_BUTTON, ""));
   }
 
   @Test
@@ -99,12 +77,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NO_CREDENTIALS)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.NO_CREDENTIALS, ""));
   }
 
   @Test
@@ -121,12 +94,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NOT_ENROLLED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.NOT_ENROLLED, ""));
   }
 
   @Test
@@ -143,12 +111,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.HARDWARE_UNAVAILABLE)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.HARDWARE_UNAVAILABLE, ""));
   }
 
   @Test
@@ -165,12 +128,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.NO_HARDWARE)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.NO_HARDWARE, ""));
   }
 
   @Test
@@ -187,12 +145,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.LOCKED_OUT_TEMPORARILY)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.LOCKED_OUT_TEMPORARILY, ""));
   }
 
   @Test
@@ -209,12 +162,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.LOCKED_OUT_PERMANENTLY)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.LOCKED_OUT_PERMANENTLY, ""));
   }
 
   @Test
@@ -231,12 +179,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.SYSTEM_CANCELED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.SYSTEM_CANCELED, ""));
   }
 
   @Test
@@ -253,9 +196,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder().setCode(AuthResultCode.TIMEOUT).setErrorMessage("").build());
+    verify(handler).complete(new AuthResult(AuthResultCode.TIMEOUT, ""));
   }
 
   @Test
@@ -272,9 +213,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder().setCode(AuthResultCode.NO_SPACE).setErrorMessage("").build());
+    verify(handler).complete(new AuthResult(AuthResultCode.NO_SPACE, ""));
   }
 
   @Test
@@ -291,12 +230,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.SECURITY_UPDATE_REQUIRED)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.SECURITY_UPDATE_REQUIRED, ""));
   }
 
   @Test
@@ -313,12 +247,7 @@ public class AuthenticationHelperTest {
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "");
 
-    verify(handler)
-        .complete(
-            new AuthResult.Builder()
-                .setCode(AuthResultCode.UNKNOWN_ERROR)
-                .setErrorMessage("")
-                .build());
+    verify(handler).complete(new AuthResult(AuthResultCode.UNKNOWN_ERROR, ""));
   }
 
   private FragmentActivity buildMockActivityWithContext(FragmentActivity mockActivity) {

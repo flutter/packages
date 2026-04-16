@@ -57,8 +57,10 @@ public final class DartVmService implements FlutterTestingProtocol {
 
   /** The JSON-RPC method for testing extension APIs. */
   private static final String TESTING_EXTENSION_METHOD = "ext.flutter.driver";
+
   /** The JSON-RPC method for retrieving Dart isolate info. */
   private static final String GET_ISOLATE_METHOD = "getIsolate";
+
   /** The JSON-RPC method for retrieving Dart VM info. */
   private static final String GET_VM_METHOD = "getVM";
 
@@ -129,7 +131,8 @@ public final class DartVmService implements FlutterTestingProtocol {
             if (response.getError() == null) {
               return null;
             } else {
-              // TODO(https://github.com/android/android-test/issues/251): Update error case handling
+              // TODO(https://github.com/android/android-test/issues/251): Update error case
+              // handling
               // like
               // AmbiguousWidgetMatcherException, NoMatchingWidgetException after nailing down the
               // design with
@@ -190,8 +193,8 @@ public final class DartVmService implements FlutterTestingProtocol {
             checkState(
                 topLeft.getX() <= bottomRight.getX() && topLeft.getY() <= bottomRight.getY(),
                 String.format(
-                    "The coordinates of the bottom right vertex [%.1f, %.1f] are not actually to the"
-                        + " bottom right of the top left vertex [%.1f, %.1f]!",
+                    "The coordinates of the bottom right vertex [%.1f, %.1f] are not actually to"
+                        + " the bottom right of the top left vertex [%.1f, %.1f]!",
                     topLeft.getX(), topLeft.getY(), bottomRight.getX(), bottomRight.getY()));
             return new Rect(
                 (int) topLeft.getX(),

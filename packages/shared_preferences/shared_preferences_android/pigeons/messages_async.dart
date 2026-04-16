@@ -50,11 +50,11 @@ class StringListResult {
 
 @HostApi()
 abstract class SharedPreferencesAsyncApi {
-  /// Adds property to shared preferences data set of type bool.
+  /// Adds property to shared preferences data set of type `bool`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void setBool(String key, bool value, SharedPreferencesPigeonOptions options);
 
-  /// Adds property to shared preferences data set of type String.
+  /// Adds property to shared preferences data set of type `String`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void setString(
     String key,
@@ -62,11 +62,11 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Adds property to shared preferences data set of type int.
+  /// Adds property to shared preferences data set of type `int`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void setInt(String key, int value, SharedPreferencesPigeonOptions options);
 
-  /// Adds property to shared preferences data set of type double.
+  /// Adds property to shared preferences data set of type `double`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void setDouble(
     String key,
@@ -74,7 +74,7 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void setEncodedStringList(
     String key,
@@ -82,7 +82,7 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Adds property to shared preferences data set of type List<String>.
+  /// Adds property to shared preferences data set of type `List<String>`.
   ///
   /// Deprecated, this is only here for testing purposes.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
@@ -108,14 +108,14 @@ abstract class SharedPreferencesAsyncApi {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   int? getInt(String key, SharedPreferencesPigeonOptions options);
 
-  /// Gets individual List<String> value stored with [key], if any.
+  /// Gets individual `List<String>` value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   List<String>? getPlatformEncodedStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Gets the JSON-encoded List<String> value stored with [key], if any.
+  /// Gets the JSON-encoded `List<String>` value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   StringListResult? getStringList(
     String key,

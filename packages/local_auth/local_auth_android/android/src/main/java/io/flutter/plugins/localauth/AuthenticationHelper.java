@@ -16,8 +16,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import io.flutter.plugins.localauth.Messages.AuthResult;
-import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import java.util.concurrent.Executor;
 
 /**
@@ -37,7 +35,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   private final Lifecycle lifecycle;
   private final FragmentActivity activity;
   private final AuthCompletionHandler completionHandler;
-  private final Messages.AuthStrings strings;
   private final BiometricPrompt.PromptInfo promptInfo;
   private final boolean isAuthSticky;
   private final UiThreadExecutor uiThreadExecutor;
@@ -47,14 +44,13 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
   AuthenticationHelper(
       Lifecycle lifecycle,
       FragmentActivity activity,
-      @NonNull Messages.AuthOptions options,
-      @NonNull Messages.AuthStrings strings,
+      @NonNull AuthOptions options,
+      @NonNull AuthStrings strings,
       @NonNull AuthCompletionHandler completionHandler,
       boolean allowCredentials) {
     this.lifecycle = lifecycle;
     this.activity = activity;
     this.completionHandler = completionHandler;
-    this.strings = strings;
     this.isAuthSticky = options.getSticky();
     this.uiThreadExecutor = new UiThreadExecutor();
 
@@ -157,14 +153,13 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         code = AuthResultCode.UNKNOWN_ERROR;
         break;
     }
-    completionHandler.complete(
-        new AuthResult.Builder().setCode(code).setErrorMessage(errString.toString()).build());
+    completionHandler.complete(new AuthResult(code, errString.toString()));
     stop();
   }
 
   @Override
   public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-    completionHandler.complete(new AuthResult.Builder().setCode(AuthResultCode.SUCCESS).build());
+    completionHandler.complete(new AuthResult(AuthResultCode.SUCCESS, null));
     stop();
   }
 

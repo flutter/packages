@@ -1,3 +1,19 @@
+## 0.4.2
+
+* Fixes an issue where merged cells would unmerge when the first cell was overlaid by a pinned row or column.
+
+## 0.4.1
+
+* Adds warnings for TableView pinned rows and columns that exceed the viewport dimensions.
+
+## 0.4.0
+
+* Added `alignment` property to `TableView` and `TreeView` to align content within the viewport when it is smaller than the viewport extent.
+
+## 0.3.9
+
+* Fixes TableSpan borders being flipped when one or both axis directions are reversed.
+
 ## 0.3.8
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.

@@ -1,3 +1,11 @@
+## 3.24.3
+
+* Adds support to get failing url from DNS errors on iOS 26+.
+
+## 3.24.2
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 3.24.1
 
 * Updates platform views on iOS to only have a weak reference to the native view. This is a

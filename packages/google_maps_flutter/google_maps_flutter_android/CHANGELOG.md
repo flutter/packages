@@ -1,3 +1,15 @@
+## 2.19.6
+
+* Fixes the onTap callback for clustered pin info window taps.
+
+## 2.19.5
+
+* Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
+
+## 2.19.4
+
+* Updates build files from Groovy to Kotlin.
+
 ## 2.19.3
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.

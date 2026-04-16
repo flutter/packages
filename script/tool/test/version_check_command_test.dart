@@ -2079,7 +2079,7 @@ release:
         },
       );
       test(
-        'ignores changelog and pubspec yaml version modifications check with post-release label',
+        'ignores changelog and pubspec yaml version modifications check with override: post-release label',
         () async {
           final RepositoryPackage package = createFakePackage(
             'package',
@@ -2112,7 +2112,7 @@ packages/package/pubspec.yaml
           final List<String> output = await runCapturingPrint(runner, <String>[
             'version-check',
             '--base-sha=main',
-            '--pr-labels=post-release-package',
+            '--pr-labels=override: post-release-package',
           ]);
 
           expect(

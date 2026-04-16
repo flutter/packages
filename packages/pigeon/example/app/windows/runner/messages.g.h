@@ -25,17 +25,17 @@ class FlutterError {
   explicit FlutterError(const std::string& code, const std::string& message)
       : code_(code), message_(message) {}
   explicit FlutterError(const std::string& code, const std::string& message,
-                        const flutter::EncodableValue& details)
+                        const ::flutter::EncodableValue& details)
       : code_(code), message_(message), details_(details) {}
 
   const std::string& code() const { return code_; }
   const std::string& message() const { return message_; }
-  const flutter::EncodableValue& details() const { return details_; }
+  const ::flutter::EncodableValue& details() const { return details_; }
 
  private:
   std::string code_;
   std::string message_;
-  flutter::EncodableValue details_;
+  ::flutter::EncodableValue details_;
 };
 
 template <class T>
@@ -65,11 +65,11 @@ enum class Code { kOne = 0, kTwo = 1 };
 class MessageData {
  public:
   // Constructs an object setting all non-nullable fields.
-  explicit MessageData(const Code& code, const flutter::EncodableMap& data);
+  explicit MessageData(const Code& code, const ::flutter::EncodableMap& data);
 
   // Constructs an object setting all fields.
   explicit MessageData(const std::string* name, const std::string* description,
-                       const Code& code, const flutter::EncodableMap& data);
+                       const Code& code, const ::flutter::EncodableMap& data);
 
   const std::string* name() const;
   void set_name(const std::string_view* value_arg);
@@ -82,22 +82,29 @@ class MessageData {
   const Code& code() const;
   void set_code(const Code& value_arg);
 
-  const flutter::EncodableMap& data() const;
-  void set_data(const flutter::EncodableMap& value_arg);
+  const ::flutter::EncodableMap& data() const;
+  void set_data(const ::flutter::EncodableMap& value_arg);
+
+  bool operator==(const MessageData& other) const;
+  bool operator!=(const MessageData& other) const;
+  /// Returns a hash code value for the object. This method is supported for the
+  /// benefit of hash tables.
+  size_t Hash() const;
 
  private:
-  static MessageData FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
+  static MessageData FromEncodableList(const ::flutter::EncodableList& list);
+  ::flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
   friend class MessageFlutterApi;
   friend class PigeonInternalCodecSerializer;
   std::optional<std::string> name_;
   std::optional<std::string> description_;
   Code code_;
-  flutter::EncodableMap data_;
+  ::flutter::EncodableMap data_;
 };
 
-class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
+class PigeonInternalCodecSerializer
+    : public ::flutter::StandardCodecSerializer {
  public:
   PigeonInternalCodecSerializer();
   inline static PigeonInternalCodecSerializer& GetInstance() {
@@ -105,12 +112,12 @@ class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
     return sInstance;
   }
 
-  void WriteValue(const flutter::EncodableValue& value,
-                  flutter::ByteStreamWriter* stream) const override;
+  void WriteValue(const ::flutter::EncodableValue& value,
+                  ::flutter::ByteStreamWriter* stream) const override;
 
  protected:
-  flutter::EncodableValue ReadValueOfType(
-      uint8_t type, flutter::ByteStreamReader* stream) const override;
+  ::flutter::EncodableValue ReadValueOfType(
+      uint8_t type, ::flutter::ByteStreamReader* stream) const override;
 };
 
 // Generated interface from Pigeon that represents a handler of messages from
@@ -126,16 +133,16 @@ class ExampleHostApi {
                            std::function<void(ErrorOr<bool> reply)> result) = 0;
 
   // The codec used by ExampleHostApi.
-  static const flutter::StandardMessageCodec& GetCodec();
+  static const ::flutter::StandardMessageCodec& GetCodec();
   // Sets up an instance of `ExampleHostApi` to handle messages through the
   // `binary_messenger`.
-  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
                     ExampleHostApi* api);
-  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+  static void SetUp(::flutter::BinaryMessenger* binary_messenger,
                     ExampleHostApi* api,
                     const std::string& message_channel_suffix);
-  static flutter::EncodableValue WrapError(std::string_view error_message);
-  static flutter::EncodableValue WrapError(const FlutterError& error);
+  static ::flutter::EncodableValue WrapError(std::string_view error_message);
+  static ::flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   ExampleHostApi() = default;
@@ -144,16 +151,16 @@ class ExampleHostApi {
 // called from C++.
 class MessageFlutterApi {
  public:
-  MessageFlutterApi(flutter::BinaryMessenger* binary_messenger);
-  MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+  MessageFlutterApi(::flutter::BinaryMessenger* binary_messenger);
+  MessageFlutterApi(::flutter::BinaryMessenger* binary_messenger,
                     const std::string& message_channel_suffix);
-  static const flutter::StandardMessageCodec& GetCodec();
+  static const ::flutter::StandardMessageCodec& GetCodec();
   void FlutterMethod(const std::string* a_string,
                      std::function<void(const std::string&)>&& on_success,
                      std::function<void(const FlutterError&)>&& on_error);
 
  private:
-  flutter::BinaryMessenger* binary_messenger_;
+  ::flutter::BinaryMessenger* binary_messenger_;
   std::string message_channel_suffix_;
 };
 
