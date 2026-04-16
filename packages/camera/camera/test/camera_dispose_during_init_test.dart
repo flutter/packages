@@ -13,7 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-// Mock data
 const int mockCameraId = 42;
 
 CameraInitializedEvent get mockInitializedEvent => const CameraInitializedEvent(
@@ -32,7 +31,6 @@ CameraErrorEvent get mockErrorEvent =>
 DeviceOrientationChangedEvent get mockOrientationEvent =>
     const DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
 
-/// Test mock that emits events immediately (like real platform behavior)
 class TestMockCameraPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements CameraPlatform {
@@ -184,7 +182,7 @@ class TestMockCameraPlatform extends Mock
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  group('CameraController - Dispose During Initialization (Issue #184959)', () {
+  group('CameraController - Dispose During Initialization', () {
     late TestMockCameraPlatform mockPlatform;
 
     setUp(() {
@@ -206,25 +204,14 @@ void main() {
           ResolutionPreset.max,
         );
 
-        // Start initialization - this sets up the orientation listener
         final Future<void> initFuture = controller.initialize();
-
-        // Immediately dispose - this should cancel the listener
         await controller.dispose();
 
-        // Now the controller is disposed. The orientation listener is still registered
-        // but it should be guarded with _isDisposed check, so it won't call
-        // notifyListeners on the disposed controller.
-        // This test verifies the fix is in place by confirming no exception occurs.
-
-        // Wait for initialization to complete/fail
         try {
           await initFuture;
         } catch (e) {
-          // It's OK if initialization fails after dispose
+          // Initialization may fail after dispose
         }
-
-        expect(true, isTrue); // If we got here, the fix is working
       },
     );
 
@@ -242,22 +229,14 @@ void main() {
           ResolutionPreset.max,
         );
 
-        // Start initialization - this sets up the error listener
         final Future<void> initFuture = controller.initialize();
-
-        // Immediately dispose
         await controller.dispose();
-
-        // The error listener is still registered but guarded with _isDisposed check
-        // so it won't call notifyListeners on the disposed controller.
 
         try {
           await initFuture;
         } catch (e) {
-          // It's OK if initialization fails after dispose
+          // Initialization may fail after dispose
         }
-
-        expect(true, isTrue); // If we got here, the fix is working
       },
     );
 
@@ -275,23 +254,14 @@ void main() {
           ResolutionPreset.max,
         );
 
-        // Start initialization
         final Future<void> initFuture = controller.initialize();
-
-        // Dispose before initialization completes
         await controller.dispose();
-
-        // The main value assignment in _initializeWithDescription is guarded
-        // with _isDisposed check, so it won't call notifyListeners
-        // This verifies the fix at line 377+ of camera_controller.dart
 
         try {
           await initFuture;
         } catch (e) {
-          // It's OK if initialization fails after dispose
+          // Initialization may fail after dispose
         }
-
-        expect(true, isTrue); // If we got here, the fix is working
       },
     );
 
@@ -307,10 +277,8 @@ void main() {
         ResolutionPreset.max,
       );
 
-      // Start initialization
       final Future<void> initFuture = controller.initialize();
 
-      // Multiple consecutive dispose calls
       await controller.dispose();
       await controller.dispose();
       await controller.dispose();
@@ -318,10 +286,8 @@ void main() {
       try {
         await initFuture;
       } catch (e) {
-        // Expected - initialization failed after dispose
+        // Initialization may fail after dispose
       }
-
-      expect(true, isTrue); // If we got here, the fix is working
     });
 
     test(
@@ -338,13 +304,11 @@ void main() {
           ResolutionPreset.max,
         );
 
-        // Initialize without disposing
         await controller.initialize();
 
         expect(controller.value.isInitialized, isTrue);
         expect(controller.value.previewSize, const Size(1920, 1080));
 
-        // Clean up
         await controller.dispose();
       },
     );
