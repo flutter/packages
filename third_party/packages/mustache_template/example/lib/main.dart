@@ -30,15 +30,15 @@ class MyApp extends StatelessWidget {
   String _renderTemplate() {
     // #docregion basic-usage
     const source = '''
-    {{# names }}
-      <div>{{ lastname }}, {{ firstname }}</div>
-    {{/ names }}
-    {{^ names }}
-      <div>No names.</div>
-    {{/ names }}
-    ''';
+{{# names }}
+{{ lastname }}, {{ firstname }}
+{{/ names }}
+{{^ names }}
+No names.
+{{/ names }}
+''';
 
-    final template = Template(source, name: 'example-template.html');
+    final template = Template(source, name: 'example-template');
 
     return template.renderString({
       'names': [
