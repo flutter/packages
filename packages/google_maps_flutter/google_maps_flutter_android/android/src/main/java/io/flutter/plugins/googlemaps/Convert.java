@@ -160,7 +160,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale ratio
-            final float scale = density / bytesMap.getImagePixelRatio().floatValue();
+            final float scale = (float) (density / bytesMap.getImagePixelRatio());
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         case NONE:
@@ -233,7 +233,7 @@ class Convert {
   }
 
   private static @Nullable Integer nullableColor(@Nullable PlatformColor color) {
-    return color == null ? null : color.getArgbValue().intValue();
+    return color == null ? null : (int) color.getArgbValue();
   }
 
   private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {
@@ -297,7 +297,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale.
-            final float scale = density / assetMap.getImagePixelRatio().floatValue();
+            final float scale = (float) (density / assetMap.getImagePixelRatio());
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         } catch (Exception e) {
@@ -313,10 +313,10 @@ class Convert {
   static @NonNull CameraPosition cameraPositionFromPigeon(
       @NonNull PlatformCameraPosition position) {
     final CameraPosition.Builder builder = CameraPosition.builder();
-    builder.bearing(position.getBearing().floatValue());
+    builder.bearing((float) position.getBearing());
     builder.target(latLngFromPigeon(position.getTarget()));
-    builder.tilt(position.getTilt().floatValue());
-    builder.zoom(position.getZoom().floatValue());
+    builder.tilt((float) position.getTilt());
+    builder.zoom((float) position.getZoom());
     return builder.build();
   }
 
@@ -331,7 +331,7 @@ class Convert {
     }
     if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngZoom newLatLngZoom) {
       return CameraUpdateFactory.newLatLngZoom(
-          latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+          latLngFromPigeon(newLatLngZoom.getLatLng()), (float) newLatLngZoom.getZoom());
     }
     if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngBounds newLatLngBounds) {
       return CameraUpdateFactory.newLatLngBounds(
@@ -340,16 +340,16 @@ class Convert {
     }
     if (cameraUpdate instanceof PlatformCameraUpdateScrollBy scrollBy) {
       return CameraUpdateFactory.scrollBy(
-          scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+          (float) scrollBy.getDx() * density, (float) scrollBy.getDy() * density);
     }
     if (cameraUpdate instanceof PlatformCameraUpdateZoomBy zoomBy) {
       final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
       return (focus != null)
-          ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
-          : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+          ? CameraUpdateFactory.zoomBy((float) zoomBy.getAmount(), focus)
+          : CameraUpdateFactory.zoomBy((float) zoomBy.getAmount());
     }
     if (cameraUpdate instanceof PlatformCameraUpdateZoomTo zoomTo) {
-      return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
+      return CameraUpdateFactory.zoomTo((float) zoomTo.getZoom());
     }
     if (cameraUpdate instanceof PlatformCameraUpdateZoom zoom) {
       return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
@@ -396,19 +396,13 @@ class Convert {
   }
 
   static @NonNull PlatformCameraPosition cameraPositionToPigeon(@NonNull CameraPosition position) {
-    return new PlatformCameraPosition.Builder()
-        .setBearing((double) position.bearing)
-        .setTarget(latLngToPigeon(position.target))
-        .setTilt((double) position.tilt)
-        .setZoom((double) position.zoom)
-        .build();
+    return new PlatformCameraPosition(
+        position.bearing, latLngToPigeon(position.target), position.tilt, position.zoom);
   }
 
   static PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
-    return new PlatformLatLngBounds.Builder()
-        .setNortheast(latLngToPigeon(latLngBounds.northeast))
-        .setSouthwest(latLngToPigeon(latLngBounds.southwest))
-        .build();
+    return new PlatformLatLngBounds(
+        latLngToPigeon(latLngBounds.northeast), latLngToPigeon(latLngBounds.southwest));
   }
 
   static @NonNull LatLngBounds latLngBoundsFromPigeon(@NonNull PlatformLatLngBounds bounds) {
@@ -417,10 +411,7 @@ class Convert {
   }
 
   static PlatformLatLng latLngToPigeon(LatLng latLng) {
-    return new PlatformLatLng.Builder()
-        .setLatitude(latLng.latitude)
-        .setLongitude(latLng.longitude)
-        .build();
+    return new PlatformLatLng(latLng.latitude, latLng.longitude);
   }
 
   static LatLng latLngFromPigeon(PlatformLatLng latLng) {
@@ -439,12 +430,11 @@ class Convert {
       markerIds[i] = markerBuilder.markerId();
     }
 
-    return new PlatformCluster.Builder()
-        .setClusterManagerId(clusterManagerId)
-        .setPosition(latLngToPigeon(cluster.getPosition()))
-        .setBounds(latLngBoundsToPigeon(latLngBoundsBuilder.build()))
-        .setMarkerIds(Arrays.asList(markerIds))
-        .build();
+    return new PlatformCluster(
+        clusterManagerId,
+        latLngToPigeon(cluster.getPosition()),
+        latLngBoundsToPigeon(latLngBoundsBuilder.build()),
+        Arrays.asList(markerIds));
   }
 
   /**
@@ -459,7 +449,7 @@ class Convert {
   }
 
   static Point pointFromPigeon(PlatformPoint point) {
-    return new Point(point.getX().intValue(), point.getY().intValue());
+    return new Point((int) point.getX(), (int) point.getY());
   }
 
   @Nullable
@@ -471,7 +461,7 @@ class Convert {
   }
 
   static PlatformPoint pointToPigeon(Point point) {
-    return new PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
+    return new PlatformPoint(point.x, point.y);
   }
 
   private static Bitmap toBitmap(byte[] bmpData) {
@@ -530,10 +520,10 @@ class Convert {
     final PlatformEdgeInsets padding = config.getPadding();
     if (padding != null) {
       sink.setPadding(
-          padding.getTop().floatValue(),
-          padding.getLeft().floatValue(),
-          padding.getBottom().floatValue(),
-          padding.getRight().floatValue());
+          (float) padding.getTop(),
+          (float) padding.getLeft(),
+          (float) padding.getBottom(),
+          (float) padding.getRight());
     }
     final Boolean rotateGesturesEnabled = config.getRotateGesturesEnabled();
     if (rotateGesturesEnabled != null) {
@@ -596,17 +586,17 @@ class Convert {
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper wrapper) {
-    sink.setAlpha(marker.getAlpha().floatValue());
-    sink.setAnchor(marker.getAnchor().getX().floatValue(), marker.getAnchor().getY().floatValue());
+    sink.setAlpha((float) marker.getAlpha());
+    sink.setAnchor((float) marker.getAnchor().getX(), (float) marker.getAnchor().getY());
     sink.setConsumeTapEvents(marker.getConsumeTapEvents());
     sink.setDraggable(marker.getDraggable());
     sink.setFlat(marker.getFlat());
     sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
     interpretInfoWindowOptions(sink, marker.getInfoWindow());
     sink.setPosition(latLngFromPigeon(marker.getPosition()));
-    sink.setRotation(marker.getRotation().floatValue());
+    sink.setRotation((float) marker.getRotation());
     sink.setVisible(marker.getVisible());
-    sink.setZIndex(marker.getZIndex().floatValue());
+    sink.setZIndex((float) marker.getZIndex());
     sink.setCollisionBehavior(collisionBehaviorFromPigeon(marker.getCollisionBehavior()));
   }
 
@@ -617,16 +607,15 @@ class Convert {
       sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
     PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
-    sink.setInfoWindowAnchor(
-        infoWindowAnchor.getX().floatValue(), infoWindowAnchor.getY().floatValue());
+    sink.setInfoWindowAnchor((float) infoWindowAnchor.getX(), (float) infoWindowAnchor.getY());
   }
 
   static String interpretPolygonOptions(PlatformPolygon polygon, PolygonOptionsSink sink) {
     sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
     sink.setGeodesic(polygon.getGeodesic());
     sink.setVisible(polygon.getVisible());
-    sink.setFillColor(polygon.getFillColor().getArgbValue().intValue());
-    sink.setStrokeColor(polygon.getStrokeColor().getArgbValue().intValue());
+    sink.setFillColor((int) polygon.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) polygon.getStrokeColor().getArgbValue());
     sink.setStrokeWidth(polygon.getStrokeWidth());
     sink.setZIndex(polygon.getZIndex());
     sink.setPoints(pointsFromPigeon(polygon.getPoints()));
@@ -666,7 +655,7 @@ class Convert {
       AssetManager assetManager,
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
-    sink.setColor(polyline.getColor().getArgbValue().intValue());
+    sink.setColor((int) polyline.getColor().getArgbValue());
     sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
@@ -681,10 +670,10 @@ class Convert {
 
   static String interpretCircleOptions(PlatformCircle circle, CircleOptionsSink sink) {
     sink.setConsumeTapEvents(circle.getConsumeTapEvents());
-    sink.setFillColor(circle.getFillColor().getArgbValue().intValue());
-    sink.setStrokeColor(circle.getStrokeColor().getArgbValue().intValue());
+    sink.setFillColor((int) circle.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) circle.getStrokeColor().getArgbValue());
     sink.setStrokeWidth(circle.getStrokeWidth());
-    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setZIndex((float) circle.getZIndex());
     sink.setCenter(latLngFromPigeon(circle.getCenter()));
     sink.setRadius(circle.getRadius());
     sink.setVisible(circle.getVisible());
@@ -710,7 +699,7 @@ class Convert {
       sink.setMaxIntensity(maxIntensity);
     }
     sink.setOpacity(heatmap.getOpacity());
-    sink.setRadius(heatmap.getRadius().intValue());
+    sink.setRadius((int) heatmap.getRadius());
     return heatmap.getHeatmapId();
   }
 
@@ -750,7 +739,7 @@ class Convert {
     final List<PlatformColor> colorData = gradient.getColors();
     final int[] colors = new int[colorData.size()];
     for (int i = 0; i < colorData.size(); i++) {
-      colors[i] = colorData.get(i).getArgbValue().intValue();
+      colors[i] = (int) colorData.get(i).getArgbValue();
     }
 
     final List<Double> startPointData = gradient.getStartPoints();
@@ -759,7 +748,7 @@ class Convert {
       startPoints[i] = startPointData.get(i).floatValue();
     }
 
-    return new Gradient(colors, startPoints, gradient.getColorMapSize().intValue());
+    return new Gradient(colors, startPoints, (int) gradient.getColorMapSize());
   }
 
   private static List<List<LatLng>> toHoles(List<List<PlatformLatLng>> data) {
@@ -812,14 +801,14 @@ class Convert {
 
   static String interpretTileOverlayOptions(PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
     sink.setFadeIn(tileOverlay.getFadeIn());
-    sink.setTransparency(tileOverlay.getTransparency().floatValue());
+    sink.setTransparency((float) tileOverlay.getTransparency());
     sink.setZIndex(tileOverlay.getZIndex());
     sink.setVisible(tileOverlay.getVisible());
     return tileOverlay.getTileOverlayId();
   }
 
   static Tile tileFromPigeon(PlatformTile tile) {
-    return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
+    return new Tile((int) tile.getWidth(), (int) tile.getHeight(), tile.getData());
   }
 
   /**
@@ -842,15 +831,14 @@ class Convert {
       @NonNull AssetManager assetManager,
       float density,
       @NonNull BitmapDescriptorFactoryWrapper wrapper) {
-    sink.setTransparency(groundOverlay.getTransparency().floatValue());
-    sink.setZIndex(groundOverlay.getZIndex().floatValue());
+    sink.setTransparency((float) groundOverlay.getTransparency());
+    sink.setZIndex((float) groundOverlay.getZIndex());
     sink.setVisible(groundOverlay.getVisible());
     if (groundOverlay.getAnchor() != null) {
       sink.setAnchor(
-          groundOverlay.getAnchor().getX().floatValue(),
-          groundOverlay.getAnchor().getY().floatValue());
+          (float) groundOverlay.getAnchor().getX(), (float) groundOverlay.getAnchor().getY());
     }
-    sink.setBearing(groundOverlay.getBearing().floatValue());
+    sink.setBearing((float) groundOverlay.getBearing());
     sink.setClickable(groundOverlay.getClickable());
     sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
     if (groundOverlay.getPosition() != null) {
@@ -890,35 +878,35 @@ class Convert {
     // data is not stored on native code. Therefore placeholder image is used for
     // the image field.
     PlatformBitmap dummyImage =
-        new PlatformBitmap.Builder()
-            .setBitmap(
-                new PlatformBitmapBytesMap.Builder()
-                    .setByteData(new byte[] {0})
-                    .setImagePixelRatio(1.0)
-                    .setBitmapScaling(PlatformMapBitmapScaling.NONE)
-                    .build())
-            .build();
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                new byte[] {0},
+                PlatformMapBitmapScaling.NONE,
+                /* imagePixelRatio */ 1.0, /* width */
+                null, /* height */
+                null));
 
-    PlatformGroundOverlay.Builder builder =
-        new PlatformGroundOverlay.Builder()
-            .setGroundOverlayId(groundOverlayId)
-            .setImage(dummyImage)
-            .setWidth((double) groundOverlay.getWidth())
-            .setHeight((double) groundOverlay.getHeight())
-            .setBearing((double) groundOverlay.getBearing())
-            .setTransparency((double) groundOverlay.getTransparency())
-            .setZIndex((long) groundOverlay.getZIndex())
-            .setVisible(groundOverlay.isVisible())
-            .setClickable(groundOverlay.isClickable());
-
+    PlatformLatLngBounds bounds = null;
+    PlatformLatLng position = null;
     if (isCreatedWithBounds) {
-      builder.setBounds(Convert.latLngBoundsToPigeon(groundOverlay.getBounds()));
+      bounds = Convert.latLngBoundsToPigeon(groundOverlay.getBounds());
     } else {
-      builder.setPosition(Convert.latLngToPigeon(groundOverlay.getPosition()));
+      position = Convert.latLngToPigeon(groundOverlay.getPosition());
     }
 
-    builder.setAnchor(Convert.buildGroundOverlayAnchorForPigeon(groundOverlay));
-    return builder.build();
+    return new PlatformGroundOverlay(
+        groundOverlayId,
+        dummyImage,
+        position,
+        bounds,
+        (double) groundOverlay.getWidth(),
+        (double) groundOverlay.getHeight(),
+        Convert.buildGroundOverlayAnchorForPigeon(groundOverlay),
+        groundOverlay.getTransparency(),
+        groundOverlay.getBearing(),
+        (long) groundOverlay.getZIndex(),
+        groundOverlay.isVisible(),
+        groundOverlay.isClickable());
   }
 
   /**
@@ -930,8 +918,6 @@ class Convert {
   @VisibleForTesting
   public static @NonNull PlatformDoublePair buildGroundOverlayAnchorForPigeon(
       @NonNull GroundOverlay groundOverlay) {
-    PlatformDoublePair.Builder anchorBuilder = new PlatformDoublePair.Builder();
-
     // Position is overlays anchor point. Calculate normalized anchor point based on position and
     // bounds.
     LatLng position = groundOverlay.getPosition();
@@ -958,9 +944,7 @@ class Convert {
                 - west)
             / width;
 
-    anchorBuilder.setX(normalizedLongitude);
-    anchorBuilder.setY(normalizedLatitude);
-    return anchorBuilder.build();
+    return new PlatformDoublePair(/* x */ normalizedLongitude, /* y */ normalizedLatitude);
   }
 
   static class BitmapDescriptorFactoryWrapper {

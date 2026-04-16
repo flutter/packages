@@ -1153,12 +1153,11 @@ class GoogleMapController
     if (tileOverlay == null) {
       return null;
     }
-    return new PlatformTileLayer.Builder()
-        .setFadeIn(tileOverlay.getFadeIn())
-        .setTransparency((double) tileOverlay.getTransparency())
-        .setZIndex((double) tileOverlay.getZIndex())
-        .setVisible(tileOverlay.isVisible())
-        .build();
+    return new PlatformTileLayer(
+        tileOverlay.isVisible(),
+        tileOverlay.getFadeIn(),
+        tileOverlay.getTransparency(),
+        tileOverlay.getZIndex());
   }
 
   @Override
@@ -1176,10 +1175,9 @@ class GoogleMapController
 
   @Override
   public @NonNull PlatformZoomRange getZoomRange() {
-    return new PlatformZoomRange.Builder()
-        .setMin((double) Objects.requireNonNull(googleMap).getMinZoomLevel())
-        .setMax((double) Objects.requireNonNull(googleMap).getMaxZoomLevel())
-        .build();
+    return new PlatformZoomRange(
+        (double) Objects.requireNonNull(googleMap).getMinZoomLevel(),
+        (double) Objects.requireNonNull(googleMap).getMaxZoomLevel());
   }
 
   @Override

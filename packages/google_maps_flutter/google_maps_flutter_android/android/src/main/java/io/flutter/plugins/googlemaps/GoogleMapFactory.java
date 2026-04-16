@@ -21,7 +21,7 @@ public class GoogleMapFactory extends PlatformViewFactory {
 
   GoogleMapFactory(
       BinaryMessenger binaryMessenger, Context context, LifecycleProvider lifecycleProvider) {
-    super(MapsApi.getCodec());
+    super(MapsApi.Companion.getCodec());
 
     this.binaryMessenger = binaryMessenger;
     this.lifecycleProvider = lifecycleProvider;

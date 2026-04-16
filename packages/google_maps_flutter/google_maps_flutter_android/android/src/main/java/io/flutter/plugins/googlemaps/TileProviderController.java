@@ -49,14 +49,13 @@ class TileProviderController implements TileProvider {
 
     @NonNull
     Tile getTile() {
-      final PlatformPoint location =
-          new PlatformPoint.Builder().setX((long) x).setY((long) y).build();
+      final PlatformPoint location = new PlatformPoint(x, y);
       handler.post(
           () ->
               flutterApi.getTileOverlayTile(
                   tileOverlayId,
                   location,
-                  (long) zoom,
+                  zoom,
                   ResultCompat.asCompatCallback(
                       result -> {
                         tile = result.getOrNull();
