@@ -375,26 +375,16 @@ class CameraController extends ValueNotifier<CameraValue> {
         imageFormatGroup: imageFormatGroup ?? ImageFormatGroup.unknown,
       );
 
+      final CameraInitializedEvent event = await initializeCompleter.future;
       if (!_isDisposed) {
         value = value.copyWith(
           isInitialized: true,
           description: description,
-          previewSize: await initializeCompleter.future.then(
-            (CameraInitializedEvent event) =>
-                Size(event.previewWidth, event.previewHeight),
-          ),
-          exposureMode: await initializeCompleter.future.then(
-            (CameraInitializedEvent event) => event.exposureMode,
-          ),
-          focusMode: await initializeCompleter.future.then(
-            (CameraInitializedEvent event) => event.focusMode,
-          ),
-          exposurePointSupported: await initializeCompleter.future.then(
-            (CameraInitializedEvent event) => event.exposurePointSupported,
-          ),
-          focusPointSupported: await initializeCompleter.future.then(
-            (CameraInitializedEvent event) => event.focusPointSupported,
-          ),
+          previewSize: Size(event.previewWidth, event.previewHeight),
+          exposureMode: event.exposureMode,
+          focusMode: event.focusMode,
+          exposurePointSupported: event.exposurePointSupported,
+          focusPointSupported: event.focusPointSupported,
         );
       }
     } on PlatformException catch (e) {
