@@ -1,6 +1,10 @@
+## 0.4.3
+
+* Adds support for trailing pinned columns and rows in TableView.
+
 ## 0.4.2
 
-* Fixes an issue where merged cells would unmerge when the first cell was overlaid by a pinned row or column.
+* Adds support for trailing pinned columns and rows in TableView.
 
 ## 0.4.1
 
