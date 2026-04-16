@@ -63,7 +63,7 @@ public class ClusterManagersControllerTest {
     mocksClosable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
-    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class), ""));
     controller = spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
@@ -94,8 +94,7 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    PlatformClusterManager initialClusterManager =
-        new PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    PlatformClusterManager initialClusterManager = new PlatformClusterManager(clusterManagerId);
     List<PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
@@ -149,13 +148,13 @@ public class ClusterManagersControllerTest {
     advancedController.init(googleMap, markerManager);
 
     PlatformClusterManager initialClusterManager1 =
-        new PlatformClusterManager.Builder().setIdentifier(defaultClusterManagerId).build();
+        new PlatformClusterManager(defaultClusterManagerId);
     List<PlatformClusterManager> clusterManagersToAdd1 = new ArrayList<>();
     clusterManagersToAdd1.add(initialClusterManager1);
     defaultController.addClusterManagers(clusterManagersToAdd1);
 
     PlatformClusterManager initialClusterManager2 =
-        new PlatformClusterManager.Builder().setIdentifier(advancedClusterManagerId).build();
+        new PlatformClusterManager(advancedClusterManagerId);
     List<PlatformClusterManager> clusterManagersToAdd2 = new ArrayList<>();
     clusterManagersToAdd2.add(initialClusterManager2);
     advancedController.addClusterManagers(clusterManagersToAdd2);
@@ -211,8 +210,7 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    PlatformClusterManager initialClusterManager =
-        new PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    PlatformClusterManager initialClusterManager = new PlatformClusterManager(clusterManagerId);
     List<PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
@@ -233,34 +231,25 @@ public class ClusterManagersControllerTest {
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
     PlatformBitmap icon =
-        new PlatformBitmap.Builder()
-            .setBitmap(
-                new PlatformBitmapBytesMap.Builder()
-                    .setByteData(byteArray)
-                    .setImagePixelRatio(1.0)
-                    .setBitmapScaling(PlatformMapBitmapScaling.NONE)
-                    .build())
-            .build();
-    PlatformDoublePair anchor = new PlatformDoublePair.Builder().setX(0.0).setY(0.0).build();
-    return new PlatformMarker.Builder()
-        .setMarkerId(markerId)
-        .setConsumeTapEvents(false)
-        .setIcon(icon)
-        .setAlpha(1.0)
-        .setDraggable(false)
-        .setFlat(false)
-        .setVisible(true)
-        .setRotation(0.0)
-        .setZIndex(0.0)
-        .setPosition(
-            new PlatformLatLng.Builder()
-                .setLatitude(location.get(0))
-                .setLongitude(location.get(1))
-                .build())
-        .setClusterManagerId(clusterManagerId)
-        .setAnchor(anchor)
-        .setInfoWindow(new PlatformInfoWindow.Builder().setAnchor(anchor).build())
-        .setCollisionBehavior(PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY)
-        .build();
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                byteArray, PlatformMapBitmapScaling.NONE, /* imagePixelRatio */ 1.0, null, null));
+    PlatformDoublePair anchor = new PlatformDoublePair(0.0, 0.0);
+    return new PlatformMarker(
+        /* alpha */ 1.0,
+        anchor,
+        /* consumeTapEvents */ false,
+        /* draggable */ false,
+        /* flat */ false,
+        icon,
+        new PlatformInfoWindow(/* title */ null, /* snippet */ null, anchor),
+        /* position */
+        new PlatformLatLng(location.get(0), location.get(1)),
+        /* rotation */ 0.0,
+        /* visible */ true,
+        /* zIndex */ 0.0,
+        markerId,
+        clusterManagerId,
+        PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY);
   }
 }
