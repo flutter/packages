@@ -31,6 +31,10 @@ CameraErrorEvent get mockErrorEvent =>
 DeviceOrientationChangedEvent get mockOrientationEvent =>
     const DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
 
+/// Mock implementation of [CameraPlatform] for testing.
+///
+/// This mock platform emits events immediately, simulating real platform behavior
+/// when camera initialization and disposal occur.
 class TestMockCameraPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements CameraPlatform {
@@ -191,8 +195,12 @@ void main() {
     });
 
     test(
-      'disposed controller should not throw on orientation listener events',
+      'should handle orientation events when controller is disposed during initialization',
       () async {
+        /// Tests that async orientation listener events do not cause exceptions
+        /// when the controller is disposed before initialization completes.
+        /// This verifies that listeners are properly guarded against updates
+        /// to disposed controller instances.
         const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -216,8 +224,12 @@ void main() {
     );
 
     test(
-      'disposed controller should not throw on error listener events',
+      'should handle error events when controller is disposed during initialization',
       () async {
+        /// Tests that async error listener events do not cause exceptions
+        /// when the controller is disposed before initialization completes.
+        /// This ensures error callbacks are properly guarded and do not attempt
+        /// to update disposed controller state.
         const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -241,8 +253,11 @@ void main() {
     );
 
     test(
-      'disposed controller should not update value on async callbacks',
+      'should not update controller value when disposed during async callbacks',
       () async {
+        /// Tests that async callbacks from platform do not update controller
+        /// state after the controller has been disposed. This verifies that
+        /// value assignments are properly guarded with disposal checks.
         const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
@@ -265,7 +280,10 @@ void main() {
       },
     );
 
-    test('multiple dispose calls should not cause issues', () async {
+    test('should handle multiple consecutive dispose calls safely', () async {
+      /// Tests that calling dispose() multiple times on the same controller
+      /// does not cause exceptions or resource leaks. This verifies that
+      /// dispose operations are idempotent and properly handle repeated calls.
       const cameraDescription = CameraDescription(
         name: 'cam',
         lensDirection: CameraLensDirection.back,
@@ -291,8 +309,12 @@ void main() {
     });
 
     test(
-      'initialization should complete successfully when not disposed',
+      'should complete initialization successfully when not disposed',
       () async {
+        /// Tests the normal initialization flow when the controller is not
+        /// disposed. This serves as a baseline to ensure that the disposal
+        /// guards do not interfere with normal camera initialization and
+        /// controller state management.
         const cameraDescription = CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
