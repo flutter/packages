@@ -228,7 +228,7 @@ class SkiaGoldClient {
       final File resultFile = workDirectory.childFile(
         fs.path.join('result-state.json'),
       );
-      if (await resultFile.exists()) {
+      if (resultFile.existsSync()) {
         resultContents = await resultFile.readAsString();
       }
 
@@ -369,7 +369,7 @@ class SkiaGoldClient {
       final File resultFile = workDirectory.childFile(
         fs.path.join('result-state.json'),
       );
-      if (await resultFile.exists()) {
+      if (resultFile.existsSync()) {
         resultContents = await resultFile.readAsString();
       }
       final buf = StringBuffer()
@@ -489,7 +489,7 @@ class SkiaGoldClient {
       fs.path.join('temp', 'auth_opt.json'),
     );
 
-    if (await authFile.exists()) {
+    if (authFile.existsSync()) {
       final String contents = await authFile.readAsString();
       final decoded = json.decode(contents) as Map<String, dynamic>;
       return !(decoded['GSUtil'] as bool);
