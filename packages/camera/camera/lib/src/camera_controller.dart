@@ -341,9 +341,10 @@ class CameraController extends ValueNotifier<CameraValue> {
       _deviceOrientationSubscription ??= CameraPlatform.instance
           .onDeviceOrientationChanged()
           .listen((DeviceOrientationChangedEvent event) {
-            if (!_isDisposed) {
-              value = value.copyWith(deviceOrientation: event.orientation);
+            if (_isDisposed) {
+              return;
             }
+            value = value.copyWith(deviceOrientation: event.orientation);
           });
 
       _cameraId = await CameraPlatform.instance.createCameraWithSettings(
