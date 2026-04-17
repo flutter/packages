@@ -149,11 +149,11 @@ class Convert {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
             int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
 
-            if (height == null) {
+            if (width != null && height == null) {
               // If only width is provided, calculate height based on aspect ratio.
               double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
               targetHeight = (int) (targetWidth * aspectRatio);
-            } else if (width == null) {
+            } else if (height != null && width == null) {
               // If only height is provided, calculate width based on aspect ratio.
               double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
               targetWidth = (int) (targetHeight * aspectRatio);
@@ -286,11 +286,11 @@ class Convert {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
             int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
 
-            if (height == null) {
+            if (width != null && height == null) {
               // If only width is provided, calculate height based on aspect ratio.
               double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
               targetHeight = (int) (targetWidth * aspectRatio);
-            } else if (width == null) {
+            } else if (height != null && width == null) {
               // If only height is provided, calculate width based on aspect ratio.
               double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
               targetWidth = (int) (targetHeight * aspectRatio);
