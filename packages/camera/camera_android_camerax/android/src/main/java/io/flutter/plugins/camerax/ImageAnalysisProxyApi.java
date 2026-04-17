@@ -83,7 +83,6 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
     // Schedule cleanup after frame draining without blocking the thread.
     // This allows pending frames to drain from the ImageReader buffer
-    // while keeping the UI responsive.
     new Handler(Looper.getMainLooper())
         .postDelayed(
             () -> {
@@ -93,7 +92,7 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
                       getPigeonRegistrar()
                           .getDefaultClearFinalizedWeakReferencesInterval());
             },
-            100);  // 100ms delay for frame draining
+            100); 
   }
 
   @Override

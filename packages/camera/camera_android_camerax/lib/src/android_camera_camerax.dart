@@ -533,8 +533,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (imageAnalysis != null) {
       await imageAnalysis!.clearAnalyzer();
 
-      // Non-blocking frame drain wait
-      // Schedule completion after 100ms without blocking the event loop
       final frameDrainCompleter = Completer<void>();
       unawaited(
         Future<void>.delayed(const Duration(milliseconds: 100)).then((_) {
@@ -543,7 +541,6 @@ class AndroidCameraCameraX extends CameraPlatform {
           }
         }),
       );
-      // Await the completer, not the Future.delayed()
       await frameDrainCompleter.future;
     }
 
@@ -551,8 +548,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (processCameraProvider != null) {
       await processCameraProvider!.unbindAll();
 
-      // Non-blocking camera close wait
-      // Schedule completion after 50ms without blocking the event loop
       final cameraCloseCompleter = Completer<void>();
       unawaited(
         Future<void>.delayed(const Duration(milliseconds: 50)).then((_) {
@@ -561,7 +556,6 @@ class AndroidCameraCameraX extends CameraPlatform {
           }
         }),
       );
-      // Await the completer, not the Future.delayed()
       await cameraCloseCompleter.future;
     }
 
