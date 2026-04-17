@@ -33,13 +33,12 @@ internal class AuthenticationHelper(
     allowCredentials: Boolean
 ) : BiometricPrompt.AuthenticationCallback(), ActivityLifecycleCallbacks, DefaultLifecycleObserver {
   private val promptInfo: PromptInfo
-  private val isAuthSticky: Boolean
+  private val isAuthSticky: Boolean = options.sticky
   private val uiThreadExecutor: UiThreadExecutor
   private var activityPaused = false
   private var biometricPrompt: BiometricPrompt? = null
 
   init {
-    this.isAuthSticky = options.sticky
     this.uiThreadExecutor = UiThreadExecutor()
 
     val promptBuilder =
@@ -69,7 +68,7 @@ internal class AuthenticationHelper(
     if (lifecycle != null) {
       lifecycle.addObserver(this)
     } else {
-      activity.getApplication().registerActivityLifecycleCallbacks(this)
+      activity.application.registerActivityLifecycleCallbacks(this)
     }
     biometricPrompt = BiometricPrompt(activity, uiThreadExecutor, this)
     biometricPrompt!!.authenticate(promptInfo)
@@ -89,7 +88,7 @@ internal class AuthenticationHelper(
       lifecycle.removeObserver(this)
       return
     }
-    activity.getApplication().unregisterActivityLifecycleCallbacks(this)
+    activity.application.unregisterActivityLifecycleCallbacks(this)
   }
 
   @SuppressLint("SwitchIntDef")
@@ -148,7 +147,7 @@ internal class AuthenticationHelper(
       val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
       // When activity is resuming, we cannot show the prompt right away. We need to post it to the
       // UI queue.
-      uiThreadExecutor.handler.post(Runnable { prompt.authenticate(promptInfo) })
+      uiThreadExecutor.handler.post { prompt.authenticate(promptInfo) }
     }
   }
 

@@ -76,7 +76,7 @@ class LocalAuthPlugin
       }
       authInProgress.set(false)
       return true
-    } catch (e: Exception) {
+    } catch (_: Exception) {
       return false
     }
   }
@@ -87,23 +87,22 @@ class LocalAuthPlugin
       callback: (Result<AuthResult>) -> Unit
   ) {
     if (authInProgress.get()) {
-      completeWithValue<AuthResult>(callback, AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null))
+      completeWithValue(callback, AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null))
       return
     }
 
-    if (activity == null || activity!!.isFinishing()) {
-      completeWithValue<AuthResult>(callback, AuthResult(AuthResultCode.NO_ACTIVITY, null))
+    if (activity == null || activity!!.isFinishing) {
+      completeWithValue(callback, AuthResult(AuthResultCode.NO_ACTIVITY, null))
       return
     }
 
     if (activity !is FragmentActivity) {
-      completeWithValue<AuthResult>(
-          callback, AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null))
+      completeWithValue(callback, AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null))
       return
     }
 
     if (!isDeviceSupported()) {
-      completeWithValue<AuthResult>(callback, AuthResult(AuthResultCode.NO_CREDENTIALS, null))
+      completeWithValue(callback, AuthResult(AuthResultCode.NO_CREDENTIALS, null))
       return
     }
 
@@ -141,7 +140,7 @@ class LocalAuthPlugin
 
   fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult?) {
     if (authInProgress.compareAndSet(true, false)) {
-      completeWithValue<AuthResult>(callback, value!!)
+      completeWithValue(callback, value!!)
     }
   }
 
@@ -149,7 +148,7 @@ class LocalAuthPlugin
   val isDeviceSecure: Boolean
     get() {
       if (keyguardManager == null) return false
-      return keyguardManager!!.isDeviceSecure()
+      return keyguardManager!!.isDeviceSecure
     }
 
   private fun canAuthenticateWithBiometrics(): Boolean {
@@ -179,23 +178,23 @@ class LocalAuthPlugin
   }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    setUp(binding.getBinaryMessenger(), this)
+    setUp(binding.binaryMessenger, this)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    setUp(binding.getBinaryMessenger(), null)
+    setUp(binding.binaryMessenger, null)
   }
 
   private fun setServicesFromActivity(activity: Activity?) {
     if (activity == null) return
     this.activity = activity
-    val context = activity.getBaseContext()
+    val context = activity.baseContext
     biometricManager = BiometricManager.from(activity)
     keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager?
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    setServicesFromActivity(binding.getActivity())
+    setServicesFromActivity(binding.activity)
     lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
   }
 
@@ -205,7 +204,7 @@ class LocalAuthPlugin
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    setServicesFromActivity(binding.getActivity())
+    setServicesFromActivity(binding.activity)
     lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
   }
 
