@@ -1,3 +1,7 @@
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 2.19.7
 
 * Fixes warnings in Java code.
