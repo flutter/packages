@@ -249,7 +249,7 @@ class RouteConfiguration {
 
   /// Legacy top level page redirect.
   ///
-  /// This is handled via [applyTopLegacyRedirect] and runs at most once per navigation.
+  /// This is handled via [applyTopLegacyRedirect] inside [redirect].
   GoRouterRedirect get topRedirect => _routingConfig.value.redirect;
 
   /// Top level page on enter.
@@ -401,80 +401,121 @@ class RouteConfiguration {
     return const <RouteMatchBase>[];
   }
 
-  /// Processes route-level redirects by returning a new [RouteMatchList] representing the new location.
+  /// Processes all redirects (top-level and route-level) and returns the
+  /// final [RouteMatchList].
   ///
-  /// This method now handles ONLY route-level redirects.
-  /// Top-level redirects are handled by applyTopLegacyRedirect.
+  /// Top-level redirects are evaluated first via [applyTopLegacyRedirect],
+  /// then route-level redirects run on the resulting match list. If a
+  /// route-level redirect changes the location, this method recurses —
+  /// re-evaluating top-level redirects on the new location naturally.
   FutureOr<RouteMatchList> redirect(
     BuildContext context,
     FutureOr<RouteMatchList> prevMatchListFuture, {
     required List<RouteMatchList> redirectHistory,
   }) {
     FutureOr<RouteMatchList> processRedirect(RouteMatchList prevMatchList) {
-      final prevLocation = prevMatchList.uri.toString();
+      // Step 1: Apply top-level redirect first (self-recursive for chains).
+      final FutureOr<RouteMatchList> afterTopLevel = applyTopLegacyRedirect(
+        context,
+        prevMatchList,
+        redirectHistory: redirectHistory,
+      );
 
-      FutureOr<RouteMatchList> processRouteLevelRedirect(
-        String? routeRedirectLocation,
-      ) {
-        if (routeRedirectLocation != null &&
-            routeRedirectLocation != prevLocation) {
-          final RouteMatchList newMatch = _getNewMatches(
-            routeRedirectLocation,
-            prevMatchList.uri,
-            redirectHistory,
-          );
-
-          if (newMatch.isError) {
-            return newMatch;
-          }
-          return redirect(context, newMatch, redirectHistory: redirectHistory);
-        }
-        return prevMatchList;
-      }
-
-      final routeMatches = <RouteMatchBase>[];
-      prevMatchList.visitRouteMatches((RouteMatchBase match) {
-        if (match.route.redirect != null) {
-          routeMatches.add(match);
-        }
-        return true;
-      });
-
-      try {
-        final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
-
-        if (routeLevelRedirectResult is String?) {
-          return processRouteLevelRedirect(routeLevelRedirectResult);
-        }
-        return routeLevelRedirectResult
-            .then<RouteMatchList>(processRouteLevelRedirect)
-            .catchError((Object error) {
-              final GoException goException = error is GoException
-                  ? error
-                  : GoException('Exception during route redirect: $error');
-              return _errorRouteMatchList(
-                prevMatchList.uri,
-                goException,
-                extra: prevMatchList.extra,
-              );
-            });
-      } catch (exception) {
-        final GoException goException = exception is GoException
-            ? exception
-            : GoException('Exception during route redirect: $exception');
-        return _errorRouteMatchList(
-          prevMatchList.uri,
-          goException,
-          extra: prevMatchList.extra,
+      // Step 2: Then apply route-level redirects on the post-top-level result.
+      if (afterTopLevel is RouteMatchList) {
+        return _processRouteLevelRedirects(
+          context,
+          afterTopLevel,
+          redirectHistory,
         );
       }
+      return afterTopLevel.then<RouteMatchList>((RouteMatchList ml) {
+        if (!context.mounted) {
+          return ml;
+        }
+        return _processRouteLevelRedirects(context, ml, redirectHistory);
+      });
     }
 
     if (prevMatchListFuture is RouteMatchList) {
       return processRedirect(prevMatchListFuture);
     }
     return prevMatchListFuture.then<RouteMatchList>(processRedirect);
+  }
+
+  /// Processes route-level redirects on [matchList].
+  ///
+  /// If a route-level redirect changes the location, recurses back into
+  /// [redirect] which will re-evaluate top-level redirects on the new path.
+  FutureOr<RouteMatchList> _processRouteLevelRedirects(
+    BuildContext context,
+    RouteMatchList matchList,
+    List<RouteMatchList> redirectHistory,
+  ) {
+    final prevLocation = matchList.uri.toString();
+
+    FutureOr<RouteMatchList> processRouteLevelRedirect(
+      String? routeRedirectLocation,
+    ) {
+      if (routeRedirectLocation != null &&
+          routeRedirectLocation != prevLocation) {
+        final RouteMatchList newMatch = _getNewMatches(
+          routeRedirectLocation,
+          matchList.uri,
+          redirectHistory,
+        );
+
+        if (newMatch.isError) {
+          return newMatch;
+        }
+        // Recurse into redirect — top-level will be re-evaluated at the
+        // top of the next cycle.
+        return redirect(context, newMatch, redirectHistory: redirectHistory);
+      }
+      return matchList;
+    }
+
+    final routeMatches = <RouteMatchBase>[];
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match.route.redirect != null) {
+        routeMatches.add(match);
+      }
+      return true;
+    });
+
+    try {
+      final FutureOr<String?> routeLevelRedirectResult = _getRouteLevelRedirect(
+        context,
+        matchList,
+        routeMatches,
+        0,
+      );
+
+      if (routeLevelRedirectResult is String?) {
+        return processRouteLevelRedirect(routeLevelRedirectResult);
+      }
+      return routeLevelRedirectResult
+          .then<RouteMatchList>(processRouteLevelRedirect)
+          .catchError((Object error) {
+            final GoException goException = error is GoException
+                ? error
+                : GoException('Exception during route redirect: $error');
+            return _errorRouteMatchList(
+              matchList.uri,
+              goException,
+              extra: matchList.extra,
+            );
+          });
+    } catch (exception) {
+      final GoException goException = exception is GoException
+          ? exception
+          : GoException('Exception during route redirect: $exception');
+      return _errorRouteMatchList(
+        matchList.uri,
+        goException,
+        extra: matchList.extra,
+      );
+    }
   }
 
   /// Applies the legacy top-level redirect to [prevMatchList] and returns the
@@ -484,9 +525,10 @@ class RouteConfiguration {
   ///
   /// Shares [redirectHistory] with later route-level redirects for proper loop detection.
   ///
-  /// Note: Legacy top-level redirect is executed at most once per navigation,
-  /// before route-level redirects. It does not re-evaluate if it redirects to
-  /// a location that would itself trigger another top-level redirect.
+  /// Recursively re-evaluates the top-level redirect when it produces a new
+  /// location, so that top-level redirect chains (e.g. `/` → `/a` → `/b`) are
+  /// fully resolved. Loop detection and redirect limit are enforced via the
+  /// shared [redirectHistory].
   FutureOr<RouteMatchList> applyTopLegacyRedirect(
     BuildContext context,
     RouteMatchList prevMatchList, {
@@ -500,7 +542,15 @@ class RouteConfiguration {
           prevMatchList.uri,
           redirectHistory,
         );
-        return newMatch;
+        if (newMatch.isError) {
+          return newMatch;
+        }
+        // Recursively re-evaluate the top-level redirect on the new location.
+        return applyTopLegacyRedirect(
+          context,
+          newMatch,
+          redirectHistory: redirectHistory,
+        );
       }
       return prevMatchList;
     }
