@@ -32,34 +32,29 @@ internal class AuthenticationHelper(
     private val completionHandler: (AuthResult) -> Unit,
     allowCredentials: Boolean
 ) : BiometricPrompt.AuthenticationCallback(), ActivityLifecycleCallbacks, DefaultLifecycleObserver {
-  private val promptInfo: PromptInfo
   private val isAuthSticky: Boolean = options.sticky
   private val uiThreadExecutor: UiThreadExecutor = UiThreadExecutor()
   private var activityPaused = false
   private var biometricPrompt: BiometricPrompt? = null
-
-  init {
-    val promptBuilder =
-        PromptInfo.Builder()
-            .setDescription(strings.reason)
-            .setTitle(strings.signInTitle)
-            .setSubtitle(strings.signInHint)
-            .setConfirmationRequired(options.sensitiveTransaction)
-
-    var allowedAuthenticators =
-        (BiometricManager.Authenticators.BIOMETRIC_WEAK or
-            BiometricManager.Authenticators.BIOMETRIC_STRONG)
-
-    if (allowCredentials) {
-      allowedAuthenticators =
-          allowedAuthenticators or BiometricManager.Authenticators.DEVICE_CREDENTIAL
-    } else {
-      promptBuilder.setNegativeButtonText(strings.cancelButton)
-    }
-
-    promptBuilder.setAllowedAuthenticators(allowedAuthenticators)
-    this.promptInfo = promptBuilder.build()
-  }
+  private val promptInfo: PromptInfo =
+      PromptInfo.Builder()
+          .apply {
+            setDescription(strings.reason)
+            setTitle(strings.signInTitle)
+            setSubtitle(strings.signInHint)
+            setConfirmationRequired(options.sensitiveTransaction)
+            var allowedAuthenticators =
+                (BiometricManager.Authenticators.BIOMETRIC_WEAK or
+                    BiometricManager.Authenticators.BIOMETRIC_STRONG)
+            if (allowCredentials) {
+              allowedAuthenticators =
+                  allowedAuthenticators or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            } else {
+              setNegativeButtonText(strings.cancelButton)
+            }
+            setAllowedAuthenticators(allowedAuthenticators)
+          }
+          .build()
 
   /** Start the biometric listener. */
   fun authenticate() {
@@ -90,30 +85,25 @@ internal class AuthenticationHelper(
 
   @SuppressLint("SwitchIntDef")
   override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-    val code: AuthResultCode?
-    when (errorCode) {
-      BiometricPrompt.ERROR_USER_CANCELED -> code = AuthResultCode.USER_CANCELED
-      BiometricPrompt.ERROR_NEGATIVE_BUTTON -> code = AuthResultCode.NEGATIVE_BUTTON
-      BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> code = AuthResultCode.NO_CREDENTIALS
-      BiometricPrompt.ERROR_NO_BIOMETRICS -> code = AuthResultCode.NOT_ENROLLED
-      BiometricPrompt.ERROR_HW_UNAVAILABLE -> code = AuthResultCode.HARDWARE_UNAVAILABLE
-      BiometricPrompt.ERROR_HW_NOT_PRESENT -> code = AuthResultCode.NO_HARDWARE
-      BiometricPrompt.ERROR_LOCKOUT -> code = AuthResultCode.LOCKED_OUT_TEMPORARILY
-      BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> code = AuthResultCode.LOCKED_OUT_PERMANENTLY
-      BiometricPrompt.ERROR_CANCELED -> {
-        // If we are doing sticky auth and the activity has been paused,
-        // ignore this error. We will start listening again when resumed.
-        if (activityPaused && isAuthSticky) {
-          return
+    // If we are doing sticky auth and the activity has been paused,
+    // ignore this error. We will start listening again when resumed.
+    if (errorCode == BiometricPrompt.ERROR_CANCELED && activityPaused && isAuthSticky) return
+    val code =
+        when (errorCode) {
+          BiometricPrompt.ERROR_USER_CANCELED -> AuthResultCode.USER_CANCELED
+          BiometricPrompt.ERROR_NEGATIVE_BUTTON -> AuthResultCode.NEGATIVE_BUTTON
+          BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL -> AuthResultCode.NO_CREDENTIALS
+          BiometricPrompt.ERROR_NO_BIOMETRICS -> AuthResultCode.NOT_ENROLLED
+          BiometricPrompt.ERROR_HW_UNAVAILABLE -> AuthResultCode.HARDWARE_UNAVAILABLE
+          BiometricPrompt.ERROR_HW_NOT_PRESENT -> AuthResultCode.NO_HARDWARE
+          BiometricPrompt.ERROR_LOCKOUT -> AuthResultCode.LOCKED_OUT_TEMPORARILY
+          BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> AuthResultCode.LOCKED_OUT_PERMANENTLY
+          BiometricPrompt.ERROR_CANCELED -> AuthResultCode.SYSTEM_CANCELED
+          BiometricPrompt.ERROR_TIMEOUT -> AuthResultCode.TIMEOUT
+          BiometricPrompt.ERROR_NO_SPACE -> AuthResultCode.NO_SPACE
+          BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED -> AuthResultCode.SECURITY_UPDATE_REQUIRED
+          else -> AuthResultCode.UNKNOWN_ERROR
         }
-        code = AuthResultCode.SYSTEM_CANCELED
-      }
-      BiometricPrompt.ERROR_TIMEOUT -> code = AuthResultCode.TIMEOUT
-      BiometricPrompt.ERROR_NO_SPACE -> code = AuthResultCode.NO_SPACE
-      BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED ->
-          code = AuthResultCode.SECURITY_UPDATE_REQUIRED
-      else -> code = AuthResultCode.UNKNOWN_ERROR
-    }
     completionHandler(AuthResult(code, errString.toString()))
     stop()
   }

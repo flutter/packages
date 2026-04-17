@@ -86,17 +86,18 @@ class LocalAuthPlugin
       strings: AuthStrings,
       callback: (Result<AuthResult>) -> Unit
   ) {
+    val currentActivity = activity
     if (authInProgress.get()) {
       callback(Result.success(AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null)))
       return
     }
 
-    if (activity?.isFinishing ?: true) {
+    if (currentActivity?.isFinishing ?: true) {
       callback(Result.success(AuthResult(AuthResultCode.NO_ACTIVITY, null)))
       return
     }
 
-    if (activity !is FragmentActivity) {
+    if (currentActivity !is FragmentActivity) {
       callback(Result.success(AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null)))
       return
     }
@@ -111,12 +112,13 @@ class LocalAuthPlugin
 
     val allowCredentials = !options.biometricOnly && canAuthenticateWithDeviceCredential()
 
-    sendAuthenticationRequest(options, strings, allowCredentials, completionHandler)
+    sendAuthenticationRequest(
+        options, strings, allowCredentials, currentActivity, completionHandler)
   }
 
   @VisibleForTesting
   fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult) -> Unit {
-    return { authResult: AuthResult -> onAuthenticationCompleted(callback, authResult) }
+    return { authResult -> onAuthenticationCompleted(callback, authResult) }
   }
 
   @VisibleForTesting
@@ -124,16 +126,12 @@ class LocalAuthPlugin
       options: AuthOptions,
       strings: AuthStrings,
       allowCredentials: Boolean,
+      fragmentActivity: FragmentActivity,
       completionHandler: (AuthResult) -> Unit
   ) {
     val helper =
         AuthenticationHelper(
-            lifecycle,
-            activity as FragmentActivity,
-            options,
-            strings,
-            completionHandler,
-            allowCredentials)
+            lifecycle, fragmentActivity, options, strings, completionHandler, allowCredentials)
     authHelper = helper
     helper.authenticate()
   }
@@ -156,7 +154,8 @@ class LocalAuthPlugin
   }
 
   private fun hasBiometricHardware(): Boolean {
-    return biometricManager?.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) !=
+    val manager = biometricManager ?: return false
+    return manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) !=
         BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
   }
 

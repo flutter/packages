@@ -11,6 +11,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -115,7 +116,9 @@ public class LocalAuthTest {
   @Test
   public void authenticate_properlyConfiguresBiometricOnlyAuthenticationRequest() {
     final LocalAuthPlugin plugin = spy(new LocalAuthPlugin());
-    setPluginActivity(plugin, buildMockActivityWithContext(mock(FragmentActivity.class)));
+    final FragmentActivity activity =
+        (FragmentActivity) buildMockActivityWithContext(mock(FragmentActivity.class));
+    setPluginActivity(plugin, activity);
     when(plugin.isDeviceSupported()).thenReturn(true);
 
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
@@ -132,6 +135,7 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
+            eq(activity),
             any());
     final AuthOptions options =
         new AuthOptions(
@@ -151,7 +155,9 @@ public class LocalAuthTest {
   @Config(sdk = 30)
   public void authenticate_properlyConfiguresBiometricAndDeviceCredentialAuthenticationRequest() {
     final LocalAuthPlugin plugin = spy(new LocalAuthPlugin());
-    setPluginActivity(plugin, buildMockActivityWithContext(mock(FragmentActivity.class)));
+    final FragmentActivity activity =
+        (FragmentActivity) buildMockActivityWithContext(mock(FragmentActivity.class));
+    setPluginActivity(plugin, activity);
     when(plugin.isDeviceSupported()).thenReturn(true);
 
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
@@ -166,6 +172,7 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
+            eq(activity),
             any());
     plugin.authenticate(
         defaultOptions,
@@ -181,7 +188,9 @@ public class LocalAuthTest {
   @Config(sdk = 30)
   public void authenticate_properlyConfiguresDeviceCredentialOnlyAuthenticationRequest() {
     final LocalAuthPlugin plugin = spy(new LocalAuthPlugin());
-    setPluginActivity(plugin, buildMockActivityWithContext(mock(FragmentActivity.class)));
+    final FragmentActivity activity =
+        (FragmentActivity) buildMockActivityWithContext(mock(FragmentActivity.class));
+    setPluginActivity(plugin, activity);
     when(plugin.isDeviceSupported()).thenReturn(true);
 
     final BiometricManager mockBiometricManager = mock(BiometricManager.class);
@@ -198,6 +207,7 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
+            eq(activity),
             any());
     plugin.authenticate(
         defaultOptions,
