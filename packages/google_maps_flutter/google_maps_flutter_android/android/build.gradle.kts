@@ -4,7 +4,7 @@ group = "io.flutter.plugins.googlemaps"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    val kotlinVersion = "2.3.20"
+    val kotlinVersion = "2.3.0"
     repositories {
         google()
         mavenCentral()
