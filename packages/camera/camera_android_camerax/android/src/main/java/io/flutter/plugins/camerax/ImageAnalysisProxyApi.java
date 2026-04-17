@@ -5,6 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
+import android.os.Handler;  
+import android.os.Looper;   
 import android.util.Log;
 import android.util.Range;
 import androidx.annotation.NonNull;
@@ -78,19 +80,20 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   @Override
   public void clearAnalyzer(ImageAnalysis pigeonInstance) {
     pigeonInstance.clearAnalyzer();
-    
-    // Add delay to allow ImageReader to drain pending frames
-    // This prevents "BufferQueue has been abandoned" errors when disposing camera
-    try {
-      Thread.sleep(100);  // 100ms delay for frame draining
-    } catch (InterruptedException e) {
-      Log.w("ImageAnalysisProxyApi", "clearAnalyzer interrupted during frame drain delay", e);
-    }
-    
-    getPigeonRegistrar()
-        .getInstanceManager()
-        .setClearFinalizedWeakReferencesInterval(
-            getPigeonRegistrar().getDefaultClearFinalizedWeakReferencesInterval());
+
+    // Schedule cleanup after frame draining without blocking the thread.
+    // This allows pending frames to drain from the ImageReader buffer
+    // while keeping the UI responsive.
+    new Handler(Looper.getMainLooper())
+        .postDelayed(
+            () -> {
+              getPigeonRegistrar()
+                  .getInstanceManager()
+                  .setClearFinalizedWeakReferencesInterval(
+                      getPigeonRegistrar()
+                          .getDefaultClearFinalizedWeakReferencesInterval());
+            },
+            100);  // 100ms delay for frame draining
   }
 
   @Override

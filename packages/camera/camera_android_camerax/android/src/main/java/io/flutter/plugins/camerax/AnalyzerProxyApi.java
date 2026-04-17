@@ -36,32 +36,33 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
       this.api = api;
     }
 
- @Override
-public void analyze(@NonNull ImageProxy image) {
-  api.getPigeonRegistrar()
-      .runOnMainThread(
-          new ProxyApiRegistrar.FlutterMethodRunnable() {
-            @Override
-            public void run() {
-              try {
-                api.analyze(
-                    AnalyzerImpl.this,
-                    image,
-                    ResultCompat.asCompatCallback(
-                        result -> {
-                          if (result.isFailure()) {
-                            onFailure(
-                                "Analyzer.analyze",
-                                Objects.requireNonNull(result.exceptionOrNull()));
-                          }
-                          return null;
-                        }));
-              } catch (Exception e) {
-                Log.e(TAG, "Error in analyzer: " + e.getMessage());
-              }
-            }
-          });
-}
+    @Override
+    public void analyze(@NonNull ImageProxy image) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  try {
+                    api.analyze(
+                        AnalyzerImpl.this,
+                        image,
+                        ResultCompat.asCompatCallback(
+                            result -> {
+                              if (result.isFailure()) {
+                                onFailure(
+                                    "Analyzer.analyze",
+                                    Objects.requireNonNull(result.exceptionOrNull()));
+                              }
+                              return null;
+                            }));
+                  } catch (Exception e) {
+                    Log.e(TAG, "Error in analyzer: " + e.getMessage());
+                  }
+                }
+              });
+    }
+  }
 
   @NonNull
   @Override
