@@ -532,18 +532,37 @@ class AndroidCameraCameraX extends CameraPlatform {
     // This prevents BufferQueue abandoned errors during camera close
     if (imageAnalysis != null) {
       await imageAnalysis!.clearAnalyzer();
-      // Wait for frames to drain after clearing analyzer
-      // This is CRITICAL - gives pending frames time to be processed
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      // Non-blocking frame drain wait
+      // Schedule completion after 100ms without blocking the event loop
+      final frameDrainCompleter = Completer<void>();
+      unawaited(
+        Future<void>.delayed(const Duration(milliseconds: 100)).then((_) {
+          if (!frameDrainCompleter.isCompleted) {
+            frameDrainCompleter.complete();
+          }
+        }),
+      );
+      // Await the completer, not the Future.delayed()
+      await frameDrainCompleter.future;
     }
 
     // Unbind all use cases - this triggers camera closure
     if (processCameraProvider != null) {
       await processCameraProvider!.unbindAll();
 
-      // Wait for camera to fully close after unbind
-      // This prevents issues when quickly opening new camera
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+      // Non-blocking camera close wait
+      // Schedule completion after 50ms without blocking the event loop
+      final cameraCloseCompleter = Completer<void>();
+      unawaited(
+        Future<void>.delayed(const Duration(milliseconds: 50)).then((_) {
+          if (!cameraCloseCompleter.isCompleted) {
+            cameraCloseCompleter.complete();
+          }
+        }),
+      );
+      // Await the completer, not the Future.delayed()
+      await cameraCloseCompleter.future;
     }
 
     // Release surface provider - only if preview was initialized
