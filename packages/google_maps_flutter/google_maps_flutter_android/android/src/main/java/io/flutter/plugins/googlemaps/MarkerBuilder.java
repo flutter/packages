@@ -14,8 +14,8 @@ import com.google.maps.android.clustering.ClusterItem;
 import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 
 class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
-  @NonNull private final MarkerOptions markerOptions;
-  @Nullable private final AdvancedMarkerOptions advancedMarkerOptions;
+  private final @NonNull MarkerOptions markerOptions;
+  private final @Nullable AdvancedMarkerOptions advancedMarkerOptions;
   private final String clusterManagerId;
   private final String markerId;
   private boolean consumeTapEvents;

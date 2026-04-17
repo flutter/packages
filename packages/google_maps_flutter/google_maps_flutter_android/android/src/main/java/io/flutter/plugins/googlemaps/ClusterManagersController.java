@@ -33,15 +33,15 @@ import java.util.Set;
 class ClusterManagersController
     implements GoogleMap.OnCameraIdleListener,
         ClusterManager.OnClusterClickListener<MarkerBuilder> {
-  @NonNull private final Context context;
+  private final @NonNull Context context;
 
   @VisibleForTesting @NonNull
   protected final HashMap<String, ClusterManager<MarkerBuilder>> clusterManagerIdToManager;
 
-  @NonNull private final MapsCallbackApi flutterApi;
-  @Nullable private MarkerManager markerManager;
-  @Nullable private GoogleMap googleMap;
-  @NonNull private final PlatformMarkerType markerType;
+  private final @NonNull MapsCallbackApi flutterApi;
+  private @Nullable MarkerManager markerManager;
+  private @Nullable GoogleMap googleMap;
+  private final @NonNull PlatformMarkerType markerType;
 
   @Nullable
   private ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener;
