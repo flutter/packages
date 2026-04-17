@@ -4,15 +4,16 @@
 
 package io.flutter.plugins.localauth;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Application;
 import android.content.Context;
 import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.FragmentActivity;
-import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
+import kotlin.Unit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -31,223 +32,275 @@ public class AuthenticationHelperTest {
 
   @Test
   public void onAuthenticationError_returnsUserCanceled() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.USER_CANCELED, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.USER_CANCELED, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsNegativeButton() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NEGATIVE_BUTTON, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.NEGATIVE_BUTTON, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.NEGATIVE_BUTTON, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_withoutDialogs_returnsNoCredential() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.NO_CREDENTIALS, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.NO_CREDENTIALS, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_withoutDialogs_returnsNotEnrolledForNoBiometrics() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_BIOMETRICS, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.NOT_ENROLLED, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.NOT_ENROLLED, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsHardwareUnavailable() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_UNAVAILABLE, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.HARDWARE_UNAVAILABLE, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.HARDWARE_UNAVAILABLE, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsHardwareNotPresent() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_HW_NOT_PRESENT, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.NO_HARDWARE, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.NO_HARDWARE, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsTemporaryLockoutForLockout() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.LOCKED_OUT_TEMPORARILY, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.LOCKED_OUT_TEMPORARILY, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsPermanentLockoutForLockoutPermanent() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_LOCKOUT_PERMANENT, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.LOCKED_OUT_PERMANENTLY, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.LOCKED_OUT_PERMANENTLY, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_withoutSticky_returnsSystemCanceled() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.SYSTEM_CANCELED, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.SYSTEM_CANCELED, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsTimeout() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_TIMEOUT, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.TIMEOUT, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.TIMEOUT, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsNoSpace() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_NO_SPACE, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.NO_SPACE, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.NO_SPACE, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsSecurityUpdateRequired() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_SECURITY_UPDATE_REQUIRED, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.SECURITY_UPDATE_REQUIRED, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.SECURITY_UPDATE_REQUIRED, result[0].getCode());
   }
 
   @Test
   public void onAuthenticationError_returnsUnknownForOtherCases() {
-    final AuthCompletionHandler handler = mock(AuthCompletionHandler.class);
+    final AuthResult[] result = new AuthResult[1];
     final AuthenticationHelper helper =
         new AuthenticationHelper(
             null,
             buildMockActivityWithContext(mock(FragmentActivity.class)),
             defaultOptions,
             dummyStrings,
-            handler,
+            (authResult -> {
+              result[0] = authResult;
+              return Unit.INSTANCE;
+            }),
             true);
 
     helper.onAuthenticationError(BiometricPrompt.ERROR_UNABLE_TO_PROCESS, "");
 
-    verify(handler).complete(new AuthResult(AuthResultCode.UNKNOWN_ERROR, ""));
+    assertNotNull(result[0]);
+    assertEquals(AuthResultCode.UNKNOWN_ERROR, result[0].getCode());
   }
 
   private FragmentActivity buildMockActivityWithContext(FragmentActivity mockActivity) {

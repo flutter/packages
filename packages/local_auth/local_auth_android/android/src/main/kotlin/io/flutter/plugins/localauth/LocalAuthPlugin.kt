@@ -16,10 +16,8 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter
-import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler
 import io.flutter.plugins.localauth.LocalAuthApi.Companion.setUp
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.jvm.functions.Function1
 
 /**
  * Flutter plugin providing access to local authentication.
@@ -53,20 +51,21 @@ class LocalAuthPlugin
     return hasBiometricHardware()
   }
 
-  override fun getEnrolledBiometrics(): MutableList<AuthClassification?>? {
-    if (biometricManager == null) {
+  override fun getEnrolledBiometrics(): List<AuthClassification>? {
+    val manager = biometricManager
+    if (manager == null) {
       return null
     }
-    val biometrics = ArrayList<AuthClassification?>()
-    if (biometricManager!!.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
-        BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(AuthClassification.WEAK)
+    return buildList {
+      if (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
+          BiometricManager.BIOMETRIC_SUCCESS) {
+        add(AuthClassification.WEAK)
+      }
+      if (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) ==
+          BiometricManager.BIOMETRIC_SUCCESS) {
+        add(AuthClassification.STRONG)
+      }
     }
-    if (biometricManager!!.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) ==
-        BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(AuthClassification.STRONG)
-    }
-    return biometrics
   }
 
   override fun stopAuthentication(): Boolean {
@@ -85,7 +84,7 @@ class LocalAuthPlugin
   override fun authenticate(
       options: AuthOptions,
       strings: AuthStrings,
-      callback: Function1<in Result<AuthResult>, Unit>
+      callback: (Result<AuthResult>) -> Unit
   ) {
     if (authInProgress.get()) {
       completeWithValue<AuthResult>(callback, AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null))
@@ -117,12 +116,8 @@ class LocalAuthPlugin
   }
 
   @VisibleForTesting
-  fun createAuthCompletionHandler(
-      callback: Function1<in Result<AuthResult>, Unit>
-  ): AuthCompletionHandler {
-    return AuthCompletionHandler { authResult: AuthResult? ->
-      onAuthenticationCompleted(callback, authResult)
-    }
+  fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult?) -> Unit {
+    return { authResult: AuthResult? -> onAuthenticationCompleted(callback, authResult) }
   }
 
   @VisibleForTesting
@@ -130,12 +125,12 @@ class LocalAuthPlugin
       options: AuthOptions,
       strings: AuthStrings,
       allowCredentials: Boolean,
-      completionHandler: AuthCompletionHandler
+      completionHandler: (AuthResult?) -> Unit
   ) {
     authHelper =
         AuthenticationHelper(
             lifecycle,
-            activity as FragmentActivity?,
+            activity as FragmentActivity,
             options,
             strings,
             completionHandler,
@@ -144,10 +139,7 @@ class LocalAuthPlugin
     authHelper!!.authenticate()
   }
 
-  fun onAuthenticationCompleted(
-      callback: Function1<in Result<AuthResult>, Unit>,
-      value: AuthResult?
-  ) {
+  fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult?) {
     if (authInProgress.compareAndSet(true, false)) {
       completeWithValue<AuthResult>(callback, value!!)
     }

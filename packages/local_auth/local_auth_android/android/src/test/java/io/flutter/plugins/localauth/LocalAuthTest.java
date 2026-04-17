@@ -27,7 +27,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,11 +132,11 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
-            any(AuthCompletionHandler.class));
+            any());
     final AuthOptions options =
         new AuthOptions(
             /* biometricOnly */ true, /* sensitiveTransaction */ false, /* sticky */ false);
-    ;
+
     plugin.authenticate(
         options,
         dummyStrings,
@@ -167,7 +166,7 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
-            any(AuthCompletionHandler.class));
+            any());
     plugin.authenticate(
         defaultOptions,
         dummyStrings,
@@ -199,7 +198,7 @@ public class LocalAuthTest {
             any(AuthOptions.class),
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
-            any(AuthCompletionHandler.class));
+            any());
     plugin.authenticate(
         defaultOptions,
         dummyStrings,

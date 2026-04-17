@@ -29,15 +29,9 @@ internal class AuthenticationHelper(
     private val activity: FragmentActivity,
     options: AuthOptions,
     strings: AuthStrings,
-    private val completionHandler: AuthCompletionHandler,
+    private val completionHandler: (AuthResult?) -> Unit,
     allowCredentials: Boolean
 ) : BiometricPrompt.AuthenticationCallback(), ActivityLifecycleCallbacks, DefaultLifecycleObserver {
-  /** The callback that handles the result of this authentication process. */
-  internal interface AuthCompletionHandler {
-    /** Called when authentication attempt is complete. */
-    fun complete(authResult: AuthResult?)
-  }
-
   private val promptInfo: PromptInfo
   private val isAuthSticky: Boolean
   private val uiThreadExecutor: UiThreadExecutor
@@ -124,12 +118,12 @@ internal class AuthenticationHelper(
           code = AuthResultCode.SECURITY_UPDATE_REQUIRED
       else -> code = AuthResultCode.UNKNOWN_ERROR
     }
-    completionHandler.complete(AuthResult(code, errString.toString()))
+    completionHandler(AuthResult(code, errString.toString()))
     stop()
   }
 
   override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-    completionHandler.complete(AuthResult(AuthResultCode.SUCCESS, null))
+    completionHandler(AuthResult(AuthResultCode.SUCCESS, null))
     stop()
   }
 
@@ -142,13 +136,13 @@ internal class AuthenticationHelper(
    * If the activity is paused, we keep track because biometric dialog simply returns "User
    * cancelled" when the activity is paused.
    */
-  override fun onActivityPaused(ignored: Activity?) {
+  private fun handlePause() {
     if (isAuthSticky) {
       activityPaused = true
     }
   }
 
-  override fun onActivityResumed(ignored: Activity?) {
+  private fun handleResume() {
     if (isAuthSticky) {
       activityPaused = false
       val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
@@ -158,24 +152,32 @@ internal class AuthenticationHelper(
     }
   }
 
+  override fun onActivityPaused(ignored: Activity) {
+    handlePause()
+  }
+
+  override fun onActivityResumed(ignored: Activity) {
+    handleResume()
+  }
+
   override fun onPause(owner: LifecycleOwner) {
-    onActivityPaused(null)
+    handlePause()
   }
 
   override fun onResume(owner: LifecycleOwner) {
-    onActivityResumed(null)
+    handleResume()
   }
 
   // Unused methods for activity lifecycle.
-  override fun onActivityCreated(activity: Activity?, bundle: Bundle?) {}
+  override fun onActivityCreated(activity: Activity, bundle: Bundle?) {}
 
-  override fun onActivityStarted(activity: Activity?) {}
+  override fun onActivityStarted(activity: Activity) {}
 
-  override fun onActivityStopped(activity: Activity?) {}
+  override fun onActivityStopped(activity: Activity) {}
 
-  override fun onActivitySaveInstanceState(activity: Activity?, bundle: Bundle?) {}
+  override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
 
-  override fun onActivityDestroyed(activity: Activity?) {}
+  override fun onActivityDestroyed(activity: Activity) {}
 
   override fun onDestroy(owner: LifecycleOwner) {}
 
