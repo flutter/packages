@@ -87,22 +87,22 @@ class LocalAuthPlugin
       callback: (Result<AuthResult>) -> Unit
   ) {
     if (authInProgress.get()) {
-      completeWithValue(callback, AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null))
+      callback(Result.success(AuthResult(AuthResultCode.ALREADY_IN_PROGRESS, null)))
       return
     }
 
     if (activity == null || activity!!.isFinishing) {
-      completeWithValue(callback, AuthResult(AuthResultCode.NO_ACTIVITY, null))
+      callback(Result.success(AuthResult(AuthResultCode.NO_ACTIVITY, null)))
       return
     }
 
     if (activity !is FragmentActivity) {
-      completeWithValue(callback, AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null))
+      callback(Result.success(AuthResult(AuthResultCode.NOT_FRAGMENT_ACTIVITY, null)))
       return
     }
 
     if (!isDeviceSupported()) {
-      completeWithValue(callback, AuthResult(AuthResultCode.NO_CREDENTIALS, null))
+      callback(Result.success(AuthResult(AuthResultCode.NO_CREDENTIALS, null)))
       return
     }
 
@@ -140,7 +140,7 @@ class LocalAuthPlugin
 
   fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult?) {
     if (authInProgress.compareAndSet(true, false)) {
-      completeWithValue(callback, value!!)
+      callback(Result.success(value!!))
     }
   }
 
