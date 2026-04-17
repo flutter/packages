@@ -70,8 +70,8 @@ class LocalAuthPlugin
 
   override fun stopAuthentication(): Boolean {
     try {
-      if (authHelper != null && authInProgress.get()) {
-        authHelper!!.stopAuthentication()
+      if (authInProgress.get()) {
+        authHelper?.stopAuthentication()
         authHelper = null
       }
       authInProgress.set(false)
@@ -91,7 +91,7 @@ class LocalAuthPlugin
       return
     }
 
-    if (activity == null || activity!!.isFinishing) {
+    if (activity?.isFinishing ?: true) {
       callback(Result.success(AuthResult(AuthResultCode.NO_ACTIVITY, null)))
       return
     }
@@ -115,8 +115,8 @@ class LocalAuthPlugin
   }
 
   @VisibleForTesting
-  fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult?) -> Unit {
-    return { authResult: AuthResult? -> onAuthenticationCompleted(callback, authResult) }
+  fun createAuthCompletionHandler(callback: (Result<AuthResult>) -> Unit): (AuthResult) -> Unit {
+    return { authResult: AuthResult -> onAuthenticationCompleted(callback, authResult) }
   }
 
   @VisibleForTesting
@@ -124,9 +124,9 @@ class LocalAuthPlugin
       options: AuthOptions,
       strings: AuthStrings,
       allowCredentials: Boolean,
-      completionHandler: (AuthResult?) -> Unit
+      completionHandler: (AuthResult) -> Unit
   ) {
-    authHelper =
+    val helper =
         AuthenticationHelper(
             lifecycle,
             activity as FragmentActivity,
@@ -134,33 +134,30 @@ class LocalAuthPlugin
             strings,
             completionHandler,
             allowCredentials)
-
-    authHelper!!.authenticate()
+    authHelper = helper
+    helper.authenticate()
   }
 
-  fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult?) {
+  fun onAuthenticationCompleted(callback: (Result<AuthResult>) -> Unit, value: AuthResult) {
     if (authInProgress.compareAndSet(true, false)) {
-      callback(Result.success(value!!))
+      callback(Result.success(value))
     }
   }
 
   @get:VisibleForTesting
   val isDeviceSecure: Boolean
     get() {
-      if (keyguardManager == null) return false
-      return keyguardManager!!.isDeviceSecure
+      return keyguardManager?.isDeviceSecure ?: false
     }
 
   private fun canAuthenticateWithBiometrics(): Boolean {
-    if (biometricManager == null) return false
-    return (biometricManager!!.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
-        BiometricManager.BIOMETRIC_SUCCESS)
+    return biometricManager?.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) ==
+        BiometricManager.BIOMETRIC_SUCCESS
   }
 
   private fun hasBiometricHardware(): Boolean {
-    if (biometricManager == null) return false
-    return (biometricManager!!.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) !=
-        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE)
+    return biometricManager?.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) !=
+        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
   }
 
   @VisibleForTesting
@@ -172,9 +169,8 @@ class LocalAuthPlugin
       return this.isDeviceSecure
     }
 
-    if (biometricManager == null) return false
-    return (biometricManager!!.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL) ==
-        BiometricManager.BIOMETRIC_SUCCESS)
+    return biometricManager?.canAuthenticate(BiometricManager.Authenticators.DEVICE_CREDENTIAL) ==
+        BiometricManager.BIOMETRIC_SUCCESS
   }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {

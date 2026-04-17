@@ -29,18 +29,16 @@ internal class AuthenticationHelper(
     private val activity: FragmentActivity,
     options: AuthOptions,
     strings: AuthStrings,
-    private val completionHandler: (AuthResult?) -> Unit,
+    private val completionHandler: (AuthResult) -> Unit,
     allowCredentials: Boolean
 ) : BiometricPrompt.AuthenticationCallback(), ActivityLifecycleCallbacks, DefaultLifecycleObserver {
   private val promptInfo: PromptInfo
   private val isAuthSticky: Boolean = options.sticky
-  private val uiThreadExecutor: UiThreadExecutor
+  private val uiThreadExecutor: UiThreadExecutor = UiThreadExecutor()
   private var activityPaused = false
   private var biometricPrompt: BiometricPrompt? = null
 
   init {
-    this.uiThreadExecutor = UiThreadExecutor()
-
     val promptBuilder =
         PromptInfo.Builder()
             .setDescription(strings.reason)
@@ -70,16 +68,15 @@ internal class AuthenticationHelper(
     } else {
       activity.application.registerActivityLifecycleCallbacks(this)
     }
-    biometricPrompt = BiometricPrompt(activity, uiThreadExecutor, this)
-    biometricPrompt!!.authenticate(promptInfo)
+    val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
+    biometricPrompt = prompt
+    prompt.authenticate(promptInfo)
   }
 
   /** Cancels the biometric authentication. */
   fun stopAuthentication() {
-    if (biometricPrompt != null) {
-      biometricPrompt!!.cancelAuthentication()
-      biometricPrompt = null
-    }
+    biometricPrompt?.cancelAuthentication()
+    biometricPrompt = null
   }
 
   /** Stops the biometric listener. */
