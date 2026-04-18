@@ -10,7 +10,7 @@ access the file and its metadata.
 
 Example:
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
+<?code-excerpt "example/lib/main.dart (Instantiate)"?>
 ```dart
 final file = XFile('assets/hello.txt');
 
