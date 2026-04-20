@@ -10,11 +10,9 @@
 //   * https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/html/parser/html_parser_idioms.h (IsHTMLSpace)
 //   * https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/svg/svg_path_parser_test.cc
 
-// TODO(stuartmorgan): Remove public_member_api_docs, adding documentation for
-//  all public members.
 // TODO(stuartmorgan): Remove library_private_types_in_public_api and do a
 //  breaking change to not use _PathOffset in public APIs.
-// ignore_for_file: public_member_api_docs, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api
 
 import 'dart:math' as math show atan2, cos, max, pi, pow, sin, sqrt, tan;
 
@@ -38,8 +36,14 @@ void writeSvgPathDataToPath(String? svg, PathProxy path) {
 
 /// A receiver for normalized [PathSegmentData].
 abstract class PathProxy {
+  /// Move the current point to (x, y) without drawing a line.
   void moveTo(double x, double y);
+
+  /// Draw a straight line from the current point to (x, y).
   void lineTo(double x, double y);
+
+  /// Draw a cubic Bézier curve to (x3, y3) using (x1, y1) and (x2, y2) as
+  /// control points.
   void cubicTo(
     double x1,
     double y1,
@@ -48,6 +52,8 @@ abstract class PathProxy {
     double x3,
     double y3,
   );
+
+  /// Close the current subpath by drawing a line back to the start point.
   void close();
 }
 
@@ -92,7 +98,12 @@ class _PathOffset {
 const double _twoPiFloat = math.pi * 2.0;
 const double _piOverTwoFloat = math.pi / 2.0;
 
+/// Parses an SVG path data string into a sequence of [PathSegmentData] objects.
+///
+/// Use [parseSegments] to iterate over all segments, or [parseSegment] to read
+/// one segment at a time. Check [hasMoreData] before calling [parseSegment].
 class SvgPathStringSource {
+  /// Creates a parser for the given SVG path data [_string].
   SvgPathStringSource(this._string)
     : assert(_string != null), // ignore: unnecessary_null_comparison
       _previousCommand = SvgPathSegType.unknown,
@@ -330,14 +341,19 @@ class SvgPathStringSource {
     }
   }
 
+  /// Whether the source string contains more segment data to parse.
   bool get hasMoreData => _idx < _length;
 
+  /// Returns a lazy iterable of all [PathSegmentData] segments in the source.
   Iterable<PathSegmentData> parseSegments() sync* {
     while (hasMoreData) {
       yield parseSegment();
     }
   }
 
+  /// Parses and returns the next [PathSegmentData] from the source.
+  ///
+  /// Requires [hasMoreData] to be true.
   PathSegmentData parseSegment() {
     assert(hasMoreData);
     final segment = PathSegmentData();
@@ -416,6 +432,7 @@ class SvgPathStringSource {
   }
 }
 
+/// Returns the reflection of [pointToReflect] across [reflectedIn].
 @Deprecated('Utility function that should not be public.')
 // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset reflectedPoint(
@@ -440,6 +457,7 @@ _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
   );
 }
 
+/// Returns true if [command] is any cubic Bézier segment type.
 bool isCubicCommand(SvgPathSegType command) {
   return command == SvgPathSegType.cubicToAbs ||
       command == SvgPathSegType.cubicToRel ||
@@ -447,6 +465,7 @@ bool isCubicCommand(SvgPathSegType command) {
       command == SvgPathSegType.smoothCubicToRel;
 }
 
+/// Returns true if [command] is any quadratic Bézier segment type.
 bool isQuadraticCommand(SvgPathSegType command) {
   return command == SvgPathSegType.quadToAbs ||
       command == SvgPathSegType.quadToRel ||
@@ -456,12 +475,16 @@ bool isQuadraticCommand(SvgPathSegType command) {
 
 // TODO(dnfield): This can probably be cleaned up a bit.  Some of this was designed in such a way to pack data/optimize for C++
 // There are probably better/clearer ways to do it for Dart.
+
+/// Data describing a single SVG path segment command and its parameters.
 class PathSegmentData {
+  /// Creates a [PathSegmentData] with [command] set to [SvgPathSegType.unknown].
   PathSegmentData()
     : command = SvgPathSegType.unknown,
       arcSweep = false,
       arcLarge = false;
 
+  /// The arc radii as a point where dx is r1 and dy is r2.
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset get arcRadii => point1;
@@ -472,49 +495,75 @@ class PathSegmentData {
   /// In degrees.
   set arcAngle(double angle) => point2 = _PathOffset(angle, point2.dy);
 
+  /// The x radius of an arc segment.
   double get r1 => arcRadii.dx;
+
+  /// The y radius of an arc segment.
   double get r2 => arcRadii.dy;
 
+  /// Whether to use the large arc for an arc segment.
   bool get largeArcFlag => arcLarge;
+
+  /// Whether to sweep in the positive angle direction for an arc segment.
   bool get sweepFlag => arcSweep;
 
+  /// The x coordinate of the target (end) point.
   double get x => targetPoint.dx;
+
+  /// The y coordinate of the target (end) point.
   double get y => targetPoint.dy;
 
+  /// The x coordinate of the first control point.
   double get x1 => point1.dx;
+
+  /// The y coordinate of the first control point.
   double get y1 => point1.dy;
 
+  /// The x coordinate of the second control point.
   double get x2 => point2.dx;
+
+  /// The y coordinate of the second control point.
   double get y2 => point2.dy;
 
+  /// The SVG path segment command for this segment.
   SvgPathSegType command;
 
+  /// The target (end) point of this segment.
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset targetPoint = _PathOffset.zero;
 
+  /// The first control point of this segment.
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset point1 = _PathOffset.zero;
 
+  /// The second control point of this segment.
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
   _PathOffset point2 = _PathOffset.zero;
+  /// Whether to sweep in the positive angle direction for an arc segment.
   bool arcSweep;
+
+  /// Whether to use the large arc for an arc segment.
   bool arcLarge;
 
+  /// Returns a string representation of this segment for debugging.
   @override
   String toString() {
     return 'PathSegmentData{$command $targetPoint $point1 $point2 $arcSweep $arcLarge}';
   }
 }
 
+/// Converts SVG path segments to absolute coordinates and normalizes them into
+/// cubic Bézier curves, emitting the result to a [PathProxy].
 class SvgPathNormalizer {
   _PathOffset _currentPoint = _PathOffset.zero;
   _PathOffset _subPathPoint = _PathOffset.zero;
   _PathOffset _controlPoint = _PathOffset.zero;
   SvgPathSegType _lastCommand = SvgPathSegType.unknown;
 
+  /// Normalizes [segment] and emits the corresponding drawing commands to [path].
   void emitSegment(PathSegmentData segment, PathProxy path) {
     final normSeg = segment;
     assert(_currentPoint != null); // ignore: unnecessary_null_comparison
