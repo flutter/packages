@@ -7,10 +7,24 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart' show Uint8List;
+import 'package:flutter/foundation.dart' show Factory, Uint8List;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart'
-    show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
+    show
+        AndroidViewController,
+        DeviceOrientation,
+        PlatformException,
+        PlatformViewsService,
+        StandardMessageCodec;
+import 'package:flutter/widgets.dart'
+    show
+        AndroidViewSurface,
+        PlatformViewLink,
+        TextDirection,
+        Texture,
+        Widget,
+        visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
@@ -415,9 +429,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
     );
-    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
-      systemServicesManager,
-    );
+    // _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+    //   systemServicesManager,
+    // );
+    _flutterSurfaceTextureId = 3;
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
@@ -436,8 +451,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    _handlesCropAndRotation = await preview!
-        .surfaceProducerHandlesCropAndRotation();
+    _handlesCropAndRotation = false;
+    // _handlesCropAndRotation = await preview!
+    //     .surfaceProducerHandlesCropAndRotation();
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
@@ -492,6 +508,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(_flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
+
+    final api = CameraPreviewViewApi();
+    await api.registerPlatformView();
 
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
@@ -1042,22 +1061,51 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Stream<DeviceOrientation> deviceOrientationStream =
-        onDeviceOrientationChanged().map(
-          (DeviceOrientationChangedEvent e) => e.orientation,
-        );
-    final Widget preview = Texture(textureId: cameraId);
+    // This is used in the platform side to register the view.
+    const viewType = 'plugins.flutter.dev/camera_android_camerax';
+    // Pass parameters to the platform side.
+    const creationParams = <String, dynamic>{};
 
-    return RotatedPreviewDelegate(
-      handlesCropAndRotation: _handlesCropAndRotation,
-      initialDeviceOrientation: _initialDeviceOrientation,
-      initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
-      deviceOrientationStream: deviceOrientationStream,
-      sensorOrientationDegrees: sensorOrientationDegrees,
-      cameraIsFrontFacing: cameraIsFrontFacing,
-      deviceOrientationManager: deviceOrientationManager,
-      child: preview,
+    return PlatformViewLink(
+      viewType: viewType,
+      surfaceFactory: (context, controller) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+        );
+      },
+      onCreatePlatformView: (params) {
+        return PlatformViewsService.initSurfaceAndroidView(
+            id: params.id,
+            viewType: viewType,
+            layoutDirection: TextDirection.ltr,
+            creationParams: creationParams,
+            creationParamsCodec: const StandardMessageCodec(),
+            onFocus: () {
+              params.onFocusChanged(true);
+            },
+          )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
+      },
     );
+    // final Stream<DeviceOrientation> deviceOrientationStream =
+    //     onDeviceOrientationChanged().map(
+    //       (DeviceOrientationChangedEvent e) => e.orientation,
+    //     );
+    // final Widget preview = Texture(textureId: cameraId);
+
+    // return RotatedPreviewDelegate(
+    //   handlesCropAndRotation: _handlesCropAndRotation,
+    //   initialDeviceOrientation: _initialDeviceOrientation,
+    //   initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
+    //   deviceOrientationStream: deviceOrientationStream,
+    //   sensorOrientationDegrees: sensorOrientationDegrees,
+    //   cameraIsFrontFacing: cameraIsFrontFacing,
+    //   deviceOrientationManager: deviceOrientationManager,
+    //   child: preview,
+    // );
   }
 
   /// Captures an image using the camera with ID [cameraId] and returns the file where it was saved.
