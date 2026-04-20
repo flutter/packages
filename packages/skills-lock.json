@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "dart-best-practices": {
+      "source": "kevmoo/dash_skills",
+      "sourceType": "github",
+      "computedHash": "1eb4a38aa94060d3d420f1b03b661ad784a1cd732ffb7ff4d8369d085024d4f5"
+    },
+    "dart-package-maintenance": {
+      "source": "kevmoo/dash_skills",
+      "sourceType": "github",
+      "computedHash": "38a88563712853149984bd823c41fa3b7c56400e5936c3166cdd2075d00f90ff"
+    },
+    "dart-test-fundamentals": {
+      "source": "kevmoo/dash_skills",
+      "sourceType": "github",
+      "computedHash": "eb99d0125ce554ac55fd85cfe865fbd703f5f311cab5bd551ce45c1f55af2adf"
+    }
+  }
+}

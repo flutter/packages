@@ -446,6 +446,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       await _previewView!.registerPreviewView();
     }
 
+    // TODO(camsim99): cache this value for additional speedup.
     final SurfaceProvider surfaceProvider = await _previewView!
         .getSurfaceProvider();
     await preview!.setSurfaceProvider(surfaceProvider);
