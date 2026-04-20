@@ -628,21 +628,16 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null && controller!.value.isRecordingVideo) {
+    if (controller != null) {
       return controller!.setDescription(cameraDescription);
+    } else {
+      return _initializeCameraController(cameraDescription);
     }
-    return _initializeCameraController(cameraDescription);
   }
 
   Future<void> _initializeCameraController(
     CameraDescription cameraDescription,
   ) async {
-    print(
-      'CAMILLE: EXAMPLE APP INITIALIZING CAMERA CONTROLLER WITH LENS DIRECTION: ${cameraDescription.lensDirection}',
-    );
-    print(
-      'CAMILLE: CONTROLLER VALUE: ${controller?.description.lensDirection}',
-    );
     final cameraController = CameraController(
       cameraDescription,
       mediaSettings: MediaSettings(
@@ -670,10 +665,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     });
 
     try {
-      await cameraController.initialize(() {
-        print('CAMILLE: Calling set state');
-        setState(() {});
-      });
+      await cameraController.initialize();
       await Future.wait(<Future<Object?>>[
         // The exposure mode is currently not supported on the web.
         ...!kIsWeb
@@ -891,7 +883,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      await cameraController.startVideoRecording(onAvailable: (_) {});
+      await cameraController.startVideoRecording();
     } on CameraException catch (e) {
       _showCameraException(e);
       return;

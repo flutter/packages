@@ -274,16 +274,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Initializes the camera on the device.
   ///
   /// Throws a [CameraException] if the initialization fails.
-  Future<void> initialize(VoidCallback? callback) =>
-      _initializeWithDescription(description, callback);
+  Future<void> initialize() => _initializeWithDescription(description);
 
   /// Initializes the camera on the device with the specified description.
   ///
   /// Throws a [CameraException] if the initialization fails.
-  Future<void> _initializeWithDescription(
-    CameraDescription description,
-    VoidCallback? callback,
-  ) async {
+  Future<void> _initializeWithDescription(CameraDescription description) async {
     if (_isDisposed) {
       throw CameraException(
         'Disposed CameraController',
@@ -309,7 +305,6 @@ class CameraController extends ValueNotifier<CameraValue> {
           CameraInitializedEvent event,
         ) {
           initializeCompleter.complete(event);
-          callback?.call();
         }),
       );
 
@@ -623,7 +618,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await CameraPlatform.instance.setDescriptionWhileRecording(description);
       value = value.copyWith(description: description);
     } else {
-      await _initializeWithDescription(description, null);
+      await _initializeWithDescription(description);
     }
   }
 
