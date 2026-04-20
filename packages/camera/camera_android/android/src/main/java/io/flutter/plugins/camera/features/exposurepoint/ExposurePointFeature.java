@@ -98,7 +98,9 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   private void buildExposureRectangle() {
     if (this.cameraBoundaries == null) {
       throw new AssertionError(
-          "The cameraBoundaries should be set (using `ExposurePointFeature.setCameraBoundaries(Size)`) before updating the exposure point.");
+          "The cameraBoundaries should be set (using"
+              + " `ExposurePointFeature.setCameraBoundaries(Size)`) before updating the exposure"
+              + " point.");
     }
     if (this.exposurePoint == null) {
       this.exposureRectangle = null;

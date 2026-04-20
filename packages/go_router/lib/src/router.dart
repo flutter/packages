@@ -583,8 +583,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       log('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
+    final RouteMatchList configBeforePop = routerDelegate.currentConfiguration;
     routerDelegate.pop<T>(result);
-    restore(routerDelegate.currentConfiguration);
+    // Only restore when the pop completed synchronously (no onExit).
+    // If deferred, currentConfiguration is still the same instance.
+    if (!identical(routerDelegate.currentConfiguration, configBeforePop)) {
+      restore(routerDelegate.currentConfiguration);
+    }
   }
 
   /// Refresh the route.

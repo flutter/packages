@@ -229,6 +229,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -237,6 +238,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -245,13 +247,16 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface AndroidQuickActionsApi {
     /** Checks for, and returns the action that launched the app. */
     @Nullable
     String getLaunchAction();
+
     /** Sets the dynamic shortcuts for the app. */
     void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList, @NonNull VoidResult result);
+
     /** Removes all dynamic shortcuts. */
     void clearShortcutItems();
 
@@ -259,6 +264,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `AndroidQuickActionsApi` to handle messages through the
      * `binaryMessenger`.
@@ -353,6 +359,7 @@ public class Messages {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class AndroidQuickActionsFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -372,6 +379,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sends a string representing a shortcut from the native platform to the app. */
     public void launchAction(@NonNull String actionArg, @NonNull VoidResult result) {
       final String channelName =

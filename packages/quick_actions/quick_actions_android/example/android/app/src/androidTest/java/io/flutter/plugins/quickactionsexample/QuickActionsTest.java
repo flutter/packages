@@ -74,8 +74,7 @@ public class QuickActionsTest {
     assertEquals(expectedShortcuts.size(), dynamicShortcuts.size());
     for (ShortcutInfo expectedShortcut : expectedShortcuts) {
       ShortcutInfo dynamicShortcut =
-          dynamicShortcuts
-              .stream()
+          dynamicShortcuts.stream()
               .filter(s -> s.getId().equals(expectedShortcut.getId()))
               .findFirst()
               .get();
@@ -94,8 +93,7 @@ public class QuickActionsTest {
         (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
     List<ShortcutInfo> dynamicShortcuts = shortcutManager.getDynamicShortcuts();
     ShortcutInfo dynamicShortcut =
-        dynamicShortcuts
-            .stream()
+        dynamicShortcuts.stream()
             .filter(s -> s.getId().equals(firstShortcut.getId()))
             .findFirst()
             .get();

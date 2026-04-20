@@ -1,3 +1,10 @@
+<<<<<<< go_router-24678095354-1
+## 17.2.2
+
+- Fixes `pop()` restoring stale configuration when route has `onExit`, which could cause the popped route to reappear with async redirects.
+
+=======
+>>>>>>> release-go_router
 ## 17.2.1
 
 - Fixes chained top-level redirects not being fully resolved (e.g. `/ → /a → /b` stopping at `/a`).

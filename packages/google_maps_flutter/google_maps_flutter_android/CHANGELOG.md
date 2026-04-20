@@ -1,3 +1,11 @@
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.19.7
+
+* Fixes warnings in Java code.
+
 ## 2.19.6
 
 * Fixes the onTap callback for clustered pin info window taps.
