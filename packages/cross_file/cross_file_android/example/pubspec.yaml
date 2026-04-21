@@ -27,10 +27,13 @@ flutter:
   uses-material-design: true
 
 dependency_overrides:
-  # When depending on this package from a real application you should use:
-  #   cross_file_android: ^x.y.z
-  # See https://dart.dev/tools/pub/dependencies#version-constraints
-  # The example app is bundled with the plugin so we use a path dependency on
-  # the parent directory to use the current plugin's version.
+  # TODO(bparrishMines): This should be moved to dependencies. This is currently placed here because
+  # the updated file_selector branch depends on cross_file_android from git and this overrides its
+  # dependency.
   cross_file_android:
+    # When depending on this package from a real application you should use:
+    #   cross_file_android: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
     path: ../

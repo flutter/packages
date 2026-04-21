@@ -22,6 +22,9 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
+  # TODO(bparrishMines): This should be moved to dependencies. This is currently placed here because
+  # the updated file_selector branch depends on cross_file_web from git and this overrides its
+  # dependency.
   cross_file_web:
     # When depending on this package from a real application you should use:
     #   cross_file_web: ^x.y.z
