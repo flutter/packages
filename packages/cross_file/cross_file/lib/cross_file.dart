@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 export 'src/cross_directory.dart';
-export 'src/cross_file.dart';
 export 'src/cross_entity.dart';
+export 'src/cross_file.dart';
 export 'src/scoped_storage_cross_directory.dart';
 export 'src/scoped_storage_cross_file.dart';
