@@ -1,3 +1,7 @@
+## 2.4.24
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.1.
+
 ## 2.4.23
 
 * Fixes dartdoc comments that accidentally used HTML.
