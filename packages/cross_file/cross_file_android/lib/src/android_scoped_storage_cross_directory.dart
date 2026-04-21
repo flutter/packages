@@ -23,7 +23,7 @@ base class AndroidScopedStorageXDirectory
   }
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     for (final DocumentFile documentFile in await _documentFile.listFiles()) {
       final String uri = await documentFile.getUri();
       if (await documentFile.isFile()) {

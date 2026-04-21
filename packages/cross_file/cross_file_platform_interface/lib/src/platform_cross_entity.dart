@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 
 /// The common superclass for [PlatformXFileCreationParams] and
 /// [PlatformXDirectoryCreationParams].
 @immutable
-abstract base class PlatformXFileEntityCreationParams {
-  /// Constructs a [PlatformXFileCreationParams].
-  const PlatformXFileEntityCreationParams({required this.uri});
+abstract base class PlatformXEntityCreationParams {
+  /// Constructs a [PlatformXEntityCreationParams].
+  const PlatformXEntityCreationParams({required this.uri});
 
   /// A string used to reference the resource's location.
   final String uri;
@@ -17,18 +17,18 @@ abstract base class PlatformXFileEntityCreationParams {
 
 /// The common superclass for [PlatformXFileExtension] and
 /// [PlatformXDirectoryExtension].
-mixin PlatformXFileEntityExtension {}
+mixin PlatformXEntityExtension {}
 
 /// The common superclass for [PlatformXFile] and [PlatformXDirectory].
-abstract base class PlatformXFileEntity {
+abstract base class PlatformXEntity {
   /// Constructs a [PlatformCrossFileEntity].
-  PlatformXFileEntity(this.params);
+  PlatformXEntity(this.params);
 
-  /// The parameters used to initialize the [PlatformXFileEntity].
-  final PlatformXFileEntityCreationParams params;
+  /// The parameters used to initialize the [PlatformXEntity].
+  final PlatformXEntityCreationParams params;
 
   /// Extension for providing platform specific features.
-  PlatformXFileEntityExtension? get extension => null;
+  PlatformXEntityExtension? get extension => null;
 
   /// Whether the resource represented by this reference exists.
   Future<bool> exists();

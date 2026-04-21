@@ -63,7 +63,7 @@ base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
   Future<bool> exists() async => _directory.existsSync();
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     await for (final FileSystemEntity entity in _directory.list()) {
       switch (entity) {
         case final Directory directory:

@@ -5,8 +5,8 @@
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show immutable, internal;
 
+import 'cross_entity.dart';
 import 'cross_file.dart';
-import 'cross_file_entity.dart';
 import 'scoped_storage_cross_directory.dart';
 import 'scoped_storage_cross_file.dart';
 
@@ -33,7 +33,7 @@ import 'scoped_storage_cross_file.dart';
 /// }
 /// ```
 @immutable
-class XDirectory extends XFileEntity {
+class XDirectory extends XEntity {
   /// Constructs a [XDirectory].
   ///
   /// See [XDirectory.fromCreationParams] for setting parameters for a specific
@@ -96,10 +96,10 @@ class XDirectory extends XFileEntity {
   }
 
   /// Lists the sub-directories and files of this directory.
-  Stream<XFileEntity> list() {
-    // Converts PlatformXFileEntities to XFileEntities.
-    return platform.list(ListParams()).map<XFileEntity>((
-      PlatformXFileEntity entity,
+  Stream<XEntity> list() {
+    // Converts PlatformXEntities to XEntities.
+    return platform.list(ListParams()).map<XEntity>((
+      PlatformXEntity entity,
     ) {
       switch (entity) {
         case PlatformXFile():
@@ -114,7 +114,7 @@ class XDirectory extends XFileEntity {
           return XDirectory.fromPlatform(entity);
       }
 
-      return XFileEntity(entity);
+      return XEntity(entity);
     });
   }
 }

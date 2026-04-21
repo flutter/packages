@@ -23,10 +23,10 @@ void main() {
     });
 
     test('list', () async {
-      final entities = <PlatformXFileEntity>[
+      final entities = <PlatformXEntity>[
         TestXFile(const PlatformXFileCreationParams(uri: 'uri1')),
         TestXDirectory(const PlatformXDirectoryCreationParams(uri: 'uri2')),
-        TestXFileEntity(const PlatformXFileCreationParams(uri: 'uri3')),
+        TestXEntity(const PlatformXFileCreationParams(uri: 'uri3')),
       ];
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformXDirectory: (PlatformXDirectoryCreationParams params) =>
@@ -38,7 +38,7 @@ void main() {
 
       final directory = XDirectory(uri: 'uri');
 
-      final List<XFileEntity> directoryEntities = await directory
+      final List<XEntity> directoryEntities = await directory
           .list()
           .toList();
       expect(directoryEntities.length, entities.length);
@@ -46,7 +46,7 @@ void main() {
       expect(directoryEntities.first.uri, entities.first.params.uri);
       expect(directoryEntities[1], isA<XDirectory>());
       expect(directoryEntities[1].uri, entities[1].params.uri);
-      expect(directoryEntities[2], isA<XFileEntity>());
+      expect(directoryEntities[2], isA<XEntity>());
       expect(directoryEntities[2].uri, entities[2].params.uri);
     });
   });

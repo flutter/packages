@@ -51,7 +51,7 @@ class FileOpenScreen extends StatelessWidget {
       debugPrint('Directory exists: ${await directory.exists()}');
 
       debugPrint('List of Entities:');
-      await for (final XFileEntity entity in directory.list()) {
+      await for (final XEntity entity in directory.list()) {
         switch (entity) {
           case final XFile file:
             final String filename = await file.name() ?? file.uri;

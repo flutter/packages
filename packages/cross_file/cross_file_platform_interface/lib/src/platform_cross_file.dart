@@ -3,11 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, protected;
 
 import 'cross_file_platform.dart';
-import 'platform_cross_file_entity.dart';
+import 'platform_cross_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXFile].
 ///
@@ -41,7 +42,7 @@ import 'platform_cross_file_entity.dart';
 /// ```
 @immutable
 base class PlatformXFileCreationParams
-    extends PlatformXFileEntityCreationParams {
+    extends PlatformXEntityCreationParams {
   /// Constructs a [PlatformXFileCreationParams].
   const PlatformXFileCreationParams({required super.uri});
 }
@@ -67,10 +68,10 @@ base class PlatformXFileCreationParams
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin PlatformXFileExtension implements PlatformXFileEntityExtension {}
+mixin PlatformXFileExtension implements PlatformXEntityExtension {}
 
 /// Interface for a reference to a local data resource.
-abstract base class PlatformXFile extends PlatformXFileEntity {
+abstract base class PlatformXFile extends PlatformXEntity {
   /// Creates a new [PlatformXFile].
   factory PlatformXFile(PlatformXFileCreationParams params) {
     assert(

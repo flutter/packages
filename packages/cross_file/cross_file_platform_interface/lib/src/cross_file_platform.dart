@@ -3,12 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-
 import 'dart:typed_data';
 
 import 'platform_cross_directory.dart';
+import 'platform_cross_entity.dart';
 import 'platform_cross_file.dart';
-import 'platform_cross_file_entity.dart';
 import 'scoped_storage/platform_scoped_storage_cross_directory.dart';
 import 'scoped_storage/platform_scoped_storage_cross_file.dart';
 
@@ -89,7 +88,7 @@ final class _DefaultXDirectory extends PlatformXDirectory {
   Future<bool> exists() async => false;
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) {
+  Stream<PlatformXEntity> list(ListParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 }
@@ -140,7 +139,7 @@ final class _DefaultScopedStorageXDirectory
   Future<bool> exists() async => false;
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) {
+  Stream<PlatformXEntity> list(ListParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }
 }

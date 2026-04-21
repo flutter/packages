@@ -124,7 +124,7 @@ final class TestXDirectory extends PlatformXDirectory {
     : super.implementation();
 
   Future<bool> Function()? onExists;
-  Stream<PlatformXFileEntity> Function(ListParams params)? onList;
+  Stream<PlatformXEntity> Function(ListParams params)? onList;
 
   @override
   Future<bool> exists() async {
@@ -132,7 +132,7 @@ final class TestXDirectory extends PlatformXDirectory {
   }
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     if (onList != null) {
       yield* onList!.call(params);
     }
@@ -210,7 +210,7 @@ final class TestScopedStorageXDirectory
     : super.implementation();
 
   Future<bool> Function()? onExists;
-  Stream<PlatformXFileEntity> Function(ListParams params)? onList;
+  Stream<PlatformXEntity> Function(ListParams params)? onList;
 
   @override
   Future<bool> exists() async {
@@ -218,15 +218,15 @@ final class TestScopedStorageXDirectory
   }
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     if (onList != null) {
       yield* onList!.call(params);
     }
   }
 }
 
-final class TestXFileEntity extends PlatformXFileEntity {
-  TestXFileEntity(super.params, {this.onExists});
+final class TestXEntity extends PlatformXEntity {
+  TestXEntity(super.params, {this.onExists});
 
   Future<bool> Function()? onExists;
 

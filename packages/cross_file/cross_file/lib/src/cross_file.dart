@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart' show immutable, internal;
 
-import 'cross_file_entity.dart';
+import 'cross_entity.dart';
 
 /// A reference to a local data resource.
 ///
@@ -31,7 +31,7 @@ import 'cross_file_entity.dart';
 /// }
 /// ```
 @immutable
-class XFile extends XFileEntity {
+class XFile extends XEntity {
   /// Constructs a [XFile].
   ///
   /// See [XFile.fromCreationParams] for setting parameters for a specific

@@ -67,7 +67,7 @@ void main() {
 
     final List<String> entityUris = await dir
         .list(ListParams())
-        .map((PlatformXFileEntity entity) => entity.params.uri)
+        .map((PlatformXEntity entity) => entity.params.uri)
         .toList();
 
     expect(entityUris, <String>[fileUri]);

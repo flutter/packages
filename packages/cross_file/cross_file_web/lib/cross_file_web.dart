@@ -7,7 +7,7 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
         ListParams,
         PlatformScopedStorageXDirectoryCreationParams,
         PlatformScopedStorageXFileCreationParams,
-        PlatformXFileEntity;
+        PlatformXEntity;
 
 export 'src/cross_file_web.dart';
 export 'src/web_scoped_storage_cross_file.dart'

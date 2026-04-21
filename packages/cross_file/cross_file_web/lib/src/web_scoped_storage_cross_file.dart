@@ -4,9 +4,10 @@
 
 import 'dart:convert';
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, visibleForTesting;
 import 'package:web/web.dart';
 
 import 'web_helpers.dart';

@@ -4,9 +4,10 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:path/path.dart' as path;
 
 /// Implementation of [PlatformXFileCreationParams] for dart:io.

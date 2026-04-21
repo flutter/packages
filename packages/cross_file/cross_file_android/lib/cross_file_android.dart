@@ -7,6 +7,6 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
         ListParams,
         PlatformScopedStorageXDirectoryCreationParams,
         PlatformScopedStorageXFileCreationParams,
-        PlatformXFileEntity;
+        PlatformXEntity;
 
 export 'src/cross_file_android.dart';

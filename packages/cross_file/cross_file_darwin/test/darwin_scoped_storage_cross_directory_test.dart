@@ -46,7 +46,7 @@ void main() {
 
     expect(
       (await directory.list(ListParams()).toList()).map(
-        (PlatformXFileEntity entity) => entity.params.uri,
+        (PlatformXEntity entity) => entity.params.uri,
       ),
       (await testDirectory.list().toList()).map(
         (FileSystemEntity entity) => entity.uri.toString(),

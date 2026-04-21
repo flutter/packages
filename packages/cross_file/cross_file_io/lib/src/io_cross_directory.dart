@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable;
 
 import 'io_cross_file.dart';
 
@@ -52,7 +52,7 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
   Future<bool> exists() async => directory.existsSync();
 
   @override
-  Stream<PlatformXFileEntity> list(ListParams params) async* {
+  Stream<PlatformXEntity> list(ListParams params) async* {
     await for (final FileSystemEntity entity in directory.list()) {
       switch (entity) {
         case final Directory directory:

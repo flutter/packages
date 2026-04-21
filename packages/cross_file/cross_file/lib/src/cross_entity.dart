@@ -7,15 +7,15 @@ import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 /// The common superclass for [XFile] and [XDirectory].
 @immutable
-class XFileEntity {
-  /// Constructs a [XFileEntity].
+class XEntity {
+  /// Constructs a [XEntity].
   @protected
   @internal
-  const XFileEntity(this.platform);
+  const XEntity(this.platform);
 
-  /// Implementation of [XFileEntity] for the current platform.
+  /// Implementation of [XEntity] for the current platform.
   @internal
-  final PlatformXFileEntity platform;
+  final PlatformXEntity platform;
 
   /// A string used to reference the resource's location.
   String get uri => platform.params.uri;

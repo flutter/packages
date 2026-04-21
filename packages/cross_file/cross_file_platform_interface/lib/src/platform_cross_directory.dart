@@ -4,10 +4,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, protected;
 
 import 'cross_file_platform.dart';
-import 'platform_cross_file_entity.dart';
+import 'platform_cross_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
 ///
@@ -41,7 +41,7 @@ import 'platform_cross_file_entity.dart';
 /// ```
 @immutable
 base class PlatformXDirectoryCreationParams
-    extends PlatformXFileEntityCreationParams {
+    extends PlatformXEntityCreationParams {
   /// Constructs a [PlatformXDirectoryCreationParams].
   const PlatformXDirectoryCreationParams({required super.uri});
 }
@@ -67,10 +67,10 @@ base class PlatformXDirectoryCreationParams
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin PlatformXDirectoryExtension implements PlatformXFileEntityExtension {}
+mixin PlatformXDirectoryExtension implements PlatformXEntityExtension {}
 
 /// Interface for a reference to a directory (or folder) on the file system.
-abstract base class PlatformXDirectory extends PlatformXFileEntity {
+abstract base class PlatformXDirectory extends PlatformXEntity {
   /// Creates a new [PlatformXDirectory].
   factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
     assert(
@@ -100,7 +100,7 @@ abstract base class PlatformXDirectory extends PlatformXFileEntity {
   ///
   /// Platforms may throw an exception if there is an error listing entities in
   /// the directory
-  Stream<PlatformXFileEntity> list(ListParams params);
+  Stream<PlatformXEntity> list(ListParams params);
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.list].
