@@ -662,4 +662,30 @@ void main() {
     expect(match.matches, hasLength(1));
     expect(matchesObj.error, isNull);
   });
+
+  testWidgets(
+    'GoRouteInformationParser can handle path without leading slash',
+    (WidgetTester tester) async {
+      final routes = <RouteBase>[
+        GoRoute(path: '/abc', builder: (_, __) => const Placeholder()),
+      ];
+      final GoRouteInformationParser parser = await createParser(
+        tester,
+        routes: routes,
+        redirectLimit: 100,
+        redirect: (_, __) => null,
+      );
+
+      final BuildContext context = tester.element(find.byType(Router<Object>));
+
+      final RouteMatchList matchesObj = await parser
+          .parseRouteInformationWithDependencies(
+            createRouteInformation('abc'),
+            context,
+          );
+      final List<RouteMatchBase> matches = matchesObj.matches;
+      expect(matches.length, 1);
+      expect(matchesObj.uri.toString(), '/abc');
+    },
+  );
 }
