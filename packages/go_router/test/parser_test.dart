@@ -667,10 +667,7 @@ void main() {
     'GoRouteInformationParser can handle path without leading slash',
     (WidgetTester tester) async {
       final routes = <RouteBase>[
-        GoRoute(
-          path: '/abc',
-          builder: (_, __) => const Placeholder(),
-        ),
+        GoRoute(path: '/abc', builder: (_, __) => const Placeholder()),
       ];
       final GoRouteInformationParser parser = await createParser(
         tester,
