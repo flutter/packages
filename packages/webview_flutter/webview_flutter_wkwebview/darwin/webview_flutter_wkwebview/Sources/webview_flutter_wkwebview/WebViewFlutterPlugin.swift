@@ -51,7 +51,8 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
 }
 
 #if os(iOS)
-  extension WebViewFlutterPlugin: FlutterApplicationLifeCycleDelegate, FlutterSceneLifeCycleDelegate {
+  extension WebViewFlutterPlugin: FlutterApplicationLifeCycleDelegate, FlutterSceneLifeCycleDelegate
+  {
     public func applicationWillTerminate(_ application: UIApplication) {
       tearDownProxyAPIRegistrar()
     }
