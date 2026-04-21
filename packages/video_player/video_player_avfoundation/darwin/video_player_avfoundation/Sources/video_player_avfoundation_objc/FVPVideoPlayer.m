@@ -138,12 +138,20 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   _player = [avFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
-  // Configure output.
-  NSDictionary *pixBuffAttributes = @{
+  // Configure output. AVVideoColorPropertiesKey must be declared on the output settings (not on
+  // pixel buffer attributes, where AVFoundation silently ignores it) so that HDR sources are
+  // tone-mapped to BT.709 SDR for the Flutter texture.
+  // See https://github.com/flutter/flutter/issues/91241
+  NSDictionary *outputSettings = @{
+    AVVideoColorPropertiesKey : @{
+      AVVideoColorPrimariesKey : AVVideoColorPrimaries_ITU_R_709_2,
+      AVVideoTransferFunctionKey : AVVideoTransferFunction_ITU_R_709_2,
+      AVVideoYCbCrMatrixKey : AVVideoYCbCrMatrix_ITU_R_709_2,
+    },
     (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{},
   };
-  _pixelBufferSource = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  _pixelBufferSource = [avFactory videoOutputWithOutputSettings:outputSettings];
 
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
