@@ -1,3 +1,7 @@
+## 6.3.31
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.1.
+
 ## 6.3.30
 
 * Updates internal implementation to use Kotlin Pigeon.
