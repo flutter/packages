@@ -1,3 +1,7 @@
+## 1.0.30
+
+* Bumps com.android.tools.build:gradle from 8.13.1 to 9.1.1.
+
 ## 1.0.29
 
 * Simplifies thread handling in message responses.
