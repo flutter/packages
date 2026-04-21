@@ -41,15 +41,16 @@ Future<XFile> accessPlatformFeatures() async {
     file = XFile.fromCreationParams(params);
   } else if (CrossFileDarwin.isCurrentImplementation()) {
     file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
-
-    await file
-        .getExtension<DarwinScopedStorageXFileExtension>()
-        .startAccessingSecurityScopedResource();
   } else {
     file = XFile.fromUri(Uri.file('/my/file.txt'));
   }
 
+  await file
+      .maybeGetExtension<DarwinScopedStorageXFileExtension>()
+      ?.startAccessingSecurityScopedResource();
+
   debugPrint(await file.readAsString());
+
   await file
       .maybeGetExtension<DarwinScopedStorageXFileExtension>()
       ?.stopAccessingSecurityScopedResource();
