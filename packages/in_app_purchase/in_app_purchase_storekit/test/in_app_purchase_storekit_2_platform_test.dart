@@ -214,6 +214,10 @@ void main() {
           (result.first as SK2PurchaseDetails).appAccountToken,
           'appAccountToken',
         );
+        expect(
+          (result.first as SK2PurchaseDetails).expirationDate,
+          'expirationDate',
+        );
       },
     );
 
