@@ -38,9 +38,7 @@ void main() {
 
       final directory = XDirectory(uri: 'uri');
 
-      final List<XEntity> directoryEntities = await directory
-          .list()
-          .toList();
+      final List<XEntity> directoryEntities = await directory.list().toList();
       expect(directoryEntities.length, entities.length);
       expect(directoryEntities.first, isA<XFile>());
       expect(directoryEntities.first.uri, entities.first.params.uri);

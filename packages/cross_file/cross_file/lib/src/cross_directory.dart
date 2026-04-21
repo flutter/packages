@@ -98,9 +98,7 @@ class XDirectory extends XEntity {
   /// Lists the sub-directories and files of this directory.
   Stream<XEntity> list() {
     // Converts PlatformXEntities to XEntities.
-    return platform.list(ListParams()).map<XEntity>((
-      PlatformXEntity entity,
-    ) {
+    return platform.list(ListParams()).map<XEntity>((PlatformXEntity entity) {
       switch (entity) {
         case PlatformXFile():
           if (entity case PlatformScopedStorageXFile()) {

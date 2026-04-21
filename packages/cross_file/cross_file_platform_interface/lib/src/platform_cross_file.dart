@@ -41,8 +41,7 @@ import 'platform_cross_entity.dart';
 /// }
 /// ```
 @immutable
-base class PlatformXFileCreationParams
-    extends PlatformXEntityCreationParams {
+base class PlatformXFileCreationParams extends PlatformXEntityCreationParams {
   /// Constructs a [PlatformXFileCreationParams].
   const PlatformXFileCreationParams({required super.uri});
 }
