@@ -15,6 +15,10 @@ base class CrossFileDarwin extends CrossFileIO {
     CrossFilePlatform.instance = CrossFileDarwin();
   }
 
+  /// Whether the current implementation of `cross_file` is [CrossFileDarwin].
+  static bool isCurrentImplementation() =>
+      CrossFilePlatform.instance.runtimeType == CrossFileDarwin;
+
   @override
   DarwinScopedStorageXFile createPlatformScopedStorageXFile(
     PlatformScopedStorageXFileCreationParams params,

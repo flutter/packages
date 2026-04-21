@@ -15,6 +15,10 @@ base class CrossFileAndroid extends CrossFileIO {
     CrossFilePlatform.instance = CrossFileAndroid();
   }
 
+  /// Whether the current implementation of `cross_file` is [CrossFileAndroid].
+  static bool isCurrentImplementation() =>
+      CrossFilePlatform.instance.runtimeType == CrossFileAndroid;
+
   @override
   AndroidScopedStorageXFile createPlatformScopedStorageXFile(
     PlatformScopedStorageXFileCreationParams params,

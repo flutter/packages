@@ -4,7 +4,6 @@
 
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
     show
-        CrossFilePlatform,
         ListParams,
         PlatformXDirectoryCreationParams,
         PlatformXFileCreationParams,
