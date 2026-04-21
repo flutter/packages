@@ -31,6 +31,7 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
 
     #if os(iOS)
       registrar.addApplicationDelegate(plugin)
+      registrar.addSceneDelegate(plugin)
     #endif
 
     registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
@@ -50,8 +51,12 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
 }
 
 #if os(iOS)
-  extension WebViewFlutterPlugin: FlutterApplicationLifeCycleDelegate {
+  extension WebViewFlutterPlugin: FlutterApplicationLifeCycleDelegate, FlutterSceneLifeCycleDelegate {
     public func applicationWillTerminate(_ application: UIApplication) {
+      tearDownProxyAPIRegistrar()
+    }
+
+    public func sceneDidDisconnect(_ scene: UIScene) {
       tearDownProxyAPIRegistrar()
     }
   }
