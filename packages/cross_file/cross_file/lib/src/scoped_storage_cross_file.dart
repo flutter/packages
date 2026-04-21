@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_file.dart';
 
-/// A reference to a local data resource within a devices scoped storage.
+/// A reference to a local data resource within a device's scoped storage.
 ///
 /// Scoped storage limits app access to external storage and apps may lose
 /// access to a resource at some point depending on the platform.

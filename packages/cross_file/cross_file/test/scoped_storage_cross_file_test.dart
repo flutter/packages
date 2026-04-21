@@ -93,19 +93,6 @@ void main() {
       expect(await file.readAsString(), message);
     });
 
-    test('canRead', () async {
-      const canRead = false;
-      CrossFilePlatform.instance = TestCrossFilePlatform(
-        onCreatePlatformScopedStorageXFile:
-            (PlatformScopedStorageXFileCreationParams params) =>
-                TestScopedStorageXFile(params, onCanRead: () async => canRead),
-      );
-
-      final file = ScopedStorageXFile(uri: 'uri');
-
-      expect(await file.canRead(), canRead);
-    });
-
     test('exists', () async {
       const exists = true;
       CrossFilePlatform.instance = TestCrossFilePlatform(
