@@ -20,14 +20,4 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
 
     CrossFileDarwinApiSetup.setUp(binaryMessenger: messenger, api: CrossFileDarwinApiImpl())
   }
-
-  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #elseif os(macOS)
-      let messenger = registrar.messenger
-    #endif
-
-    CrossFileDarwinApiSetup.setUp(binaryMessenger: messenger, api: nil)
-  }
 }
