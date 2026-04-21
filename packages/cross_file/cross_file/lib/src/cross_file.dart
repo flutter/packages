@@ -3,9 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_file_entity.dart';
 
@@ -66,9 +67,11 @@ class XFile extends XFileEntity {
     : this.fromPlatform(PlatformXFile(params));
 
   /// Constructs a [XFile] from a specific platform implementation.
+  @internal
   const XFile.fromPlatform(PlatformXFile super.platform);
 
   /// Implementation of [XFile] for the current platform.
+  @internal
   @override
   PlatformXFile get platform => super.platform as PlatformXFile;
 

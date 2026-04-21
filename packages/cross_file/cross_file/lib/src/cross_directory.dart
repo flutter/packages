@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_file.dart';
 import 'cross_file_entity.dart';
@@ -72,9 +72,11 @@ class XDirectory extends XFileEntity {
     : this.fromPlatform(PlatformXDirectory(params));
 
   /// Constructs a [XDirectory] from a specific platform implementation.
+  @internal
   const XDirectory.fromPlatform(PlatformXDirectory super.platform);
 
   /// Implementation of [PlatformXDirectory] for the current platform.
+  @internal
   @override
   PlatformXDirectory get platform => super.platform as PlatformXDirectory;
 

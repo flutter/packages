@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_file.dart';
 
@@ -72,10 +72,12 @@ class ScopedStorageXFile extends XFile {
   ) : this.fromPlatform(PlatformScopedStorageXFile(params));
 
   /// Constructs a [ScopedStorageXFile] from a specific platform implementation.
+  @internal
   const ScopedStorageXFile.fromPlatform(
     PlatformScopedStorageXFile super.platform,
   ) : super.fromPlatform();
 
+  @internal
   @override
   PlatformScopedStorageXFile get platform =>
       super.platform as PlatformScopedStorageXFile;

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, internal;
 
 import 'cross_directory.dart';
 
@@ -74,10 +74,12 @@ class ScopedStorageXDirectory extends XDirectory {
 
   /// Constructs a [ScopedStorageXDirectory] from a specific platform
   /// implementation.
+  @internal
   const ScopedStorageXDirectory.fromPlatform(
     PlatformScopedStorageXDirectory super.platform,
   ) : super.fromPlatform();
 
+  @internal
   @override
   PlatformScopedStorageXDirectory get platform =>
       super.platform as PlatformScopedStorageXDirectory;

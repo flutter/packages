@@ -3,16 +3,18 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 /// The common superclass for [XFile] and [XDirectory].
 @immutable
 class XFileEntity {
   /// Constructs a [XFileEntity].
   @protected
+  @internal
   const XFileEntity(this.platform);
 
   /// Implementation of [XFileEntity] for the current platform.
+  @internal
   final PlatformXFileEntity platform;
 
   /// A string used to reference the resource's location.
