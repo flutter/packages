@@ -493,4 +493,89 @@ void main() {
       expect(onExitState2.fullPath, '/route-2/:id2');
     },
   );
+
+  // Regression test: pop() with onExit + async redirect must not restore
+  // stale configuration.
+  testWidgets(
+    'pop does not call restore with stale config when route has onExit',
+    (WidgetTester tester) async {
+      final homeKey = UniqueKey();
+      final detailKey = UniqueKey();
+
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => DummyScreen(key: homeKey),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'detail',
+                onExit: (_, __) => true,
+                builder: (_, __) => DummyScreen(key: detailKey),
+              ),
+            ],
+          ),
+        ],
+        tester,
+        initialLocation: '/detail',
+        redirect: (_, GoRouterState state) async {
+          // Async redirect — completes in a later microtask.
+          await Future<void>.delayed(Duration.zero);
+          return null;
+        },
+      );
+
+      await tester.pumpAndSettle();
+      expect(find.byKey(detailKey), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      // The detail route should be gone after pop.
+      expect(
+        find.byKey(detailKey),
+        findsNothing,
+        reason:
+            'Route with onExit should be properly popped '
+            'even when async redirect is present',
+      );
+      expect(find.byKey(homeKey), findsOneWidget);
+    },
+  );
+
+  // Verify that pop is correctly cancelled when onExit returns false.
+  testWidgets('pop is cancelled when onExit returns false', (
+    WidgetTester tester,
+  ) async {
+    final homeKey = UniqueKey();
+    final detailKey = UniqueKey();
+
+    final GoRouter router = await createRouter(
+      <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => DummyScreen(key: homeKey),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'detail',
+              onExit: (_, __) => false, // Always prevent leaving.
+              builder: (_, __) => DummyScreen(key: detailKey),
+            ),
+          ],
+        ),
+      ],
+      tester,
+      initialLocation: '/detail',
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.byKey(detailKey), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    // Should still be on the detail page.
+    expect(find.byKey(detailKey), findsOneWidget);
+    expect(find.byKey(homeKey), findsNothing);
+  });
 }

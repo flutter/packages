@@ -12,8 +12,8 @@ import 'page.dart';
 /// Page for demonstrating marker clustering support.
 class ClusteringPage extends GoogleMapExampleAppPage {
   /// Default Constructor.
-  const ClusteringPage({Key? key})
-    : super(const Icon(Icons.place), 'Manage clustering', key: key);
+  const ClusteringPage({super.key})
+    : super(const Icon(Icons.place), 'Manage clustering');
 
   @override
   Widget build(BuildContext context) {
