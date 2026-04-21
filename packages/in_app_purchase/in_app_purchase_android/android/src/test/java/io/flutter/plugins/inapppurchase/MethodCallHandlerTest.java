@@ -1194,7 +1194,9 @@ public class MethodCallHandlerTest {
   private ProductDetails buildProductDetails(String id) {
     String json =
         String.format(
-            "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"%s\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}",
+            "{\"title\":\"Example title\",\"description\":\"Example"
+                + " description\",\"productId\":\"%s\",\"type\":\"inapp\",\"name\":\"Example"
+                + " name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}",
             id);
 
     try {

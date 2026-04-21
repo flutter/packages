@@ -1254,17 +1254,22 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
       },
-      didFailProvisionalNavigation: (_, __, NSError error) {
+      didFailProvisionalNavigation: (_, __, NSError error) async {
+        var url =
+            error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLStringError]
+                as String?;
+
+        // On iOS 26+, the error is stored with `NSURLErrorFailingURLErrorKey`.
+        if (url == null) {
+          final nativeURL =
+              error.userInfo[NSErrorUserInfoKey.NSURLErrorFailingURLErrorKey]
+                  as URL?;
+          url = await nativeURL?.getAbsoluteString();
+        }
+
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(
-              error,
-              isForMainFrame: true,
-              url:
-                  error.userInfo[NSErrorUserInfoKey
-                          .NSURLErrorFailingURLStringError]
-                      as String?,
-            ),
+            WebKitWebResourceError._(error, isForMainFrame: true, url: url),
           );
         }
       },

@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.urllauncher'),
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/urllauncher/Messages.java',
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/urllauncher/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.urllauncher'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

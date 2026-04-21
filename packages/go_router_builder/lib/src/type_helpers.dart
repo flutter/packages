@@ -94,6 +94,29 @@ String decodeParameter(
   }
 
   final DartType paramType = element.type;
+  final String? annotatedDecoder = element.decoder;
+
+  if (annotatedDecoder != null) {
+    // If there is a custom decoder, use it directly.
+    final stateValueAccess =
+        'state.${_stateValueAccess(element, pathParameters)}';
+    String decoded;
+    if (!element.type.isNullableType && !element.hasDefaultValue) {
+      decoded = '$annotatedDecoder($stateValueAccess)';
+    } else {
+      decoded =
+          '($stateValueAccess == null ? null : $annotatedDecoder($stateValueAccess!))';
+    }
+
+    if (element.isOptional && element.hasDefaultValue) {
+      if (element.type.isNullableType) {
+        throw NullableDefaultValueError(element);
+      }
+      decoded += ' ?? ${element.defaultValueCode!}';
+    }
+    return decoded;
+  }
+
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
       String? decoder;
@@ -133,7 +156,8 @@ String decodeParameter(
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${withoutNullability(paramType.getDisplayString())}` is not supported.',
+    '`${withoutNullability(paramType.getDisplayString())}` is not supported. '
+    'Consider using @TypedQueryParameter with a custom encoder and decoder.',
     element: element,
   );
 }
@@ -145,6 +169,18 @@ String encodeField(
   PropertyAccessorElement element,
   List<ElementAnnotation>? metadata,
 ) {
+  final String? annotatedEncoder = element.encoder;
+  if (annotatedEncoder != null) {
+    final fieldAccess = '$selfFieldName.${element.displayName}';
+    final bool isNullable = element.returnType.isNullableType;
+    final encoded = '$annotatedEncoder($fieldAccess${isNullable ? '!' : ''})';
+    if (isNullable) {
+      return '$fieldAccess != null ? $encoded : null';
+    } else {
+      return encoded;
+    }
+  }
+
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
       String? encoder;
@@ -177,7 +213,8 @@ String encodeField(
   }
 
   throw InvalidGenerationSourceError(
-    'The return type `${element.returnType}` is not supported.',
+    'The return type `${element.returnType}` is not supported. '
+    'Consider using @TypedQueryParameter with a custom encoder and decoder.',
     element: element,
   );
 }
@@ -201,11 +238,12 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
 /// Returns the comparison of a parameter with its default value.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String compareField(
-  FormalParameterElement param,
-  String value1,
-  String value2,
-) {
+String compareField(FormalParameterElement param) {
+  final String? annotatedCompare = param.compare;
+  if (annotatedCompare != null) {
+    return '$annotatedCompare($selfFieldName.${param.displayName}, ${param.defaultValueCode!})';
+  }
+
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(param.type)) {
       return helper._compare(
@@ -216,7 +254,8 @@ String compareField(
   }
 
   throw InvalidGenerationSourceError(
-    'The type `${param.type}` is not supported.',
+    'The type `${param.type}` is not supported. '
+    'Consider using @TypedQueryParameter with a custom compare function.',
     element: param,
   );
 }
@@ -864,6 +903,61 @@ extension FormalParameterElementExtension on FormalParameterElement {
         displayName.kebab;
     return escapeDartString(name);
   }
+
+  /// Returns the name of the decoder function for this parameter, if it has a
+  /// `TypedQueryParameter` annotation with a decoder specified.
+  String? get decoder {
+    final typedQueryParameterReader = ConstantReader(
+      _typedQueryParameterChecker.firstAnnotationOf(this),
+    );
+
+    return typedQueryParameterReader
+        .peek('decoder')
+        ?.objectValue
+        .toFunctionValue()
+        ?.qualifiedName;
+  }
+
+  /// Returns the name of the encoder function for this parameter, if it has a
+  /// `TypedQueryParameter` annotation with an encoder specified.
+  String? get encoder {
+    final typedQueryParameterReader = ConstantReader(
+      _typedQueryParameterChecker.firstAnnotationOf(this),
+    );
+
+    return typedQueryParameterReader
+        .peek('encoder')
+        ?.objectValue
+        .toFunctionValue()
+        ?.qualifiedName;
+  }
+
+  /// Returns the name of the compare function for this parameter, if it has a
+  /// `TypedQueryParameter` annotation with a compare function specified.
+  String? get compare {
+    final typedQueryParameterReader = ConstantReader(
+      _typedQueryParameterChecker.firstAnnotationOf(this),
+    );
+
+    return typedQueryParameterReader
+        .peek('compare')
+        ?.objectValue
+        .toFunctionValue()
+        ?.qualifiedName;
+  }
+}
+
+/// Extension helpers on [PropertyAccessorElement].
+extension PropertyAccessorElementExtension on PropertyAccessorElement {
+  /// Returns the name of the encoder function for this property, if it has a
+  /// `TypedQueryParameter` annotation with an encoder specified.
+  String? get encoder {
+    return (enclosingElement as InterfaceElement)
+        .unnamedConstructor
+        ?.formalParameters
+        .firstWhereOrNull((parameter) => parameter.displayName == displayName)
+        ?.encoder;
+  }
 }
 
 /// An error thrown when a default value is used with a nullable type.
@@ -880,3 +974,28 @@ class NullableDefaultValueError extends InvalidGenerationSourceError {
 const _typedQueryParameterChecker = TypeChecker.fromUrl(
   'package:go_router/src/route_data.dart#TypedQueryParameter',
 );
+
+/// Extension helpers on [ExecutableElement].
+extension ExecutableElementExtension on ExecutableElement {
+  /// Returns the name of `this` qualified with the class name if it's a
+  /// [MethodElement].
+  String get qualifiedName {
+    if (this is TopLevelFunctionElement) {
+      return name!;
+    }
+
+    if (this is MethodElement) {
+      return '${enclosingElement!.name}.$name';
+    }
+
+    if (this is ConstructorElement) {
+      // The default constructor.
+      if ((name?.isEmpty ?? false) || name == 'new') {
+        return enclosingElement!.name!;
+      }
+      return '${enclosingElement!.name}.$name';
+    }
+
+    throw UnsupportedError('Not sure how to support typeof $runtimeType');
+  }
+}

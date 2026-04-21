@@ -7,8 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOut: 'android/src/main/java/io/flutter/plugins/localauth/Messages.java',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.localauth'),
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/localauth/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.localauth'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
