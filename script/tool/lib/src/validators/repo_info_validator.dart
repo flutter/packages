@@ -15,6 +15,7 @@ const int _exitUnknownPackageEntry = 4;
 
 /// Validates that a package has all of the expected repository-level entries.
 class RepoInfoValidator {
+  /// Creates a new instance of the validator with the given command context.
   RepoInfoValidator({
     required Map<String, List<String>> readmeTableEntries,
     required Set<String> autoLabeledPackages,
@@ -95,6 +96,10 @@ class RepoInfoValidator {
     return entries;
   }
 
+  /// Validates that the repository information for a package is correct,
+  /// returning a list of resulting error strings.
+  ///
+  /// If no errors are found, an empty list is returned.
   Future<List<String>> validatePackage(RepositoryPackage package) async {
     final String packageName = package.directory.basename;
     final errors = <String>[];
