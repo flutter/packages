@@ -95,6 +95,7 @@ class XDirectory extends XFileEntity {
 
   /// Lists the sub-directories and files of this directory.
   Stream<XFileEntity> list() {
+    // Converts PlatformXFileEntities to XFileEntities.
     return platform.list(ListParams()).map<XFileEntity>((
       PlatformXFileEntity entity,
     ) {
