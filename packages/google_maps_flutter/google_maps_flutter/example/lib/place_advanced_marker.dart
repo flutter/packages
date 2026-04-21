@@ -13,12 +13,8 @@ import 'page.dart';
 /// Page demonstrating how to use Advanced [Marker] class.
 class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const PlaceAdvancedMarkerPage({Key? key, required this.mapId})
-    : super(
-        const Icon(Icons.place_outlined),
-        'Place advanced marker',
-        key: key,
-      );
+  const PlaceAdvancedMarkerPage({super.key, required this.mapId})
+    : super(const Icon(Icons.place_outlined), 'Place advanced marker');
 
   /// Map ID to use for the GoogleMap.
   final String? mapId;

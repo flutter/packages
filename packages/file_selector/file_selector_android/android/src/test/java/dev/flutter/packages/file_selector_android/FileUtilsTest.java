@@ -88,7 +88,8 @@ public class FileUtilsTest {
 
   @Test
   public void getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
-    // Uri that represents Documents/test directory from some external storage volume ("external" for this test):
+    // Uri that represents Documents/test directory from some external storage volume ("external"
+    // for this test):
     Uri uri =
         Uri.parse(
             "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest");
@@ -255,7 +256,8 @@ public class FileUtilsTest {
 
   // Mocks a malicious content provider attempting to use path indirection to modify files outside
   // of the intended directory.
-  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  // See
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
   private static class MockMaliciousContentProvider extends ContentProvider {
     public static String PNG_URI = "content://dummy/a.png";
 

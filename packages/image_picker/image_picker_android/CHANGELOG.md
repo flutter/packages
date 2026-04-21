@@ -1,3 +1,7 @@
+## 0.8.13+16
+
+* Bumps androidx.core:core from 1.17.0 to 1.18.0.
+
 ## 0.8.13+15
 
 * Updates build files from Groovy to Kotlin.

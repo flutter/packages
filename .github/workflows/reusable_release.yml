@@ -8,8 +8,6 @@ on:
       branch-name:
         required: true
         type: string
-# Declare default permissions as read only.
-permissions: read-all
 jobs:
   release:
     if: github.repository_owner == 'flutter'
@@ -44,7 +42,8 @@ jobs:
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
-      uses: lewagon/wait-on-check-action@74049309dfeff245fe8009a0137eacf28136cb3c
+      if: inputs.branch-name == 'main'
+      uses: lewagon/wait-on-check-action@9312864dfbc9fd208e9c0417843430751c042800
       with:
         ref: ${{ github.sha }}
         check-name: 'Linux ci_yaml packages roller'
@@ -56,7 +55,8 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@74049309dfeff245fe8009a0137eacf28136cb3c
+      if: inputs.branch-name == 'main'
+      uses: lewagon/wait-on-check-action@9312864dfbc9fd208e9c0417843430751c042800
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
@@ -76,9 +76,11 @@ jobs:
         if [ "${{ inputs.is-batch-release }}" = "true" ]; then
           BATCH_FLAG="--batch-release-branch=${INPUTS_BRANCH_NAME}"
         fi
+        
         dart ./script/tool/lib/src/main.dart publish \
           --all-changed \
           $BATCH_FLAG \
           --base-sha=HEAD~ \
-          --skip-confirmation
+          --skip-confirmation \
+          --remote=origin
       env: { PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}", INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}" }

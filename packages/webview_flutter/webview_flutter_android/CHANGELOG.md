@@ -1,3 +1,8 @@
+## 4.11.0
+
+* Adds support to opt out of Android inset changes. See
+  `AndroidWebViewController.setInsetsForWebContentToIgnore`.
+
 ## 4.10.15
 
 * Fixes dartdoc comments that accidentally used HTML.

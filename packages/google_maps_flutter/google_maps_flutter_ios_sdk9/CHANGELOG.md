@@ -1,3 +1,7 @@
+## 2.18.1
+
+* Removes the requirement to use static builds with Swift Package Manager.
+
 ## 2.18.0
 
 * Adds support for advanced markers.

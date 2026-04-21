@@ -16,8 +16,8 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PlaceMarkerPage extends GoogleMapExampleAppPage {
-  const PlaceMarkerPage({Key? key})
-    : super(const Icon(Icons.place), 'Place marker', key: key);
+  const PlaceMarkerPage({super.key})
+    : super(const Icon(Icons.place), 'Place marker');
 
   @override
   Widget build(BuildContext context) {

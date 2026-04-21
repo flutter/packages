@@ -27,10 +27,13 @@ public class WidgetInfo {
 
   /** A String representation of a Flutter widget's ValueKey. */
   @Nullable private final String valueKey;
+
   /** A String representation of the runtime type of the widget. */
   private final String runtimeType;
+
   /** The widget's text property. */
   @Nullable private final String text;
+
   /** The widget's tooltip property. */
   @Nullable private final String tooltip;
 
