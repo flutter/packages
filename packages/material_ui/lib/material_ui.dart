@@ -7,4 +7,4 @@
 /// To use, import `package:material_ui/material_ui.dart`.
 library material_ui;
 
-export 'package:flutter/material.dart';
+export 'm3.dart';
