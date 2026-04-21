@@ -42,7 +42,16 @@ base class DarwinScopedStorageXFileCreationParams
 base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
     with DarwinScopedStorageXFileExtension {
   /// Constructs a [DarwinScopedStorageXFile].
-  DarwinScopedStorageXFile(super.params) : super.implementation();
+  DarwinScopedStorageXFile(super.params) : super.implementation() {
+    _finalizer.attach(this, params.uri);
+  }
+
+  static final Finalizer<String> _finalizer = Finalizer((String url) {
+    // Check that this is not called during a unit test.
+    if (Platform.environment['FLUTTER_TEST'] != 'true') {
+      CrossFileDarwinApi().stopAccessingSecurityScopedResource(url);
+    }
+  });
 
   late final _file = File.fromUri(Uri.parse(params.uri));
 
