@@ -11,7 +11,7 @@ This library passes all [mustache specification](https://github.com/mustache/spe
 <?code-excerpt "example/main.dart (basic-usage)"?>
 ```dart
 void main() {
-  var source = '''
+  const source = '''
     {{# names }}
       <div>{{ lastname }}, {{ firstname }}</div>
     {{/ names }}
@@ -21,13 +21,13 @@ void main() {
     {{! I am a comment. }}
   ''';
 
-  var template = Template(source, name: 'template-filename.html');
+  final template = Template(source, name: 'template-filename.html');
 
-  var output = template.renderString({
+  final Object output = template.renderString({
     'names': [
       {'firstname': 'Greg', 'lastname': 'Lowe'},
-      {'firstname': 'Bob', 'lastname': 'Johnson'}
-    ]
+      {'firstname': 'Bob', 'lastname': 'Johnson'},
+    ],
   });
 
   print(output);
@@ -56,9 +56,9 @@ By default all output from `{{variable}}` tags is html escaped, this behaviour c
 
 <?code-excerpt "example/main.dart (nested-paths)"?>
 ```dart
-var t = Template('{{ author.name }}');
-var nestedOutput = t.renderString({
-  'author': {'name': 'Greg Lowe'}
+final t = Template('{{ author.name }}');
+final Object nestedOutput = t.renderString({
+  'author': {'name': 'Greg Lowe'},
 });
 print(nestedOutput);
 ```
@@ -67,13 +67,13 @@ print(nestedOutput);
 
 <?code-excerpt "example/main.dart (partials)"?>
 ```dart
-var partial = Template('{{ foo }}', name: 'partial');
+final partial = Template('{{ foo }}', name: 'partial');
 
-var resolver = (String name) => name == 'partial-name' ? partial : null;
+Template? resolver(String name) => name == 'partial-name' ? partial : null;
 
-var pt = Template('{{> partial-name }}', partialResolver: resolver);
+final pt = Template('{{> partial-name }}', partialResolver: resolver);
 
-var partialOutput = pt.renderString({'foo': 'bar'}); // bar
+final Object partialOutput = pt.renderString({'foo': 'bar'}); // bar
 print(partialOutput);
 ```
 
@@ -81,9 +81,9 @@ print(partialOutput);
 
 <?code-excerpt "example/main.dart (lambdas)"?>
 ```dart
-var lt = Template('{{# foo }}{{bar}}{{/ foo }}');
-var lambda =
-    (LambdaContext ctx) => '<b>${ctx.renderString().toUpperCase()}</b>';
+final lt = Template('{{# foo }}{{bar}}{{/ foo }}');
+String lambda(LambdaContext ctx) =>
+    '<b>${ctx.renderString().toUpperCase()}</b>';
 print(lt.renderString({'foo': lambda, 'bar': 'pub'})); // <b>PUB</b>
 ```
 
@@ -91,9 +91,10 @@ In the following example `LambdaContext.renderSource(source)` re-parses the sour
 
 <?code-excerpt "example/main.dart (lambda-render-source)"?>
 ```dart
-var rst = Template('{{# foo }}{{bar}}{{/ foo }}');
-var renderSourceLambda =
-    (LambdaContext ctx) => ctx.renderSource('${ctx.source} {{cmd}}');
-print(rst.renderString(
-    {'foo': renderSourceLambda, 'bar': 'pub', 'cmd': 'build'})); // pub build
+final rst = Template('{{# foo }}{{bar}}{{/ foo }}');
+String renderSourceLambda(LambdaContext ctx) =>
+    ctx.renderSource('${ctx.source} {{cmd}}');
+print(
+  rst.renderString({'foo': renderSourceLambda, 'bar': 'pub', 'cmd': 'build'}),
+); // pub build
 ```
