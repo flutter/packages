@@ -18,7 +18,7 @@ void main() {
   testWidgets('Can read from file using dart:io implementation', (
     WidgetTester tester,
   ) async {
-    final Directory dir = await getTemporaryDirectory();
+    final Directory dir = await getApplicationCacheDirectory();
 
     final xDir = XDirectory.fromPath(dir.path);
     expect(await xDir.exists(), isTrue);
