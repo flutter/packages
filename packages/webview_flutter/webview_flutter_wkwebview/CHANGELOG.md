@@ -1,7 +1,3 @@
-## 3.24.5
-
-* Reverts `3.24.4` to prevent missing `FlutterSceneLifeCycleDelegate` build error.
-
 ## 3.24.4
 
 * Updates plugin to prevent message calls when application will terminate.
