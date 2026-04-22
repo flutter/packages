@@ -44,7 +44,16 @@ base class DarwinScopedStorageXDirectoryCreationParams
 base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
     with DarwinScopedStorageXDirectoryExtension {
   /// Constructs a [DarwinScopedStorageXDirectory].
-  DarwinScopedStorageXDirectory(super.params) : super.implementation();
+  DarwinScopedStorageXDirectory(super.params) : super.implementation() {
+    _finalizer.attach(this, params.uri);
+  }
+
+  static final Finalizer<String> _finalizer = Finalizer((String url) {
+    // Check that this is not called during a unit test.
+    if (Platform.environment['FLUTTER_TEST'] != 'true') {
+      CrossFileDarwinApi().stopAccessingSecurityScopedResource(url);
+    }
+  });
 
   late final _directory = Directory.fromUri(Uri.parse(params.uri));
 
