@@ -22,6 +22,7 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun fromTreeUri(treeUri: String): DocumentFile {
+    // Only returns null on platforms below Android 19.
     return DocumentFile.fromTreeUri(pigeonRegistrar.context, treeUri.toUri())!!
   }
 
