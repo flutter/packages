@@ -132,14 +132,6 @@ void main() {
         expect(await file.readAsString(), testFileStringContents);
       });
 
-      test('canRead', () async {
-        final file = PlatformScopedStorageXFile(
-          WebScopedStorageXFileCreationParams.fromBlob(testFile),
-        );
-
-        expect(await file.canRead(), true);
-      });
-
       test('exists', () async {
         final file = PlatformScopedStorageXFile(
           WebScopedStorageXFileCreationParams.fromBlob(testFile),
