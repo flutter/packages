@@ -1,7 +1,7 @@
 ## 3.24.6
 
 * Relands update to prevent message calls when application will terminate.
-* Updates minimum supported SDK version to Flutter 3.38.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 3.24.5
 
