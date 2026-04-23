@@ -15,9 +15,13 @@ jobs:
     outputs:
       head_branch_created: ${{ steps.check-branch-exists.outputs.exists }}
       release_branch: ${{ steps.create-branch.outputs.release_branch }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
     steps:
       - name: checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          token: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
       - name: "Install Flutter"
         uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
@@ -51,14 +55,14 @@ jobs:
       # The create-pull-request action needs both content and pull-requests permissions.
       pull-requests: write
       contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
     steps:
       - name: checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           ref: ${{ env.HEAD_BRANCH_NAME }}
       - name: Create batch release PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
         run: |
           gh pr create \
             --base "${{ needs.create_batch_release_branch.outputs.release_branch }}" \
