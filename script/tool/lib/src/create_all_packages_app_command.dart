@@ -32,9 +32,9 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   /// Creates an instance of the builder command.
   CreateAllPackagesAppCommand(
     Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.processRunner = const ProcessRunner(),
+    super.platform = const LocalPlatform(),
+  }) : super(packagesDir) {
     argParser.addOption(
       _outputDirectoryFlag,
       defaultsTo: packagesDir.parent.path,
