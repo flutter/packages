@@ -98,7 +98,7 @@ class BranchesForBatchReleaseCommand extends PackageCommand {
     }
 
     final releaseBranchName =
-        'release-${package.displayName}-${releaseInfo.newVersion}';
+        'release-${package.directory.basename}-${releaseInfo.newVersion}';
 
     await _createAndPushReleaseBranch(
       git: repository,
