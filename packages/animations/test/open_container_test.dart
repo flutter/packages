@@ -516,8 +516,11 @@ void main() {
         (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
             as ShapeDecoration;
     final double expectedT = Curves.fastOutSlowIn.transform(0.5);
-    final BoxShadow expectedShadow =
-        BoxShadow.lerpList(null, openShadows, expectedT)!.single;
+    final BoxShadow expectedShadow = BoxShadow.lerpList(
+      null,
+      openShadows,
+      expectedT,
+    )!.single;
     expect(transitioningDecoration.shadows, hasLength(1));
     expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
     expect(
@@ -615,8 +618,11 @@ void main() {
         (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
             as ShapeDecoration;
     final double expectedT = Curves.fastOutSlowIn.transform(0.5);
-    final BoxShadow expectedShadow =
-        BoxShadow.lerpList(closedShadows, null, expectedT)!.single;
+    final BoxShadow expectedShadow = BoxShadow.lerpList(
+      closedShadows,
+      null,
+      expectedT,
+    )!.single;
     expect(transitioningDecoration.shadows, hasLength(1));
     expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
     expect(
