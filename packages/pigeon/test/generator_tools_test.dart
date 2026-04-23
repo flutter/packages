@@ -518,8 +518,10 @@ void myMethod() {
 
   group('compareTypeDeclarationGenericness', () {
     const object = TypeDeclaration(baseName: 'Object', isNullable: false);
-    const nullableObject =
-        TypeDeclaration(baseName: 'Object', isNullable: true);
+    const nullableObject = TypeDeclaration(
+      baseName: 'Object',
+      isNullable: true,
+    );
     const listObject = TypeDeclaration(
       baseName: 'List',
       isNullable: false,
@@ -554,7 +556,7 @@ void myMethod() {
           baseName: 'List',
           isNullable: false,
           typeArguments: <TypeDeclaration>[nullableObject],
-        )
+        ),
       ],
     );
 
@@ -566,9 +568,12 @@ void myMethod() {
       expect(compareTypeDeclarationGenericness(object, nullableObject), -1);
     });
 
-    test('Untyped List defaults to List<Object?> which is more generic than List<Object>', () {
-      expect(compareTypeDeclarationGenericness(untypedList, listObject), 1);
-    });
+    test(
+      'Untyped List defaults to List<Object?> which is more generic than List<Object>',
+      () {
+        expect(compareTypeDeclarationGenericness(untypedList, listObject), 1);
+      },
+    );
 
     test('List<Object> is more generic than List<String>', () {
       expect(compareTypeDeclarationGenericness(listObject, listString), 1);
@@ -578,15 +583,24 @@ void myMethod() {
       expect(compareTypeDeclarationGenericness(mapObjectObject, listObject), 1);
     });
 
-    test('Untyped Map defaults to Map<Object?, Object?> which is more generic than Map<Object, Object>', () {
-      expect(compareTypeDeclarationGenericness(untypedMap, mapObjectObject), 1);
-    });
+    test(
+      'Untyped Map defaults to Map<Object?, Object?> which is more generic than Map<Object, Object>',
+      () {
+        expect(
+          compareTypeDeclarationGenericness(untypedMap, mapObjectObject),
+          1,
+        );
+      },
+    );
 
     test('List<List<Object?>> is more generic than List<List<Object>>', () {
       expect(
-          compareTypeDeclarationGenericness(
-              listListNullableObject, listListObject),
-          1);
+        compareTypeDeclarationGenericness(
+          listListNullableObject,
+          listListObject,
+        ),
+        1,
+      );
     });
   });
 }

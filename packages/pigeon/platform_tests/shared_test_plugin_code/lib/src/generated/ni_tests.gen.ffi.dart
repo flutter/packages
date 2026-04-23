@@ -277,22 +277,6 @@ extension type NIAllClassesWrapperBridge._(objc.ObjCObject object$)
       release: true,
     );
   }
-
-  /// new
-  static NIAllClassesWrapperBridge new$() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_NIAllClassesWrapperBridge,
-      _sel_new,
-    );
-    return NIAllClassesWrapperBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
-  }
-
-  /// Returns a new instance of NIAllClassesWrapperBridge constructed with the default `new` method.
-  NIAllClassesWrapperBridge() : this.as(new$().object$);
 }
 
 extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
@@ -373,24 +357,6 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_classMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NIAllClassesWrapperBridge init() {
-    objc.checkOsVersionInternal(
-      'NIAllClassesWrapperBridge.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NIAllClassesWrapperBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
   }
 
   /// initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:
@@ -637,22 +603,6 @@ extension type NIAllNullableTypesBridge._(objc.ObjCObject object$)
       release: true,
     );
   }
-
-  /// new
-  static NIAllNullableTypesBridge new$() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_NIAllNullableTypesBridge,
-      _sel_new,
-    );
-    return NIAllNullableTypesBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
-  }
-
-  /// Returns a new instance of NIAllNullableTypesBridge constructed with the default `new` method.
-  NIAllNullableTypesBridge() : this.as(new$().object$);
 }
 
 extension NIAllNullableTypesBridge$Methods on NIAllNullableTypesBridge {
@@ -926,24 +876,6 @@ extension NIAllNullableTypesBridge$Methods on NIAllNullableTypesBridge {
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NIAllNullableTypesBridge init() {
-    objc.checkOsVersionInternal(
-      'NIAllNullableTypesBridge.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NIAllNullableTypesBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
   }
 
   /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:
@@ -1770,22 +1702,6 @@ extension type NIAllNullableTypesWithoutRecursionBridge._(
       release: true,
     );
   }
-
-  /// new
-  static NIAllNullableTypesWithoutRecursionBridge new$() {
-    final $ret = _objc_msgSend_151sglz(
-      _class_NIAllNullableTypesWithoutRecursionBridge,
-      _sel_new,
-    );
-    return NIAllNullableTypesWithoutRecursionBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
-  }
-
-  /// Returns a new instance of NIAllNullableTypesWithoutRecursionBridge constructed with the default `new` method.
-  NIAllNullableTypesWithoutRecursionBridge() : this.as(new$().object$);
 }
 
 extension NIAllNullableTypesWithoutRecursionBridge$Methods
@@ -2039,24 +1955,6 @@ extension NIAllNullableTypesWithoutRecursionBridge$Methods
     return $ret.address == 0
         ? null
         : objc.NSDictionary.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NIAllNullableTypesWithoutRecursionBridge init() {
-    objc.checkOsVersionInternal(
-      'NIAllNullableTypesWithoutRecursionBridge.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NIAllNullableTypesWithoutRecursionBridge.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
   }
 
   /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
@@ -2781,15 +2679,6 @@ extension type NIAllTypesBridge._(objc.ObjCObject object$)
     );
     return NIAllTypesBridge.fromPointer($ret, retain: false, release: true);
   }
-
-  /// new
-  static NIAllTypesBridge new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NIAllTypesBridge, _sel_new);
-    return NIAllTypesBridge.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns a new instance of NIAllTypesBridge constructed with the default `new` method.
-  NIAllTypesBridge() : this.as(new$().object$);
 }
 
 extension NIAllTypesBridge$Methods on NIAllTypesBridge {
@@ -2997,20 +2886,6 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_enumMap);
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NIAllTypesBridge init() {
-    objc.checkOsVersionInternal(
-      'NIAllTypesBridge.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NIAllTypesBridge.fromPointer($ret, retain: false, release: true);
   }
 
   /// initWithABool:anInt:anInt64:aDouble:aByteArray:a4ByteArray:a8ByteArray:aFloatArray:anEnum:anotherEnum:aString:anObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:
@@ -23108,15 +22983,6 @@ extension type NIUnusedClassBridge._(objc.ObjCObject object$)
     );
     return NIUnusedClassBridge.fromPointer($ret, retain: false, release: true);
   }
-
-  /// new
-  static NIUnusedClassBridge new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NIUnusedClassBridge, _sel_new);
-    return NIUnusedClassBridge.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns a new instance of NIUnusedClassBridge constructed with the default `new` method.
-  NIUnusedClassBridge() : this.as(new$().object$);
 }
 
 extension NIUnusedClassBridge$Methods on NIUnusedClassBridge {
@@ -23132,20 +22998,6 @@ extension NIUnusedClassBridge$Methods on NIUnusedClassBridge {
     return $ret.address == 0
         ? null
         : objc.NSObject.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NIUnusedClassBridge init() {
-    objc.checkOsVersionInternal(
-      'NIUnusedClassBridge.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NIUnusedClassBridge.fromPointer($ret, retain: false, release: true);
   }
 
   /// initWithAField:
@@ -23680,15 +23532,6 @@ extension type NiTestsNumberWrapper._(objc.ObjCObject object$)
     );
     return NiTestsNumberWrapper.fromPointer($ret, retain: false, release: true);
   }
-
-  /// new
-  static NiTestsNumberWrapper new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NiTestsNumberWrapper, _sel_new);
-    return NiTestsNumberWrapper.fromPointer($ret, retain: false, release: true);
-  }
-
-  /// Returns a new instance of NiTestsNumberWrapper constructed with the default `new` method.
-  NiTestsNumberWrapper() : this.as(new$().object$);
 }
 
 extension NiTestsNumberWrapper$Methods on NiTestsNumberWrapper {
@@ -23705,20 +23548,6 @@ extension NiTestsNumberWrapper$Methods on NiTestsNumberWrapper {
   /// hash
   int get hash$1 {
     return _objc_msgSend_xw2lbc(object$.ref.pointer, _sel_hash);
-  }
-
-  /// init
-  NiTestsNumberWrapper init() {
-    objc.checkOsVersionInternal(
-      'NiTestsNumberWrapper.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NiTestsNumberWrapper.fromPointer($ret, retain: false, release: true);
   }
 
   /// initWithNumber:type:
@@ -23927,19 +23756,6 @@ extension type NiTestsPigeonTypedData._(objc.ObjCObject object$)
       release: true,
     );
   }
-
-  /// new
-  static NiTestsPigeonTypedData new$() {
-    final $ret = _objc_msgSend_151sglz(_class_NiTestsPigeonTypedData, _sel_new);
-    return NiTestsPigeonTypedData.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
-  }
-
-  /// Returns a new instance of NiTestsPigeonTypedData constructed with the default `new` method.
-  NiTestsPigeonTypedData() : this.as(new$().object$);
 }
 
 extension NiTestsPigeonTypedData$Methods on NiTestsPigeonTypedData {
@@ -23953,24 +23769,6 @@ extension NiTestsPigeonTypedData$Methods on NiTestsPigeonTypedData {
     );
     final $ret = _objc_msgSend_151sglz(object$.ref.pointer, _sel_data);
     return objc.NSData.fromPointer($ret, retain: true, release: true);
-  }
-
-  /// init
-  NiTestsPigeonTypedData init() {
-    objc.checkOsVersionInternal(
-      'NiTestsPigeonTypedData.init',
-      iOS: (false, (2, 0, 0)),
-      macOS: (false, (10, 0, 0)),
-    );
-    final $ret = _objc_msgSend_151sglz(
-      object$.ref.retainAndReturnPointer(),
-      _sel_init,
-    );
-    return NiTestsPigeonTypedData.fromPointer(
-      $ret,
-      retain: false,
-      release: true,
-    );
   }
 
   /// initWithData:type:
