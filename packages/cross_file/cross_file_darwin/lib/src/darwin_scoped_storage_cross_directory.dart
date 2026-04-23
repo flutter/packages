@@ -90,6 +90,11 @@ base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
   }
 
   @override
+  Future<bool> canRead() {
+    return params.api.isReadableFile(params.uri);
+  }
+
+  @override
   Future<bool> startAccessingSecurityScopedResource() {
     return params.api.startAccessingSecurityScopedResource(params.uri);
   }

@@ -31,11 +31,30 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidScopedStorageXDirectory(
+    final directory = AndroidScopedStorageXDirectory(
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
-    expect(await file.exists(), true);
+    expect(await directory.exists(), true);
+  });
+
+  test('canRead', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const canRead = false;
+    when(mockDocumentFile.canRead()).thenAnswer((_) async => canRead);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri =
+        ({required String treeUri}) {
+          expect(treeUri, uri);
+          return mockDocumentFile;
+        };
+
+    final directory = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    expect(await directory.canRead(), canRead);
   });
 
   test('list', () async {

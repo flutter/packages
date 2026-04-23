@@ -18,6 +18,9 @@ base class AndroidScopedStorageXDirectory
   );
 
   @override
+  Future<bool> canRead() => _documentFile.canRead();
+
+  @override
   Future<bool> exists() async {
     return await _documentFile.exists() && await _documentFile.isDirectory();
   }

@@ -139,6 +139,9 @@ final class _DefaultScopedStorageXDirectory
   Future<bool> exists() async => false;
 
   @override
+  Future<bool> canRead() async => false;
+
+  @override
   Stream<PlatformXEntity> list(ListParams params) {
     throw UnsupportedError('This instance does not represent any directory.');
   }

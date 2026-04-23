@@ -206,15 +206,25 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
 
 final class TestScopedStorageXDirectory
     extends PlatformScopedStorageXDirectory {
-  TestScopedStorageXDirectory(super.params, {this.onExists, this.onList})
-    : super.implementation();
+  TestScopedStorageXDirectory(
+    super.params, {
+    this.onExists,
+    this.onList,
+    this.onCanRead,
+  }) : super.implementation();
 
   Future<bool> Function()? onExists;
   Stream<PlatformXEntity> Function(ListParams params)? onList;
+  Future<bool> Function()? onCanRead;
 
   @override
   Future<bool> exists() async {
     return await onExists?.call() ?? false;
+  }
+
+  @override
+  Future<bool> canRead() async {
+    return await onCanRead?.call() ?? false;
   }
 
   @override

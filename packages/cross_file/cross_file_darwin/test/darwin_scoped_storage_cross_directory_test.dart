@@ -54,6 +54,19 @@ void main() {
     );
   });
 
+  test('canRead', () async {
+    final mockApi = MockCrossFileDarwinApi();
+    const uri = 'uri';
+    const result = true;
+    when(mockApi.isReadableFile(uri)).thenAnswer((_) async => result);
+
+    final directory = DarwinScopedStorageXDirectory(
+      DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
+    );
+
+    expect(await directory.canRead(), result);
+  });
+
   test('startAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
     final uri = testDirectory.uri.toString();
@@ -62,22 +75,22 @@ void main() {
       mockApi.startAccessingSecurityScopedResource(uri),
     ).thenAnswer((_) async => result);
 
-    final file = DarwinScopedStorageXDirectory(
+    final directory = DarwinScopedStorageXDirectory(
       DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
     );
 
-    expect(await file.startAccessingSecurityScopedResource(), result);
+    expect(await directory.startAccessingSecurityScopedResource(), result);
   });
 
   test('stopAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
     final uri = testDirectory.uri.toString();
 
-    final file = DarwinScopedStorageXDirectory(
+    final directory = DarwinScopedStorageXDirectory(
       DarwinScopedStorageXDirectoryCreationParams(uri: uri, api: mockApi),
     );
 
-    await file.stopAccessingSecurityScopedResource();
+    await directory.stopAccessingSecurityScopedResource();
     verify(mockApi.stopAccessingSecurityScopedResource(uri));
   });
 }

@@ -56,5 +56,21 @@ void main() {
       expect(directoryEntities[2], isA<XEntity>());
       expect(directoryEntities[2].uri, entities[2].params.uri);
     });
+
+    test('canRead', () async {
+      const canRead = false;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXDirectory:
+            (PlatformScopedStorageXDirectoryCreationParams params) =>
+                TestScopedStorageXDirectory(
+                  params,
+                  onCanRead: () async => canRead,
+                ),
+      );
+
+      final file = ScopedStorageXDirectory(uri: 'uri');
+
+      expect(await file.canRead(), canRead);
+    });
   });
 }
