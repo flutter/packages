@@ -476,7 +476,7 @@ class MenuAnchor extends StatefulWidget {
   /// closed.
   final MenuAnchorChildBuilder? builder;
 
-  /// The semantic label of the dialog used by this menu.
+  /// The semantic label of the menu.
   ///
   /// Defaults to null.
   final String? semanticLabel;
@@ -720,6 +720,27 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
   }
 
   Widget _buildOverlay(BuildContext context, RawMenuOverlayInfo position) {
+    Widget submenu = _Submenu(
+      fadeAnimation: opacityAnimation,
+      heightAnimation: heightAnimation,
+      layerLink: widget.layerLink,
+      consumeOutsideTaps: widget.consumeOutsideTap,
+      menuScopeNode: _menuScopeNode,
+      menuStyle: widget.style,
+      clipBehavior: widget.clipBehavior,
+      menuChildren: _menuChildren,
+      crossAxisUnconstrained: widget.crossAxisUnconstrained,
+      menuPosition: position,
+      anchor: this,
+      alignmentOffset: widget.alignmentOffset ?? Offset.zero,
+      reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
+    );
+
+    // Only inject the semantics node if a label is provided
+    if (widget.semanticLabel != null) {
+      submenu = Semantics(container: true, label: widget.semanticLabel, child: submenu);
+    }
+
     // ExcludeSemantics, ExcludeFocus, and IgnorePointer are used to effectively
     // disable all interactions with the menu while it is closing.
     //
@@ -730,27 +751,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       excluding: isClosingOrClosed,
       child: IgnorePointer(
         ignoring: isClosingOrClosed,
-        child: ExcludeFocus(
-          excluding: isClosingOrClosed,
-          child: Semantics(
-            label: widget.semanticLabel,
-            child: _Submenu(
-              fadeAnimation: opacityAnimation,
-              heightAnimation: heightAnimation,
-              layerLink: widget.layerLink,
-              consumeOutsideTaps: widget.consumeOutsideTap,
-              menuScopeNode: _menuScopeNode,
-              menuStyle: widget.style,
-              clipBehavior: widget.clipBehavior,
-              menuChildren: _menuChildren,
-              crossAxisUnconstrained: widget.crossAxisUnconstrained,
-              menuPosition: position,
-              anchor: this,
-              alignmentOffset: widget.alignmentOffset ?? Offset.zero,
-              reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
-            ),
-          ),
-        ),
+        child: ExcludeFocus(excluding: isClosingOrClosed, child: submenu),
       ),
     );
   }
