@@ -4,7 +4,7 @@
 
 @import AVFoundation;
 
-#import "./messages.g.h"
+#import "./VideoPlayerInstanceMessages.g.h"
 #import "FVPAVFactory.h"
 #import "FVPVideoEventListener.h"
 #import "FVPViewProvider.h"

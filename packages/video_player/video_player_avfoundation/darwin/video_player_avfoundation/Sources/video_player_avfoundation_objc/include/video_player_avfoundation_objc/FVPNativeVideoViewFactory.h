@@ -12,11 +12,15 @@
 @import Flutter;
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// A factory class responsible for creating native video views that can be embedded in a
 /// Flutter app.
 @interface FVPNativeVideoViewFactory : NSObject <FlutterPlatformViewFactory>
 /// Initializes a new instance of FVPNativeVideoViewFactory with the given messenger and
 /// a block that provides video players associated with their identifiers.
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-       playerByIdentifierProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdentifierProvider;
+       playerByIdentifierProvider:(FVPVideoPlayer * _Nullable (^)(NSNumber *))playerByIdentifierProvider;
 @end
+
+NS_ASSUME_NONNULL_END

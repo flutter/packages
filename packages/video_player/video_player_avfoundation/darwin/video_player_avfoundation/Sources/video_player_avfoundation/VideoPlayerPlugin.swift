@@ -12,8 +12,20 @@ import AVFoundation
   #error("Unsupported platform.")
 #endif
 
+#if canImport(video_player_avfoundation_objc)
+import video_player_avfoundation_objc
+#endif
+
+// Protocol for an display link factory. Used for injecting display links in tests.
+protocol DisplayLinkFactory {
+  func displayLink(
+    with viewProvider: FVPViewProvider,
+    callback: @escaping () -> Void
+  ) -> FVPDisplayLink
+}
+
 /// Non-test implementation of the display link factory.
-class DefaultDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
+class DefaultDisplayLinkFactory: NSObject, DisplayLinkFactory {
   func displayLink(
     with viewProvider: FVPViewProvider,
     callback: @escaping () -> Void
@@ -39,19 +51,19 @@ class DefaultAssetProvider: NSObject, FVPAssetProvider {
     super.init()
   }
 
-  func lookupKey(forAsset asset: String) -> String {
-    return registrar?.lookupKey(forAsset: asset) ?? ""
+  func lookupKey(forAsset asset: String) -> String? {
+    return registrar?.lookupKey(forAsset: asset)
   }
 
-  func lookupKey(forAsset asset: String, fromPackage package: String) -> String {
-    return registrar?.lookupKey(forAsset: asset, fromPackage: package) ?? ""
+  func lookupKey(forAsset asset: String, fromPackage package: String) -> String? {
+    return registrar?.lookupKey(forAsset: asset, fromPackage: package)
   }
 }
 
 class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
   private let binaryMessenger: FlutterBinaryMessenger
   private let textureRegistry: FlutterTextureRegistry
-  private let displayLinkFactory: FVPDisplayLinkFactory
+  private let displayLinkFactory: DisplayLinkFactory
   private let avFactory: FVPAVFactory
   private let viewProvider: FVPViewProvider
   private let assetProvider: FVPAssetProvider
@@ -60,25 +72,38 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
 
   static func register(with registrar: FlutterPluginRegistrar) {
     let instance = VideoPlayerPlugin(registrar: registrar)
+    // Publish the instance so that it receives detachFromEngine.
     registrar.publish(instance)
     
+#if os(iOS)
+  let messenger = registrar.messenger()
+#else
+  let messenger = registrar.messenger
+#endif
     let factory = FVPNativeVideoViewFactory(
-      messenger: registrar.messenger,
+      messenger: messenger,
       playerByIdentifierProvider: { [weak instance] (playerIdentifier: NSNumber) -> FVPVideoPlayer? in
         return instance?.playersByIdentifier[playerIdentifier.int64Value]
       }
     )
     registrar.register(factory, withId: "plugins.flutter.dev/video_player_ios")
     
-    AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: registrar.messenger, api: instance)
+    AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   convenience init(registrar: FlutterPluginRegistrar) {
+#if os(iOS)
+  let messenger = registrar.messenger()
+    let textures = registrar.textures()
+#else
+  let messenger = registrar.messenger
+    let textures = registrar.textures
+#endif
     self.init(
       avFactory: FVPDefaultAVFactory(),
       displayLinkFactory: DefaultDisplayLinkFactory(),
-      binaryMessenger: registrar.messenger,
-      textureRegistry: registrar.textures,
+      binaryMessenger: messenger,
+      textureRegistry: textures,
       viewProvider: FVPDefaultViewProvider(registrar: registrar),
       assetProvider: DefaultAssetProvider(registrar: registrar)
     )
@@ -86,7 +111,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
 
   init(
     avFactory: FVPAVFactory,
-    displayLinkFactory: FVPDisplayLinkFactory,
+    displayLinkFactory: DisplayLinkFactory,
     binaryMessenger: FlutterBinaryMessenger,
     textureRegistry: FlutterTextureRegistry,
     viewProvider: FVPViewProvider,
@@ -103,13 +128,20 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
 
   func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     for player in playersByIdentifier.values {
+      // Remove the channel and texture cleanup, and the event listener, to ensure that the player
+      // doesn't message the engine that is no longer connected.
       player.onDisposed = nil
       player.eventListener = nil
       var error: FlutterError?
       player.disposeWithError(&error)
     }
     playersByIdentifier.removeAll()
-    AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: registrar.messenger, api: nil)
+#if os(iOS)
+  let messenger = registrar.messenger()
+#else
+  let messenger = registrar.messenger
+#endif
+    AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: nil)
   }
 
   func initialize() throws {
@@ -140,7 +172,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
     let item = try playerItem(with: creationOptions)
     let frameUpdater = FVPFrameUpdater(registry: textureRegistry)
     let displayLink = displayLinkFactory.displayLink(with: viewProvider) {
-      frameUpdater?.displayLinkFired()
+      frameUpdater.displayLinkFired()
     }
 
     let player = FVPTextureBasedVideoPlayer(
@@ -151,9 +183,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
       viewProvider: viewProvider
     )
 
-    guard let textureId = textureRegistry.register(player) else {
-      throw PigeonError(code: "video_player", message: "Failed to register texture", details: nil)
-    }
+    let textureId = textureRegistry.register(player)
     player.setTextureIdentifier(textureId)
 
     let playerId = configurePlayer(player) { [weak self] in
@@ -182,6 +212,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
         )
       }
     #endif
+    // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
   }
 
   func fileURLForAsset(name asset: String, package: String?) throws -> String? {
@@ -192,6 +223,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
     var path = Bundle.main.path(forResource: resource, ofType: nil)
     #if os(macOS)
       // See https://github.com/flutter/flutter/issues/135302
+      // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
       if path == nil {
         path = URL(string: resource, relativeTo: Bundle.main.bundleURL)?.path
       }
@@ -215,9 +247,10 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
     SetUpFVPVideoPlayerInstanceApiWithSuffix(binaryMessenger, player, channelSuffix)
     
     player.onDisposed = { [weak self] in
-      SetUpFVPVideoPlayerInstanceApiWithSuffix(self?.binaryMessenger, nil, channelSuffix)
+      guard let strongSelf = self else { return }
+      SetUpFVPVideoPlayerInstanceApiWithSuffix(strongSelf.binaryMessenger, nil, channelSuffix)
       extraDisposeHandler?()
-      self?.playersByIdentifier.removeValue(forKey: playerId)
+      strongSelf.playersByIdentifier.removeValue(forKey: playerId)
     }
 
     // Set up the event channel.
@@ -242,6 +275,14 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
 }
 
 #if os(iOS)
+  // This function, although slightly modified, is also in camera_avfoundation.
+  // Both need to do the same thing and run on the same thread (for example main thread).
+  // Do not overwrite PlayAndRecord with Playback which causes inability to record
+  // audio, do not overwrite all options.
+  // Only change category if it is considered an upgrade which means it can only enable
+  // ability to play in silent mode or ability to record audio but never disables it,
+  // that could affect other plugins which depend on this global state. Only change
+  // category or options if there is change to prevent unnecessary lags and silence.
   private func upgradeAudioSessionCategory(
     session: FVPAVAudioSession,
     requestedCategory: AVAudioSession.Category,
