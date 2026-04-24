@@ -5,7 +5,6 @@
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
@@ -14,7 +13,6 @@ import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
@@ -31,10 +29,10 @@ const int _exitMissingLegacySource = 6;
 class CreateAllPackagesAppCommand extends PackageCommand {
   /// Creates an instance of the builder command.
   CreateAllPackagesAppCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addOption(
       _outputDirectoryFlag,
       defaultsTo: packagesDir.parent.path,
