@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/video_player_avfoundation/FVPAVFactory.h"
+#import "./include/video_player_avfoundation_objc/FVPAVFactory.h"
 
 @import AVFoundation;
 

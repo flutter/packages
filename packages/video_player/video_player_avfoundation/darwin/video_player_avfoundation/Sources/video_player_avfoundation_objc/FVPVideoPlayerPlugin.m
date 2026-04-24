@@ -2,22 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
+#import "./include/video_player_avfoundation_objc/FVPVideoPlayerPlugin.h"
+#import "./include/video_player_avfoundation_objc/FVPVideoPlayerPlugin_Test.h"
 
 @import AVFoundation;
 
-#import "./include/video_player_avfoundation/FVPAVFactory.h"
-#import "./include/video_player_avfoundation/FVPAssetProvider.h"
-#import "./include/video_player_avfoundation/FVPDisplayLink.h"
-#import "./include/video_player_avfoundation/FVPEventBridge.h"
-#import "./include/video_player_avfoundation/FVPFrameUpdater.h"
-#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
-#import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "./include/video_player_avfoundation_objc/FVPAVFactory.h"
+#import "./include/video_player_avfoundation_objc/FVPAssetProvider.h"
+#import "./include/video_player_avfoundation_objc/FVPDisplayLink.h"
+#import "./include/video_player_avfoundation_objc/FVPEventBridge.h"
+#import "./include/video_player_avfoundation_objc/FVPFrameUpdater.h"
+#import "./include/video_player_avfoundation_objc/FVPNativeVideoViewFactory.h"
+#import "./include/video_player_avfoundation_objc/FVPTextureBasedVideoPlayer.h"
+#import "./include/video_player_avfoundation_objc/FVPVideoPlayer.h"
 // Relative path is needed for messages.g.h. See
 // https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
-#import "./include/video_player_avfoundation/messages.g.h"
+#import "./include/video_player_avfoundation_objc/messages.g.h"
 
 /// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>

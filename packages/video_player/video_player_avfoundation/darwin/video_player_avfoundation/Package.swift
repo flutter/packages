@@ -20,11 +20,17 @@ let package = Package(
     .target(
       name: "video_player_avfoundation",
       dependencies: [
-        .target(name: "video_player_avfoundation_ios", condition: .when(platforms: [.iOS])),
-        .target(name: "video_player_avfoundation_macos", condition: .when(platforms: [.macOS])),
+        "video_player_avfoundation_objc"
       ],
       resources: [
         .process("Resources")
+      ]
+    ),
+    .target(
+      name: "video_player_avfoundation_objc",
+      dependencies: [
+        .target(name: "video_player_avfoundation_ios", condition: .when(platforms: [.iOS])),
+        .target(name: "video_player_avfoundation_macos", condition: .when(platforms: [.macOS])),
       ],
       cSettings: [
         .headerSearchPath("include/video_player_avfoundation")
