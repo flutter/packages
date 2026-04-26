@@ -678,17 +678,19 @@ this command.
     var hasMissingBuild = false;
     var buildFailed = false;
     String? arch;
+    const x64DirName = 'x64';
+    const arm64DirName = 'arm64';
     if (platform.isWindows) {
       arch = switch (_abi) {
-        Abi.windowsX64 => 'x64',
-        Abi.windowsArm64 => 'arm64',
+        Abi.windowsX64 => x64DirName,
+        Abi.windowsArm64 => arm64DirName,
         _ => null,
       };
     } else if (platform.isLinux) {
       // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
       // CI configuration for the repository.
       // See: https://github.com/flutter/flutter/issues/114349
-      arch = 'x64';
+      arch = x64DirName;
     }
 
     if (arch == null) {
@@ -700,13 +702,28 @@ this command.
     }
 
     for (final RepositoryPackage example in plugin.getExamples()) {
-      final project = CMakeProject(
+      var project = CMakeProject(
         example.directory,
         buildMode: buildMode,
         processRunner: processRunner,
         platform: platform,
         arch: arch,
       );
+      if (platform.isWindows &&
+          arch == arm64DirName &&
+          !project.isConfigured()) {
+        // Check for x64, to handle builds that don't yet have
+        // https://github.com/flutter/flutter/issues/129807.
+        // TODO(stuartmorgan): Remove this when CI no longer supports a
+        // version of Flutter without the issue above fixed.
+        project = CMakeProject(
+          example.directory,
+          buildMode: buildMode,
+          processRunner: processRunner,
+          platform: platform,
+          arch: x64DirName,
+        );
+      }
       if (!project.isConfigured()) {
         printError(
           'ERROR: Run "flutter build" on ${example.displayName}, '
