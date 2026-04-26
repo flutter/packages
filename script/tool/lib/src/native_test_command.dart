@@ -695,7 +695,7 @@ this command.
       return _PlatformResult(
         RunState.failed,
         error:
-            'Testing on platform and architecture "$_abi" as CMakeProjects is not supported.',
+            'Google Test testing is not supported on $platform $_abi.',
       );
     }
 
