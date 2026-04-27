@@ -1,3 +1,7 @@
+## 1.0.29
+
+* Simplifies thread handling in message responses.
+
 ## 1.0.28
 
 * Updates build files from Groovy to Kotlin.

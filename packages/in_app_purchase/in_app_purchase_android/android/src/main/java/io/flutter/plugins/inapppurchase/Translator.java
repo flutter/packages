@@ -95,7 +95,7 @@ import java.util.Locale;
   static PlatformProductType toPlatformProductType(@NonNull String typeString) {
     switch (typeString) {
       case BillingClient.ProductType.INAPP:
-        // Fallback handling to avoid throwing an exception if a new type is added in the future.
+      // Fallback handling to avoid throwing an exception if a new type is added in the future.
       default:
         return PlatformProductType.INAPP;
       case BillingClient.ProductType.SUBS:

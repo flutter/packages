@@ -288,6 +288,55 @@ void main() {
     });
 
     test(
+      'onWebResourceError can receive DNS errors from didFailProvisionalNavigation',
+      () async {
+        PigeonOverrides.wKNavigationDelegate_new =
+            CapturingNavigationDelegate.new;
+        final webKitDelegate = WebKitNavigationDelegate(
+          const WebKitNavigationDelegateCreationParams(),
+        );
+
+        late final WebKitWebResourceError callbackError;
+        void onWebResourceError(WebResourceError error) {
+          callbackError = error as WebKitWebResourceError;
+        }
+
+        await webKitDelegate.setOnWebResourceError(onWebResourceError);
+
+        CapturingNavigationDelegate
+            .lastCreatedDelegate
+            .didFailProvisionalNavigation!(
+          WKNavigationDelegate.pigeon_detached(
+            decidePolicyForNavigationAction: (_, __, ___) async {
+              return NavigationActionPolicy.cancel;
+            },
+            decidePolicyForNavigationResponse: (_, __, ___) async {
+              return NavigationResponsePolicy.cancel;
+            },
+            didReceiveAuthenticationChallenge: (_, __, ___) async {
+              return AuthenticationChallengeResponse.pigeon_detached(
+                disposition:
+                    UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              );
+            },
+          ),
+          WKWebView.pigeon_detached(),
+          NSError.pigeon_detached(
+            code: WKErrorCode.webViewInvalidated,
+            domain: 'domain',
+            userInfo: const <String, Object?>{
+              NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
+                  'www.flutter.dev',
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
+          ),
+        );
+
+        expect(callbackError.url, 'www.flutter.dev');
+      },
+    );
+
+    test(
       'onWebResourceError from webViewWebContentProcessDidTerminate',
       () async {
         PigeonOverrides.wKNavigationDelegate_new =

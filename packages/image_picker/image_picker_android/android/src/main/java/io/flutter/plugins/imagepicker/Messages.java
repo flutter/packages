@@ -870,6 +870,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -878,6 +879,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -886,6 +888,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImagePickerApi {
     /** Selects images and returns their paths. */
@@ -894,17 +897,20 @@ public class Messages {
         @NonNull ImageSelectionOptions options,
         @NonNull GeneralOptions generalOptions,
         @NonNull Result<List<String>> result);
+
     /** Selects video and returns their paths. */
     void pickVideos(
         @NonNull SourceSpecification source,
         @NonNull VideoSelectionOptions options,
         @NonNull GeneralOptions generalOptions,
         @NonNull Result<List<String>> result);
+
     /** Selects images and videos and returns their paths. */
     void pickMedia(
         @NonNull MediaSelectionOptions mediaSelectionOptions,
         @NonNull GeneralOptions generalOptions,
         @NonNull Result<List<String>> result);
+
     /** Returns results from a previous app session, if any. */
     @Nullable
     CacheRetrievalResult retrieveLostResults();
@@ -913,6 +919,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ImagePickerApi api) {
       setUp(binaryMessenger, "", api);
