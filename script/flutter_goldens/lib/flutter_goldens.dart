@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:platform/platform.dart';
 import 'package:process/process.dart';
+import 'package:yaml/yaml.dart';
 
 import 'skia_client.dart';
 export 'skia_client.dart';
@@ -66,6 +67,9 @@ Future<void> testExecutable(
   const FileSystem fs = LocalFileSystem();
   const ProcessManager process = LocalProcessManager();
   final httpClient = io.HttpClient();
+
+  namePrefix ??= FlutterGoldenFileComparator.getPackageName(fs);
+
   if (FlutterPostSubmitFileComparator.isForEnvironment(platform)) {
     goldenFileComparator =
         await FlutterPostSubmitFileComparator.fromLocalFileComparator(
@@ -225,6 +229,25 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
     final File goldenFile = fs.directory(basedir).childFile(fs.file(uri).path);
 
     return goldenFile;
+  }
+
+  /// Extracts the package name from the nearest `pubspec.yaml` file.
+  @visibleForTesting
+  static String? getPackageName(FileSystem fs) {
+    Directory current = fs.currentDirectory;
+    while (current.path != current.parent.path) {
+      final File pubspec = current.childFile('pubspec.yaml');
+      if (pubspec.existsSync()) {
+        try {
+          final YamlMap yaml = loadYaml(pubspec.readAsStringSync()) as YamlMap;
+          return yaml['name'] as String?;
+        } catch (e) {
+          // Ignore parsing errors and keep looking
+        }
+      }
+      current = current.parent;
+    }
+    return null;
   }
 
   /// Prepends the golden URL with the library name that encloses the current
