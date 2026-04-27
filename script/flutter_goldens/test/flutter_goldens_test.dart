@@ -18,8 +18,6 @@ import 'package:process/process.dart';
 
 import 'json_templates.dart';
 
-// TODO(ianh): make sure all constructors order their arguments in a manner consistent with the defined parameter order
-
 const String _kFlutterRoot = '/flutter';
 
 // 1x1 transparent pixel
@@ -213,7 +211,7 @@ void main() {
         'git',
         'rev-parse',
         'HEAD',
-      ], '/packages');
+      ], '/flutter');
       const goldctlInvocation = RunInvocation(<String>[
         'goldctl',
         'imgtest',
@@ -281,7 +279,7 @@ void main() {
         'git',
         'rev-parse',
         'HEAD',
-      ], '/packages');
+      ], '/flutter');
       const goldctlInvocation = RunInvocation(<String>[
         'goldctl',
         'imgtest',
@@ -361,7 +359,7 @@ void main() {
         'git',
         'rev-parse',
         'HEAD',
-      ], '/packages');
+      ], '/flutter');
       const goldctlInvocation = RunInvocation(<String>[
         'goldctl',
         'imgtest',
@@ -544,42 +542,7 @@ void main() {
 
       expect(
         skiaClient.getTraceID('flutter.golden.1'),
-        equals('9b44cb4464826eef24cbb8095407edc8'),
-      );
-    });
-
-    test('Creates traceID correctly - Browser', () async {
-      final fs = MemoryFileSystem();
-      final platform = FakePlatform(
-        environment: <String, String>{
-          'GOLDCTL': 'goldctl',
-          'SWARMING_TASK_ID': '4ae997b50dfd4d11',
-          'LOGDOG_STREAM_PREFIX':
-              'buildbucket/cr-buildbucket.appspot.com/8885996262141582672',
-          'GOLD_TRYJOB': 'refs/pull/49815/head',
-
-          'CHROME_EXECUTABLE': 'chrome',
-        },
-        operatingSystem: 'linux',
-      );
-      final process = FakeProcessManager();
-      final fakeHttpClient = FakeHttpClient();
-      fs.directory(_kFlutterRoot).createSync(recursive: true);
-      final Directory workDirectory = fs.directory('/workDirectory')
-        ..createSync(recursive: true);
-      final skiaClient = SkiaGoldClient(
-        workDirectory,
-        fs: fs,
-        process: process,
-        platform: platform,
-        httpClient: fakeHttpClient,
-        log: (String message) =>
-            fail('skia gold client printed unexpected output: "$message"'),
-      );
-
-      expect(
-        skiaClient.getTraceID('flutter.golden.1'),
-        equals('2592d057e5ea8dbc8ac4e8851090695a'),
+        equals('abe4ba07d57982f282adcd425aa8581f'),
       );
     });
 
@@ -607,7 +570,7 @@ void main() {
         );
         expect(
           skiaClient.getTraceID('flutter.golden.1'),
-          equals('198543ea507122f8fafde25f946bccb0'),
+          equals('405ca6a70c598037ab019d85f35f8357'),
         );
       },
     );
@@ -1203,6 +1166,51 @@ void main() {
           fakeSkiaClient.getExpectationForTestThrowable = null;
         },
       );
+    });
+
+    group('_getPackageName', () {
+      test('extracts name from pubspec.yaml', () {
+        final fs = MemoryFileSystem();
+        final Directory packageDir = fs.directory('/my_package')
+          ..createSync(recursive: true);
+        packageDir.childFile('pubspec.yaml').writeAsStringSync('name: my_package_name\n');
+        fs.currentDirectory = packageDir;
+
+        expect(FlutterGoldenFileComparator.getPackageName(fs)
+, 'my_package_name');
+      });
+
+      test('traverses upwards to find pubspec.yaml', () {
+        final fs = MemoryFileSystem();
+        final Directory packageDir = fs.directory('/my_package')
+          ..createSync(recursive: true);
+        packageDir.childFile('pubspec.yaml').writeAsStringSync('name: my_package_name\n');
+        final Directory testDir = packageDir.childDirectory('test')..createSync(recursive: true);
+        fs.currentDirectory = testDir;
+
+        expect(FlutterGoldenFileComparator.getPackageName(fs)
+, 'my_package_name');
+      });
+
+      test('returns null if no pubspec.yaml is found', () {
+        final fs = MemoryFileSystem();
+        final Directory someDir = fs.directory('/some/dir')..createSync(recursive: true);
+        fs.currentDirectory = someDir;
+
+        expect(FlutterGoldenFileComparator.getPackageName(fs)
+, isNull);
+      });
+
+      test('handles invalid yaml gracefully', () {
+        final fs = MemoryFileSystem();
+        final Directory packageDir = fs.directory('/my_package')
+          ..createSync(recursive: true);
+        packageDir.childFile('pubspec.yaml').writeAsStringSync('invalid: yaml: : :');
+        fs.currentDirectory = packageDir;
+
+        expect(FlutterGoldenFileComparator.getPackageName(fs)
+, isNull);
+      });
     });
   });
 }

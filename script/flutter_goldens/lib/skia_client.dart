@@ -20,7 +20,6 @@ import 'package:process/process.dart';
 
 const String _kSDKKey = 'SDK_CHECKOUT_PATH';
 const String _kGoldctlKey = 'GOLDCTL';
-const String _kTestBrowserKey = 'CHROME_EXECUTABLE';
 
 /// Signature of callbacks used to inject [print] replacements.
 typedef LogCallback = void Function(String);
@@ -449,7 +448,7 @@ class SkiaGoldClient {
       'git',
       'rev-parse',
       'HEAD',
-    ], workingDirectory: path.join(path.dirname(cleanPath), 'packages'));
+    ], workingDirectory: cleanPath);
     if (revParse.exitCode != 0) {
       throw const SkiaException(
         'Current commit of flutter/packages can not be found.',
@@ -463,14 +462,13 @@ class SkiaGoldClient {
   /// Returns a JSON String with keys value pairs used to uniquely identify the
   /// configuration that generated the given golden file.
   ///
-  /// Currently, the only key value pairs being tracked is the platform the
-  /// image was rendered on, and for web tests, the browser the image was
-  /// rendered on.
+  /// Currently, the key value pairs being tracked are the platform the
+  /// image was rendered on and the Flutter channel the test was run on.
   String _getKeysJSON() {
     final keys = <String, dynamic>{
       'Platform': platform.operatingSystem,
       'CI': 'luci',
-      'Web': _isBrowserTest.toString(),
+      'Channel': _channel,
     };
 
     return json.encode(keys);
@@ -516,8 +514,8 @@ class SkiaGoldClient {
     ];
   }
 
-  bool get _isBrowserTest {
-    return platform.environment[_kTestBrowserKey] != null;
+  String get _channel {
+    return platform.environment['CHANNEL'] ?? 'stable';
   }
 
   /// Returns a trace id based on the current testing environment to lookup
@@ -527,7 +525,7 @@ class SkiaGoldClient {
     final parameters = <String, Object?>{
       'CI': 'luci',
       'Platform': platform.operatingSystem,
-      'Web': _isBrowserTest.toString(),
+      'Channel': _channel,
       'name': testName,
       'source_type': 'flutter packages',
     };
