@@ -20,7 +20,6 @@ import 'package:process/process.dart';
 
 const String _kSDKKey = 'SDK_CHECKOUT_PATH';
 const String _kGoldctlKey = 'GOLDCTL';
-const String _kTestBrowserKey = 'CHROME_EXECUTABLE';
 
 /// Signature of callbacks used to inject [print] replacements.
 typedef LogCallback = void Function(String);
@@ -153,7 +152,7 @@ class SkiaGoldClient {
     await failures.create();
     final String commitHash = await _getCurrentCommit();
 
-    final imgtestInitCommand = <String>[
+    final imgtestInitCommand = <String?>[
       _goldctl,
       'imgtest',
       'init',
@@ -179,7 +178,7 @@ class SkiaGoldClient {
       throw SkiaException(buf.toString());
     }
 
-    final io.ProcessResult result = await process.run(imgtestInitCommand);
+    final io.ProcessResult result = await process.run(imgtestInitCommand.cast<String>());
 
     if (result.exitCode != 0) {
       _initialized = false;
@@ -225,9 +224,7 @@ class SkiaGoldClient {
       // If an unapproved image has made it to post-submit, throw to close the
       // tree.
       String? resultContents;
-      final File resultFile = workDirectory.childFile(
-        fs.path.join('result-state.json'),
-      );
+      final File resultFile = workDirectory.childFile(fs.path.join('result-state.json'));
       if (resultFile.existsSync()) {
         resultContents = await resultFile.readAsString();
       }
@@ -248,9 +245,7 @@ class SkiaGoldClient {
         ..writeln('stdout: ${result.stdout}')
         ..writeln('stderr: ${result.stderr}')
         ..writeln()
-        ..writeln(
-          'result-state.json: ${resultContents ?? 'No result file found.'}',
-        );
+        ..writeln('result-state.json: ${resultContents ?? 'No result file found.'}');
       throw SkiaException(buf.toString());
     }
 
@@ -283,7 +278,7 @@ class SkiaGoldClient {
     await failures.create();
     final String commitHash = await _getCurrentCommit();
 
-    final imgtestInitCommand = <String>[
+    final imgtestInitCommand = <String?>[
       _goldctl,
       'imgtest',
       'init',
@@ -314,15 +309,13 @@ class SkiaGoldClient {
       throw SkiaException(buf.toString());
     }
 
-    final io.ProcessResult result = await process.run(imgtestInitCommand);
+    final io.ProcessResult result = await process.run(imgtestInitCommand.cast<String>());
 
     if (result.exitCode != 0) {
       _tryjobInitialized = false;
       final buf = StringBuffer()
         ..writeln('Skia Gold tryjobInit failure.')
-        ..writeln(
-          'An error occurred when initializing golden file tryjob with ',
-        )
+        ..writeln('An error occurred when initializing golden file tryjob with ')
         ..writeln('goldctl.')
         ..writeln()
         ..writeln('Debug information for Gold --------------------------------')
@@ -363,12 +356,9 @@ class SkiaGoldClient {
 
     final resultStdout = result.stdout.toString();
     if (result.exitCode != 0 &&
-        !(resultStdout.contains('Untriaged') ||
-            resultStdout.contains('negative image'))) {
+        !(resultStdout.contains('Untriaged') || resultStdout.contains('negative image'))) {
       String? resultContents;
-      final File resultFile = workDirectory.childFile(
-        fs.path.join('result-state.json'),
-      );
+      final File resultFile = workDirectory.childFile(fs.path.join('result-state.json'));
       if (resultFile.existsSync()) {
         resultContents = await resultFile.readAsString();
       }
@@ -382,9 +372,7 @@ class SkiaGoldClient {
         ..writeln('stderr: ${result.stderr}')
         ..writeln()
         ..writeln()
-        ..writeln(
-          'result-state.json: ${resultContents ?? 'No result file found.'}',
-        );
+        ..writeln('result-state.json: ${resultContents ?? 'No result file found.'}');
       throw SkiaException(buf.toString());
     }
     return result.exitCode == 0 ? null : resultStdout;
@@ -400,16 +388,12 @@ class SkiaGoldClient {
     );
     late String rawResponse;
     try {
-      final io.HttpClientRequest request = await httpClient.getUrl(
-        requestForExpectations,
-      );
+      final io.HttpClientRequest request = await httpClient.getUrl(requestForExpectations);
       final io.HttpClientResponse response = await request.close();
       rawResponse = await utf8.decodeStream(response);
       final dynamic jsonResponse = json.decode(rawResponse);
       if (jsonResponse is! Map<String, dynamic>) {
-        throw const FormatException(
-          'Skia gold expectations do not match expected format.',
-        );
+        throw const FormatException('Skia gold expectations do not match expected format.');
       }
       expectation = jsonResponse['digest'] as String?;
     } on FormatException catch (error) {
@@ -433,9 +417,7 @@ class SkiaGoldClient {
     final Uri requestForImage = Uri.parse(
       'https://flutter-packages-gold.skia.org/img/images/$imageHash.png',
     );
-    final io.HttpClientRequest request = await httpClient.getUrl(
-      requestForImage,
-    );
+    final io.HttpClientRequest request = await httpClient.getUrl(requestForImage);
     final io.HttpClientResponse response = await request.close();
     await response.forEach((List<int> bytes) => imageBytes.addAll(bytes));
     return imageBytes;
@@ -449,11 +431,9 @@ class SkiaGoldClient {
       'git',
       'rev-parse',
       'HEAD',
-    ], workingDirectory: path.join(path.dirname(cleanPath), 'packages'));
+    ], workingDirectory: cleanPath);
     if (revParse.exitCode != 0) {
-      throw const SkiaException(
-        'Current commit of flutter/packages can not be found.',
-      );
+      throw const SkiaException('Current commit of flutter/packages can not be found.');
     }
     final String commit = (revParse.stdout as String).trim();
 
@@ -463,14 +443,13 @@ class SkiaGoldClient {
   /// Returns a JSON String with keys value pairs used to uniquely identify the
   /// configuration that generated the given golden file.
   ///
-  /// Currently, the only key value pairs being tracked is the platform the
-  /// image was rendered on, and for web tests, the browser the image was
-  /// rendered on.
+  /// Currently, the key value pairs being tracked are the platform the
+  /// image was rendered on and the Flutter channel the test was run on.
   String _getKeysJSON() {
     final keys = <String, dynamic>{
       'Platform': platform.operatingSystem,
       'CI': 'luci',
-      'Web': _isBrowserTest.toString(),
+      'Channel': _channel,
     };
 
     return json.encode(keys);
@@ -485,9 +464,7 @@ class SkiaGoldClient {
   /// Returns a boolean value to prevent the client from re-authorizing itself
   /// for multiple tests.
   Future<bool> clientIsAuthorized() async {
-    final File authFile = workDirectory.childFile(
-      fs.path.join('temp', 'auth_opt.json'),
-    );
+    final File authFile = workDirectory.childFile(fs.path.join('temp', 'auth_opt.json'));
 
     if (authFile.existsSync()) {
       final String contents = await authFile.readAsString();
@@ -500,24 +477,15 @@ class SkiaGoldClient {
   /// Returns a list of arguments for initializing a tryjob based on the testing
   /// environment.
   List<String> getCIArguments() {
-    final String jobId = platform.environment['LOGDOG_STREAM_PREFIX']!
-        .split('/')
-        .last;
+    final String jobId = platform.environment['LOGDOG_STREAM_PREFIX']!.split('/').last;
     final List<String> refs = platform.environment['GOLD_TRYJOB']!.split('/');
     final String pullRequest = refs[refs.length - 2];
 
-    return <String>[
-      '--changelist',
-      pullRequest,
-      '--cis',
-      'buildbucket',
-      '--jobid',
-      jobId,
-    ];
+    return <String>['--changelist', pullRequest, '--cis', 'buildbucket', '--jobid', jobId];
   }
 
-  bool get _isBrowserTest {
-    return platform.environment[_kTestBrowserKey] != null;
+  String get _channel {
+    return platform.environment['CHANNEL'] ?? 'stable';
   }
 
   /// Returns a trace id based on the current testing environment to lookup
@@ -527,7 +495,7 @@ class SkiaGoldClient {
     final parameters = <String, Object?>{
       'CI': 'luci',
       'Platform': platform.operatingSystem,
-      'Web': _isBrowserTest.toString(),
+      'Channel': _channel,
       'name': testName,
       'source_type': 'flutter packages',
     };

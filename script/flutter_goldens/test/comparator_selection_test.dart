@@ -44,30 +44,18 @@ void main() {
 
     // If we don't have gold but are on CI, we skip regardless.
     expect(_testRecommendations(hasLuci: true), _Comparator.skip);
-    expect(
-      _testRecommendations(hasLuci: true, hasTryJob: true),
-      _Comparator.skip,
-    );
+    expect(_testRecommendations(hasLuci: true, hasTryJob: true), _Comparator.skip);
 
     // On Luci, with Gold, post-submit. Flutter root and LUCI variables should have no effect.
-    expect(
-      _testRecommendations(hasGold: true, hasLuci: true),
-      _Comparator.post,
-    );
+    expect(_testRecommendations(hasGold: true, hasLuci: true), _Comparator.post);
 
     // On Luci, with Gold, pre-submit. Flutter root and LUCI variables should have no effect.
-    expect(
-      _testRecommendations(hasGold: true, hasLuci: true, hasTryJob: true),
-      _Comparator.pre,
-    );
+    expect(_testRecommendations(hasGold: true, hasLuci: true, hasTryJob: true), _Comparator.pre);
   });
 
   test('Comparator recommendations - release branch', () {
     // If we're running locally (no CI), use a local comparator.
-    expect(
-      _testRecommendations(branch: 'flutter-3.16-candidate.0'),
-      _Comparator.local,
-    );
+    expect(_testRecommendations(branch: 'flutter-3.16-candidate.0'), _Comparator.local);
 
     expect(
       _testRecommendations(branch: 'flutter-3.16-candidate.0', hasGold: true),
@@ -80,21 +68,13 @@ void main() {
       _Comparator.skip,
     );
     expect(
-      _testRecommendations(
-        branch: 'flutter-3.16-candidate.0',
-        hasLuci: true,
-        hasTryJob: true,
-      ),
+      _testRecommendations(branch: 'flutter-3.16-candidate.0', hasLuci: true, hasTryJob: true),
       _Comparator.skip,
     );
 
     // On Luci, with Gold, post-submit. Flutter root and LUCI variables should have no effect. Branch should make us skip.
     expect(
-      _testRecommendations(
-        branch: 'flutter-3.16-candidate.0',
-        hasGold: true,
-        hasLuci: true,
-      ),
+      _testRecommendations(branch: 'flutter-3.16-candidate.0', hasGold: true, hasLuci: true),
       _Comparator.skip,
     );
 
@@ -117,25 +97,14 @@ void main() {
 
     // If we don't have gold but are on CI, we skip regardless.
     expect(_testRecommendations(os: 'linux', hasLuci: true), _Comparator.skip);
-    expect(
-      _testRecommendations(os: 'linux', hasLuci: true, hasTryJob: true),
-      _Comparator.skip,
-    );
+    expect(_testRecommendations(os: 'linux', hasLuci: true, hasTryJob: true), _Comparator.skip);
 
     // On Luci, with Gold, post-submit. Flutter root has no effect.
-    expect(
-      _testRecommendations(os: 'linux', hasGold: true, hasLuci: true),
-      _Comparator.post,
-    );
+    expect(_testRecommendations(os: 'linux', hasGold: true, hasLuci: true), _Comparator.post);
 
     // On Luci, with Gold, pre-submit. Flutter root should have no effect.
     expect(
-      _testRecommendations(
-        os: 'linux',
-        hasGold: true,
-        hasLuci: true,
-        hasTryJob: true,
-      ),
+      _testRecommendations(os: 'linux', hasGold: true, hasLuci: true, hasTryJob: true),
       _Comparator.pre,
     );
   });
