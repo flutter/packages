@@ -4225,6 +4225,14 @@ void main() {
       expect(find.text('Cell 3,0'), findsNothing);
 
       // Scroll horizontally so that column 1 is entirely behind pinned column 0.
+      // Pinned column 0 is 0 to 100.
+      // Unpinned content starts at 100 (Column 1).
+      // Scroll 100 pixels.
+      // Content at 0 (start of column 1) moves to absolute 100 - 100 = 0.
+      // Content at 50 (end of column 1) moves to absolute 100 + (50 - 100) = 50.
+      // So column 1 (0 to 50) is entirely covered by pinned column 0.
+      // Column 2 (50 to 100) is also covered.
+      // Column 3 (100 to 150) is the first visible in unpinned area.
       horizontalController.jumpTo(100);
       await tester.pump();
 
