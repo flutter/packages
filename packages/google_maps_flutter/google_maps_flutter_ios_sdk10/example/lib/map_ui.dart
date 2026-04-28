@@ -17,8 +17,7 @@ final LatLngBounds sydneyBounds = LatLngBounds(
 );
 
 class MapUiPage extends GoogleMapExampleAppPage {
-  const MapUiPage({Key? key})
-    : super(const Icon(Icons.map), 'User interface', key: key);
+  const MapUiPage({super.key}) : super(const Icon(Icons.map), 'User interface');
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 class GroundOverlayBuilder implements GroundOverlaySink {
 
-  private final GroundOverlayOptions groundOverlayOptions;
+  private final @NonNull GroundOverlayOptions groundOverlayOptions;
 
   GroundOverlayBuilder() {
     this.groundOverlayOptions = new GroundOverlayOptions();

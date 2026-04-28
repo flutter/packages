@@ -1010,6 +1010,54 @@ void main() {
         );
       },
     );
+
+    group('normalizeUri', () {
+      test('adds leading slash if missing', () {
+        expect(RouteConfiguration.normalizeUri(Uri.parse('foo')).path, '/foo');
+      });
+
+      test('handles empty path', () {
+        expect(RouteConfiguration.normalizeUri(Uri.parse('')).path, '/');
+      });
+
+      test('removes trailing slash if length > 1', () {
+        expect(
+          RouteConfiguration.normalizeUri(Uri.parse('/foo/')).path,
+          '/foo',
+        );
+      });
+
+      test('does not remove slash for root root', () {
+        expect(RouteConfiguration.normalizeUri(Uri.parse('/')).path, '/');
+      });
+
+      test('preserves query parameters and fragments', () {
+        final Uri uri = RouteConfiguration.normalizeUri(Uri.parse('foo?a=b#c'));
+        expect(uri.path, '/foo');
+        expect(uri.queryParameters['a'], 'b');
+        expect(uri.fragment, 'c');
+      });
+
+      test('handles hash fragments with authority', () {
+        final Uri uri = RouteConfiguration.normalizeUri(
+          Uri.parse('http://localhost:3000/#foo'),
+        );
+        expect(uri.path, '/');
+        expect(uri.fragment, 'foo');
+      });
+
+      test('handles hash fragments without authority', () {
+        final Uri uri = RouteConfiguration.normalizeUri(Uri.parse('/#foo'));
+        expect(uri.path, '/');
+        expect(uri.fragment, 'foo');
+      });
+
+      test('returns same instance if already normalized', () {
+        final Uri uri = Uri.parse('/foo');
+        final Uri normalized = RouteConfiguration.normalizeUri(uri);
+        expect(identical(uri, normalized), isTrue);
+      });
+    });
   });
 }
 

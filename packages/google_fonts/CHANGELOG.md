@@ -1,3 +1,7 @@
+## 8.1.0
+
+- Adds the ability to supply a custom HTTP client to `GoogleFonts.config`.
+
 ## 8.0.2
 
 - Fixes a bug where exceptions thrown during return within try blocks in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).

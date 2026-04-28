@@ -49,19 +49,26 @@ public class InAppPurchasePluginTest {
     mockCloseable.close();
   }
 
-  // The PROXY_PACKAGE_KEY value of this test (io.flutter.plugins.inapppurchase) should never be changed.
-  // In case there's a strong reason to change it, please inform the current code owner of the plugin.
+  // The PROXY_PACKAGE_KEY value of this test (io.flutter.plugins.inapppurchase) should never be
+  // changed.
+  // In case there's a strong reason to change it, please inform the current code owner of the
+  // plugin.
   @Test
   public void attachToActivity_proxyIsSet_V2Embedding() {
     InAppPurchasePlugin plugin = new InAppPurchasePlugin();
     plugin.onAttachedToEngine(flutterPluginBinding);
     plugin.onAttachedToActivity(activityPluginBinding);
-    // The `PROXY_PACKAGE_KEY` value is hard coded in the plugin code as "io.flutter.plugins.inapppurchase".
-    // We cannot use `BuildConfig.LIBRARY_PACKAGE_NAME` directly in the plugin code because whether to read BuildConfig.APPLICATION_ID or LIBRARY_PACKAGE_NAME
-    // depends on the "APP's" Android Gradle plugin version. Newer versions of AGP use LIBRARY_PACKAGE_NAME, whereas older ones use BuildConfig.APPLICATION_ID.
+    // The `PROXY_PACKAGE_KEY` value is hard coded in the plugin code as
+    // "io.flutter.plugins.inapppurchase".
+    // We cannot use `BuildConfig.LIBRARY_PACKAGE_NAME` directly in the plugin code because whether
+    // to read BuildConfig.APPLICATION_ID or LIBRARY_PACKAGE_NAME
+    // depends on the "APP's" Android Gradle plugin version. Newer versions of AGP use
+    // LIBRARY_PACKAGE_NAME, whereas older ones use BuildConfig.APPLICATION_ID.
     Mockito.verify(mockIntent).putExtra(PROXY_PACKAGE_KEY, "io.flutter.plugins.inapppurchase");
     assertEquals("io.flutter.plugins.inapppurchase", BuildConfig.LIBRARY_PACKAGE_NAME);
   }
 }
-// We cannot use `BuildConfig.LIBRARY_PACKAGE_NAME` directly in the plugin code because whether to read BuildConfig.APPLICATION_ID or LIBRARY_PACKAGE_NAME
-// depends on the "APP's" Android Gradle plugin version. Newer versions of AGP use LIBRARY_PACKAGE_NAME, whereas older ones use BuildConfig.APPLICATION_ID.
+// We cannot use `BuildConfig.LIBRARY_PACKAGE_NAME` directly in the plugin code because whether to
+// read BuildConfig.APPLICATION_ID or LIBRARY_PACKAGE_NAME
+// depends on the "APP's" Android Gradle plugin version. Newer versions of AGP use
+// LIBRARY_PACKAGE_NAME, whereas older ones use BuildConfig.APPLICATION_ID.

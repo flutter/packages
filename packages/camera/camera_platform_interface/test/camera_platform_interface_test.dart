@@ -521,6 +521,20 @@ void main() {
     );
 
     test(
+      'Default implementation of setJpegImageQuality() should throw unimplemented error',
+      () {
+        // Arrange
+        final cameraPlatform = ExtendsCameraPlatform();
+
+        // Act & Assert
+        expect(
+          () => cameraPlatform.setJpegImageQuality(1, 50),
+          throwsUnimplementedError,
+        );
+      },
+    );
+
+    test(
       'Default implementation of supportsImageStreaming() should return false',
       () {
         // Arrange

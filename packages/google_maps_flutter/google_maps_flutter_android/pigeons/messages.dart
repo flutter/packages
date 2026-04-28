@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.googlemaps'),
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/googlemaps/Messages.java',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.googlemaps'),
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/googlemaps/Messages.kt',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
