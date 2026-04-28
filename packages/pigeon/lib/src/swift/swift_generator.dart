@@ -57,7 +57,9 @@ class SwiftOptions {
   /// The module name that the FFi classes will use. Required if useFfi is true.
   final String? ffiModuleName;
 
-  /// The directory that the app exists in, this is required for FFI APIs.
+  /// The directory that the app exists in.
+  ///
+  /// Defaults to './' if not specified.
   final String? appDirectory;
 
   /// The path to the Apple SDK to use for FFI generation.

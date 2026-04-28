@@ -59,6 +59,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
             outputConfig: OutputConfig(
               dartConfig: DartCodeOutputConfig(
+                // Path is relative to appDirectory.
                 path: Uri.file('${path.relative(path.withoutExtension(generatorOptions.dartOptions.dartOut ?? './lib/pigeons/'), from: generatorOptions.appDirectory ?? './')}.jni.dart'),
               structure: OutputStructure.singleFile,
             ),

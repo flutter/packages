@@ -70,7 +70,7 @@ Future<void> main(List<String> args) async {
       ObjCCompatibleSwiftFileInput(
         files: <Uri>[
           Uri.file(
-            '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin/NiTests.gen.swift',
+            '../darwin/test_plugin/Sources/test_plugin/NiTests.gen.swift',
           ),
         ],
       ),
@@ -79,11 +79,12 @@ Future<void> main(List<String> args) async {
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: 'test_plugin',
+      // Path is relative to appDirectory.
       dartFile: Uri.file(
-        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart',
+        '../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart',
       ),
       objectiveCFile: Uri.file(
-        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin_objc/NiTests.gen.m',
+        '../darwin/test_plugin/Sources/test_plugin_objc/NiTests.gen.m',
       ),
       preamble: '''
   // Copyright 2013 The Flutter Authors

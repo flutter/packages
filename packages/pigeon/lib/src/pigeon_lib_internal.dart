@@ -573,7 +573,7 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       swiftOptions,
       options.basePath,
       dartOptions.dartOut,
-      swiftOptions.swiftOut,
+      options.appDirectory,
     );
 
     generator.generate(
@@ -586,11 +586,11 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
 
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
-      options.swiftOptions?.appDirectory != null &&
-          (options.swiftOptions?.useFfi ?? false)
+      (options.swiftOptions?.useFfi ?? false)
       ? _openSink(
           'ffigen_config.dart',
-          basePath: options.swiftOptions?.appDirectory ?? '',
+          basePath:
+              options.swiftOptions?.appDirectory ?? options.appDirectory ?? '',
         )
       : null;
 
@@ -809,7 +809,11 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.kotlinOptions?.kotlinOut != null &&
           (options.kotlinOptions?.useJni ?? false)
-      ? _openSink('jnigen_config.dart', basePath: options.appDirectory ?? '')
+      ? _openSink(
+          'jnigen_config.dart',
+          basePath:
+              options.kotlinOptions?.appDirectory ?? options.appDirectory ?? '',
+        )
       : null;
 
   @override

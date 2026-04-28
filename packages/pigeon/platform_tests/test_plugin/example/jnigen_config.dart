@@ -12,6 +12,7 @@ void main() async {
       summarizerOptions: SummarizerOptions(backend: SummarizerBackend.asm),
       outputConfig: OutputConfig(
         dartConfig: DartCodeOutputConfig(
+          // Path is relative to appDirectory.
           path: Uri.file(
             '../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.jni.dart',
           ),

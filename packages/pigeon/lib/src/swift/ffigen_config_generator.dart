@@ -156,15 +156,16 @@ import 'package:swiftgen/swiftgen.dart';
       ),
     ),
     inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
-        Uri.file('${generatorOptions.swiftOptions.swiftOut}')
+        Uri.file('${path.relative(generatorOptions.swiftOptions.swiftOut, from: generatorOptions.exampleAppDirectory ?? './')}')
       ])
     ],
     include: (Declaration d) =>
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
       module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
-      dartFile: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
-      objectiveCFile: Uri.file('${path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(generatorOptions.swiftOptions.swiftOut)}.m')}'),
+      // Path is relative to appDirectory.
+      dartFile: Uri.file('${path.relative(path.withoutExtension(generatorOptions.dartOut ?? ''), from: generatorOptions.exampleAppDirectory ?? './')}.ffi.dart'),
+      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(generatorOptions.swiftOptions.swiftOut)}.m'), from: generatorOptions.exampleAppDirectory ?? './')}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 

@@ -9,8 +9,15 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOptions: DartOptions(),
-    kotlinOptions: KotlinOptions(useJni: true),
-    swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'test_plugin'),
+    kotlinOptions: KotlinOptions(
+      useJni: true,
+      appDirectory: 'platform_tests/test_plugin/example/',
+    ),
+    swiftOptions: SwiftOptions(
+      useFfi: true,
+      ffiModuleName: 'test_plugin',
+      appDirectory: 'platform_tests/test_plugin/example/',
+    ),
   ),
 )
 enum NIAnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }

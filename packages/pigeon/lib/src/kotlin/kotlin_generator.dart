@@ -62,7 +62,9 @@ class KotlinOptions {
   /// Whether to use Jni when possible.
   final bool useJni;
 
-  /// The directory that the app exists in, this is required for Jni APIs.
+  /// The directory that the app exists in.
+  ///
+  /// Defaults to './' if not specified.
   final String? appDirectory;
 
   /// The name of the error class used for passing custom error parameters.
