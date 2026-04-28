@@ -118,7 +118,9 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('pinnedColumnCount + trailingPinnedColumnCount <= columnCount'),
+            contains(
+              'pinnedColumnCount + trailingPinnedColumnCount <= columnCount',
+            ),
           ),
         ),
       );

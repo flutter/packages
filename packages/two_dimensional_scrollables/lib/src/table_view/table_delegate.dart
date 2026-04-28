@@ -198,8 +198,14 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
        assert(trailingPinnedRowCount >= 0),
        assert(rowCount == null || rowCount >= 0),
        assert(columnCount == null || columnCount >= 0),
-       assert(columnCount == null || pinnedColumnCount + trailingPinnedColumnCount <= columnCount),
-       assert(rowCount == null || pinnedRowCount + trailingPinnedRowCount <= rowCount),
+       assert(
+         columnCount == null ||
+             pinnedColumnCount + trailingPinnedColumnCount <= columnCount,
+       ),
+       assert(
+         rowCount == null ||
+             pinnedRowCount + trailingPinnedRowCount <= rowCount,
+       ),
        _rowBuilder = rowBuilder,
        _columnBuilder = columnBuilder,
        _pinnedColumnCount = pinnedColumnCount,
@@ -219,7 +225,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int? get columnCount => maxXIndex == null ? null : maxXIndex! + 1;
 
   set columnCount(int? value) {
-    assert(value == null || pinnedColumnCount + trailingPinnedColumnCount <= value);
+    assert(
+      value == null || pinnedColumnCount + trailingPinnedColumnCount <= value,
+    );
     maxXIndex = value == null ? null : value - 1;
   }
 
@@ -238,7 +246,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
-    assert(columnCount == null || value + trailingPinnedColumnCount <= columnCount!);
+    assert(
+      columnCount == null || value + trailingPinnedColumnCount <= columnCount!,
+    );
     if (pinnedColumnCount == value) {
       return;
     }

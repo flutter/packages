@@ -4179,8 +4179,8 @@ void main() {
   testWidgets('Trailing pinned columns and rows - smoke test', (
     WidgetTester tester,
   ) async {
-    final ScrollController horizontalController = ScrollController();
-    final ScrollController verticalController = ScrollController();
+    final horizontalController = ScrollController();
+    final verticalController = ScrollController();
 
     Widget getTableView({
       int? columnCount = 10,
@@ -4223,8 +4223,6 @@ void main() {
             height: 400,
             width: 400,
             child: getTableView(
-              columnCount: 10,
-              rowCount: 10,
               trailingPinnedColumnCount: 1,
               trailingPinnedRowCount: 1,
             ),
@@ -4319,10 +4317,10 @@ void main() {
                   const TableSpan(extent: FixedTableSpanExtent(100)),
               cellBuilder: (BuildContext context, TableVicinity vicinity) {
                 if (vicinity.row >= 8 && vicinity.column == 0) {
-                  return TableViewCell(
+                  return const TableViewCell(
                     rowMergeStart: 8,
                     rowMergeSpan: 2,
-                    child: const Text('Merged R8-9 C0'),
+                    child: Text('Merged R8-9 C0'),
                   );
                 }
                 return TableViewCell(
