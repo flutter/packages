@@ -38,9 +38,11 @@ import 'package:jni/jni.dart' as jni$_;
 
 const _$jniVersionCheck = jni$_.JniVersionCheck(1, 0);
 
-/// from: `NiTestsError`
+/// from: `com.example.test_plugin.NiTestsError`
 extension type NiTestsError._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NiTestsError');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NiTestsError',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NiTestsError> type = $NiTestsError$Type$();
@@ -251,13 +253,15 @@ final class $NiTestsError$Type$ extends jni$_.JType<NiTestsError> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNiTestsError;';
+  String get signature => r'Lcom/example/test_plugin/NiTestsError;';
 }
 
-/// from: `NIHostIntegrationCoreApi`
+/// from: `com.example.test_plugin.NIHostIntegrationCoreApi`
 extension type NIHostIntegrationCoreApi._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIHostIntegrationCoreApi');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIHostIntegrationCoreApi',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIHostIntegrationCoreApi> type =
@@ -291,8 +295,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
     _noop(reference.pointer, _id_noop.pointer).check();
   }
 
-  static final _id_echoAllTypes = NIHostIntegrationCoreApi._class
-      .instanceMethodId(r'echoAllTypes', r'(LNIAllTypes;)LNIAllTypes;');
+  static final _id_echoAllTypes = NIHostIntegrationCoreApi._class.instanceMethodId(
+    r'echoAllTypes',
+    r'(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;',
+  );
 
   static final _echoAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -312,7 +318,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public fun echoAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes echoAllTypes(NIAllTypes nIAllTypes) {
     final _$nIAllTypes = nIAllTypes.reference;
@@ -883,7 +889,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?> echoEnumList(jni$_.JList<NIAnEnum?> list) {
     final _$list = list.reference;
@@ -918,7 +924,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public fun echoClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?> echoClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -955,7 +961,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> echoNonNullEnumList(jni$_.JList<NIAnEnum> list) {
     final _$list = list.reference;
@@ -990,7 +996,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes> echoNonNullClassList(
     jni$_.JList<NIAllNullableTypes> list,
@@ -1128,7 +1134,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?> echoEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -1162,7 +1168,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> echoClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map,
@@ -1273,7 +1279,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> echoNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum> map,
@@ -1310,7 +1316,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes> echoNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes> map,
@@ -1326,7 +1332,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoClassWrapper = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoClassWrapper',
-        r'(LNIAllClassesWrapper;)LNIAllClassesWrapper;',
+        r'(Lcom/example/test_plugin/NIAllClassesWrapper;)Lcom/example/test_plugin/NIAllClassesWrapper;',
       );
 
   static final _echoClassWrapper =
@@ -1347,7 +1353,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper`
+  /// from: `public fun echoClassWrapper(wrapper: com.example.test_plugin.NIAllClassesWrapper): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper echoClassWrapper(
     NIAllClassesWrapper nIAllClassesWrapper,
@@ -1362,7 +1368,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
 
   static final _id_echoEnum = NIHostIntegrationCoreApi._class.instanceMethodId(
     r'echoEnum',
-    r'(LNIAnEnum;)LNIAnEnum;',
+    r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _echoEnum =
@@ -1383,7 +1389,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public fun echoEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum echoEnum(NIAnEnum nIAnEnum) {
     final _$nIAnEnum = nIAnEnum.reference;
@@ -1397,7 +1403,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAnotherEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAnotherEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoAnotherEnum =
@@ -1418,7 +1424,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public fun echoAnotherEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum echoAnotherEnum(NIAnotherEnum nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum.reference;
@@ -1527,7 +1533,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAllNullableTypes = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAllNullableTypes',
-        r'(LNIAllNullableTypes;)LNIAllNullableTypes;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _echoAllNullableTypes =
@@ -1548,7 +1554,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public fun echoAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? echoAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -1565,7 +1571,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'echoAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _echoAllNullableTypesWithoutRecursion =
@@ -1586,7 +1592,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public fun echoAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
     NIAllNullableTypesWithoutRecursion? nIAllNullableTypesWithoutRecursion,
@@ -1603,7 +1609,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_extractNestedNullableString = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'extractNestedNullableString',
-        r'(LNIAllClassesWrapper;)Ljava/lang/String;',
+        r'(Lcom/example/test_plugin/NIAllClassesWrapper;)Ljava/lang/String;',
       );
 
   static final _extractNestedNullableString =
@@ -1624,7 +1630,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun extractNestedNullableString(wrapper: NIAllClassesWrapper): kotlin.String?`
+  /// from: `public fun extractNestedNullableString(wrapper: com.example.test_plugin.NIAllClassesWrapper): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? extractNestedNullableString(
     NIAllClassesWrapper nIAllClassesWrapper,
@@ -1640,7 +1646,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_createNestedNullableString = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'createNestedNullableString',
-        r'(Ljava/lang/String;)LNIAllClassesWrapper;',
+        r'(Ljava/lang/String;)Lcom/example/test_plugin/NIAllClassesWrapper;',
       );
 
   static final _createNestedNullableString =
@@ -1661,7 +1667,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): NIAllClassesWrapper`
+  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper createNestedNullableString(jni$_.JString? string) {
     final _$string = string?.reference ?? jni$_.jNullReference;
@@ -1675,7 +1681,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_sendMultipleNullableTypes = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'sendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _sendMultipleNullableTypes =
@@ -1704,7 +1710,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypes`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
@@ -1726,7 +1732,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_sendMultipleNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'sendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _sendMultipleNullableTypesWithoutRecursion =
@@ -1755,7 +1761,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
@@ -2138,7 +2144,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? echoNullableEnumList(jni$_.JList<NIAnEnum?>? list) {
     final _$list = list?.reference ?? jni$_.jNullReference;
@@ -2173,7 +2179,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? echoNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -2210,7 +2216,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum>? echoNullableNonNullEnumList(
     jni$_.JList<NIAnEnum>? list,
@@ -2248,7 +2254,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes>? echoNullableNonNullClassList(
     jni$_.JList<NIAllNullableTypes>? list,
@@ -2396,7 +2402,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -2433,7 +2439,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? echoNullableClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? map,
@@ -2545,7 +2551,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>?): kotlin.collections.Map<NIAnEnum, NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum>? map,
@@ -2582,7 +2588,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? echoNullableNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? map,
@@ -2596,7 +2602,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   }
 
   static final _id_echoNullableEnum = NIHostIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'echoNullableEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2616,7 +2625,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public fun echoNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? echoNullableEnum(NIAnEnum? nIAnEnum) {
     final _$nIAnEnum = nIAnEnum?.reference ?? jni$_.jNullReference;
@@ -2630,7 +2639,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAnotherNullableEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAnotherNullableEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoAnotherNullableEnum =
@@ -2651,7 +2660,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum?.reference ?? jni$_.jNullReference;
@@ -3462,7 +3471,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>> echoAsyncEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -3528,7 +3537,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>> echoAsyncClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -3792,7 +3801,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>> echoAsyncEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -3858,7 +3867,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>
   echoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map) async {
@@ -3896,11 +3905,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
         as jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>;
   }
 
-  static final _id_echoAsyncEnum = NIHostIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoAsyncEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncEnum = NIHostIntegrationCoreApi._class.instanceMethodId(
+    r'echoAsyncEnum',
+    r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
 
   static final _echoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -3923,7 +3931,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum> echoAsyncEnum(NIAnEnum nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -3962,7 +3970,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAnotherAsyncEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAnotherAsyncEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncEnum =
@@ -3986,7 +3994,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum> echoAnotherAsyncEnum(
     NIAnotherEnum nIAnotherEnum,
@@ -4214,7 +4222,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAsyncNIAllTypes = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAsyncNIAllTypes',
-        r'(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNIAllTypes =
@@ -4238,7 +4246,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public suspend fun echoAsyncNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllTypes> echoAsyncNIAllTypes(NIAllTypes nIAllTypes) async {
     final $p = jni$_.ReceivePort();
@@ -4277,7 +4285,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAsyncNullableNIAllNullableTypes =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypes',
-        r'(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypes =
@@ -4301,7 +4309,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypes?> echoAsyncNullableNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -4348,7 +4356,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAsyncNullableNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypesWithoutRecursion =
@@ -4372,7 +4380,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypesWithoutRecursion?>
   echoAsyncNullableNIAllNullableTypesWithoutRecursion(
@@ -5126,7 +5134,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>?> echoAsyncNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -5194,7 +5202,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>?> echoAsyncNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -5465,7 +5473,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>?> echoAsyncNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -5533,7 +5541,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?>
   echoAsyncNullableClassMap(
@@ -5578,7 +5586,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_echoAsyncNullableEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAsyncNullableEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnum =
@@ -5602,7 +5610,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum?> echoAsyncNullableEnum(NIAnEnum? nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -5644,7 +5652,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'echoAnotherAsyncNullableEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncNullableEnum =
@@ -5668,7 +5676,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum?> echoAnotherAsyncNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -5791,7 +5799,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoNIAllTypes = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'callFlutterEchoNIAllTypes',
-        r'(LNIAllTypes;)LNIAllTypes;',
+        r'(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;',
       );
 
   static final _callFlutterEchoNIAllTypes =
@@ -5812,7 +5820,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public fun callFlutterEchoNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes callFlutterEchoNIAllTypes(NIAllTypes nIAllTypes) {
     final _$nIAllTypes = nIAllTypes.reference;
@@ -5827,7 +5835,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoNIAllNullableTypes',
-        r'(LNIAllNullableTypes;)LNIAllNullableTypes;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _callFlutterEchoNIAllNullableTypes =
@@ -5848,7 +5856,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public fun callFlutterEchoNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? callFlutterEchoNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -5865,7 +5873,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterSendMultipleNullableTypes =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _callFlutterSendMultipleNullableTypes =
@@ -5894,7 +5902,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypes`
+  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes callFlutterSendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
@@ -5916,7 +5924,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterEchoNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _callFlutterEchoNIAllNullableTypesWithoutRecursion =
@@ -5937,7 +5945,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public fun callFlutterEchoNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion?
   callFlutterEchoNIAllNullableTypesWithoutRecursion(
@@ -5955,7 +5963,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterSendMultipleNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _callFlutterSendMultipleNullableTypesWithoutRecursion =
@@ -5984,7 +5992,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion
   callFlutterSendMultipleNullableTypesWithoutRecursion(
@@ -6318,7 +6326,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?> callFlutterEchoEnumList(jni$_.JList<NIAnEnum?> list) {
     final _$list = list.reference;
@@ -6353,7 +6361,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?> callFlutterEchoClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -6391,7 +6399,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> callFlutterEchoNonNullEnumList(
     jni$_.JList<NIAnEnum> list,
@@ -6429,7 +6437,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes> callFlutterEchoNonNullClassList(
     jni$_.JList<NIAllNullableTypes> list,
@@ -6577,7 +6585,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?> callFlutterEchoEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -6614,7 +6622,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> callFlutterEchoClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map,
@@ -6728,7 +6736,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> callFlutterEchoNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum> map,
@@ -6766,7 +6774,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes> callFlutterEchoNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes> map,
@@ -6780,7 +6788,10 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   }
 
   static final _id_callFlutterEchoEnum = NIHostIntegrationCoreApi._class
-      .instanceMethodId(r'callFlutterEchoEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'callFlutterEchoEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _callFlutterEchoEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6800,7 +6811,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public fun callFlutterEchoEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum callFlutterEchoEnum(NIAnEnum nIAnEnum) {
     final _$nIAnEnum = nIAnEnum.reference;
@@ -6815,7 +6826,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoNIAnotherEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _callFlutterEchoNIAnotherEnum =
@@ -6836,7 +6847,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public fun callFlutterEchoNIAnotherEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum callFlutterEchoNIAnotherEnum(NIAnotherEnum nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum.reference;
@@ -7185,7 +7196,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? callFlutterEchoNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -7223,7 +7234,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? callFlutterEchoNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -7260,7 +7271,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum>? callFlutterEchoNullableNonNullEnumList(
     jni$_.JList<NIAnEnum>? list,
@@ -7297,7 +7308,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
     jni$_.JList<NIAllNullableTypes>? list,
@@ -7448,7 +7459,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? callFlutterEchoNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -7486,7 +7497,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?
   callFlutterEchoNullableClassMap(
@@ -7599,7 +7610,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>?): kotlin.collections.Map<NIAnEnum, NIAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum>? callFlutterEchoNullableNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum>? map,
@@ -7636,7 +7647,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes>?
   callFlutterEchoNullableNonNullClassMap(
@@ -7653,7 +7664,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoNullableEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'callFlutterEchoNullableEnum',
-        r'(LNIAnEnum;)LNIAnEnum;',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
       );
 
   static final _callFlutterEchoNullableEnum =
@@ -7674,7 +7685,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public fun callFlutterEchoNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? callFlutterEchoNullableEnum(NIAnEnum? nIAnEnum) {
     final _$nIAnEnum = nIAnEnum?.reference ?? jni$_.jNullReference;
@@ -7689,7 +7700,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoAnotherNullableEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _callFlutterEchoAnotherNullableEnum =
@@ -7710,7 +7721,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? callFlutterEchoAnotherNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -7786,7 +7797,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNIAllTypes',
-        r'(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNIAllTypes =
@@ -7810,7 +7821,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public suspend fun callFlutterEchoAsyncNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllTypes> callFlutterEchoAsyncNIAllTypes(
     NIAllTypes nIAllTypes,
@@ -7851,7 +7862,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoAsyncNullableNIAllNullableTypes =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNIAllNullableTypes',
-        r'(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNIAllNullableTypes =
@@ -7875,7 +7886,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypes?>
   callFlutterEchoAsyncNullableNIAllNullableTypes(
@@ -7923,7 +7934,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion =
@@ -7947,7 +7958,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypesWithoutRecursion?>
   callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
@@ -8678,7 +8689,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>> callFlutterEchoAsyncEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -8745,7 +8756,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>> callFlutterEchoAsyncClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -8811,7 +8822,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>> callFlutterEchoAsyncNonNullEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -8877,7 +8888,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>>
   callFlutterEchoAsyncNonNullClassList(
@@ -9144,7 +9155,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>> callFlutterEchoAsyncEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -9211,7 +9222,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>
   callFlutterEchoAsyncClassMap(
@@ -9254,7 +9265,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoAsyncEnum = NIHostIntegrationCoreApi._class
       .instanceMethodId(
         r'callFlutterEchoAsyncEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncEnum =
@@ -9278,7 +9289,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum> callFlutterEchoAsyncEnum(NIAnEnum nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -9318,7 +9329,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoAnotherAsyncEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncEnum =
@@ -9342,7 +9353,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum> callFlutterEchoAnotherAsyncEnum(
     NIAnotherEnum nIAnotherEnum,
@@ -10161,7 +10172,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -10229,7 +10240,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>?>
   callFlutterEchoAsyncNullableClassList(
@@ -10298,7 +10309,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>?>
   callFlutterEchoAsyncNullableNonNullEnumList(
@@ -10367,7 +10378,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>?>
   callFlutterEchoAsyncNullableNonNullClassList(
@@ -10645,7 +10656,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>?>
   callFlutterEchoAsyncNullableEnumMap(
@@ -10714,7 +10725,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?>
   callFlutterEchoAsyncNullableClassMap(
@@ -10760,7 +10771,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableEnum =
@@ -10784,7 +10795,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum?> callFlutterEchoAsyncNullableEnum(
     NIAnEnum? nIAnEnum,
@@ -10827,7 +10838,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
   static final _id_callFlutterEchoAnotherAsyncNullableEnum =
       NIHostIntegrationCoreApi._class.instanceMethodId(
         r'callFlutterEchoAnotherAsyncNullableEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncNullableEnum =
@@ -10851,7 +10862,7 @@ extension NIHostIntegrationCoreApi$$Methods on NIHostIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -10986,14 +10997,14 @@ final class $NIHostIntegrationCoreApi$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIHostIntegrationCoreApi;';
+  String get signature => r'Lcom/example/test_plugin/NIHostIntegrationCoreApi;';
 }
 
-/// from: `NIHostIntegrationCoreApiRegistrar`
+/// from: `com.example.test_plugin.NIHostIntegrationCoreApiRegistrar`
 extension type NIHostIntegrationCoreApiRegistrar._(jni$_.JObject _$this)
     implements NIHostIntegrationCoreApi {
   static final _class = jni$_.JClass.forName(
-    r'NIHostIntegrationCoreApiRegistrar',
+    r'com/example/test_plugin/NIHostIntegrationCoreApiRegistrar',
   );
 
   /// The type which includes information such as the signature of this class.
@@ -11030,7 +11041,10 @@ extension type NIHostIntegrationCoreApiRegistrar._(jni$_.JObject _$this)
 extension NIHostIntegrationCoreApiRegistrar$$Methods
     on NIHostIntegrationCoreApiRegistrar {
   static final _id_get$api = NIHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'getApi', r'()LNIHostIntegrationCoreApi;');
+      .instanceMethodId(
+        r'getApi',
+        r'()Lcom/example/test_plugin/NIHostIntegrationCoreApi;',
+      );
 
   static final _get$api =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11048,7 +11062,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public final NIHostIntegrationCoreApi getApi()`
+  /// from: `public final com.example.test_plugin.NIHostIntegrationCoreApi getApi()`
   /// The returned object must be released after use, by calling the [release] method.
   NIHostIntegrationCoreApi? get api {
     return _get$api(
@@ -11058,7 +11072,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_set$api = NIHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'setApi', r'(LNIHostIntegrationCoreApi;)V');
+      .instanceMethodId(
+        r'setApi',
+        r'(Lcom/example/test_plugin/NIHostIntegrationCoreApi;)V',
+      );
 
   static final _set$api =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11078,7 +11095,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public final void setApi(NIHostIntegrationCoreApi nIHostIntegrationCoreApi)`
+  /// from: `public final void setApi(com.example.test_plugin.NIHostIntegrationCoreApi nIHostIntegrationCoreApi)`
   set api(NIHostIntegrationCoreApi? nIHostIntegrationCoreApi) {
     final _$nIHostIntegrationCoreApi =
         nIHostIntegrationCoreApi?.reference ?? jni$_.jNullReference;
@@ -11092,7 +11109,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_register = NIHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'register',
-        r'(LNIHostIntegrationCoreApi;Ljava/lang/String;)LNIHostIntegrationCoreApiRegistrar;',
+        r'(Lcom/example/test_plugin/NIHostIntegrationCoreApi;Ljava/lang/String;)Lcom/example/test_plugin/NIHostIntegrationCoreApiRegistrar;',
       );
 
   static final _register =
@@ -11116,7 +11133,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun register(api: NIHostIntegrationCoreApi, name: kotlin.String): NIHostIntegrationCoreApiRegistrar`
+  /// from: `public fun register(api: com.example.test_plugin.NIHostIntegrationCoreApi, name: kotlin.String): com.example.test_plugin.NIHostIntegrationCoreApiRegistrar`
   /// The returned object must be released after use, by calling the [release] method.
   NIHostIntegrationCoreApiRegistrar register(
     NIHostIntegrationCoreApi nIHostIntegrationCoreApi,
@@ -11135,7 +11152,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_getInstance = NIHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'getInstance',
-        r'(Ljava/lang/String;)LNIHostIntegrationCoreApiRegistrar;',
+        r'(Ljava/lang/String;)Lcom/example/test_plugin/NIHostIntegrationCoreApiRegistrar;',
       );
 
   static final _getInstance =
@@ -11156,7 +11173,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun getInstance(name: kotlin.String): NIHostIntegrationCoreApiRegistrar?`
+  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NIHostIntegrationCoreApiRegistrar?`
   /// The returned object must be released after use, by calling the [release] method.
   NIHostIntegrationCoreApiRegistrar? getInstance(jni$_.JString string) {
     final _$string = string.reference;
@@ -11192,7 +11209,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoAllTypes = NIHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoAllTypes', r'(LNIAllTypes;)LNIAllTypes;');
+      .instanceMethodId(
+        r'echoAllTypes',
+        r'(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;',
+      );
 
   static final _echoAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11212,7 +11232,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public fun echoAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes echoAllTypes(NIAllTypes nIAllTypes) {
     final _$nIAllTypes = nIAllTypes.reference;
@@ -11777,7 +11797,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?> echoEnumList(jni$_.JList<NIAnEnum?> list) {
     final _$list = list.reference;
@@ -11812,7 +11832,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public fun echoClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?> echoClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -11850,7 +11870,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> echoNonNullEnumList(jni$_.JList<NIAnEnum> list) {
     final _$list = list.reference;
@@ -11886,7 +11906,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes> echoNonNullClassList(
     jni$_.JList<NIAllNullableTypes> list,
@@ -12022,7 +12042,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?> echoEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -12056,7 +12076,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> echoClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map,
@@ -12168,7 +12188,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> echoNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum> map,
@@ -12206,7 +12226,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes> echoNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes> map,
@@ -12222,7 +12242,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoClassWrapper = NIHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoClassWrapper',
-        r'(LNIAllClassesWrapper;)LNIAllClassesWrapper;',
+        r'(Lcom/example/test_plugin/NIAllClassesWrapper;)Lcom/example/test_plugin/NIAllClassesWrapper;',
       );
 
   static final _echoClassWrapper =
@@ -12243,7 +12263,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper`
+  /// from: `public fun echoClassWrapper(wrapper: com.example.test_plugin.NIAllClassesWrapper): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper echoClassWrapper(
     NIAllClassesWrapper nIAllClassesWrapper,
@@ -12257,7 +12277,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoEnum = NIHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'echoEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _echoEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12277,7 +12300,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public fun echoEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum echoEnum(NIAnEnum nIAnEnum) {
     final _$nIAnEnum = nIAnEnum.reference;
@@ -12291,7 +12314,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAnotherEnum = NIHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAnotherEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoAnotherEnum =
@@ -12312,7 +12335,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public fun echoAnotherEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum echoAnotherEnum(NIAnotherEnum nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum.reference;
@@ -12424,7 +12447,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'echoAllNullableTypes',
-        r'(LNIAllNullableTypes;)LNIAllNullableTypes;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _echoAllNullableTypes =
@@ -12445,7 +12468,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public fun echoAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? echoAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -12462,7 +12485,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _echoAllNullableTypesWithoutRecursion =
@@ -12483,7 +12506,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public fun echoAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
     NIAllNullableTypesWithoutRecursion? nIAllNullableTypesWithoutRecursion,
@@ -12500,7 +12523,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_extractNestedNullableString =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'extractNestedNullableString',
-        r'(LNIAllClassesWrapper;)Ljava/lang/String;',
+        r'(Lcom/example/test_plugin/NIAllClassesWrapper;)Ljava/lang/String;',
       );
 
   static final _extractNestedNullableString =
@@ -12521,7 +12544,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun extractNestedNullableString(wrapper: NIAllClassesWrapper): kotlin.String?`
+  /// from: `public fun extractNestedNullableString(wrapper: com.example.test_plugin.NIAllClassesWrapper): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JString? extractNestedNullableString(
     NIAllClassesWrapper nIAllClassesWrapper,
@@ -12537,7 +12560,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_createNestedNullableString =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'createNestedNullableString',
-        r'(Ljava/lang/String;)LNIAllClassesWrapper;',
+        r'(Ljava/lang/String;)Lcom/example/test_plugin/NIAllClassesWrapper;',
       );
 
   static final _createNestedNullableString =
@@ -12558,7 +12581,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): NIAllClassesWrapper`
+  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper createNestedNullableString(jni$_.JString? string) {
     final _$string = string?.reference ?? jni$_.jNullReference;
@@ -12573,7 +12596,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'sendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _sendMultipleNullableTypes =
@@ -12602,7 +12625,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypes`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
@@ -12624,7 +12647,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_sendMultipleNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'sendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _sendMultipleNullableTypesWithoutRecursion =
@@ -12653,7 +12676,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
@@ -13041,7 +13064,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? echoNullableEnumList(jni$_.JList<NIAnEnum?>? list) {
     final _$list = list?.reference ?? jni$_.jNullReference;
@@ -13077,7 +13100,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? echoNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -13114,7 +13137,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum>? echoNullableNonNullEnumList(
     jni$_.JList<NIAnEnum>? list,
@@ -13151,7 +13174,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes>? echoNullableNonNullClassList(
     jni$_.JList<NIAllNullableTypes>? list,
@@ -13301,7 +13324,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -13339,7 +13362,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? echoNullableClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? map,
@@ -13451,7 +13474,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>?): kotlin.collections.Map<NIAnEnum, NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum>? map,
@@ -13488,7 +13511,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? echoNullableNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? map,
@@ -13502,7 +13525,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoNullableEnum = NIHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'echoNullableEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13522,7 +13548,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public fun echoNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? echoNullableEnum(NIAnEnum? nIAnEnum) {
     final _$nIAnEnum = nIAnEnum?.reference ?? jni$_.jNullReference;
@@ -13537,7 +13563,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'echoAnotherNullableEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoAnotherNullableEnum =
@@ -13558,7 +13584,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum?.reference ?? jni$_.jNullReference;
@@ -14373,7 +14399,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>> echoAsyncEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -14439,7 +14465,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>> echoAsyncClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -14703,7 +14729,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>> echoAsyncEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -14769,7 +14795,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>
   echoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map) async {
@@ -14810,7 +14836,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAsyncEnum = NIHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnum =
@@ -14834,7 +14860,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum> echoAsyncEnum(NIAnEnum nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -14874,7 +14900,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'echoAnotherAsyncEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncEnum =
@@ -14898,7 +14924,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum> echoAnotherAsyncEnum(
     NIAnotherEnum nIAnotherEnum,
@@ -15129,7 +15155,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'echoAsyncNIAllTypes',
-        r'(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNIAllTypes =
@@ -15153,7 +15179,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public suspend fun echoAsyncNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllTypes> echoAsyncNIAllTypes(NIAllTypes nIAllTypes) async {
     final $p = jni$_.ReceivePort();
@@ -15192,7 +15218,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAsyncNullableNIAllNullableTypes =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypes',
-        r'(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypes =
@@ -15216,7 +15242,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypes?> echoAsyncNullableNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -15263,7 +15289,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAsyncNullableNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypesWithoutRecursion =
@@ -15287,7 +15313,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypesWithoutRecursion?>
   echoAsyncNullableNIAllNullableTypesWithoutRecursion(
@@ -16047,7 +16073,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>?> echoAsyncNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -16115,7 +16141,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>?> echoAsyncNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -16389,7 +16415,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>?> echoAsyncNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -16458,7 +16484,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?>
   echoAsyncNullableClassMap(
@@ -16504,7 +16530,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'echoAsyncNullableEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnum =
@@ -16528,7 +16554,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum?> echoAsyncNullableEnum(NIAnEnum? nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -16569,7 +16595,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAnotherAsyncNullableEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAnotherAsyncNullableEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncNullableEnum =
@@ -16593,7 +16619,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum?> echoAnotherAsyncNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -16720,7 +16746,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'callFlutterEchoNIAllTypes',
-        r'(LNIAllTypes;)LNIAllTypes;',
+        r'(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;',
       );
 
   static final _callFlutterEchoNIAllTypes =
@@ -16741,7 +16767,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public fun callFlutterEchoNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes callFlutterEchoNIAllTypes(NIAllTypes nIAllTypes) {
     final _$nIAllTypes = nIAllTypes.reference;
@@ -16755,7 +16781,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoNIAllNullableTypes =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNIAllNullableTypes',
-        r'(LNIAllNullableTypes;)LNIAllNullableTypes;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _callFlutterEchoNIAllNullableTypes =
@@ -16776,7 +16802,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public fun callFlutterEchoNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? callFlutterEchoNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -16793,7 +16819,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterSendMultipleNullableTypes =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _callFlutterSendMultipleNullableTypes =
@@ -16822,7 +16848,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypes`
+  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes callFlutterSendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
@@ -16844,7 +16870,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _callFlutterEchoNIAllNullableTypesWithoutRecursion =
@@ -16865,7 +16891,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public fun callFlutterEchoNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion?
   callFlutterEchoNIAllNullableTypesWithoutRecursion(
@@ -16883,7 +16909,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterSendMultipleNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _callFlutterSendMultipleNullableTypesWithoutRecursion =
@@ -16912,7 +16938,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion
   callFlutterSendMultipleNullableTypesWithoutRecursion(
@@ -17257,7 +17283,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?> callFlutterEchoEnumList(jni$_.JList<NIAnEnum?> list) {
     final _$list = list.reference;
@@ -17293,7 +17319,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?> callFlutterEchoClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -17330,7 +17356,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> callFlutterEchoNonNullEnumList(
     jni$_.JList<NIAnEnum> list,
@@ -17367,7 +17393,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes> callFlutterEchoNonNullClassList(
     jni$_.JList<NIAllNullableTypes> list,
@@ -17518,7 +17544,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?> callFlutterEchoEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -17556,7 +17582,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> callFlutterEchoClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map,
@@ -17667,7 +17693,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> callFlutterEchoNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum> map,
@@ -17704,7 +17730,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes> callFlutterEchoNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes> map,
@@ -17719,7 +17745,10 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
 
   static final _id_callFlutterEchoEnum = NIHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'callFlutterEchoEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _callFlutterEchoEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -17739,7 +17768,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public fun callFlutterEchoEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum callFlutterEchoEnum(NIAnEnum nIAnEnum) {
     final _$nIAnEnum = nIAnEnum.reference;
@@ -17753,7 +17782,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoNIAnotherEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNIAnotherEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _callFlutterEchoNIAnotherEnum =
@@ -17774,7 +17803,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public fun callFlutterEchoNIAnotherEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum callFlutterEchoNIAnotherEnum(NIAnotherEnum nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum.reference;
@@ -18128,7 +18157,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? callFlutterEchoNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -18165,7 +18194,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? callFlutterEchoNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -18202,7 +18231,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum>? callFlutterEchoNullableNonNullEnumList(
     jni$_.JList<NIAnEnum>? list,
@@ -18239,7 +18268,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
     jni$_.JList<NIAllNullableTypes>? list,
@@ -18387,7 +18416,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? callFlutterEchoNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -18424,7 +18453,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?
   callFlutterEchoNullableClassMap(
@@ -18537,7 +18566,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>?): kotlin.collections.Map<NIAnEnum, NIAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum>? callFlutterEchoNullableNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum>? map,
@@ -18574,7 +18603,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes>?
   callFlutterEchoNullableNonNullClassMap(
@@ -18591,7 +18620,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoNullableEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableEnum',
-        r'(LNIAnEnum;)LNIAnEnum;',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
       );
 
   static final _callFlutterEchoNullableEnum =
@@ -18612,7 +18641,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public fun callFlutterEchoNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? callFlutterEchoNullableEnum(NIAnEnum? nIAnEnum) {
     final _$nIAnEnum = nIAnEnum?.reference ?? jni$_.jNullReference;
@@ -18626,7 +18655,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAnotherNullableEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAnotherNullableEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _callFlutterEchoAnotherNullableEnum =
@@ -18647,7 +18676,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? callFlutterEchoAnotherNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -18723,7 +18752,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncNIAllTypes =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNIAllTypes',
-        r'(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNIAllTypes =
@@ -18747,7 +18776,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public suspend fun callFlutterEchoAsyncNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllTypes> callFlutterEchoAsyncNIAllTypes(
     NIAllTypes nIAllTypes,
@@ -18788,7 +18817,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncNullableNIAllNullableTypes =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNIAllNullableTypes',
-        r'(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNIAllNullableTypes =
@@ -18812,7 +18841,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypes?>
   callFlutterEchoAsyncNullableNIAllNullableTypes(
@@ -18860,7 +18889,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion =
@@ -18884,7 +18913,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypesWithoutRecursion?>
   callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(
@@ -19613,7 +19642,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>> callFlutterEchoAsyncEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -19679,7 +19708,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>> callFlutterEchoAsyncClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -19745,7 +19774,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>> callFlutterEchoAsyncNonNullEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -19811,7 +19840,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>>
   callFlutterEchoAsyncNonNullClassList(
@@ -20078,7 +20107,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>> callFlutterEchoAsyncEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -20144,7 +20173,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>
   callFlutterEchoAsyncClassMap(
@@ -20188,7 +20217,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncEnum =
@@ -20212,7 +20241,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum> callFlutterEchoAsyncEnum(NIAnEnum nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -20251,7 +20280,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAnotherAsyncEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAnotherAsyncEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncEnum =
@@ -20275,7 +20304,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum> callFlutterEchoAnotherAsyncEnum(
     NIAnotherEnum nIAnotherEnum,
@@ -21087,7 +21116,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -21155,7 +21184,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>?>
   callFlutterEchoAsyncNullableClassList(
@@ -21224,7 +21253,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>?>
   callFlutterEchoAsyncNullableNonNullEnumList(
@@ -21293,7 +21322,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>?>
   callFlutterEchoAsyncNullableNonNullClassList(
@@ -21569,7 +21598,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>?>
   callFlutterEchoAsyncNullableEnumMap(
@@ -21638,7 +21667,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?>
   callFlutterEchoAsyncNullableClassMap(
@@ -21683,7 +21712,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncNullableEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableEnum =
@@ -21707,7 +21736,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum?> callFlutterEchoAsyncNullableEnum(
     NIAnEnum? nIAnEnum,
@@ -21750,7 +21779,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAnotherAsyncNullableEnum =
       NIHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAnotherAsyncNullableEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncNullableEnum =
@@ -21774,7 +21803,7 @@ extension NIHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -21909,13 +21938,16 @@ final class $NIHostIntegrationCoreApiRegistrar$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIHostIntegrationCoreApiRegistrar;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIHostIntegrationCoreApiRegistrar;';
 }
 
-/// from: `NIFlutterIntegrationCoreApi`
+/// from: `com.example.test_plugin.NIFlutterIntegrationCoreApi`
 extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIFlutterIntegrationCoreApi');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIFlutterIntegrationCoreApi',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIFlutterIntegrationCoreApi> type =
@@ -21973,7 +22005,8 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         _$impls[$p]!.throwErrorFromVoid();
         return jni$_.nullptr;
       }
-      if ($d == r'echoNIAllTypes(LNIAllTypes;)LNIAllTypes;') {
+      if ($d ==
+          r'echoNIAllTypes(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;') {
         final $r = _$impls[$p]!.echoNIAllTypes(($a![0] as NIAllTypes));
         return ($r as jni$_.JObject?)
                 ?.as(const jni$_.$JObject$Type$())
@@ -21982,7 +22015,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoNIAllNullableTypes(LNIAllNullableTypes;)LNIAllNullableTypes;') {
+          r'echoNIAllNullableTypes(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;') {
         final $r = _$impls[$p]!.echoNIAllNullableTypes(
           ($a![0] as NIAllNullableTypes?),
         );
@@ -21993,7 +22026,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;') {
+          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;') {
         final $r = _$impls[$p]!.sendMultipleNullableTypes(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
@@ -22006,7 +22039,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoNIAllNullableTypesWithoutRecursion(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;') {
+          r'echoNIAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;') {
         final $r = _$impls[$p]!.echoNIAllNullableTypesWithoutRecursion(
           ($a![0] as NIAllNullableTypesWithoutRecursion?),
         );
@@ -22017,7 +22050,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;') {
+          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;') {
         final $r = _$impls[$p]!.sendMultipleNullableTypesWithoutRecursion(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
@@ -22227,7 +22260,8 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
                 .toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoEnum(LNIAnEnum;)LNIAnEnum;') {
+      if ($d ==
+          r'echoEnum(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;') {
         final $r = _$impls[$p]!.echoEnum(($a![0] as NIAnEnum));
         return ($r as jni$_.JObject?)
                 ?.as(const jni$_.$JObject$Type$())
@@ -22235,7 +22269,8 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
                 .toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoNIAnotherEnum(LNIAnotherEnum;)LNIAnotherEnum;') {
+      if ($d ==
+          r'echoNIAnotherEnum(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;') {
         final $r = _$impls[$p]!.echoNIAnotherEnum(($a![0] as NIAnotherEnum));
         return ($r as jni$_.JObject?)
                 ?.as(const jni$_.$JObject$Type$())
@@ -22459,7 +22494,8 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
                 .toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoNullableEnum(LNIAnEnum;)LNIAnEnum;') {
+      if ($d ==
+          r'echoNullableEnum(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;') {
         final $r = _$impls[$p]!.echoNullableEnum(($a![0] as NIAnEnum?));
         return ($r as jni$_.JObject?)
                 ?.as(const jni$_.$JObject$Type$())
@@ -22467,7 +22503,8 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
                 .toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoAnotherNullableEnum(LNIAnotherEnum;)LNIAnotherEnum;') {
+      if ($d ==
+          r'echoAnotherNullableEnum(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;') {
         final $r = _$impls[$p]!.echoAnotherNullableEnum(
           ($a![0] as NIAnotherEnum?),
         );
@@ -22500,7 +22537,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNIAllTypes(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNIAllTypes(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -22514,7 +22551,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNullableNIAllNullableTypes(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableNIAllNullableTypes(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -22530,7 +22567,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNullableNIAllNullableTypesWithoutRecursion(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableNIAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -22838,7 +22875,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncEnum(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncEnum(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r = jni$_.KotlinContinuation.fromReference(
           ($a![1] as jni$_.JObject).reference,
         ).resumeWithFuture(_$impls[$p]!.echoAsyncEnum(($a![0] as NIAnEnum)));
@@ -22849,7 +22886,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAnotherAsyncEnum(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAnotherAsyncEnum(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -23157,7 +23194,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNullableEnum(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableEnum(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -23171,7 +23208,7 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAnotherAsyncNullableEnum(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAnotherAsyncNullableEnum(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final $r =
             jni$_.KotlinContinuation.fromReference(
               ($a![1] as jni$_.JObject).reference,
@@ -23207,10 +23244,15 @@ extension type NIFlutterIntegrationCoreApi._(jni$_.JObject _$this)
       final $r = _$invokeMethod($p.sendPort.nativePort, $i);
       jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
     });
-    implementer.add(r'NIFlutterIntegrationCoreApi', $p, _$invokePointer, [
-      if ($impl.noop$async) r'noop()V',
-      if ($impl.throwErrorFromVoid$async) r'throwErrorFromVoid()V',
-    ]);
+    implementer.add(
+      r'com.example.test_plugin.NIFlutterIntegrationCoreApi',
+      $p,
+      _$invokePointer,
+      [
+        if ($impl.noop$async) r'noop()V',
+        if ($impl.throwErrorFromVoid$async) r'throwErrorFromVoid()V',
+      ],
+    );
     final $a = $p.sendPort.nativePort;
     _$impls[$a] = $impl;
   }
@@ -23335,7 +23377,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   }
 
   static final _id_echoNIAllTypes = NIFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNIAllTypes', r'(LNIAllTypes;)LNIAllTypes;');
+      .instanceMethodId(
+        r'echoNIAllTypes',
+        r'(Lcom/example/test_plugin/NIAllTypes;)Lcom/example/test_plugin/NIAllTypes;',
+      );
 
   static final _echoNIAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -23355,7 +23400,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public fun echoNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes echoNIAllTypes(NIAllTypes nIAllTypes) {
     final _$nIAllTypes = nIAllTypes.reference;
@@ -23369,7 +23414,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoNIAllNullableTypes = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoNIAllNullableTypes',
-        r'(LNIAllNullableTypes;)LNIAllNullableTypes;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _echoNIAllNullableTypes =
@@ -23390,7 +23435,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public fun echoNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? echoNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -23408,7 +23453,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'sendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypes;',
       );
 
   static final _sendMultipleNullableTypes =
@@ -23437,7 +23482,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypes`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
@@ -23459,7 +23504,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoNIAllNullableTypesWithoutRecursion =
       NIFlutterIntegrationCoreApi._class.instanceMethodId(
         r'echoNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _echoNIAllNullableTypesWithoutRecursion =
@@ -23480,7 +23525,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public fun echoNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion? echoNIAllNullableTypesWithoutRecursion(
     NIAllNullableTypesWithoutRecursion? nIAllNullableTypesWithoutRecursion,
@@ -23497,7 +23542,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_sendMultipleNullableTypesWithoutRecursion =
       NIFlutterIntegrationCoreApi._class.instanceMethodId(
         r'sendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _sendMultipleNullableTypesWithoutRecursion =
@@ -23526,7 +23571,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
@@ -23847,7 +23892,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?> echoEnumList(jni$_.JList<NIAnEnum?> list) {
     final _$list = list.reference;
@@ -23882,7 +23927,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public fun echoClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?> echoClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -23919,7 +23964,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> echoNonNullEnumList(jni$_.JList<NIAnEnum> list) {
     final _$list = list.reference;
@@ -23954,7 +23999,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes> echoNonNullClassList(
     jni$_.JList<NIAllNullableTypes> list,
@@ -24090,7 +24135,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?> echoEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -24124,7 +24169,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> echoClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map,
@@ -24235,7 +24280,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> echoNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum> map,
@@ -24272,7 +24317,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>`
+  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes> echoNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes> map,
@@ -24285,8 +24330,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
     ).object<jni$_.JMap<jni$_.JLong, NIAllNullableTypes>>();
   }
 
-  static final _id_echoEnum = NIFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoEnum', r'(LNIAnEnum;)LNIAnEnum;');
+  static final _id_echoEnum = NIFlutterIntegrationCoreApi._class.instanceMethodId(
+    r'echoEnum',
+    r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+  );
 
   static final _echoEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -24306,7 +24353,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public fun echoEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum echoEnum(NIAnEnum nIAnEnum) {
     final _$nIAnEnum = nIAnEnum.reference;
@@ -24320,7 +24367,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoNIAnotherEnum = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoNIAnotherEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoNIAnotherEnum =
@@ -24341,7 +24388,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public fun echoNIAnotherEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum echoNIAnotherEnum(NIAnotherEnum nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum.reference;
@@ -24681,7 +24728,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? echoNullableEnumList(jni$_.JList<NIAnEnum?>? list) {
     final _$list = list?.reference ?? jni$_.jNullReference;
@@ -24716,7 +24763,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? echoNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -24754,7 +24801,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum>? echoNullableNonNullEnumList(
     jni$_.JList<NIAnEnum>? list,
@@ -24792,7 +24839,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes>? echoNullableNonNullClassList(
     jni$_.JList<NIAllNullableTypes>? list,
@@ -24940,7 +24987,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -24977,7 +25024,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? echoNullableClassMap(
     jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? map,
@@ -25091,7 +25138,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>?): kotlin.collections.Map<NIAnEnum, NIAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
     jni$_.JMap<NIAnEnum, NIAnEnum>? map,
@@ -25129,7 +25176,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, NIAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? echoNullableNonNullClassMap(
     jni$_.JMap<jni$_.JLong, NIAllNullableTypes>? map,
@@ -25143,7 +25190,10 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   }
 
   static final _id_echoNullableEnum = NIFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableEnum', r'(LNIAnEnum;)LNIAnEnum;');
+      .instanceMethodId(
+        r'echoNullableEnum',
+        r'(Lcom/example/test_plugin/NIAnEnum;)Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -25163,7 +25213,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public fun echoNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? echoNullableEnum(NIAnEnum? nIAnEnum) {
     final _$nIAnEnum = nIAnEnum?.reference ?? jni$_.jNullReference;
@@ -25177,7 +25227,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAnotherNullableEnum = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAnotherNullableEnum',
-        r'(LNIAnotherEnum;)LNIAnotherEnum;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;)Lcom/example/test_plugin/NIAnotherEnum;',
       );
 
   static final _echoAnotherNullableEnum =
@@ -25198,7 +25248,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? nIAnotherEnum) {
     final _$nIAnotherEnum = nIAnotherEnum?.reference ?? jni$_.jNullReference;
@@ -25335,7 +25385,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAsyncNIAllTypes = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAsyncNIAllTypes',
-        r'(LNIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNIAllTypes =
@@ -25359,7 +25409,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes`
+  /// from: `public suspend fun echoAsyncNIAllTypes(everything: com.example.test_plugin.NIAllTypes): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllTypes> echoAsyncNIAllTypes(NIAllTypes nIAllTypes) async {
     final $p = jni$_.ReceivePort();
@@ -25398,7 +25448,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAsyncNullableNIAllNullableTypes =
       NIFlutterIntegrationCoreApi._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypes',
-        r'(LNIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypes =
@@ -25422,7 +25472,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypes(everything: com.example.test_plugin.NIAllNullableTypes?): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypes?> echoAsyncNullableNIAllNullableTypes(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -25469,7 +25519,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAsyncNullableNIAllNullableTypesWithoutRecursion =
       NIFlutterIntegrationCoreApi._class.instanceMethodId(
         r'echoAsyncNullableNIAllNullableTypesWithoutRecursion',
-        r'(LNIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNIAllNullableTypesWithoutRecursion =
@@ -25493,7 +25543,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAllNullableTypesWithoutRecursion?>
   echoAsyncNullableNIAllNullableTypesWithoutRecursion(
@@ -26210,7 +26260,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<NIAnEnum?>): kotlin.collections.List<NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>> echoAsyncEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -26276,7 +26326,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<NIAllNullableTypes?>): kotlin.collections.List<NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>> echoAsyncClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -26342,7 +26392,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>): kotlin.collections.List<NIAnEnum>`
+  /// from: `public suspend fun echoAsyncNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>> echoAsyncNonNullEnumList(
     jni$_.JList<NIAnEnum?> list,
@@ -26409,7 +26459,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>): kotlin.collections.List<NIAllNullableTypes>`
+  /// from: `public suspend fun echoAsyncNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>> echoAsyncNonNullClassList(
     jni$_.JList<NIAllNullableTypes?> list,
@@ -26673,7 +26723,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>> echoAsyncEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?> map,
@@ -26739,7 +26789,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>>
   echoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?> map) async {
@@ -26780,7 +26830,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAsyncEnum = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAsyncEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnum =
@@ -26804,7 +26854,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: com.example.test_plugin.NIAnEnum): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum> echoAsyncEnum(NIAnEnum nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -26843,7 +26893,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAnotherAsyncEnum = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAnotherAsyncEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncEnum =
@@ -26867,7 +26917,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum> echoAnotherAsyncEnum(
     NIAnotherEnum nIAnotherEnum,
@@ -27618,7 +27668,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<NIAnEnum?>?): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum?>?> echoAsyncNullableEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -27687,7 +27737,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<NIAllNullableTypes?>?): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes?>?> echoAsyncNullableClassList(
     jni$_.JList<NIAllNullableTypes?>? list,
@@ -27755,7 +27805,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<NIAnEnum>?): kotlin.collections.List<NIAnEnum>?`
+  /// from: `public suspend fun echoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>?): kotlin.collections.List<com.example.test_plugin.NIAnEnum>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAnEnum>?> echoAsyncNullableNonNullEnumList(
     jni$_.JList<NIAnEnum?>? list,
@@ -27823,7 +27873,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNonNullClassList(classList: kotlin.collections.List<NIAllNullableTypes>?): kotlin.collections.List<NIAllNullableTypes>?`
+  /// from: `public suspend fun echoAsyncNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JList<NIAllNullableTypes>?>
   echoAsyncNullableNonNullClassList(
@@ -28096,7 +28146,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<NIAnEnum?, NIAnEnum?>?> echoAsyncNullableEnumMap(
     jni$_.JMap<NIAnEnum?, NIAnEnum?>? map,
@@ -28165,7 +28215,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>?>
   echoAsyncNullableClassMap(
@@ -28210,7 +28260,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
   static final _id_echoAsyncNullableEnum = NIFlutterIntegrationCoreApi._class
       .instanceMethodId(
         r'echoAsyncNullableEnum',
-        r'(LNIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnum =
@@ -28234,7 +28284,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: com.example.test_plugin.NIAnEnum?): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnEnum?> echoAsyncNullableEnum(NIAnEnum? nIAnEnum) async {
     final $p = jni$_.ReceivePort();
@@ -28276,7 +28326,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
       ._class
       .instanceMethodId(
         r'echoAnotherAsyncNullableEnum',
-        r'(LNIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(Lcom/example/test_plugin/NIAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncNullableEnum =
@@ -28300,7 +28350,7 @@ extension NIFlutterIntegrationCoreApi$$Methods on NIFlutterIntegrationCoreApi {
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NIAnotherEnum?): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<NIAnotherEnum?> echoAnotherAsyncNullableEnum(
     NIAnotherEnum? nIAnotherEnum,
@@ -30078,14 +30128,15 @@ final class $NIFlutterIntegrationCoreApi$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIFlutterIntegrationCoreApi;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIFlutterIntegrationCoreApi;';
 }
 
-/// from: `NIFlutterIntegrationCoreApiRegistrar`
+/// from: `com.example.test_plugin.NIFlutterIntegrationCoreApiRegistrar`
 extension type NIFlutterIntegrationCoreApiRegistrar._(jni$_.JObject _$this)
     implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'NIFlutterIntegrationCoreApiRegistrar',
+    r'com/example/test_plugin/NIFlutterIntegrationCoreApiRegistrar',
   );
 
   /// The type which includes information such as the signature of this class.
@@ -30125,7 +30176,7 @@ extension NIFlutterIntegrationCoreApiRegistrar$$Methods
       ._class
       .instanceMethodId(
         r'registerInstance',
-        r'(LNIFlutterIntegrationCoreApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NIFlutterIntegrationCoreApi;Ljava/lang/String;)V',
       );
 
   static final _registerInstance =
@@ -30149,7 +30200,7 @@ extension NIFlutterIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: NIFlutterIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NIFlutterIntegrationCoreApi, name: kotlin.String): kotlin.Unit`
   void registerInstance(
     NIFlutterIntegrationCoreApi nIFlutterIntegrationCoreApi,
     jni$_.JString string,
@@ -30167,7 +30218,7 @@ extension NIFlutterIntegrationCoreApiRegistrar$$Methods
   static final _id_getInstance = NIFlutterIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'getInstance',
-        r'(Ljava/lang/String;)LNIFlutterIntegrationCoreApi;',
+        r'(Ljava/lang/String;)Lcom/example/test_plugin/NIFlutterIntegrationCoreApi;',
       );
 
   static final _getInstance =
@@ -30188,7 +30239,7 @@ extension NIFlutterIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun getInstance(name: kotlin.String): NIFlutterIntegrationCoreApi?`
+  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NIFlutterIntegrationCoreApi?`
   /// The returned object must be released after use, by calling the [release] method.
   NIFlutterIntegrationCoreApi? getInstance(jni$_.JString string) {
     final _$string = string.reference;
@@ -30207,13 +30258,16 @@ final class $NIFlutterIntegrationCoreApiRegistrar$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIFlutterIntegrationCoreApiRegistrar;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIFlutterIntegrationCoreApiRegistrar;';
 }
 
-/// from: `NIUnusedClass$Companion`
+/// from: `com.example.test_plugin.NIUnusedClass$Companion`
 extension type NIUnusedClass$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIUnusedClass$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIUnusedClass$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIUnusedClass$Companion> type =
@@ -30256,7 +30310,7 @@ extension type NIUnusedClass$Companion._(jni$_.JObject _$this)
 extension NIUnusedClass$Companion$$Methods on NIUnusedClass$Companion {
   static final _id_fromList = NIUnusedClass$Companion._class.instanceMethodId(
     r'fromList',
-    r'(Ljava/util/List;)LNIUnusedClass;',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NIUnusedClass;',
   );
 
   static final _fromList =
@@ -30277,7 +30331,7 @@ extension NIUnusedClass$Companion$$Methods on NIUnusedClass$Companion {
             )
           >();
 
-  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): NIUnusedClass`
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NIUnusedClass`
   /// The returned object must be released after use, by calling the [release] method.
   NIUnusedClass fromList(jni$_.JList<jni$_.JObject?> list) {
     final _$list = list.reference;
@@ -30296,21 +30350,23 @@ final class $NIUnusedClass$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIUnusedClass$Companion;';
+  String get signature => r'Lcom/example/test_plugin/NIUnusedClass$Companion;';
 }
 
-/// from: `NIUnusedClass`
+/// from: `com.example.test_plugin.NIUnusedClass`
 extension type NIUnusedClass._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIUnusedClass');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIUnusedClass',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIUnusedClass> type = $NIUnusedClass$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIUnusedClass$Companion;',
+    r'Lcom/example/test_plugin/NIUnusedClass$Companion;',
   );
 
-  /// from: `static public final NIUnusedClass$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIUnusedClass$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIUnusedClass$Companion get Companion =>
       _id_Companion.get(_class, NIUnusedClass$Companion.type)
@@ -30576,7 +30632,7 @@ extension NIUnusedClass$$Methods on NIUnusedClass {
 
   static final _id_copy = NIUnusedClass._class.instanceMethodId(
     r'copy',
-    r'(Ljava/lang/Object;)LNIUnusedClass;',
+    r'(Ljava/lang/Object;)Lcom/example/test_plugin/NIUnusedClass;',
   );
 
   static final _copy =
@@ -30597,7 +30653,7 @@ extension NIUnusedClass$$Methods on NIUnusedClass {
             )
           >();
 
-  /// from: `public fun copy(aField: kotlin.Any?): NIUnusedClass`
+  /// from: `public fun copy(aField: kotlin.Any?): com.example.test_plugin.NIUnusedClass`
   /// The returned object must be released after use, by calling the [release] method.
   NIUnusedClass copy(jni$_.JObject? object) {
     final _$object = object?.reference ?? jni$_.jNullReference;
@@ -30645,13 +30701,15 @@ final class $NIUnusedClass$Type$ extends jni$_.JType<NIUnusedClass> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIUnusedClass;';
+  String get signature => r'Lcom/example/test_plugin/NIUnusedClass;';
 }
 
-/// from: `NIAllTypes$Companion`
+/// from: `com.example.test_plugin.NIAllTypes$Companion`
 extension type NIAllTypes$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllTypes$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllTypes$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllTypes$Companion> type =
@@ -30694,7 +30752,7 @@ extension type NIAllTypes$Companion._(jni$_.JObject _$this)
 extension NIAllTypes$Companion$$Methods on NIAllTypes$Companion {
   static final _id_fromList = NIAllTypes$Companion._class.instanceMethodId(
     r'fromList',
-    r'(Ljava/util/List;)LNIAllTypes;',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NIAllTypes;',
   );
 
   static final _fromList =
@@ -30715,7 +30773,7 @@ extension NIAllTypes$Companion$$Methods on NIAllTypes$Companion {
             )
           >();
 
-  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): NIAllTypes`
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes fromList(jni$_.JList<jni$_.JObject?> list) {
     final _$list = list.reference;
@@ -30734,28 +30792,30 @@ final class $NIAllTypes$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllTypes$Companion;';
+  String get signature => r'Lcom/example/test_plugin/NIAllTypes$Companion;';
 }
 
-/// from: `NIAllTypes`
+/// from: `com.example.test_plugin.NIAllTypes`
 extension type NIAllTypes._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllTypes');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllTypes',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllTypes> type = $NIAllTypes$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAllTypes$Companion;',
+    r'Lcom/example/test_plugin/NIAllTypes$Companion;',
   );
 
-  /// from: `static public final NIAllTypes$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAllTypes$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAllTypes$Companion get Companion =>
       _id_Companion.get(_class, NIAllTypes$Companion.type)
           as NIAllTypes$Companion;
 
   static final _id_new$ = _class.constructorId(
-    r'(ZJJD[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
+    r'(ZJJD[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
   );
 
   static final _new$ =
@@ -30834,7 +30894,7 @@ extension type NIAllTypes._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `public void <init>(boolean z, long j, long j1, double d, byte[] bs, int[] is, long[] js, double[] ds, NIAnEnum nIAnEnum, NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<NIAnEnum, ? extends NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
+  /// from: `public void <init>(boolean z, long j, long j1, double d, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NIAnEnum nIAnEnum, com.example.test_plugin.NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends com.example.test_plugin.NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<com.example.test_plugin.NIAnEnum, ? extends com.example.test_plugin.NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllTypes(
     core$_.bool z,
@@ -31152,7 +31212,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
 
   static final _id_get$anEnum = NIAllTypes._class.instanceMethodId(
     r'getAnEnum',
-    r'()LNIAnEnum;',
+    r'()Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _get$anEnum =
@@ -31171,7 +31231,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public final NIAnEnum getAnEnum()`
+  /// from: `public final com.example.test_plugin.NIAnEnum getAnEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum get anEnum {
     return _get$anEnum(
@@ -31182,7 +31242,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
 
   static final _id_get$anotherEnum = NIAllTypes._class.instanceMethodId(
     r'getAnotherEnum',
-    r'()LNIAnotherEnum;',
+    r'()Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _get$anotherEnum =
@@ -31201,7 +31261,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public final NIAnotherEnum getAnotherEnum()`
+  /// from: `public final com.example.test_plugin.NIAnotherEnum getAnotherEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum get anotherEnum {
     return _get$anotherEnum(
@@ -31441,7 +31501,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public final java.util.List<NIAnEnum> getEnumList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAnEnum> getEnumList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> get enumList {
     return _get$enumList(
@@ -31651,7 +31711,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public final java.util.Map<NIAnEnum, NIAnEnum> getEnumMap()`
+  /// from: `public final java.util.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum> getEnumMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> get enumMap {
     return _get$enumMap(
@@ -32066,7 +32126,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
 
   static final _id_component9 = NIAllTypes._class.instanceMethodId(
     r'component9',
-    r'()LNIAnEnum;',
+    r'()Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _component9 =
@@ -32085,7 +32145,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public operator fun component9(): NIAnEnum`
+  /// from: `public operator fun component9(): com.example.test_plugin.NIAnEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum component9() {
     return _component9(
@@ -32096,7 +32156,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
 
   static final _id_component10 = NIAllTypes._class.instanceMethodId(
     r'component10',
-    r'()LNIAnotherEnum;',
+    r'()Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _component10 =
@@ -32115,7 +32175,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public operator fun component10(): NIAnotherEnum`
+  /// from: `public operator fun component10(): com.example.test_plugin.NIAnotherEnum`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum component10() {
     return _component10(
@@ -32355,7 +32415,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public operator fun component18(): kotlin.collections.List<NIAnEnum>`
+  /// from: `public operator fun component18(): kotlin.collections.List<com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum> component18() {
     return _component18(
@@ -32565,7 +32625,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public operator fun component25(): kotlin.collections.Map<NIAnEnum, NIAnEnum>`
+  /// from: `public operator fun component25(): kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum, NIAnEnum> component25() {
     return _component25(
@@ -32667,7 +32727,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
 
   static final _id_copy = NIAllTypes._class.instanceMethodId(
     r'copy',
-    r'(ZJJD[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)LNIAllTypes;',
+    r'(ZJJD[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NIAllTypes;',
   );
 
   static final _copy =
@@ -32746,7 +32806,7 @@ extension NIAllTypes$$Methods on NIAllTypes {
             )
           >();
 
-  /// from: `public fun copy(aBool: kotlin.Boolean, anInt: kotlin.Long, anInt64: kotlin.Long, aDouble: kotlin.Double, aByteArray: kotlin.ByteArray, a4ByteArray: kotlin.IntArray, a8ByteArray: kotlin.LongArray, aFloatArray: kotlin.DoubleArray, anEnum: NIAnEnum, anotherEnum: NIAnotherEnum, aString: kotlin.String, anObject: kotlin.Any, list: kotlin.collections.List<kotlin.Any?>, stringList: kotlin.collections.List<kotlin.String>, intList: kotlin.collections.List<kotlin.Long>, doubleList: kotlin.collections.List<kotlin.Double>, boolList: kotlin.collections.List<kotlin.Boolean>, enumList: kotlin.collections.List<NIAnEnum>, objectList: kotlin.collections.List<kotlin.Any>, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>>, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>>, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>, stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>, intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>, enumMap: kotlin.collections.Map<NIAnEnum, NIAnEnum>, objectMap: kotlin.collections.Map<kotlin.Any, kotlin.Any>, listMap: kotlin.collections.Map<kotlin.Long, kotlin.collections.List<kotlin.Any?>>, mapMap: kotlin.collections.Map<kotlin.Long, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>>): NIAllTypes`
+  /// from: `public fun copy(aBool: kotlin.Boolean, anInt: kotlin.Long, anInt64: kotlin.Long, aDouble: kotlin.Double, aByteArray: kotlin.ByteArray, a4ByteArray: kotlin.IntArray, a8ByteArray: kotlin.LongArray, aFloatArray: kotlin.DoubleArray, anEnum: com.example.test_plugin.NIAnEnum, anotherEnum: com.example.test_plugin.NIAnotherEnum, aString: kotlin.String, anObject: kotlin.Any, list: kotlin.collections.List<kotlin.Any?>, stringList: kotlin.collections.List<kotlin.String>, intList: kotlin.collections.List<kotlin.Long>, doubleList: kotlin.collections.List<kotlin.Double>, boolList: kotlin.collections.List<kotlin.Boolean>, enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum>, objectList: kotlin.collections.List<kotlin.Any>, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>>, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>>, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>, stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>, intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>, enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum>, objectMap: kotlin.collections.Map<kotlin.Any, kotlin.Any>, listMap: kotlin.collections.Map<kotlin.Long, kotlin.collections.List<kotlin.Any?>>, mapMap: kotlin.collections.Map<kotlin.Long, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>>): com.example.test_plugin.NIAllTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes copy(
     core$_.bool z,
@@ -32873,13 +32933,15 @@ final class $NIAllTypes$Type$ extends jni$_.JType<NIAllTypes> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllTypes;';
+  String get signature => r'Lcom/example/test_plugin/NIAllTypes;';
 }
 
-/// from: `NIAllNullableTypes$Companion`
+/// from: `com.example.test_plugin.NIAllNullableTypes$Companion`
 extension type NIAllNullableTypes$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllNullableTypes$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllNullableTypes$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllNullableTypes$Companion> type =
@@ -32924,7 +32986,10 @@ extension type NIAllNullableTypes$Companion._(jni$_.JObject _$this)
 extension NIAllNullableTypes$Companion$$Methods
     on NIAllNullableTypes$Companion {
   static final _id_fromList = NIAllNullableTypes$Companion._class
-      .instanceMethodId(r'fromList', r'(Ljava/util/List;)LNIAllNullableTypes;');
+      .instanceMethodId(
+        r'fromList',
+        r'(Ljava/util/List;)Lcom/example/test_plugin/NIAllNullableTypes;',
+      );
 
   static final _fromList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -32944,7 +33009,7 @@ extension NIAllNullableTypes$Companion$$Methods
             )
           >();
 
-  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): NIAllNullableTypes`
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes fromList(jni$_.JList<jni$_.JObject?> list) {
     final _$list = list.reference;
@@ -32963,30 +33028,33 @@ final class $NIAllNullableTypes$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllNullableTypes$Companion;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIAllNullableTypes$Companion;';
 }
 
-/// from: `NIAllNullableTypes`
+/// from: `com.example.test_plugin.NIAllNullableTypes`
 extension type NIAllNullableTypes._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllNullableTypes');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllNullableTypes',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllNullableTypes> type =
       $NIAllNullableTypes$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAllNullableTypes$Companion;',
+    r'Lcom/example/test_plugin/NIAllNullableTypes$Companion;',
   );
 
-  /// from: `static public final NIAllNullableTypes$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAllNullableTypes$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAllNullableTypes$Companion get Companion =>
       _id_Companion.get(_class, NIAllNullableTypes$Companion.type)
           as NIAllNullableTypes$Companion;
 
   static final _id_new$ = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;LNIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Lcom/example/test_plugin/NIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
   );
 
   static final _new$ =
@@ -33071,7 +33139,7 @@ extension type NIAllNullableTypes._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, NIAnEnum nIAnEnum, NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, NIAllNullableTypes nIAllNullableTypes, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.List<NIAllNullableTypes> list9, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<NIAnEnum, ? extends NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6, java.util.Map<java.lang.Long, NIAllNullableTypes> map7)`
+  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NIAnEnum nIAnEnum, com.example.test_plugin.NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, com.example.test_plugin.NIAllNullableTypes nIAllNullableTypes, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends com.example.test_plugin.NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.List<com.example.test_plugin.NIAllNullableTypes> list9, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<com.example.test_plugin.NIAnEnum, ? extends com.example.test_plugin.NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6, java.util.Map<java.lang.Long, com.example.test_plugin.NIAllNullableTypes> map7)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllNullableTypes(
     jni$_.JBoolean? boolean,
@@ -33176,7 +33244,7 @@ extension type NIAllNullableTypes._(jni$_.JObject _$this)
   }
 
   static final _id_new$1 = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;LNIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Lcom/example/test_plugin/NIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
 
   static final _new$1 =
@@ -33265,7 +33333,7 @@ extension type NIAllNullableTypes._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, NIAnEnum nIAnEnum, NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, NIAllNullableTypes nIAllNullableTypes, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.List list9, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, java.util.Map map7, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NIAnEnum nIAnEnum, com.example.test_plugin.NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, com.example.test_plugin.NIAllNullableTypes nIAllNullableTypes, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.List list9, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, java.util.Map map7, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllNullableTypes.new$1(
     jni$_.JBoolean? boolean,
@@ -33629,7 +33697,10 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
   }
 
   static final _id_get$aNullableEnum = NIAllNullableTypes._class
-      .instanceMethodId(r'getANullableEnum', r'()LNIAnEnum;');
+      .instanceMethodId(
+        r'getANullableEnum',
+        r'()Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _get$aNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -33647,7 +33718,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final NIAnEnum getANullableEnum()`
+  /// from: `public final com.example.test_plugin.NIAnEnum getANullableEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? get aNullableEnum {
     return _get$aNullableEnum(
@@ -33657,7 +33728,10 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
   }
 
   static final _id_get$anotherNullableEnum = NIAllNullableTypes._class
-      .instanceMethodId(r'getAnotherNullableEnum', r'()LNIAnotherEnum;');
+      .instanceMethodId(
+        r'getAnotherNullableEnum',
+        r'()Lcom/example/test_plugin/NIAnotherEnum;',
+      );
 
   static final _get$anotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -33675,7 +33749,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final NIAnotherEnum getAnotherNullableEnum()`
+  /// from: `public final com.example.test_plugin.NIAnotherEnum getAnotherNullableEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? get anotherNullableEnum {
     return _get$anotherNullableEnum(
@@ -33741,7 +33815,10 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
   }
 
   static final _id_get$allNullableTypes = NIAllNullableTypes._class
-      .instanceMethodId(r'getAllNullableTypes', r'()LNIAllNullableTypes;');
+      .instanceMethodId(
+        r'getAllNullableTypes',
+        r'()Lcom/example/test_plugin/NIAllNullableTypes;',
+      );
 
   static final _get$allNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -33759,7 +33836,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final NIAllNullableTypes getAllNullableTypes()`
+  /// from: `public final com.example.test_plugin.NIAllNullableTypes getAllNullableTypes()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? get allNullableTypes {
     return _get$allNullableTypes(
@@ -33939,7 +34016,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final java.util.List<NIAnEnum> getEnumList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAnEnum> getEnumList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? get enumList {
     return _get$enumList(
@@ -34057,7 +34134,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final java.util.List<NIAllNullableTypes> getRecursiveClassList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAllNullableTypes> getRecursiveClassList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? get recursiveClassList {
     return _get$recursiveClassList(
@@ -34177,7 +34254,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final java.util.Map<NIAnEnum, NIAnEnum> getEnumMap()`
+  /// from: `public final java.util.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum> getEnumMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? get enumMap {
     return _get$enumMap(
@@ -34296,7 +34373,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public final java.util.Map<java.lang.Long, NIAllNullableTypes> getRecursiveClassMap()`
+  /// from: `public final java.util.Map<java.lang.Long, com.example.test_plugin.NIAllNullableTypes> getRecursiveClassMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? get recursiveClassMap {
     return _get$recursiveClassMap(
@@ -34636,7 +34713,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
 
   static final _id_component9 = NIAllNullableTypes._class.instanceMethodId(
     r'component9',
-    r'()LNIAnEnum;',
+    r'()Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _component9 =
@@ -34655,7 +34732,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component9(): NIAnEnum?`
+  /// from: `public operator fun component9(): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? component9() {
     return _component9(
@@ -34666,7 +34743,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
 
   static final _id_component10 = NIAllNullableTypes._class.instanceMethodId(
     r'component10',
-    r'()LNIAnotherEnum;',
+    r'()Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _component10 =
@@ -34685,7 +34762,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component10(): NIAnotherEnum?`
+  /// from: `public operator fun component10(): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? component10() {
     return _component10(
@@ -34756,7 +34833,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
 
   static final _id_component13 = NIAllNullableTypes._class.instanceMethodId(
     r'component13',
-    r'()LNIAllNullableTypes;',
+    r'()Lcom/example/test_plugin/NIAllNullableTypes;',
   );
 
   static final _component13 =
@@ -34775,7 +34852,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component13(): NIAllNullableTypes?`
+  /// from: `public operator fun component13(): com.example.test_plugin.NIAllNullableTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes? component13() {
     return _component13(
@@ -34955,7 +35032,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component19(): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public operator fun component19(): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? component19() {
     return _component19(
@@ -35075,7 +35152,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component23(): kotlin.collections.List<NIAllNullableTypes?>?`
+  /// from: `public operator fun component23(): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypes?>? component23() {
     return _component23(
@@ -35195,7 +35272,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component27(): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public operator fun component27(): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? component27() {
     return _component27(
@@ -35316,7 +35393,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public operator fun component31(): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?`
+  /// from: `public operator fun component31(): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypes?>? component31() {
     return _component31(
@@ -35327,7 +35404,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
 
   static final _id_copy = NIAllNullableTypes._class.instanceMethodId(
     r'copy',
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;LNIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)LNIAllNullableTypes;',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Lcom/example/test_plugin/NIAllNullableTypes;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NIAllNullableTypes;',
   );
 
   static final _copy =
@@ -35412,7 +35489,7 @@ extension NIAllNullableTypes$$Methods on NIAllNullableTypes {
             )
           >();
 
-  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: NIAnEnum?, anotherNullableEnum: NIAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, allNullableTypes: NIAllNullableTypes?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<NIAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, recursiveClassList: kotlin.collections.List<NIAllNullableTypes?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, recursiveClassMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypes?>?): NIAllNullableTypes`
+  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: com.example.test_plugin.NIAnEnum?, anotherNullableEnum: com.example.test_plugin.NIAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, allNullableTypes: com.example.test_plugin.NIAllNullableTypes?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, recursiveClassList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypes?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, recursiveClassMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypes?>?): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes copy(
     jni$_.JBoolean? boolean,
@@ -35553,15 +35630,15 @@ final class $NIAllNullableTypes$Type$ extends jni$_.JType<NIAllNullableTypes> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllNullableTypes;';
+  String get signature => r'Lcom/example/test_plugin/NIAllNullableTypes;';
 }
 
-/// from: `NIAllNullableTypesWithoutRecursion$Companion`
+/// from: `com.example.test_plugin.NIAllNullableTypesWithoutRecursion$Companion`
 extension type NIAllNullableTypesWithoutRecursion$Companion._(
   jni$_.JObject _$this
 ) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'NIAllNullableTypesWithoutRecursion$Companion',
+    r'com/example/test_plugin/NIAllNullableTypesWithoutRecursion$Companion',
   );
 
   /// The type which includes information such as the signature of this class.
@@ -35610,7 +35687,7 @@ extension NIAllNullableTypesWithoutRecursion$Companion$$Methods
       ._class
       .instanceMethodId(
         r'fromList',
-        r'(Ljava/util/List;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/util/List;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _fromList =
@@ -35631,7 +35708,7 @@ extension NIAllNullableTypesWithoutRecursion$Companion$$Methods
             )
           >();
 
-  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion fromList(
     jni$_.JList<jni$_.JObject?> list,
@@ -35652,14 +35729,15 @@ final class $NIAllNullableTypesWithoutRecursion$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllNullableTypesWithoutRecursion$Companion;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion$Companion;';
 }
 
-/// from: `NIAllNullableTypesWithoutRecursion`
+/// from: `com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
 extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
     implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'NIAllNullableTypesWithoutRecursion',
+    r'com/example/test_plugin/NIAllNullableTypesWithoutRecursion',
   );
 
   /// The type which includes information such as the signature of this class.
@@ -35667,10 +35745,10 @@ extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
       $NIAllNullableTypesWithoutRecursion$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAllNullableTypesWithoutRecursion$Companion;',
+    r'Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion$Companion;',
   );
 
-  /// from: `static public final NIAllNullableTypesWithoutRecursion$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAllNullableTypesWithoutRecursion$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAllNullableTypesWithoutRecursion$Companion get Companion =>
       _id_Companion.get(
@@ -35680,7 +35758,7 @@ extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
           as NIAllNullableTypesWithoutRecursion$Companion;
 
   static final _id_new$ = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V',
   );
 
   static final _new$ =
@@ -35759,7 +35837,7 @@ extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, NIAnEnum nIAnEnum, NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<NIAnEnum, ? extends NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
+  /// from: `public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NIAnEnum nIAnEnum, com.example.test_plugin.NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List<? extends java.lang.Object> list, java.util.List<java.lang.String> list1, java.util.List<java.lang.Long> list2, java.util.List<java.lang.Double> list3, java.util.List<java.lang.Boolean> list4, java.util.List<? extends com.example.test_plugin.NIAnEnum> list5, java.util.List<? extends java.lang.Object> list6, java.util.List<? extends java.util.List> list7, java.util.List<? extends java.util.Map> list8, java.util.Map<java.lang.Object, ? extends java.lang.Object> map, java.util.Map<java.lang.String, java.lang.String> map1, java.util.Map<java.lang.Long, java.lang.Long> map2, java.util.Map<com.example.test_plugin.NIAnEnum, ? extends com.example.test_plugin.NIAnEnum> map3, java.util.Map<java.lang.Object, ? extends java.lang.Object> map4, java.util.Map<java.lang.Long, ? extends java.util.List> map5, java.util.Map<java.lang.Long, ? extends java.util.Map> map6)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
@@ -35854,7 +35932,7 @@ extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
   }
 
   static final _id_new$1 = _class.constructorId(
-    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+    r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
 
   static final _new$1 =
@@ -35937,7 +36015,7 @@ extension type NIAllNullableTypesWithoutRecursion._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, NIAnEnum nIAnEnum, NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `synthetic public void <init>(java.lang.Boolean boolean, java.lang.Long long, java.lang.Long long1, java.lang.Double double, byte[] bs, int[] is, long[] js, double[] ds, com.example.test_plugin.NIAnEnum nIAnEnum, com.example.test_plugin.NIAnotherEnum nIAnotherEnum, java.lang.String string, java.lang.Object object, java.util.List list, java.util.List list1, java.util.List list2, java.util.List list3, java.util.List list4, java.util.List list5, java.util.List list6, java.util.List list7, java.util.List list8, java.util.Map map, java.util.Map map1, java.util.Map map2, java.util.Map map3, java.util.Map map4, java.util.Map map5, java.util.Map map6, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllNullableTypesWithoutRecursion.new$1(
     jni$_.JBoolean? boolean,
@@ -36298,7 +36376,10 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
   }
 
   static final _id_get$aNullableEnum = NIAllNullableTypesWithoutRecursion._class
-      .instanceMethodId(r'getANullableEnum', r'()LNIAnEnum;');
+      .instanceMethodId(
+        r'getANullableEnum',
+        r'()Lcom/example/test_plugin/NIAnEnum;',
+      );
 
   static final _get$aNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -36316,7 +36397,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public final NIAnEnum getANullableEnum()`
+  /// from: `public final com.example.test_plugin.NIAnEnum getANullableEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? get aNullableEnum {
     return _get$aNullableEnum(
@@ -36327,7 +36408,10 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
 
   static final _id_get$anotherNullableEnum = NIAllNullableTypesWithoutRecursion
       ._class
-      .instanceMethodId(r'getAnotherNullableEnum', r'()LNIAnotherEnum;');
+      .instanceMethodId(
+        r'getAnotherNullableEnum',
+        r'()Lcom/example/test_plugin/NIAnotherEnum;',
+      );
 
   static final _get$anotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -36345,7 +36429,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public final NIAnotherEnum getAnotherNullableEnum()`
+  /// from: `public final com.example.test_plugin.NIAnotherEnum getAnotherNullableEnum()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? get anotherNullableEnum {
     return _get$anotherNullableEnum(
@@ -36571,7 +36655,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public final java.util.List<NIAnEnum> getEnumList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAnEnum> getEnumList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? get enumList {
     return _get$enumList(
@@ -36767,7 +36851,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public final java.util.Map<NIAnEnum, NIAnEnum> getEnumMap()`
+  /// from: `public final java.util.Map<com.example.test_plugin.NIAnEnum, com.example.test_plugin.NIAnEnum> getEnumMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? get enumMap {
     return _get$enumMap(
@@ -37169,7 +37253,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
   }
 
   static final _id_component9 = NIAllNullableTypesWithoutRecursion._class
-      .instanceMethodId(r'component9', r'()LNIAnEnum;');
+      .instanceMethodId(r'component9', r'()Lcom/example/test_plugin/NIAnEnum;');
 
   static final _component9 =
       jni$_.ProtectedJniExtensions.lookup<
@@ -37187,7 +37271,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public operator fun component9(): NIAnEnum?`
+  /// from: `public operator fun component9(): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? component9() {
     return _component9(
@@ -37197,7 +37281,10 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
   }
 
   static final _id_component10 = NIAllNullableTypesWithoutRecursion._class
-      .instanceMethodId(r'component10', r'()LNIAnotherEnum;');
+      .instanceMethodId(
+        r'component10',
+        r'()Lcom/example/test_plugin/NIAnotherEnum;',
+      );
 
   static final _component10 =
       jni$_.ProtectedJniExtensions.lookup<
@@ -37215,7 +37302,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public operator fun component10(): NIAnotherEnum?`
+  /// from: `public operator fun component10(): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? component10() {
     return _component10(
@@ -37439,7 +37526,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public operator fun component18(): kotlin.collections.List<NIAnEnum?>?`
+  /// from: `public operator fun component18(): kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAnEnum?>? component18() {
     return _component18(
@@ -37635,7 +37722,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public operator fun component25(): kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?`
+  /// from: `public operator fun component25(): kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<NIAnEnum?, NIAnEnum?>? component25() {
     return _component25(
@@ -37732,7 +37819,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
   static final _id_copy = NIAllNullableTypesWithoutRecursion._class
       .instanceMethodId(
         r'copy',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLNIAnEnum;LNIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)LNIAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/Long;Ljava/lang/Double;[B[I[J[DLcom/example/test_plugin/NIAnEnum;Lcom/example/test_plugin/NIAnotherEnum;Ljava/lang/String;Ljava/lang/Object;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _copy =
@@ -37811,7 +37898,7 @@ extension NIAllNullableTypesWithoutRecursion$$Methods
             )
           >();
 
-  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: NIAnEnum?, anotherNullableEnum: NIAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<NIAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<NIAnEnum?, NIAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?): NIAllNullableTypesWithoutRecursion`
+  /// from: `public fun copy(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableInt64: kotlin.Long?, aNullableDouble: kotlin.Double?, aNullableByteArray: kotlin.ByteArray?, aNullable4ByteArray: kotlin.IntArray?, aNullable8ByteArray: kotlin.LongArray?, aNullableFloatArray: kotlin.DoubleArray?, aNullableEnum: com.example.test_plugin.NIAnEnum?, anotherNullableEnum: com.example.test_plugin.NIAnotherEnum?, aNullableString: kotlin.String?, aNullableObject: kotlin.Any?, list: kotlin.collections.List<kotlin.Any?>?, stringList: kotlin.collections.List<kotlin.String?>?, intList: kotlin.collections.List<kotlin.Long?>?, doubleList: kotlin.collections.List<kotlin.Double?>?, boolList: kotlin.collections.List<kotlin.Boolean?>?, enumList: kotlin.collections.List<com.example.test_plugin.NIAnEnum?>?, objectList: kotlin.collections.List<kotlin.Any?>?, listList: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>?>?, mapList: kotlin.collections.List<kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?, map: kotlin.collections.Map<kotlin.Any, kotlin.Any?>?, stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?, intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?, enumMap: kotlin.collections.Map<com.example.test_plugin.NIAnEnum?, com.example.test_plugin.NIAnEnum?>?, objectMap: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?, listMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.List<kotlin.Any?>?>?, mapMap: kotlin.collections.Map<kotlin.Long?, kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?>?): com.example.test_plugin.NIAllNullableTypesWithoutRecursion`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion copy(
     jni$_.JBoolean? boolean,
@@ -37941,13 +38028,16 @@ final class $NIAllNullableTypesWithoutRecursion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllNullableTypesWithoutRecursion;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;';
 }
 
-/// from: `NIAllClassesWrapper$Companion`
+/// from: `com.example.test_plugin.NIAllClassesWrapper$Companion`
 extension type NIAllClassesWrapper$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllClassesWrapper$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllClassesWrapper$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllClassesWrapper$Companion> type =
@@ -37994,7 +38084,7 @@ extension NIAllClassesWrapper$Companion$$Methods
   static final _id_fromList = NIAllClassesWrapper$Companion._class
       .instanceMethodId(
         r'fromList',
-        r'(Ljava/util/List;)LNIAllClassesWrapper;',
+        r'(Ljava/util/List;)Lcom/example/test_plugin/NIAllClassesWrapper;',
       );
 
   static final _fromList =
@@ -38015,7 +38105,7 @@ extension NIAllClassesWrapper$Companion$$Methods
             )
           >();
 
-  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): NIAllClassesWrapper`
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper fromList(jni$_.JList<jni$_.JObject?> list) {
     final _$list = list.reference;
@@ -38034,30 +38124,33 @@ final class $NIAllClassesWrapper$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllClassesWrapper$Companion;';
+  String get signature =>
+      r'Lcom/example/test_plugin/NIAllClassesWrapper$Companion;';
 }
 
-/// from: `NIAllClassesWrapper`
+/// from: `com.example.test_plugin.NIAllClassesWrapper`
 extension type NIAllClassesWrapper._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAllClassesWrapper');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAllClassesWrapper',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAllClassesWrapper> type =
       $NIAllClassesWrapper$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAllClassesWrapper$Companion;',
+    r'Lcom/example/test_plugin/NIAllClassesWrapper$Companion;',
   );
 
-  /// from: `static public final NIAllClassesWrapper$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAllClassesWrapper$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAllClassesWrapper$Companion get Companion =>
       _id_Companion.get(_class, NIAllClassesWrapper$Companion.type)
           as NIAllClassesWrapper$Companion;
 
   static final _id_new$ = _class.constructorId(
-    r'(LNIAllNullableTypes;LNIAllNullableTypesWithoutRecursion;LNIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)V',
+    r'(Lcom/example/test_plugin/NIAllNullableTypes;Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lcom/example/test_plugin/NIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)V',
   );
 
   static final _new$ =
@@ -38094,7 +38187,7 @@ extension type NIAllClassesWrapper._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `public void <init>(NIAllNullableTypes nIAllNullableTypes, NIAllNullableTypesWithoutRecursion nIAllNullableTypesWithoutRecursion, NIAllTypes nIAllTypes, java.util.List<NIAllTypes> list, java.util.List<NIAllNullableTypesWithoutRecursion> list1, java.util.Map<java.lang.Long, NIAllTypes> map, java.util.Map<java.lang.Long, NIAllNullableTypesWithoutRecursion> map1)`
+  /// from: `public void <init>(com.example.test_plugin.NIAllNullableTypes nIAllNullableTypes, com.example.test_plugin.NIAllNullableTypesWithoutRecursion nIAllNullableTypesWithoutRecursion, com.example.test_plugin.NIAllTypes nIAllTypes, java.util.List<com.example.test_plugin.NIAllTypes> list, java.util.List<com.example.test_plugin.NIAllNullableTypesWithoutRecursion> list1, java.util.Map<java.lang.Long, com.example.test_plugin.NIAllTypes> map, java.util.Map<java.lang.Long, com.example.test_plugin.NIAllNullableTypesWithoutRecursion> map1)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllClassesWrapper(
     NIAllNullableTypes nIAllNullableTypes,
@@ -38127,7 +38220,7 @@ extension type NIAllClassesWrapper._(jni$_.JObject _$this)
   }
 
   static final _id_new$1 = _class.constructorId(
-    r'(LNIAllNullableTypes;LNIAllNullableTypesWithoutRecursion;LNIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+    r'(Lcom/example/test_plugin/NIAllNullableTypes;Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lcom/example/test_plugin/NIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
   );
 
   static final _new$1 =
@@ -38168,7 +38261,7 @@ extension type NIAllClassesWrapper._(jni$_.JObject _$this)
             )
           >();
 
-  /// from: `synthetic public void <init>(NIAllNullableTypes nIAllNullableTypes, NIAllNullableTypesWithoutRecursion nIAllNullableTypesWithoutRecursion, NIAllTypes nIAllTypes, java.util.List list, java.util.List list1, java.util.Map map, java.util.Map map1, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// from: `synthetic public void <init>(com.example.test_plugin.NIAllNullableTypes nIAllNullableTypes, com.example.test_plugin.NIAllNullableTypesWithoutRecursion nIAllNullableTypesWithoutRecursion, com.example.test_plugin.NIAllTypes nIAllTypes, java.util.List list, java.util.List list1, java.util.Map map, java.util.Map map1, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
   /// The returned object must be released after use, by calling the [release] method.
   factory NIAllClassesWrapper.new$1(
     NIAllNullableTypes? nIAllNullableTypes,
@@ -38210,7 +38303,10 @@ extension type NIAllClassesWrapper._(jni$_.JObject _$this)
 
 extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
   static final _id_get$allNullableTypes = NIAllClassesWrapper._class
-      .instanceMethodId(r'getAllNullableTypes', r'()LNIAllNullableTypes;');
+      .instanceMethodId(
+        r'getAllNullableTypes',
+        r'()Lcom/example/test_plugin/NIAllNullableTypes;',
+      );
 
   static final _get$allNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -38228,7 +38324,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final NIAllNullableTypes getAllNullableTypes()`
+  /// from: `public final com.example.test_plugin.NIAllNullableTypes getAllNullableTypes()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes get allNullableTypes {
     return _get$allNullableTypes(
@@ -38241,7 +38337,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
       ._class
       .instanceMethodId(
         r'getAllNullableTypesWithoutRecursion',
-        r'()LNIAllNullableTypesWithoutRecursion;',
+        r'()Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
       );
 
   static final _get$allNullableTypesWithoutRecursion =
@@ -38260,7 +38356,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final NIAllNullableTypesWithoutRecursion getAllNullableTypesWithoutRecursion()`
+  /// from: `public final com.example.test_plugin.NIAllNullableTypesWithoutRecursion getAllNullableTypesWithoutRecursion()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion? get allNullableTypesWithoutRecursion {
     return _get$allNullableTypesWithoutRecursion(
@@ -38271,7 +38367,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
 
   static final _id_get$allTypes = NIAllClassesWrapper._class.instanceMethodId(
     r'getAllTypes',
-    r'()LNIAllTypes;',
+    r'()Lcom/example/test_plugin/NIAllTypes;',
   );
 
   static final _get$allTypes =
@@ -38290,7 +38386,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final NIAllTypes getAllTypes()`
+  /// from: `public final com.example.test_plugin.NIAllTypes getAllTypes()`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes? get allTypes {
     return _get$allTypes(
@@ -38320,7 +38416,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final java.util.List<NIAllTypes> getClassList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAllTypes> getClassList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllTypes?> get classList {
     return _get$classList(
@@ -38348,7 +38444,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final java.util.List<NIAllNullableTypesWithoutRecursion> getNullableClassList()`
+  /// from: `public final java.util.List<com.example.test_plugin.NIAllNullableTypesWithoutRecursion> getNullableClassList()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypesWithoutRecursion?>? get nullableClassList {
     return _get$nullableClassList(
@@ -38378,7 +38474,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final java.util.Map<java.lang.Long, NIAllTypes> getClassMap()`
+  /// from: `public final java.util.Map<java.lang.Long, com.example.test_plugin.NIAllTypes> getClassMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllTypes?> get classMap {
     return _get$classMap(
@@ -38406,7 +38502,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public final java.util.Map<java.lang.Long, NIAllNullableTypesWithoutRecursion> getNullableClassMap()`
+  /// from: `public final java.util.Map<java.lang.Long, com.example.test_plugin.NIAllNullableTypesWithoutRecursion> getNullableClassMap()`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypesWithoutRecursion?>?
   get nullableClassMap {
@@ -38507,7 +38603,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
 
   static final _id_component1 = NIAllClassesWrapper._class.instanceMethodId(
     r'component1',
-    r'()LNIAllNullableTypes;',
+    r'()Lcom/example/test_plugin/NIAllNullableTypes;',
   );
 
   static final _component1 =
@@ -38526,7 +38622,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component1(): NIAllNullableTypes`
+  /// from: `public operator fun component1(): com.example.test_plugin.NIAllNullableTypes`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypes component1() {
     return _component1(
@@ -38537,7 +38633,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
 
   static final _id_component2 = NIAllClassesWrapper._class.instanceMethodId(
     r'component2',
-    r'()LNIAllNullableTypesWithoutRecursion;',
+    r'()Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;',
   );
 
   static final _component2 =
@@ -38556,7 +38652,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component2(): NIAllNullableTypesWithoutRecursion?`
+  /// from: `public operator fun component2(): com.example.test_plugin.NIAllNullableTypesWithoutRecursion?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllNullableTypesWithoutRecursion? component2() {
     return _component2(
@@ -38567,7 +38663,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
 
   static final _id_component3 = NIAllClassesWrapper._class.instanceMethodId(
     r'component3',
-    r'()LNIAllTypes;',
+    r'()Lcom/example/test_plugin/NIAllTypes;',
   );
 
   static final _component3 =
@@ -38586,7 +38682,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component3(): NIAllTypes?`
+  /// from: `public operator fun component3(): com.example.test_plugin.NIAllTypes?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllTypes? component3() {
     return _component3(
@@ -38616,7 +38712,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component4(): kotlin.collections.List<NIAllTypes?>`
+  /// from: `public operator fun component4(): kotlin.collections.List<com.example.test_plugin.NIAllTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllTypes?> component4() {
     return _component4(
@@ -38646,7 +38742,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component5(): kotlin.collections.List<NIAllNullableTypesWithoutRecursion?>?`
+  /// from: `public operator fun component5(): kotlin.collections.List<com.example.test_plugin.NIAllNullableTypesWithoutRecursion?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JList<NIAllNullableTypesWithoutRecursion?>? component5() {
     return _component5(
@@ -38676,7 +38772,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component6(): kotlin.collections.Map<kotlin.Long?, NIAllTypes?>`
+  /// from: `public operator fun component6(): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllTypes?>`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllTypes?> component6() {
     return _component6(
@@ -38706,7 +38802,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public operator fun component7(): kotlin.collections.Map<kotlin.Long?, NIAllNullableTypesWithoutRecursion?>?`
+  /// from: `public operator fun component7(): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypesWithoutRecursion?>?`
   /// The returned object must be released after use, by calling the [release] method.
   jni$_.JMap<jni$_.JLong?, NIAllNullableTypesWithoutRecursion?>? component7() {
     return _component7(
@@ -38717,7 +38813,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
 
   static final _id_copy = NIAllClassesWrapper._class.instanceMethodId(
     r'copy',
-    r'(LNIAllNullableTypes;LNIAllNullableTypesWithoutRecursion;LNIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)LNIAllClassesWrapper;',
+    r'(Lcom/example/test_plugin/NIAllNullableTypes;Lcom/example/test_plugin/NIAllNullableTypesWithoutRecursion;Lcom/example/test_plugin/NIAllTypes;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)Lcom/example/test_plugin/NIAllClassesWrapper;',
   );
 
   static final _copy =
@@ -38754,7 +38850,7 @@ extension NIAllClassesWrapper$$Methods on NIAllClassesWrapper {
             )
           >();
 
-  /// from: `public fun copy(allNullableTypes: NIAllNullableTypes, allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion?, allTypes: NIAllTypes?, classList: kotlin.collections.List<NIAllTypes?>, nullableClassList: kotlin.collections.List<NIAllNullableTypesWithoutRecursion?>?, classMap: kotlin.collections.Map<kotlin.Long?, NIAllTypes?>, nullableClassMap: kotlin.collections.Map<kotlin.Long?, NIAllNullableTypesWithoutRecursion?>?): NIAllClassesWrapper`
+  /// from: `public fun copy(allNullableTypes: com.example.test_plugin.NIAllNullableTypes, allNullableTypesWithoutRecursion: com.example.test_plugin.NIAllNullableTypesWithoutRecursion?, allTypes: com.example.test_plugin.NIAllTypes?, classList: kotlin.collections.List<com.example.test_plugin.NIAllTypes?>, nullableClassList: kotlin.collections.List<com.example.test_plugin.NIAllNullableTypesWithoutRecursion?>?, classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllTypes?>, nullableClassMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NIAllNullableTypesWithoutRecursion?>?): com.example.test_plugin.NIAllClassesWrapper`
   /// The returned object must be released after use, by calling the [release] method.
   NIAllClassesWrapper copy(
     NIAllNullableTypes nIAllNullableTypes,
@@ -38824,13 +38920,15 @@ final class $NIAllClassesWrapper$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAllClassesWrapper;';
+  String get signature => r'Lcom/example/test_plugin/NIAllClassesWrapper;';
 }
 
-/// from: `NIAnEnum$Companion`
+/// from: `com.example.test_plugin.NIAnEnum$Companion`
 extension type NIAnEnum$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAnEnum$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAnEnum$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAnEnum$Companion> type =
@@ -38873,7 +38971,7 @@ extension type NIAnEnum$Companion._(jni$_.JObject _$this)
 extension NIAnEnum$Companion$$Methods on NIAnEnum$Companion {
   static final _id_ofRaw = NIAnEnum$Companion._class.instanceMethodId(
     r'ofRaw',
-    r'(I)LNIAnEnum;',
+    r'(I)Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _ofRaw =
@@ -38894,7 +38992,7 @@ extension NIAnEnum$Companion$$Methods on NIAnEnum$Companion {
             )
           >();
 
-  /// from: `public fun ofRaw(raw: kotlin.Int): NIAnEnum?`
+  /// from: `public fun ofRaw(raw: kotlin.Int): com.example.test_plugin.NIAnEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnEnum? ofRaw(core$_.int i) {
     return _ofRaw(reference.pointer, _id_ofRaw.pointer, i).object<NIAnEnum?>();
@@ -38907,64 +39005,78 @@ final class $NIAnEnum$Companion$Type$ extends jni$_.JType<NIAnEnum$Companion> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAnEnum$Companion;';
+  String get signature => r'Lcom/example/test_plugin/NIAnEnum$Companion;';
 }
 
-/// from: `NIAnEnum`
+/// from: `com.example.test_plugin.NIAnEnum`
 extension type NIAnEnum._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAnEnum');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAnEnum',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAnEnum> type = $NIAnEnum$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAnEnum$Companion;',
+    r'Lcom/example/test_plugin/NIAnEnum$Companion;',
   );
 
-  /// from: `static public final NIAnEnum$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAnEnum$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum$Companion get Companion =>
       _id_Companion.get(_class, NIAnEnum$Companion.type) as NIAnEnum$Companion;
 
-  static final _id_ONE = _class.staticFieldId(r'ONE', r'LNIAnEnum;');
+  static final _id_ONE = _class.staticFieldId(
+    r'ONE',
+    r'Lcom/example/test_plugin/NIAnEnum;',
+  );
 
-  /// from: `static public final NIAnEnum ONE`
+  /// from: `static public final com.example.test_plugin.NIAnEnum ONE`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum get ONE => _id_ONE.get(_class, NIAnEnum.type) as NIAnEnum;
 
-  static final _id_TWO = _class.staticFieldId(r'TWO', r'LNIAnEnum;');
+  static final _id_TWO = _class.staticFieldId(
+    r'TWO',
+    r'Lcom/example/test_plugin/NIAnEnum;',
+  );
 
-  /// from: `static public final NIAnEnum TWO`
+  /// from: `static public final com.example.test_plugin.NIAnEnum TWO`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum get TWO => _id_TWO.get(_class, NIAnEnum.type) as NIAnEnum;
 
-  static final _id_THREE = _class.staticFieldId(r'THREE', r'LNIAnEnum;');
+  static final _id_THREE = _class.staticFieldId(
+    r'THREE',
+    r'Lcom/example/test_plugin/NIAnEnum;',
+  );
 
-  /// from: `static public final NIAnEnum THREE`
+  /// from: `static public final com.example.test_plugin.NIAnEnum THREE`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum get THREE => _id_THREE.get(_class, NIAnEnum.type) as NIAnEnum;
 
   static final _id_FORTY_TWO = _class.staticFieldId(
     r'FORTY_TWO',
-    r'LNIAnEnum;',
+    r'Lcom/example/test_plugin/NIAnEnum;',
   );
 
-  /// from: `static public final NIAnEnum FORTY_TWO`
+  /// from: `static public final com.example.test_plugin.NIAnEnum FORTY_TWO`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum get FORTY_TWO =>
       _id_FORTY_TWO.get(_class, NIAnEnum.type) as NIAnEnum;
 
   static final _id_FOUR_HUNDRED_TWENTY_TWO = _class.staticFieldId(
     r'FOUR_HUNDRED_TWENTY_TWO',
-    r'LNIAnEnum;',
+    r'Lcom/example/test_plugin/NIAnEnum;',
   );
 
-  /// from: `static public final NIAnEnum FOUR_HUNDRED_TWENTY_TWO`
+  /// from: `static public final com.example.test_plugin.NIAnEnum FOUR_HUNDRED_TWENTY_TWO`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum get FOUR_HUNDRED_TWENTY_TWO =>
       _id_FOUR_HUNDRED_TWENTY_TWO.get(_class, NIAnEnum.type) as NIAnEnum;
 
-  static final _id_values = _class.staticMethodId(r'values', r'()[LNIAnEnum;');
+  static final _id_values = _class.staticMethodId(
+    r'values',
+    r'()[Lcom/example/test_plugin/NIAnEnum;',
+  );
 
   static final _values =
       jni$_.ProtectedJniExtensions.lookup<
@@ -38982,7 +39094,7 @@ extension type NIAnEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public NIAnEnum[] values()`
+  /// from: `static public com.example.test_plugin.NIAnEnum[] values()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JArray<NIAnEnum?>? values() {
     return _values(
@@ -38993,7 +39105,7 @@ extension type NIAnEnum._(jni$_.JObject _$this) implements jni$_.JObject {
 
   static final _id_valueOf = _class.staticMethodId(
     r'valueOf',
-    r'(Ljava/lang/String;)LNIAnEnum;',
+    r'(Ljava/lang/String;)Lcom/example/test_plugin/NIAnEnum;',
   );
 
   static final _valueOf =
@@ -39014,7 +39126,7 @@ extension type NIAnEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public NIAnEnum valueOf(java.lang.String string)`
+  /// from: `static public com.example.test_plugin.NIAnEnum valueOf(java.lang.String string)`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnEnum? valueOf(jni$_.JString? string) {
     final _$string = string?.reference ?? jni$_.jNullReference;
@@ -39046,7 +39158,7 @@ extension type NIAnEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public kotlin.enums.EnumEntries<NIAnEnum> getEntries()`
+  /// from: `static public kotlin.enums.EnumEntries<com.example.test_plugin.NIAnEnum> getEntries()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JObject get entries {
     return _get$entries(
@@ -39090,13 +39202,15 @@ final class $NIAnEnum$Type$ extends jni$_.JType<NIAnEnum> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAnEnum;';
+  String get signature => r'Lcom/example/test_plugin/NIAnEnum;';
 }
 
-/// from: `NIAnotherEnum$Companion`
+/// from: `com.example.test_plugin.NIAnotherEnum$Companion`
 extension type NIAnotherEnum$Companion._(jni$_.JObject _$this)
     implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAnotherEnum$Companion');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAnotherEnum$Companion',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAnotherEnum$Companion> type =
@@ -39139,7 +39253,7 @@ extension type NIAnotherEnum$Companion._(jni$_.JObject _$this)
 extension NIAnotherEnum$Companion$$Methods on NIAnotherEnum$Companion {
   static final _id_ofRaw = NIAnotherEnum$Companion._class.instanceMethodId(
     r'ofRaw',
-    r'(I)LNIAnotherEnum;',
+    r'(I)Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _ofRaw =
@@ -39160,7 +39274,7 @@ extension NIAnotherEnum$Companion$$Methods on NIAnotherEnum$Companion {
             )
           >();
 
-  /// from: `public fun ofRaw(raw: kotlin.Int): NIAnotherEnum?`
+  /// from: `public fun ofRaw(raw: kotlin.Int): com.example.test_plugin.NIAnotherEnum?`
   /// The returned object must be released after use, by calling the [release] method.
   NIAnotherEnum? ofRaw(core$_.int i) {
     return _ofRaw(
@@ -39178,21 +39292,23 @@ final class $NIAnotherEnum$Companion$Type$
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAnotherEnum$Companion;';
+  String get signature => r'Lcom/example/test_plugin/NIAnotherEnum$Companion;';
 }
 
-/// from: `NIAnotherEnum`
+/// from: `com.example.test_plugin.NIAnotherEnum`
 extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(r'NIAnotherEnum');
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NIAnotherEnum',
+  );
 
   /// The type which includes information such as the signature of this class.
   static const jni$_.JType<NIAnotherEnum> type = $NIAnotherEnum$Type$();
   static final _id_Companion = _class.staticFieldId(
     r'Companion',
-    r'LNIAnotherEnum$Companion;',
+    r'Lcom/example/test_plugin/NIAnotherEnum$Companion;',
   );
 
-  /// from: `static public final NIAnotherEnum$Companion Companion`
+  /// from: `static public final com.example.test_plugin.NIAnotherEnum$Companion Companion`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnotherEnum$Companion get Companion =>
       _id_Companion.get(_class, NIAnotherEnum$Companion.type)
@@ -39200,17 +39316,17 @@ extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
 
   static final _id_JUST_IN_CASE = _class.staticFieldId(
     r'JUST_IN_CASE',
-    r'LNIAnotherEnum;',
+    r'Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
-  /// from: `static public final NIAnotherEnum JUST_IN_CASE`
+  /// from: `static public final com.example.test_plugin.NIAnotherEnum JUST_IN_CASE`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnotherEnum get JUST_IN_CASE =>
       _id_JUST_IN_CASE.get(_class, NIAnotherEnum.type) as NIAnotherEnum;
 
   static final _id_values = _class.staticMethodId(
     r'values',
-    r'()[LNIAnotherEnum;',
+    r'()[Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _values =
@@ -39229,7 +39345,7 @@ extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public NIAnotherEnum[] values()`
+  /// from: `static public com.example.test_plugin.NIAnotherEnum[] values()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JArray<NIAnotherEnum?>? values() {
     return _values(
@@ -39240,7 +39356,7 @@ extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
 
   static final _id_valueOf = _class.staticMethodId(
     r'valueOf',
-    r'(Ljava/lang/String;)LNIAnotherEnum;',
+    r'(Ljava/lang/String;)Lcom/example/test_plugin/NIAnotherEnum;',
   );
 
   static final _valueOf =
@@ -39261,7 +39377,7 @@ extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public NIAnotherEnum valueOf(java.lang.String string)`
+  /// from: `static public com.example.test_plugin.NIAnotherEnum valueOf(java.lang.String string)`
   /// The returned object must be released after use, by calling the [release] method.
   static NIAnotherEnum? valueOf(jni$_.JString? string) {
     final _$string = string?.reference ?? jni$_.jNullReference;
@@ -39293,7 +39409,7 @@ extension type NIAnotherEnum._(jni$_.JObject _$this) implements jni$_.JObject {
             )
           >();
 
-  /// from: `static public kotlin.enums.EnumEntries<NIAnotherEnum> getEntries()`
+  /// from: `static public kotlin.enums.EnumEntries<com.example.test_plugin.NIAnotherEnum> getEntries()`
   /// The returned object must be released after use, by calling the [release] method.
   static jni$_.JObject get entries {
     return _get$entries(
@@ -39337,5 +39453,5 @@ final class $NIAnotherEnum$Type$ extends jni$_.JType<NIAnotherEnum> {
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'LNIAnotherEnum;';
+  String get signature => r'Lcom/example/test_plugin/NIAnotherEnum;';
 }

@@ -65,20 +65,23 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
           ),
           logLevel: Level.ALL,''');
           indent.writeScoped('classes: [', '],', () {
+            final packagePrefix = generatorOptions.kotlinOptions.package != null
+                ? '${generatorOptions.kotlinOptions.package}.'
+                : '';
             indent.writeln(
-              "'${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
+              "'$packagePrefix${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
             );
             for (final Api api in root.apis) {
               if (api is AstHostApi || api is AstFlutterApi) {
-                indent.writeln("'${api.name}',");
-                indent.writeln("'${api.name}Registrar',");
+                indent.writeln("'$packagePrefix${api.name}',");
+                indent.writeln("'$packagePrefix${api.name}Registrar',");
               }
             }
             for (final Class dataClass in root.classes) {
-              indent.writeln("'${dataClass.name}',");
+              indent.writeln("'$packagePrefix${dataClass.name}',");
             }
             for (final Enum enumType in root.enums) {
-              indent.writeln("'${enumType.name}',");
+              indent.writeln("'$packagePrefix${enumType.name}',");
             }
           });
         });

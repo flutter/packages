@@ -41,6 +41,11 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 
 /// Sets up and runs the integration tests.
 void runPigeonNIIntegrationTests(TargetGenerator targetGenerator) {
+  if (targetGenerator != TargetGenerator.kotlin &&
+      targetGenerator != TargetGenerator.swift) {
+    return;
+  }
+
   group('FFI/JNIHost sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
       final NIHostIntegrationCoreApiForNativeInterop? api =

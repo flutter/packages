@@ -251,7 +251,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    if (generatorOptions.package != null && !generatorOptions.useJni) {
+    if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package}');
     }
     indent.newln();

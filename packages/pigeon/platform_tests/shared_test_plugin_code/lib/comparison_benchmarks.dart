@@ -400,8 +400,7 @@ void runComparisonBenchmarks(TargetGenerator targetGenerator) {
       });
     }
 
-    if (targetGenerator == TargetGenerator.swift ||
-        targetGenerator == TargetGenerator.objc) {
+    if (targetGenerator == TargetGenerator.swift) {
       testWidgets(
         'FFI list casting overhead micro-benchmark: cast() vs List.from() vs map()',
         (WidgetTester _) async {

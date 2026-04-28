@@ -6,6 +6,8 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
+package com.example.test_plugin
+
 import android.util.Log
 import androidx.annotation.Keep
 import io.flutter.plugin.common.StandardMessageCodec

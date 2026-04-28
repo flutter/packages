@@ -21,12 +21,11 @@ let package = Package(
     .target(
       name: "test_plugin_objc",
       dependencies: [],
-      resources: []
+      publicHeadersPath: "."
     ),
     .target(
       name: "test_plugin",
-      dependencies: ["test_plugin_objc"],
-      resources: []
+      dependencies: ["test_plugin_objc"]
     ),
   ]
 )
