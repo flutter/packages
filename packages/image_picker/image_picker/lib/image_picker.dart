@@ -270,8 +270,15 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the
+  /// captured video. If no [maxDuration] is specified, the maximum duration
+  /// will be infinite.
+  ///
+  /// [maxDuration] is only honored when [source] is [ImageSource.camera].
+  /// For gallery selection, the modern iOS picker (`PHPickerViewController`)
+  /// and the Android pickers (`PickVisualMediaRequest` and
+  /// `Intent.ACTION_GET_CONTENT`) do not support filtering by duration, so
+  /// this argument is ignored on those platforms.
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
@@ -304,9 +311,15 @@ class ImagePicker {
   ///
   /// The videos come from the gallery.
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured
-  /// videos. If no [maxDuration] is specified, the maximum duration will be
-  /// infinite. This value may be ignored by platforms that cannot support it.
+  /// The [maxDuration] argument specifies the maximum duration of the
+  /// selected videos. If no [maxDuration] is specified, the maximum duration
+  /// will be infinite.
+  ///
+  /// Most platform gallery pickers do not support filtering by duration, so
+  /// this argument is ignored on those platforms. Specifically, the modern
+  /// iOS picker (`PHPickerViewController`) and the Android pickers
+  /// (`PickVisualMediaRequest` and `Intent.ACTION_GET_CONTENT`) do not honor
+  /// it.
   ///
   /// The `limit` parameter modifies the maximum number of videos that can be
   /// selected. This value may be ignored by platforms that cannot support it.
