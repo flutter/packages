@@ -1,3 +1,8 @@
+## 2.10.0
+
+* Implements `setPreventsDisplaySleepDuringVideoPlayback` using
+  `AVPlayer.preventsDisplaySleepDuringVideoPlayback`.
+
 ## 2.9.4
 
 * Ensures that the display link does not continue requesting frames after a player is disposed.

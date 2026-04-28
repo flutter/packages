@@ -1,3 +1,10 @@
+## 2.12.0
+
+* Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
+  `VideoPlayerValue`, and `setPreventsDisplaySleepDuringVideoPlayback` to
+  `VideoPlayerController`, to control whether the display sleeps during playback
+  on iOS and macOS.
+
 ## 2.11.1
 
 * Optimizes caption retrieval with binary search.
