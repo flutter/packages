@@ -1,4 +1,4 @@
-## 0.4.3
+## 0.5.0
 
 * Adds support for trailing pinned columns and rows in TableView.
 

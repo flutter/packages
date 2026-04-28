@@ -28,11 +28,19 @@ import 'table_span.dart';
 /// and columns through merging. The table supports lazy rendering and will only
 /// instantiate those cells that are currently visible in the table's viewport
 /// and those that extend into the [cacheExtent]. Therefore, when merging cells
-/// in a [TableView], the same child must be returned from every vicinity the
-/// merged cell contains. The `build` method will only be called once for a
-/// merged cell, but since the table's children are lazily laid out, returning
-/// the same child ensures the merged cell can be built no matter which part of
-/// it is visible.
+/// in a [TableView], the same child with the same merge information must be
+/// returned from every vicinity the merged cell contains. The `build` method
+/// will only be called once for a merged cell, but since the table's children
+/// are lazily laid out, returning the same child and merge information ensures
+/// the merged cell can be built no matter which part of it is visible.
+///
+/// For example, if a cell is configured to span 3 columns, starting at column 1,
+/// the [cellBuilder] must return a [TableViewCell] with the same [child],
+/// [columnMergeStart] as 1, and [columnMergeSpan] as 3 for all three
+/// [TableVicinity]s (column 1, 2, and 3). If the merge information is only
+/// provided for the first vicinity (column 1), and that vicinity is scrolled
+/// out of the viewport and [cacheExtent], the table will not know the following
+/// vicinities (column 2 and 3) are part of a merge and will "unmerge" them.
 ///
 /// The layout of the table (e.g. how many rows/columns there are and their
 /// extents) as well as the content of the individual cells is defined by
@@ -1384,8 +1392,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             )) {
               // Both row and column are pinned at this cell, or just pinned row.
               (true, true) || (false, true) =>
-                firstRow >=
-                        (_firstTrailingPinnedRow ?? double.maxFinite.toInt())
+                _firstTrailingPinnedRow != null &&
+                        firstRow >= _firstTrailingPinnedRow!
                     ? viewportDimension.height - _trailingPinnedRowsExtent
                     : 0.0,
               // Cell is within a pinned column, or no pinned area at all.
@@ -1430,8 +1438,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             )) {
               // Both row and column are pinned at this cell, or just pinned column.
               (true, true) || (false, true) =>
-                firstColumn >=
-                        (_firstTrailingPinnedColumn ?? double.maxFinite.toInt())
+                _firstTrailingPinnedColumn != null &&
+                        firstColumn >= _firstTrailingPinnedColumn!
                     ? viewportDimension.width - _trailingPinnedColumnsExtent
                     : 0.0,
               // Cell is within a pinned row, or no pinned area at all.
@@ -2231,6 +2239,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   void dispose() {
     _clipPinnedRowsHandle.layer = null;
     _clipPinnedColumnsHandle.layer = null;
+    _clipTrailingPinnedRowsHandle.layer = null;
+    _clipTrailingPinnedColumnsHandle.layer = null;
     _clipCellsHandle.layer = null;
     for (final _Span span in _rowMetrics.values) {
       span.dispose();
