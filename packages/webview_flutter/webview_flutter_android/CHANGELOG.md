@@ -1,3 +1,7 @@
+## 4.11.1
+
+* Adds `headers` to `NavigationRequest` to tell if it `isDownloadRequest` from `onDownloadStart`.
+
 ## 4.11.0
 
 * Adds support to opt out of Android inset changes. See

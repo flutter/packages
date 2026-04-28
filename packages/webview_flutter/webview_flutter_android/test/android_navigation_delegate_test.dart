@@ -579,6 +579,39 @@ void main() {
       },
     );
 
+    test(
+      'isDownloadRequest from onDownloadStart should be true',
+      () {
+        final androidNavigationDelegate = AndroidNavigationDelegate(
+          _buildCreationParams(),
+        );
+
+        androidNavigationDelegate.setOnLoadRequest((_) {
+          return Future.value();
+        });
+
+        late final NavigationRequest callbackNavigationRequest;
+        androidNavigationDelegate.setOnNavigationRequest((
+          NavigationRequest navigationRequest,
+        ) {
+          callbackNavigationRequest = navigationRequest;
+          return NavigationDecision.navigate;
+        });
+
+        CapturingDownloadListener.lastCreatedListener.onDownloadStart(
+          MockDownloadListener(),
+          'https://www.google.com',
+          '',
+          '',
+          '',
+          0,
+        );
+
+        expect(callbackNavigationRequest.url, 'https://www.google.com');
+        expect(callbackNavigationRequest.isDownloadRequest, true);
+      },
+    );
+
     test('onUrlChange', () {
       final androidNavigationDelegate = AndroidNavigationDelegate(
         _buildCreationParams(),

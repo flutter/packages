@@ -1,3 +1,7 @@
+## 2.15.2
+
+* Adds `headers` and `isDownloadRequest` to `NavigationRequest`，so we can easily tell if it was made to download an attachment from `onDownloadStart`.
+
 ## 2.15.1
 
 * Fixes dartdoc comments that accidentally used HTML.

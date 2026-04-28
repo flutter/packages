@@ -1680,7 +1680,18 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
             int contentLength,
           ) {
             if (weakThis.target != null) {
-              weakThis.target?._handleNavigation(url, isForMainFrame: true);
+              if (!contentDisposition.toLowerCase().startsWith('attachment')) {
+                contentDisposition = 'attachment; $contentDisposition'.trim();
+              }
+              weakThis.target?._handleNavigation(
+                url,
+                isForMainFrame: true,
+                headers: {
+                  'content-disposition': contentDisposition,
+                  'content-type': mimetype,
+                  'content-length': contentLength.toString(),
+                },
+              );
             }
           },
     );
@@ -1744,7 +1755,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     }
 
     final FutureOr<NavigationDecision> returnValue = onNavigationRequest(
-      NavigationRequest(url: url, isMainFrame: isForMainFrame),
+      NavigationRequest(url: url, isMainFrame: isForMainFrame, headers: headers),
     );
 
     if (returnValue is NavigationDecision &&
