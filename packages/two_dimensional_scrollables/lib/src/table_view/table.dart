@@ -699,13 +699,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // If we are starting from 0, we should dispose of any metrics that are
         // no longer in use. This happens when the number of columns is reduced.
         if (!appendColumns) {
-          _columnMetrics.removeWhere((int key, _Span span) {
-            if (key >= column) {
-              span.dispose();
-              return true;
-            }
-            return false;
-          });
+          _disposeTrailingSpans(_columnMetrics, column);
         }
         final bool acceptedDimension = _updateHorizontalScrollBounds();
         if (!acceptedDimension) {
@@ -746,15 +740,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     if (!appendColumns) {
-      // If we are not appending, we should dispose of any metrics that are
-      // no longer in use. This happens when the number of columns is reduced.
-      _columnMetrics.removeWhere((int key, _Span span) {
-        if (key >= column) {
-          span.dispose();
-          return true;
-        }
-        return false;
-      });
+      _disposeTrailingSpans(_columnMetrics, column);
     }
 
     assert(_columnMetrics.length >= delegate.pinnedColumnCount);
@@ -842,13 +828,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         // If we are starting from 0, we should dispose of any metrics that are
         // no longer in use. This happens when the number of rows is reduced.
         if (!appendRows) {
-          _rowMetrics.removeWhere((int key, _Span span) {
-            if (key >= row) {
-              span.dispose();
-              return true;
-            }
-            return false;
-          });
+          _disposeTrailingSpans(_rowMetrics, row);
         }
         final bool acceptedDimension = _updateVerticalScrollBounds();
         if (!acceptedDimension) {
@@ -889,15 +869,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     if (!appendRows) {
-      // If we are not appending, we should dispose of any metrics that are
-      // no longer in use. This happens when the number of rows is reduced.
-      _rowMetrics.removeWhere((int key, _Span span) {
-        if (key >= row) {
-          span.dispose();
-          return true;
-        }
-        return false;
-      });
+      _disposeTrailingSpans(_rowMetrics, row);
     }
 
     assert(_rowMetrics.length >= delegate.pinnedRowCount);
@@ -921,6 +893,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             ? _rowNullTerminatedIndex! - 1
             : null
       : delegate.rowCount! - delegate.trailingPinnedRowCount - 1;
+
+  void _disposeTrailingSpans(Map<int, _Span> metrics, int startIndex) {
+    metrics.removeWhere((int key, _Span span) {
+      if (key >= startIndex) {
+        span.dispose();
+        return true;
+      }
+      return false;
+    });
+  }
 
   void _updateScrollBounds() {
     final bool acceptedDimension =
