@@ -8,10 +8,6 @@ fun <T> completeWithError(callback: (Result<@JvmSuppressWildcards T>) -> Unit, f
   callback(Result.failure(failure))
 }
 
-fun completeWithUnitSuccess(callback: (Result<Unit>) -> Unit) {
-  callback(Result.success(Unit))
-}
-
 @Suppress("UNCHECKED_CAST")
 class ResultCompat<T>(private val result: Result<T>) {
   private val value: T? = result.getOrNull()

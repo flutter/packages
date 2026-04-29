@@ -89,9 +89,9 @@ public class BillingClientFactoryImplTest {
         ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
     verify(mockCallbackApi, times(1))
         .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
+    assertEquals(externalTransactionToken, callbackCaptor.getValue().getExternalTransactionToken());
     assertEquals(
-        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
+        originalTransactionId, callbackCaptor.getValue().getOriginalExternalTransactionId());
     assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 

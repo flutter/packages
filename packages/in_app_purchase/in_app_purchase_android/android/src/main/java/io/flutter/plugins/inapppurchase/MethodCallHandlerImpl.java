@@ -137,7 +137,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
   @Override
   public void createAlternativeBillingOnlyReportingDetailsAsync(
-      @NonNull Function1<? super Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>, Unit> callback) {
+      @NonNull
+          Function1<? super Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>, Unit>
+              callback) {
     if (billingClient == null) {
       ResultUtilsKt.completeWithError(callback, getNullBillingClientError());
       return;
@@ -145,10 +147,10 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     try {
       billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
           ((billingResult, alternativeBillingOnlyReportingDetails) ->
-          ResultCompat.success(
+              ResultCompat.success(
                   fromAlternativeBillingOnlyReportingDetails(
-                  billingResult, alternativeBillingOnlyReportingDetails),
-              callback)));
+                      billingResult, alternativeBillingOnlyReportingDetails),
+                  callback)));
     } catch (RuntimeException e) {
       ResultUtilsKt.completeWithError(
           callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
@@ -182,7 +184,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       billingClient.getBillingConfigAsync(
           GetBillingConfigParams.newBuilder().build(),
           (billingResult, billingConfig) ->
-          ResultCompat.success(fromBillingConfig(billingResult, billingConfig), callback));
+              ResultCompat.success(fromBillingConfig(billingResult, billingConfig), callback));
     } catch (RuntimeException e) {
       ResultUtilsKt.completeWithError(
           callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
@@ -225,8 +227,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           params,
           (billingResult, productDetailsList) -> {
             updateCachedProducts(productDetailsList);
-            PlatformProductDetailsResponse response = new PlatformProductDetailsResponse(
-                fromBillingResult(billingResult), fromProductDetailsList(productDetailsList));
+            PlatformProductDetailsResponse response =
+                new PlatformProductDetailsResponse(
+                    fromBillingResult(billingResult), fromProductDetailsList(productDetailsList));
             ResultCompat.success(response, callback);
           });
     } catch (RuntimeException e) {
@@ -358,7 +361,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
     try {
       ConsumeResponseListener listener =
-          (billingResult, outToken) -> ResultCompat.success(fromBillingResult(billingResult), callback);
+          (billingResult, outToken) ->
+              ResultCompat.success(fromBillingResult(billingResult), callback);
       ConsumeParams.Builder paramsBuilder =
           ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
       ConsumeParams params = paramsBuilder.build();
@@ -387,8 +391,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       billingClient.queryPurchasesAsync(
           paramsBuilder.build(),
           (billingResult, purchasesList) -> {
-            PlatformPurchasesResponse response = new PlatformPurchasesResponse(
-                fromBillingResult(billingResult), fromPurchasesList(purchasesList));
+            PlatformPurchasesResponse response =
+                new PlatformPurchasesResponse(
+                    fromBillingResult(billingResult), fromPurchasesList(purchasesList));
             ResultCompat.success(response, callback);
           });
     } catch (RuntimeException e) {
@@ -413,8 +418,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
               .setProductType(toProductTypeString(productType))
               .build(),
           (billingResult, purchasesList) -> {
-            PlatformPurchaseHistoryResponse response = new PlatformPurchaseHistoryResponse(
-                fromBillingResult(billingResult), fromPurchaseHistoryRecordList(purchasesList));
+            PlatformPurchaseHistoryResponse response =
+                new PlatformPurchaseHistoryResponse(
+                    fromBillingResult(billingResult), fromPurchaseHistoryRecordList(purchasesList));
             ResultCompat.success(response, callback);
           });
     } catch (RuntimeException e) {
@@ -426,7 +432,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   @Override
   public void startConnection(
       long handle,
-          @NonNull PlatformBillingChoiceMode billingMode,
+      @NonNull PlatformBillingChoiceMode billingMode,
       @NonNull PlatformPendingPurchasesParams pendingPurchasesParams,
       @NonNull Function1<? super Result<PlatformBillingResult>, Unit> callback) {
     if (billingClient == null) {

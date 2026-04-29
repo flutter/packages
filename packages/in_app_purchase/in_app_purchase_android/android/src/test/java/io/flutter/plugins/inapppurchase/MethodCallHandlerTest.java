@@ -9,10 +9,10 @@ import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT
 import static io.flutter.plugins.inapppurchase.Translator.fromBillingResponseCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
+import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
@@ -354,7 +355,7 @@ public class MethodCallHandlerTest {
     assertTrue(platformBillingConfigResult.called);
     PlatformBillingConfigResponse response = platformBillingConfigResult.result.getOrNull();
     assertResultsMatch(response.getBillingResult(), billingResult);
-    assertEquals(response.getCountryCode(), expectedCountryCode);
+    assertEquals(expectedCountryCode, response.getCountryCode());
   }
 
   @Test
@@ -394,7 +395,7 @@ public class MethodCallHandlerTest {
     PlatformAlternativeBillingOnlyReportingDetailsResponse response =
         platformAlternativeBillingOnlyReportingDetailsResult.result.getOrNull();
     assertResultsMatch(response.getBillingResult(), billingResult);
-    assertEquals(response.getExternalTransactionToken(), expectedExternalTransactionToken);
+    assertEquals(expectedExternalTransactionToken, response.getExternalTransactionToken());
   }
 
   @Test
@@ -518,7 +519,7 @@ public class MethodCallHandlerTest {
     stateListener.onBillingServiceDisconnected();
     ArgumentCaptor<Long> handleCaptor = ArgumentCaptor.forClass(Long.class);
     verify(mockCallbackApi, times(1)).onBillingServiceDisconnected(handleCaptor.capture(), any());
-    assertEquals(handleCaptor.getValue().longValue(), disconnectCallbackHandle);
+    assertEquals(disconnectCallbackHandle, handleCaptor.getValue().longValue());
   }
 
   @Test
@@ -646,7 +647,7 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     String oldProductId = "oldFoo";
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
+    queryForProducts(List.of(productId, oldProductId));
     PlatformBillingFlowParams params =
         new PlatformBillingFlowParams(
             productId,
@@ -699,7 +700,7 @@ public class MethodCallHandlerTest {
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
+    queryForProducts(List.of(productId, oldProductId));
     PlatformBillingFlowParams params =
         new PlatformBillingFlowParams(
             productId, replacementMode, null, accountId, null, oldProductId, purchaseToken);
@@ -720,7 +721,7 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     String queryOldProductId = "oldFoo";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
+    queryForProducts(List.of(productId, queryOldProductId));
     PlatformBillingFlowParams params =
         new PlatformBillingFlowParams(
             productId, replacementMode, null, accountId, null, null, null);
@@ -743,7 +744,7 @@ public class MethodCallHandlerTest {
     String accountId = "account";
     String queryOldProductId = "oldFoo";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
+    queryForProducts(List.of(productId, queryOldProductId));
     PlatformBillingFlowParams params =
         new PlatformBillingFlowParams(
             productId, replacementMode, null, accountId, null, null, null);
@@ -766,7 +767,7 @@ public class MethodCallHandlerTest {
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_FULL_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
+    queryForProducts(List.of(productId, oldProductId));
     PlatformBillingFlowParams params =
         new PlatformBillingFlowParams(
             productId, replacementMode, null, accountId, null, oldProductId, purchaseToken);
@@ -889,7 +890,7 @@ public class MethodCallHandlerTest {
     assertTrue(platformPurchasesResult.called);
     PlatformPurchasesResponse purchasesResponse = platformPurchasesResult.result.getOrNull();
     assertEquals(
-        purchasesResponse.getBillingResult().getResponseCode(), PlatformBillingResponse.OK);
+        PlatformBillingResponse.OK, purchasesResponse.getBillingResult().getResponseCode());
     assertTrue(purchasesResponse.getPurchases().isEmpty());
   }
 
@@ -1027,8 +1028,8 @@ public class MethodCallHandlerTest {
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * PlatformPendingPurchasesParams, Messages.Result)} with startup params.
+   * Call {@link MethodCallHandlerImpl#startConnection(long, PlatformBillingChoiceMode,
+   * PlatformPendingPurchasesParams, Function1)} with startup params.
    *
    * <p>Defaults to play billing only which is the default.
    */
@@ -1038,8 +1039,8 @@ public class MethodCallHandlerTest {
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * PlatformPendingPurchasesParams, Messages.Result)} with startup params.
+   * Call {@link MethodCallHandlerImpl#startConnection(long, PlatformBillingChoiceMode,
+   * PlatformPendingPurchasesParams, Function1)} with startup params.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
       PlatformBillingChoiceMode billingChoiceMode,
@@ -1158,7 +1159,9 @@ public class MethodCallHandlerTest {
         .build();
   }
 
-  private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
+  private void assertResultsMatch(
+      @Nullable PlatformBillingResult pigeonResult, BillingResult nativeResult) {
+    assertNotNull(pigeonResult);
     assertEquals(
         pigeonResult.getResponseCode(), fromBillingResponseCode(nativeResult.getResponseCode()));
     assertEquals(pigeonResult.getDebugMessage(), nativeResult.getDebugMessage());

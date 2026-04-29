@@ -278,7 +278,7 @@ public class TranslatorTest {
     assertEquals(expected.getFormattedPrice(), serialized.getFormattedPrice());
     assertEquals(expected.getPriceCurrencyCode(), serialized.getPriceCurrencyCode());
     assertEquals(expected.getPriceAmountMicros(), serialized.getPriceAmountMicros());
-    assertEquals((long) expected.getBillingCycleCount(), serialized.getBillingCycleCount());
+    assertEquals(expected.getBillingCycleCount(), serialized.getBillingCycleCount());
     assertEquals(expected.getBillingPeriod(), serialized.getBillingPeriod());
     assertEquals(
         expected.getRecurrenceMode(), recurrenceModeFromPlatform(serialized.getRecurrenceMode()));
@@ -309,45 +309,34 @@ public class TranslatorTest {
   private void assertSerialized(
       ProductDetails.InstallmentPlanDetails expected, PlatformInstallmentPlanDetails serialized) {
     assertEquals(
-        (long) expected.getInstallmentPlanCommitmentPaymentsCount(),
+        expected.getInstallmentPlanCommitmentPaymentsCount(),
         serialized.getCommitmentPaymentsCount());
     assertEquals(
-        (long) expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
+        expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
         serialized.getSubsequentCommitmentPaymentsCount());
   }
 
   private String productTypeFromPlatform(PlatformProductType type) {
-    switch (type) {
-      case INAPP:
-        return BillingClient.ProductType.INAPP;
-      case SUBS:
-        return BillingClient.ProductType.SUBS;
-    }
-    throw new IllegalStateException("Unhandled type");
+    return switch (type) {
+      case INAPP -> BillingClient.ProductType.INAPP;
+      case SUBS -> BillingClient.ProductType.SUBS;
+    };
   }
 
   private int stateFromPlatform(PlatformPurchaseState state) {
-    switch (state) {
-      case UNSPECIFIED:
-        return Purchase.PurchaseState.UNSPECIFIED_STATE;
-      case PURCHASED:
-        return Purchase.PurchaseState.PURCHASED;
-      case PENDING:
-        return Purchase.PurchaseState.PENDING;
-    }
-    throw new IllegalStateException("Unhandled state");
+    return switch (state) {
+      case UNSPECIFIED -> Purchase.PurchaseState.UNSPECIFIED_STATE;
+      case PURCHASED -> Purchase.PurchaseState.PURCHASED;
+      case PENDING -> Purchase.PurchaseState.PENDING;
+    };
   }
 
   private int recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
-    switch (mode) {
-      case FINITE_RECURRING:
-        return ProductDetails.RecurrenceMode.FINITE_RECURRING;
-      case INFINITE_RECURRING:
-        return ProductDetails.RecurrenceMode.INFINITE_RECURRING;
-      case NON_RECURRING:
-        return ProductDetails.RecurrenceMode.NON_RECURRING;
-    }
-    throw new IllegalStateException("Unhandled mode");
+    return switch (mode) {
+      case FINITE_RECURRING -> ProductDetails.RecurrenceMode.FINITE_RECURRING;
+      case INFINITE_RECURRING -> ProductDetails.RecurrenceMode.INFINITE_RECURRING;
+      case NON_RECURRING -> ProductDetails.RecurrenceMode.NON_RECURRING;
+    };
   }
 
   private void assertSerialized(
@@ -358,7 +347,7 @@ public class TranslatorTest {
     assertEquals(expected.getOriginalJson(), serialized.getOriginalJson());
     assertEquals(expected.getProducts(), serialized.getProducts());
     assertEquals(expected.getDeveloperPayload(), serialized.getDeveloperPayload());
-    assertEquals((long) expected.getQuantity(), serialized.getQuantity());
+    assertEquals(expected.getQuantity(), serialized.getQuantity());
   }
 }
 
