@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.UserChoiceBillingListener;
+import io.flutter.Log;
 import kotlin.Unit;
 
 /** The implementation for {@link BillingClientFactory} for the plugin. */
@@ -38,7 +39,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         // Do nothing.
         break;
       default:
-        io.flutter.Log.e(
+        Log.e(
             "BillingClientFactoryImpl",
             "Unknown BillingChoiceMode " + billingChoiceMode + ", Defaulting to PLAY_BILLING_ONLY");
         break;
