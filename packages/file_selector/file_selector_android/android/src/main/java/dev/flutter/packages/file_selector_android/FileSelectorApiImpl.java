@@ -142,8 +142,8 @@ public class FileSelectorApiImpl implements FileSelectorApi {
       @NonNull FileTypes allowedTypes,
       @NonNull
           Function1<
-                  ? super @NotNull Result<? extends @NotNull List<@NotNull FileResponse>>, @NotNull
-                  Unit>
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull FileResponse>>,
+                  @NotNull Unit>
               callback) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
