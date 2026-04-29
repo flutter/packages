@@ -551,4 +551,111 @@ void main() {
 
     expect(eventLog, isEmpty);
   }, skip: kIsWeb || !isMainChannel); // https://github.com/flutter/flutter/pull/129851
+
+  testWidgets('fontWeight decoder', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets())
+      ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+    addTearDown(runtime.dispose);
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: DynamicContent(),
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        onEvent: (String name, DynamicMap arguments) { },
+      ),
+    );
+
+    // String values w100–w900 in textStyle.
+    for (final (String name, FontWeight weight) in <(String, FontWeight)>[
+      ('w100', FontWeight.w100), ('w200', FontWeight.w200), ('w300', FontWeight.w300),
+      ('w400', FontWeight.w400), ('w500', FontWeight.w500), ('w600', FontWeight.w600),
+      ('w700', FontWeight.w700), ('w800', FontWeight.w800), ('w900', FontWeight.w900),
+      ('normal', FontWeight.w400), ('bold', FontWeight.w700),
+    ]) {
+      runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+        import core;
+        widget root = Directionality(
+          textDirection: "ltr",
+          child: Text(text: "hello", style: { fontWeight: "$name", fontSize: 16.0 }),
+        );
+      '''));
+      await tester.pump();
+      expect(tester.widget<Text>(find.byType(Text)).style?.fontWeight, weight, reason: 'string "$name"');
+    }
+
+    // Integer values 100–900 in textStyle.
+    for (final (int value, FontWeight weight) in <(int, FontWeight)>[
+      (100, FontWeight.w100), (200, FontWeight.w200), (300, FontWeight.w300),
+      (400, FontWeight.w400), (500, FontWeight.w500), (600, FontWeight.w600),
+      (700, FontWeight.w700), (800, FontWeight.w800), (900, FontWeight.w900),
+    ]) {
+      runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+        import core;
+        widget root = Directionality(
+          textDirection: "ltr",
+          child: Text(text: "hello", style: { fontWeight: $value, fontSize: 16.0 }),
+        );
+      '''));
+      await tester.pump();
+      expect(tester.widget<Text>(find.byType(Text)).style?.fontWeight, weight, reason: 'int $value');
+    }
+
+    // Unknown string returns null.
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Text(text: "hello", style: { fontWeight: "heavy", fontSize: 16.0 }),
+      );
+    '''));
+    await tester.pump();
+    expect(tester.widget<Text>(find.byType(Text)).style?.fontWeight, isNull);
+
+    // Missing key returns null.
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Text(text: "hello", style: { fontSize: 16.0 }),
+      );
+    '''));
+    await tester.pump();
+    expect(tester.widget<Text>(find.byType(Text)).style?.fontWeight, isNull);
+
+    // String values w100–w900 in strutStyle.
+    for (final (String name, FontWeight weight) in <(String, FontWeight)>[
+      ('w100', FontWeight.w100), ('w200', FontWeight.w200), ('w300', FontWeight.w300),
+      ('w400', FontWeight.w400), ('w500', FontWeight.w500), ('w600', FontWeight.w600),
+      ('w700', FontWeight.w700), ('w800', FontWeight.w800), ('w900', FontWeight.w900),
+      ('normal', FontWeight.w400), ('bold', FontWeight.w700),
+    ]) {
+      runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+        import core;
+        widget root = Directionality(
+          textDirection: "ltr",
+          child: Text(text: "hello", strutStyle: { fontWeight: "$name", fontSize: 16.0 }),
+        );
+      '''));
+      await tester.pump();
+      expect(tester.widget<Text>(find.byType(Text)).strutStyle?.fontWeight, weight, reason: 'strutStyle string "$name"');
+    }
+
+    // Integer values 100–900 in strutStyle.
+    for (final (int value, FontWeight weight) in <(int, FontWeight)>[
+      (100, FontWeight.w100), (200, FontWeight.w200), (300, FontWeight.w300),
+      (400, FontWeight.w400), (500, FontWeight.w500), (600, FontWeight.w600),
+      (700, FontWeight.w700), (800, FontWeight.w800), (900, FontWeight.w900),
+    ]) {
+      runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+        import core;
+        widget root = Directionality(
+          textDirection: "ltr",
+          child: Text(text: "hello", strutStyle: { fontWeight: $value, fontSize: 16.0 }),
+        );
+      '''));
+      await tester.pump();
+      expect(tester.widget<Text>(find.byType(Text)).strutStyle?.fontWeight, weight, reason: 'strutStyle int $value');
+    }
+  });
 }
