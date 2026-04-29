@@ -1095,12 +1095,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     final double trailingPinnedColumnOffset = _firstTrailingPinnedColumn != null
-        ? -(viewportDimension.width - _trailingPinnedColumnsExtent) -
-              _hAlignmentOffset
+        ? -(viewportDimension.width - _trailingPinnedColumnsExtent)
         : 0.0;
     final double trailingPinnedRowOffset = _firstTrailingPinnedRow != null
-        ? -(viewportDimension.height - _trailingPinnedRowsExtent) -
-              _vAlignmentOffset
+        ? -(viewportDimension.height - _trailingPinnedRowsExtent)
         : 0.0;
 
     final double? offsetIntoColumn = _firstNonPinnedColumn != null
@@ -1582,8 +1580,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         offset,
         Rect.fromLTWH(
           reversedH
-              ? viewportDimension.width - _leadingPinnedColumnsExtent
-              : 0.0,
+              ? viewportDimension.width - _leadingPinnedColumnsExtent - _hAlignmentOffset
+              : _hAlignmentOffset,
           (reversedV ? _trailingPinnedRowsExtent : _leadingPinnedRowsExtent) +
               (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           _leadingPinnedColumnsExtent,
@@ -1615,8 +1613,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         offset,
         Rect.fromLTWH(
           reversedH
-              ? 0.0
-              : viewportDimension.width - _trailingPinnedColumnsExtent,
+              ? _hAlignmentOffset
+              : viewportDimension.width - _trailingPinnedColumnsExtent - _hAlignmentOffset,
           (reversedV ? _trailingPinnedRowsExtent : _leadingPinnedRowsExtent) +
               (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           _trailingPinnedColumnsExtent,
@@ -1654,7 +1652,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   ? _trailingPinnedColumnsExtent
                   : _leadingPinnedColumnsExtent) +
               (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
-          reversedV ? viewportDimension.height - _leadingPinnedRowsExtent : 0.0,
+          reversedV
+              ? viewportDimension.height - _leadingPinnedRowsExtent - _vAlignmentOffset
+              : _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _leadingPinnedRowsExtent,
         ),
@@ -1691,8 +1691,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   : _leadingPinnedColumnsExtent) +
               (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
           reversedV
-              ? 0.0
-              : viewportDimension.height - _trailingPinnedRowsExtent,
+              ? _vAlignmentOffset
+              : viewportDimension.height - _trailingPinnedRowsExtent - _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _trailingPinnedRowsExtent,
         ),
