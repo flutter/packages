@@ -68,7 +68,7 @@ public final class PlatformVideoView implements PlatformView {
   /**
    * Binds the ExoPlayer to the provided surface.
    */
-  private static void bindPlayerToSurface(@NonNull ExoPlayer exoPlayer, @NonNull Surface surface) {
+  static void bindPlayerToSurface(@NonNull ExoPlayer exoPlayer, @NonNull Surface surface) {
     if (surface.isValid()) {
       exoPlayer.setVideoSurface(surface);
     }
@@ -78,7 +78,7 @@ public final class PlatformVideoView implements PlatformView {
    * Workaround for a rendering bug on Android 9 (API 28) where the decoder does not flush its
    * output buffer when a new surface is attached while the player is paused.
    */
-  private static void forceFirstFrameForAndroid9(@NonNull ExoPlayer exoPlayer) {
+  static void forceFirstFrameForAndroid9(@NonNull ExoPlayer exoPlayer) {
     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P && !exoPlayer.getPlayWhenReady()) {
       long position = exoPlayer.getCurrentPosition();
       exoPlayer.seekTo(position == 0 ? 1 : position);
