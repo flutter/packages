@@ -106,8 +106,8 @@ public class ImagePickerDelegate
         @Nullable VideoSelectionOptions videoOptions,
         @NonNull
             Function1<
-                    ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull
-                    Unit>
+                    ? super @NotNull Result<? extends @NotNull List<@NotNull String>>,
+                    @NotNull Unit>
                 callback) {
       this.imageOptions = imageOptions;
       this.videoOptions = videoOptions;
