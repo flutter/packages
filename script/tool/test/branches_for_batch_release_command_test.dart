@@ -4,7 +4,7 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:flutter_plugin_tools/src/branch_for_batch_release_command.dart';
+import 'package:flutter_plugin_tools/src/branches_for_batch_release_command.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
@@ -34,7 +34,7 @@ void main() {
   Future<List<String>> runBatchCommand({
     void Function(Error error)? errorHandler,
   }) => runCapturingPrint(runner, <String>[
-    'branch-for-batch-release',
+    'branches-for-batch-release',
     '--packages=a_package',
     '--branch=release-branch',
     '--remote=origin',
@@ -59,52 +59,53 @@ version: 1.0.0
     return package;
   }
 
-  const expectedGitCallsForABFiles = <ProcessCall>[
-    ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
-    ProcessCall('git-rm', <String>[
-      '/packages/a_package/pending_changelogs/a.yaml',
-      '/packages/a_package/pending_changelogs/b.yaml',
-    ], null),
-    ProcessCall('git-add', <String>[
-      '/packages/a_package/pubspec.yaml',
-      '/packages/a_package/CHANGELOG.md',
-    ], null),
-    ProcessCall('git-commit', <String>[
-      '-m',
-      '[a_package] Prepare for batch release',
-    ], null),
-    ProcessCall('git-push', <String>['origin', 'release-branch'], null),
-  ];
-  const expectedGitCallsForAFiles = <ProcessCall>[
-    ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
-    ProcessCall('git-rm', <String>[
-      '/packages/a_package/pending_changelogs/a.yaml',
-    ], null),
-    ProcessCall('git-add', <String>[
-      '/packages/a_package/pubspec.yaml',
-      '/packages/a_package/CHANGELOG.md',
-    ], null),
-    ProcessCall('git-commit', <String>[
-      '-m',
-      '[a_package] Prepare for batch release',
-    ], null),
-    ProcessCall('git-push', <String>['origin', 'release-branch'], null),
-  ];
+  List<ProcessCall> getExpectedGitCalls(
+    String version, {
+    bool includesB = false,
+    bool includesC = false,
+  }) {
+    final rmFiles = <String>['/packages/a_package/pending_changelogs/a.yaml'];
+    if (includesB) {
+      rmFiles.add('/packages/a_package/pending_changelogs/b.yaml');
+    }
+    if (includesC) {
+      rmFiles.add('/packages/a_package/pending_changelogs/c.yaml');
+    }
+
+    return <ProcessCall>[
+      ProcessCall('git-branch', <String>['release-a_package-$version'], null),
+      ProcessCall('git-push', <String>[
+        'origin',
+        'release-a_package-$version',
+      ], null),
+      const ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
+      ProcessCall('git-rm', rmFiles, null),
+      const ProcessCall('git-add', <String>[
+        '/packages/a_package/pubspec.yaml',
+        '/packages/a_package/CHANGELOG.md',
+      ], null),
+      const ProcessCall('git-commit', <String>[
+        '-m',
+        '[a_package] Prepare for batch release',
+      ], null),
+      const ProcessCall('git-push', <String>['origin', 'release-branch'], null),
+    ];
+  }
 
   setUp(() {
     mockPlatform = MockPlatform();
     final GitDir gitDir;
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final command = BranchForBatchReleaseCommand(
+    final command = BranchesForBatchReleaseCommand(
       packagesDir,
       processRunner: processRunner,
       gitDir: gitDir,
       platform: mockPlatform,
     );
     runner = CommandRunner<void>(
-      'branch_for_batch_release_command',
-      'Test for branch_for_batch_release_command',
+      'branches_for_batch_release_command',
+      'Test for branches_for_batch_release_command',
     );
     runner.addCommand(command);
   });
@@ -140,7 +141,7 @@ version: minor
       expect(changelogContent, contains('A new feature'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForAFiles),
+        orderedEquals(getExpectedGitCalls('1.1.0')),
       );
     });
 
@@ -174,7 +175,7 @@ version: major
       expect(changelogContent, contains('A new feature'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForAFiles),
+        orderedEquals(getExpectedGitCalls('2.0.0')),
       );
     });
 
@@ -208,7 +209,7 @@ version: patch
       expect(changelogContent, contains('A new feature'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForAFiles),
+        orderedEquals(getExpectedGitCalls('1.0.1')),
       );
     });
 
@@ -247,7 +248,7 @@ version: major
       expect(changelogContent, contains('A breaking change'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForABFiles),
+        orderedEquals(getExpectedGitCalls('2.0.0', includesB: true)),
       );
     });
 
@@ -286,7 +287,7 @@ version: patch
       expect(changelogContent, contains('A bug fix'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForABFiles),
+        orderedEquals(getExpectedGitCalls('1.1.0', includesB: true)),
       );
     });
 
@@ -325,7 +326,7 @@ version: patch
       expect(changelogContent, contains('A bug fix'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForABFiles),
+        orderedEquals(getExpectedGitCalls('2.0.0', includesB: true)),
       );
     });
 
@@ -369,29 +370,9 @@ version: patch
       expect(changelogContent, contains('A bug fix'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(<ProcessCall>[
-          const ProcessCall('git-checkout', <String>[
-            '-b',
-            'release-branch',
-          ], null),
-          const ProcessCall('git-rm', <String>[
-            '/packages/a_package/pending_changelogs/a.yaml',
-            '/packages/a_package/pending_changelogs/b.yaml',
-            '/packages/a_package/pending_changelogs/c.yaml',
-          ], null),
-          const ProcessCall('git-add', <String>[
-            '/packages/a_package/pubspec.yaml',
-            '/packages/a_package/CHANGELOG.md',
-          ], null),
-          const ProcessCall('git-commit', <String>[
-            '-m',
-            '[a_package] Prepare for batch release',
-          ], null),
-          const ProcessCall('git-push', <String>[
-            'origin',
-            'release-branch',
-          ], null),
-        ]),
+        orderedEquals(
+          getExpectedGitCalls('2.0.0', includesB: true, includesC: true),
+        ),
       );
     });
 
@@ -430,7 +411,7 @@ version: minor
       expect(changelogContent, contains('Another new feature'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForABFiles),
+        orderedEquals(getExpectedGitCalls('1.1.0', includesB: true)),
       );
     });
 
@@ -469,7 +450,7 @@ version: skip
       expect(changelogContent, contains('A documentation update'));
       expect(
         gitProcessRunner.recordedCalls,
-        orderedEquals(expectedGitCallsForABFiles),
+        orderedEquals(getExpectedGitCalls('1.1.0', includesB: true)),
       );
     });
 
@@ -679,7 +660,10 @@ version: major
         },
       );
 
-      expect(output.last, contains('Failed to push to release-branch: error'));
+      expect(
+        output.last,
+        contains('Failed to push to release-a_package-2.0.0: error'),
+      );
     });
 
     test('throws for pre-1.0.0 packages', () async {

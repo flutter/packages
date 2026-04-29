@@ -17,14 +17,15 @@ import androidx.annotation.Nullable;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
-import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
-import io.flutter.plugins.quickactions.Messages.FlutterError;
-import io.flutter.plugins.quickactions.Messages.ShortcutItemMessage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 
 final class QuickActions implements AndroidQuickActionsApi {
   static final String EXTRA_ACTION = "some unique action key";
@@ -54,9 +55,10 @@ final class QuickActions implements AndroidQuickActionsApi {
 
   @Override
   public void setShortcutItems(
-      @NonNull List<ShortcutItemMessage> itemsList, @NonNull Messages.VoidResult result) {
+      @NonNull List<ShortcutItemMessage> itemsList,
+      @NotNull Function1<? super @NotNull Result<@NotNull Unit>, @NotNull Unit> callback) {
     if (!isVersionAllowed()) {
-      result.success();
+      ResultUtilsKt.completeWithUnitSuccess(callback);
       return;
     }
     List<ShortcutInfoCompat> shortcuts = shortcutItemMessageToShortcutInfo(itemsList);
@@ -74,9 +76,10 @@ final class QuickActions implements AndroidQuickActionsApi {
           }
 
           if (dynamicShortcutsSet) {
-            result.success();
+            ResultUtilsKt.completeWithUnitSuccess(callback);
           } else {
-            result.error(
+            ResultUtilsKt.completeWithError(
+                callback,
                 new FlutterError(
                     "quick_action_setshortcutitems_failure",
                     "Exception thrown when setting dynamic shortcuts",
