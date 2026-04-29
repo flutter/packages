@@ -214,7 +214,8 @@ public class FileSelectorAndroidPluginTest {
     }
   }
 
-  // This test was created when error handling was moved from FileUtils.java to FileSelectorApiImpl.java
+  // This test was created when error handling was moved from FileUtils.java to
+  // FileSelectorApiImpl.java
   // in https://github.com/flutter/packages/pull/8184, so as to maintain the existing test.
   // The behavior is actually an error case and should be fixed,
   // see: https://github.com/flutter/flutter/issues/159568.

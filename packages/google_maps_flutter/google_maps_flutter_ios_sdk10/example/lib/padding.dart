@@ -11,8 +11,8 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PaddingPage extends GoogleMapExampleAppPage {
-  const PaddingPage({Key? key})
-    : super(const Icon(Icons.map), 'Add padding to the map', key: key);
+  const PaddingPage({super.key})
+    : super(const Icon(Icons.map), 'Add padding to the map');
 
   @override
   Widget build(BuildContext context) {

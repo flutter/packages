@@ -19,9 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
-import io.flutter.plugins.urllauncher.Messages.BrowserOptions;
-import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
-import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -65,7 +62,7 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean canLaunchUrl(@NonNull String url) {
+  public boolean canLaunchUrl(@NonNull String url) {
     Intent launchIntent = new Intent(Intent.ACTION_VIEW);
     launchIntent.setData(Uri.parse(url));
     String componentName = intentResolver.getHandlerComponentName(launchIntent);
@@ -81,10 +78,8 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean launchUrl(
-      @NonNull String url,
-      @NonNull Map<String, String> headers,
-      @NonNull Boolean requireNonBrowser) {
+  public boolean launchUrl(
+      @NonNull String url, @NonNull Map<String, String> headers, boolean requireNonBrowser) {
     ensureActivity();
     assert activity != null;
 
@@ -105,9 +100,9 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean openUrlInApp(
+  public boolean openUrlInApp(
       @NonNull String url,
-      @NonNull Boolean allowCustomTab,
+      boolean allowCustomTab,
       @NonNull WebViewOptions webViewOptions,
       @NonNull BrowserOptions browserOptions) {
     ensureActivity();
@@ -147,7 +142,7 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean supportsCustomTabs() {
+  public boolean supportsCustomTabs() {
     return CustomTabsClient.getPackageName(applicationContext, Collections.emptyList()) != null;
   }
 
@@ -196,7 +191,7 @@ final class UrlLauncher implements UrlLauncherApi {
 
   private void ensureActivity() {
     if (activity == null) {
-      throw new Messages.FlutterError(
+      throw new FlutterError(
           "NO_ACTIVITY", "Launching a URL requires a foreground activity.", null);
     }
   }

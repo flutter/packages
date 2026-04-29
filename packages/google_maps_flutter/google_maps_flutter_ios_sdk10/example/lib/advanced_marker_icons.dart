@@ -12,12 +12,8 @@ import 'place_marker.dart';
 /// Page that demonstrates how to use custom [AdvanceMarker] icons.
 class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkerIconsPage({Key? key, required this.mapId})
-    : super(
-        key: key,
-        const Icon(Icons.image_outlined),
-        'Advanced marker icons',
-      );
+  const AdvancedMarkerIconsPage({super.key, required this.mapId})
+    : super(const Icon(Icons.image_outlined), 'Advanced marker icons');
 
   /// Map ID to use for the GoogleMap.
   final String? mapId;

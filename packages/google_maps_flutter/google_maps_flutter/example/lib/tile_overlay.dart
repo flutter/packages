@@ -13,8 +13,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
 class TileOverlayPage extends GoogleMapExampleAppPage {
-  const TileOverlayPage({Key? key})
-    : super(const Icon(Icons.map), 'Tile overlay', key: key);
+  const TileOverlayPage({super.key})
+    : super(const Icon(Icons.map), 'Tile overlay');
 
   @override
   Widget build(BuildContext context) {

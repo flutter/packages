@@ -245,8 +245,7 @@ class TestWebView: WKWebView {
 }
 
 class TestURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender,
-  @unchecked
-  Sendable
+  @unchecked Sendable
 {
   func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {
 

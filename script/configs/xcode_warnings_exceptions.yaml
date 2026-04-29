@@ -7,3 +7,7 @@
 # TODO(loicsharma): Remove once AppAuth-iOS's warnings are fixed.
 # See: https://github.com/flutter/flutter/issues/162342
 - google_sign_in_ios
+
+# TODO(okorohelijah): Remove once Google-Maps-iOS-Utils's warnings are fixed upstream.
+# See: https://github.com/flutter/flutter/issues/184470
+- google_maps_flutter_ios

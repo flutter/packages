@@ -281,14 +281,7 @@ void main() {
     test('corner case strict', () {
       const source = '{{{ #foo }}} {{{ /foo }}}';
       final parser = Parser(source, 'foo', '{{ }}');
-      try {
-        parser.parse();
-        // TODO(stuartmorgan): Restructure test to use throwsA.
-        // ignore: use_test_throws_matchers
-        fail('Should fail.');
-      } on Exception catch (e) {
-        expect(e is TemplateException, isTrue);
-      }
+      expect(() => parser.parse(), throwsA(isA<TemplateException>()));
     });
 
     test('corner case lenient', () {
@@ -327,25 +320,16 @@ void main() {
       ex.toString();
     });
 
-    Exception parseFail(String source) {
-      try {
+    void Function() parseFail(String source) {
+      return () {
         final parser = Parser(source, 'foo', '{{ }}');
         parser.parse();
-        // TODO(stuartmorgan): Restructure test to use throwsA.
-        // ignore: use_test_throws_matchers
-        fail('Did not throw.');
-      } on Exception catch (ex, st) {
-        if (ex is! TemplateException) {
-          print(ex);
-          print(st);
-        }
-        return ex;
-      }
+      };
     }
 
     test('parse eof', () {
-      void expectTemplateEx(Exception ex) =>
-          expect(ex is TemplateException, isTrue);
+      void expectTemplateEx(void Function() shouldThrow) =>
+          expect(shouldThrow, throwsA(isA<TemplateException>()));
 
       expectTemplateEx(parseFail('{{#foo}}{{bar}}{{/foo}'));
       expectTemplateEx(parseFail('{{#foo}}{{bar}}{{/foo'));

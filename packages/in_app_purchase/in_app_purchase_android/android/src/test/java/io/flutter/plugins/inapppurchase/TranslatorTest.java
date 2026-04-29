@@ -30,11 +30,21 @@ import org.junit.Test;
 
 public class TranslatorTest {
   private static final String PURCHASE_EXAMPLE_JSON =
-      "{\"orderId\":\"foo\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\", \"obfuscatedAccountId\":\"Account101\", \"obfuscatedProfileId\":\"Profile105\"}";
+      "{\"orderId\":\"foo\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy"
+          + " payload\",\"isAcknowledged\":\"true\", \"obfuscatedAccountId\":\"Account101\","
+          + " \"obfuscatedProfileId\":\"Profile105\"}";
   private static final String IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON =
-      "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"Example id\",\"type\":\"inapp\",\"name\":\"Example name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}";
+      "{\"title\":\"Example title\",\"description\":\"Example description\",\"productId\":\"Example"
+          + " id\",\"type\":\"inapp\",\"name\":\"Example"
+          + " name\",\"oneTimePurchaseOfferDetails\":{\"priceAmountMicros\":990000,\"priceCurrencyCode\":\"USD\",\"formattedPrice\":\"$0.99\"}}";
   private static final String SUBS_PRODUCT_DETAIL_EXAMPLE_JSON =
-      "{\"title\":\"Example title 2\",\"description\":\"Example description 2\",\"productId\":\"Example id 2\",\"type\":\"subs\",\"name\":\"Example name 2\",\"subscriptionOfferDetails\":[{\"offerId\":\"Example offer id\",\"basePlanId\":\"Example base plan id\",\"offerTags\":[\"Example offer tag\"],\"offerIdToken\":\"Example offer token\",\"pricingPhases\":[{\"formattedPrice\":\"$0.99\",\"priceCurrencyCode\":\"USD\",\"priceAmountMicros\":990000,\"billingCycleCount\":4,\"billingPeriod\":\"Example billing period\",\"recurrenceMode\":1}]}]}";
+      "{\"title\":\"Example title 2\",\"description\":\"Example description"
+          + " 2\",\"productId\":\"Example id 2\",\"type\":\"subs\",\"name\":\"Example name"
+          + " 2\",\"subscriptionOfferDetails\":[{\"offerId\":\"Example offer"
+          + " id\",\"basePlanId\":\"Example base plan id\",\"offerTags\":[\"Example offer"
+          + " tag\"],\"offerIdToken\":\"Example offer"
+          + " token\",\"pricingPhases\":[{\"formattedPrice\":\"$0.99\",\"priceCurrencyCode\":\"USD\",\"priceAmountMicros\":990000,\"billingCycleCount\":4,\"billingPeriod\":\"Example"
+          + " billing period\",\"recurrenceMode\":1}]}]}";
 
   Constructor<ProductDetails> productDetailsConstructor;
 
@@ -115,7 +125,8 @@ public class TranslatorTest {
   @Test
   public void fromPurchasesHistoryRecordList() throws JSONException {
     final String purchase2Json =
-        "{\"orderId\":\"foo2\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\"}";
+        "{\"orderId\":\"foo2\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy"
+            + " payload\",\"isAcknowledged\":\"true\"}";
     final String signature = "signature";
     final List<PurchaseHistoryRecord> expected =
         Arrays.asList(
@@ -138,7 +149,8 @@ public class TranslatorTest {
   @Test
   public void fromPurchasesList() throws JSONException {
     final String purchase2Json =
-        "{\"orderId\":\"foo2\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy payload\",\"isAcknowledged\":\"true\"}";
+        "{\"orderId\":\"foo2\",\"packageName\":\"bar\",\"productId\":\"consumable\",\"purchaseTime\":11111111,\"purchaseState\":0,\"purchaseToken\":\"baz\",\"developerPayload\":\"dummy"
+            + " payload\",\"isAcknowledged\":\"true\"}";
     final String signature = "signature";
     final List<Purchase> expected =
         Arrays.asList(
