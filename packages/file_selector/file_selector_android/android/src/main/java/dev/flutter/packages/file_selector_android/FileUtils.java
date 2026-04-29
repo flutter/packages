@@ -66,9 +66,11 @@ public class FileUtils {
       String[] uriDocumentIdSplit = uriDocumentId.split(":");
 
       if (uriDocumentIdSplit.length < 2) {
-        // We expect the URI document ID to contain its storage volume and name to determine its path.
+        // We expect the URI document ID to contain its storage volume and name to
+        // determine its path.
         throw new UnsupportedOperationException(
-            "Retrieving the path of a document with an unknown storage volume or name is unsupported by this plugin.");
+            "Retrieving the path of a document with an unknown storage volume or name is"
+                + " unsupported by this plugin.");
       }
 
       String documentStorageVolume = uriDocumentIdSplit[0];
@@ -208,7 +210,8 @@ public class FileUtils {
     return fileName.substring(0, lastDotIndex);
   }
 
-  // From https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
+  // From
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
   protected static @Nullable String sanitizeFilename(@Nullable String displayName) {
     if (displayName == null) {
       return null;
