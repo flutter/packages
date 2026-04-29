@@ -217,7 +217,7 @@ class NIAllNullableTypesWithoutRecursion {
     this.listList,
     this.mapList,
 
-    //     // Maps
+    // Maps
     this.map,
     this.stringMap,
     this.intMap,
@@ -515,7 +515,7 @@ abstract class NIHostIntegrationCoreApi {
     String? aNullableString,
   );
 
-  // /// Returns passed in arguments of multiple types.
+  /// Returns passed in arguments of multiple types.
   @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
   @SwiftFunction(
     'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)',
@@ -1413,22 +1413,22 @@ abstract class NIHostIntegrationCoreApi {
   bool callFlutterNoopOnBackgroundThread();
 }
 
-// /// An API that can be implemented for minimal, compile-only tests.
-// //
-// // This is also here to test that multiple host APIs can be generated
-// // successfully in all languages (e.g., in Java where it requires having a
-// // wrapper class).
+/// An API that can be implemented for minimal, compile-only tests.
+//
+// This is also here to test that multiple host APIs can be generated
+// successfully in all languages (e.g., in Java where it requires having a
+// wrapper class).
 // @HostApi()
 // abstract class NIHostTrivialApi {
 //   void noop();
 // }
 
-// /// A simple API implemented in some unit tests.
-// //
-// // This is separate from NIHostIntegrationCoreApi to avoid having to update a
-// // lot of unit tests every time we add something to the integration test API.
-// // TODO(stuartmorgan): Restructure the unit tests to reduce the number of
-// // different APIs we define.
+/// A simple API implemented in some unit tests.
+//
+// This is separate from NIHostIntegrationCoreApi to avoid having to update a
+// lot of unit tests every time we add something to the integration test API.
+// TODO(stuartmorgan): Restructure the unit tests to reduce the number of
+// different APIs we define.
 // @HostApi()
 // abstract class NIHostSmallApi {
 //   @async
@@ -1497,7 +1497,7 @@ abstract class NIFlutterIntegrationCoreApi {
     String? aNullableString,
   );
 
-  //   // ========== Non-nullable argument/return type tests ==========
+  // ========== Non-nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
   @ObjCSelector('echoBool:')
@@ -1625,7 +1625,7 @@ abstract class NIFlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   NIAnotherEnum echoNIAnotherEnum(NIAnotherEnum anotherEnum);
 
-  //   // ========== Nullable argument/return type tests ==========
+  // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
   @ObjCSelector('echoNullableBool:')
