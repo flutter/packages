@@ -20,13 +20,14 @@ import java.util.Currency
 
 fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
   return PlatformProductDetails(
-      detail.description,
-      detail.name,
-      detail.productId,
-      toPlatformProductType(detail.productType),
-      detail.title,
-      fromOneTimePurchaseOfferDetails(detail.oneTimePurchaseOfferDetails),
-      fromSubscriptionOfferDetailsList(detail.subscriptionOfferDetails))
+      description = detail.description,
+      name = detail.name,
+      productId = detail.productId,
+      productType = toPlatformProductType(detail.productType),
+      title = detail.title,
+      oneTimePurchaseOfferDetails =
+          fromOneTimePurchaseOfferDetails(detail.oneTimePurchaseOfferDetails),
+      subscriptionOfferDetails = fromSubscriptionOfferDetailsList(detail.subscriptionOfferDetails))
 }
 
 fun toProductList(
@@ -83,9 +84,9 @@ fun fromOneTimePurchaseOfferDetails(
   }
 
   return PlatformOneTimePurchaseOfferDetails(
-      oneTimePurchaseOfferDetails.priceAmountMicros,
-      oneTimePurchaseOfferDetails.formattedPrice,
-      oneTimePurchaseOfferDetails.priceCurrencyCode)
+      priceAmountMicros = oneTimePurchaseOfferDetails.priceAmountMicros,
+      formattedPrice = oneTimePurchaseOfferDetails.formattedPrice,
+      priceCurrencyCode = oneTimePurchaseOfferDetails.priceCurrencyCode)
 }
 
 fun fromSubscriptionOfferDetailsList(
@@ -107,12 +108,13 @@ fun fromSubscriptionOfferDetails(
     subscriptionOfferDetails: ProductDetails.SubscriptionOfferDetails
 ): PlatformSubscriptionOfferDetails {
   return PlatformSubscriptionOfferDetails(
-      subscriptionOfferDetails.basePlanId,
-      subscriptionOfferDetails.offerId,
-      subscriptionOfferDetails.offerToken,
-      subscriptionOfferDetails.offerTags,
-      fromPricingPhases(subscriptionOfferDetails.pricingPhases),
-      fromInstallmentPlanDetails(subscriptionOfferDetails.installmentPlanDetails))
+      basePlanId = subscriptionOfferDetails.basePlanId,
+      offerId = subscriptionOfferDetails.offerId,
+      offerToken = subscriptionOfferDetails.offerToken,
+      offerTags = subscriptionOfferDetails.offerTags,
+      pricingPhases = fromPricingPhases(subscriptionOfferDetails.pricingPhases),
+      installmentPlanDetails =
+          fromInstallmentPlanDetails(subscriptionOfferDetails.installmentPlanDetails))
 }
 
 fun fromPricingPhases(
@@ -127,12 +129,12 @@ fun fromPricingPhases(
 
 fun fromPricingPhase(pricingPhase: ProductDetails.PricingPhase): PlatformPricingPhase {
   return PlatformPricingPhase(
-      pricingPhase.billingCycleCount.toLong(),
-      toPlatformRecurrenceMode(pricingPhase.recurrenceMode),
-      pricingPhase.priceAmountMicros,
-      pricingPhase.billingPeriod,
-      pricingPhase.formattedPrice,
-      pricingPhase.priceCurrencyCode)
+      billingCycleCount = pricingPhase.billingCycleCount.toLong(),
+      recurrenceMode = toPlatformRecurrenceMode(pricingPhase.recurrenceMode),
+      priceAmountMicros = pricingPhase.priceAmountMicros,
+      billingPeriod = pricingPhase.billingPeriod,
+      formattedPrice = pricingPhase.formattedPrice,
+      priceCurrencyCode = pricingPhase.priceCurrencyCode)
 }
 
 fun fromInstallmentPlanDetails(
@@ -143,8 +145,10 @@ fun fromInstallmentPlanDetails(
   }
 
   return PlatformInstallmentPlanDetails(
-      installmentPlanDetails.installmentPlanCommitmentPaymentsCount.toLong(),
-      installmentPlanDetails.subsequentInstallmentPlanCommitmentPaymentsCount.toLong())
+      commitmentPaymentsCount =
+          installmentPlanDetails.installmentPlanCommitmentPaymentsCount.toLong(),
+      subsequentCommitmentPaymentsCount =
+          installmentPlanDetails.subsequentInstallmentPlanCommitmentPaymentsCount.toLong())
 }
 
 fun toPlatformRecurrenceMode(mode: Int): PlatformRecurrenceMode {
@@ -172,8 +176,8 @@ fun fromPurchase(purchase: Purchase): PlatformPurchase {
   if (billingAccountIdentifiers != null) {
     accountIdentifiers =
         PlatformAccountIdentifiers(
-            billingAccountIdentifiers.obfuscatedAccountId,
-            billingAccountIdentifiers.obfuscatedProfileId)
+            obfuscatedAccountId = billingAccountIdentifiers.obfuscatedAccountId,
+            obfuscatedProfileId = billingAccountIdentifiers.obfuscatedProfileId)
   }
 
   var pendingPurchaseUpdate: PlatformPendingPurchaseUpdate? = null
@@ -183,20 +187,20 @@ fun fromPurchase(purchase: Purchase): PlatformPurchase {
   }
 
   return PlatformPurchase(
-      purchase.orderId,
-      purchase.packageName,
-      purchase.purchaseTime,
-      purchase.purchaseToken,
-      purchase.signature,
-      purchase.products,
-      purchase.isAutoRenewing,
-      purchase.originalJson,
-      purchase.developerPayload,
-      purchase.isAcknowledged,
-      purchase.quantity.toLong(),
-      toPlatformPurchaseState(purchase.purchaseState),
-      accountIdentifiers,
-      pendingPurchaseUpdate)
+      orderId = purchase.orderId,
+      packageName = purchase.packageName,
+      purchaseTime = purchase.purchaseTime,
+      purchaseToken = purchase.purchaseToken,
+      signature = purchase.signature,
+      products = purchase.products,
+      isAutoRenewing = purchase.isAutoRenewing,
+      originalJson = purchase.originalJson,
+      developerPayload = purchase.developerPayload,
+      isAcknowledged = purchase.isAcknowledged,
+      quantity = purchase.quantity.toLong(),
+      purchaseState = toPlatformPurchaseState(purchase.purchaseState),
+      accountIdentifiers = accountIdentifiers,
+      pendingPurchaseUpdate = pendingPurchaseUpdate)
 }
 
 fun fromPendingPurchaseUpdate(
@@ -214,13 +218,13 @@ fun fromPurchaseHistoryRecord(
     purchaseHistoryRecord: PurchaseHistoryRecord
 ): PlatformPurchaseHistoryRecord {
   return PlatformPurchaseHistoryRecord(
-      purchaseHistoryRecord.quantity.toLong(),
-      purchaseHistoryRecord.purchaseTime,
-      purchaseHistoryRecord.developerPayload,
-      purchaseHistoryRecord.originalJson,
-      purchaseHistoryRecord.purchaseToken,
-      purchaseHistoryRecord.signature,
-      purchaseHistoryRecord.products)
+      quantity = purchaseHistoryRecord.quantity.toLong(),
+      purchaseTime = purchaseHistoryRecord.purchaseTime,
+      developerPayload = purchaseHistoryRecord.developerPayload,
+      originalJson = purchaseHistoryRecord.originalJson,
+      purchaseToken = purchaseHistoryRecord.purchaseToken,
+      signature = purchaseHistoryRecord.signature,
+      products = purchaseHistoryRecord.products)
 }
 
 fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPurchase> {
@@ -282,9 +286,9 @@ fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse {
 
 fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserChoiceDetails {
   return PlatformUserChoiceDetails(
-      userChoiceDetails.originalExternalTransactionId,
-      userChoiceDetails.externalTransactionToken,
-      fromUserChoiceProductsList(userChoiceDetails.products))
+      originalExternalTransactionId = userChoiceDetails.originalExternalTransactionId,
+      externalTransactionToken = userChoiceDetails.externalTransactionToken,
+      products = fromUserChoiceProductsList(userChoiceDetails.products))
 }
 
 fun fromUserChoiceProductsList(
@@ -303,7 +307,7 @@ fun fromUserChoiceProductsList(
 
 fun fromUserChoiceProduct(product: UserChoiceDetails.Product): PlatformUserChoiceProduct {
   return PlatformUserChoiceProduct(
-      product.id, product.offerToken, toPlatformProductType(product.type))
+      id = product.id, offerToken = product.offerToken, type = toPlatformProductType(product.type))
 }
 
 /** Converter from [BillingResult] and [BillingConfig] to map. */
