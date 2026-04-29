@@ -120,7 +120,15 @@ class VersionAndChangelogValidator {
     required bool checkForMissingChanges,
     required bool ignorePlatformInterfaceBreaks,
   }) async {
-    final Pubspec pubspec = package.parsePubspec();
+    final Pubspec? pubspec = _tryParsePubspec(package);
+    if (pubspec == null) {
+      // No remaining checks make sense, so fail immediately.
+      return <String>['Invalid pubspec.yaml.'];
+    }
+
+    if (pubspec.publishTo == 'none') {
+      return <String>[];
+    }
 
     final Version? currentPubspecVersion = pubspec.version;
     if (currentPubspecVersion == null) {
@@ -655,6 +663,16 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       from: _repoRoot,
       platformContext: _path,
     );
+  }
+
+  Pubspec? _tryParsePubspec(RepositoryPackage package) {
+    try {
+      final Pubspec pubspec = package.parsePubspec();
+      return pubspec;
+    } on Exception catch (exception) {
+      printError('${_indentation}Failed to parse `pubspec.yaml`: $exception}');
+      return null;
+    }
   }
 }
 

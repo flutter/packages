@@ -5,7 +5,6 @@
 import 'package:file/file.dart';
 
 import 'common/git_version_finder.dart';
-import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 import 'validators/version_and_changelog_validator.dart';
@@ -72,6 +71,10 @@ class VersionCheckCommand extends PackageLoopingCommand {
       'This command requires "flutter" to be in your path.';
 
   @override
+  final PackageLoopingType packageLoopingType =
+      PackageLoopingType.includeAllSubpackages;
+
+  @override
   bool get hasLongOutput => false;
 
   @override
@@ -81,15 +84,23 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final Pubspec? pubspec = _tryParsePubspec(package);
-    if (pubspec == null) {
-      // No remaining checks make sense, so fail immediately.
-      return PackageResult.fail(<String>['Invalid pubspec.yaml.']);
+    if (!package.isTopLevel) {
+      return PackageResult.skip('Not a top-level package.');
+    }
+    final List<String> errors = [];
+
+    if (package.isTopLevel) {
+      errors.addAll(await _validateVersionAndChangelog(package));
     }
 
-    if (pubspec.publishTo == 'none') {
-      return PackageResult.skip('Found "publish_to: none".');
-    }
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
+  }
+
+  Future<List<String>> _validateVersionAndChangelog(
+    RepositoryPackage package,
+  ) async {
     final Directory repoRoot = packagesDir.fileSystem.directory(
       (await gitDir).path,
     );
@@ -104,24 +115,11 @@ class VersionCheckCommand extends PackageLoopingCommand {
       prLabels: _prLabels,
     );
 
-    final List<String> errors = await validator.validateChangelogAndVersion(
+    return validator.validateChangelogAndVersion(
       package,
       checkForMissingChanges: getBoolArg(_checkForMissingChanges),
       ignorePlatformInterfaceBreaks: getBoolArg(_ignorePlatformInterfaceBreaks),
     );
-    return errors.isEmpty
-        ? PackageResult.success()
-        : PackageResult.fail(errors);
-  }
-
-  Pubspec? _tryParsePubspec(RepositoryPackage package) {
-    try {
-      final Pubspec pubspec = package.parsePubspec();
-      return pubspec;
-    } on Exception catch (exception) {
-      printError('${indentation}Failed to parse `pubspec.yaml`: $exception}');
-      return null;
-    }
   }
 
   /// Returns the labels associated with this PR, if any, or an empty set

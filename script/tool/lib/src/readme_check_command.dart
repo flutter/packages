@@ -38,10 +38,26 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       'Checks that READMEs follow repository conventions.';
 
   @override
+  final PackageLoopingType packageLoopingType =
+      PackageLoopingType.includeAllSubpackages;
+
+  @override
   bool get hasLongOutput => false;
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final List<String> errors = [];
+
+    if (package.isTopLevel) {
+      errors.addAll(await _validateReadme(package));
+    }
+
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
+  }
+
+  Future<List<String>> _validateReadme(RepositoryPackage package) async {
     final validator = ReadmeValidator(
       path: path,
       indentation: indentation,
@@ -78,8 +94,6 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       );
     }
 
-    return errors.isEmpty
-        ? PackageResult.success()
-        : PackageResult.fail(errors);
+    return errors;
   }
 }
