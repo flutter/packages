@@ -4,16 +4,16 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromAlternativeBillingOnlyReportingDetails;
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingConfig;
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
-import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.toBillingClientFeature;
-import static io.flutter.plugins.inapppurchase.Translator.toProductList;
-import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
-import static io.flutter.plugins.inapppurchase.Translator.toReplacementMode;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromAlternativeBillingOnlyReportingDetails;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingConfig;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromProductDetailsList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchaseHistoryRecordList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.toBillingClientFeature;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.toProductList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.toProductTypeString;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.toReplacementMode;
 
 import android.app.Activity;
 import android.app.Application;

@@ -63,7 +63,7 @@ public class TranslatorTest {
     final ProductDetails expected =
         productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    PlatformProductDetails serialized = Translator.fromProductDetail(expected);
+    PlatformProductDetails serialized = TranslatorKt.fromProductDetail(expected);
 
     assertSerialized(expected, serialized);
   }
@@ -74,7 +74,7 @@ public class TranslatorTest {
     final ProductDetails expected =
         productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    PlatformProductDetails serialized = Translator.fromProductDetail(expected);
+    PlatformProductDetails serialized = TranslatorKt.fromProductDetail(expected);
 
     assertSerialized(expected, serialized);
   }
@@ -87,7 +87,7 @@ public class TranslatorTest {
             productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
             productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
 
-    final List<PlatformProductDetails> serialized = Translator.fromProductDetailsList(expected);
+    final List<PlatformProductDetails> serialized = TranslatorKt.fromProductDetailsList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -96,20 +96,20 @@ public class TranslatorTest {
 
   @Test
   public void fromProductDetailsList_null() {
-    assertEquals(Collections.emptyList(), Translator.fromProductDetailsList(null));
+    assertEquals(Collections.emptyList(), TranslatorKt.fromProductDetailsList(null));
   }
 
   @Test
   public void fromPurchase() throws JSONException {
     final Purchase expected = new Purchase(PURCHASE_EXAMPLE_JSON, "signature");
-    assertSerialized(expected, Translator.fromPurchase(expected));
+    assertSerialized(expected, TranslatorKt.fromPurchase(expected));
   }
 
   @Test
   public void fromPurchaseWithoutAccountIds() throws JSONException {
     final Purchase expected =
         new PurchaseWithoutAccountIdentifiers(PURCHASE_EXAMPLE_JSON, "signature");
-    PlatformPurchase serialized = Translator.fromPurchase(expected);
+    PlatformPurchase serialized = TranslatorKt.fromPurchase(expected);
     assertNotNull(serialized.getOrderId());
     assertNull(serialized.getAccountIdentifiers());
   }
@@ -118,7 +118,7 @@ public class TranslatorTest {
   public void fromPurchaseHistoryRecord() throws JSONException {
     final PurchaseHistoryRecord expected =
         new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, "signature");
-    assertSerialized(expected, Translator.fromPurchaseHistoryRecord(expected));
+    assertSerialized(expected, TranslatorKt.fromPurchaseHistoryRecord(expected));
   }
 
   @Test
@@ -133,7 +133,7 @@ public class TranslatorTest {
             new PurchaseHistoryRecord(purchase2Json, signature));
 
     final List<PlatformPurchaseHistoryRecord> serialized =
-        Translator.fromPurchaseHistoryRecordList(expected);
+        TranslatorKt.fromPurchaseHistoryRecordList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -142,7 +142,7 @@ public class TranslatorTest {
 
   @Test
   public void fromPurchasesHistoryRecordList_null() {
-    assertEquals(Collections.emptyList(), Translator.fromPurchaseHistoryRecordList(null));
+    assertEquals(Collections.emptyList(), TranslatorKt.fromPurchaseHistoryRecordList(null));
   }
 
   @Test
@@ -155,7 +155,7 @@ public class TranslatorTest {
         Arrays.asList(
             new Purchase(PURCHASE_EXAMPLE_JSON, signature), new Purchase(purchase2Json, signature));
 
-    final List<PlatformPurchase> serialized = Translator.fromPurchasesList(expected);
+    final List<PlatformPurchase> serialized = TranslatorKt.fromPurchasesList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -164,7 +164,7 @@ public class TranslatorTest {
 
   @Test
   public void fromPurchasesList_null() {
-    assertEquals(Collections.emptyList(), Translator.fromPurchasesList(null));
+    assertEquals(Collections.emptyList(), TranslatorKt.fromPurchasesList(null));
   }
 
   @Test
@@ -174,7 +174,7 @@ public class TranslatorTest {
             .setDebugMessage("dummy debug message")
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .build();
-    PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
+    PlatformBillingResult platformResult = TranslatorKt.fromBillingResult(newBillingResult);
 
     assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
@@ -184,7 +184,7 @@ public class TranslatorTest {
   public void fromBillingResult_debugMessageNull() {
     BillingResult newBillingResult =
         BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build();
-    PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
+    PlatformBillingResult platformResult = TranslatorKt.fromBillingResult(newBillingResult);
 
     assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
@@ -192,9 +192,9 @@ public class TranslatorTest {
 
   @Test
   public void currencyCodeFromSymbol() {
-    assertEquals("$", Translator.currencySymbolFromCode("USD"));
+    assertEquals("$", TranslatorKt.currencySymbolFromCode("USD"));
     try {
-      Translator.currencySymbolFromCode("EUROPACOIN");
+      TranslatorKt.currencySymbolFromCode("EUROPACOIN");
       fail("Translator should throw an exception");
     } catch (Exception e) {
       assertTrue(e instanceof IllegalArgumentException);

@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
-import static io.flutter.plugins.inapppurchase.Translator.toPendingPurchasesParams;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromUserChoiceDetails;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.toPendingPurchasesParams;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
