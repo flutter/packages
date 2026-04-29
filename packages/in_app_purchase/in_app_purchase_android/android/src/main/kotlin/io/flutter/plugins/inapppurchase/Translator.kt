@@ -31,9 +31,9 @@ fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
 
 fun toProductList(
     platformProducts: MutableList<PlatformQueryProduct>
-): MutableList<QueryProductDetailsParams.Product?> {
-  val products: MutableList<QueryProductDetailsParams.Product?> =
-      ArrayList<QueryProductDetailsParams.Product?>()
+): MutableList<QueryProductDetailsParams.Product> {
+  val products: MutableList<QueryProductDetailsParams.Product> =
+      ArrayList<QueryProductDetailsParams.Product>()
   for (platformProduct in platformProducts) {
     products.add(toProduct(platformProduct))
   }
@@ -65,12 +65,12 @@ fun toPlatformProductType(typeString: String): PlatformProductType {
 
 fun fromProductDetailsList(
     productDetailsList: MutableList<ProductDetails>?
-): MutableList<PlatformProductDetails?> {
+): MutableList<PlatformProductDetails> {
   if (productDetailsList == null) {
-    return mutableListOf<PlatformProductDetails?>()
+    return mutableListOf<PlatformProductDetails>()
   }
 
-  val output = ArrayList<PlatformProductDetails?>()
+  val output = ArrayList<PlatformProductDetails>()
   for (detail in productDetailsList) {
     output.add(fromProductDetail(detail))
   }
@@ -92,12 +92,12 @@ fun fromOneTimePurchaseOfferDetails(
 
 fun fromSubscriptionOfferDetailsList(
     subscriptionOfferDetailsList: MutableList<ProductDetails.SubscriptionOfferDetails>?
-): MutableList<PlatformSubscriptionOfferDetails?>? {
+): MutableList<PlatformSubscriptionOfferDetails>? {
   if (subscriptionOfferDetailsList == null) {
     return null
   }
 
-  val serialized = ArrayList<PlatformSubscriptionOfferDetails?>()
+  val serialized = ArrayList<PlatformSubscriptionOfferDetails>()
   for (subscriptionOfferDetails in subscriptionOfferDetailsList) {
     serialized.add(fromSubscriptionOfferDetails(subscriptionOfferDetails))
   }
@@ -119,8 +119,8 @@ fun fromSubscriptionOfferDetails(
 
 fun fromPricingPhases(
     pricingPhases: ProductDetails.PricingPhases
-): MutableList<PlatformPricingPhase?> {
-  val serialized = ArrayList<PlatformPricingPhase?>()
+): MutableList<PlatformPricingPhase> {
+  val serialized = ArrayList<PlatformPricingPhase>()
   for (pricingPhase in pricingPhases.getPricingPhaseList()) {
     serialized.add(fromPricingPhase(pricingPhase))
   }
@@ -225,12 +225,12 @@ fun fromPurchaseHistoryRecord(
       purchaseHistoryRecord.getProducts())
 }
 
-fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPurchase?> {
+fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPurchase> {
   if (purchases == null) {
-    return mutableListOf<PlatformPurchase?>()
+    return mutableListOf<PlatformPurchase>()
   }
 
-  val serialized: MutableList<PlatformPurchase?> = ArrayList<PlatformPurchase?>()
+  val serialized: MutableList<PlatformPurchase> = ArrayList<PlatformPurchase>()
   for (purchase in purchases) {
     serialized.add(fromPurchase(purchase))
   }
@@ -239,13 +239,13 @@ fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPu
 
 fun fromPurchaseHistoryRecordList(
     purchaseHistoryRecords: MutableList<PurchaseHistoryRecord>?
-): MutableList<PlatformPurchaseHistoryRecord?> {
+): MutableList<PlatformPurchaseHistoryRecord> {
   if (purchaseHistoryRecords == null) {
-    return mutableListOf<PlatformPurchaseHistoryRecord?>()
+    return mutableListOf<PlatformPurchaseHistoryRecord>()
   }
 
-  val serialized: MutableList<PlatformPurchaseHistoryRecord?> =
-      ArrayList<PlatformPurchaseHistoryRecord?>()
+  val serialized: MutableList<PlatformPurchaseHistoryRecord> =
+      ArrayList<PlatformPurchaseHistoryRecord>()
   for (purchaseHistoryRecord in purchaseHistoryRecords) {
     serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord))
   }
@@ -292,12 +292,12 @@ fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserCho
 
 fun fromUserChoiceProductsList(
     productsList: MutableList<UserChoiceDetails.Product>
-): MutableList<PlatformUserChoiceProduct?> {
+): MutableList<PlatformUserChoiceProduct> {
   if (productsList.isEmpty()) {
-    return mutableListOf<PlatformUserChoiceProduct?>()
+    return mutableListOf<PlatformUserChoiceProduct>()
   }
 
-  val output = ArrayList<PlatformUserChoiceProduct?>()
+  val output = ArrayList<PlatformUserChoiceProduct>()
   for (product in productsList) {
     output.add(fromUserChoiceProduct(product))
   }
