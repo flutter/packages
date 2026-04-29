@@ -31,13 +31,9 @@ fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
 }
 
 fun toProductList(
-    platformProducts: MutableList<PlatformQueryProduct>
-): MutableList<QueryProductDetailsParams.Product> {
-  val products: MutableList<QueryProductDetailsParams.Product> = ArrayList()
-  for (platformProduct in platformProducts) {
-    products.add(toProduct(platformProduct))
-  }
-  return products
+    platformProducts: List<PlatformQueryProduct>
+): List<QueryProductDetailsParams.Product> {
+  return platformProducts.map { toProduct(it) }
 }
 
 fun toProduct(platformProduct: PlatformQueryProduct): QueryProductDetailsParams.Product {
@@ -63,17 +59,9 @@ fun toPlatformProductType(typeString: String): PlatformProductType {
 }
 
 fun fromProductDetailsList(
-    productDetailsList: MutableList<ProductDetails>?
-): MutableList<PlatformProductDetails> {
-  if (productDetailsList == null) {
-    return mutableListOf()
-  }
-
-  val output = ArrayList<PlatformProductDetails>()
-  for (detail in productDetailsList) {
-    output.add(fromProductDetail(detail))
-  }
-  return output
+    productDetailsList: List<ProductDetails>?
+): List<PlatformProductDetails> {
+  return productDetailsList?.map { fromProductDetail(it) } ?: emptyList()
 }
 
 fun fromOneTimePurchaseOfferDetails(
@@ -90,18 +78,9 @@ fun fromOneTimePurchaseOfferDetails(
 }
 
 fun fromSubscriptionOfferDetailsList(
-    subscriptionOfferDetailsList: MutableList<ProductDetails.SubscriptionOfferDetails>?
-): MutableList<PlatformSubscriptionOfferDetails>? {
-  if (subscriptionOfferDetailsList == null) {
-    return null
-  }
-
-  val serialized = ArrayList<PlatformSubscriptionOfferDetails>()
-  for (subscriptionOfferDetails in subscriptionOfferDetailsList) {
-    serialized.add(fromSubscriptionOfferDetails(subscriptionOfferDetails))
-  }
-
-  return serialized
+    subscriptionOfferDetailsList: List<ProductDetails.SubscriptionOfferDetails>?
+): List<PlatformSubscriptionOfferDetails>? {
+  return subscriptionOfferDetailsList?.map { fromSubscriptionOfferDetails(it) }
 }
 
 fun fromSubscriptionOfferDetails(
@@ -117,14 +96,8 @@ fun fromSubscriptionOfferDetails(
           fromInstallmentPlanDetails(subscriptionOfferDetails.installmentPlanDetails))
 }
 
-fun fromPricingPhases(
-    pricingPhases: ProductDetails.PricingPhases
-): MutableList<PlatformPricingPhase> {
-  val serialized = ArrayList<PlatformPricingPhase>()
-  for (pricingPhase in pricingPhases.pricingPhaseList) {
-    serialized.add(fromPricingPhase(pricingPhase))
-  }
-  return serialized
+fun fromPricingPhases(pricingPhases: ProductDetails.PricingPhases): List<PlatformPricingPhase> {
+  return pricingPhases.pricingPhaseList.map { fromPricingPhase(it) }
 }
 
 fun fromPricingPhase(pricingPhase: ProductDetails.PricingPhase): PlatformPricingPhase {
@@ -151,24 +124,21 @@ fun fromInstallmentPlanDetails(
           installmentPlanDetails.subsequentInstallmentPlanCommitmentPaymentsCount.toLong())
 }
 
-fun toPlatformRecurrenceMode(mode: Int): PlatformRecurrenceMode {
-  when (mode) {
-    ProductDetails.RecurrenceMode.FINITE_RECURRING -> return PlatformRecurrenceMode.FINITE_RECURRING
-    ProductDetails.RecurrenceMode.INFINITE_RECURRING ->
-        return PlatformRecurrenceMode.INFINITE_RECURRING
-    ProductDetails.RecurrenceMode.NON_RECURRING -> return PlatformRecurrenceMode.NON_RECURRING
-  }
-  return PlatformRecurrenceMode.NON_RECURRING
-}
+fun toPlatformRecurrenceMode(mode: Int): PlatformRecurrenceMode =
+    when (mode) {
+      ProductDetails.RecurrenceMode.FINITE_RECURRING -> PlatformRecurrenceMode.FINITE_RECURRING
+      ProductDetails.RecurrenceMode.INFINITE_RECURRING -> PlatformRecurrenceMode.INFINITE_RECURRING
+      ProductDetails.RecurrenceMode.NON_RECURRING -> PlatformRecurrenceMode.NON_RECURRING
+      else -> PlatformRecurrenceMode.NON_RECURRING
+    }
 
-fun toPlatformPurchaseState(state: Int): PlatformPurchaseState {
-  when (state) {
-    Purchase.PurchaseState.PURCHASED -> return PlatformPurchaseState.PURCHASED
-    Purchase.PurchaseState.PENDING -> return PlatformPurchaseState.PENDING
-    Purchase.PurchaseState.UNSPECIFIED_STATE -> return PlatformPurchaseState.UNSPECIFIED
-  }
-  return PlatformPurchaseState.UNSPECIFIED
-}
+fun toPlatformPurchaseState(state: Int): PlatformPurchaseState =
+    when (state) {
+      Purchase.PurchaseState.PURCHASED -> PlatformPurchaseState.PURCHASED
+      Purchase.PurchaseState.PENDING -> PlatformPurchaseState.PENDING
+      Purchase.PurchaseState.UNSPECIFIED_STATE -> PlatformPurchaseState.UNSPECIFIED
+      else -> PlatformPurchaseState.UNSPECIFIED
+    }
 
 fun fromPurchase(purchase: Purchase): PlatformPurchase {
   var accountIdentifiers: PlatformAccountIdentifiers? = null
@@ -227,30 +197,14 @@ fun fromPurchaseHistoryRecord(
       products = purchaseHistoryRecord.products)
 }
 
-fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPurchase> {
-  if (purchases == null) {
-    return mutableListOf()
-  }
-
-  val serialized: MutableList<PlatformPurchase> = ArrayList()
-  for (purchase in purchases) {
-    serialized.add(fromPurchase(purchase))
-  }
-  return serialized
+fun fromPurchasesList(purchases: List<Purchase>?): List<PlatformPurchase> {
+  return purchases?.map { fromPurchase(it) } ?: emptyList()
 }
 
 fun fromPurchaseHistoryRecordList(
-    purchaseHistoryRecords: MutableList<PurchaseHistoryRecord>?
-): MutableList<PlatformPurchaseHistoryRecord> {
-  if (purchaseHistoryRecords == null) {
-    return mutableListOf()
-  }
-
-  val serialized: MutableList<PlatformPurchaseHistoryRecord> = ArrayList()
-  for (purchaseHistoryRecord in purchaseHistoryRecords) {
-    serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord))
-  }
-  return serialized
+    purchaseHistoryRecords: List<PurchaseHistoryRecord>?
+): List<PlatformPurchaseHistoryRecord> {
+  return purchaseHistoryRecords?.map { fromPurchaseHistoryRecord(it) } ?: emptyList()
 }
 
 fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
@@ -258,31 +212,27 @@ fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
       fromBillingResponseCode(billingResult.responseCode), billingResult.debugMessage)
 }
 
-fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse {
-  when (billingResponseCode) {
-    BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED ->
-        return PlatformBillingResponse.FEATURE_NOT_SUPPORTED
-    BillingClient.BillingResponseCode.SERVICE_DISCONNECTED ->
-        return PlatformBillingResponse.SERVICE_DISCONNECTED
-    BillingClient.BillingResponseCode.OK -> return PlatformBillingResponse.OK
-    BillingClient.BillingResponseCode.USER_CANCELED -> return PlatformBillingResponse.USER_CANCELED
-    BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE ->
-        return PlatformBillingResponse.SERVICE_UNAVAILABLE
-    BillingClient.BillingResponseCode.BILLING_UNAVAILABLE ->
-        return PlatformBillingResponse.BILLING_UNAVAILABLE
-    BillingClient.BillingResponseCode.ITEM_UNAVAILABLE ->
-        return PlatformBillingResponse.ITEM_UNAVAILABLE
-    BillingClient.BillingResponseCode.DEVELOPER_ERROR ->
-        return PlatformBillingResponse.DEVELOPER_ERROR
-    BillingClient.BillingResponseCode.ERROR -> return PlatformBillingResponse.ERROR
-    BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED ->
-        return PlatformBillingResponse.ITEM_ALREADY_OWNED
-    BillingClient.BillingResponseCode.ITEM_NOT_OWNED ->
-        return PlatformBillingResponse.ITEM_NOT_OWNED
-    BillingClient.BillingResponseCode.NETWORK_ERROR -> return PlatformBillingResponse.NETWORK_ERROR
-  }
-  return PlatformBillingResponse.ERROR
-}
+fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse =
+    when (billingResponseCode) {
+      BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED ->
+          PlatformBillingResponse.FEATURE_NOT_SUPPORTED
+      BillingClient.BillingResponseCode.SERVICE_DISCONNECTED ->
+          PlatformBillingResponse.SERVICE_DISCONNECTED
+      BillingClient.BillingResponseCode.OK -> PlatformBillingResponse.OK
+      BillingClient.BillingResponseCode.USER_CANCELED -> PlatformBillingResponse.USER_CANCELED
+      BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE ->
+          PlatformBillingResponse.SERVICE_UNAVAILABLE
+      BillingClient.BillingResponseCode.BILLING_UNAVAILABLE ->
+          PlatformBillingResponse.BILLING_UNAVAILABLE
+      BillingClient.BillingResponseCode.ITEM_UNAVAILABLE -> PlatformBillingResponse.ITEM_UNAVAILABLE
+      BillingClient.BillingResponseCode.DEVELOPER_ERROR -> PlatformBillingResponse.DEVELOPER_ERROR
+      BillingClient.BillingResponseCode.ERROR -> PlatformBillingResponse.ERROR
+      BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED ->
+          PlatformBillingResponse.ITEM_ALREADY_OWNED
+      BillingClient.BillingResponseCode.ITEM_NOT_OWNED -> PlatformBillingResponse.ITEM_NOT_OWNED
+      BillingClient.BillingResponseCode.NETWORK_ERROR -> PlatformBillingResponse.NETWORK_ERROR
+      else -> PlatformBillingResponse.ERROR
+    }
 
 fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserChoiceDetails {
   return PlatformUserChoiceDetails(
@@ -292,17 +242,9 @@ fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserCho
 }
 
 fun fromUserChoiceProductsList(
-    productsList: MutableList<UserChoiceDetails.Product>
-): MutableList<PlatformUserChoiceProduct> {
-  if (productsList.isEmpty()) {
-    return mutableListOf()
-  }
-
-  val output = ArrayList<PlatformUserChoiceProduct>()
-  for (product in productsList) {
-    output.add(fromUserChoiceProduct(product))
-  }
-  return output
+    productsList: List<UserChoiceDetails.Product>
+): List<PlatformUserChoiceProduct> {
+  return productsList.map { fromUserChoiceProduct(it) }
 }
 
 fun fromUserChoiceProduct(product: UserChoiceDetails.Product): PlatformUserChoiceProduct {
@@ -371,16 +313,15 @@ fun toReplacementMode(replacementMode: PlatformReplacementMode): Int {
 }
 
 /**
- * Gets the symbol of for the given currency code for the default
- * [ DISPLAY][Locale.Category.DISPLAY] locale. For example, for the US Dollar, the symbol is "$" if
- * the default locale is the US, while for other locales it may be "US$". If no symbol can be
- * determined, the ISO 4217 currency code is returned.
+ * Gets the symbol of for the given currency code for the default [Locale.Category.DISPLAY] locale.
+ * For example, for the US Dollar, the symbol is "$" if the default locale is the US, while for
+ * other locales it may be "US$". If no symbol can be determined, the ISO 4217 currency code is
+ * returned.
  *
  * @param currencyCode the ISO 4217 code of the currency
- * @return the symbol of this currency code for the default [ DISPLAY][Locale.Category.DISPLAY]
- *   locale
- * @exception NullPointerException if `currencyCode` is null
- * @exception IllegalArgumentException if `currencyCode` is not a supported ISO 4217 code.
+ * @return the symbol of this currency code for the default [Locale.Category.DISPLAY] locale
+ * @throws NullPointerException if `currencyCode` is null
+ * @throws IllegalArgumentException if `currencyCode` is not a supported ISO 4217 code.
  */
 fun currencySymbolFromCode(currencyCode: String?): String? {
   return Currency.getInstance(currencyCode).symbol
