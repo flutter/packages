@@ -8,11 +8,15 @@ import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 import 'validators/repo_info_validator.dart';
 
-/// A command to verify repository-level metadata about packages, such as
-/// repo README and auto-label entries.
-class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
+/// A command to validate that packages follow various team conventions,
+/// guidelines, and best practices.
+///
+/// This includes:
+/// - repository-level metadata about packages, such as repo README and
+///   auto-label entries.
+class ValidateCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
-  RepoPackageInfoCheckCommand(super.packagesDir, {super.gitDir});
+  ValidateCommand(super.packagesDir, {super.gitDir});
 
   late Directory _repoRoot;
 
@@ -24,14 +28,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   final Set<String> _autoLabeledPackages = <String>{};
 
   @override
-  final String name = 'repo-package-info-check';
+  final String name = 'validate';
 
   @override
-  List<String> get aliases => <String>['check-repo-package-info'];
-
-  @override
-  final String description =
-      'Checks that all packages are listed correctly in repo metadata.';
+  final String description = 'Checks that packages follow team guidelines.';
 
   @override
   final bool hasLongOutput = false;
@@ -40,7 +40,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
-    // Extract all of the README.md table entries.
+    // Extract all of the repo-level README.md table entries.
     _readmeTableEntries.addAll(
       RepoInfoValidator.loadReadmeTableEntries(
         repoRoot: _repoRoot,
@@ -48,7 +48,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         thirdPartyPackagesDir: thirdPartyPackagesDir,
       ),
     );
-    // Extract all of the lebeler.yml package entries.
+    // Extract all of the labeler.yml package entries.
     _autoLabeledPackages.addAll(
       RepoInfoValidator.loadAutoLabeledPackages(repoRoot: _repoRoot),
     );

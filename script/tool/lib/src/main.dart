@@ -33,11 +33,11 @@ import 'publish_command.dart';
 import 'pubspec_check_command.dart';
 import 'readme_check_command.dart';
 import 'remove_dev_dependencies_command.dart';
-import 'repo_package_info_check_command.dart';
 import 'update_dependency_command.dart';
 import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
+import 'validate_command.dart';
 import 'version_check_command.dart';
 
 void main(List<String> args) {
@@ -64,9 +64,11 @@ void main(List<String> args) {
           'Productivity utils for hosting multiple plugins within one repository.',
         )
         ..addCommand(AnalyzeCommand(packagesDir))
+        ..addCommand(BranchesForBatchReleaseCommand(packagesDir))
         ..addCommand(BuildExamplesCommand(packagesDir))
         ..addCommand(CreateAllPackagesAppCommand(packagesDir))
         ..addCommand(CustomTestCommand(packagesDir))
+        ..addCommand(DartTestCommand(packagesDir))
         ..addCommand(DependabotCheckCommand(packagesDir))
         ..addCommand(DriveExamplesCommand(packagesDir))
         ..addCommand(FederationSafetyCheckCommand(packagesDir))
@@ -76,23 +78,21 @@ void main(List<String> args) {
         ..addCommand(FormatCommand(packagesDir))
         ..addCommand(GradleCheckCommand(packagesDir))
         ..addCommand(LicenseCheckCommand(packagesDir))
-        ..addCommand(PodspecCheckCommand(packagesDir))
         ..addCommand(ListCommand(packagesDir))
-        ..addCommand(NativeTestCommand(packagesDir))
         ..addCommand(MakeDepsPathBasedCommand(packagesDir))
+        ..addCommand(NativeTestCommand(packagesDir))
+        ..addCommand(PodspecCheckCommand(packagesDir))
         ..addCommand(PublishCheckCommand(packagesDir))
         ..addCommand(PublishCommand(packagesDir))
         ..addCommand(PubspecCheckCommand(packagesDir))
         ..addCommand(ReadmeCheckCommand(packagesDir))
         ..addCommand(RemoveDevDependenciesCommand(packagesDir))
-        ..addCommand(RepoPackageInfoCheckCommand(packagesDir))
-        ..addCommand(DartTestCommand(packagesDir))
         ..addCommand(UpdateDependencyCommand(packagesDir))
         ..addCommand(UpdateExcerptsCommand(packagesDir))
         ..addCommand(UpdateMinSdkCommand(packagesDir))
         ..addCommand(UpdateReleaseInfoCommand(packagesDir))
-        ..addCommand(VersionCheckCommand(packagesDir))
-        ..addCommand(BranchesForBatchReleaseCommand(packagesDir));
+        ..addCommand(ValidateCommand(packagesDir))
+        ..addCommand(VersionCheckCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
     final toolExit = e as ToolExit;

@@ -94,7 +94,7 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-dependency 
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart readme-check --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart version-check --packages <changed_packages>
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart license-check
-  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart repo-package-info-check
+  dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart validate
   ```
 
 ### Specialized Workflows
