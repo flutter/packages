@@ -687,18 +687,31 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 : startOfTrailingPinnedColumn)
           : startOfRegularColumn;
       _Span? span = _columnMetrics.remove(column);
-      final TableSpan? configuration =
-          span?.configuration ?? delegate.buildColumn(column);
+      final TableSpan? configuration = (needsDelegateRebuild || span == null)
+          ? delegate.buildColumn(column)
+          : span.configuration;
       if (configuration == null) {
         // We have reached the end of columns based on a null termination. This
         // This happens when a column count has not been specified.
         assert(_columnsAreInfinite);
         _lastNonPinnedColumn ??= column - 1;
         _columnNullTerminatedIndex = column;
+        // If we are starting from 0, we should dispose of any metrics that are
+        // no longer in use. This happens when the number of columns is reduced.
+        if (!appendColumns) {
+          _columnMetrics.removeWhere((int key, _Span span) {
+            if (key >= column) {
+              span.dispose();
+              return true;
+            }
+            return false;
+          });
+        }
         final bool acceptedDimension = _updateHorizontalScrollBounds();
         if (!acceptedDimension) {
           _updateFirstAndLastVisibleCell();
         }
+        span?.dispose();
         break;
       }
       span ??= _Span();
@@ -730,6 +743,18 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         startOfTrailingPinnedColumn = span.trailingOffset;
       }
       column++;
+    }
+
+    if (!appendColumns) {
+      // If we are not appending, we should dispose of any metrics that are
+      // no longer in use. This happens when the number of columns is reduced.
+      _columnMetrics.removeWhere((int key, _Span span) {
+        if (key >= column) {
+          span.dispose();
+          return true;
+        }
+        return false;
+      });
     }
 
     assert(_columnMetrics.length >= delegate.pinnedColumnCount);
@@ -804,8 +829,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 : startOfTrailingPinnedRow)
           : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
-      final TableSpan? configuration =
-          span?.configuration ?? delegate.buildRow(row);
+      final TableSpan? configuration = (needsDelegateRebuild || span == null)
+          ? delegate.buildRow(row)
+          : span.configuration;
       if (configuration == null) {
         // We have reached the end of rows based on a null termination. This
         // This happens when a row count has not been specified, but we have
@@ -813,10 +839,22 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         assert(_rowsAreInfinite);
         _lastNonPinnedRow ??= row - 1;
         _rowNullTerminatedIndex = row;
+        // If we are starting from 0, we should dispose of any metrics that are
+        // no longer in use. This happens when the number of rows is reduced.
+        if (!appendRows) {
+          _rowMetrics.removeWhere((int key, _Span span) {
+            if (key >= row) {
+              span.dispose();
+              return true;
+            }
+            return false;
+          });
+        }
         final bool acceptedDimension = _updateVerticalScrollBounds();
         if (!acceptedDimension) {
           _updateFirstAndLastVisibleCell();
         }
+        span?.dispose();
         break;
       }
       span ??= _Span();
@@ -848,6 +886,18 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         startOfTrailingPinnedRow = span.trailingOffset;
       }
       row++;
+    }
+
+    if (!appendRows) {
+      // If we are not appending, we should dispose of any metrics that are
+      // no longer in use. This happens when the number of rows is reduced.
+      _rowMetrics.removeWhere((int key, _Span span) {
+        if (key >= row) {
+          span.dispose();
+          return true;
+        }
+        return false;
+      });
     }
 
     assert(_rowMetrics.length >= delegate.pinnedRowCount);
@@ -1041,14 +1091,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
-      for (final _Span span in _columnMetrics.values) {
-        span.dispose();
-      }
-      _columnMetrics.clear();
-      for (final _Span span in _rowMetrics.values) {
-        span.dispose();
-      }
-      _rowMetrics.clear();
       _updateColumnMetrics();
       _updateRowMetrics();
       _updateScrollBounds();

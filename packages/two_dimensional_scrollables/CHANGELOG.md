@@ -1,3 +1,7 @@
+## 0.5.1
+
+* Fixes an infinite loop of onExit/onEnter events when setState is called within onEnter in a TableSpan.
+
 ## 0.5.0
 
 * Adds support for trailing pinned columns and rows in TableView.

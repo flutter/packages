@@ -3630,7 +3630,72 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         SystemMouseCursors.basic,
       );
+      await gesture.removePointer();
     });
+
+    testWidgets(
+      'Calling setState within onEnter does not cause a loop of onExit/onEnter - Regression test for https://github.com/flutter/flutter/issues/147614',
+      (WidgetTester tester) async {
+        var enterCounter = 0;
+        var exitCounter = 0;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TableView.builder(
+                    columnCount: 1,
+                    rowCount: 1,
+                    columnBuilder: (int index) =>
+                        const TableSpan(extent: FixedTableSpanExtent(100)),
+                    rowBuilder: (int index) => TableSpan(
+                      extent: const FixedTableSpanExtent(100),
+                      onEnter: (_) {
+                        enterCounter++;
+                        setState(() {});
+                      },
+                      onExit: (_) {
+                        exitCounter++;
+                      },
+                    ),
+                    cellBuilder:
+                        (BuildContext context, TableVicinity vicinity) {
+                          return const TableViewCell(
+                            child: SizedBox.square(dimension: 100),
+                          );
+                        },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+
+        // Initial state
+        expect(enterCounter, 0);
+        expect(exitCounter, 0);
+
+        // Move mouse to the center of the first row (0,0)
+        final TestGesture gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.addPointer(location: const Offset(50, 50));
+        await tester.pump();
+
+        // Should have entered once
+        expect(enterCounter, 1);
+        expect(exitCounter, 0);
+
+        // Pump again to see if it triggers again
+        await tester.pump();
+
+        expect(exitCounter, 0, reason: 'Should not have exited');
+        expect(enterCounter, 1, reason: 'Should not have re-entered');
+
+        await gesture.removePointer();
+      },
+    );
 
     group('Merged pinned cells layout', () {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
