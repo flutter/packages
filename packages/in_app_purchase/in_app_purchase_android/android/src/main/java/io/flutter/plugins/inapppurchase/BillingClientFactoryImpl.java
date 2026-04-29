@@ -12,8 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.UserChoiceBillingListener;
-import io.flutter.Log;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import kotlin.Unit;
 
 /** The implementation for {@link BillingClientFactory} for the plugin. */
 final class BillingClientFactoryImpl implements BillingClientFactory {
@@ -21,9 +20,9 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
   @Override
   public BillingClient createBillingClient(
       @NonNull Context context,
-      @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
+      @NonNull InAppPurchaseCallbackApi callbackApi,
       PlatformBillingChoiceMode billingChoiceMode,
-      Messages.PlatformPendingPurchasesParams pendingPurchasesParams) {
+      PlatformPendingPurchasesParams pendingPurchasesParams) {
     BillingClient.Builder builder =
         BillingClient.newBuilder(context)
             .enablePendingPurchases(toPendingPurchasesParams(pendingPurchasesParams));
@@ -39,7 +38,7 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
         // Do nothing.
         break;
       default:
-        Log.e(
+        io.flutter.Log.e(
             "BillingClientFactoryImpl",
             "Unknown BillingChoiceMode " + billingChoiceMode + ", Defaulting to PLAY_BILLING_ONLY");
         break;
@@ -49,19 +48,19 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
 
   @VisibleForTesting
   /* package */ UserChoiceBillingListener createUserChoiceBillingListener(
-      @NonNull Messages.InAppPurchaseCallbackApi callbackApi) {
+      @NonNull InAppPurchaseCallbackApi callbackApi) {
     return userChoiceDetails ->
         callbackApi.userSelectedalternativeBilling(
             fromUserChoiceDetails(userChoiceDetails),
-            new Messages.VoidResult() {
-              @Override
-              public void success() {}
-
-              @Override
-              public void error(@NonNull Throwable error) {
-                io.flutter.Log.e(
-                    "IN_APP_PURCHASE", "userSelectedalternativeBilling handler error: " + error);
-              }
-            });
+            ResultCompat.asCompatCallback(
+                result -> {
+                  Throwable error = result.exceptionOrNull();
+                  if (error != null) {
+                    io.flutter.Log.e(
+                        "IN_APP_PURCHASE",
+                        "userSelectedalternativeBilling handler error: " + error);
+                  }
+                  return Unit.INSTANCE;
+                }));
   }
 }

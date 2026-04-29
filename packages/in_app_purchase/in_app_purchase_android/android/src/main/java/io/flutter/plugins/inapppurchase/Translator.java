@@ -18,27 +18,6 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.UserChoiceDetails;
-import io.flutter.plugins.inapppurchase.Messages.FlutterError;
-import io.flutter.plugins.inapppurchase.Messages.PlatformAccountIdentifiers;
-import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPendingPurchaseUpdate;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetails;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchase;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryRecord;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseState;
-import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
-import io.flutter.plugins.inapppurchase.Messages.PlatformRecurrenceMode;
-import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
-import io.flutter.plugins.inapppurchase.Messages.PlatformSubscriptionOfferDetails;
-import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
-import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceProduct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -51,17 +30,14 @@ import java.util.Locale;
  */
 /*package*/ class Translator {
   static @NonNull PlatformProductDetails fromProductDetail(@NonNull ProductDetails detail) {
-    return new PlatformProductDetails.Builder()
-        .setTitle(detail.getTitle())
-        .setDescription(detail.getDescription())
-        .setProductId(detail.getProductId())
-        .setProductType(toPlatformProductType(detail.getProductType()))
-        .setName(detail.getName())
-        .setOneTimePurchaseOfferDetails(
-            fromOneTimePurchaseOfferDetails(detail.getOneTimePurchaseOfferDetails()))
-        .setSubscriptionOfferDetails(
-            fromSubscriptionOfferDetailsList(detail.getSubscriptionOfferDetails()))
-        .build();
+    return new PlatformProductDetails(
+        detail.getDescription(),
+        detail.getName(),
+        detail.getProductId(),
+        toPlatformProductType(detail.getProductType()),
+        detail.getTitle(),
+        fromOneTimePurchaseOfferDetails(detail.getOneTimePurchaseOfferDetails()),
+        fromSubscriptionOfferDetailsList(detail.getSubscriptionOfferDetails()));
   }
 
   static @NonNull List<QueryProductDetailsParams.Product> toProductList(
@@ -122,11 +98,10 @@ import java.util.Locale;
       return null;
     }
 
-    return new PlatformOneTimePurchaseOfferDetails.Builder()
-        .setPriceAmountMicros(oneTimePurchaseOfferDetails.getPriceAmountMicros())
-        .setPriceCurrencyCode(oneTimePurchaseOfferDetails.getPriceCurrencyCode())
-        .setFormattedPrice(oneTimePurchaseOfferDetails.getFormattedPrice())
-        .build();
+    return new PlatformOneTimePurchaseOfferDetails(
+        oneTimePurchaseOfferDetails.getPriceAmountMicros(),
+        oneTimePurchaseOfferDetails.getFormattedPrice(),
+        oneTimePurchaseOfferDetails.getPriceCurrencyCode());
   }
 
   static @Nullable List<PlatformSubscriptionOfferDetails> fromSubscriptionOfferDetailsList(
@@ -146,15 +121,13 @@ import java.util.Locale;
 
   static @NonNull PlatformSubscriptionOfferDetails fromSubscriptionOfferDetails(
       @NonNull ProductDetails.SubscriptionOfferDetails subscriptionOfferDetails) {
-    return new PlatformSubscriptionOfferDetails.Builder()
-        .setOfferId(subscriptionOfferDetails.getOfferId())
-        .setBasePlanId(subscriptionOfferDetails.getBasePlanId())
-        .setOfferTags(subscriptionOfferDetails.getOfferTags())
-        .setOfferToken(subscriptionOfferDetails.getOfferToken())
-        .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
-        .setInstallmentPlanDetails(
-            fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
-        .build();
+    return new PlatformSubscriptionOfferDetails(
+        subscriptionOfferDetails.getBasePlanId(),
+        subscriptionOfferDetails.getOfferId(),
+        subscriptionOfferDetails.getOfferToken(),
+        subscriptionOfferDetails.getOfferTags(),
+        fromPricingPhases(subscriptionOfferDetails.getPricingPhases()),
+        fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()));
   }
 
   static @NonNull List<PlatformPricingPhase> fromPricingPhases(
@@ -168,28 +141,24 @@ import java.util.Locale;
 
   static @NonNull PlatformPricingPhase fromPricingPhase(
       @NonNull ProductDetails.PricingPhase pricingPhase) {
-    return new PlatformPricingPhase.Builder()
-        .setFormattedPrice(pricingPhase.getFormattedPrice())
-        .setPriceCurrencyCode(pricingPhase.getPriceCurrencyCode())
-        .setPriceAmountMicros(pricingPhase.getPriceAmountMicros())
-        .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
-        .setBillingPeriod(pricingPhase.getBillingPeriod())
-        .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
-        .build();
+    return new PlatformPricingPhase(
+        (long) pricingPhase.getBillingCycleCount(),
+        toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()),
+        pricingPhase.getPriceAmountMicros(),
+        pricingPhase.getBillingPeriod(),
+        pricingPhase.getFormattedPrice(),
+        pricingPhase.getPriceCurrencyCode());
   }
 
-  static @Nullable Messages.PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
+  static @Nullable PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
       @Nullable ProductDetails.InstallmentPlanDetails installmentPlanDetails) {
     if (installmentPlanDetails == null) {
       return null;
     }
 
-    return new Messages.PlatformInstallmentPlanDetails.Builder()
-        .setCommitmentPaymentsCount(
-            (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
-        .setSubsequentCommitmentPaymentsCount(
-            (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
-        .build();
+    return new PlatformInstallmentPlanDetails(
+        (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount(),
+        (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount());
   }
 
   static PlatformRecurrenceMode toPlatformRecurrenceMode(int mode) {
@@ -217,35 +186,37 @@ import java.util.Locale;
   }
 
   static @NonNull PlatformPurchase fromPurchase(@NonNull Purchase purchase) {
-    PlatformPurchase.Builder builder =
-        new PlatformPurchase.Builder()
-            .setOrderId(purchase.getOrderId())
-            .setPackageName(purchase.getPackageName())
-            .setPurchaseTime(purchase.getPurchaseTime())
-            .setPurchaseToken(purchase.getPurchaseToken())
-            .setSignature(purchase.getSignature())
-            .setProducts(purchase.getProducts())
-            .setIsAutoRenewing(purchase.isAutoRenewing())
-            .setOriginalJson(purchase.getOriginalJson())
-            .setDeveloperPayload(purchase.getDeveloperPayload())
-            .setIsAcknowledged(purchase.isAcknowledged())
-            .setPurchaseState(toPlatformPurchaseState(purchase.getPurchaseState()))
-            .setQuantity((long) purchase.getQuantity());
-    AccountIdentifiers accountIdentifiers = purchase.getAccountIdentifiers();
-    if (accountIdentifiers != null) {
-      builder.setAccountIdentifiers(
-          new PlatformAccountIdentifiers.Builder()
-              .setObfuscatedAccountId(accountIdentifiers.getObfuscatedAccountId())
-              .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
-              .build());
+    PlatformAccountIdentifiers accountIdentifiers = null;
+    AccountIdentifiers billingAccountIdentifiers = purchase.getAccountIdentifiers();
+    if (billingAccountIdentifiers != null) {
+      accountIdentifiers =
+          new PlatformAccountIdentifiers(
+              billingAccountIdentifiers.getObfuscatedAccountId(),
+              billingAccountIdentifiers.getObfuscatedProfileId());
     }
 
-    Purchase.PendingPurchaseUpdate pendingPurchaseUpdate = purchase.getPendingPurchaseUpdate();
-    if (pendingPurchaseUpdate != null) {
-      builder.setPendingPurchaseUpdate(fromPendingPurchaseUpdate(pendingPurchaseUpdate));
+    PlatformPendingPurchaseUpdate pendingPurchaseUpdate = null;
+    Purchase.PendingPurchaseUpdate billingPendingPurchaseUpdate =
+        purchase.getPendingPurchaseUpdate();
+    if (billingPendingPurchaseUpdate != null) {
+      pendingPurchaseUpdate = fromPendingPurchaseUpdate(billingPendingPurchaseUpdate);
     }
 
-    return builder.build();
+    return new PlatformPurchase(
+        purchase.getOrderId(),
+        purchase.getPackageName(),
+        purchase.getPurchaseTime(),
+        purchase.getPurchaseToken(),
+        purchase.getSignature(),
+        purchase.getProducts(),
+        purchase.isAutoRenewing(),
+        purchase.getOriginalJson(),
+        purchase.getDeveloperPayload(),
+        purchase.isAcknowledged(),
+        (long) purchase.getQuantity(),
+        toPlatformPurchaseState(purchase.getPurchaseState()),
+        accountIdentifiers,
+        pendingPurchaseUpdate);
   }
 
   static @Nullable PlatformPendingPurchaseUpdate fromPendingPurchaseUpdate(
@@ -254,23 +225,20 @@ import java.util.Locale;
       return null;
     }
 
-    return new Messages.PlatformPendingPurchaseUpdate.Builder()
-        .setPurchaseToken(pendingPurchaseUpdate.getPurchaseToken())
-        .setProducts(pendingPurchaseUpdate.getProducts())
-        .build();
+    return new PlatformPendingPurchaseUpdate(
+        pendingPurchaseUpdate.getProducts(), pendingPurchaseUpdate.getPurchaseToken());
   }
 
   static @NonNull PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
       @NonNull PurchaseHistoryRecord purchaseHistoryRecord) {
-    return new PlatformPurchaseHistoryRecord.Builder()
-        .setPurchaseTime(purchaseHistoryRecord.getPurchaseTime())
-        .setPurchaseToken(purchaseHistoryRecord.getPurchaseToken())
-        .setSignature(purchaseHistoryRecord.getSignature())
-        .setProducts(purchaseHistoryRecord.getProducts())
-        .setDeveloperPayload(purchaseHistoryRecord.getDeveloperPayload())
-        .setOriginalJson(purchaseHistoryRecord.getOriginalJson())
-        .setQuantity((long) purchaseHistoryRecord.getQuantity())
-        .build();
+    return new PlatformPurchaseHistoryRecord(
+        (long) purchaseHistoryRecord.getQuantity(),
+        purchaseHistoryRecord.getPurchaseTime(),
+        purchaseHistoryRecord.getDeveloperPayload(),
+        purchaseHistoryRecord.getOriginalJson(),
+        purchaseHistoryRecord.getPurchaseToken(),
+        purchaseHistoryRecord.getSignature(),
+        purchaseHistoryRecord.getProducts());
   }
 
   static @NonNull List<PlatformPurchase> fromPurchasesList(@Nullable List<Purchase> purchases) {
@@ -299,10 +267,8 @@ import java.util.Locale;
   }
 
   static @NonNull PlatformBillingResult fromBillingResult(@NonNull BillingResult billingResult) {
-    return new PlatformBillingResult.Builder()
-        .setResponseCode(fromBillingResponseCode(billingResult.getResponseCode()))
-        .setDebugMessage(billingResult.getDebugMessage())
-        .build();
+    return new PlatformBillingResult(
+        fromBillingResponseCode(billingResult.getResponseCode()), billingResult.getDebugMessage());
   }
 
   static @NonNull PlatformBillingResponse fromBillingResponseCode(int billingResponseCode) {
@@ -337,11 +303,10 @@ import java.util.Locale;
 
   static @NonNull PlatformUserChoiceDetails fromUserChoiceDetails(
       @NonNull UserChoiceDetails userChoiceDetails) {
-    return new PlatformUserChoiceDetails.Builder()
-        .setExternalTransactionToken(userChoiceDetails.getExternalTransactionToken())
-        .setOriginalExternalTransactionId(userChoiceDetails.getOriginalExternalTransactionId())
-        .setProducts(fromUserChoiceProductsList(userChoiceDetails.getProducts()))
-        .build();
+    return new PlatformUserChoiceDetails(
+        userChoiceDetails.getOriginalExternalTransactionId(),
+        userChoiceDetails.getExternalTransactionToken(),
+        fromUserChoiceProductsList(userChoiceDetails.getProducts()));
   }
 
   static @NonNull List<PlatformUserChoiceProduct> fromUserChoiceProductsList(
@@ -359,20 +324,15 @@ import java.util.Locale;
 
   static @NonNull PlatformUserChoiceProduct fromUserChoiceProduct(
       @NonNull UserChoiceDetails.Product product) {
-    return new PlatformUserChoiceProduct.Builder()
-        .setId(product.getId())
-        .setOfferToken(product.getOfferToken())
-        .setType(toPlatformProductType(product.getType()))
-        .build();
+    return new PlatformUserChoiceProduct(
+        product.getId(), product.getOfferToken(), toPlatformProductType(product.getType()));
   }
 
   /** Converter from {@link BillingResult} and {@link BillingConfig} to map. */
   static @NonNull PlatformBillingConfigResponse fromBillingConfig(
       @NonNull BillingResult result, @Nullable BillingConfig billingConfig) {
-    return new PlatformBillingConfigResponse.Builder()
-        .setBillingResult(fromBillingResult(result))
-        .setCountryCode(billingConfig == null ? "" : billingConfig.getCountryCode())
-        .build();
+    return new PlatformBillingConfigResponse(
+        fromBillingResult(result), billingConfig == null ? "" : billingConfig.getCountryCode());
   }
 
   /**
@@ -381,14 +341,12 @@ import java.util.Locale;
   static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse
       fromAlternativeBillingOnlyReportingDetails(
           @NonNull BillingResult result, @Nullable AlternativeBillingOnlyReportingDetails details) {
-    return new PlatformAlternativeBillingOnlyReportingDetailsResponse.Builder()
-        .setBillingResult(fromBillingResult(result))
-        .setExternalTransactionToken(details == null ? "" : details.getExternalTransactionToken())
-        .build();
+    return new PlatformAlternativeBillingOnlyReportingDetailsResponse(
+        fromBillingResult(result), details == null ? "" : details.getExternalTransactionToken());
   }
 
   static @NonNull PendingPurchasesParams toPendingPurchasesParams(
-      @Nullable Messages.PlatformPendingPurchasesParams platformPendingPurchasesParams) {
+      @Nullable PlatformPendingPurchasesParams platformPendingPurchasesParams) {
     PendingPurchasesParams.Builder pendingPurchasesBuilder =
         PendingPurchasesParams.newBuilder().enableOneTimeProducts();
     if (platformPendingPurchasesParams != null

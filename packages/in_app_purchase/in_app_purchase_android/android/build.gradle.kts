@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 group = "io.flutter.plugins.inapppurchase"
 version = "1.0-SNAPSHOT"
 
