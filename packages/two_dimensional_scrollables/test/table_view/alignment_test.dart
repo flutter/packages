@@ -605,7 +605,9 @@ void main() {
       );
     });
 
-    testWidgets('Alignment with trailing pinned columns', (WidgetTester tester) async {
+    testWidgets('Alignment with trailing pinned columns', (
+      WidgetTester tester,
+    ) async {
       const viewportWidth = 600.0;
 
       await tester.pumpWidget(
@@ -668,7 +670,9 @@ void main() {
       );
     });
 
-    testWidgets('Alignment with trailing pinned rows', (WidgetTester tester) async {
+    testWidgets('Alignment with trailing pinned rows', (
+      WidgetTester tester,
+    ) async {
       const viewportHeight = 600.0;
 
       await tester.pumpWidget(

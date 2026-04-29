@@ -1580,7 +1580,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         offset,
         Rect.fromLTWH(
           reversedH
-              ? viewportDimension.width - _leadingPinnedColumnsExtent - _hAlignmentOffset
+              ? viewportDimension.width -
+                    _leadingPinnedColumnsExtent -
+                    _hAlignmentOffset
               : _hAlignmentOffset,
           (reversedV ? _trailingPinnedRowsExtent : _leadingPinnedRowsExtent) +
               (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
@@ -1614,7 +1616,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         Rect.fromLTWH(
           reversedH
               ? _hAlignmentOffset
-              : viewportDimension.width - _trailingPinnedColumnsExtent - _hAlignmentOffset,
+              : viewportDimension.width -
+                    _trailingPinnedColumnsExtent -
+                    _hAlignmentOffset,
           (reversedV ? _trailingPinnedRowsExtent : _leadingPinnedRowsExtent) +
               (reversedV ? -_vAlignmentOffset : _vAlignmentOffset),
           _trailingPinnedColumnsExtent,
@@ -1653,7 +1657,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   : _leadingPinnedColumnsExtent) +
               (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
           reversedV
-              ? viewportDimension.height - _leadingPinnedRowsExtent - _vAlignmentOffset
+              ? viewportDimension.height -
+                    _leadingPinnedRowsExtent -
+                    _vAlignmentOffset
               : _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _leadingPinnedRowsExtent,
@@ -1692,7 +1698,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               (reversedH ? -_hAlignmentOffset : _hAlignmentOffset),
           reversedV
               ? _vAlignmentOffset
-              : viewportDimension.height - _trailingPinnedRowsExtent - _vAlignmentOffset,
+              : viewportDimension.height -
+                    _trailingPinnedRowsExtent -
+                    _vAlignmentOffset,
           viewportDimension.width - _pinnedColumnsExtent,
           _trailingPinnedRowsExtent,
         ),
