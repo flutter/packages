@@ -3304,6 +3304,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -3312,6 +3313,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -3320,39 +3322,48 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InAppPurchaseApi {
     /** Wraps BillingClient#isReady. */
     @NonNull
     Boolean isReady();
+
     /** Wraps BillingClient#startConnection(BillingClientStateListener). */
     void startConnection(
         @NonNull Long callbackHandle,
         @NonNull PlatformBillingChoiceMode billingMode,
         @NonNull PlatformPendingPurchasesParams pendingPurchasesParams,
         @NonNull Result<PlatformBillingResult> result);
+
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
+
     /**
      * Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams,
      * BillingConfigResponseListener).
      */
     void getBillingConfigAsync(@NonNull Result<PlatformBillingConfigResponse> result);
+
     /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
     @NonNull
     PlatformBillingResult launchBillingFlow(@NonNull PlatformBillingFlowParams params);
+
     /**
      * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
      * AcknowledgePurchaseResponseListener).
      */
     void acknowledgePurchase(
         @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+
     /** Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener). */
     void queryPurchasesAsync(
         @NonNull PlatformProductType productType,
         @NonNull Result<PlatformPurchasesResponse> result);
+
     /**
      * Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,
      * PurchaseHistoryResponseListener).
@@ -3360,6 +3371,7 @@ public class Messages {
     void queryPurchaseHistoryAsync(
         @NonNull PlatformProductType productType,
         @NonNull Result<PlatformPurchaseHistoryResponse> result);
+
     /**
      * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
      * ProductDetailsResponseListener).
@@ -3367,13 +3379,17 @@ public class Messages {
     void queryProductDetailsAsync(
         @NonNull List<PlatformQueryProduct> products,
         @NonNull Result<PlatformProductDetailsResponse> result);
+
     /** Wraps BillingClient#isFeatureSupported(String). */
     @NonNull
     Boolean isFeatureSupported(@NonNull PlatformBillingClientFeature feature);
+
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
+
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
     void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
+
     /**
      * Wraps
      * BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
@@ -3385,6 +3401,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`.
      */
@@ -3813,6 +3830,7 @@ public class Messages {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class InAppPurchaseCallbackApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -3832,6 +3850,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Called for BillingClientStateListener#onBillingServiceDisconnected(). */
     public void onBillingServiceDisconnected(
         @NonNull Long callbackHandleArg, @NonNull VoidResult result) {
@@ -3857,6 +3876,7 @@ public class Messages {
             }
           });
     }
+
     /** Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>). */
     public void onPurchasesUpdated(
         @NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
@@ -3882,6 +3902,7 @@ public class Messages {
             }
           });
     }
+
     /** Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails). */
     public void userSelectedalternativeBilling(
         @NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {

@@ -513,6 +513,7 @@ public class GeneratedFileSelectorApi {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -521,6 +522,7 @@ public class GeneratedFileSelectorApi {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -529,6 +531,7 @@ public class GeneratedFileSelectorApi {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /**
    * An API to call to native code to select files or directories.
    *
@@ -544,6 +547,7 @@ public class GeneratedFileSelectorApi {
         @Nullable String initialDirectory,
         @NonNull FileTypes allowedTypes,
         @NonNull NullableResult<FileResponse> result);
+
     /**
      * Opens a file dialog for loading files and returns a list of file responses chosen by the
      * user.
@@ -552,6 +556,7 @@ public class GeneratedFileSelectorApi {
         @Nullable String initialDirectory,
         @NonNull FileTypes allowedTypes,
         @NonNull Result<List<FileResponse>> result);
+
     /**
      * Opens a file dialog for loading directories and returns a directory path.
      *
@@ -564,6 +569,7 @@ public class GeneratedFileSelectorApi {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `FileSelectorApi` to handle messages through the `binaryMessenger`.
      */

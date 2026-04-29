@@ -260,12 +260,17 @@ class RouteConfiguration {
 
   /// Normalizes a URI by ensuring it has a valid path and removing trailing slashes.
   static Uri normalizeUri(Uri uri) {
-    if (uri.hasEmptyPath) {
-      return uri.replace(path: '/');
-    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
-      return uri.replace(path: uri.path.substring(0, uri.path.length - 1));
+    String path = uri.path;
+    if (!path.startsWith('/')) {
+      path = '/$path';
     }
-    return uri;
+    if (path.length > 1 && path.endsWith('/')) {
+      path = path.substring(0, path.length - 1);
+    }
+    if (path == uri.path) {
+      return uri;
+    }
+    return uri.replace(path: path);
   }
 
   /// The global key for top level navigator.

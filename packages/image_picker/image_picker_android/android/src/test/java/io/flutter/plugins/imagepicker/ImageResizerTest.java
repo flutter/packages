@@ -33,7 +33,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
-// RobolectricTestRunner always creates a default mock bitmap when reading from file. So we cannot actually test the scaling.
+// RobolectricTestRunner always creates a default mock bitmap when reading from file. So we cannot
+// actually test the scaling.
 // But we can still test whether the original or scaled file is created.
 @RunWith(RobolectricTestRunner.class)
 public class ImageResizerTest {

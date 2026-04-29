@@ -15,9 +15,8 @@ import 'page.dart';
 /// Same as [ClusteringPage] but works with [AdvancedMarker].
 class AdvancedMarkersClusteringPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkersClusteringPage({Key? key, required this.mapId})
+  const AdvancedMarkersClusteringPage({super.key, required this.mapId})
     : super(
-        key: key,
         const Icon(Icons.place_outlined),
         'Manage clusters of advanced markers',
       );

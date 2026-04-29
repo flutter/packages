@@ -255,7 +255,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           "NOT_FOUND",
           "Details for product "
               + params.getProduct()
-              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + " are not available. It might because products were not fetched prior to the call."
+              + " Please fetch the products first. An example of how to fetch the products could be"
+              + " found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
     }
@@ -279,7 +281,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
                 + params.getOfferToken()
                 + " for product "
                 + params.getProduct()
-                + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
+                + " is not valid. Make sure to only pass offer tokens that belong to the product."
+                + " To obtain offer tokens for a product, fetch the products. An example of how to"
+                + " fetch the products could be found here: "
                 + LOAD_PRODUCT_DOC_URL,
             null);
       }
@@ -290,7 +294,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
       throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
-          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a replacement mode.",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct"
+              + " in order to use a replacement mode.",
           null);
     } else if (params.getOldProduct() != null
         && !cachedProducts.containsKey(params.getOldProduct())) {
@@ -298,7 +303,9 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
           "Details for product "
               + params.getOldProduct()
-              + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
+              + " are not available. It might because products were not fetched prior to the call."
+              + " Please fetch the products first. An example of how to fetch the products could be"
+              + " found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
     }

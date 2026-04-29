@@ -355,6 +355,302 @@ void main() {
     expect(dataClosed.rect, dataTransitionDone.rect);
   });
 
+  testWidgets('Custom shadows work', (WidgetTester tester) async {
+    const closedShadows = <BoxShadow>[
+      BoxShadow(color: Colors.blue, blurRadius: 10.0),
+    ];
+    const openShadows = <BoxShadow>[
+      BoxShadow(color: Colors.red, blurRadius: 20.0),
+    ];
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedShadows: closedShadows,
+            openShadows: openShadows,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Verify closed state: Material elevation should be 0 because custom shadows are provided.
+    final Element srcMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final srcMaterial = srcMaterialElement.widget as Material;
+    expect(srcMaterial.elevation, 0.0);
+
+    // Verify DecoratedBox has the correct shadows.
+    final Element decoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == srcMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final decoration =
+        (decoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    expect(decoration.shadows, closedShadows);
+
+    // Open the container.
+    await tester.tap(find.text('Closed'));
+    await tester.pump(); // Start animation.
+    await tester.pump(const Duration(milliseconds: 150)); // Mid-point.
+
+    final Element transitioningMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final transitioningMaterial =
+        transitioningMaterialElement.widget as Material;
+    expect(transitioningMaterial.elevation, 0.0);
+
+    final Element transitioningDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate(
+          (Element e) => e == transitioningMaterialElement,
+        ),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final transitioningDecoration =
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+
+    // Verify shadows are lerping.
+    final double expectedT = Curves.fastOutSlowIn.transform(0.5);
+    expect(
+      transitioningDecoration.shadows![0].color,
+      Color.lerp(Colors.blue, Colors.red, expectedT),
+    );
+    expect(
+      transitioningDecoration.shadows![0].blurRadius,
+      10.0 + (20.0 - 10.0) * expectedT,
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify open state.
+    final Element openMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final openMaterial = openMaterialElement.widget as Material;
+    expect(openMaterial.elevation, 0.0);
+
+    final Element openDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == openMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final openDecoration =
+        (openDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    expect(openDecoration.shadows, openShadows);
+  });
+
+  testWidgets('Closed elevation transitions into open custom shadows', (
+    WidgetTester tester,
+  ) async {
+    const openShadows = <BoxShadow>[
+      BoxShadow(color: Colors.red, blurRadius: 20.0),
+    ];
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedElevation: 4.0,
+            openShadows: openShadows,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    final Element srcMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final srcMaterial = srcMaterialElement.widget as Material;
+    expect(srcMaterial.elevation, 4.0);
+    expect(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == srcMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+      findsNothing,
+    );
+
+    await tester.tap(find.text('Closed'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+
+    final Element transitioningMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final transitioningMaterial =
+        transitioningMaterialElement.widget as Material;
+    expect(transitioningMaterial.elevation, lessThan(4.0));
+    expect(transitioningMaterial.elevation, greaterThan(0.0));
+
+    final Element transitioningDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate(
+          (Element e) => e == transitioningMaterialElement,
+        ),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final transitioningDecoration =
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    final double expectedT = Curves.fastOutSlowIn.transform(0.5);
+    final BoxShadow expectedShadow = BoxShadow.lerpList(
+      null,
+      openShadows,
+      expectedT,
+    )!.single;
+    expect(transitioningDecoration.shadows, hasLength(1));
+    expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
+    expect(
+      transitioningDecoration.shadows![0].blurRadius,
+      expectedShadow.blurRadius,
+    );
+    expect(
+      transitioningDecoration.shadows![0].spreadRadius,
+      expectedShadow.spreadRadius,
+    );
+    expect(transitioningDecoration.shadows![0].offset, expectedShadow.offset);
+
+    await tester.pumpAndSettle();
+
+    final Element openMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final openMaterial = openMaterialElement.widget as Material;
+    expect(openMaterial.elevation, 0.0);
+
+    final Element openDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == openMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final openDecoration =
+        (openDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    expect(openDecoration.shadows, openShadows);
+  });
+
+  testWidgets('Closed custom shadows transition into open elevation', (
+    WidgetTester tester,
+  ) async {
+    const closedShadows = <BoxShadow>[
+      BoxShadow(color: Colors.blue, blurRadius: 10.0),
+    ];
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            closedShadows: closedShadows,
+            openElevation: 8.0,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    final Element srcMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final srcMaterial = srcMaterialElement.widget as Material;
+    expect(srcMaterial.elevation, 0.0);
+
+    final Element srcDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == srcMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final srcDecoration =
+        (srcDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    expect(srcDecoration.shadows, closedShadows);
+
+    await tester.tap(find.text('Closed'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 150));
+
+    final Element transitioningMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
+    );
+    final transitioningMaterial =
+        transitioningMaterialElement.widget as Material;
+    expect(transitioningMaterial.elevation, greaterThan(0.0));
+    expect(transitioningMaterial.elevation, lessThan(8.0));
+
+    final Element transitioningDecoratedBoxElement = tester.firstElement(
+      find.ancestor(
+        of: find.byElementPredicate(
+          (Element e) => e == transitioningMaterialElement,
+        ),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    final transitioningDecoration =
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
+            as ShapeDecoration;
+    final double expectedT = Curves.fastOutSlowIn.transform(0.5);
+    final BoxShadow expectedShadow = BoxShadow.lerpList(
+      closedShadows,
+      null,
+      expectedT,
+    )!.single;
+    expect(transitioningDecoration.shadows, hasLength(1));
+    expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
+    expect(
+      transitioningDecoration.shadows![0].blurRadius,
+      expectedShadow.blurRadius,
+    );
+    expect(
+      transitioningDecoration.shadows![0].spreadRadius,
+      expectedShadow.spreadRadius,
+    );
+    expect(transitioningDecoration.shadows![0].offset, expectedShadow.offset);
+
+    await tester.pumpAndSettle();
+
+    final Element openMaterialElement = tester.firstElement(
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
+    );
+    final openMaterial = openMaterialElement.widget as Material;
+    expect(openMaterial.elevation, 8.0);
+    expect(
+      find.ancestor(
+        of: find.byElementPredicate((Element e) => e == openMaterialElement),
+        matching: find.byType(DecoratedBox),
+      ),
+      findsNothing,
+    );
+  });
+
   testWidgets('Container opens - Fade through', (WidgetTester tester) async {
     const ShapeBorder shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8.0)),

@@ -323,9 +323,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add(
-          compareField(param, parameterName, param.defaultValueCode!),
-        );
+        conditions.add(compareField(param));
       } else if (param.type.isNullableType) {
         conditions.add('$selfFieldName.$parameterName != null');
       }
