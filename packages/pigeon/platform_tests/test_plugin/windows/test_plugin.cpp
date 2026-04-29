@@ -747,7 +747,8 @@ void TestPlugin::CallFlutterThrowError(
         result) {
   flutter_api_->ThrowError(
       [result](const flutter::EncodableValue* echo) {
-        result(echo ? std::optional<flutter::EncodableValue>(*echo) : std::nullopt);
+        result(echo ? std::optional<flutter::EncodableValue>(*echo)
+                    : std::nullopt);
       },
       [result](const FlutterError& error) { result(error); });
 }
