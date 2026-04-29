@@ -20,20 +20,19 @@ import java.util.Currency
 
 fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
   return PlatformProductDetails(
-      detail.getDescription(),
-      detail.getName(),
-      detail.getProductId(),
-      toPlatformProductType(detail.getProductType()),
-      detail.getTitle(),
-      fromOneTimePurchaseOfferDetails(detail.getOneTimePurchaseOfferDetails()),
-      fromSubscriptionOfferDetailsList(detail.getSubscriptionOfferDetails()))
+      detail.description,
+      detail.name,
+      detail.productId,
+      toPlatformProductType(detail.productType),
+      detail.title,
+      fromOneTimePurchaseOfferDetails(detail.oneTimePurchaseOfferDetails),
+      fromSubscriptionOfferDetailsList(detail.subscriptionOfferDetails))
 }
 
 fun toProductList(
     platformProducts: MutableList<PlatformQueryProduct>
 ): MutableList<QueryProductDetailsParams.Product> {
-  val products: MutableList<QueryProductDetailsParams.Product> =
-      ArrayList<QueryProductDetailsParams.Product>()
+  val products: MutableList<QueryProductDetailsParams.Product> = ArrayList()
   for (platformProduct in platformProducts) {
     products.add(toProduct(platformProduct))
   }
@@ -48,18 +47,17 @@ fun toProduct(platformProduct: PlatformQueryProduct): QueryProductDetailsParams.
 }
 
 fun toProductTypeString(type: PlatformProductType): String {
-  when (type) {
-    PlatformProductType.INAPP -> return BillingClient.ProductType.INAPP
-    PlatformProductType.SUBS -> return BillingClient.ProductType.SUBS
+  return when (type) {
+    PlatformProductType.INAPP -> BillingClient.ProductType.INAPP
+    PlatformProductType.SUBS -> BillingClient.ProductType.SUBS
   }
-  throw FlutterError("UNKNOWN_TYPE", "Unknown product type: " + type, null)
 }
 
 fun toPlatformProductType(typeString: String): PlatformProductType {
-  when (typeString) {
-    BillingClient.ProductType.INAPP -> return PlatformProductType.INAPP
-    BillingClient.ProductType.SUBS -> return PlatformProductType.SUBS
-    else -> return PlatformProductType.INAPP
+  return when (typeString) {
+    BillingClient.ProductType.INAPP -> PlatformProductType.INAPP
+    BillingClient.ProductType.SUBS -> PlatformProductType.SUBS
+    else -> PlatformProductType.INAPP
   }
 }
 
@@ -67,7 +65,7 @@ fun fromProductDetailsList(
     productDetailsList: MutableList<ProductDetails>?
 ): MutableList<PlatformProductDetails> {
   if (productDetailsList == null) {
-    return mutableListOf<PlatformProductDetails>()
+    return mutableListOf()
   }
 
   val output = ArrayList<PlatformProductDetails>()
@@ -85,9 +83,9 @@ fun fromOneTimePurchaseOfferDetails(
   }
 
   return PlatformOneTimePurchaseOfferDetails(
-      oneTimePurchaseOfferDetails.getPriceAmountMicros(),
-      oneTimePurchaseOfferDetails.getFormattedPrice(),
-      oneTimePurchaseOfferDetails.getPriceCurrencyCode())
+      oneTimePurchaseOfferDetails.priceAmountMicros,
+      oneTimePurchaseOfferDetails.formattedPrice,
+      oneTimePurchaseOfferDetails.priceCurrencyCode)
 }
 
 fun fromSubscriptionOfferDetailsList(
@@ -109,19 +107,19 @@ fun fromSubscriptionOfferDetails(
     subscriptionOfferDetails: ProductDetails.SubscriptionOfferDetails
 ): PlatformSubscriptionOfferDetails {
   return PlatformSubscriptionOfferDetails(
-      subscriptionOfferDetails.getBasePlanId(),
-      subscriptionOfferDetails.getOfferId(),
-      subscriptionOfferDetails.getOfferToken(),
-      subscriptionOfferDetails.getOfferTags(),
-      fromPricingPhases(subscriptionOfferDetails.getPricingPhases()),
-      fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
+      subscriptionOfferDetails.basePlanId,
+      subscriptionOfferDetails.offerId,
+      subscriptionOfferDetails.offerToken,
+      subscriptionOfferDetails.offerTags,
+      fromPricingPhases(subscriptionOfferDetails.pricingPhases),
+      fromInstallmentPlanDetails(subscriptionOfferDetails.installmentPlanDetails))
 }
 
 fun fromPricingPhases(
     pricingPhases: ProductDetails.PricingPhases
 ): MutableList<PlatformPricingPhase> {
   val serialized = ArrayList<PlatformPricingPhase>()
-  for (pricingPhase in pricingPhases.getPricingPhaseList()) {
+  for (pricingPhase in pricingPhases.pricingPhaseList) {
     serialized.add(fromPricingPhase(pricingPhase))
   }
   return serialized
@@ -129,12 +127,12 @@ fun fromPricingPhases(
 
 fun fromPricingPhase(pricingPhase: ProductDetails.PricingPhase): PlatformPricingPhase {
   return PlatformPricingPhase(
-      pricingPhase.getBillingCycleCount().toLong(),
-      toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()),
-      pricingPhase.getPriceAmountMicros(),
-      pricingPhase.getBillingPeriod(),
-      pricingPhase.getFormattedPrice(),
-      pricingPhase.getPriceCurrencyCode())
+      pricingPhase.billingCycleCount.toLong(),
+      toPlatformRecurrenceMode(pricingPhase.recurrenceMode),
+      pricingPhase.priceAmountMicros,
+      pricingPhase.billingPeriod,
+      pricingPhase.formattedPrice,
+      pricingPhase.priceCurrencyCode)
 }
 
 fun fromInstallmentPlanDetails(
@@ -145,8 +143,8 @@ fun fromInstallmentPlanDetails(
   }
 
   return PlatformInstallmentPlanDetails(
-      installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount().toLong(),
-      installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount().toLong())
+      installmentPlanDetails.installmentPlanCommitmentPaymentsCount.toLong(),
+      installmentPlanDetails.subsequentInstallmentPlanCommitmentPaymentsCount.toLong())
 }
 
 fun toPlatformRecurrenceMode(mode: Int): PlatformRecurrenceMode {
@@ -170,33 +168,33 @@ fun toPlatformPurchaseState(state: Int): PlatformPurchaseState {
 
 fun fromPurchase(purchase: Purchase): PlatformPurchase {
   var accountIdentifiers: PlatformAccountIdentifiers? = null
-  val billingAccountIdentifiers = purchase.getAccountIdentifiers()
+  val billingAccountIdentifiers = purchase.accountIdentifiers
   if (billingAccountIdentifiers != null) {
     accountIdentifiers =
         PlatformAccountIdentifiers(
-            billingAccountIdentifiers.getObfuscatedAccountId(),
-            billingAccountIdentifiers.getObfuscatedProfileId())
+            billingAccountIdentifiers.obfuscatedAccountId,
+            billingAccountIdentifiers.obfuscatedProfileId)
   }
 
   var pendingPurchaseUpdate: PlatformPendingPurchaseUpdate? = null
-  val billingPendingPurchaseUpdate = purchase.getPendingPurchaseUpdate()
+  val billingPendingPurchaseUpdate = purchase.pendingPurchaseUpdate
   if (billingPendingPurchaseUpdate != null) {
     pendingPurchaseUpdate = fromPendingPurchaseUpdate(billingPendingPurchaseUpdate)
   }
 
   return PlatformPurchase(
-      purchase.getOrderId(),
-      purchase.getPackageName(),
-      purchase.getPurchaseTime(),
-      purchase.getPurchaseToken(),
-      purchase.getSignature(),
-      purchase.getProducts(),
-      purchase.isAutoRenewing(),
-      purchase.getOriginalJson(),
-      purchase.getDeveloperPayload(),
-      purchase.isAcknowledged(),
-      purchase.getQuantity().toLong(),
-      toPlatformPurchaseState(purchase.getPurchaseState()),
+      purchase.orderId,
+      purchase.packageName,
+      purchase.purchaseTime,
+      purchase.purchaseToken,
+      purchase.signature,
+      purchase.products,
+      purchase.isAutoRenewing,
+      purchase.originalJson,
+      purchase.developerPayload,
+      purchase.isAcknowledged,
+      purchase.quantity.toLong(),
+      toPlatformPurchaseState(purchase.purchaseState),
       accountIdentifiers,
       pendingPurchaseUpdate)
 }
@@ -209,28 +207,28 @@ fun fromPendingPurchaseUpdate(
   }
 
   return PlatformPendingPurchaseUpdate(
-      pendingPurchaseUpdate.getProducts(), pendingPurchaseUpdate.getPurchaseToken())
+      pendingPurchaseUpdate.products, pendingPurchaseUpdate.purchaseToken)
 }
 
 fun fromPurchaseHistoryRecord(
     purchaseHistoryRecord: PurchaseHistoryRecord
 ): PlatformPurchaseHistoryRecord {
   return PlatformPurchaseHistoryRecord(
-      purchaseHistoryRecord.getQuantity().toLong(),
-      purchaseHistoryRecord.getPurchaseTime(),
-      purchaseHistoryRecord.getDeveloperPayload(),
-      purchaseHistoryRecord.getOriginalJson(),
-      purchaseHistoryRecord.getPurchaseToken(),
-      purchaseHistoryRecord.getSignature(),
-      purchaseHistoryRecord.getProducts())
+      purchaseHistoryRecord.quantity.toLong(),
+      purchaseHistoryRecord.purchaseTime,
+      purchaseHistoryRecord.developerPayload,
+      purchaseHistoryRecord.originalJson,
+      purchaseHistoryRecord.purchaseToken,
+      purchaseHistoryRecord.signature,
+      purchaseHistoryRecord.products)
 }
 
 fun fromPurchasesList(purchases: MutableList<Purchase>?): MutableList<PlatformPurchase> {
   if (purchases == null) {
-    return mutableListOf<PlatformPurchase>()
+    return mutableListOf()
   }
 
-  val serialized: MutableList<PlatformPurchase> = ArrayList<PlatformPurchase>()
+  val serialized: MutableList<PlatformPurchase> = ArrayList()
   for (purchase in purchases) {
     serialized.add(fromPurchase(purchase))
   }
@@ -241,11 +239,10 @@ fun fromPurchaseHistoryRecordList(
     purchaseHistoryRecords: MutableList<PurchaseHistoryRecord>?
 ): MutableList<PlatformPurchaseHistoryRecord> {
   if (purchaseHistoryRecords == null) {
-    return mutableListOf<PlatformPurchaseHistoryRecord>()
+    return mutableListOf()
   }
 
-  val serialized: MutableList<PlatformPurchaseHistoryRecord> =
-      ArrayList<PlatformPurchaseHistoryRecord>()
+  val serialized: MutableList<PlatformPurchaseHistoryRecord> = ArrayList()
   for (purchaseHistoryRecord in purchaseHistoryRecords) {
     serialized.add(fromPurchaseHistoryRecord(purchaseHistoryRecord))
   }
@@ -254,7 +251,7 @@ fun fromPurchaseHistoryRecordList(
 
 fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
   return PlatformBillingResult(
-      fromBillingResponseCode(billingResult.getResponseCode()), billingResult.getDebugMessage())
+      fromBillingResponseCode(billingResult.responseCode), billingResult.debugMessage)
 }
 
 fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse {
@@ -285,16 +282,16 @@ fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse {
 
 fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserChoiceDetails {
   return PlatformUserChoiceDetails(
-      userChoiceDetails.getOriginalExternalTransactionId(),
-      userChoiceDetails.getExternalTransactionToken(),
-      fromUserChoiceProductsList(userChoiceDetails.getProducts()))
+      userChoiceDetails.originalExternalTransactionId,
+      userChoiceDetails.externalTransactionToken,
+      fromUserChoiceProductsList(userChoiceDetails.products))
 }
 
 fun fromUserChoiceProductsList(
     productsList: MutableList<UserChoiceDetails.Product>
 ): MutableList<PlatformUserChoiceProduct> {
   if (productsList.isEmpty()) {
-    return mutableListOf<PlatformUserChoiceProduct>()
+    return mutableListOf()
   }
 
   val output = ArrayList<PlatformUserChoiceProduct>()
@@ -306,7 +303,7 @@ fun fromUserChoiceProductsList(
 
 fun fromUserChoiceProduct(product: UserChoiceDetails.Product): PlatformUserChoiceProduct {
   return PlatformUserChoiceProduct(
-      product.getId(), product.getOfferToken(), toPlatformProductType(product.getType()))
+      product.id, product.offerToken, toPlatformProductType(product.type))
 }
 
 /** Converter from [BillingResult] and [BillingConfig] to map. */
@@ -314,8 +311,7 @@ fun fromBillingConfig(
     result: BillingResult,
     billingConfig: BillingConfig?
 ): PlatformBillingConfigResponse {
-  return PlatformBillingConfigResponse(
-      fromBillingResult(result), if (billingConfig == null) "" else billingConfig.getCountryCode())
+  return PlatformBillingConfigResponse(fromBillingResult(result), billingConfig?.countryCode ?: "")
 }
 
 /** Converter from [BillingResult] and [AlternativeBillingOnlyReportingDetails] to map. */
@@ -324,7 +320,7 @@ fun fromAlternativeBillingOnlyReportingDetails(
     details: AlternativeBillingOnlyReportingDetails?
 ): PlatformAlternativeBillingOnlyReportingDetailsResponse {
   return PlatformAlternativeBillingOnlyReportingDetailsResponse(
-      fromBillingResult(result), if (details == null) "" else details.getExternalTransactionToken())
+      fromBillingResult(result), details?.externalTransactionToken ?: "")
 }
 
 fun toPendingPurchasesParams(
@@ -338,39 +334,36 @@ fun toPendingPurchasesParams(
 }
 
 fun toBillingClientFeature(feature: PlatformBillingClientFeature): String {
-  when (feature) {
+  return when (feature) {
     PlatformBillingClientFeature.ALTERNATIVE_BILLING_ONLY ->
-        return BillingClient.FeatureType.ALTERNATIVE_BILLING_ONLY
-    PlatformBillingClientFeature.BILLING_CONFIG -> return BillingClient.FeatureType.BILLING_CONFIG
-    PlatformBillingClientFeature.EXTERNAL_OFFER -> return BillingClient.FeatureType.EXTERNAL_OFFER
-    PlatformBillingClientFeature.IN_APP_MESSAGING ->
-        return BillingClient.FeatureType.IN_APP_MESSAGING
+        BillingClient.FeatureType.ALTERNATIVE_BILLING_ONLY
+    PlatformBillingClientFeature.BILLING_CONFIG -> BillingClient.FeatureType.BILLING_CONFIG
+    PlatformBillingClientFeature.EXTERNAL_OFFER -> BillingClient.FeatureType.EXTERNAL_OFFER
+    PlatformBillingClientFeature.IN_APP_MESSAGING -> BillingClient.FeatureType.IN_APP_MESSAGING
     PlatformBillingClientFeature.PRICE_CHANGE_CONFIRMATION ->
-        return BillingClient.FeatureType.PRICE_CHANGE_CONFIRMATION
-    PlatformBillingClientFeature.PRODUCT_DETAILS -> return BillingClient.FeatureType.PRODUCT_DETAILS
-    PlatformBillingClientFeature.SUBSCRIPTIONS -> return BillingClient.FeatureType.SUBSCRIPTIONS
+        BillingClient.FeatureType.PRICE_CHANGE_CONFIRMATION
+    PlatformBillingClientFeature.PRODUCT_DETAILS -> BillingClient.FeatureType.PRODUCT_DETAILS
+    PlatformBillingClientFeature.SUBSCRIPTIONS -> BillingClient.FeatureType.SUBSCRIPTIONS
     PlatformBillingClientFeature.SUBSCRIPTIONS_UPDATE ->
-        return BillingClient.FeatureType.SUBSCRIPTIONS_UPDATE
+        BillingClient.FeatureType.SUBSCRIPTIONS_UPDATE
   }
-  throw FlutterError("UNKNOWN_FEATURE", "Unknown client feature: " + feature, null)
 }
 
 fun toReplacementMode(replacementMode: PlatformReplacementMode): Int {
-  when (replacementMode) {
+  return when (replacementMode) {
     PlatformReplacementMode.CHARGE_FULL_PRICE ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE
     PlatformReplacementMode.CHARGE_PRORATED_PRICE ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE
     PlatformReplacementMode.DEFERRED ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.DEFERRED
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.DEFERRED
     PlatformReplacementMode.WITHOUT_PRORATION ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITHOUT_PRORATION
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITHOUT_PRORATION
     PlatformReplacementMode.WITH_TIME_PRORATION ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITH_TIME_PRORATION
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITH_TIME_PRORATION
     PlatformReplacementMode.UNKNOWN_REPLACEMENT_MODE ->
-        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE
   }
-  return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE
 }
 
 /**
@@ -386,5 +379,5 @@ fun toReplacementMode(replacementMode: PlatformReplacementMode): Int {
  * @exception IllegalArgumentException if `currencyCode` is not a supported ISO 4217 code.
  */
 fun currencySymbolFromCode(currencyCode: String?): String? {
-  return Currency.getInstance(currencyCode).getSymbol()
+  return Currency.getInstance(currencyCode).symbol
 }
