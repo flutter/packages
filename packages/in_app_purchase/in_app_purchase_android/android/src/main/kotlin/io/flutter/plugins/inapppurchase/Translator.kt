@@ -16,7 +16,6 @@ import com.android.billingclient.api.Purchase.PendingPurchaseUpdate
 import com.android.billingclient.api.PurchaseHistoryRecord
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.UserChoiceDetails
-import java.util.Currency
 
 fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
   return PlatformProductDetails(
@@ -310,19 +309,4 @@ fun toReplacementMode(replacementMode: PlatformReplacementMode): Int {
     PlatformReplacementMode.UNKNOWN_REPLACEMENT_MODE ->
         BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE
   }
-}
-
-/**
- * Gets the symbol of for the given currency code for the default [Locale.Category.DISPLAY] locale.
- * For example, for the US Dollar, the symbol is "$" if the default locale is the US, while for
- * other locales it may be "US$". If no symbol can be determined, the ISO 4217 currency code is
- * returned.
- *
- * @param currencyCode the ISO 4217 code of the currency
- * @return the symbol of this currency code for the default [Locale.Category.DISPLAY] locale
- * @throws NullPointerException if `currencyCode` is null
- * @throws IllegalArgumentException if `currencyCode` is not a supported ISO 4217 code.
- */
-fun currencySymbolFromCode(currencyCode: String?): String? {
-  return Currency.getInstance(currencyCode).symbol
 }

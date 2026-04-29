@@ -7,8 +7,6 @@ package io.flutter.plugins.inapppurchase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.AccountIdentifiers;
@@ -188,17 +186,6 @@ public class TranslatorTest {
 
     assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
-  }
-
-  @Test
-  public void currencyCodeFromSymbol() {
-    assertEquals("$", TranslatorKt.currencySymbolFromCode("USD"));
-    try {
-      TranslatorKt.currencySymbolFromCode("EUROPACOIN");
-      fail("Translator should throw an exception");
-    } catch (Exception e) {
-      assertTrue(e instanceof IllegalArgumentException);
-    }
   }
 
   private void assertSerialized(ProductDetails expected, PlatformProductDetails serialized) {
