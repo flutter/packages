@@ -2,6 +2,7 @@
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
   `setPreventsDisplaySleepDuringVideoPlayback` to `VideoPlayerPlatform`.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.6.0
 
