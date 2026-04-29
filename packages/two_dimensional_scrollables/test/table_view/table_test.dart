@@ -3634,8 +3634,9 @@ void main() {
     });
 
     testWidgets(
-      'Calling setState within onEnter does not cause a loop of onExit/onEnter - Regression test for https://github.com/flutter/flutter/issues/147614',
+      'Calling setState within onEnter does not cause a loop of onExit/onEnter',
       (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/147614
         var enterCounter = 0;
         var exitCounter = 0;
 
