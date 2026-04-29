@@ -34,6 +34,10 @@ class ValidateCommand extends PackageLoopingCommand {
   final String description = 'Checks that packages follow team guidelines.';
 
   @override
+  final PackageLoopingType packageLoopingType =
+      PackageLoopingType.includeAllSubpackages;
+
+  @override
   final bool hasLongOutput = false;
 
   @override
@@ -56,16 +60,25 @@ class ValidateCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final List<String> errors = [];
+
+    if (package.isTopLevel) {
+      errors.addAll(await _validateRepoInfo(package));
+    }
+
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
+  }
+
+  /// Runs repo-level checks.
+  Future<List<String>> _validateRepoInfo(RepositoryPackage package) async {
     final validator = RepoInfoValidator(
       readmeTableEntries: _readmeTableEntries,
       autoLabeledPackages: _autoLabeledPackages,
       gitDir: await gitDir,
       indentation: indentation,
     );
-    final List<String> errors = await validator.validatePackage(package);
-
-    return errors.isEmpty
-        ? PackageResult.success()
-        : PackageResult.fail(errors);
+    return validator.validatePackage(package);
   }
 }

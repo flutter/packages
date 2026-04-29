@@ -89,7 +89,7 @@ ${readmeTableEntry('a_package')}
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+        containsAllInOrder(<Matcher>[contains('Running for a_package')]),
       );
     });
 
@@ -110,7 +110,6 @@ ${readmeTableHeader()}
 ${readmeTableEntry(pluginName)}
 ''');
         writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
-        writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
 
         // 4 packages * 2 checks (git, gh) = 8 calls.
         // Default mocks in setUp cover 1 call each. We need 3 more each.
@@ -127,7 +126,12 @@ ${readmeTableEntry(pluginName)}
 
         expect(
           output,
-          containsAllInOrder(<Matcher>[contains('Ran for 4 package(s)')]),
+          containsAllInOrder(<Matcher>[
+            contains('Running for foo'),
+            contains('Running for foo_android'),
+            contains('Running for foo_ios'),
+            contains('Running for foo_platform_interface'),
+          ]),
         );
       },
     );
