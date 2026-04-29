@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'container_transition.dart';
 import 'fade_scale_transition.dart';
 import 'fade_through_transition.dart';
+import 'go_router_example.dart';
 import 'shared_axis_transition.dart';
 
 void main() {
@@ -89,6 +90,19 @@ class _TransitionsHomePageState extends State<_TransitionsHomePage> {
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return const FadeScaleTransitionDemo();
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _TransitionListTile(
+                  title: 'go_router integration',
+                  subtitle: 'OpenContainerPage',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return const GoRouterExampleApp();
                         },
                       ),
                     );
