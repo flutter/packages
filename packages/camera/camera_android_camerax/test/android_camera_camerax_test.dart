@@ -17,6 +17,16 @@ import 'package:mockito/mockito.dart';
 
 import 'android_camera_camerax_test.mocks.dart';
 
+class FakeCaptureRequestOptions extends Fake implements CaptureRequestOptions {
+  final Map<CaptureRequestKey, Object?> _options;
+  FakeCaptureRequestOptions(this._options);
+
+  @override
+  Future<Object?> getCaptureRequestOption(CaptureRequestKey key) async {
+    return _options[key];
+  }
+}
+
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Analyzer>(),
   MockSpec<AspectRatioStrategy>(),
@@ -484,13 +494,7 @@ void main() {
 
     PigeonOverrides.captureRequestOptions_new =
         ({required Map<CaptureRequestKey, Object?> options}) {
-          final mockCaptureRequestOptions = MockCaptureRequestOptions();
-          options.forEach((CaptureRequestKey key, Object? value) {
-            when(
-              mockCaptureRequestOptions.getCaptureRequestOption(key),
-            ).thenAnswer((_) async => value);
-          });
-          return mockCaptureRequestOptions;
+          return FakeCaptureRequestOptions(options);
         };
     PigeonOverrides.captureRequest_controlAELock =
         CaptureRequestKey.pigeon_detached();
@@ -4033,6 +4037,182 @@ void main() {
             expect(camera.torchEnabled, true);
         }
       }
+    },
+  );
+
+  test(
+    'setFlashMode throws exception when torch mode set but no flash unit',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 44;
+      final mockCameraControl = MockCameraControl();
+      final mockCameraInfo = MockCameraInfo();
+
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = mockCameraInfo;
+
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => false);
+
+      expect(
+        () => camera.setFlashMode(cameraId, FlashMode.torch),
+        throwsA(
+          isA<CameraException>().having(
+            (CameraException e) => e.code,
+            'code',
+            'flashModeNotSupported',
+          ),
+        ),
+      );
+    },
+  );
+
+  test(
+    'initializeCamera restores torch state to ON if enabled and flash available',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 44;
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockCameraControl = MockCameraControl();
+      final mockLiveCameraState = MockLiveCameraState();
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.cameraSelector = MockCameraSelector();
+      camera.preview = MockPreview();
+      camera.imageCapture = MockImageCapture();
+      camera.imageAnalysis = MockImageAnalysis();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+      camera.torchEnabled = true;
+
+      await camera.initializeCamera(cameraId);
+
+      verify(mockCameraControl.enableTorch(true));
+    },
+  );
+
+  test('initializeCamera ensures torch state is OFF if not enabled', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 44;
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockCamera = MockCamera();
+    final mockCameraInfo = MockCameraInfo();
+    final mockCameraControl = MockCameraControl();
+    final mockLiveCameraState = MockLiveCameraState();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = MockCameraSelector();
+    camera.preview = MockPreview();
+    camera.imageCapture = MockImageCapture();
+    camera.imageAnalysis = MockImageAnalysis();
+
+    when(
+      mockProcessCameraProvider.bindToLifecycle(any, any),
+    ).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+    when(
+      mockCameraInfo.getCameraState(),
+    ).thenAnswer((_) async => mockLiveCameraState);
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+    camera.torchEnabled = false;
+
+    await camera.initializeCamera(cameraId);
+
+    verifyNever(mockCameraControl.enableTorch(any));
+  });
+
+  test(
+    'initializeCamera does not restore torch state if enabled but no flash unit',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 44;
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockCameraControl = MockCameraControl();
+      final mockLiveCameraState = MockLiveCameraState();
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.cameraSelector = MockCameraSelector();
+      camera.preview = MockPreview();
+      camera.imageCapture = MockImageCapture();
+      camera.imageAnalysis = MockImageAnalysis();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => false);
+
+      camera.torchEnabled = true;
+
+      await camera.initializeCamera(cameraId);
+
+      verifyNever(mockCameraControl.enableTorch(any));
+    },
+  );
+
+  test(
+    'initializeCamera does not emit error when restore torch fails',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 44;
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockCameraControl = MockCameraControl();
+      final mockLiveCameraState = MockLiveCameraState();
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.cameraSelector = MockCameraSelector();
+      camera.preview = MockPreview();
+      camera.imageCapture = MockImageCapture();
+      camera.imageAnalysis = MockImageAnalysis();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(mockCameraControl);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => mockLiveCameraState);
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+      camera.torchEnabled = true;
+
+      when(mockCameraControl.enableTorch(true)).thenThrow(
+        PlatformException(code: 'camera_error', message: 'Torch failed'),
+      );
+
+      var errorEmitted = false;
+      final StreamSubscription<CameraErrorEvent> subscription =
+          camera.onCameraError(cameraId).listen((_) {
+        errorEmitted = true;
+      });
+
+      await camera.initializeCamera(cameraId);
+
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      expect(errorEmitted, isFalse);
+      await subscription.cancel();
     },
   );
 
