@@ -1413,32 +1413,6 @@ abstract class NIHostIntegrationCoreApi {
   bool callFlutterNoopOnBackgroundThread();
 }
 
-/// An API that can be implemented for minimal, compile-only tests.
-//
-// This is also here to test that multiple host APIs can be generated
-// successfully in all languages (e.g., in Java where it requires having a
-// wrapper class).
-// @HostApi()
-// abstract class NIHostTrivialApi {
-//   void noop();
-// }
-
-/// A simple API implemented in some unit tests.
-//
-// This is separate from NIHostIntegrationCoreApi to avoid having to update a
-// lot of unit tests every time we add something to the integration test API.
-// TODO(stuartmorgan): Restructure the unit tests to reduce the number of
-// different APIs we define.
-// @HostApi()
-// abstract class NIHostSmallApi {
-//   @async
-//   @ObjCSelector('echoString:')
-//   String echo(String aString);
-
-//   @async
-//   void voidVoid();
-// }
-
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 @FlutterApi()

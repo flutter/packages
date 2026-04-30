@@ -22773,7 +22773,7 @@ extension NIHostIntegrationCoreApiSetup$Methods
           );
   }
 
-  /// sendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:
+  /// Returns passed in arguments of multiple types.
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 10.15.0

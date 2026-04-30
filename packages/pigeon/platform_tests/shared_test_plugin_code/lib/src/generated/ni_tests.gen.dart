@@ -11489,6 +11489,7 @@ class NIHostIntegrationCoreApi {
     return pigeonVar_replyValue! as NIAllNullableTypes;
   }
 
+  /// Returns passed in arguments of multiple types.
   Future<NIAllNullableTypesWithoutRecursion>
   sendMultipleNullableTypesWithoutRecursion(
     bool? aNullableBool,

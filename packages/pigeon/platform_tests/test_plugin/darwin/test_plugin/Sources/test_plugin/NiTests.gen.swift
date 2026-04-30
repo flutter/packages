@@ -2051,6 +2051,7 @@ protocol NIHostIntegrationCoreApi {
   func sendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NIAllNullableTypes
+  /// Returns passed in arguments of multiple types.
   func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NIAllNullableTypesWithoutRecursion
@@ -3117,6 +3118,7 @@ protocol NIHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Returns passed in arguments of multiple types.
   @objc func sendMultipleNullableTypesWithoutRecursion(
     aNullableBool: NSNumber?, aNullableInt: NSNumber?, aNullableString: NSString?,
     wrappedError: NiTestsError

@@ -1479,6 +1479,7 @@ SWIFT_AVAILABILITY(macos, introduced = 10.15)
                                   wrappedError:
                                       (NiTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+/// Returns passed in arguments of multiple types.
 - (NIAllNullableTypesWithoutRecursionBridge* _Nullable)
     sendMultipleNullableTypesWithoutRecursionWithANullableBool:
         (NSNumber* _Nullable)aNullableBool

@@ -1130,7 +1130,7 @@ abstract class NIHostIntegrationCoreApi {
       aNullableInt: Long?,
       aNullableString: String?
   ): NIAllNullableTypes
-
+  /** Returns passed in arguments of multiple types. */
   abstract fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
@@ -2101,7 +2101,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-
+  /** Returns passed in arguments of multiple types. */
   override fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
