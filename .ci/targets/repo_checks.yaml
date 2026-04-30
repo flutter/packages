@@ -26,14 +26,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["readme-check"]
     always: true
-    # Re-run with --require-excerpts, skipping packages that still need
-    # to be converted. Once https://github.com/flutter/flutter/issues/102679
-    # has been fixed, this can be removed --require-excerpts added to the
-    # run above.
-  - name: README snippet configuration validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["readme-check", "--require-excerpts", "--exclude=script/configs/temp_exclude_excerpt.yaml"]
-    always: true
   - name: README snippet validation
     script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]

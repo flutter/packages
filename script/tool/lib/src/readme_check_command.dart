@@ -18,14 +18,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     super.processRunner,
     super.platform,
     super.gitDir,
-  }) {
-    argParser.addFlag(
-      _requireExcerptsArg,
-      help: 'Require that Dart code blocks be managed by code-excerpt.',
-    );
-  }
-
-  static const String _requireExcerptsArg = 'require-excerpts';
+  });
 
   @override
   final String name = 'readme-check';
@@ -62,7 +55,6 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       path: path,
       indentation: indentation,
       warningLogger: printWarning,
-      requireCodeExcerpts: getBoolArg(_requireExcerptsArg),
     );
 
     final List<String> errors = validator.validateReadme(

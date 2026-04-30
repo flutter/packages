@@ -712,6 +712,7 @@ A B C
       package.readmeFile.writeAsStringSync('''
 Example:
 
+<?code-excerpt "main.dart (SomeSection)"?>
 ```  dart
 A B C
 ```
@@ -747,7 +748,6 @@ A B C
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'readme-check',
-        '--require-excerpts',
       ]);
 
       expect(
@@ -759,7 +759,7 @@ A B C
       );
     });
 
-    test('fails on missing excerpt tag when requested', () async {
+    test('fails on missing excerpt tag', () async {
       final RepositoryPackage package = createFakePackage(
         'a_package',
         packagesDir,
@@ -776,7 +776,7 @@ A B C
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check', '--require-excerpts'],
+        <String>['readme-check'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -792,6 +792,34 @@ A B C
             'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md',
           ),
           contains('Missing code-excerpt management for code block'),
+        ]),
+      );
+    });
+
+    test('passes and warns for missing excerpt tag when opted out', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+
+      package.readmeFile.writeAsStringSync('''
+Example:
+
+```dart
+A B C
+```
+''');
+      package.ciConfigFile.writeAsStringSync('exempt_from_excerpts: true');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'readme-check',
+      ]);
+
+      expect(
+        output,
+        containsAll(<Matcher>[
+          contains('Running for a_package...'),
+          contains('Skipping code excerpt validation due to ci_config.yaml'),
         ]),
       );
     });
