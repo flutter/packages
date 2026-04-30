@@ -22,10 +22,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["license-check"]
     always: true
-  - name: README validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["readme-check"]
-    always: true
   - name: README snippet validation
     script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]

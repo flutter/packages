@@ -15,6 +15,7 @@ import 'common/repository_package.dart';
 import 'validators/dependabot_validator.dart';
 import 'validators/gradle_validator.dart';
 import 'validators/pubspec_validator.dart';
+import 'validators/readme_validator.dart';
 import 'validators/repo_info_validator.dart';
 
 /// The set of possible validators.
@@ -190,15 +191,18 @@ class ValidateCommand extends PackageLoopingCommand {
   }
 
   Future<List<String>> _validateReadme(RepositoryPackage package) async {
+    // TODO(stuartmorgan): Consider restructuring this to just check the
+    //  current package's README for all packages, now that this is part of an
+    //  includeAllSubpackages command. The current logic is from when it was
+    //  its own top-level-only command.
     if (!package.isTopLevel) {
       return [];
     }
-    /*
+
     final validator = ReadmeValidator(
       path: path,
       indentation: indentation,
       warningLogger: printWarning,
-      requireCodeExcerpts: getBoolArg(_requireExcerptsArg),
     );
 
     final List<String> errors = validator.validateReadme(
@@ -231,8 +235,6 @@ class ValidateCommand extends PackageLoopingCommand {
     }
 
     return errors;
-*/
-    return [];
   }
 
   Stream<String> _findAllPublishedPackages() async* {

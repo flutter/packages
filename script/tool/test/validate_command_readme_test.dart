@@ -6,7 +6,7 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
-import 'package:flutter_plugin_tools/src/readme_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -24,11 +24,12 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final command = ReadmeCheckCommand(
+    final command = ValidateCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
       gitDir: gitDir,
+      targetedValidators: {Validator.readme},
     );
 
     runner = CommandRunner<void>(
@@ -50,7 +51,7 @@ void main() {
     getExampleDir(package).childFile('README.md').writeAsStringSync('A readme');
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'readme-check',
+      'validate',
     ]);
 
     expect(
@@ -74,7 +75,7 @@ void main() {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['readme-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -91,7 +92,7 @@ void main() {
     createFakePackage('a_package', packagesDir);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'readme-check',
+      'validate',
     ]);
 
     expect(
@@ -113,7 +114,7 @@ void main() {
     miscSubpackage.readmeFile.deleteSync();
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'readme-check',
+      'validate',
     ]);
 
     expect(output, isNot(contains(subpackageName)));
@@ -137,7 +138,7 @@ samples, guidance on mobile development, and a full API reference.
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['readme-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -181,7 +182,7 @@ samples, guidance on mobile development, and a full API reference.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -216,7 +217,7 @@ Demonstrates how to use the a_plugin_ios plugin.
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['readme-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -262,7 +263,7 @@ Demonstrates how to use the a_plugin plugin.
 ''');
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'readme-check',
+      'validate',
     ]);
 
     expect(
@@ -291,7 +292,7 @@ Some random description.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -347,7 +348,7 @@ very unlikely to be relevant.
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'readme-check',
+        'validate',
       ]);
 
       expect(
@@ -388,7 +389,7 @@ samples, guidance on mobile development, and a full API reference.
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['readme-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -425,7 +426,7 @@ samples, guidance on mobile development, and a full API reference.
         createFakePlugin('${federatedPluginName}_android', federatedDir);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'readme-check',
+          'validate',
         ]);
 
         expect(
@@ -448,7 +449,7 @@ samples, guidance on mobile development, and a full API reference.
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['readme-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -470,7 +471,7 @@ samples, guidance on mobile development, and a full API reference.
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['readme-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -499,7 +500,7 @@ A very useful plugin.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -536,7 +537,7 @@ A very useful plugin.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -577,7 +578,7 @@ A very useful plugin.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -620,7 +621,7 @@ A very useful plugin.
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -660,7 +661,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -691,7 +692,7 @@ A B C
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'readme-check',
+        'validate',
       ]);
 
       expect(
@@ -719,7 +720,7 @@ A B C
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'readme-check',
+        'validate',
       ]);
 
       expect(
@@ -747,7 +748,7 @@ A B C
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'readme-check',
+        'validate',
       ]);
 
       expect(
@@ -776,7 +777,7 @@ A B C
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['readme-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -812,7 +813,7 @@ A B C
       package.ciConfigFile.writeAsStringSync('exempt_from_excerpts: true');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'readme-check',
+        'validate',
       ]);
 
       expect(
