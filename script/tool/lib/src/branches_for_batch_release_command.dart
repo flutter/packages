@@ -18,10 +18,10 @@ import 'common/repository_package.dart';
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
 
-/// A command to create a remote branch with release changes for a single package.
-class BranchForBatchReleaseCommand extends PackageCommand {
-  /// Creates a new `branch-for-batch-release` command.
-  BranchForBatchReleaseCommand(
+/// A command to create remote branches with release changes for a single package.
+class BranchesForBatchReleaseCommand extends PackageCommand {
+  /// Creates a new `branches-for-batch-release` command.
+  BranchesForBatchReleaseCommand(
     super.packagesDir, {
     super.processRunner,
     super.platform,
@@ -42,10 +42,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   @override
-  final String name = 'branch-for-batch-release';
+  final String name = 'branches-for-batch-release';
 
   @override
-  final String description = 'Creates a release PR for a single package.';
+  final String description = 'Creates release branches for a single package.';
 
   @override
   Future<void> run() async {
@@ -97,7 +97,17 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    await _generateCommitAndBranch(
+    final releaseBranchName =
+        'release-${package.directory.basename}-${releaseInfo.newVersion}';
+
+    await _createAndPushReleaseBranch(
+      git: repository,
+      package: package,
+      releaseBranchName: releaseBranchName,
+      remoteName: remoteName,
+    );
+
+    await _createHeadBranchAndCommit(
       git: repository,
       package: package,
       branchName: branchName,
@@ -145,7 +155,37 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   /// remove the pending changelog files, stage the changes, and commit them.
   ///
   /// Throws a [ToolExit] if any of the steps fail.
-  Future<void> _generateCommitAndBranch({
+  Future<void> _createAndPushReleaseBranch({
+    required GitDir git,
+    required RepositoryPackage package,
+    required String releaseBranchName,
+    required String remoteName,
+  }) async {
+    print('  Creating release branch "$releaseBranchName"...');
+    final io.ProcessResult releaseBranchResult = await git.runCommand(<String>[
+      'branch',
+      releaseBranchName,
+    ]);
+    if (releaseBranchResult.exitCode != 0) {
+      printError(
+        'Failed to create release branch $releaseBranchName: ${releaseBranchResult.stderr}',
+      );
+      throw ToolExit(_kGitFailedToPush);
+    }
+
+    await _pushBranch(git, remoteName, releaseBranchName);
+
+    final String? githubOutput = platform.environment['GITHUB_OUTPUT'];
+    if (githubOutput != null && githubOutput.isNotEmpty) {
+      final File file = package.directory.fileSystem.file(githubOutput);
+      file.writeAsStringSync(
+        'release_branch=$releaseBranchName\n',
+        mode: io.FileMode.append,
+      );
+    }
+  }
+
+  Future<void> _createHeadBranchAndCommit({
     required GitDir git,
     required RepositoryPackage package,
     required String branchName,
