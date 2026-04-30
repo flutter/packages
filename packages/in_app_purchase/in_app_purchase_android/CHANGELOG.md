@@ -1,3 +1,7 @@
+## 0.4.0+11
+
+* Add showInAppMessages support for Android platform.
+
 ## 0.4.0+10
 
 * Fixes dartdoc comments that accidentally used HTML.
