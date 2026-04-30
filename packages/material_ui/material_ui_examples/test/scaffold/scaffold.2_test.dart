@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/scaffold/scaffold.2.dart'
+import 'package:material_ui_examples/scaffold/scaffold.2.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

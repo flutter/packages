@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/shaped_input_border/shaped_input_border.0.dart'
+import 'package:material_ui_examples/shaped_input_border/shaped_input_border.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

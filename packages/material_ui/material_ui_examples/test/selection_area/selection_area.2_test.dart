@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_api_samples/material/selection_area/selection_area.2.dart'
+import 'package:material_ui_examples/selection_area/selection_area.2.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

@@ -4,7 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/page_transitions_theme/page_transitions_theme.0.dart'
+import 'package:material_ui_examples/page_transitions_theme/page_transitions_theme.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

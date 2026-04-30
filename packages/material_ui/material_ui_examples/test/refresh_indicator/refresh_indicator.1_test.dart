@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/refresh_indicator/refresh_indicator.1.dart'
+import 'package:material_ui_examples/refresh_indicator/refresh_indicator.1.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 
