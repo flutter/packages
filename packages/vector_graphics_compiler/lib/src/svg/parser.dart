@@ -1434,18 +1434,24 @@ class SvgParser {
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
     if (colorString.toLowerCase().startsWith('hsl')) {
-      final List<int> values = colorString
+      final List<num> values = colorString
           .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
           .split(',')
           .map((String rawColor) {
             rawColor = rawColor.trim();
 
-            if (rawColor.endsWith('%')) {
+            final bool isPercentage = rawColor.endsWith('%');
+            if (isPercentage) {
               rawColor = rawColor.substring(0, rawColor.length - 1);
             }
 
             if (rawColor.contains('.')) {
-              return (parseDouble(rawColor)! * 2.55).round();
+              final double v = parseDouble(rawColor)!;
+              // HSL percentage components (saturation, lightness) stay in
+              // the 0–100 range so they can be divided by 100 below.
+              // Non-percentage decimals are alpha values in 0–1; convert to
+              // 0–255 here to match the int-based storage used below.
+              return isPercentage ? v : (v * 255).round();
             }
 
             return int.parse(rawColor);
@@ -1454,7 +1460,7 @@ class SvgParser {
       final double hue = values[0] / 360 % 1;
       final double saturation = values[1] / 100;
       final double luminance = values[2] / 100;
-      final int alpha = values.length > 3 ? values[3] : 255;
+      final int alpha = values.length > 3 ? values[3].toInt() : 255;
       var rgb = <double>[0, 0, 0];
 
       if (hue < 1 / 6) {
