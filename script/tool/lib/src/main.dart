@@ -15,7 +15,6 @@ import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
 import 'custom_test_command.dart';
 import 'dart_test_command.dart';
-import 'dependabot_check_command.dart';
 import 'drive_examples_command.dart';
 import 'federation_safety_check_command.dart';
 import 'fetch_deps_command.dart';
@@ -69,7 +68,6 @@ void main(List<String> args) {
         ..addCommand(CreateAllPackagesAppCommand(packagesDir))
         ..addCommand(CustomTestCommand(packagesDir))
         ..addCommand(DartTestCommand(packagesDir))
-        ..addCommand(DependabotCheckCommand(packagesDir))
         ..addCommand(DriveExamplesCommand(packagesDir))
         ..addCommand(FederationSafetyCheckCommand(packagesDir))
         ..addCommand(FetchDepsCommand(packagesDir))

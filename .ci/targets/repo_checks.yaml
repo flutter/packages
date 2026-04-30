@@ -56,9 +56,9 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["check-repo-package-info"]
     always: true
-  - name: Dependabot coverage validation
+  - name: Repository standards validation
     script: .ci/scripts/tool_runner.sh
-    args: ["dependabot-check"]
+    args: ["validate"]
     always: true
   - name: CHANGELOG and version validation
     script: .ci/scripts/check_version.sh
