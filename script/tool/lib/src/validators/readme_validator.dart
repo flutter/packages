@@ -64,7 +64,7 @@ class ReadmeValidator {
     }
 
     print(
-      '${_indentation}Checking '
+      '${_indentation}Validating '
       '${relativePosixPath(readme, from: mainPackage.directory, platformContext: _path)}...',
     );
 

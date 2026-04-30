@@ -57,10 +57,10 @@ void main() {
     expect(
       output,
       containsAll(<Matcher>[
-        contains('  Checking README.md...'),
-        contains('  Checking example/README.md...'),
-        contains('  Checking example/example1/README.md...'),
-        contains('  Checking example/example2/README.md...'),
+        contains('  Validating README.md...'),
+        contains('  Validating example/README.md...'),
+        contains('  Validating example/example1/README.md...'),
+        contains('  Validating example/example2/README.md...'),
       ]),
     );
   });
@@ -269,8 +269,8 @@ Demonstrates how to use the a_plugin plugin.
     expect(
       output,
       containsAll(<Matcher>[
-        contains('  Checking README.md...'),
-        contains('  Checking example/README.md...'),
+        contains('  Validating README.md...'),
+        contains('  Validating example/README.md...'),
       ]),
     );
   });
@@ -354,8 +354,8 @@ very unlikely to be relevant.
       expect(
         output,
         containsAll(<Matcher>[
-          contains('  Checking README.md...'),
-          contains('  Checking example/README.md...'),
+          contains('  Validating README.md...'),
+          contains('  Validating example/README.md...'),
         ]),
       );
     },
