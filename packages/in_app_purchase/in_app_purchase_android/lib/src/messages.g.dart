@@ -77,10 +77,9 @@ enum PlatformInAppMessageResponse {
 
   /// The subscription status changed.
   ///
-  /// For example, a subscription has been rec-
-  /// overed from a suspended state. Developers should expect the purchase token
-  /// to be returned with this response code and use the purchase token with the
-  /// Google Play Developer API.
+  /// For example, a subscription has been recovered from a suspended state.
+  /// Developers should expect the purchase token to be returned with this
+  /// response code and use the purchase token with the Google Play Developer API.
   subscriptionStatusUpdated,
 }
 
@@ -1986,13 +1985,13 @@ class InAppPurchaseApi {
 abstract class InAppPurchaseCallbackApi {
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
-  /// Called for BillingClientStateListener#onBillingServiceDisconnected().
+  /// Called for `BillingClientStateListener#onBillingServiceDisconnected()`.
   void onBillingServiceDisconnected(int callbackHandle);
 
-  /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
+  /// Called for `PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)`.
   void onPurchasesUpdated(PlatformPurchasesResponse update);
 
-  /// Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails).
+  /// Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`.
   void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 
   static void setUp(

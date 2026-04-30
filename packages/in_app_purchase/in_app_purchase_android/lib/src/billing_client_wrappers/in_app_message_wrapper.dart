@@ -10,10 +10,9 @@ enum InAppMessageResponse {
 
   /// The subscription status changed.
   ///
-  /// For example, a subscription has been rec-
-  /// overed from a suspended state. Developers should expect the purchase token
-  /// to be returned with this response code and use the purchase token with the
-  /// Google Play Developer API.
+  /// For example, a subscription has been recovered from a suspended state.
+  /// Developers should expect the purchase token to be returned with this
+  /// response code and use the purchase token with the Google Play Developer API.
   subscriptionStatusUpdated,
 }
 

@@ -107,7 +107,7 @@ public class Messages {
     /**
      * The subscription status changed.
      *
-     * <p>For example, a subscription has been rec- overed from a suspended state. Developers should
+     * <p>For example, a subscription has been recovered from a suspended state. Developers should
      * expect the purchase token to be returned with this response code and use the purchase token
      * with the Google Play Developer API.
      */
@@ -3532,6 +3532,7 @@ public class Messages {
      */
     void createAlternativeBillingOnlyReportingDetailsAsync(
         @NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
+
     /** Wraps BillingClient#showInAppMessages(). */
     void showInAppMessages(@NonNull Result<PlatformInAppMessageResult> result);
 
@@ -4019,7 +4020,7 @@ public class Messages {
       return PigeonCodec.INSTANCE;
     }
 
-    /** Called for BillingClientStateListener#onBillingServiceDisconnected(). */
+    /** Called for `BillingClientStateListener#onBillingServiceDisconnected()`. */
     public void onBillingServiceDisconnected(
         @NonNull Long callbackHandleArg, @NonNull VoidResult result) {
       final String channelName =
@@ -4045,7 +4046,7 @@ public class Messages {
           });
     }
 
-    /** Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>). */
+    /** Called for `PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)`. */
     public void onPurchasesUpdated(
         @NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
       final String channelName =
@@ -4071,7 +4072,7 @@ public class Messages {
           });
     }
 
-    /** Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails). */
+    /** Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`. */
     public void userSelectedalternativeBilling(
         @NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {
       final String channelName =
