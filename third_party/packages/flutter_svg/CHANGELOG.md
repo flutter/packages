@@ -1,3 +1,8 @@
+## 2.3.0
+
+* Adds an `imageBuilder` property to `SvgPicture` for wrapping the loaded SVG
+  widget.
+
 ## 2.2.4
 
 * Updates README with example to scale SVG without losing quality
