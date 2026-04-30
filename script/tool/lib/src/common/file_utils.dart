@@ -58,6 +58,12 @@ List<String>? loadYamlList(File file) {
   if (!file.existsSync()) {
     return null;
   }
-  final yaml = loadYaml(file.readAsStringSync()) as YamlList;
-  return yaml.toList().cast<String>();
+  final String contents = file.readAsStringSync();
+  final Object? yaml = loadYaml(contents);
+  // Treat an empty or comment-only file as an empty list, to avoid requiring
+  // adding an explicit empty list entry to the YAML when no entries are needed.
+  if (yaml == null) {
+    return [];
+  }
+  return (yaml as YamlList).toList().cast<String>();
 }

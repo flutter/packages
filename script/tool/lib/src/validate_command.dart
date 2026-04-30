@@ -27,7 +27,7 @@ import 'validators/repo_info_validator.dart';
 /// includes things like command line parsing and run initialization.
 @visibleForTesting
 // ignore: public_member_api_docs
-enum Validator { dependabot, repoInfo, gradle, pubspec }
+enum Validator { dependabot, gradle, pubspec, readme, repoInfo }
 
 // Config file names.
 const String _versionConfigFileName = 'min_version.yaml';
@@ -129,6 +129,7 @@ class ValidateCommand extends PackageLoopingCommand {
     final List<String> errors = [
       if (_shouldRun(Validator.repoInfo)) ...await _validateRepoInfo(package),
       if (_shouldRun(Validator.pubspec)) ...await _validatePubspec(package),
+      if (_shouldRun(Validator.readme)) ...await _validateReadme(package),
       if (_shouldRun(Validator.dependabot))
         ...await _validateDependabot(package),
       if (_shouldRun(Validator.gradle)) ...await _validateGradle(package),
@@ -186,6 +187,52 @@ class ValidateCommand extends PackageLoopingCommand {
       minMinFlutterVersion: _minMinFlutterVersion,
     );
     return validator.validatePubspec(package);
+  }
+
+  Future<List<String>> _validateReadme(RepositoryPackage package) async {
+    if (!package.isTopLevel) {
+      return [];
+    }
+    /*
+    final validator = ReadmeValidator(
+      path: path,
+      indentation: indentation,
+      warningLogger: printWarning,
+      requireCodeExcerpts: getBoolArg(_requireExcerptsArg),
+    );
+
+    final List<String> errors = validator.validateReadme(
+      package.readmeFile,
+      mainPackage: package,
+      isExample: false,
+    );
+    for (final RepositoryPackage packageToCheck in package.getExamples()) {
+      errors.addAll(
+        validator.validateReadme(
+          packageToCheck.readmeFile,
+          mainPackage: package,
+          isExample: true,
+        ),
+      );
+    }
+
+    // If there's an example/README.md for a multi-example package, validate
+    // that as well, as it will be shown on pub.dev.
+    final Directory exampleDir = package.directory.childDirectory('example');
+    final File exampleDirReadme = exampleDir.childFile('README.md');
+    if (exampleDir.existsSync() && !isPackage(exampleDir)) {
+      errors.addAll(
+        validator.validateReadme(
+          exampleDirReadme,
+          mainPackage: package,
+          isExample: true,
+        ),
+      );
+    }
+
+    return errors;
+*/
+    return [];
   }
 
   Stream<String> _findAllPublishedPackages() async* {
