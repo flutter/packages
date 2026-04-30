@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 import 'validators/dependabot_validator.dart';
+import 'validators/gradle_validator.dart';
 import 'validators/repo_info_validator.dart';
 
 /// The set of possible validators.
@@ -19,7 +20,8 @@ import 'validators/repo_info_validator.dart';
 /// This is done instead of testing validators directly to ensure that testing
 /// includes things like command line parsing and run initialization.
 @visibleForTesting
-enum Validator { dependabot, repoInfo }
+// ignore: public_member_api_docs
+enum Validator { dependabot, repoInfo, gradle }
 
 /// A command to validate that packages follow various team conventions,
 /// guidelines, and best practices.
@@ -28,6 +30,7 @@ enum Validator { dependabot, repoInfo }
 /// - repository-level metadata about packages, such as repo README and
 ///   auto-label entries
 /// - dependabot configuration coverage
+/// - gradle configurations
 class ValidateCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
   ValidateCommand(super.packagesDir, {this.targetedValidators, super.gitDir});
@@ -87,16 +90,12 @@ class ValidateCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<String> errors = [];
-
-    if (package.isTopLevel) {
-      if (_shouldRun(Validator.repoInfo)) {
-        errors.addAll(await _validateRepoInfo(package));
-      }
-    }
-    if (_shouldRun(Validator.dependabot)) {
-      errors.addAll(await _validateDependabot(package));
-    }
+    final List<String> errors = [
+      if (_shouldRun(Validator.repoInfo)) ...await _validateRepoInfo(package),
+      if (_shouldRun(Validator.dependabot))
+        ...await _validateDependabot(package),
+      if (_shouldRun(Validator.gradle)) ...await _validateGradle(package),
+    ];
 
     return errors.isEmpty
         ? PackageResult.success()
@@ -105,6 +104,10 @@ class ValidateCommand extends PackageLoopingCommand {
 
   /// Runs repo-level checks.
   Future<List<String>> _validateRepoInfo(RepositoryPackage package) async {
+    // Repo-level checks only apply to top-level packages.
+    if (!package.isTopLevel) {
+      return <String>[];
+    }
     final validator = RepoInfoValidator(
       readmeTableEntries: _readmeTableEntries,
       autoLabeledPackages: _autoLabeledPackages,
@@ -121,14 +124,16 @@ class ValidateCommand extends PackageLoopingCommand {
       repoRoot: _repoRoot,
       indentation: indentation,
     );
+    return validator.validateDependabotCoverage(package);
+  }
 
-    final errors = <String>[];
+  Future<List<String>> _validateGradle(RepositoryPackage package) async {
+    if (!package.platformDirectory(FlutterPlatform.android).existsSync()) {
+      return [];
+    }
 
-    errors.addAll(validator.validateDependabotCoverage(package));
-
-    // TODO(stuartmorgan): Add other ecosystem checks here as more are enabled.
-
-    return errors;
+    final validator = GradleValidator(path: path, indentation: indentation);
+    return validator.validateGradle(package);
   }
 
   bool _shouldRun(Validator validator) =>

@@ -48,10 +48,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]
     always: true
-  - name: Gradle validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["gradle-check"]
-    always: true
   - name: Repository-level package metadata validation
     script: .ci/scripts/tool_runner.sh
     args: ["check-repo-package-info"]
