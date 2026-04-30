@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/color_scheme/dynamic_content_color.0.dart'
+import 'package:material_ui_examples/color_scheme/dynamic_content_color.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

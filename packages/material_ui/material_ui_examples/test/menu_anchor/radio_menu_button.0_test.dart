@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_api_samples/material/menu_anchor/radio_menu_button.0.dart'
+import 'package:material_ui_examples/menu_anchor/radio_menu_button.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

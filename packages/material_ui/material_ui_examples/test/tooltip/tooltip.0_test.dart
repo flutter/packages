@@ -4,7 +4,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/tooltip/tooltip.0.dart' as example;
+import 'package:material_ui_examples/tooltip/tooltip.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

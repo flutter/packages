@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/list_tile/list_tile.4.dart'
+import 'package:material_ui_examples/list_tile/list_tile.4.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

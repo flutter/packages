@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/theme_data/theme_data.0.dart'
+import 'package:material_ui_examples/theme_data/theme_data.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

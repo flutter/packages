@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/flexible_space_bar/flexible_space_bar.0.dart'
+import 'package:material_ui_examples/flexible_space_bar/flexible_space_bar.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 

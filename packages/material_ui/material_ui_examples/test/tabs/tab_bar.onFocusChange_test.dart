@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_api_samples/material/tabs/tab_bar.onFocusChange.dart'
+import 'package:material_ui_examples/tabs/tab_bar.onFocusChange.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 
