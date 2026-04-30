@@ -22,12 +22,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["license-check"]
     always: true
-    # The major and minor version here should match the lowest version analyzed
-    # in legacy version analysis (.ci.yaml analyze_legacy).
-  - name: pubspec validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["pubspec-check"]
-    always: true
   - name: README validation
     script: .ci/scripts/tool_runner.sh
     args: ["readme-check"]

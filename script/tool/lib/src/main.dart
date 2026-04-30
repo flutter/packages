@@ -28,7 +28,6 @@ import 'native_test_command.dart';
 import 'podspec_check_command.dart';
 import 'publish_check_command.dart';
 import 'publish_command.dart';
-import 'pubspec_check_command.dart';
 import 'readme_check_command.dart';
 import 'remove_dev_dependencies_command.dart';
 import 'update_dependency_command.dart';
@@ -80,7 +79,6 @@ void main(List<String> args) {
         ..addCommand(PodspecCheckCommand(packagesDir))
         ..addCommand(PublishCheckCommand(packagesDir))
         ..addCommand(PublishCommand(packagesDir))
-        ..addCommand(PubspecCheckCommand(packagesDir))
         ..addCommand(ReadmeCheckCommand(packagesDir))
         ..addCommand(RemoveDevDependenciesCommand(packagesDir))
         ..addCommand(UpdateDependencyCommand(packagesDir))
