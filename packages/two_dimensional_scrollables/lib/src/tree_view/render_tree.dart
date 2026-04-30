@@ -346,13 +346,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     );
     _horizontalOverflows = maxHorizontalExtent > 0.0;
 
-    final double verticalLeadingExtent = verticalOffset.pixels;
-    final double verticalTrailingExtent =
-        _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height;
-    final double maxVerticalExtent = math.max(
-      0.0,
-      math.max(verticalLeadingExtent, verticalTrailingExtent),
-    );
+    final double maxVerticalExtent = _rowMetrics.isEmpty
+        ? 0.0
+        : math.max(
+            0.0,
+            _rowMetrics[_rowMetrics.length - 1]!.trailingOffset -
+                viewportDimension.height,
+          );
     _verticalOverflows = maxVerticalExtent > 0.0;
 
     final bool acceptedDimension =
@@ -389,43 +389,40 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
     }
 
-    if (_firstRow == null) {
-      assert(_lastRow == null);
-      return;
-    }
-    assert(_firstRow != null && _lastRow != null);
+    if (_firstRow != null) {
+      assert(_lastRow != null);
+      _Span rowSpan;
+      double rowOffset =
+          -verticalOffset.pixels +
+          _rowMetrics[_firstRow!]!.leadingOffset +
+          _vAlignmentOffset;
+      for (int row = _firstRow!; row <= _lastRow!; row++) {
+        rowSpan = _rowMetrics[row]!;
+        final double rowHeight = rowSpan.extent;
+        if (_animationLeadingIndices.keys.contains(row)) {
+          rowOffset -= rowSpan.animationOffset;
+        }
+        rowOffset += rowSpan.configuration.padding.leading;
 
-    _Span rowSpan;
-    double rowOffset =
-        -verticalOffset.pixels +
-        _rowMetrics[_firstRow!]!.leadingOffset +
-        _vAlignmentOffset;
-    for (int row = _firstRow!; row <= _lastRow!; row++) {
-      rowSpan = _rowMetrics[row]!;
-      final double rowHeight = rowSpan.extent;
-      if (_animationLeadingIndices.keys.contains(row)) {
-        rowOffset -= rowSpan.animationOffset;
+        final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
+        final RenderBox child = buildOrObtainChildFor(vicinity)!;
+        final TwoDimensionalViewportParentData parentData = parentDataOf(child);
+        final childConstraints = BoxConstraints(
+          minHeight: rowHeight,
+          maxHeight: rowHeight,
+          // Width is allowed to be unbounded.
+        );
+        child.layout(childConstraints, parentUsesSize: true);
+        parentData.layoutOffset = Offset(
+          (_rowDepths[row]! * indentation) - horizontalOffset.pixels,
+          rowOffset,
+        );
+        rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
+        _furthestHorizontalExtent = math.max(
+          parentData.layoutOffset!.dx + child.size.width,
+          _furthestHorizontalExtent,
+        );
       }
-      rowOffset += rowSpan.configuration.padding.leading;
-
-      final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
-      final RenderBox child = buildOrObtainChildFor(vicinity)!;
-      final TwoDimensionalViewportParentData parentData = parentDataOf(child);
-      final childConstraints = BoxConstraints(
-        minHeight: rowHeight,
-        maxHeight: rowHeight,
-        // Width is allowed to be unbounded.
-      );
-      child.layout(childConstraints, parentUsesSize: true);
-      parentData.layoutOffset = Offset(
-        (_rowDepths[row]! * indentation) - horizontalOffset.pixels,
-        rowOffset,
-      );
-      rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
-      _furthestHorizontalExtent = math.max(
-        parentData.layoutOffset!.dx + child.size.width,
-        _furthestHorizontalExtent,
-      );
     }
     _updateScrollBounds();
   }
