@@ -349,6 +349,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+
+  /// Sets the JPEG compression quality for still image capture.
+  @async
+  @ObjCSelector('setJpegImageQuality:')
+  void setJpegImageQuality(int quality);
 }
 
 @EventChannelApi()

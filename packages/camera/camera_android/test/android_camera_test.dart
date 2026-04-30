@@ -873,5 +873,14 @@ void main() {
       verify(mockCameraApi.startImageStream()).called(1);
       verify(mockCameraApi.stopImageStream()).called(1);
     });
+
+    test('Should set the image quality', () async {
+      // Arrange
+      // Act
+      await camera.setJpegImageQuality(cameraId, 50);
+
+      // Assert
+      verify(mockCameraApi.setJpegImageQuality(50)).called(1);
+    });
   });
 }
