@@ -29,6 +29,7 @@ enum Validator { dependabot, repoInfo, gradle }
 /// This includes:
 /// - repository-level metadata about packages, such as repo README and
 ///   auto-label entries
+/// - pubspec format and contents
 /// - dependabot configuration coverage
 /// - gradle configurations
 class ValidateCommand extends PackageLoopingCommand {

@@ -4,11 +4,23 @@
 
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
+import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 import 'validators/pubspec_validator.dart';
+
+// Config file names.
+const String _versionConfigFileName = 'min_version.yaml';
+const String _allowedPinnedDependenciesFileName =
+    'allowed_pinned_dependencies.yaml';
+const String _allowedUnpinnedDependenciesFileName =
+    'allowed_unpinned_dependencies.yaml';
+
+const int _exitCodeVersionConfigIssue = 3;
 
 /// A command to enforce pubspec conventions across the repository.
 ///
@@ -22,36 +34,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     super.processRunner,
     super.platform,
     super.gitDir,
-  }) {
-    argParser.addOption(
-      _minMinFlutterVersionFlag,
-      help:
-          'The minimum Flutter version to allow as the minimum SDK constraint.',
-    );
-    argParser.addMultiOption(
-      _allowDependenciesFlag,
-      help:
-          'Packages (comma separated) that are allowed as dependencies or '
-          'dev_dependencies.\n\n'
-          'Alternately, a list of one or more YAML files that contain a list '
-          'of allowed dependencies.',
-      defaultsTo: <String>[],
-    );
-    argParser.addMultiOption(
-      _allowPinnedDependenciesFlag,
-      help:
-          'Packages (comma separated) that are allowed as dependencies or '
-          'dev_dependencies only if pinned to an exact version.\n\n'
-          'Alternately, a list of one or more YAML files that contain a list '
-          'of allowed pinned dependencies.',
-      defaultsTo: <String>[],
-    );
-  }
-
-  static const String _minMinFlutterVersionFlag = 'min-min-flutter-version';
-  static const String _allowDependenciesFlag = 'allow-dependencies';
-  static const String _allowPinnedDependenciesFlag =
-      'allow-pinned-dependencies';
+  });
 
   // The names of all published packages in the repository.
   final AllowPackageLists _allowedPackages = (
@@ -59,6 +42,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     pinned: <String>{},
     unpinned: <String>{},
   );
+
+  late final String _minMinFlutterVersion;
 
   @override
   final String name = 'pubspec-check';
@@ -79,13 +64,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    // Find all local, published packages.
-    _allowedPackages.local.addAll(await _findAllPublishedPackages().toList());
-    // Load explicitly allowed packages.
-    _allowedPackages.unpinned.addAll(getYamlListArg(_allowDependenciesFlag));
-    _allowedPackages.pinned.addAll(
-      getYamlListArg(_allowPinnedDependenciesFlag),
-    );
+    await _loadAllowedDependencies();
+    _minMinFlutterVersion = await _loadMinMinFlutterVersion();
   }
 
   @override
@@ -96,7 +76,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       warningLogger: printWarning,
       allowedPackages: _allowedPackages,
       repoRoot: packagesDir.parent,
-      minMinFlutterVersion: getStringArg(_minMinFlutterVersionFlag),
+      minMinFlutterVersion: _minMinFlutterVersion,
     );
     final List<String> errors = await validator.validatePubspec(package);
     return errors.isEmpty
@@ -118,6 +98,53 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         yield pubspec.name;
       }
     }
+  }
+
+  Future<void> _loadAllowedDependencies() async {
+    final Directory repoRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
+    final Directory toolConfigDir = toolConfigDirectory(repoRoot);
+
+    // Find all local, published packages.
+    _allowedPackages.local.addAll(await _findAllPublishedPackages().toList());
+    // Load explicitly allowed packages.
+    _allowedPackages.unpinned.addAll(
+      loadYamlList(
+            toolConfigDir.childFile(_allowedUnpinnedDependenciesFileName),
+          ) ??
+          <String>[],
+    );
+    _allowedPackages.pinned.addAll(
+      loadYamlList(
+            toolConfigDir.childFile(_allowedPinnedDependenciesFileName),
+          ) ??
+          <String>[],
+    );
+  }
+
+  Future<String> _loadMinMinFlutterVersion() async {
+    final Directory repoRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
+    final File versionConfig = toolConfigDirectory(
+      repoRoot,
+    ).childFile(_versionConfigFileName);
+    if (!versionConfig.existsSync()) {
+      printError(
+        'Minimum version configuration file not found at $_versionConfigFileName',
+      );
+      return '';
+    }
+    const minFlutterKey = 'min_flutter';
+    final config = loadYaml(versionConfig.readAsStringSync()) as YamlMap?;
+    if (config == null || config[minFlutterKey] == null) {
+      printError(
+        '$_versionConfigFileName must be a map containing a "$minFlutterKey" entry',
+      );
+      throw ToolExit(_exitCodeVersionConfigIssue);
+    }
+    return (config[minFlutterKey] as String).trim();
   }
 
   Pubspec? _tryParsePubspec(String pubspecContents) {

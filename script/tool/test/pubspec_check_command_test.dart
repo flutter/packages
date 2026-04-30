@@ -144,6 +144,7 @@ void main() {
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
+    late Directory toolConfigDir;
 
     setUp(() {
       mockPlatform = MockPlatform();
@@ -151,6 +152,9 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
+      toolConfigDir = packagesDir.parent.childDirectory('tool_config');
+      toolConfigDir.createSync(recursive: true);
+      
       final command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
@@ -164,6 +168,30 @@ void main() {
       );
       runner.addCommand(command);
     });
+
+    void setVersionConfig({required String minFlutterVersion}) {
+      toolConfigDir
+          .childFile('min_version.yaml')
+          .writeAsStringSync('min_flutter: "$minFlutterVersion"');
+    }
+
+    void setAllowedDependencies({
+      Iterable<String>? pinned,
+      Iterable<String>? unpinned,
+    }) {
+      if (pinned != null) {
+        toolConfigDir
+            .childFile('allowed_pinned_dependencies.yaml')
+            .writeAsStringSync(pinned.map((String dep) => '- $dep').join('\n'));
+      }
+      if (unpinned != null) {
+        toolConfigDir
+            .childFile('allowed_unpinned_dependencies.yaml')
+            .writeAsStringSync(
+              unpinned.map((String dep) => '- $dep').join('\n'),
+            );
+      }
+    }
 
     test('passes for a plugin following conventions', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
@@ -1545,11 +1573,12 @@ ${_environmentSection(flutterConstraint: '>=2.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0'],
+          <String>['pubspec-check'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1583,11 +1612,10 @@ ${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
         ]);
 
         expect(
@@ -1616,11 +1644,10 @@ ${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
         ]);
 
         expect(
@@ -1648,11 +1675,12 @@ ${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0'],
+          <String>['pubspec-check'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1684,11 +1712,10 @@ ${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
         ]);
 
         expect(
@@ -1717,11 +1744,10 @@ ${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-          '--min-min-flutter-version',
-          '3.0.0',
         ]);
 
         expect(
@@ -1747,11 +1773,12 @@ ${_environmentSection()}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+      setVersionConfig(minFlutterVersion: '2.0.0');
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check', '--min-min-flutter-version', '2.0.0'],
+        <String>['pubspec-check'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1929,11 +1956,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allowed: ^1.0.0'])}
 ${_topicsSection()}
 ''');
+        setAllowedDependencies(unpinned: <String>['allowed']);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'pubspec-check',
-          '--allow-dependencies',
-          'allowed',
         ]);
 
         expect(
@@ -1959,11 +1985,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
 ${_topicsSection()}
 ''');
+          setAllowedDependencies(pinned: <String>['allow_pinned']);
 
           final List<String> output = await runCapturingPrint(runner, <String>[
             'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
           ]);
 
           expect(
@@ -1990,11 +2015,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
+          setAllowedDependencies(pinned: <String>['allow_pinned']);
 
           final List<String> output = await runCapturingPrint(runner, <String>[
             'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
           ]);
 
           expect(
@@ -2019,15 +2043,12 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
 ${_topicsSection()}
 ''');
+        setAllowedDependencies(pinned: <String>['allow_pinned']);
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>[
-            'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
-          ],
+          <String>['pubspec-check'],
           errorHandler: (Error e) {
             commandError = e;
           },

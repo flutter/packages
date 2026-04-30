@@ -4,6 +4,7 @@
 
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
 /// Returns a [File] created by appending all but the last item in [components]
 /// to [base] as subdirectories, then appending the last as a file.
@@ -49,3 +50,14 @@ String relativePosixPath(
     platformContext.relative(entity.absolute.path, from: from.path),
   ),
 );
+
+/// Loads the file at [filename], which must contain a YAML list of strings.
+///
+/// If the file is not found, returns null.
+List<String>? loadYamlList(File file) {
+  if (!file.existsSync()) {
+    return null;
+  }
+  final yaml = loadYaml(file.readAsStringSync()) as YamlList;
+  return yaml.toList().cast<String>();
+}

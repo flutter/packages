@@ -10,9 +10,9 @@ import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
-import 'package:yaml/yaml.dart';
 
 import 'core.dart';
+import 'file_utils.dart';
 import 'git_version_finder.dart';
 import 'output_utils.dart';
 import 'process_runner.dart';
@@ -286,11 +286,11 @@ abstract class PackageCommand extends Command<void> {
     return getStringListArg(key).expand<String>((String item) {
       if (item.endsWith('.yaml')) {
         final File file = packagesDir.fileSystem.file(item);
-        final Object? yaml = loadYaml(file.readAsStringSync());
-        if (yaml == null) {
+        final List<String>? list = loadYamlList(file);
+        if (list == null) {
           return const <String>[];
         }
-        return (yaml as YamlList).toList().cast<String>();
+        return list;
       }
       return <String>[item];
     }).toSet();
