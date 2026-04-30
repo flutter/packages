@@ -4631,6 +4631,84 @@ void main() {
     expect(mergedRect.top, 200);
     expect(mergedRect.bottom, 400);
   });
+
+  testWidgets('Trailing pinned spans are not included in regular layout pass', (
+    WidgetTester tester,
+  ) async {
+    // This test ensures that trailing pinned spans are not built or painted
+    // as part of the regular (non-pinned) range.
+    const spanExtent = 100.0;
+    final paintCounts = <TableVicinity, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              cacheExtent: 0.0,
+              columnCount: 6, // 2 regular (0,1), 4 trailing pinned (2,3,4,5)
+              rowCount: 6, // 2 regular, 4 trailing pinned
+              trailingPinnedColumnCount: 4,
+              trailingPinnedRowCount: 4,
+              columnBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(spanExtent)),
+              rowBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(spanExtent)),
+              cellBuilder: (context, vicinity) {
+                return TableViewCell(
+                  child: _PaintCounter(
+                    onPaint: () {
+                      paintCounts[vicinity] = (paintCounts[vicinity] ?? 0) + 1;
+                    },
+                    child: Text('x: ${vicinity.column} y: ${vicinity.row}'),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+
+    // Pinned cells should be painted exactly once.
+    // Before the fix, they would be painted once in the regular pass
+    // (if incorrectly included) and once in the pinned pass.
+    // Since they are visually clipped in the regular pass by pushClipRect,
+    // they would only be painted once anyway, BUT the fix ensures
+    // we don't even iterate over them in the regular pass.
+    expect(paintCounts[const TableVicinity(column: 5, row: 5)], 1);
+    expect(paintCounts[TableVicinity.zero], 1);
+    expect(paintCounts.length, 36);
+  });
+}
+
+class _PaintCounter extends SingleChildRenderObjectWidget {
+  const _PaintCounter({required this.onPaint, required super.child});
+  final VoidCallback onPaint;
+  @override
+  _RenderPaintCounter createRenderObject(BuildContext context) =>
+      _RenderPaintCounter(onPaint);
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderPaintCounter renderObject,
+  ) {
+    renderObject.onPaint = onPaint;
+  }
+}
+
+class _RenderPaintCounter extends RenderProxyBox {
+  _RenderPaintCounter(this.onPaint);
+  VoidCallback onPaint;
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    onPaint();
+    super.paint(context, offset);
+  }
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Fixes an issue where trailing pinned spans were included in the regular layout pass, leading to unnecessary iterations.
+
 ## 0.5.1
 
 * Fixes an infinite loop of onExit/onEnter events when setState is called within onEnter in a TableSpan.

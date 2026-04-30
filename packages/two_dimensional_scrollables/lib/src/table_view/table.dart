@@ -1025,7 +1025,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
     );
     if (_firstNonPinnedColumn != null) {
-      _lastNonPinnedColumn ??= _columnMetrics.length - 1;
+      _lastNonPinnedColumn ??= _lastRegularColumnIndex;
     }
 
     if (_rowMetrics.isNotEmpty) {
@@ -1056,7 +1056,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
     );
     if (_firstNonPinnedRow != null) {
-      _lastNonPinnedRow ??= _rowMetrics.length - 1;
+      _lastNonPinnedRow ??= _lastRegularRowIndex;
     }
   }
 
