@@ -339,13 +339,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
   }
 
-  void _updateScrollBounds() {
-    final double maxHorizontalExtent = math.max(
-      0.0,
-      _furthestHorizontalExtent - viewportDimension.width,
-    );
-    _horizontalOverflows = maxHorizontalExtent > 0.0;
-
+  void _updateVerticalScrollBounds() {
     final double maxVerticalExtent = _rowMetrics.isEmpty
         ? 0.0
         : math.max(
@@ -354,14 +348,22 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
                 viewportDimension.height,
           );
     _verticalOverflows = maxVerticalExtent > 0.0;
-
-    final bool acceptedDimension =
-        horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent) &&
-        verticalOffset.applyContentDimensions(0.0, maxVerticalExtent);
-
+    final bool acceptedDimension = verticalOffset.applyContentDimensions(
+      0.0,
+      maxVerticalExtent,
+    );
     if (!acceptedDimension) {
       _updateFirstAndLastVisibleRow();
     }
+  }
+
+  void _updateHorizontalScrollBounds() {
+    final double maxHorizontalExtent = math.max(
+      0.0,
+      _furthestHorizontalExtent - viewportDimension.width,
+    );
+    _horizontalOverflows = maxHorizontalExtent > 0.0;
+    horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent);
   }
 
   @override
@@ -388,6 +390,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
             2.0;
       }
     }
+
+    _updateVerticalScrollBounds();
 
     if (_firstRow != null) {
       assert(_lastRow != null);
@@ -419,12 +423,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         );
         rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
         _furthestHorizontalExtent = math.max(
-          parentData.layoutOffset!.dx + child.size.width,
+          parentData.layoutOffset!.dx +
+              horizontalOffset.pixels +
+              child.size.width,
           _furthestHorizontalExtent,
         );
       }
     }
-    _updateScrollBounds();
+    _updateHorizontalScrollBounds();
   }
 
   // Maps the UniqueKey associated with animating node segments with the clip
