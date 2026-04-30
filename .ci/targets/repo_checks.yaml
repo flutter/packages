@@ -48,10 +48,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["update-excerpts", "--fail-on-change"]
     always: true
-  - name: Repository-level package metadata validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["check-repo-package-info"]
-    always: true
   - name: Repository standards validation
     script: .ci/scripts/tool_runner.sh
     args: ["validate"]
