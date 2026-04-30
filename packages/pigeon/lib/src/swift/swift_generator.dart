@@ -421,10 +421,10 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   }) {
     final privateString = private ? 'private ' : '';
     final extendsString = classDefinition.superClass != null
-        ? ': ${classDefinition.superClass!.name}'
+        ? ': ${classDefinition.superClass!.name}, CustomStringConvertible'
         : hashable
-        ? ': Hashable'
-        : '';
+        ? ': Hashable, CustomStringConvertible'
+        : ': CustomStringConvertible';
     if (classDefinition.isSwiftClass) {
       indent.write(
         '${privateString}class ${classDefinition.name}$extendsString ',
@@ -593,6 +593,14 @@ if (wrapped == nil) {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      indent.newln();
+      writeClassToString(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -704,6 +712,25 @@ if (wrapped == nil) {
     });
   }
 
+  /// Writes the `CustomStringConvertible` conformance for a class.
+  void writeClassToString(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('public var description: String {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((
+        NamedType field,
+      ) {
+        return '${field.name}: \\(${field.name})';
+      });
+      final String fieldsConcat = fieldStrings.join(', ');
+      indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
+    });
+  }
+
   @override
   void writeClassDecode(
     InternalSwiftOptions generatorOptions,
@@ -799,6 +826,7 @@ if (wrapped == nil) {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
+    indent.newln();
     const generatedComments = <String>[
       ' Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.',
     ];
@@ -1433,10 +1461,32 @@ if (wrapped == nil) {
 
   void _writeIsNullish(Indent indent) {
     indent.newln();
-    indent.write('private func isNullish(_ value: Any?) -> Bool ');
-    indent.addScoped('{', '}', () {
-      indent.writeln('return value is NSNull || value == nil');
-    });
+    indent.format('''
+#if DEBUG
+  func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#else
+  private func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#endif''');
   }
 
   void _writeWrapResult(Indent indent) {

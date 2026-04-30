@@ -33,9 +33,31 @@ final class EventChannelTestsError: Error {
   }
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
+#if DEBUG
+  func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#else
+  private func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#endif
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -166,7 +188,7 @@ enum AnotherEventEnum: Int {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class EventAllNullableTypes: Hashable {
+class EventAllNullableTypes: Hashable, CustomStringConvertible {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -441,6 +463,11 @@ class EventAllNullableTypes: Hashable {
     deepHashEventChannelTests(value: mapMap, hasher: &hasher)
     deepHashEventChannelTests(value: recursiveClassMap, hasher: &hasher)
   }
+
+  public var description: String {
+    return
+      "EventAllNullableTypes(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), allNullableTypes: \(allNullableTypes), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), recursiveClassList: \(recursiveClassList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap), recursiveClassMap: \(recursiveClassMap))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -450,7 +477,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: PlatformEvent, CustomStringConvertible {
   var value: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -477,10 +504,14 @@ struct IntEvent: PlatformEvent {
     hasher.combine("IntEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "IntEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: PlatformEvent, CustomStringConvertible {
   var value: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -507,10 +538,14 @@ struct StringEvent: PlatformEvent {
     hasher.combine("StringEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "StringEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct BoolEvent: PlatformEvent {
+struct BoolEvent: PlatformEvent, CustomStringConvertible {
   var value: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -537,10 +572,14 @@ struct BoolEvent: PlatformEvent {
     hasher.combine("BoolEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "BoolEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct DoubleEvent: PlatformEvent {
+struct DoubleEvent: PlatformEvent, CustomStringConvertible {
   var value: Double
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -567,10 +606,14 @@ struct DoubleEvent: PlatformEvent {
     hasher.combine("DoubleEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "DoubleEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ObjectsEvent: PlatformEvent {
+struct ObjectsEvent: PlatformEvent, CustomStringConvertible {
   var value: Any
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -597,10 +640,14 @@ struct ObjectsEvent: PlatformEvent {
     hasher.combine("ObjectsEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "ObjectsEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EnumEvent: PlatformEvent {
+struct EnumEvent: PlatformEvent, CustomStringConvertible {
   var value: EventEnum
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -627,10 +674,14 @@ struct EnumEvent: PlatformEvent {
     hasher.combine("EnumEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
   }
+
+  public var description: String {
+    return "EnumEvent(value: \(value))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ClassEvent: PlatformEvent {
+struct ClassEvent: PlatformEvent, CustomStringConvertible {
   var value: EventAllNullableTypes
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -656,6 +707,10 @@ struct ClassEvent: PlatformEvent {
   func hash(into hasher: inout Hasher) {
     hasher.combine("ClassEvent")
     deepHashEventChannelTests(value: value, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "ClassEvent(value: \(value))"
   }
 }
 

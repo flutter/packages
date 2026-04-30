@@ -168,6 +168,11 @@ class MessageData {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'MessageData(name: $name, description: $description, code: $code, data: $data)';
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -203,8 +208,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class ExampleHostApi {
-  /// Constructor for [ExampleHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [ExampleHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   ExampleHostApi({
     BinaryMessenger? binaryMessenger,

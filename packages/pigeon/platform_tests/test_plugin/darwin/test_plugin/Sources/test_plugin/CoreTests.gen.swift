@@ -65,9 +65,31 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
+#if DEBUG
+  func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#else
+  private func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#endif
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -196,7 +218,7 @@ enum AnotherEnum: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct UnusedClass: Hashable {
+struct UnusedClass: Hashable, CustomStringConvertible {
   var aField: Any? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -223,12 +245,16 @@ struct UnusedClass: Hashable {
     hasher.combine("UnusedClass")
     deepHashCoreTests(value: aField, hasher: &hasher)
   }
+
+  public var description: String {
+    return "UnusedClass(aField: \(aField))"
+  }
 }
 
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllTypes: Hashable {
+struct AllTypes: Hashable, CustomStringConvertible {
   var aBool: Bool
   var anInt: Int64
   var anInt64: Int64
@@ -414,12 +440,17 @@ struct AllTypes: Hashable {
     deepHashCoreTests(value: listMap, hasher: &hasher)
     deepHashCoreTests(value: mapMap, hasher: &hasher)
   }
+
+  public var description: String {
+    return
+      "AllTypes(aBool: \(aBool), anInt: \(anInt), anInt64: \(anInt64), aDouble: \(aDouble), aByteArray: \(aByteArray), a4ByteArray: \(a4ByteArray), a8ByteArray: \(a8ByteArray), aFloatArray: \(aFloatArray), anEnum: \(anEnum), anotherEnum: \(anotherEnum), aString: \(aString), anObject: \(anObject), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap))"
+  }
 }
 
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class AllNullableTypes: Hashable {
+class AllNullableTypes: Hashable, CustomStringConvertible {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -693,6 +724,11 @@ class AllNullableTypes: Hashable {
     deepHashCoreTests(value: mapMap, hasher: &hasher)
     deepHashCoreTests(value: recursiveClassMap, hasher: &hasher)
   }
+
+  public var description: String {
+    return
+      "AllNullableTypes(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), allNullableTypes: \(allNullableTypes), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), recursiveClassList: \(recursiveClassList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap), recursiveClassMap: \(recursiveClassMap))"
+  }
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -700,7 +736,7 @@ class AllNullableTypes: Hashable {
 /// test Swift classes.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableTypesWithoutRecursion: Hashable {
+struct AllNullableTypesWithoutRecursion: Hashable, CustomStringConvertible {
   var aNullableBool: Bool? = nil
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
@@ -890,6 +926,11 @@ struct AllNullableTypesWithoutRecursion: Hashable {
     deepHashCoreTests(value: listMap, hasher: &hasher)
     deepHashCoreTests(value: mapMap, hasher: &hasher)
   }
+
+  public var description: String {
+    return
+      "AllNullableTypesWithoutRecursion(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap))"
+  }
 }
 
 /// A class for testing nested class handling.
@@ -899,7 +940,7 @@ struct AllNullableTypesWithoutRecursion: Hashable {
 /// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllClassesWrapper: Hashable {
+struct AllClassesWrapper: Hashable, CustomStringConvertible {
   var allNullableTypes: AllNullableTypes
   var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
   var allTypes: AllTypes? = nil
@@ -965,12 +1006,17 @@ struct AllClassesWrapper: Hashable {
     deepHashCoreTests(value: classMap, hasher: &hasher)
     deepHashCoreTests(value: nullableClassMap, hasher: &hasher)
   }
+
+  public var description: String {
+    return
+      "AllClassesWrapper(allNullableTypes: \(allNullableTypes), allNullableTypesWithoutRecursion: \(allNullableTypesWithoutRecursion), allTypes: \(allTypes), classList: \(classList), nullableClassList: \(nullableClassList), classMap: \(classMap), nullableClassMap: \(nullableClassMap))"
+  }
 }
 
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct TestMessage: Hashable {
+struct TestMessage: Hashable, CustomStringConvertible {
   var testList: [Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -996,6 +1042,10 @@ struct TestMessage: Hashable {
   func hash(into hasher: inout Hasher) {
     hasher.combine("TestMessage")
     deepHashCoreTests(value: testList, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "TestMessage(testList: \(testList))"
   }
 }
 
@@ -4558,6 +4608,7 @@ class HostIntegrationCoreApiSetup {
     }
   }
 }
+
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 ///
@@ -6253,6 +6304,7 @@ class HostSmallApiSetup {
     }
   }
 }
+
 /// A simple API called in some unit tests.
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.

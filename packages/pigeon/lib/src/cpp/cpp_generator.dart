@@ -483,6 +483,12 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: 'size_t',
           isConst: true,
         );
+        _writeFunctionDeclaration(
+          indent,
+          'ToString',
+          returnType: 'std::string',
+          isConst: true,
+        );
       });
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
@@ -966,6 +972,7 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
       'map',
       'string',
       'optional',
+      'sstream',
     ]);
     indent.newln();
   }
@@ -1130,6 +1137,43 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
           );
         }
         indent.writeln('return result;');
+      },
+    );
+
+    _writeFunctionDefinition(
+      indent,
+      'ToString',
+      scope: classDefinition.name,
+      returnType: 'std::string',
+      isConst: true,
+      body: () {
+        indent.writeln('std::stringstream ss;');
+        indent.writeln('ss << "${classDefinition.name}(";');
+        enumerate(orderedFields, (int index, final NamedType field) {
+          final String name = _makeInstanceVariableName(field);
+          final comma = index == 0 ? '' : ', ';
+          indent.writeln('ss << "$comma${field.name}: ";');
+          if (field.type.isNullable) {
+            indent.writeScoped('if ($name.has_value()) {', '} else {', () {
+              if (field.type.isClass) {
+                indent.writeln('ss << $name->ToString();');
+              } else {
+                indent.writeln('ss << *$name;');
+              }
+            });
+            indent.nest(1, () {
+              indent.writeln('ss << "null";');
+            });
+          } else {
+            if (field.type.isClass) {
+              indent.writeln('ss << $name.ToString();');
+            } else {
+              indent.writeln('ss << $name;');
+            }
+          }
+        });
+        indent.writeln('ss << ")";');
+        indent.writeln('return ss.str();');
       },
     );
 

@@ -74,8 +74,8 @@ class _PigeonCodec extends StandardMessageCodec {
 }
 
 class NullableReturnHostApi {
-  /// Constructor for [NullableReturnHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NullableReturnHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullableReturnHostApi({
     BinaryMessenger? binaryMessenger,
@@ -150,8 +150,8 @@ abstract class NullableReturnFlutterApi {
 }
 
 class NullableArgHostApi {
-  /// Constructor for [NullableArgHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NullableArgHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullableArgHostApi({
     BinaryMessenger? binaryMessenger,
@@ -230,8 +230,8 @@ abstract class NullableArgFlutterApi {
 }
 
 class NullableCollectionReturnHostApi {
-  /// Constructor for [NullableCollectionReturnHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NullableCollectionReturnHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullableCollectionReturnHostApi({
     BinaryMessenger? binaryMessenger,
@@ -306,8 +306,8 @@ abstract class NullableCollectionReturnFlutterApi {
 }
 
 class NullableCollectionArgHostApi {
-  /// Constructor for [NullableCollectionArgHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
+  /// Constructor for [NullableCollectionArgHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullableCollectionArgHostApi({
     BinaryMessenger? binaryMessenger,

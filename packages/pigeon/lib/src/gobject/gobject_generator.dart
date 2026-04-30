@@ -5,6 +5,7 @@
 import 'package:path/path.dart' as path;
 
 import '../ast.dart';
+import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
 
@@ -352,6 +353,17 @@ class GObjectHeaderGenerator
       'Returns: the hash code.',
     ], _docCommentSpec);
     indent.writeln('guint ${methodPrefix}_hash($className* object);');
+
+    indent.newln();
+    addDocumentationComments(indent, <String>[
+      '${methodPrefix}_to_string:',
+      '@object: a #$className.',
+      '',
+      'Returns a string representation of a #$className object.',
+      '',
+      'Returns: (transfer full): a new string, free with g_free().',
+    ], _docCommentSpec);
+    indent.writeln('gchar* ${methodPrefix}_to_string($className* object);');
   }
 
   @override
@@ -1345,6 +1357,89 @@ class GObjectSourceGenerator
         }
       }
       indent.writeln('return result;');
+    });
+
+    indent.newln();
+    indent.writeScoped('gchar* ${methodPrefix}_to_string($className* self) {', '}', () {
+      indent.writeln('g_return_val_if_fail($testMacro(self), NULL);');
+      indent.writeln(
+        'GString* str = g_string_new("${classDefinition.name}(");',
+      );
+
+      enumerate(classDefinition.fields, (int index, final NamedType field) {
+        final String fieldName = _getFieldName(field.name);
+        final comma = index == 0 ? '' : ', ';
+        indent.writeln('g_string_append(str, "$comma$fieldName: ");');
+
+        if (field.type.isClass) {
+          final String fieldMethodPrefix = _getMethodPrefix(
+            module,
+            field.type.baseName,
+          );
+          indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+            indent.writeln(
+              'gchar* field_str = ${fieldMethodPrefix}_to_string(self->$fieldName);',
+            );
+            indent.writeln('g_string_append(str, field_str);');
+            indent.writeln('g_free(field_str);');
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('g_string_append(str, "null");');
+          });
+        } else if (field.type.baseName == 'String') {
+          indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+            indent.writeln(
+              'g_string_append_printf(str, "\\"%s\\"", self->$fieldName);',
+            );
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('g_string_append(str, "null");');
+          });
+        } else if (_isNumericListType(field.type)) {
+          indent.writeln(
+            'g_string_append_printf(str, "[...], length: %zu", self->${fieldName}_length);',
+          );
+        } else if (field.type.baseName == 'bool') {
+          indent.writeln(
+            'g_string_append(str, self->$fieldName ? "true" : "false");',
+          );
+        } else if (field.type.baseName == 'int') {
+          if (field.type.isNullable) {
+            indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+              indent.writeln(
+                'g_string_append_printf(str, "%" G_GINT64_FORMAT, *self->$fieldName);',
+              );
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('g_string_append(str, "null");');
+            });
+          } else {
+            indent.writeln(
+              'g_string_append_printf(str, "%" G_GINT64_FORMAT, self->$fieldName);',
+            );
+          }
+        } else if (field.type.baseName == 'double') {
+          if (field.type.isNullable) {
+            indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+              indent.writeln(
+                'g_string_append_printf(str, "%g", *self->$fieldName);',
+              );
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('g_string_append(str, "null");');
+            });
+          } else {
+            indent.writeln(
+              'g_string_append_printf(str, "%g", self->$fieldName);',
+            );
+          }
+        } else {
+          indent.writeln('g_string_append(str, "...");');
+        }
+      });
+
+      indent.writeln('g_string_append(str, ")");');
+      indent.writeln('return g_string_free(str, FALSE);');
     });
   }
 

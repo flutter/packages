@@ -345,6 +345,30 @@ guint pigeon_example_package_message_data_hash(
   return result;
 }
 
+gchar* pigeon_example_package_message_data_to_string(
+    PigeonExamplePackageMessageData* self) {
+  g_return_val_if_fail(PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_DATA(self), NULL);
+  GString* str = g_string_new("MessageData(");
+  g_string_append(str, "name: ");
+  if (self->name != nullptr) {
+    g_string_append_printf(str, "\"%s\"", self->name);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ", description: ");
+  if (self->description != nullptr) {
+    g_string_append_printf(str, "\"%s\"", self->description);
+  } else {
+    g_string_append(str, "null");
+  }
+  g_string_append(str, ", code: ");
+  g_string_append(str, "...");
+  g_string_append(str, ", data: ");
+  g_string_append(str, "...");
+  g_string_append(str, ")");
+  return g_string_free(str, FALSE);
+}
+
 struct _PigeonExamplePackageMessageCodec {
   FlStandardMessageCodec parent_instance;
 };

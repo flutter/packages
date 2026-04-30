@@ -333,6 +333,13 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassToString(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -387,6 +394,37 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         );
       }
       indent.writeln('return result');
+    });
+  }
+
+  /// Writes the `toString` method for a class.
+  void writeClassToString(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('override fun toString(): String {', '}', () {
+      final Iterable<String> fieldStrings = classDefinition.fields.map((
+        NamedType field,
+      ) {
+        final String name = field.name;
+        if (field.type.baseName == 'Uint8List' ||
+            field.type.baseName == 'Int32List' ||
+            field.type.baseName == 'Int64List' ||
+            field.type.baseName == 'Float64List') {
+          final nullSafe = field.type.isNullable ? '?' : '';
+          return '$name=\${$name$nullSafe.contentToString()}';
+        }
+        return '$name=\$$name';
+      });
+      final String fieldsConcat = fieldStrings.join(', ');
+      if (fieldsConcat.isEmpty) {
+        indent.writeln('return "${classDefinition.name}()"');
+      } else {
+        indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
+      }
     });
   }
 

@@ -41,7 +41,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
 
 void main() {
   /// Creates a temporary file named [filename] then calls [callback] with a
-  /// [File] representing that temporary directory.  The file will be deleted
+  /// [File] representing that temporary directory. The file will be deleted
   /// after the [callback] is executed.
   void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();

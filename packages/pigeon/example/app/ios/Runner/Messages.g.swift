@@ -64,9 +64,31 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
+#if DEBUG
+  func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#else
+  private func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#endif
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -188,7 +210,7 @@ enum Code: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData: Hashable {
+struct MessageData: Hashable, CustomStringConvertible {
   var name: String? = nil
   var description: String? = nil
   var code: Code
@@ -231,6 +253,10 @@ struct MessageData: Hashable {
     deepHashMessages(value: description, hasher: &hasher)
     deepHashMessages(value: code, hasher: &hasher)
     deepHashMessages(value: data, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "MessageData(name: \(name), description: \(description), code: \(code), data: \(data))"
   }
 }
 
@@ -349,6 +375,7 @@ class ExampleHostApiSetup {
     }
   }
 }
+
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(

@@ -93,6 +93,7 @@ class UnusedClass {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static UnusedClass FromEncodableList(const ::flutter::EncodableList& list);
@@ -227,6 +228,7 @@ class AllTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static AllTypes FromEncodableList(const ::flutter::EncodableList& list);
@@ -442,6 +444,7 @@ class AllNullableTypes {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static AllNullableTypes FromEncodableList(
@@ -643,6 +646,7 @@ class AllNullableTypesWithoutRecursion {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
@@ -748,6 +752,7 @@ class AllClassesWrapper {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static AllClassesWrapper FromEncodableList(
@@ -790,6 +795,7 @@ class TestMessage {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static TestMessage FromEncodableList(const ::flutter::EncodableList& list);

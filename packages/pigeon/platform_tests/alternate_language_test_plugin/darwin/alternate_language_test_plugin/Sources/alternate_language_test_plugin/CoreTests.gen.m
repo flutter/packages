@@ -218,6 +218,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.aField);
   return result;
 }
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTUnusedClass(aField: %@)", self.aField];
+}
 @end
 
 @implementation FLTAllTypes
@@ -416,6 +419,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.listMap);
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   return result;
+}
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:
+          @"FLTAllTypes(aBool: %@, anInt: %@, anInt64: %@, aDouble: %@, aByteArray: %@, "
+          @"a4ByteArray: %@, a8ByteArray: %@, aFloatArray: %@, anEnum: %@, anotherEnum: %@, "
+          @"aString: %@, anObject: %@, list: %@, stringList: %@, intList: %@, doubleList: %@, "
+          @"boolList: %@, enumList: %@, objectList: %@, listList: %@, mapList: %@, map: %@, "
+          @"stringMap: %@, intMap: %@, enumMap: %@, objectMap: %@, listMap: %@, mapMap: %@)",
+          @(self.aBool), @(self.anInt), @(self.anInt64), @(self.aDouble), self.aByteArray,
+          self.a4ByteArray, self.a8ByteArray, self.aFloatArray, @(self.anEnum), @(self.anotherEnum),
+          self.aString, self.anObject, self.list, self.stringList, self.intList, self.doubleList,
+          self.boolList, self.enumList, self.objectList, self.listList, self.mapList, self.map,
+          self.stringMap, self.intMap, self.enumMap, self.objectMap, self.listMap, self.mapMap];
 }
 @end
 
@@ -636,6 +653,26 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.recursiveClassMap);
   return result;
 }
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:@"FLTAllNullableTypes(aNullableBool: %@, aNullableInt: %@, aNullableInt64: "
+                       @"%@, aNullableDouble: %@, aNullableByteArray: %@, aNullable4ByteArray: %@, "
+                       @"aNullable8ByteArray: %@, aNullableFloatArray: %@, aNullableEnum: %@, "
+                       @"anotherNullableEnum: %@, aNullableString: %@, aNullableObject: %@, "
+                       @"allNullableTypes: %@, list: %@, stringList: %@, intList: %@, doubleList: "
+                       @"%@, boolList: %@, enumList: %@, objectList: %@, listList: %@, mapList: "
+                       @"%@, recursiveClassList: %@, map: %@, stringMap: %@, intMap: %@, enumMap: "
+                       @"%@, objectMap: %@, listMap: %@, mapMap: %@, recursiveClassMap: %@)",
+                       self.aNullableBool, self.aNullableInt, self.aNullableInt64,
+                       self.aNullableDouble, self.aNullableByteArray, self.aNullable4ByteArray,
+                       self.aNullable8ByteArray, self.aNullableFloatArray, self.aNullableEnum,
+                       self.anotherNullableEnum, self.aNullableString, self.aNullableObject,
+                       self.allNullableTypes, self.list, self.stringList, self.intList,
+                       self.doubleList, self.boolList, self.enumList, self.objectList,
+                       self.listList, self.mapList, self.recursiveClassList, self.map,
+                       self.stringMap, self.intMap, self.enumMap, self.objectMap, self.listMap,
+                       self.mapMap, self.recursiveClassMap];
+}
 @end
 
 @implementation FLTAllNullableTypesWithoutRecursion
@@ -838,6 +875,24 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.mapMap);
   return result;
 }
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:
+          @"FLTAllNullableTypesWithoutRecursion(aNullableBool: %@, aNullableInt: %@, "
+          @"aNullableInt64: %@, aNullableDouble: %@, aNullableByteArray: %@, aNullable4ByteArray: "
+          @"%@, aNullable8ByteArray: %@, aNullableFloatArray: %@, aNullableEnum: %@, "
+          @"anotherNullableEnum: %@, aNullableString: %@, aNullableObject: %@, list: %@, "
+          @"stringList: %@, intList: %@, doubleList: %@, boolList: %@, enumList: %@, objectList: "
+          @"%@, listList: %@, mapList: %@, map: %@, stringMap: %@, intMap: %@, enumMap: %@, "
+          @"objectMap: %@, listMap: %@, mapMap: %@)",
+          self.aNullableBool, self.aNullableInt, self.aNullableInt64, self.aNullableDouble,
+          self.aNullableByteArray, self.aNullable4ByteArray, self.aNullable8ByteArray,
+          self.aNullableFloatArray, self.aNullableEnum, self.anotherNullableEnum,
+          self.aNullableString, self.aNullableObject, self.list, self.stringList, self.intList,
+          self.doubleList, self.boolList, self.enumList, self.objectList, self.listList,
+          self.mapList, self.map, self.stringMap, self.intMap, self.enumMap, self.objectMap,
+          self.listMap, self.mapMap];
+}
 @end
 
 @implementation FLTAllClassesWrapper
@@ -917,6 +972,15 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   result = result * 31 + FLTPigeonDeepHash(self.nullableClassMap);
   return result;
 }
+- (NSString *)description {
+  return
+      [NSString stringWithFormat:@"FLTAllClassesWrapper(allNullableTypes: %@, "
+                                 @"allNullableTypesWithoutRecursion: %@, allTypes: %@, classList: "
+                                 @"%@, nullableClassList: %@, classMap: %@, nullableClassMap: %@)",
+                                 self.allNullableTypes, self.allNullableTypesWithoutRecursion,
+                                 self.allTypes, self.classList, self.nullableClassList,
+                                 self.classMap, self.nullableClassMap];
+}
 @end
 
 @implementation FLTTestMessage
@@ -953,6 +1017,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   NSUInteger result = [self class].hash;
   result = result * 31 + FLTPigeonDeepHash(self.testList);
   return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTTestMessage(testList: %@)", self.testList];
 }
 @end
 

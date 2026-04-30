@@ -90,6 +90,7 @@ class MessageData {
   /// Returns a hash code value for the object. This method is supported for the
   /// benefit of hash tables.
   size_t Hash() const;
+  std::string ToString() const;
 
  private:
   static MessageData FromEncodableList(const ::flutter::EncodableList& list);

@@ -93,6 +93,17 @@ guint core_tests_pigeon_test_unused_class_hash(
     CoreTestsPigeonTestUnusedClass* object);
 
 /**
+ * core_tests_pigeon_test_unused_class_to_string:
+ * @object: a #CoreTestsPigeonTestUnusedClass.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestUnusedClass object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_unused_class_to_string(
+    CoreTestsPigeonTestUnusedClass* object);
+
+/**
  * CoreTestsPigeonTestAllTypes:
  *
  * A class containing all supported types.
@@ -489,6 +500,17 @@ gboolean core_tests_pigeon_test_all_types_equals(
  * Returns: the hash code.
  */
 guint core_tests_pigeon_test_all_types_hash(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_to_string:
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllTypes object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_types_to_string(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
@@ -939,6 +961,18 @@ guint core_tests_pigeon_test_all_nullable_types_hash(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_to_string:
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllNullableTypes
+ * object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_nullable_types_to_string(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * CoreTestsPigeonTestAllNullableTypesWithoutRecursion:
  *
  * The primary purpose for this class is to ensure coverage of Swift structs
@@ -1376,6 +1410,18 @@ guint core_tests_pigeon_test_all_nullable_types_without_recursion_hash(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_to_string:
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Returns a string representation of a
+ * #CoreTestsPigeonTestAllNullableTypesWithoutRecursion object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
  * CoreTestsPigeonTestAllClassesWrapper:
  *
  * A class for testing nested class handling.
@@ -1517,6 +1563,18 @@ guint core_tests_pigeon_test_all_classes_wrapper_hash(
     CoreTestsPigeonTestAllClassesWrapper* object);
 
 /**
+ * core_tests_pigeon_test_all_classes_wrapper_to_string:
+ * @object: a #CoreTestsPigeonTestAllClassesWrapper.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestAllClassesWrapper
+ * object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_all_classes_wrapper_to_string(
+    CoreTestsPigeonTestAllClassesWrapper* object);
+
+/**
  * CoreTestsPigeonTestTestMessage:
  *
  * A data class containing a List, used in unit tests.
@@ -1569,6 +1627,17 @@ gboolean core_tests_pigeon_test_test_message_equals(
  * Returns: the hash code.
  */
 guint core_tests_pigeon_test_test_message_hash(
+    CoreTestsPigeonTestTestMessage* object);
+
+/**
+ * core_tests_pigeon_test_test_message_to_string:
+ * @object: a #CoreTestsPigeonTestTestMessage.
+ *
+ * Returns a string representation of a #CoreTestsPigeonTestTestMessage object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* core_tests_pigeon_test_test_message_to_string(
     CoreTestsPigeonTestTestMessage* object);
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,

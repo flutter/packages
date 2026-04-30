@@ -252,6 +252,10 @@ data class MessageData(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.data)
     return result
   }
+
+  override fun toString(): String {
+    return "MessageData(name=$name, description=$description, code=$code, data=$data)"
+  }
 }
 
 private open class MessagesPigeonCodec : StandardMessageCodec() {

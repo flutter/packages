@@ -113,6 +113,17 @@ gboolean pigeon_example_package_message_data_equals(
 guint pigeon_example_package_message_data_hash(
     PigeonExamplePackageMessageData* object);
 
+/**
+ * pigeon_example_package_message_data_to_string:
+ * @object: a #PigeonExamplePackageMessageData.
+ *
+ * Returns a string representation of a #PigeonExamplePackageMessageData object.
+ *
+ * Returns: (transfer full): a new string, free with g_free().
+ */
+gchar* pigeon_example_package_message_data_to_string(
+    PigeonExamplePackageMessageData* object);
+
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
                      pigeon_example_package_message_codec,
                      PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,

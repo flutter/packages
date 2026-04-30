@@ -285,6 +285,11 @@ public class CoreTests {
       return pigeonDeepHashCode(fields);
     }
 
+    @Override
+    public String toString() {
+      return "UnusedClass{" + "aField=" + aField + "}";
+    }
+
     public static final class Builder {
 
       private @Nullable Object aField;
@@ -764,6 +769,95 @@ public class CoreTests {
             mapMap
           };
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "AllTypes{"
+          + "aBool="
+          + aBool
+          + ", "
+          + "anInt="
+          + anInt
+          + ", "
+          + "anInt64="
+          + anInt64
+          + ", "
+          + "aDouble="
+          + aDouble
+          + ", "
+          + "aByteArray="
+          + java.util.Arrays.toString(aByteArray)
+          + ", "
+          + "a4ByteArray="
+          + java.util.Arrays.toString(a4ByteArray)
+          + ", "
+          + "a8ByteArray="
+          + java.util.Arrays.toString(a8ByteArray)
+          + ", "
+          + "aFloatArray="
+          + java.util.Arrays.toString(aFloatArray)
+          + ", "
+          + "anEnum="
+          + anEnum
+          + ", "
+          + "anotherEnum="
+          + anotherEnum
+          + ", "
+          + "aString="
+          + aString
+          + ", "
+          + "anObject="
+          + anObject
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + "}";
     }
 
     public static final class Builder {
@@ -1518,6 +1612,104 @@ public class CoreTests {
             recursiveClassMap
           };
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "AllNullableTypes{"
+          + "aNullableBool="
+          + aNullableBool
+          + ", "
+          + "aNullableInt="
+          + aNullableInt
+          + ", "
+          + "aNullableInt64="
+          + aNullableInt64
+          + ", "
+          + "aNullableDouble="
+          + aNullableDouble
+          + ", "
+          + "aNullableByteArray="
+          + java.util.Arrays.toString(aNullableByteArray)
+          + ", "
+          + "aNullable4ByteArray="
+          + java.util.Arrays.toString(aNullable4ByteArray)
+          + ", "
+          + "aNullable8ByteArray="
+          + java.util.Arrays.toString(aNullable8ByteArray)
+          + ", "
+          + "aNullableFloatArray="
+          + java.util.Arrays.toString(aNullableFloatArray)
+          + ", "
+          + "aNullableEnum="
+          + aNullableEnum
+          + ", "
+          + "anotherNullableEnum="
+          + anotherNullableEnum
+          + ", "
+          + "aNullableString="
+          + aNullableString
+          + ", "
+          + "aNullableObject="
+          + aNullableObject
+          + ", "
+          + "allNullableTypes="
+          + allNullableTypes
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "recursiveClassList="
+          + recursiveClassList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + ", "
+          + "recursiveClassMap="
+          + recursiveClassMap
+          + "}";
     }
 
     public static final class Builder {
@@ -2276,6 +2468,95 @@ public class CoreTests {
       return pigeonDeepHashCode(fields);
     }
 
+    @Override
+    public String toString() {
+      return "AllNullableTypesWithoutRecursion{"
+          + "aNullableBool="
+          + aNullableBool
+          + ", "
+          + "aNullableInt="
+          + aNullableInt
+          + ", "
+          + "aNullableInt64="
+          + aNullableInt64
+          + ", "
+          + "aNullableDouble="
+          + aNullableDouble
+          + ", "
+          + "aNullableByteArray="
+          + java.util.Arrays.toString(aNullableByteArray)
+          + ", "
+          + "aNullable4ByteArray="
+          + java.util.Arrays.toString(aNullable4ByteArray)
+          + ", "
+          + "aNullable8ByteArray="
+          + java.util.Arrays.toString(aNullable8ByteArray)
+          + ", "
+          + "aNullableFloatArray="
+          + java.util.Arrays.toString(aNullableFloatArray)
+          + ", "
+          + "aNullableEnum="
+          + aNullableEnum
+          + ", "
+          + "anotherNullableEnum="
+          + anotherNullableEnum
+          + ", "
+          + "aNullableString="
+          + aNullableString
+          + ", "
+          + "aNullableObject="
+          + aNullableObject
+          + ", "
+          + "list="
+          + list
+          + ", "
+          + "stringList="
+          + stringList
+          + ", "
+          + "intList="
+          + intList
+          + ", "
+          + "doubleList="
+          + doubleList
+          + ", "
+          + "boolList="
+          + boolList
+          + ", "
+          + "enumList="
+          + enumList
+          + ", "
+          + "objectList="
+          + objectList
+          + ", "
+          + "listList="
+          + listList
+          + ", "
+          + "mapList="
+          + mapList
+          + ", "
+          + "map="
+          + map
+          + ", "
+          + "stringMap="
+          + stringMap
+          + ", "
+          + "intMap="
+          + intMap
+          + ", "
+          + "enumMap="
+          + enumMap
+          + ", "
+          + "objectMap="
+          + objectMap
+          + ", "
+          + "listMap="
+          + listMap
+          + ", "
+          + "mapMap="
+          + mapMap
+          + "}";
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -2762,6 +3043,32 @@ public class CoreTests {
       return pigeonDeepHashCode(fields);
     }
 
+    @Override
+    public String toString() {
+      return "AllClassesWrapper{"
+          + "allNullableTypes="
+          + allNullableTypes
+          + ", "
+          + "allNullableTypesWithoutRecursion="
+          + allNullableTypesWithoutRecursion
+          + ", "
+          + "allTypes="
+          + allTypes
+          + ", "
+          + "classList="
+          + classList
+          + ", "
+          + "nullableClassList="
+          + nullableClassList
+          + ", "
+          + "classMap="
+          + classMap
+          + ", "
+          + "nullableClassMap="
+          + nullableClassMap
+          + "}";
+    }
+
     public static final class Builder {
 
       private @Nullable AllNullableTypes allNullableTypes;
@@ -2903,6 +3210,11 @@ public class CoreTests {
     public int hashCode() {
       Object[] fields = new Object[] {getClass(), testList};
       return pigeonDeepHashCode(fields);
+    }
+
+    @Override
+    public String toString() {
+      return "TestMessage{" + "testList=" + testList + "}";
     }
 
     public static final class Builder {

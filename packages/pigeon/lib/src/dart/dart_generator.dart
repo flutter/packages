@@ -398,6 +398,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln(
       'int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);',
     );
+
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeScoped('String toString() {', '}', () {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
+      );
+      final Iterable<String> fieldStrings = fields.map((NamedType field) {
+        return '${field.name}: \$${field.name}';
+      });
+      final String fieldsConcat = fieldStrings.join(', ');
+      indent.writeln("return '${classDefinition.name}($fieldsConcat)';");
+    });
   }
 
   @override
@@ -645,8 +658,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.format('''
-/// Constructor for [${api.name}].  The [binaryMessenger] named argument is
-/// available for dependency injection.  If it is left null, the default
+/// Constructor for [${api.name}]. The [binaryMessenger] named argument is
+/// available for dependency injection. If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
     : ${varNamePrefix}binaryMessenger = binaryMessenger,
@@ -1272,7 +1285,7 @@ Object? _extractReplyValueOrThrow(
 \t\t\tdetails: replyList[2],
 \t\t);''');
     // On iOS we can return nil from functions to accommodate error
-    // handling.  Returning a nil value and not returning an error is an
+    // handling. Returning a nil value and not returning an error is an
     // exception.
     indent.format('''
 \t} else if (!isNullValid && (replyList.isNotEmpty && replyList[0] == null)) {

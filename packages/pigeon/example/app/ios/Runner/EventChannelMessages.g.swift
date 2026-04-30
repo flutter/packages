@@ -14,9 +14,31 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
+#if DEBUG
+  func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#else
+  private func isNullish(_ value: Any?) -> Bool {
+    guard let innerValue = value else {
+      return true
+    }
+
+    if case Optional<Any>.some(Optional<Any>.none) = value {
+      return true
+    }
+
+    return innerValue is NSNull
+  }
+#endif
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -139,7 +161,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: PlatformEvent, CustomStringConvertible {
   var data: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -166,10 +188,14 @@ struct IntEvent: PlatformEvent {
     hasher.combine("IntEvent")
     deepHashEventChannelMessages(value: data, hasher: &hasher)
   }
+
+  public var description: String {
+    return "IntEvent(data: \(data))"
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: PlatformEvent, CustomStringConvertible {
   var data: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -195,6 +221,10 @@ struct StringEvent: PlatformEvent {
   func hash(into hasher: inout Hasher) {
     hasher.combine("StringEvent")
     deepHashEventChannelMessages(value: data, hasher: &hasher)
+  }
+
+  public var description: String {
+    return "StringEvent(data: \(data))"
   }
 }
 
