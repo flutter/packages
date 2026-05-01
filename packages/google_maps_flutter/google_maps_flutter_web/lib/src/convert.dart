@@ -126,9 +126,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   // Treat an empty mapId as null, as the app-facing package may pass it either
   // way.
-  final String? mapId = configuration.mapId?.isEmpty ?? true
-      ? null
-      : configuration.mapId;
+  final String? mapId = configuration.mapId == '' ? null : configuration.mapId;
   // If using cloud map, do not set options.styles
   if (mapId == null) {
     options.styles = styles;
