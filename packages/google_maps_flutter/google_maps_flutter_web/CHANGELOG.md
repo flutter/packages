@@ -1,7 +1,3 @@
-## 0.6.2+2
-
-* Removes a LICENSE entry for code that no longer exists in the package.
-
 ## 0.6.2+1
 
 * Fixes a bug that prevented non-cloud styles from being applied.
