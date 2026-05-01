@@ -1881,6 +1881,9 @@ void main() {
     final code = sink.toString();
     expect(code, contains(': Hashable, CustomStringConvertible'));
     expect(code, contains('public var description: String {'));
-    expect(code, contains(r'return "Foobar(field1: \(field1))"'));
+    expect(
+      code,
+      contains(r'return "Foobar(field1: \(String(describing: field1)))"'),
+    );
   });
 }

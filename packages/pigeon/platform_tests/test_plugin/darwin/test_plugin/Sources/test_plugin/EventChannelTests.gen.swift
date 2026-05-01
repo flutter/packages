@@ -33,8 +33,8 @@ final class EventChannelTestsError: Error {
   }
 }
 
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum EventChannelTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -45,19 +45,7 @@ final class EventChannelTestsError: Error {
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif
+}
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -466,7 +454,7 @@ class EventAllNullableTypes: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "EventAllNullableTypes(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), allNullableTypes: \(allNullableTypes), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), recursiveClassList: \(recursiveClassList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap), recursiveClassMap: \(recursiveClassMap))"
+      "EventAllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
   }
 }
 
@@ -477,7 +465,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent, CustomStringConvertible {
+struct IntEvent: PlatformEvent {
   var value: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -506,12 +494,12 @@ struct IntEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "IntEvent(value: \(value))"
+    return "IntEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent, CustomStringConvertible {
+struct StringEvent: PlatformEvent {
   var value: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -540,12 +528,12 @@ struct StringEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "StringEvent(value: \(value))"
+    return "StringEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct BoolEvent: PlatformEvent, CustomStringConvertible {
+struct BoolEvent: PlatformEvent {
   var value: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -574,12 +562,12 @@ struct BoolEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "BoolEvent(value: \(value))"
+    return "BoolEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct DoubleEvent: PlatformEvent, CustomStringConvertible {
+struct DoubleEvent: PlatformEvent {
   var value: Double
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -608,12 +596,12 @@ struct DoubleEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "DoubleEvent(value: \(value))"
+    return "DoubleEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ObjectsEvent: PlatformEvent, CustomStringConvertible {
+struct ObjectsEvent: PlatformEvent {
   var value: Any
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -642,12 +630,12 @@ struct ObjectsEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "ObjectsEvent(value: \(value))"
+    return "ObjectsEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EnumEvent: PlatformEvent, CustomStringConvertible {
+struct EnumEvent: PlatformEvent {
   var value: EventEnum
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -676,12 +664,12 @@ struct EnumEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "EnumEvent(value: \(value))"
+    return "EnumEvent(value: \(String(describing: value)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ClassEvent: PlatformEvent, CustomStringConvertible {
+struct ClassEvent: PlatformEvent {
   var value: EventAllNullableTypes
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -710,7 +698,7 @@ struct ClassEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "ClassEvent(value: \(value))"
+    return "ClassEvent(value: \(String(describing: value)))"
   }
 }
 

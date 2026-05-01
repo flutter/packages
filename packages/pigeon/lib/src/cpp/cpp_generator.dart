@@ -1154,14 +1154,14 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
           final comma = index == 0 ? '' : ', ';
           indent.writeln('ss << "$comma${field.name}: ";');
           if (field.type.isNullable) {
-            indent.writeScoped('if ($name.has_value()) {', '} else {', () {
+            indent.writeScoped('if ($name.has_value()) {', '}', () {
               if (field.type.isClass) {
                 indent.writeln('ss << $name->ToString();');
               } else {
                 indent.writeln('ss << *$name;');
               }
             });
-            indent.nest(1, () {
+            indent.writeScoped('else {', '}', () {
               indent.writeln('ss << "null";');
             });
           } else {

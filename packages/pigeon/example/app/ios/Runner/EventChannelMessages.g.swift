@@ -14,8 +14,8 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum EventChannelMessagesPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -26,19 +26,7 @@ import Foundation
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif
+}
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -161,7 +149,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent, CustomStringConvertible {
+struct IntEvent: PlatformEvent {
   var data: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -190,12 +178,12 @@ struct IntEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "IntEvent(data: \(data))"
+    return "IntEvent(data: \(String(describing: data)))"
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent, CustomStringConvertible {
+struct StringEvent: PlatformEvent {
   var data: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -224,7 +212,7 @@ struct StringEvent: PlatformEvent, CustomStringConvertible {
   }
 
   public var description: String {
-    return "StringEvent(data: \(data))"
+    return "StringEvent(data: \(String(describing: data)))"
   }
 }
 

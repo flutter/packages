@@ -64,8 +64,8 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum MessagesPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -76,19 +76,7 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif
+}
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -256,7 +244,8 @@ struct MessageData: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "MessageData(name: \(name), description: \(description), code: \(code), data: \(data))"
+    return
+      "MessageData(name: \(String(describing: name)), description: \(String(describing: description)), code: \(String(describing: code)), data: \(String(describing: data)))"
   }
 }
 

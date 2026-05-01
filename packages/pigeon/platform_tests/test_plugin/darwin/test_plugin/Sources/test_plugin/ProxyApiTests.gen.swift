@@ -65,8 +65,8 @@ private func createConnectionError(withChannelName channelName: String) -> Proxy
     details: "")
 }
 
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum ProxyApiTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -77,19 +77,7 @@ private func createConnectionError(withChannelName channelName: String) -> Proxy
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif
+}
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }

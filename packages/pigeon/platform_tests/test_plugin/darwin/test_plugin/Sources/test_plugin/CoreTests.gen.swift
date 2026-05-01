@@ -65,8 +65,8 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum CoreTestsPigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -77,19 +77,7 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif
+}
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
@@ -247,7 +235,7 @@ struct UnusedClass: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "UnusedClass(aField: \(aField))"
+    return "UnusedClass(aField: \(String(describing: aField)))"
   }
 }
 
@@ -443,7 +431,7 @@ struct AllTypes: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "AllTypes(aBool: \(aBool), anInt: \(anInt), anInt64: \(anInt64), aDouble: \(aDouble), aByteArray: \(aByteArray), a4ByteArray: \(a4ByteArray), a8ByteArray: \(a8ByteArray), aFloatArray: \(aFloatArray), anEnum: \(anEnum), anotherEnum: \(anotherEnum), aString: \(aString), anObject: \(anObject), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap))"
+      "AllTypes(aBool: \(String(describing: aBool)), anInt: \(String(describing: anInt)), anInt64: \(String(describing: anInt64)), aDouble: \(String(describing: aDouble)), aByteArray: \(String(describing: aByteArray)), a4ByteArray: \(String(describing: a4ByteArray)), a8ByteArray: \(String(describing: a8ByteArray)), aFloatArray: \(String(describing: aFloatArray)), anEnum: \(String(describing: anEnum)), anotherEnum: \(String(describing: anotherEnum)), aString: \(String(describing: aString)), anObject: \(String(describing: anObject)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
   }
 }
 
@@ -727,7 +715,7 @@ class AllNullableTypes: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "AllNullableTypes(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), allNullableTypes: \(allNullableTypes), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), recursiveClassList: \(recursiveClassList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap), recursiveClassMap: \(recursiveClassMap))"
+      "AllNullableTypes(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), allNullableTypes: \(String(describing: allNullableTypes)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), recursiveClassList: \(String(describing: recursiveClassList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)), recursiveClassMap: \(String(describing: recursiveClassMap)))"
   }
 }
 
@@ -929,7 +917,7 @@ struct AllNullableTypesWithoutRecursion: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "AllNullableTypesWithoutRecursion(aNullableBool: \(aNullableBool), aNullableInt: \(aNullableInt), aNullableInt64: \(aNullableInt64), aNullableDouble: \(aNullableDouble), aNullableByteArray: \(aNullableByteArray), aNullable4ByteArray: \(aNullable4ByteArray), aNullable8ByteArray: \(aNullable8ByteArray), aNullableFloatArray: \(aNullableFloatArray), aNullableEnum: \(aNullableEnum), anotherNullableEnum: \(anotherNullableEnum), aNullableString: \(aNullableString), aNullableObject: \(aNullableObject), list: \(list), stringList: \(stringList), intList: \(intList), doubleList: \(doubleList), boolList: \(boolList), enumList: \(enumList), objectList: \(objectList), listList: \(listList), mapList: \(mapList), map: \(map), stringMap: \(stringMap), intMap: \(intMap), enumMap: \(enumMap), objectMap: \(objectMap), listMap: \(listMap), mapMap: \(mapMap))"
+      "AllNullableTypesWithoutRecursion(aNullableBool: \(String(describing: aNullableBool)), aNullableInt: \(String(describing: aNullableInt)), aNullableInt64: \(String(describing: aNullableInt64)), aNullableDouble: \(String(describing: aNullableDouble)), aNullableByteArray: \(String(describing: aNullableByteArray)), aNullable4ByteArray: \(String(describing: aNullable4ByteArray)), aNullable8ByteArray: \(String(describing: aNullable8ByteArray)), aNullableFloatArray: \(String(describing: aNullableFloatArray)), aNullableEnum: \(String(describing: aNullableEnum)), anotherNullableEnum: \(String(describing: anotherNullableEnum)), aNullableString: \(String(describing: aNullableString)), aNullableObject: \(String(describing: aNullableObject)), list: \(String(describing: list)), stringList: \(String(describing: stringList)), intList: \(String(describing: intList)), doubleList: \(String(describing: doubleList)), boolList: \(String(describing: boolList)), enumList: \(String(describing: enumList)), objectList: \(String(describing: objectList)), listList: \(String(describing: listList)), mapList: \(String(describing: mapList)), map: \(String(describing: map)), stringMap: \(String(describing: stringMap)), intMap: \(String(describing: intMap)), enumMap: \(String(describing: enumMap)), objectMap: \(String(describing: objectMap)), listMap: \(String(describing: listMap)), mapMap: \(String(describing: mapMap)))"
   }
 }
 
@@ -1009,7 +997,7 @@ struct AllClassesWrapper: Hashable, CustomStringConvertible {
 
   public var description: String {
     return
-      "AllClassesWrapper(allNullableTypes: \(allNullableTypes), allNullableTypesWithoutRecursion: \(allNullableTypesWithoutRecursion), allTypes: \(allTypes), classList: \(classList), nullableClassList: \(nullableClassList), classMap: \(classMap), nullableClassMap: \(nullableClassMap))"
+      "AllClassesWrapper(allNullableTypes: \(String(describing: allNullableTypes)), allNullableTypesWithoutRecursion: \(String(describing: allNullableTypesWithoutRecursion)), allTypes: \(String(describing: allTypes)), classList: \(String(describing: classList)), nullableClassList: \(String(describing: nullableClassList)), classMap: \(String(describing: classMap)), nullableClassMap: \(String(describing: nullableClassMap)))"
   }
 }
 
@@ -1045,7 +1033,7 @@ struct TestMessage: Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "TestMessage(testList: \(testList))"
+    return "TestMessage(testList: \(String(describing: testList)))"
   }
 }
 

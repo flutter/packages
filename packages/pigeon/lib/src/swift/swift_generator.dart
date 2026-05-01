@@ -421,7 +421,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   }) {
     final privateString = private ? 'private ' : '';
     final extendsString = classDefinition.superClass != null
-        ? ': ${classDefinition.superClass!.name}, CustomStringConvertible'
+        ? ': ${classDefinition.superClass!.name}'
         : hashable
         ? ': Hashable, CustomStringConvertible'
         : ': CustomStringConvertible';
@@ -720,15 +720,23 @@ if (wrapped == nil) {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    indent.writeScoped('public var description: String {', '}', () {
-      final Iterable<String> fieldStrings = classDefinition.fields.map((
-        NamedType field,
-      ) {
-        return '${field.name}: \\(${field.name})';
-      });
-      final String fieldsConcat = fieldStrings.join(', ');
-      indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
-    });
+    final overrideString =
+        (classDefinition.superClass != null && classDefinition.isSwiftClass)
+        ? 'override '
+        : '';
+    indent.writeScoped(
+      '${overrideString}public var description: String {',
+      '}',
+      () {
+        final Iterable<String> fieldStrings = classDefinition.fields.map((
+          NamedType field,
+        ) {
+          return '${field.name}: \\(String(describing: ${field.name}))';
+        });
+        final String fieldsConcat = fieldStrings.join(', ');
+        indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
+      },
+    );
   }
 
   @override
@@ -1459,11 +1467,13 @@ if (wrapped == nil) {
     }
   }
 
-  void _writeIsNullish(Indent indent) {
+  void _writeIsNullish(InternalSwiftOptions generatorOptions, Indent indent) {
     indent.newln();
+    final String uniqueComponent =
+        generatorOptions.fileSpecificClassNameComponent ?? '';
     indent.format('''
-#if DEBUG
-  func isNullish(_ value: Any?) -> Bool {
+enum ${uniqueComponent}PigeonInternal {
+  static func isNullish(_ value: Any?) -> Bool {
     guard let innerValue = value else {
       return true
     }
@@ -1474,19 +1484,7 @@ if (wrapped == nil) {
 
     return innerValue is NSNull
   }
-#else
-  private func isNullish(_ value: Any?) -> Bool {
-    guard let innerValue = value else {
-      return true
-    }
-
-    if case Optional<Any>.some(Optional<Any>.none) = value {
-      return true
-    }
-
-    return innerValue is NSNull
-  }
-#endif''');
+}''');
   }
 
   void _writeWrapResult(Indent indent) {
@@ -1696,7 +1694,7 @@ func $deepHashName(value: Any?, hasher: inout Hasher) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
 
-    _writeIsNullish(indent);
+    _writeIsNullish(generatorOptions, indent);
     _writeNilOrValue(indent);
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(generatorOptions, indent);

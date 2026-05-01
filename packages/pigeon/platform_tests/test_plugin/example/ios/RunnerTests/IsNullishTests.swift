@@ -12,20 +12,20 @@ struct IsNullishTests {
   @Test
   func testNil() {
     let value: Any? = nil
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
   func testNSNull() {
     let value: Any? = NSNull()
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
   func testNestedNil() {
     let inner: Any? = nil
     let value: Any? = inner
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
@@ -33,26 +33,26 @@ struct IsNullishTests {
     let innerMost: Any? = nil
     let inner: Any?? = innerMost
     let value: Any? = inner
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
   func testTypedNil() {
     let typedNil: String? = nil
     let value: Any? = typedNil
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
   func testNestedNSNull() {
     let inner: Any? = NSNull()
     let value: Any? = inner
-    #expect(isNullish(value) == true)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == true)
   }
 
   @Test
   func testNonNullValue() {
     let value: Any? = "Hello"
-    #expect(isNullish(value) == false)
+    #expect(CoreTestsPigeonInternal.isNullish(value) == false)
   }
 }
