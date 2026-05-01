@@ -40,7 +40,7 @@ class NavigationActionProxyAPITests: XCTestCase {
 }
 
 class TestNavigationAction: WKNavigationAction {
-  let internalTargetFrame = TestFrameInfo()
+  let internalTargetFrame = TestFrameInfo.instance
 
   override var request: URLRequest {
     return URLRequest(url: URL(string: "http://google.com")!)

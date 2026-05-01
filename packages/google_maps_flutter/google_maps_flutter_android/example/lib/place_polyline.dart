@@ -12,8 +12,8 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PlacePolylinePage extends GoogleMapExampleAppPage {
-  const PlacePolylinePage({Key? key})
-    : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
+  const PlacePolylinePage({super.key})
+    : super(const Icon(Icons.linear_scale), 'Place polyline');
 
   @override
   Widget build(BuildContext context) {

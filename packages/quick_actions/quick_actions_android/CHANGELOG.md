@@ -1,3 +1,11 @@
+## 1.0.30
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 1.0.29
+
+* Simplifies thread handling in message responses.
+
 ## 1.0.28
 
 * Updates build files from Groovy to Kotlin.

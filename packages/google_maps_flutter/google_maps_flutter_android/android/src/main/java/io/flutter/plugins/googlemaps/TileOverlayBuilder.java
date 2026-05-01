@@ -4,12 +4,13 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.maps.model.TileProvider;
 
 class TileOverlayBuilder implements TileOverlaySink {
 
-  private final TileOverlayOptions tileOverlayOptions;
+  private final @NonNull TileOverlayOptions tileOverlayOptions;
 
   TileOverlayBuilder() {
     this.tileOverlayOptions = new TileOverlayOptions();

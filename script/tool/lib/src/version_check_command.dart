@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
@@ -12,7 +11,6 @@ import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
-import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
 /// Categories of version change types.
@@ -98,17 +96,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
     super.processRunner,
     super.platform,
     super.gitDir,
-    http.Client? httpClient,
-  }) : _pubVersionFinder = PubVersionFinder(
-         httpClient: httpClient ?? http.Client(),
-       ) {
-    argParser.addFlag(
-      _againstPubFlag,
-      help:
-          'Whether the version check should run against the version on pub.\n'
-          'Defaults to false, which means the version check only run against '
-          'the previous version in code.',
-    );
+  }) {
     argParser.addOption(
       _prLabelsArg,
       help:
@@ -140,7 +128,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
     );
   }
 
-  static const String _againstPubFlag = 'against-pub';
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
   static const String _ignorePlatformInterfaceBreaks =
@@ -160,8 +147,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
   /// PR that would normally require one.
   static const String _missingChangelogChangeOverrideLabel =
       'override: no changelog needed';
-
-  final PubVersionFinder _pubVersionFinder;
 
   late final GitVersionFinder _gitVersionFinder;
 
@@ -184,7 +169,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
   final String description =
       'Checks if the versions of packages have been incremented per pub specification.\n'
       'Also checks if the latest version in CHANGELOG matches the version in pubspec.\n\n'
-      'This command requires "pub" and "flutter" to be in your path.';
+      'This command requires "flutter" to be in your path.';
 
   @override
   bool get hasLongOutput => false;
@@ -303,33 +288,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
         : PackageResult.fail(errors);
   }
 
-  @override
-  Future<void> completeRun() async {
-    _pubVersionFinder.httpClient.close();
-  }
-
-  /// Returns the previous published version of [package].
-  ///
-  /// [packageName] must be the actual name of the package as published (i.e.,
-  /// the name from pubspec.yaml, not the on disk name if different.)
-  Future<Version?> _fetchPreviousVersionFromPub(String packageName) async {
-    final PubVersionFinderResponse pubVersionFinderResponse =
-        await _pubVersionFinder.getPackageVersion(packageName: packageName);
-    switch (pubVersionFinderResponse.result) {
-      case PubVersionFinderResult.success:
-        return pubVersionFinderResponse.versions.first;
-      case PubVersionFinderResult.fail:
-        printError('''
-${indentation}Error fetching version on pub for $packageName.
-${indentation}HTTP Status ${pubVersionFinderResponse.httpResponse.statusCode}
-${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
-''');
-        return null;
-      case PubVersionFinderResult.noPackageFound:
-        return Version.none;
-    }
-  }
-
   /// Returns the version of [package] from git at the base comparison hash.
   Future<Version?> _getPreviousVersionFromGit(RepositoryPackage package) async {
     final File pubspecFile = package.pubspecFile;
@@ -352,28 +310,12 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   }) async {
     // This method isn't called unless `version` is non-null.
     final Version currentVersion = pubspec.version!;
-    Version? previousVersion;
-    String previousVersionSource;
-    if (getBoolArg(_againstPubFlag)) {
-      previousVersionSource = 'pub';
-      previousVersion = await _fetchPreviousVersionFromPub(pubspec.name);
-      if (previousVersion == null) {
-        return _CurrentVersionState.unknown;
-      }
-      if (previousVersion != Version.none) {
-        print(
-          '$indentation${pubspec.name}: Current largest version on pub: $previousVersion',
-        );
-      }
-    } else {
-      previousVersionSource = baseSha;
-      previousVersion =
-          await _getPreviousVersionFromGit(package) ?? Version.none;
-    }
+    final Version previousVersion =
+        await _getPreviousVersionFromGit(package) ?? Version.none;
     if (previousVersion == Version.none) {
       print(
         '${indentation}Unable to find previous version '
-        '${getBoolArg(_againstPubFlag) ? 'on pub server' : 'at git base'}.',
+        'at git base.',
       );
       logWarning(
         '${indentation}If this package is not new, something has gone wrong.',
@@ -387,7 +329,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     }
 
     // Check for reverts when doing local validation.
-    if (!getBoolArg(_againstPubFlag) && currentVersion < previousVersion) {
+    if (currentVersion < previousVersion) {
       // Since this skips validation, try to ensure that it really is likely
       // to be a revert rather than a typo by checking that the transition
       // from the lower version to the new version would have been valid.
@@ -414,7 +356,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     } else {
       printError(
         '${indentation}Incorrectly updated version.\n'
-        '${indentation}HEAD: $currentVersion, $previousVersionSource: $previousVersion.\n'
+        '${indentation}HEAD: $currentVersion, $baseSha: $previousVersion.\n'
         '${indentation}Allowed versions: $allowedNextVersions',
       );
       return _CurrentVersionState.invalidChange;
