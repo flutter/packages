@@ -13,12 +13,8 @@ import 'page.dart';
 /// Page demonstrating how to use Advanced [Marker] class.
 class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const PlaceAdvancedMarkerPage({Key? key, required this.mapId})
-    : super(
-        const Icon(Icons.place_outlined),
-        'Place advanced marker',
-        key: key,
-      );
+  const PlaceAdvancedMarkerPage({super.key, required this.mapId})
+    : super(const Icon(Icons.place_outlined), 'Place advanced marker');
 
   /// Map ID to use for the GoogleMap.
   final String? mapId;
@@ -268,10 +264,10 @@ class _PlaceAdvancedMarkerBodyState extends State<_PlaceAdvancedMarkerBody> {
 
   Future<void> _changeZIndex(MarkerId markerId) async {
     final AdvancedMarker marker = markers[markerId]!;
-    final double current = marker.zIndex;
+    final int current = marker.zIndexInt;
     setState(() {
       markers[markerId] = marker.copyWith(
-        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
+        zIndexIntParam: current == 12 ? 0 : current + 1,
       );
     });
   }

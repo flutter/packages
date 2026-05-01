@@ -43,7 +43,7 @@ void main() {
     final p.Context path = analyzeCommand.path;
     javaFormatPath = path.join(
       path.dirname(path.fromUri(mockPlatform.script)),
-      'google-java-format-1.3-all-deps.jar',
+      'google-java-format-1.28.0-all-deps.jar',
     );
     packagesDir.fileSystem.file(javaFormatPath).createSync(recursive: true);
     kotlinFormatPath = path.join(

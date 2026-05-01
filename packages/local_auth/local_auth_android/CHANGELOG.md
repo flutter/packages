@@ -1,3 +1,7 @@
+## 2.0.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 2.0.7
 
 * Updates build files from Groovy to Kotlin.

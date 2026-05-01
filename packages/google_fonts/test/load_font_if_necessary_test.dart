@@ -116,9 +116,9 @@ void main() {
   late MockHttpClient mockHttpClient;
 
   setUp(() async {
-    mockHttpClient = MockHttpClient();
-    httpClient = mockHttpClient;
     assetManifest = MockAssetManifest();
+    mockHttpClient = MockHttpClient();
+    GoogleFonts.config.httpClient = mockHttpClient;
     GoogleFonts.config.allowRuntimeFetching = true;
     when(mockHttpClient.gets(any)).thenAnswer((_) async {
       return http.Response(_fakeResponse, 200);

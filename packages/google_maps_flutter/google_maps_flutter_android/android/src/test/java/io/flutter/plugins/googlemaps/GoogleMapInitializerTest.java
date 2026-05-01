@@ -4,18 +4,17 @@
 
 package io.flutter.plugins.googlemaps;
 
-import static org.mockito.Mockito.any;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import android.content.Context;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.MapsInitializer.Renderer;
 import io.flutter.plugin.common.BinaryMessenger;
+import kotlin.Unit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,34 +38,55 @@ public class GoogleMapInitializerTest {
   @Test
   public void initializer_OnMapsSdkInitializedWithLatestRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LATEST);
-    @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    final Boolean[] callbackCalled = new Boolean[1];
     googleMapInitializer.initializeWithPreferredRenderer(
-        Messages.PlatformRendererType.LATEST, result);
+        PlatformRendererType.LATEST,
+        ResultCompat.asCompatCallback(
+            result -> {
+              callbackCalled[0] = true;
+              PlatformRendererType type = result.getOrNull();
+              assertEquals(PlatformRendererType.LATEST, type);
+              return Unit.INSTANCE;
+            }));
     googleMapInitializer.onMapsSdkInitialized(Renderer.LATEST);
-    verify(result, times(1)).success(Messages.PlatformRendererType.LATEST);
-    verify(result, never()).error(any());
+
+    assertTrue(callbackCalled[0]);
   }
 
   @SuppressWarnings("deprecation")
   @Test
   public void initializer_OnMapsSdkInitializedWithLegacyRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);
-    @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    final Boolean[] callbackCalled = new Boolean[1];
     googleMapInitializer.initializeWithPreferredRenderer(
-        Messages.PlatformRendererType.LEGACY, result);
+        PlatformRendererType.LEGACY,
+        ResultCompat.asCompatCallback(
+            result -> {
+              callbackCalled[0] = true;
+              PlatformRendererType type = result.getOrNull();
+              assertEquals(PlatformRendererType.LEGACY, type);
+              return Unit.INSTANCE;
+            }));
     googleMapInitializer.onMapsSdkInitialized(Renderer.LEGACY);
-    verify(result, times(1)).success(Messages.PlatformRendererType.LEGACY);
-    verify(result, never()).error(any());
+
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
   public void initializer_onMethodCallWithNoRendererPreference() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(null);
-    @SuppressWarnings("unchecked")
-    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
-    googleMapInitializer.initializeWithPreferredRenderer(null, result);
-    verify(result, never()).error(any());
+    final Boolean[] callbackCalled = new Boolean[1];
+    googleMapInitializer.initializeWithPreferredRenderer(
+        null,
+        ResultCompat.asCompatCallback(
+            result -> {
+              callbackCalled[0] = true;
+              Throwable error = result.exceptionOrNull();
+              assertNull(error);
+              return Unit.INSTANCE;
+            }));
+    googleMapInitializer.onMapsSdkInitialized(Renderer.LATEST);
+
+    assertTrue(callbackCalled[0]);
   }
 }

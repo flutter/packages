@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.
+version: patch

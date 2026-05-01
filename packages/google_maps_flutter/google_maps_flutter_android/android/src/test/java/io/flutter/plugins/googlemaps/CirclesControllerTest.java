@@ -48,26 +48,27 @@ public class CirclesControllerTest {
 
     final String id = "a_circle";
 
-    final Messages.PlatformCircle.Builder builder = new Messages.PlatformCircle.Builder();
-    builder
-        .setCircleId(id)
-        .setConsumeTapEvents(false)
-        .setFillColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
-        .setCenter(new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build())
-        .setRadius(1.0)
-        .setStrokeColor(new Messages.PlatformColor.Builder().setArgbValue(0L).build())
-        .setStrokeWidth(1L)
-        .setVisible(true)
-        .setZIndex(0.0);
-
-    controller.addCircles(Collections.singletonList(builder.build()));
+    controller.addCircles(Collections.singletonList(createCircle(id, /* consumesEvents */ false)));
     // There should be exactly one circle.
     Assert.assertEquals(1, controller.circleIdToController.size());
 
-    builder.setConsumeTapEvents(true);
-    controller.changeCircles(Collections.singletonList(builder.build()));
+    controller.changeCircles(
+        Collections.singletonList(createCircle(id, /* consumesEvents */ true)));
     // There should still only be one circle, and it should be updated.
     Assert.assertEquals(1, controller.circleIdToController.size());
     verify(circle, times(1)).setClickable(true);
+  }
+
+  private PlatformCircle createCircle(String circleId, boolean consumesEvents) {
+    return new PlatformCircle(
+        consumesEvents,
+        /* fillColor */ new PlatformColor(0L),
+        /* strokeColor */ new PlatformColor(0L),
+        /* visible */ true,
+        /* strokeWidth */ 1L,
+        /* zIndex */ 0.0,
+        /* center */ (new PlatformLatLng(0.0, 0.0)),
+        /* radius */ 1.0,
+        circleId);
   }
 }
