@@ -37,7 +37,7 @@ ImageFormatGroup _imageFormatGroupFromPlatformData(dynamic data) {
         return ImageFormatGroup.yuv420;
       case 256: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
-      case 42: // android.graphics.PixelFormat.RGBA_8888
+      case 1: // android.graphics.PixelFormat.RGBA_8888
         return ImageFormatGroup.rgba8888;
     }
   }
