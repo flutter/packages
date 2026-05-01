@@ -2099,6 +2099,8 @@ void main() {
             AndroidCameraCameraX.imageAnalysisOutputImageFormatYuv420_888,
           ImageFormatGroup.nv21 =>
             AndroidCameraCameraX.imageAnalysisOutputImageFormatNv21,
+          ImageFormatGroup.rgba8888 =>
+            AndroidCameraCameraX.imageAnalysisOutputImageFormatRgba8888,
           _ => null,
         };
         // Tell plugin to create mock/detached objects for testing createCamera

@@ -32,6 +32,9 @@ final class CameraPropertiesTests: XCTestCase {
     XCTAssertEqual(
       kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
       getPixelFormat(for: .yuv420))
+    XCTAssertEqual(
+      kCVPixelFormatType_32RGBA,
+      getPixelFormat(for: .rgba8888))
   }
 
   // MARK: - Device Orientation Tests

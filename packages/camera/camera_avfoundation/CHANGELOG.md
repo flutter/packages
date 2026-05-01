@@ -1,3 +1,7 @@
+## 0.10.2
+
+* Adds support for `ImageFormatGroup.rgba8888` image format.
+
 ## 0.10.1
 
 * Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.

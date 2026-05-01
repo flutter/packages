@@ -71,6 +71,8 @@ func getPixelFormat(for imageFormat: PlatformImageFormatGroup) -> OSType {
     return kCVPixelFormatType_32BGRA
   case .yuv420:
     return kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+  case .rgba8888:
+    return kCVPixelFormatType_32RGBA
   @unknown default:
     assertionFailure("Unknown image format")
     return kCVPixelFormatType_32BGRA
