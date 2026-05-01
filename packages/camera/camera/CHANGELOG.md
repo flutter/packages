@@ -1,3 +1,7 @@
+## 0.12.1
+
+* Adds support for `ImageFormatGroup.rgba8888` image format.
+
 ## 0.12.0+1
 
 * Makes `Optional.of` constructor `const`.

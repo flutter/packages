@@ -56,4 +56,26 @@ void main() {
     );
     expect(cameraImage.format.group, ImageFormatGroup.yuv420);
   });
+
+  test('CameraImageData has ImageFormatGroup.rgba8888', () {
+    final CameraImageData cameraImage = cameraImageFromPlatformData(
+      PlatformCameraImageData(
+        formatCode: 1380401729,
+        width: 1,
+        height: 1,
+        lensAperture: 1.8,
+        sensorExposureTimeNanoseconds: 9991324,
+        sensorSensitivity: 92.0,
+        planes: <PlatformCameraImagePlane>[
+          PlatformCameraImagePlane(
+            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+            bytesPerRow: 4,
+            width: 1,
+            height: 1,
+          ),
+        ],
+      ),
+    );
+    expect(cameraImage.format.group, ImageFormatGroup.rgba8888);
+  });
 }

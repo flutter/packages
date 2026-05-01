@@ -40,8 +40,8 @@ enum ImageFormatGroup {
 
   /// 32-bit RGBA.
   ///
-  /// On Android, this is `android.graphics.ImageFormat.FLEX_RGBA_8888`. See
-  /// https://developer.android.com/reference/android/graphics/ImageFormat#FLEX_RGBA_8888
+  /// On Android, this is `android.graphics.PixelFormat.RGBA_8888`. See
+  /// https://developer.android.com/reference/android/graphics/PixelFormat#RGBA_8888
   ///
   /// On iOS, this is `kCVPixelFormatType_32RGBA`. See
   /// https://developer.apple.com/documentation/corevideo/kcvpixelformattype_32rgba

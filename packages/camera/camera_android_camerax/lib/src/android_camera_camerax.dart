@@ -12,6 +12,7 @@ import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
 
@@ -184,10 +185,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/android/graphics/ImageFormat#JPEG.
   static const int imageProxyFormatJpeg = 256;
 
-  /// Constant representing the FLEX_RGBA_8888 image format used by ImageProxy.
+  /// Constant representing the RGBA_8888 image format used by ImageProxy.
   ///
-  /// See https://developer.android.com/reference/android/graphics/ImageFormat#FLEX_RGBA_8888.
-  static const int imageProxyFormatRgba8888 = 42;
+  /// See https://developer.android.com/reference/android/graphics/PixelFormat#RGBA_8888.
+  static const int imageProxyFormatRgba8888 = 1;
 
   /// Constant representing the YUV 420 image format used for configuring ImageAnalysis.
   ///
@@ -467,8 +468,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///  * Retrieves information about the camera and sends a [CameraInitializedEvent].
   ///
   /// [imageFormatGroup] is used to specify the image format used for image
-  /// streaming, but CameraX currently only supports YUV_420_888 (the CameraX default),
-  /// NV21, and RGBA (not supported by Flutter).
+  /// streaming. CameraX currently supports YUV_420_888 (the CameraX default),
+  /// NV21, and RGBA8888.
   @override
   Future<void> initializeCamera(
     int cameraId, {
@@ -1475,7 +1476,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         return ImageFormatGroup.nv21;
       case imageProxyFormatJpeg: // android.graphics.ImageFormat.JPEG
         return ImageFormatGroup.jpeg;
-      case imageProxyFormatRgba8888: // android.graphics.ImageFormat.FLEX_RGBA_8888
+      case imageProxyFormatRgba8888: // android.graphics.PixelFormat.RGBA_8888
         return ImageFormatGroup.rgba8888;
     }
 
