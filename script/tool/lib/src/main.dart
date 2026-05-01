@@ -34,7 +34,6 @@ import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
 import 'update_release_info_command.dart';
 import 'validate_command.dart';
-import 'version_check_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
@@ -83,8 +82,7 @@ void main(List<String> args) {
         ..addCommand(UpdateExcerptsCommand(packagesDir))
         ..addCommand(UpdateMinSdkCommand(packagesDir))
         ..addCommand(UpdateReleaseInfoCommand(packagesDir))
-        ..addCommand(ValidateCommand(packagesDir))
-        ..addCommand(VersionCheckCommand(packagesDir));
+        ..addCommand(ValidateCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
     final toolExit = e as ToolExit;

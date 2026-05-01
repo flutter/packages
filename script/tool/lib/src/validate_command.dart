@@ -9,6 +9,7 @@ import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_utils.dart';
+import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
@@ -17,6 +18,7 @@ import 'validators/gradle_validator.dart';
 import 'validators/pubspec_validator.dart';
 import 'validators/readme_validator.dart';
 import 'validators/repo_info_validator.dart';
+import 'validators/version_and_changelog_validator.dart';
 
 /// The set of possible validators.
 ///
@@ -28,7 +30,7 @@ import 'validators/repo_info_validator.dart';
 /// includes things like command line parsing and run initialization.
 @visibleForTesting
 // ignore: public_member_api_docs
-enum Validator { dependabot, gradle, pubspec, readme, repoInfo }
+enum Validator { dependabot, gradle, pubspec, readme, repoInfo, version }
 
 // Config file names.
 const String _versionConfigFileName = 'min_version.yaml';
@@ -56,7 +58,41 @@ class ValidateCommand extends PackageLoopingCommand {
     super.processRunner,
     super.platform,
     super.gitDir,
-  });
+  }) {
+    argParser.addOption(
+      _prLabelsArg,
+      help:
+          'A comma-separated list of labels associated with this PR, '
+          'if applicable.\n\n'
+          'If supplied, labels may override or disable some checks.',
+      hide: true,
+    );
+    argParser.addFlag(
+      _checkForMissingChanges,
+      help:
+          'Validates that changes to packages include CHANGELOG and '
+          'version changes unless they meet an established exemption.\n\n'
+          'If used with --$_prLabelsArg, this should only be used in '
+          'pre-submit CI checks, to prevent post-submit breakage '
+          'when labels are no longer applicable.',
+    );
+    argParser.addFlag(
+      _ignorePlatformInterfaceBreaks,
+      help:
+          'Bypasses the check that platform interfaces do not contain '
+          'breaking changes.\n\n'
+          'This is only intended for use in post-submit CI checks, to '
+          'prevent post-submit breakage when overriding the check with '
+          'labels. Pre-submit checks should always use '
+          '--$_prLabelsArg instead.',
+      hide: true,
+    );
+  }
+
+  static const String _prLabelsArg = 'pr-labels';
+  static const String _checkForMissingChanges = 'check-for-missing-changes';
+  static const String _ignorePlatformInterfaceBreaks =
+      'ignore-platform-interface-breaks';
 
   /// The validators to run.
   ///
@@ -64,6 +100,10 @@ class ValidateCommand extends PackageLoopingCommand {
   final Set<Validator>? targetedValidators;
 
   late Directory _repoRoot;
+
+  late final GitVersionFinder _gitVersionFinder;
+
+  late final Set<String> _prLabels = _getPRLabels();
 
   /// Data from the root README.md table of packages.
   final Map<String, List<String>> _readmeTableEntries =
@@ -100,6 +140,7 @@ class ValidateCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
+    _gitVersionFinder = await retrieveVersionFinder();
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
     if (_shouldRun(Validator.repoInfo)) {
@@ -134,6 +175,8 @@ class ValidateCommand extends PackageLoopingCommand {
       if (_shouldRun(Validator.dependabot))
         ...await _validateDependabot(package),
       if (_shouldRun(Validator.gradle)) ...await _validateGradle(package),
+      if (_shouldRun(Validator.version))
+        ...await _validateVersionAndChangelog(package),
     ];
 
     return errors.isEmpty
@@ -237,6 +280,34 @@ class ValidateCommand extends PackageLoopingCommand {
     return errors;
   }
 
+  Future<List<String>> _validateVersionAndChangelog(
+    RepositoryPackage package,
+  ) async {
+    if (!package.isTopLevel) {
+      return [];
+    }
+
+    final Directory repoRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
+
+    final validator = VersionAndChangelogValidator(
+      path: path,
+      indentation: indentation,
+      warningLogger: logWarning,
+      gitVersionFinder: _gitVersionFinder,
+      repoRoot: repoRoot,
+      changedFiles: changedFiles,
+      prLabels: _prLabels,
+    );
+
+    return validator.validateChangelogAndVersion(
+      package,
+      checkForMissingChanges: getBoolArg(_checkForMissingChanges),
+      ignorePlatformInterfaceBreaks: getBoolArg(_ignorePlatformInterfaceBreaks),
+    );
+  }
+
   Stream<String> _findAllPublishedPackages() async* {
     for (final File pubspecFile
         in (await _repoRoot.list(recursive: true, followLinks: false).toList())
@@ -299,5 +370,15 @@ class ValidateCommand extends PackageLoopingCommand {
       print('  Cannot parse pubspec.yaml: $exception');
     }
     return null;
+  }
+
+  /// Returns the labels associated with this PR, if any, or an empty set
+  /// if that flag is not provided.
+  Set<String> _getPRLabels() {
+    final String labels = getStringArg(_prLabelsArg);
+    if (labels.isEmpty) {
+      return <String>{};
+    }
+    return labels.split(',').map((String label) => label.trim()).toSet();
   }
 }

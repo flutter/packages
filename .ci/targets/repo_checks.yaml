@@ -27,11 +27,7 @@ tasks:
     args: ["update-excerpts", "--fail-on-change"]
     always: true
   - name: Repository standards validation
-    script: .ci/scripts/tool_runner.sh
-    args: ["validate"]
-    always: true
-  - name: CHANGELOG and version validation
-    script: .ci/scripts/check_version.sh
+    script: .ci/scripts/validate.sh
     always: true
   - name: federated safety check
     script: .ci/scripts/check_federated_safety.sh
