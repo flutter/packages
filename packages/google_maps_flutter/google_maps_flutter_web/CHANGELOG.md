@@ -1,3 +1,7 @@
+## 0.6.2+1
+
+* Removes a LICENSE entry for code that no longer exists in the package.
+
 ## 0.6.2
 
 * Adds `colorScheme` support for controlling cloud-based map brightness.

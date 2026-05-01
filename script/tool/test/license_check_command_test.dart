@@ -472,10 +472,10 @@ void main() {
       thirdPartyFile.createSync(recursive: true);
       writeLicense(
         thirdPartyFile,
-        copyright: 'Copyright 2017 Workiva Inc.',
+        copyright: 'Copyright 2003-2005 Colin Percival. All rights reserved.',
         license: <String>[
-          'Licensed under the Apache License, Version 2.0 (the "License");',
-          'you may not use this file except in compliance with the License.',
+          'Use of this source code is governed by a BSD-style license that can be',
+          'found in the LICENSE file.',
         ],
       );
       mockGitFilesListWithAllFiles(root);

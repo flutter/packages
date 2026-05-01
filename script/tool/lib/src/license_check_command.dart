@@ -68,13 +68,6 @@ const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
 // When adding license regexes here, include the copyright info to ensure that
 // any new additions are flagged for added scrutiny in review.
 final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
-  // Third-party code used in url_launcher_web.
-  RegExp(
-    r'^// Copyright 2017 Workiva Inc\..*'
-    r'^// Licensed under the Apache License, Version 2\.0',
-    multiLine: true,
-    dotAll: true,
-  ),
   // Third-party code used in google_maps_flutter_web.
   RegExp(
     r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev',
