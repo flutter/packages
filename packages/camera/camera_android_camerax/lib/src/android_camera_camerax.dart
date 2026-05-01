@@ -200,7 +200,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
   static const int imageAnalysisOutputImageFormatNv21 = 3;
 
-  /// Constant representing the RGBA 8888 image format used for configuring ImageAnalysis.
+  /// Constant representing the RGBA_8888 image format used for configuring ImageAnalysis.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_RGBA_8888()
   static const int imageAnalysisOutputImageFormatRgba8888 = 2;

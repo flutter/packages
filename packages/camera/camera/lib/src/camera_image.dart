@@ -89,8 +89,8 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
       // android.graphics.ImageFormat.NV21
       case 17:
         return ImageFormatGroup.nv21;
-      // android.graphics.ImageFormat.FLEX_RGBA_8888
-      case 42:
+      // android.graphics.PixelFormat.RGBA_8888
+      case 1:
         return ImageFormatGroup.rgba8888;
     }
   }
