@@ -667,9 +667,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onUpdateTextPosition(int textPositionId) {
     final _TextPosition position = _textPositions[textPositionId];
-    // Any explicit absolute position (or reset) starts a new SVG anchored
-    // chunk, so flush whatever we've queued for the previous one.
-    _flushPendingTextChunk();
+    // Per the SVG spec, a new anchored chunk begins only when the element
+    // establishes an explicit absolute position (i.e. `x`/`y` on a <text>
+    // or <tspan>). The parser also emits a TextPosition for every <tspan>
+    // even when it has no x/y of its own; those should NOT break the
+    // current chunk. `reset` (set on <text> elements) likewise starts a
+    // fresh chunk.
+    if (position.reset || position.x != null) {
+      _flushPendingTextChunk();
+    }
     if (position.reset) {
       _accumulatedTextPositionX = 0;
       _textPositionY = 0;

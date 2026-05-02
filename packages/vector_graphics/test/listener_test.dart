@@ -160,11 +160,15 @@ void main() {
     // xAnchorMultiplier = 0.5 corresponds to text-anchor="middle".
     listener.onTextConfig('ABCDEFG', null, 0.5, 0, 16, 0, 0, 0, 0);
     await listener.onDrawText(0, 0, null, null);
+    // The parser emits a TextPosition for every <tspan>, including those
+    // with no x/y. That must NOT break the current anchored chunk.
+    listener.onTextPosition(1, null, null, null, null, false, null);
+    listener.onUpdateTextPosition(1);
     listener.onTextConfig('ABCDEFG', null, 0.5, 0, 16, 0, 0, 0, 1);
     await listener.onDrawText(1, 0, null, null);
     // Force flush of the pending anchored chunk by starting a new one.
-    listener.onTextPosition(1, 0, 0, null, null, true, null);
-    listener.onUpdateTextPosition(1);
+    listener.onTextPosition(2, 0, 0, null, null, true, null);
+    listener.onUpdateTextPosition(2);
 
     final Invocation drawParagraph0 = factory.fakeCanvases.last.invocations[0];
     final Invocation drawParagraph1 = factory.fakeCanvases.last.invocations[1];
