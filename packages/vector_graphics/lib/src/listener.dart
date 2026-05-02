@@ -668,12 +668,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   void onUpdateTextPosition(int textPositionId) {
     final _TextPosition position = _textPositions[textPositionId];
     // Per the SVG spec, a new anchored chunk begins only when the element
-    // establishes an explicit absolute position (i.e. `x`/`y` on a <text>
-    // or <tspan>). The parser also emits a TextPosition for every <tspan>
-    // even when it has no x/y of its own; those should NOT break the
-    // current chunk. `reset` (set on <text> elements) likewise starts a
-    // fresh chunk.
-    if (position.reset || position.x != null) {
+    // establishes an explicit absolute position (i.e. an `x` or `y` on a
+    // <text> or <tspan>). Relative `dx`/`dy` move the pen but do NOT
+    // start a new chunk; neither does the bare per-tspan TextPosition the
+    // parser emits when the tspan has no x/y of its own. `reset` (set on
+    // <text> elements) likewise starts a fresh chunk.
+    if (position.reset || position.x != null || position.y != null) {
       _flushPendingTextChunk();
     }
     if (position.reset) {
@@ -710,10 +710,23 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final double dx = _accumulatedTextPositionX ?? 0;
     final double dy = _textPositionY;
 
+    // A change in text-anchor on a continuing chunk also starts a new
+    // anchored chunk per the SVG spec.
+    if (_pendingChunk.isNotEmpty &&
+        textConfig.xAnchorMultiplier != _chunkAnchorMultiplier) {
+      _flushPendingTextChunk();
+    }
+
     if (_pendingChunk.isEmpty) {
       _chunkOriginX = dx;
       _chunkAnchorMultiplier = textConfig.xAnchorMultiplier;
       _chunkAdvance = 0;
+    } else {
+      // Continuing the chunk: take the live pen position so any in-chunk
+      // relative `dx="..."` movements applied via onUpdateTextPosition
+      // since the last segment are accounted for in the segment's offset
+      // within the chunk.
+      _chunkAdvance = dx - _chunkOriginX!;
     }
     final double offsetWithinChunk = _chunkAdvance;
 
