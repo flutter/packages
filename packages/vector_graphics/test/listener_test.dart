@@ -124,16 +124,16 @@ void main() {
     listener.onTextPosition(1, 0, 0, null, null, true, null);
     listener.onUpdateTextPosition(1);
 
-    // The chunk's two segments are now rendered as a single ui.Paragraph
-    // (so cross-tspan layout is preserved). The combined paragraph is
-    // drawn once at the chunk's origin x.
-    final List<Invocation> draws = factory.fakeCanvases.last.invocations
-        .where((i) => i.memberName == #drawParagraph)
-        .toList();
-    expect(draws, hasLength(1));
+    final Invocation drawParagraph0 = factory.fakeCanvases.last.invocations[0];
+    final Invocation drawParagraph1 = factory.fakeCanvases.last.invocations[1];
+
+    expect(drawParagraph0.memberName, #drawParagraph);
     // Only checking the X because Y seems to vary a bit by platform within
     // acceptable range. X is what gets managed by the listener anyway.
-    expect((draws[0].positionalArguments[1] as Offset).dx, 10);
+    expect((drawParagraph0.positionalArguments[1] as Offset).dx, 10);
+
+    expect(drawParagraph1.memberName, #drawParagraph);
+    expect((drawParagraph1.positionalArguments[1] as Offset).dx, 58);
   });
 
   test('Text anchor middle centers the entire chunk across tspans', () async {
@@ -170,23 +170,25 @@ void main() {
     listener.onTextPosition(2, 0, 0, null, null, true, null);
     listener.onUpdateTextPosition(2);
 
-    // Both tspans are rendered as a single combined ui.Paragraph centered
-    // around x=100. Total chunk width = 2w, anchor offset = w, so the
-    // combined paragraph is drawn at dx = 100 - w (i.e. dx < 100).
-    final List<Invocation> draws = factory.fakeCanvases.last.invocations
-        .where((i) => i.memberName == #drawParagraph)
-        .toList();
-    expect(draws, hasLength(1));
-    final double dx = (draws[0].positionalArguments[1] as Offset).dx;
+    final Invocation drawParagraph0 = factory.fakeCanvases.last.invocations[0];
+    final Invocation drawParagraph1 = factory.fakeCanvases.last.invocations[1];
+    expect(drawParagraph0.memberName, #drawParagraph);
+    expect(drawParagraph1.memberName, #drawParagraph);
+
+    final double dx0 = (drawParagraph0.positionalArguments[1] as Offset).dx;
+    final double dx1 = (drawParagraph1.positionalArguments[1] as Offset).dx;
+
+    // The chunk is two equal tspans of width w. text-anchor="middle" centers
+    // the whole chunk (total width 2w) around x=100, so:
+    //   dx0 = 100 - w   (left tspan)
+    //   dx1 = 100       (right tspan)
+    // Therefore the second tspan should start exactly at the original x=100.
+    expect(dx1, 100, reason: 'second tspan should start at the original x');
+    final double w = 100 - dx0;
     expect(
-      dx,
-      lessThan(100),
-      reason: 'middle-anchored chunk should start to the left of the anchor x',
-    );
-    expect(
-      100 - dx,
-      greaterThan(0),
-      reason: 'distance from x to chunk start equals half the chunk width',
+      dx1 - dx0,
+      w,
+      reason: 'tspans should be contiguous within the chunk',
     );
   });
 

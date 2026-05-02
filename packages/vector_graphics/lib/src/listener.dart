@@ -276,10 +276,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   // Pending text draws within the current SVG anchored chunk. Per the SVG
   // spec, `text-anchor` applies to the chunk as a whole, so we cannot
-  // commit any glyphs to the canvas until we know the full chunk width.
-  // We also build a single ui.Paragraph per chunk so that cross-tspan
-  // shaping and pixel alignment are preserved (otherwise consecutive
-  // tspans would render with a small visible gap between them).
+  // commit a paragraph to the canvas until we know the full chunk width.
   final List<_PendingTextDraw> _pendingChunk = <_PendingTextDraw>[];
   // The user-space x at which the current chunk begins (i.e. the value of
   // `_accumulatedTextPositionX` at the time the first paragraph in the
@@ -288,16 +285,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   // The text-anchor multiplier of the first paragraph in the chunk; used
   // to position the chunk as a whole.
   double _chunkAnchorMultiplier = 0;
-  // Vertical baseline and transform of the chunk (taken from the first
-  // segment).
-  double _chunkDy = 0;
-  Float64List? _chunkTransform;
+  // Cumulative pen-advance within the current chunk so far.
+  double _chunkAdvance = 0;
 
   _PatternConfig? _currentPattern;
 
   static final Paint _emptyPaint = Paint();
-  static final Paint _transparentPaint = Paint()
-    ..color = const Color(0x00000000);
   static final Paint _grayscaleDstInPaint = Paint()
     ..blendMode = BlendMode.dstIn
     ..colorFilter = const ColorFilter.matrix(
@@ -720,46 +713,54 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     if (_pendingChunk.isEmpty) {
       _chunkOriginX = dx;
       _chunkAnchorMultiplier = textConfig.xAnchorMultiplier;
-      _chunkDy = dy;
-      _chunkTransform = _textTransform;
+      _chunkAdvance = 0;
+    }
+    final double offsetWithinChunk = _chunkAdvance;
+
+    Paragraph buildParagraph(int paintId) {
+      final Paint paint = _paints[paintId];
+      if (patternId != null) {
+        paint.shader = _patterns[patternId]!.shader;
+      }
+      final builder = ParagraphBuilder(
+        ParagraphStyle(textDirection: _textDirection),
+      );
+      builder.pushStyle(
+        TextStyle(
+          locale: _locale,
+          foreground: paint,
+          fontWeight: textConfig.fontWeight,
+          fontSize: textConfig.fontSize,
+          fontFamily: textConfig.fontFamily,
+          decoration: textConfig.decoration,
+          decorationStyle: textConfig.decorationStyle,
+          decorationColor: textConfig.decorationColor,
+        ),
+      );
+      builder.addText(textConfig.text);
+      final Paragraph paragraph = builder.build();
+      paragraph.layout(const ParagraphConstraints(width: double.infinity));
+      return paragraph;
     }
 
-    _pendingChunk.add(
-      _PendingTextDraw(
-        textConfig: textConfig,
-        fillPaintId: fillId,
-        strokePaintId: strokeId,
-        patternId: patternId,
-      ),
-    );
+    double paragraphWidth = 0;
+    if (fillId != null) {
+      final Paragraph p = buildParagraph(fillId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(
+        _PendingTextDraw(p, offsetWithinChunk, dy, _textTransform),
+      );
+    }
+    if (strokeId != null) {
+      final Paragraph p = buildParagraph(strokeId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(
+        _PendingTextDraw(p, offsetWithinChunk, dy, _textTransform),
+      );
+    }
 
-    // Update _accumulatedTextPositionX so that any subsequent in-flow
-    // positioning (e.g. <tspan dx="..."> within the same chunk) starts
-    // from the end of this segment. We measure each segment in isolation
-    // here — the actual rendering paragraph will be built once per chunk
-    // at flush time so cross-tspan layout is preserved.
-    final double segmentWidth = _measureSegmentWidth(textConfig);
-    _accumulatedTextPositionX = dx + segmentWidth;
-  }
-
-  double _measureSegmentWidth(_TextConfig textConfig) {
-    final builder = ParagraphBuilder(
-      ParagraphStyle(textDirection: _textDirection),
-    );
-    builder.pushStyle(
-      TextStyle(
-        locale: _locale,
-        fontWeight: textConfig.fontWeight,
-        fontSize: textConfig.fontSize,
-        fontFamily: textConfig.fontFamily,
-      ),
-    );
-    builder.addText(textConfig.text);
-    final Paragraph p = builder.build();
-    p.layout(const ParagraphConstraints(width: double.infinity));
-    final double width = p.maxIntrinsicWidth;
-    p.dispose();
-    return width;
+    _chunkAdvance += paragraphWidth;
+    _accumulatedTextPositionX = dx + paragraphWidth;
   }
 
   void _flushPendingTextChunk() {
@@ -767,70 +768,29 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       return;
     }
     final double originX = _chunkOriginX ?? 0;
-    final double dy = _chunkDy;
-    final Float64List? transform = _chunkTransform;
-    final bool hasFill = _pendingChunk.any((d) => d.fillPaintId != null);
-    final bool hasStroke = _pendingChunk.any((d) => d.strokePaintId != null);
-
-    void paint(int? Function(_PendingTextDraw) paintIdSelector) {
-      final builder = ParagraphBuilder(
-        ParagraphStyle(textDirection: _textDirection),
-      );
-      for (final _PendingTextDraw draw in _pendingChunk) {
-        final int? paintId = paintIdSelector(draw);
-        // If this segment doesn't participate in this paint role (e.g.
-        // no stroke), still include its text so glyph positions in the
-        // combined paragraph match the fill paragraph. Render it
-        // transparent by skipping pushStyle's foreground.
-        final Paint? p = paintId == null ? null : _paints[paintId];
-        if (p != null && draw.patternId != null) {
-          p.shader = _patterns[draw.patternId!]!.shader;
-        }
-        builder.pushStyle(
-          TextStyle(
-            locale: _locale,
-            foreground: p ?? _transparentPaint,
-            fontWeight: draw.textConfig.fontWeight,
-            fontSize: draw.textConfig.fontSize,
-            fontFamily: draw.textConfig.fontFamily,
-            decoration: draw.textConfig.decoration,
-            decorationStyle: draw.textConfig.decorationStyle,
-            decorationColor: draw.textConfig.decorationColor,
-          ),
-        );
-        builder.addText(draw.textConfig.text);
-        builder.pop();
+    final double anchorOffset = _chunkAdvance * _chunkAnchorMultiplier;
+    for (final _PendingTextDraw draw in _pendingChunk) {
+      final Paragraph paragraph = draw.paragraph;
+      if (draw.transform != null) {
+        _canvas.save();
+        _canvas.transform(draw.transform!);
       }
-      final Paragraph paragraph = builder.build();
-      paragraph.layout(const ParagraphConstraints(width: double.infinity));
-      final double width = paragraph.maxIntrinsicWidth;
-      final double anchorOffset = width * _chunkAnchorMultiplier;
       _canvas.drawParagraph(
         paragraph,
-        Offset(originX - anchorOffset, dy - paragraph.alphabeticBaseline),
+        Offset(
+          originX + draw.offsetWithinChunk - anchorOffset,
+          draw.dy - paragraph.alphabeticBaseline,
+        ),
       );
       paragraph.dispose();
+      if (draw.transform != null) {
+        _canvas.restore();
+      }
     }
-
-    if (transform != null) {
-      _canvas.save();
-      _canvas.transform(transform);
-    }
-    if (hasFill) {
-      paint((d) => d.fillPaintId);
-    }
-    if (hasStroke) {
-      paint((d) => d.strokePaintId);
-    }
-    if (transform != null) {
-      _canvas.restore();
-    }
-
     _pendingChunk.clear();
     _chunkOriginX = null;
     _chunkAnchorMultiplier = 0;
-    _chunkDy = 0;
-    _chunkTransform = null;
+    _chunkAdvance = 0;
   }
 
   int _createImageKey(int imageId, int format) {
@@ -979,17 +939,17 @@ class _TextConfig {
 }
 
 class _PendingTextDraw {
-  _PendingTextDraw({
-    required this.textConfig,
-    required this.fillPaintId,
-    required this.strokePaintId,
-    required this.patternId,
-  });
+  _PendingTextDraw(
+    this.paragraph,
+    this.offsetWithinChunk,
+    this.dy,
+    this.transform,
+  );
 
-  final _TextConfig textConfig;
-  final int? fillPaintId;
-  final int? strokePaintId;
-  final int? patternId;
+  final Paragraph paragraph;
+  final double offsetWithinChunk;
+  final double dy;
+  final Float64List? transform;
 }
 
 /// An exception thrown if decoding fails.
