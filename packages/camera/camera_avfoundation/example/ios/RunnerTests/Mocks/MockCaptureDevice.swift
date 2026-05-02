@@ -18,7 +18,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
   var setFocusPointOfInterestStub: ((CGPoint) -> Void)?
   var setExposureModeStub: ((AVCaptureDevice.ExposureMode) -> Void)?
   var setExposurePointOfInterestStub: ((CGPoint) -> Void)?
-  var setExposureTargetBiasStub: ((Float, ((CMTime) -> Void)?) -> Void)?
+  var setExposureTargetBiasStub: ((Float, (@Sendable (CMTime) -> Void)?) -> Void)?
   var isExposureModeSupportedStub: ((AVCaptureDevice.ExposureMode) -> Bool)?
   var setVideoZoomFactorStub: ((CGFloat) -> Void)?
   var lockForConfigurationStub: (() throws -> Void)?
@@ -99,7 +99,7 @@ class MockCaptureDevice: NSObject, CaptureDevice {
     set { setExposurePointOfInterestStub?(newValue) }
   }
 
-  func setExposureTargetBias(_ bias: Float, completionHandler handler: ((CMTime) -> Void)? = nil) {
+  func setExposureTargetBias(_ bias: Float, completionHandler handler: (@Sendable (CMTime) -> Void)? = nil) {
     setExposureTargetBiasStub?(bias, handler)
   }
 
