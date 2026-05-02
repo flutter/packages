@@ -1,3 +1,8 @@
+## 0.10.1+1
+
+* Fixes Swift 6 Sendability warning in `CaptureDevice` protocol by annotating
+  the `setExposureTargetBias` completion handler as `@Sendable`.
+
 ## 0.10.1
 
 * Fixes fatal crash on iPhone 17 when using `ResolutionPreset.max`.

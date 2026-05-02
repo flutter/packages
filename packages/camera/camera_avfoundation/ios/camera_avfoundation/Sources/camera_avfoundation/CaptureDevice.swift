@@ -45,7 +45,7 @@ protocol CaptureDevice: NSObjectProtocol {
   var minExposureTargetBias: Float { get }
   var maxExposureTargetBias: Float { get }
   func setExposureTargetBias(
-    _ bias: Float, completionHandler handler: ((CMTime) -> Void)?)
+    _ bias: Float, completionHandler handler: (@Sendable (CMTime) -> Void)?)
   func isExposureModeSupported(_ mode: AVCaptureDevice.ExposureMode) -> Bool
 
   // Zoom
