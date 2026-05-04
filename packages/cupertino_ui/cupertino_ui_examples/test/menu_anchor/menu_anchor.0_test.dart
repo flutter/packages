@@ -4,7 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 // Import the sample app.
-import 'package:flutter_api_samples/cupertino/menu_anchor/menu_anchor.0.dart'
+import 'package:cupertino_ui_examples/menu_anchor/menu_anchor.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';
 
