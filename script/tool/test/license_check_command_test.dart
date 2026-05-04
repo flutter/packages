@@ -472,10 +472,11 @@ void main() {
       thirdPartyFile.createSync(recursive: true);
       writeLicense(
         thirdPartyFile,
-        copyright: 'Copyright 2003-2005 Colin Percival. All rights reserved.',
+        copyright: 'Copyright (c) 2013, Greg Lowe',
         license: <String>[
-          'Use of this source code is governed by a BSD-style license that can be',
-          'found in the LICENSE file.',
+          'Redistribution and use in source and binary forms, with or without '
+              'modification, are permitted provided that the following '
+              'conditions are met:',
         ],
       );
       mockGitFilesListWithAllFiles(root);

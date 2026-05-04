@@ -73,12 +73,6 @@ final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
     r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev',
     multiLine: true,
   ),
-  // bsdiff in flutter/packages.
-  RegExp(
-    r'// Copyright 2003-2005 Colin Percival\. All rights reserved\.\n'
-    r'// Use of this source code is governed by a BSD-style license that can be\n'
-    r'// found in the LICENSE file\.\n',
-  ),
   // packages/third_party/mustache_template.
   RegExp(
     r'Copyright \(c\) 2013, Greg Lowe\n'
