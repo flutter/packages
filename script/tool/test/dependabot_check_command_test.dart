@@ -76,12 +76,7 @@ $gradleEntries
       'dependabot-check',
     ]);
 
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('No issues found!'),
-      ]),
-    );
+    expect(output, containsAllInOrder(<Matcher>[contains('No issues found!')]));
   });
 
   test('fails for app missing Gradle coverage', () async {

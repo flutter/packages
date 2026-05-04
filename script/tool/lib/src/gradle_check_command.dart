@@ -34,8 +34,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
       return PackageResult.skip('No android/ directory.');
     }
 
-    final validator = GradleValidator(path: path, indentation: indentation,
-    );
+    final validator = GradleValidator(path: path, indentation: indentation);
     final List<String> errors = validator.validateGradle(package);
 
     // TODO(stuartmorgan): When combining this with other commands, use the
