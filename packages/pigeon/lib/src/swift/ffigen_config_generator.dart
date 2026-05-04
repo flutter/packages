@@ -70,7 +70,7 @@ import 'package:swiftgen/swiftgen.dart';
       path.posix.dirname(
         path.posix.dirname(generatorOptions.swiftOptions.swiftOut),
       ),
-      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc',
+      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc_gen',
     );
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {

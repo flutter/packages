@@ -84,7 +84,7 @@ Future<void> main(List<String> args) async {
         '../../shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart',
       ),
       objectiveCFile: Uri.file(
-        '../darwin/test_plugin/Sources/test_plugin_objc/NiTests.gen.m',
+        '../darwin/test_plugin/Sources/test_plugin_objc_gen/NiTests.gen.m',
       ),
       preamble: '''
   // Copyright 2013 The Flutter Authors
@@ -131,7 +131,7 @@ Future<void> main(List<String> args) async {
   ).generate(
     logger: null,
     tempDirectory: Uri.directory(
-      '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin_objc',
+      '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin_objc_gen',
     ),
   );
 }
