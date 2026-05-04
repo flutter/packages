@@ -166,7 +166,7 @@ class RepositoryPackage {
       isFederated &&
       !isPlatformInterface &&
       directory.basename != directory.parent.basename;
-  
+
   /// True if this appears to be a top-level package, according to repository
   /// conventions.
   bool get isTopLevel => getEnclosingPackage() == null;
