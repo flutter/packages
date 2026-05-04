@@ -24,6 +24,11 @@ void main() {
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
 
+    root.childFile('.ci.yaml').writeAsStringSync(r'''
+enabled_branches:
+  - main
+''');
+
     final command = RepoPackageInfoCheckCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
       'dependabot_test',
@@ -956,27 +961,6 @@ jobs:
       expect(
         output,
         containsAllInOrder(<Matcher>[contains('No issues found!')]),
-      );
-    });
-
-    test('fails if .ci.yaml file is missing for batch package', () async {
-      final RepositoryPackage package = setupReleaseStrategyTest();
-      writeBatchConfig(package, validCiYaml: false);
-      writeWorkflowFiles();
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['repo-package-info-check'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        contains(contains('Missing .ci.yaml file at the repository root.')),
       );
     });
 

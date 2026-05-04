@@ -428,17 +428,6 @@ class RepoInfoValidator {
   }) {
     final errors = <String>[];
     final File ciYamlFile = repoRoot.childFile('.ci.yaml');
-    if (!ciYamlFile.existsSync()) {
-      if (isBatchRelease) {
-        printError(
-          '${_indentation}Missing .ci.yaml file at the repository root.\n'
-          '${_indentation}See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
-        );
-        errors.add('Missing .ci.yaml');
-      }
-      return errors;
-    }
-
     final String content = ciYamlFile.readAsStringSync();
     final yaml = loadYaml(content) as YamlMap;
 
