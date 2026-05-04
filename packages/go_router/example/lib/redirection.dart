@@ -44,11 +44,11 @@ class LoginInfoProvider extends InheritedNotifier<LoginInfo> {
 
   /// Returns the [LoginInfo] from the closest [LoginInfoProvider] ancestor.
   static LoginInfo of(BuildContext context, {bool listen = true}) {
-    if (listen) {
-      return context.dependOnInheritedWidgetOfExactType<LoginInfoProvider>()!.notifier!;
-    } else {
-      return (context.getElementForInheritedWidgetOfExactType<LoginInfoProvider>()!.widget as LoginInfoProvider).notifier!;
-    }
+    final LoginInfoProvider? result = listen
+        ? context.dependOnInheritedWidgetOfExactType<LoginInfoProvider>()
+        : context.getElementForInheritedWidgetOfExactType<LoginInfoProvider>()?.widget as LoginInfoProvider?;
+    assert(result != null, 'No LoginInfoProvider found in context');
+    return result!.notifier!;
   }
 }
 
@@ -143,7 +143,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginInfo info = LoginInfoProvider.of(context, listen: false);
+    final LoginInfo info = LoginInfoProvider.of(context);
 
     return Scaffold(
       appBar: AppBar(
