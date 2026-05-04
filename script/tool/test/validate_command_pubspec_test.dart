@@ -59,8 +59,8 @@ ${publishable ? '' : "publish_to: 'none'"}
 }
 
 String _environmentSection({
-  String dartConstraint = '>=2.17.0 <4.0.0',
-  String? flutterConstraint = '>=3.0.0',
+  String dartConstraint = '^3.5.0',
+  String? flutterConstraint = '>=3.24.0',
 }) {
   return <String>[
     'environment:',
@@ -144,16 +144,17 @@ void main() {
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
-    late Directory toolConfigDir;
-
+    late Directory repoRoot;
     setUp(() {
       mockPlatform = MockPlatform();
       final RecordingProcessRunner processRunner;
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      toolConfigDir = packagesDir.parent.childDirectory('tool_config');
-      toolConfigDir.createSync(recursive: true);
+      repoRoot = packagesDir.parent;
+      // Set an basic config with just the required elements so that tests
+      // that don't need test-specific settings still pass.
+      setToolConfig(repoRoot);
 
       final command = ValidateCommand(
         packagesDir,
@@ -169,30 +170,6 @@ void main() {
       );
       runner.addCommand(command);
     });
-
-    void setVersionConfig({required String minFlutterVersion}) {
-      toolConfigDir
-          .childFile('min_version.yaml')
-          .writeAsStringSync('min_flutter: "$minFlutterVersion"');
-    }
-
-    void setAllowedDependencies({
-      Iterable<String>? pinned,
-      Iterable<String>? unpinned,
-    }) {
-      if (pinned != null) {
-        toolConfigDir
-            .childFile('allowed_pinned_dependencies.yaml')
-            .writeAsStringSync(pinned.map((String dep) => '- $dep').join('\n'));
-      }
-      if (unpinned != null) {
-        toolConfigDir
-            .childFile('allowed_unpinned_dependencies.yaml')
-            .writeAsStringSync(
-              unpinned.map((String dep) => '- $dep').join('\n'),
-            );
-      }
-    }
 
     test('passes for a plugin following conventions', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
@@ -1570,11 +1547,11 @@ ${_devDependenciesSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=2.10.0')}
+${_environmentSection(flutterConstraint: '>=3.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -1590,7 +1567,7 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-              'Minimum allowed Flutter version 2.10.0 is less than 3.0.0',
+              'Minimum allowed Flutter version 3.10.0 is less than 3.38.0',
             ),
           ]),
         );
@@ -1609,11 +1586,11 @@ ${_topicsSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.35.0', dartConstraint: '^3.9.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.35.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1641,11 +1618,11 @@ ${_topicsSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.38.0', dartConstraint: '^3.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.35.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1672,11 +1649,11 @@ ${_topicsSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -1691,7 +1668,7 @@ ${_topicsSection()}
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Minimum allowed Dart version 2.14.0 is less than 2.17.0'),
+            contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
           ]),
         );
       },
@@ -1709,11 +1686,11 @@ ${_topicsSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.3.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.32.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1741,11 +1718,11 @@ ${_topicsSection()}
 
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null)}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setVersionConfig(minFlutterVersion: '3.0.0');
+        setToolConfig(repoRoot, minFlutterVersion: '3.22.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1774,7 +1751,7 @@ ${_environmentSection()}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-      setVersionConfig(minFlutterVersion: '2.0.0');
+      setToolConfig(repoRoot, minFlutterVersion: '2.0.0');
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1805,7 +1782,7 @@ ${_topicsSection()}
 
       package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
-${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.16.0 <4.0.0')}
+${_environmentSection(flutterConstraint: '>=3.38.0', dartConstraint: '^3.4.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
@@ -1824,9 +1801,9 @@ ${_topicsSection()}
         output,
         containsAllInOrder(<Matcher>[
           contains(
-            'The minimum Dart version is 2.16.0, but the '
-            'minimum Flutter version of 3.3.0 shipped with '
-            'Dart 2.18.0. Please use consistent lower SDK '
+            'The minimum Dart version is 3.4.0, but the '
+            'minimum Flutter version of 3.38.0 shipped with '
+            'Dart 3.10.0. Please use consistent lower SDK '
             'bounds',
           ),
         ]),
@@ -1957,7 +1934,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allowed: ^1.0.0'])}
 ${_topicsSection()}
 ''');
-        setAllowedDependencies(unpinned: <String>['allowed']);
+        setToolConfig(
+          packagesDir.parent,
+          unpinnedDependencies: <String>['allowed'],
+        );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1986,7 +1966,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
 ${_topicsSection()}
 ''');
-          setAllowedDependencies(pinned: <String>['allow_pinned']);
+          setToolConfig(
+            packagesDir.parent,
+            pinnedDependencies: <String>['allow_pinned'],
+          );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
             'validate',
@@ -2016,7 +1999,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
-          setAllowedDependencies(pinned: <String>['allow_pinned']);
+          setToolConfig(
+            packagesDir.parent,
+            pinnedDependencies: <String>['allow_pinned'],
+          );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
             'validate',
@@ -2044,7 +2030,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
 ${_topicsSection()}
 ''');
-        setAllowedDependencies(pinned: <String>['allow_pinned']);
+        setToolConfig(
+          packagesDir.parent,
+          pinnedDependencies: <String>['allow_pinned'],
+        );
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(

@@ -1,8 +1,0 @@
-# The minimum Flutter version that can be used as the minimum SDK constraints
-# by packages in this repository. For example, if this is set to 3.22, then a
-# package can have a minimum SDK version of 3.32, 3.35, 3.38, etc, but
-# not 3.29.
-#
-# The major and minor version here should match the lowest version analyzed
-# in legacy version analysis (.ci.yaml analyze_legacy).
-min_flutter: '3.35.0'

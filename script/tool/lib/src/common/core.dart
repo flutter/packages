@@ -124,7 +124,7 @@ bool isPackage(FileSystemEntity entity) {
 /// While there is no specific definition of the meaning of different non-zero
 /// exit codes for this tool, commands should follow the general convention:
 ///   1: The command ran correctly, but found errors.
-///   2: The command failed to run because the arguments were invalid.
+///   2: The command failed to run because the arguments or config were invalid.
 ///  >2: The command failed to run correctly for some other reason. Ideally,
 ///      each such failure should have a unique exit code within the context of
 ///      that command.
@@ -134,12 +134,16 @@ class ToolExit extends Error {
 
   /// The code that the process should exit with.
   final int exitCode;
+
+  @override
+  String toString() => 'ToolExit(exitCode: $exitCode)';
 }
 
 /// A exit code for [ToolExit] for a successful run that found errors.
 const int exitCommandFoundErrors = 1;
 
-/// A exit code for [ToolExit] for a failure to run due to invalid arguments.
+/// A exit code for [ToolExit] for a failure to run due to invalid arguments
+/// or config.
 const int exitInvalidArguments = 2;
 
 /// The directory to which to write logs and other artifacts, if set in CI.
@@ -151,7 +155,3 @@ Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
   }
   return logsDirectory;
 }
-
-/// The directory that contains repo-specific configuration for this tooling.
-Directory toolConfigDirectory(Directory repoRoot) =>
-    repoRoot.childDirectory('tool_config');
