@@ -12,7 +12,7 @@ import java.util.List;
 
 /** Builder of a single Heatmap on the map. */
 public class HeatmapBuilder implements HeatmapOptionsSink {
-  private final HeatmapTileProvider.Builder heatmapOptions;
+  private final @NonNull HeatmapTileProvider.Builder heatmapOptions;
 
   /** Construct a HeatmapBuilder. */
   HeatmapBuilder() {

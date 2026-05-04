@@ -5,6 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/license_check_command.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
@@ -74,9 +75,8 @@ void main() {
           .listSync(recursive: true, followLinks: false)
           .whereType<File>()
           .map(
-            (File f) => p.posix.joinAll(
-              p.split(p.relative(f.absolute.path, from: root.path)),
-            ),
+            (File f) =>
+                relativePosixPath(f, from: root, platformContext: p.posix),
           )
           .join('\n');
 

@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Adds `imageBuilder` property to `VectorGraphic` for wrapping the loaded vector graphic widget.
+
 ## 1.1.21
 
 * Corrected width/height parameter documentation in VectorGraphic widget.
