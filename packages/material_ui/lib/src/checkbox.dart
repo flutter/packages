@@ -10,7 +10,7 @@
 /// @docImport 'switch.dart';
 library;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 import 'checkbox_theme.dart';
 import 'color_scheme.dart';
