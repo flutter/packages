@@ -1,5 +1,8 @@
 ## NEXT
 
+* Fixes broken dartdoc references in `completePurchase` to point to
+  `InAppPurchaseException` and `InAppPurchaseException.code` instead of the
+  non-existent `PurchaseException` and `PurchaseException.errorCode`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

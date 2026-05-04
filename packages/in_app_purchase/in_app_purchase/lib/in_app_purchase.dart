@@ -173,15 +173,15 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// For convenience, [PurchaseDetails.pendingCompletePurchase] indicates if a
   /// purchase is pending for completion.
   ///
-  /// The method will throw a [PurchaseException] when the purchase could not be
-  /// finished. Depending on the [PurchaseException.errorCode] the developer
-  /// should try to complete the purchase via this method again, or retry the
-  /// [completePurchase] method at a later time. If the
-  /// [PurchaseException.errorCode] indicates you should not retry there might
+  /// The method will throw an [InAppPurchaseException] when the purchase
+  /// could not be finished. Depending on the [InAppPurchaseException.code] the
+  /// developer should try to complete the purchase via this method again, or
+  /// retry the [completePurchase] method at a later time. If the
+  /// [InAppPurchaseException.code] indicates you should not retry there might
   /// be some issue with the app's code or the configuration of the app in the
   /// respective store. The developer is responsible to fix this issue. The
-  /// [PurchaseException.message] field might provide more information on what
-  /// went wrong.
+  /// [InAppPurchaseException.message] field might provide more information on
+  /// what went wrong.
   Future<void> completePurchase(PurchaseDetails purchase) =>
       InAppPurchasePlatform.instance.completePurchase(purchase);
 
