@@ -46,7 +46,10 @@ class LoginInfoProvider extends InheritedNotifier<LoginInfo> {
   static LoginInfo of(BuildContext context, {bool listen = true}) {
     final LoginInfoProvider? result = listen
         ? context.dependOnInheritedWidgetOfExactType<LoginInfoProvider>()
-        : context.getElementForInheritedWidgetOfExactType<LoginInfoProvider>()?.widget as LoginInfoProvider?;
+        : context
+                  .getElementForInheritedWidgetOfExactType<LoginInfoProvider>()
+                  ?.widget
+              as LoginInfoProvider?;
     assert(result != null, 'No LoginInfoProvider found in context');
     return result!.notifier!;
   }
