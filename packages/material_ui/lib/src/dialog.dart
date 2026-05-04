@@ -12,7 +12,7 @@ library;
 
 import 'dart:ui' show SemanticsHitTestBehavior, SemanticsRole, clampDouble, lerpDouble;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import 'color_scheme.dart';

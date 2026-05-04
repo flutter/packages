@@ -12,6 +12,9 @@ workspace:
   - material_ui_examples
 
 dependencies:
+  cupertino_ui:
+    # TODO(justinmc): Use the pub.dev package when published.
+    path: ../cupertino_ui
   flutter:
     sdk: flutter
 
