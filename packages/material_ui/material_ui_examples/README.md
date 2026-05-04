@@ -49,7 +49,7 @@ sample in the file is a separate file in that directory. So, for the example
 above, where the examples are from the
 [lib/src/about.dart](../lib/src/about.dart) file, the `AboutListTile` class, the
 first sample (hence the index "0") for that symbol resides in the file named
-[lib/about_list_tile.0.dart](lib/about_list_tile.0.dart).
+[lib/about/about_list_tile.0.dart](lib/about/about_list_tile.0.dart).
 
 Symbol names are converted from "CamelCase" to "snake_case". Dots are left
 between symbol names, so the first example for symbol
@@ -74,7 +74,7 @@ wanted to add a new example to the `AboutListTile` class:
 /// Write a description of the example here. This description will appear in the
 /// API web documentation to introduce the example.
 ///
-/// ** See code in material_ui_examples/lib/about_list_tile.0.dart **
+/// ** See code in material_ui_examples/lib/about/about_list_tile.0.dart **
 /// {@end-tool}
 ```
 
