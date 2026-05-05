@@ -14,7 +14,7 @@ flutter:
       android:
         default_package: google_maps_flutter_android
       ios:
-        default_package: google_maps_flutter_ios
+        default_package: google_maps_flutter_ios_sdk9
       web:
         default_package: google_maps_flutter_web
 
