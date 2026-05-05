@@ -262,9 +262,6 @@ abstract class CameraInfo {
 
   /// A LiveData of ZoomState.
   LiveData getZoomState();
-
-  /// Returns true if the camera has a flash unit.
-  bool hasFlashUnit();
 }
 
 /// Direction of lens of a camera.

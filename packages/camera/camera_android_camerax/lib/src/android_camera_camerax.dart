@@ -137,25 +137,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The flash mode currently configured for [imageCapture].
   CameraXFlashMode? _currentFlashMode;
 
-  /// The `CameraDescription` of the camera currently in use.
-  CameraDescription? _currentCameraDescription;
-
-  /// Map of torch flash mode enabled state for each camera, keyed by camera name.
+  /// Whether or not torch flash mode has been enabled for the [camera].
   @visibleForTesting
-  final Map<String, bool> torchEnabledPerCamera = <String, bool>{};
-
-  /// Whether or not torch flash mode has been enabled for the current camera.
-  @visibleForTesting
-  bool get torchEnabled {
-    final String name = _currentCameraDescription?.name ?? 'default';
-    return torchEnabledPerCamera[name] ?? false;
-  }
-
-  @visibleForTesting
-  set torchEnabled(bool value) {
-    final String name = _currentCameraDescription?.name ?? 'default';
-    torchEnabledPerCamera[name] = value;
-  }
+  bool torchEnabled = false;
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
@@ -389,7 +373,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
-    _currentCameraDescription = cameraDescription;
     enableRecordingAudio = mediaSettings?.enableAudio ?? false;
     final CameraPermissionsError? error = await systemServicesManager
         .requestCameraPermissions(enableRecordingAudio);
@@ -997,7 +980,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setDescriptionWhileRecording(
     CameraDescription description,
   ) async {
-    _currentCameraDescription = description;
     if (recording == null) {
       cameraErrorStreamController.add(
         'Camera description not set. No active video recording.',
@@ -1137,17 +1119,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         if (torchEnabled) {
           // Torch mode enabled already.
           return;
-        }
-
-        // Check if flash is available before enabling torch.
-        if (cameraInfo != null) {
-          final bool hasFlash = await cameraInfo!.hasFlashUnit();
-          if (!hasFlash) {
-            throw CameraException(
-              'flashModeNotSupported',
-              'The camera does not support torch mode because it has no flash unit.',
-            );
-          }
         }
 
         await _enableTorchMode(true);
@@ -1511,14 +1482,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
-
-    // Restore torch state if enabled for this camera.
-    if (torchEnabled) {
-      final bool hasFlash = await cameraInfo!.hasFlashUnit();
-      if (hasFlash) {
-        await _enableTorchMode(true, addErrorToStream: false);
-      }
-    }
   }
 
   /// Creates [Observer] of the [CameraState] that will:
@@ -1901,18 +1864,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     ];
   }
 
-  Future<void> _enableTorchMode(
-    bool value, {
-    bool addErrorToStream = true,
-  }) async {
+  Future<void> _enableTorchMode(bool value) async {
     try {
       await cameraControl.enableTorch(value);
     } on PlatformException catch (e) {
-      if (addErrorToStream) {
-        cameraErrorStreamController.add(
-          e.message ?? 'The camera was unable to change torch modes.',
-        );
-      }
+      cameraErrorStreamController.add(
+        e.message ?? 'The camera was unable to change torch modes.',
+      );
     }
   }
 

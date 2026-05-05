@@ -61,9 +61,4 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
     return new LiveDataProxyApi.LiveDataWrapper(
         pigeonInstance.getZoomState(), LiveDataSupportedType.ZOOM_STATE);
   }
-
-  @Override
-  public Boolean hasFlashUnit(CameraInfo pigeonInstance) {
-    return pigeonInstance.hasFlashUnit();
-  }
 }
