@@ -231,16 +231,11 @@ class RepoInfoValidator {
   String _prTagForPackage(String packageName) => 'p: $packageName';
 
   String _issueTagForPackage(String packageName) {
-    // TODO(stuartmorgan): Move this to a config file. See
-    // https://github.com/flutter/flutter/issues/185364
-    switch (packageName) {
-      case 'google_maps_flutter':
-        return 'p: maps';
-      case 'webview_flutter':
-        return 'p: webview';
-      default:
-        return 'p: $packageName';
-    }
+    final Map<String, String> customLabels = getNonStandardPackageLabels(
+      _repoRoot,
+    );
+    final String packageLabelName = customLabels[packageName] ?? packageName;
+    return 'p: $packageLabelName';
   }
 
   Future<List<String>> _validateFilesBasedOnReleaseStrategy(

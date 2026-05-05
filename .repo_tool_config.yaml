@@ -118,3 +118,7 @@ allowed_dependencies:
     - source_helper
     - vector_math
     - webkit_inspection_protocol
+
+package_labels:
+  google_maps_flutter: maps
+  webview_flutter: webview

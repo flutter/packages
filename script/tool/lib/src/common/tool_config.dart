@@ -71,3 +71,17 @@ String? getMinFlutterVersion(Directory repoRoot) {
 
   return (pinned: pinned, unpinned: unpinned);
 }
+
+/// Returns a map from package names to non-standard issue labels used for those
+/// packages. Packages that use the default label `p: <package_name>` are not
+/// included in the returned map.
+Map<String, String> getNonStandardPackageLabels(Directory repoRoot) {
+  final customLabels = _getToolConfig(repoRoot)['package_labels'] as YamlMap?;
+  if (customLabels == null) {
+    return <String, String>{};
+  }
+
+  return customLabels.map(
+    (key, value) => MapEntry(key as String, value as String),
+  );
+}

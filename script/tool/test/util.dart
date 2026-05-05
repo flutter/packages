@@ -600,6 +600,7 @@ void setToolConfig(
   String? minFlutterVersion,
   List<String>? pinnedDependencies,
   List<String>? unpinnedDependencies,
+  Map<String, String>? packageLabels,
 }) {
   final editor = YamlEditor('{repo_name: $repoName}');
   if (minFlutterVersion != null) {
@@ -621,6 +622,12 @@ void setToolConfig(
       for (final String dependency in unpinnedDependencies) {
         editor.appendToList([allowedDependenciesKey, unpinnedKey], dependency);
       }
+    }
+  }
+  if (packageLabels != null) {
+    editor.update(['package_labels'], YamlMap());
+    for (final MapEntry<String, String> entry in packageLabels.entries) {
+      editor.update(['package_labels', entry.key], entry.value);
     }
   }
   repoRoot

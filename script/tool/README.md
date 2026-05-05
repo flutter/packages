@@ -220,3 +220,6 @@ The following sections are supported:
   - `unpinned`: A list of package names that are allowed as `pubspec.yaml`
     dependencies without a specific version constraint (or with a broad
     constraint).
+- `package_labels`: A map from a package name to the label to use for that
+  package's issue link query. This is only needed for packages that use a
+  label other than `p: <package_name>`.

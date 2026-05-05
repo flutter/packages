@@ -543,6 +543,84 @@ ${readmeTableEntry(packageName)}
     );
   });
 
+  group('custom package labels', () {
+    test('passes for correct custom package label in README', () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      const customLabel = 'custom_label';
+      setToolConfig(
+        root,
+        packageLabels: <String, String>{'a_package': customLabel},
+      );
+
+      final String encodedIssueTag = Uri.encodeComponent('p: $customLabel');
+      final String encodedPRTag = Uri.encodeComponent('p: a_package');
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+| [a_package](./packages/a_package/) | [![pub package](https://img.shields.io/pub/v/a_package.svg)](https://pub.dev/packages/a_package) | [![pub points](https://img.shields.io/pub/points/a_package)](https://pub.dev/packages/a_package/score) | [![popularity](https://img.shields.io/pub/popularity/a_package)](https://pub.dev/packages/a_package/score) | [![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedIssueTag?label=)](https://github.com/flutter/flutter/labels/$encodedIssueTag) | [![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedPRTag?label=)](https://github.com/flutter/packages/labels/$encodedPRTag) |
+''');
+      writeAutoLabelerYaml(packages);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      if (commandError != null) {
+        print(r'Test failed with error: $commandError');
+        print('Output:');
+        output.forEach(print);
+      }
+
+      expect(commandError, isNull);
+      expect(output, containsAll(<Matcher>[contains('No issues found!')]));
+    });
+
+    test(
+      'fails when default package label is used in README but custom is configured',
+      () async {
+        final packages = <RepositoryPackage>[
+          createFakePackage('a_package', packagesDir),
+        ];
+
+        const customLabel = 'custom_label';
+        setToolConfig(
+          root,
+          packageLabels: <String, String>{'a_package': customLabel},
+        );
+
+        // Use default label in README
+        root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+        writeAutoLabelerYaml(packages);
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          contains(contains('Incorrect link in root README.md table')),
+        );
+      },
+    );
+  });
+
   group('ci_config check', () {
     test('control test', () async {
       final RepositoryPackage package = createFakePackage(
