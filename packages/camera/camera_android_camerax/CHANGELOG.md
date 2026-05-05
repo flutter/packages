@@ -1,5 +1,6 @@
 ## 0.7.2
 
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
 * Bumps camerax_version from 1.5.3 to 1.6.0.
 
 ## 0.7.1+2
