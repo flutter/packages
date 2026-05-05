@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/text_form_field/text_form_field.2.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';

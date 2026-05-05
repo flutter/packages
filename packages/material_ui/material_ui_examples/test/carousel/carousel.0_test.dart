@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/carousel/carousel.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';

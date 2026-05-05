@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/widget_state_input_border/widget_state_input_border.0.dart'
     as example;
 import 'package:flutter_test/flutter_test.dart';

@@ -7,7 +7,7 @@
 // displayed on the left side, and also a button to open the [NavigationDrawer].
 // All of these navigation widgets are built from an identical list of data.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Flutter code sample for [NavigationDrawer].
 
