@@ -12,6 +12,12 @@
       "sourceType": "github",
       "skillPath": "skills/test-driven-development/SKILL.md",
       "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
+    },
+    "zoom-out": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/zoom-out/SKILL.md",
+      "computedHash": "8357aeaece3b709c442eab67e64b86844e05e2f1ea95b109565eba50b6def36e"
     }
   }
 }
