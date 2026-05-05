@@ -439,7 +439,7 @@ ${_devDependenciesSection()}
       );
     });
 
-    test('fails when repository is not flutter/packages', () async {
+    test('fails when repository does not match the tool config', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
@@ -471,6 +471,36 @@ ${_devDependenciesSection()}
             'The "repository" link should start with the repository\'s '
             'main tree: "https://github.com/flutter/packages/tree/main"',
           ),
+        ]),
+      );
+    });
+
+    test('passes for a correct non-flutter/package repository', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin', repository: 'flutter/core-packages')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, repoName: 'flutter/core-packages');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'validate',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin...'),
+          contains('No issues found!'),
         ]),
       );
     });
