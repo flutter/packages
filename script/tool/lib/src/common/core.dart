@@ -41,6 +41,10 @@ const String kDoNotLandWarning = 'DO NOT MERGE';
 /// Key for enabling web WASM compilation
 const String kWebWasmFlag = 'wasm';
 
+/// The URL to provide in printed messages to point users to tool documentation.
+const String toolDocsUrl =
+    'https://github.com/flutter/packages/blob/main/script/tool/README.md';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }

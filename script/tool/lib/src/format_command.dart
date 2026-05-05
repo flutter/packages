@@ -203,7 +203,7 @@ class FormatCommand extends PackageLoopingCommand {
 
     print(
       '\nTo fix run the repository tooling `format` command: '
-      'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code\n'
+      '$toolDocsUrl#format-code\n'
       'or copy-paste this command into your terminal:',
     );
 

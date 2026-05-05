@@ -9,6 +9,7 @@ import 'package:yaml/yaml.dart';
 import '../common/core.dart';
 import '../common/output_utils.dart';
 import '../common/repository_package.dart';
+import '../common/tool_config.dart';
 
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
@@ -20,15 +21,18 @@ class RepoInfoValidator {
     required Map<String, List<String>> readmeTableEntries,
     required Set<String> autoLabeledPackages,
     required GitDir gitDir,
+    required Directory repoRoot,
     required String indentation,
   }) : _readmeTableEntries = readmeTableEntries,
        _autoLabeledPackages = autoLabeledPackages,
        _gitDir = gitDir,
+       _repoRoot = repoRoot,
        _indentation = indentation;
 
   final Map<String, List<String>> _readmeTableEntries;
   final Set<String> _autoLabeledPackages;
   final GitDir _gitDir;
+  final Directory _repoRoot;
   final String _indentation;
 
   /// Returns all the data from the package table in the root README.md file.
@@ -144,6 +148,7 @@ class RepoInfoValidator {
       printError('${_indentation}Missing repo root README.md table entry');
       errors.add('Missing repo root README.md table entry');
     } else {
+      final String repoName = getRepositoryName(_repoRoot);
       // Extract the two parts of a "[label](link)" .md link.
       final mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
       // Possible link targets.
@@ -179,8 +184,8 @@ class RepoInfoValidator {
             r'\?label=\)$',
           );
           final prTagLink = RegExp(
-            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
-            '$encodedPRTag'
+            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/'
+            '$repoName/$encodedPRTag'
             r'\?label=\)$',
           );
           if (!(anchor == packageName ||
@@ -205,7 +210,7 @@ class RepoInfoValidator {
             '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$',
           );
           final gitHubPRLink = RegExp(
-            '^https://github.com/flutter/packages/labels/$encodedPRTag\$',
+            '^https://github.com/$repoName/labels/$encodedPRTag\$',
           );
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||

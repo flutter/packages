@@ -23,6 +23,8 @@ void main() {
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
+    // Set a minimal config so that a default repo name is available.
+    setToolConfig(root);
 
     root.childFile('.ci.yaml').writeAsStringSync(r'''
 enabled_branches:
@@ -53,14 +55,17 @@ enabled_branches:
 ''';
   }
 
-  String readmeTableEntry(String packageName) {
+  String readmeTableEntry(
+    String packageName, {
+    String repoName = 'flutter/packages',
+  }) {
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     return '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$encodedTag) | '
-        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/$repoName/$encodedTag?label=)](https://github.com/$repoName/labels/$encodedTag) |';
   }
 
   void writeAutoLabelerYaml(List<RepositoryPackage> packages) {
@@ -93,6 +98,29 @@ ${readmeTableHeader()}
 ${readmeTableEntry('a_package')}
 ''');
     writeAutoLabelerYaml(packages);
+
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'validate',
+    ]);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+    );
+  });
+
+  test('passes for correct coverage with a different repo name', () async {
+    final packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
+
+    const repoName = 'different/repo';
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package', repoName: repoName)}
+''');
+    writeAutoLabelerYaml(packages);
+    setToolConfig(root, repoName: repoName);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
       'validate',

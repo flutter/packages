@@ -187,6 +187,7 @@ class ValidateCommand extends PackageLoopingCommand {
       readmeTableEntries: _readmeTableEntries,
       autoLabeledPackages: _autoLabeledPackages,
       gitDir: await gitDir,
+      repoRoot: _repoRoot,
       indentation: indentation,
     );
     return validator.validatePackage(package);
