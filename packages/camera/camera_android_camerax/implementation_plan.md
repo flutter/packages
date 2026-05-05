@@ -11,7 +11,7 @@ This plan proposes to fix this by tracking torch state per camera and restoring 
 > [!IMPORTANT]
 > **Multi-Camera Support**: To prevent out-of-sync issues in complex camera switching cases (e.g., devices with more than 2 cameras), I propose changing `torchEnabled` from a single boolean to a map `_torchEnabledPerCamera = <String, bool>{}` keyed by the camera name (from `CameraDescription.name`). This ensures torch state is isolated per camera.
 >
-> **New Variable**: I am adding `_currentCameraDescription` to track the active camera. This is required because some methods (like `initializeCamera`) only receive a `cameraId` (which is the texture ID) and need to know which camera description it corresponds to in order to use its name as a key in `_torchEnabledPerCamera`.
+> **New Mapping**: Instead of tracking a single active camera, I will maintain a map `_cameraIdToCameraName = <int, String>{}` to map `cameraId` (texture ID) to the camera name. This is required because some methods (like `initializeCamera`) only receive a `cameraId` and need to know which camera name it corresponds to in order to use it as a key in `_torchEnabledPerCamera`. This approach is more robust than relying on a "current" camera state.
 
 > [!NOTE]
 > **CameraX Expectations**: CameraX expects developers to check `CameraInfo.hasFlashUnit()` before calling `CameraControl.enableTorch()`.
@@ -47,12 +47,12 @@ Summary of changes to retain and restore torch state across camera switches.
 
 #### [MODIFY] [lib/src/android_camera_camerax.dart](lib/src/android_camera_camerax.dart)
 
-- Add `_currentCameraDescription` instance variable to track the active camera.
-- Update `_currentCameraDescription` in `createCameraWithSettings` and `setDescriptionWhileRecording`.
+- Add `Map<int, String> _cameraIdToCameraName = {};` to map `cameraId` (texture ID) to camera name.
+- Update `_cameraIdToCameraName` in `createCameraWithSettings` with the created camera's ID and name.
 - Replace `torchEnabled` boolean with `Map<String, bool> _torchEnabledPerCamera = {};`.
-- Update `setFlashMode` to use `_torchEnabledPerCamera` keyed by `_currentCameraDescription.name`. If mode is `FlashMode.torch`, check `await cameraInfo!.hasFlashUnit()` first and throw a specific `CameraException` if false.
-- Create a `_restoreTorchState` method that checks if `_torchEnabledPerCamera[_currentCameraDescription.name]` is true and `await cameraInfo!.hasFlashUnit()` is true, and if so, calls `_enableTorchMode(true)`.
-- Call `_restoreTorchState` in `createCameraWithSettings` and `setDescriptionWhileRecording` instead of `_updateCameraInfoAndLiveCameraState` to avoid unnecessary calls when binding use cases.
+- Update `setFlashMode` to use `_torchEnabledPerCamera` keyed by the camera name retrieved from `_cameraIdToCameraName[cameraId]`. If mode is `FlashMode.torch`, check `await cameraInfo!.hasFlashUnit()` first and throw a `CameraException` with error code `torchNotSupported` if false. Also ensure native errors from `CameraControl.enableTorch()` are surfaced.
+- Create a `_restoreTorchState` method that takes `cameraId`, retrieves the camera name from `_cameraIdToCameraName[cameraId]`, checks if `_torchEnabledPerCamera[cameraName]` is true and `await cameraInfo!.hasFlashUnit()` is true, and if so, calls `_enableTorchMode(true)`.
+- Call `_restoreTorchState` in `initializeCamera` (after `cameraControl` is initialized) and `setDescriptionWhileRecording` as appropriate.
 
 ## Verification Plan
 
@@ -95,3 +95,17 @@ tool dart-test --package=camera_android_camerax
     - Run example app: `flutter run example`
     - Check torch state via adb: `adb shell dumpsys media.camera | grep -i "torch"`
     - Ensure emulator has camera flash enabled in settings if testing actual toggle.
+
+## Grill Session Answers
+
+**Question 1:** The plan proposes using a map `_torchEnabledPerCamera` to track torch state per camera. Why is this approach preferred over simply resetting the state on switch or querying CameraX?
+**Answer:** It allows retaining the desired torch state for each camera independently, enabling automatic restoration when switching back to a camera that supported it, which matches user expectations.
+
+**Question 2:** The plan proposes adding `_currentCameraDescription` to track the active camera because some methods only receive a `cameraId`. Would it be better to maintain a map from `cameraId` (texture ID) to camera name instead, or do you prefer tracking the full `CameraDescription`?
+**Answer:** I prefer maintaining a map from `cameraId` to camera name to be more robust and avoid relying on a "current" camera state.
+
+**Question 3:** The plan proposes throwing a specific `CameraException` if the user tries to turn on torch on a camera without flash. What specific error code and message should we use, and should we also handle failures from `CameraControl.enableTorch()` itself?
+**Answer:** Use a specific error code like `torchNotSupported` when `hasFlashUnit()` is false, and also handle failures from `enableTorch` by surfacing the native error.
+
+**Question 4:** The plan proposes calling `_restoreTorchState` in `createCameraWithSettings`. However, `cameraControl` is not initialized until `initializeCamera`. Should we call `_restoreTorchState` in `initializeCamera` instead?
+**Answer:** Yes, call `_restoreTorchState` in `initializeCamera` after `cameraControl` is initialized, to ensure we don't get null pointer or uninitialized variable errors.
