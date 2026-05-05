@@ -123,6 +123,7 @@ tool dart-test --package=camera_android_camerax
     - `tool readme-check --packages=camera_android_camerax`
     - `tool version-check --packages=camera_android_camerax`
     - `tool pubspec-check --packages=camera_android_camerax --allow-dependencies=../../../script/configs/allowed_unpinned_deps.yaml`
+- After completing all the above checks and considering the work done, run the `/comprehensive-code-review` skill on the changes. Review the generated feedback, address any items that are agreed to be valid improvements, and then re-run the list of required checks to ensure no new issues were introduced.
 - Finally, run `tool publish-check --packages=camera_android_camerax`.
 
 > [!IMPORTANT]
