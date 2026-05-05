@@ -17,6 +17,48 @@ import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
 
+/// Defines different types of sources causing window insets.
+///
+/// See https://developer.android.com/reference/androidx/core/view/WindowInsetsCompat.Type
+enum AndroidWebViewInsets {
+  /// All system bars.
+  ///
+  /// Includes [statusBars], [captionBar] as well as [navigationBars], but not
+  /// [ime].
+  systemBars,
+
+  /// An inset type representing the area that used by DisplayCutout.
+  displayCutout,
+
+  /// An inset type representing the window of a caption bar.
+  captionBar,
+
+  /// An inset type representing the window of an InputMethod.
+  ime,
+
+  /// An inset type representing the area of a window where mandatory system
+  /// gestures have priority and may consume some or all touch input, e.g. due
+  /// to the a system bar occupying it, or it being reserved for touch-only
+  /// gestures.
+  mandatorySystemGestures,
+
+  /// An inset type representing any system bars for navigation.
+  navigationBars,
+
+  /// An inset type representing any system bars for displaying status.
+  statusBars,
+
+  /// An inset type representing the area of a window where system gestures
+  /// have priority and may consume some or all touch input, e.g. due to the a
+  /// system bar occupying it, or it being reserved for touch-only gestures.
+  systemGestures,
+
+  /// An insets type representing how much tappable elements must at least be
+  /// inset to remain both tappable and visually unobstructed by persistent
+  /// system windows.
+  tappableElement,
+}
+
 /// Object specifying parameters for loading a local file in a
 /// [AndroidWebViewController].
 @immutable
@@ -859,6 +901,39 @@ class AndroidWebViewController extends PlatformWebViewController {
     return android_webview.WebSettingsCompat.setPaymentRequestEnabled(
       _webView.settings,
       enabled,
+    );
+  }
+
+  /// Sets the insets that the native View should prevent the web contents from
+  /// receiving.
+  Future<void> setInsetsForWebContentToIgnore(
+    List<AndroidWebViewInsets> insets,
+  ) async {
+    return _webView.setInsetListenerToSetInsetsToZero(
+      insets
+          .map(
+            (AndroidWebViewInsets inset) => switch (inset) {
+              AndroidWebViewInsets.systemBars =>
+                android_webview.WindowInsetsType.systemBars,
+              AndroidWebViewInsets.displayCutout =>
+                android_webview.WindowInsetsType.displayCutout,
+              AndroidWebViewInsets.captionBar =>
+                android_webview.WindowInsetsType.captionBar,
+              AndroidWebViewInsets.ime => android_webview.WindowInsetsType.ime,
+              AndroidWebViewInsets.mandatorySystemGestures =>
+                android_webview.WindowInsetsType.mandatorySystemGestures,
+              AndroidWebViewInsets.navigationBars =>
+                android_webview.WindowInsetsType.navigationBars,
+              AndroidWebViewInsets.statusBars =>
+                android_webview.WindowInsetsType.statusBars,
+              AndroidWebViewInsets.systemGestures =>
+                android_webview.WindowInsetsType.systemGestures,
+              AndroidWebViewInsets.tappableElement =>
+                android_webview.WindowInsetsType.tappableElement,
+            },
+          )
+          .toSet()
+          .toList(),
     );
   }
 }

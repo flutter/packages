@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `pop()` restoring stale configuration when route has `onExit`, which could cause the popped route to reappear with async redirects.
+version: patch

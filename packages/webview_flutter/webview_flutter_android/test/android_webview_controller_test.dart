@@ -2066,6 +2066,31 @@ void main() {
     expect(expectedEnabled, capturedEnabled);
   });
 
+  test('setInsetsForWebContentToIgnore', () async {
+    final mockWebView = MockWebView();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+    );
+
+    for (final AndroidWebViewInsets inset in AndroidWebViewInsets.values) {
+      await controller.setInsetsForWebContentToIgnore(<AndroidWebViewInsets>[
+        inset,
+      ]);
+
+      verify(
+        mockWebView.setInsetListenerToSetInsetsToZero(
+          <android_webview.WindowInsetsType>[
+            android_webview.WindowInsetsType.values.firstWhere((
+              android_webview.WindowInsetsType nativeInset,
+            ) {
+              return nativeInset.name == inset.name;
+            }),
+          ],
+        ),
+      ).called(1);
+    }
+  });
+
   group('AndroidWebViewWidget', () {
     testWidgets('Builds Android view using supplied parameters', (
       WidgetTester tester,
