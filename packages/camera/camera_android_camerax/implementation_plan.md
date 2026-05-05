@@ -34,23 +34,25 @@ Summary of changes to retain and restore torch state across camera switches.
 
 ---
 
-#### [MODIFY] [pigeons/camerax_library.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/pigeons/camerax_library.dart)
+#### [MODIFY] [pigeons/camerax_library.dart](pigeons/camerax_library.dart)
 
 - Add `bool hasFlashUnit();` to `abstract class CameraInfo`.
 - Run the Pigeon generator to update generated files.
+- The version of pigeon should not change.
 
-#### [MODIFY] [android/src/main/java/io/flutter/plugins/camerax/CameraInfoProxyApi.java](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/android/src/main/java/io/flutter/plugins/camerax/CameraInfoProxyApi.java)
+#### [MODIFY] [android/src/main/java/io/flutter/plugins/camerax/CameraInfoProxyApi.java](android/src/main/java/io/flutter/plugins/camerax/CameraInfoProxyApi.java)
 
 - Implement `hasFlashUnit(CameraInfo pigeonInstance)` to return `pigeonInstance.hasFlashUnit()`.
+- New methods in `CameraInfoProxyApi` need to include a `CameraInfoProxyTest` for the new method.
 
-#### [MODIFY] [lib/src/android_camera_camerax.dart](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart)
+#### [MODIFY] [lib/src/android_camera_camerax.dart](lib/src/android_camera_camerax.dart)
 
 - Add `_currentCameraDescription` instance variable to track the active camera.
 - Update `_currentCameraDescription` in `createCameraWithSettings` and `setDescriptionWhileRecording`.
 - Replace `torchEnabled` boolean with `Map<String, bool> _torchEnabledPerCamera = {};`.
 - Update `setFlashMode` to use `_torchEnabledPerCamera` keyed by `_currentCameraDescription.name`. If mode is `FlashMode.torch`, check `await cameraInfo!.hasFlashUnit()` first and throw a specific `CameraException` if false.
-- Modify `_enableTorchMode` to accept an optional `addErrorToStream` boolean parameter (defaulting to `true`). When restoring state, we will pass `false` to avoid spamming the stream if it fails unexpectedly.
-- In `_updateCameraInfoAndLiveCameraState`, add logic to restore torch state: if `_torchEnabledPerCamera[_currentCameraDescription.name]` is true, check `await cameraInfo!.hasFlashUnit()`. If true, call `_enableTorchMode(true, addErrorToStream: false)`.
+- Create a `_restoreTorchState` method that checks if `_torchEnabledPerCamera[_currentCameraDescription.name]` is true and `await cameraInfo!.hasFlashUnit()` is true, and if so, calls `_enableTorchMode(true)`.
+- Call `_restoreTorchState` in `createCameraWithSettings` and `setDescriptionWhileRecording` instead of `_updateCameraInfoAndLiveCameraState` to avoid unnecessary calls when binding use cases.
 
 ## Verification Plan
 
@@ -63,9 +65,10 @@ alias tool="dart run ../../../script/tool/bin/flutter_plugin_tools.dart"
 
 I will add unit tests in `android_camera_camerax_test.dart` to verify:
 1. `setFlashMode` with `FlashMode.torch` sets torch state for that camera.
-2. `_updateCameraInfoAndLiveCameraState` attempts to restore torch state to ON if enabled for that camera and flash is available.
-3. `_updateCameraInfoAndLiveCameraState` ensures torch state is OFF if not enabled for that camera.
-4. `_enableTorchMode` handles failures by not adding to stream when `addErrorToStream` is false.
+2. `_restoreTorchState` attempts to restore torch state to ON if enabled for that camera and flash is available.
+3. `_restoreTorchState` does not attempt to turn on torch if not enabled for that camera.
+4. `setDescriptionWhileRecording` restores torch state as expected when switching cameras.
+
 
 Run tests using:
 ```bash
@@ -74,6 +77,7 @@ tool dart-test --package=camera_android_camerax
 
 ### Codebase Health Guidelines
 
+- Versions of dependencies should not change unless a feature from a newer version is required.
 - Run `tool format --package=camera_android_camerax` and `tool analyze --package=camera_android_camerax` after every code edit.
 - Run `tool fix --packages=camera_android_camerax` if errors are found in analyze before attempting any other mitigations.
 - Run tests after each test case added and after finishing a unit of code work.
@@ -84,10 +88,10 @@ tool dart-test --package=camera_android_camerax
 
 ### Manual Verification
 
-1. **Example App**: Build and run the example app to check behavior visually.
+1. **Example App**: Build and run the example app to check behavior visually. **Explicitly test switching between all 3 cameras** (Main, Ultrawide, and Front) to ensure torch state is handled correctly.
 2. **Integration Tests**: Run `flutter test` in `example/integration_test` to ensure nothing broke.
 3. **Emulator Testing**:
-    - Start emulator: `../../Library/Android/sdk/emulator/emulator -avd Pixel_9_API_36` (or available AVD).
+    - Start emulator: `../../Library/Android/sdk/emulator/emulator -avd Pixel_9_API_36` (or `Pixel_9` or other available AVD). *Note: This path assumes execution from the repository root.*
     - Run example app: `flutter run example`
     - Check torch state via adb: `adb shell dumpsys media.camera | grep -i "torch"`
     - Ensure emulator has camera flash enabled in settings if testing actual toggle.
