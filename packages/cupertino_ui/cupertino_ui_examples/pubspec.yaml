@@ -16,6 +16,11 @@ dependencies:
   vector_math: any
   web: any
   test: any
+  cupertino_ui:
+    path: ..
+  material_ui:
+    # TODO(justinmc): Use the pub.dev package when published.
+    path: ../../material_ui
 
 dev_dependencies:
   integration_test:
