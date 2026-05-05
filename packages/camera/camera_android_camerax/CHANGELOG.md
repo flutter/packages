@@ -1,3 +1,7 @@
+## 0.7.3
+
+* Fixes torch state retention on camera switch.
+
 ## 0.7.2
 
 * Bumps camerax_version from 1.5.3 to 1.6.0.
