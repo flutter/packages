@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:path/path.dart' as p;
 
 /// Returns a [File] created by appending all but the last item in [components]
 /// to [base] as subdirectories, then appending the last as a file.
@@ -31,3 +32,20 @@ Directory childDirectoryWithSubcomponents(
   }
   return dir;
 }
+
+/// Returns the relative path from [from] to [entity] using [platformContext]
+/// as the path context, but always formatting the result as a POSIX path
+/// (using forward slashes).
+///
+/// This is useful for generating paths that will be used in configuration
+/// files or command lines that expect POSIX paths, even when running on a
+/// platform that uses a different path separator, or for display.
+String relativePosixPath(
+  FileSystemEntity entity, {
+  required Directory from,
+  required p.Context platformContext,
+}) => p.posix.joinAll(
+  platformContext.split(
+    platformContext.relative(entity.absolute.path, from: from.path),
+  ),
+);

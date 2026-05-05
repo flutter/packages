@@ -137,6 +137,8 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.useRootNavigator = false,
     this.routeSettings,
     this.clipBehavior = Clip.antiAlias,
+    this.closedShadows,
+    this.openShadows,
   });
 
   /// Background color of the container while it is closed.
@@ -299,6 +301,16 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///  * [Material.clipBehavior], which is used to implement this property.
   final Clip clipBehavior;
 
+  /// Custom shadows of the container while it is closed.
+  ///
+  /// If this is provided, [closedElevation] will be ignored.
+  final List<BoxShadow>? closedShadows;
+
+  /// Custom shadows of the container while it is open.
+  ///
+  /// If this is provided, [openElevation] will be ignored.
+  final List<BoxShadow>? openShadows;
+
   @override
   State<OpenContainer<T?>> createState() => OpenContainerState<T>();
 }
@@ -349,6 +361,8 @@ class OpenContainerState<T> extends State<OpenContainer<T?>> {
             transitionType: widget.transitionType,
             useRootNavigator: widget.useRootNavigator,
             routeSettings: widget.routeSettings,
+            closedShadows: widget.closedShadows,
+            openShadows: widget.openShadows,
           ),
         );
     if (widget.onClosed != null) {
@@ -358,22 +372,32 @@ class OpenContainerState<T> extends State<OpenContainer<T?>> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget material = Material(
+      clipBehavior: widget.clipBehavior,
+      color: widget.closedColor,
+      elevation: widget.closedShadows == null ? widget.closedElevation : 0.0,
+      shape: widget.closedShape,
+      child: Builder(
+        key: _closedBuilderKey,
+        builder: (BuildContext context) {
+          return widget.closedBuilder(context, openContainer);
+        },
+      ),
+    );
+
     return _Hideable(
       key: _hideableKey,
       child: GestureDetector(
         onTap: widget.tappable ? openContainer : null,
-        child: Material(
-          clipBehavior: widget.clipBehavior,
-          color: widget.closedColor,
-          elevation: widget.closedElevation,
-          shape: widget.closedShape,
-          child: Builder(
-            key: _closedBuilderKey,
-            builder: (BuildContext context) {
-              return widget.closedBuilder(context, openContainer);
-            },
-          ),
-        ),
+        child: widget.closedShadows == null
+            ? material
+            : DecoratedBox(
+                decoration: ShapeDecoration(
+                  shape: widget.closedShape,
+                  shadows: widget.closedShadows,
+                ),
+                child: material,
+              ),
       ),
     );
   }
@@ -464,10 +488,13 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.transitionType,
     required this.useRootNavigator,
     required RouteSettings? routeSettings,
+    required this.closedShadows,
+    required this.openShadows,
   }) : _elevationTween = Tween<double>(
-         begin: closedElevation,
-         end: openElevation,
+         begin: closedShadows == null ? closedElevation : 0.0,
+         end: openShadows == null ? openElevation : 0.0,
        ),
+       _shadowsTween = _getShadowsTween(closedShadows, openShadows),
        _shapeTween = ShapeBorderTween(begin: closedShape, end: openShape),
        _colorTween = _getColorTween(
          transitionType: transitionType,
@@ -580,6 +607,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final ShapeBorder openShape;
   final CloseContainerBuilder closedBuilder;
   final OpenContainerBuilder<T> openBuilder;
+  final List<BoxShadow>? closedShadows;
+  final List<BoxShadow>? openShadows;
 
   // See [_OpenContainerState._hideableKey].
   final GlobalKey<_HideableState> hideableKey;
@@ -594,6 +623,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final bool useRootNavigator;
 
   final Tween<double> _elevationTween;
+  final Animatable<List<BoxShadow>?> _shadowsTween;
   final ShapeBorderTween _shapeTween;
   final _FlippableTweenSequence<double> _closedOpacityTween;
   final _FlippableTweenSequence<double> _openOpacityTween;
@@ -624,6 +654,16 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   // Defines the position and the size of the (opening) [OpenContainer] within
   // the bounds of the enclosing [Navigator].
   final RectTween _rectTween = RectTween();
+
+  static Animatable<List<BoxShadow>?> _getShadowsTween(
+    List<BoxShadow>? begin,
+    List<BoxShadow>? end,
+  ) {
+    if (begin == null && end == null) {
+      return ConstantTween<List<BoxShadow>?>(null);
+    }
+    return _ShadowsTween(begin: begin, end: end);
+  }
 
   AnimationStatus? _lastAnimationStatus;
   AnimationStatus? _currentAnimationStatus;
@@ -769,18 +809,28 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
         animation: animation,
         builder: (BuildContext context, Widget? child) {
           if (animation.isCompleted) {
-            return SizedBox.expand(
-              child: Material(
-                color: openColor,
-                elevation: openElevation,
-                shape: openShape,
-                child: Builder(
-                  key: _openBuilderKey,
-                  builder: (BuildContext context) {
-                    return openBuilder(context, closeContainer);
-                  },
-                ),
+            final Widget material = Material(
+              color: openColor,
+              elevation: openShadows == null ? openElevation : 0.0,
+              shape: openShape,
+              child: Builder(
+                key: _openBuilderKey,
+                builder: (BuildContext context) {
+                  return openBuilder(context, closeContainer);
+                },
               ),
+            );
+
+            return SizedBox.expand(
+              child: openShadows == null
+                  ? material
+                  : DecoratedBox(
+                      decoration: ShapeDecoration(
+                        shape: openShape,
+                        shadows: openShadows,
+                      ),
+                      child: material,
+                    ),
             );
           }
 
@@ -822,6 +872,64 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           assert(scrimTween != null);
 
           final Rect rect = _rectTween.evaluate(curvedAnimation)!;
+          final Widget material = Material(
+            clipBehavior: Clip.antiAlias,
+            animationDuration: Duration.zero,
+            color: colorTween!.evaluate(animation),
+            shape: _shapeTween.evaluate(curvedAnimation),
+            elevation: _elevationTween.evaluate(curvedAnimation),
+            child: Stack(
+              fit: StackFit.passthrough,
+              children: <Widget>[
+                // Closed child fading out.
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: _rectTween.begin!.width,
+                    height: _rectTween.begin!.height,
+                    child: (hideableKey.currentState?.isInTree ?? false)
+                        ? null
+                        : FadeTransition(
+                            opacity: closedOpacityTween!.animate(animation),
+                            child: Builder(
+                              key: closedBuilderKey,
+                              builder: (BuildContext context) {
+                                // Use dummy "open container" callback
+                                // since we are in the process of opening.
+                                return closedBuilder(context, () {});
+                              },
+                            ),
+                          ),
+                  ),
+                ),
+
+                // Open child fading in.
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: _rectTween.end!.width,
+                    height: _rectTween.end!.height,
+                    child: FadeTransition(
+                      opacity: openOpacityTween!.animate(animation),
+                      child: Builder(
+                        key: _openBuilderKey,
+                        builder: (BuildContext context) {
+                          return openBuilder(context, closeContainer);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+
+          final List<BoxShadow>? currentShadows = _shadowsTween.evaluate(
+            curvedAnimation,
+          );
+
           return SizedBox.expand(
             child: Container(
               color: scrimTween!.evaluate(curvedAnimation),
@@ -832,62 +940,15 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                   child: SizedBox(
                     width: rect.width,
                     height: rect.height,
-                    child: Material(
-                      clipBehavior: Clip.antiAlias,
-                      animationDuration: Duration.zero,
-                      color: colorTween!.evaluate(animation),
-                      shape: _shapeTween.evaluate(curvedAnimation),
-                      elevation: _elevationTween.evaluate(curvedAnimation),
-                      child: Stack(
-                        fit: StackFit.passthrough,
-                        children: <Widget>[
-                          // Closed child fading out.
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            alignment: Alignment.topLeft,
-                            child: SizedBox(
-                              width: _rectTween.begin!.width,
-                              height: _rectTween.begin!.height,
-                              child:
-                                  (hideableKey.currentState?.isInTree ?? false)
-                                  ? null
-                                  : FadeTransition(
-                                      opacity: closedOpacityTween!.animate(
-                                        animation,
-                                      ),
-                                      child: Builder(
-                                        key: closedBuilderKey,
-                                        builder: (BuildContext context) {
-                                          // Use dummy "open container" callback
-                                          // since we are in the process of opening.
-                                          return closedBuilder(context, () {});
-                                        },
-                                      ),
-                                    ),
+                    child: currentShadows == null
+                        ? material
+                        : DecoratedBox(
+                            decoration: ShapeDecoration(
+                              shape: _shapeTween.evaluate(curvedAnimation)!,
+                              shadows: currentShadows,
                             ),
+                            child: material,
                           ),
-
-                          // Open child fading in.
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            alignment: Alignment.topLeft,
-                            child: SizedBox(
-                              width: _rectTween.end!.width,
-                              height: _rectTween.end!.height,
-                              child: FadeTransition(
-                                opacity: openOpacityTween!.animate(animation),
-                                child: Builder(
-                                  key: _openBuilderKey,
-                                  builder: (BuildContext context) {
-                                    return openBuilder(context, closeContainer);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -934,5 +995,14 @@ class _FlippableTweenSequence<T> extends TweenSequence<T> {
       _flipped = _FlippableTweenSequence<T>(newItems);
     }
     return _flipped;
+  }
+}
+
+class _ShadowsTween extends Tween<List<BoxShadow>?> {
+  _ShadowsTween({super.begin, super.end});
+
+  @override
+  List<BoxShadow>? lerp(double t) {
+    return BoxShadow.lerpList(begin, end, t);
   }
 }
