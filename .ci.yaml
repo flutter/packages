@@ -137,10 +137,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       add_recipes_cq: "true"
       target_file: dart_unit_tests.yaml
       channel: master
@@ -151,10 +147,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -164,10 +156,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -177,10 +165,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -968,10 +952,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -981,10 +961,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      dependencies: >-
-        [
-          {"dependency": "goldctl", "version": "git_revision:031e93819017b95c3f2dfe463189c7b8d02f2f83"}
-        ]
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
