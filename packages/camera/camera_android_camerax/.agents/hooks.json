@@ -1,0 +1,26 @@
+{
+  "dart-format": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "./.agents/hooks/dart_format.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "dart-analyze": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "./.agents/hooks/dart_analyze.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
