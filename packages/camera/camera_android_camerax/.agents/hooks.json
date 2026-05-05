@@ -2,6 +2,7 @@
   "dart-format": {
     "PostToolUse": [
       {
+        "matcher": "*",
         "hooks": [
           {
             "command": "./.agents/hooks/dart_format.sh",
@@ -11,15 +12,12 @@
       }
     ]
   },
-  "dart-analyze": {
-    "PostToolUse": [
+  "dart-analyze-gate": {
+    "Stop": [
       {
-        "hooks": [
-          {
-            "command": "./.agents/hooks/dart_analyze.sh",
-            "timeout": 60
-          }
-        ]
+        "type": "command",
+        "command": "./.agents/hooks/dart_analyze.sh",
+        "timeout": 90
       }
     ]
   }
