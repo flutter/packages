@@ -13,7 +13,7 @@ import 'package:path/path.dart' as path;
 import 'cross_file_darwin_apis.g.dart';
 import 'security_scoped_resource.dart';
 
-/// Implementation of [DarwinScopedStorageXFileCreationParams] for iOS and
+/// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
 /// macOS.
 @immutable
 base class DarwinScopedStorageXFileCreationParams

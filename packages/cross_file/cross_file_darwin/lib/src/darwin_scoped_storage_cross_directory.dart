@@ -12,8 +12,8 @@ import 'cross_file_darwin_apis.g.dart';
 import 'darwin_scoped_storage_cross_file.dart';
 import 'security_scoped_resource.dart';
 
-/// Implementation of [PlatformXDirectoryCreationParams] for iOS and
-/// macOS.
+/// Implementation of [PlatformScopedStorageXDirectoryCreationParams] for iOS
+/// and macOS.
 @immutable
 base class DarwinScopedStorageXDirectoryCreationParams
     extends PlatformScopedStorageXDirectoryCreationParams {
