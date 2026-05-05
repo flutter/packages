@@ -16,6 +16,11 @@ dependencies:
   vector_math: any
   web: any
   test: any
+  material_ui:
+    path: ..
+  cupertino_ui:
+    # TODO(justinmc): Use the pub.dev package when published.
+    path: ../../cupertino_ui
 
 dev_dependencies:
   integration_test:
@@ -31,7 +36,5 @@ dev_dependencies:
   flutter_web_plugins:
     sdk: flutter
   flutter_lints: ^6.0.0
-
-
 flutter:
   uses-material-design: true
