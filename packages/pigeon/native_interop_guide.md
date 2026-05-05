@@ -82,7 +82,41 @@ Pigeon automatically handles running `jnigen` and `ffigen` as part of the genera
   4. Generates the final files.
 - **For FFI (iOS/macOS)**: When `swiftOptions.useFfi` is enabled and `swiftOptions.appDirectory` is specified, Pigeon will automatically run `ffigen` if `ffigen_config.dart` exists in that directory.
 
+### Step 3: iOS/macOS Build System Configuration (FFI)
+
+Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates an intermediate Objective-C bridging file (`.m` file) in a subdirectory named `<swift_output_dir>_objc_gen`. 
+
+To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build system:
+
+#### Option A: CocoaPods (Standard Flutter Plugins)
+If you are developing a standard Flutter plugin using CocoaPods, ensure your `.podspec` file matches both Swift and Objective-C source files:
+```ruby
+s.source_files = 'Sources/**/*.{swift,m}'
+```
+This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
+
+#### Option B: Swift Package Manager (SPM)
+If your plugin uses SPM, note that Swift and Objective-C files cannot reside within the same SPM target. You must define two separate targets in your `Package.swift` file:
+1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
+2. The main Swift target that depends on the Objective-C target.
+
+Example configuration:
+```swift
+targets: [
+  .target(
+    name: "my_plugin_objc_gen",
+    dependencies: [],
+    publicHeadersPath: "."
+  ),
+  .target(
+    name: "my_plugin",
+    dependencies: ["my_plugin_objc_gen"]
+  ),
+]
+```
+
 ---
+
 
 ## 5. Migration Guide
 
