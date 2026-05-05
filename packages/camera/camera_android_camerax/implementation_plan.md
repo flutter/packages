@@ -26,11 +26,22 @@ Before making any code changes, run the following command to ensure dependencies
 dart run ../../../script/tool/bin/flutter_plugin_tools.dart fetch-deps --packages=camera_android_camerax
 ```
 
+## Test-Driven Development Workflow
+
+We will strictly follow Test-Driven Development (TDD) for this implementation as described in the TDD skill.
+1. **RED**: Write a minimal failing test in `test/android_camera_camerax_test.dart` or relevant Java test file.
+2. **Verify RED**: Run the test and verify it fails with the expected message.
+3. **GREEN**: Write the minimal production code to make the test pass.
+4. **Verify GREEN**: Run the test and verify it passes.
+5. **REFACTOR**: Clean up the code while keeping the tests green.
+
+*The Iron Law: No production code without a failing test first.*
+
 ## Proposed Changes
 
 ### camera_android_camerax
 
-Summary of changes to retain and restore torch state across camera switches.
+Summary of changes to retain and restore torch state across camera switches. Following TDD, we will implement these by first writing tests in `test/android_camera_camerax_test.dart` and relevant Java test files to reproduce the missing behavior or test the new functionality, and then writing the minimal code to pass the tests.
 
 ---
 
