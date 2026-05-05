@@ -11,6 +11,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
 /// Main method that can be used in a `flutter_test_config.dart` file to set
@@ -100,7 +101,9 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   }) {
     final Directory comparisonRoot = switch (suffix) {
       null =>
-        fs.directory(defaultComparator.basedir).childDirectory('skia_goldens'),
+        fs
+            .directory(path.fromUri(defaultComparator.basedir))
+            .childDirectory('skia_goldens'),
       _ => fs.systemTempDirectory.createTempSync(suffix),
     };
     return comparisonRoot;
@@ -109,7 +112,9 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   /// Returns the golden [File] identified by the given [Uri].
   @protected
   File getGoldenFile(Uri uri) {
-    final File goldenFile = fs.directory(basedir).childFile(fs.file(uri).path);
+    final File goldenFile = fs
+        .directory(path.fromUri(basedir))
+        .childFile(path.fromUri(uri));
 
     return goldenFile;
   }
@@ -122,8 +127,10 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
       final File pubspec = current.childFile('pubspec.yaml');
       if (pubspec.existsSync()) {
         try {
-          final yaml = loadYaml(pubspec.readAsStringSync()) as YamlMap;
-          return yaml['name'] as String?;
+          final Object? yaml = loadYaml(pubspec.readAsStringSync());
+          if (yaml is YamlMap) {
+            return yaml['name'] as String?;
+          }
         } catch (e) {
           // Ignore parsing errors and keep looking
         }
