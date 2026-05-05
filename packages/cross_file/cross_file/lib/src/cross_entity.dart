@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 /// The common superclass for [XFile] and [XDirectory].
 @immutable
-class XEntity {
+base class XEntity {
   /// Constructs a [XEntity].
   @protected
   @internal

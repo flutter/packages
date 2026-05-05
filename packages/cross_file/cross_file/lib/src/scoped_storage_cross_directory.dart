@@ -33,7 +33,7 @@ import 'cross_directory.dart';
 /// }
 /// ```
 @immutable
-class ScopedStorageXDirectory extends XDirectory {
+base class ScopedStorageXDirectory extends XDirectory {
   /// Constructs a [ScopedStorageXDirectory].
   ///
   /// See [ScopedStorageXDirectory.fromCreationParams] for setting parameters

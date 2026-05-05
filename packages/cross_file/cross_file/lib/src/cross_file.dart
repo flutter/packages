@@ -31,7 +31,7 @@ import 'cross_entity.dart';
 /// }
 /// ```
 @immutable
-class XFile extends XEntity {
+base class XFile extends XEntity {
   /// Constructs a [XFile].
   ///
   /// See [XFile.fromCreationParams] for setting parameters for a specific

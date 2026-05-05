@@ -32,7 +32,7 @@ import 'cross_file.dart';
 /// }
 /// ```
 @immutable
-class ScopedStorageXFile extends XFile {
+base class ScopedStorageXFile extends XFile {
   /// Constructs a [ScopedStorageXFile].
   ///
   /// See [ScopedStorageXFile.fromCreationParams] for setting parameters

@@ -33,7 +33,7 @@ import 'scoped_storage_cross_file.dart';
 /// }
 /// ```
 @immutable
-class XDirectory extends XEntity {
+base class XDirectory extends XEntity {
   /// Constructs a [XDirectory].
   ///
   /// See [XDirectory.fromCreationParams] for setting parameters for a specific
