@@ -114,9 +114,9 @@ tool dart-test --package=camera_android_camerax
 ### Required Checks for Completion
 
 - Versions of dependencies should not change unless a feature from a newer version is required.
-- Run `tool format --package=camera_android_camerax` and `tool analyze --package=camera_android_camerax` after every code edit.
+- Run `tool format --packages=camera_android_camerax` and `tool analyze --packages=camera_android_camerax` after every code edit.
 - Run `tool fix --packages=camera_android_camerax` if errors are found in analyze before attempting any other mitigations.
-- Run tests after each test case added and after finishing a unit of code work using `tool dart-test --package=camera_android_camerax`.
+- Run tests after each test case added and after finishing a unit of code work using `tool dart-test --packages=camera_android_camerax`.
 - Run `tool gradle-check --packages=camera_android_camerax` after touching `build.gradle` files.
 - Run `tool license-check --packages=camera_android_camerax` after getting new files to their final state.
 - When completely done, run:
