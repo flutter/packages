@@ -2629,6 +2629,76 @@ void main() {
     },
   );
 
+  test('hasFlashUnit returns expected result', () async {
+    final mockCameraInfo = MockCameraInfo();
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+    final bool result = await mockCameraInfo.hasFlashUnit();
+
+    expect(result, isTrue);
+  });
+
+  test('setFlashMode with torch sets state for camera', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 1;
+    const cameraName = 'camera0';
+    camera.cameraIdToCameraName[cameraId] = cameraName;
+
+    final mockCamera = MockCamera();
+    final mockCameraControl = MockCameraControl();
+    camera.camera = mockCamera;
+    camera.cameraControl = mockCameraControl;
+
+    final mockCameraInfo = MockCameraInfo();
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+    await camera.setFlashMode(cameraId, FlashMode.torch);
+
+    expect(camera.torchEnabledPerCamera[cameraName], isTrue);
+  });
+
+  test('_restoreTorchState restores torch if enabled and has flash', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 1;
+    const cameraName = 'camera0';
+    camera.cameraIdToCameraName[cameraId] = cameraName;
+    camera.torchEnabledPerCamera[cameraName] = true;
+
+    final mockCamera = MockCamera();
+    final mockCameraControl = MockCameraControl();
+    camera.camera = mockCamera;
+    camera.cameraControl = mockCameraControl;
+
+    final mockCameraInfo = MockCameraInfo();
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
+    await camera.restoreTorchState(cameraId);
+
+    verify(mockCameraControl.enableTorch(true));
+  });
+
+  test('_restoreTorchState does not restore torch if not enabled', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 1;
+    const cameraName = 'camera0';
+    camera.cameraIdToCameraName[cameraId] = cameraName;
+    camera.torchEnabledPerCamera[cameraName] = false;
+
+    final mockCamera = MockCamera();
+    final mockCameraControl = MockCameraControl();
+    camera.camera = mockCamera;
+    camera.cameraControl = mockCameraControl;
+
+    final mockCameraInfo = MockCameraInfo();
+    camera.cameraInfo = mockCameraInfo;
+
+    await camera.restoreTorchState(cameraId);
+
+    verifyNever(mockCameraControl.enableTorch(any));
+  });
+
   group('video recording', () {
     test(
       'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording with audio enabled as desired',
@@ -3912,6 +3982,9 @@ void main() {
       final mockProcessCameraProvider = MockProcessCameraProvider();
       const cameraId = 77;
 
+      const cameraName = 'camera0';
+      camera.cameraIdToCameraName[cameraId] = cameraName;
+
       // Set directly for test versus calling createCamera.
       camera.imageCapture = MockImageCapture();
       camera.cameraControl = MockCameraControl();
@@ -3966,6 +4039,9 @@ void main() {
         mockProcessCameraProvider.isBound(camera.imageCapture),
       ).thenAnswer((_) async => true);
 
+      const cameraName = 'camera0';
+      camera.cameraIdToCameraName[cameraId] = cameraName;
+
       for (final FlashMode flashMode in FlashMode.values) {
         await camera.setFlashMode(cameraId, flashMode);
 
@@ -3987,7 +4063,7 @@ void main() {
         }
 
         verifyNever(mockCameraControl.enableTorch(true));
-        expect(camera.torchEnabled, isFalse);
+        expect(camera.torchEnabledPerCamera[cameraName] ?? false, isFalse);
         await camera.takePicture(cameraId);
         verify(camera.imageCapture!.setFlashMode(expectedFlashMode));
       }
@@ -3997,15 +4073,21 @@ void main() {
   test('setFlashMode turns on torch mode as expected', () async {
     final camera = AndroidCameraCameraX();
     const cameraId = 44;
+    const cameraName = 'camera0';
+    camera.cameraIdToCameraName[cameraId] = cameraName;
     final mockCameraControl = MockCameraControl();
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
 
+    final mockCameraInfo = MockCameraInfo();
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
     await camera.setFlashMode(cameraId, FlashMode.torch);
 
     verify(mockCameraControl.enableTorch(true));
-    expect(camera.torchEnabled, isTrue);
+    expect(camera.torchEnabledPerCamera[cameraName], isTrue);
   });
 
   test(
@@ -4013,13 +4095,19 @@ void main() {
     () async {
       final camera = AndroidCameraCameraX();
       const cameraId = 33;
+      const cameraName = 'camera0';
+      camera.cameraIdToCameraName[cameraId] = cameraName;
       final mockCameraControl = MockCameraControl();
 
       // Set directly for test versus calling createCamera.
       camera.cameraControl = mockCameraControl;
 
+      final mockCameraInfo = MockCameraInfo();
+      camera.cameraInfo = mockCameraInfo;
+      when(mockCameraInfo.hasFlashUnit()).thenAnswer((_) async => true);
+
       for (final FlashMode flashMode in FlashMode.values) {
-        camera.torchEnabled = true;
+        camera.torchEnabledPerCamera[cameraName] = true;
         await camera.setFlashMode(cameraId, flashMode);
 
         switch (flashMode) {
@@ -4027,10 +4115,10 @@ void main() {
           case FlashMode.auto:
           case FlashMode.always:
             verify(mockCameraControl.enableTorch(false));
-            expect(camera.torchEnabled, isFalse);
+            expect(camera.torchEnabledPerCamera[cameraName] ?? false, isFalse);
           case FlashMode.torch:
             verifyNever(mockCameraControl.enableTorch(true));
-            expect(camera.torchEnabled, true);
+            expect(camera.torchEnabledPerCamera[cameraName], true);
         }
       }
     },

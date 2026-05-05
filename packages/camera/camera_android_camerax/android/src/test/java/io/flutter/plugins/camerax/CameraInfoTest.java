@@ -99,4 +99,15 @@ public class CameraInfoTest {
 
     assertEquals(value, api.getZoomState(instance).getLiveData());
   }
+
+  @Test
+  public void hasFlashUnit_makesCallToRetrieveHasFlashUnit() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final boolean value = true;
+    when(instance.hasFlashUnit()).thenReturn(value);
+
+    assertEquals(value, api.hasFlashUnit(instance));
+  }
 }
