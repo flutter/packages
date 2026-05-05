@@ -4,6 +4,8 @@
 
 // See also dev/automated_tests/flutter_test/flutter_gold_test.dart
 
+import 'dart:typed_data';
+
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_goldens/flutter_goldens.dart';
@@ -82,6 +84,22 @@ void main() {
 
         expect(FlutterGoldenFileComparator.getPackageName(fs), isNull);
       });
+    });
+  });
+
+  group('FlutterSkippingFileComparator', () {
+    test('compare returns true', () async {
+      final fs = MemoryFileSystem();
+      final comparator = FlutterSkippingFileComparator(
+        Uri.parse('/basedir'),
+        'reason',
+        fs: fs,
+      );
+      final bool result = await comparator.compare(
+        Uint8List.fromList(<int>[1, 2, 3]),
+        Uri.parse('golden.png'),
+      );
+      expect(result, isTrue);
     });
   });
 }

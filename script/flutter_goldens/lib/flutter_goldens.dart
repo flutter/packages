@@ -25,12 +25,6 @@ import 'package:yaml/yaml.dart';
 /// tests using `flutter test`. This should not be called when running a test
 /// using `flutter run`, as in that environment, the [goldenFileComparator] is a
 /// [TrivialComparator].
-///
-/// An [HttpClient] is created when this method is called. That client is used
-/// to communicate with the Skia Gold servers. Any [HttpOverrides] set in this
-/// will affect whether this is effective or not. For example, if the current
-/// override provides a mock client that always fails, then all calls to gold
-/// comparison functions will fail.
 Future<void> testExecutable(
   FutureOr<void> Function() testMain, {
   String? namePrefix,
@@ -97,11 +91,6 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   Uri getTestUri(Uri key, int? version) => key;
 
   /// Calculate the appropriate basedir for the current test context.
-  ///
-  /// The optional [suffix] argument is used by the
-  /// [FlutterPostSubmitFileComparator] and the [FlutterPreSubmitFileComparator].
-  /// These [FlutterGoldenFileComparator]s randomize their base directories to
-  /// maintain thread safety while using the `goldctl` tool.
   @protected
   @visibleForTesting
   static Directory getBaseDirectory(
@@ -147,20 +136,6 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
 
 /// A [FlutterGoldenFileComparator] for testing conditions that do not execute
 /// golden file tests.
-///
-/// Currently, this comparator is used on Luci environments when executing tests
-/// outside of the flutter/flutter repository.
-///
-/// See also:
-///
-///  * [FlutterPostSubmitFileComparator], another [FlutterGoldenFileComparator]
-///    that tests golden images through Skia Gold.
-///  * [FlutterPreSubmitFileComparator], another
-///    [FlutterGoldenFileComparator] that tests golden images before changes are
-///    merged into the master branch.
-///  * [FlutterLocalFileComparator], another
-///    [FlutterGoldenFileComparator] that tests golden images locally on your
-///    current machine.
 class FlutterSkippingFileComparator extends FlutterGoldenFileComparator {
   /// Creates a [FlutterSkippingFileComparator] that will skip tests that
   /// are not in the right environment for golden file testing.
