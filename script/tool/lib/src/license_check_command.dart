@@ -9,6 +9,7 @@ import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 
@@ -393,10 +394,10 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return p.posix.joinAll(
-      path.split(
-        path.relative(file.absolute.path, from: packagesDir.parent.path),
-      ),
+    return relativePosixPath(
+      file,
+      from: packagesDir.parent,
+      platformContext: path,
     );
   }
 }
