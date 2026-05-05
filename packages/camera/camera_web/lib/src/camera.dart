@@ -144,6 +144,9 @@ class Camera {
   /// A listener fired when a video recording is stopped.
   void Function(web.Event)? _videoRecordingStoppedListener;
 
+  /// The output path for the video recording.
+  String? _videoOutputPath;
+
   /// A builder to merge a list of blobs into a single blob.
   @visibleForTesting
   web.Blob Function(List<web.Blob> blobs, String type) blobBuilder =
@@ -455,7 +458,8 @@ class Camera {
   ///
   /// Throws a [CameraWebException] if the browser does not support any of the
   /// available video mime types from [_videoMimeType].
-  Future<void> startVideoRecording() async {
+  Future<void> startVideoRecording({String? videoOutputPath}) async {
+    _videoOutputPath = videoOutputPath;
     final options = web.MediaRecorderOptions(mimeType: _videoMimeType);
     if (recorderOptions.audioBitrate != null) {
       options.audioBitsPerSecond = recorderOptions.audioBitrate!;
@@ -512,7 +516,7 @@ class Camera {
       final file = XFile(
         web.URL.createObjectURL(videoBlob),
         mimeType: _videoMimeType,
-        name: videoBlob.hashCode.toString(),
+        name: _videoOutputPath ?? videoBlob.hashCode.toString(),
       );
 
       // Emit an event containing the recorded video file.

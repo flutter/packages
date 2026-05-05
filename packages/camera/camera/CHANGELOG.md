@@ -1,3 +1,7 @@
+## 0.12.0+2
+
+* Adds `videoOutputPath` support to `startVideoRecording`.
+
 ## 0.12.0+1
 
 * Makes `Optional.of` constructor `const`.

@@ -838,8 +838,9 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
-  public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
-    prepareRecording();
+  public void startVideoRecording(
+      @Nullable EventChannel imageStreamChannel, @Nullable String videoOutputPath) {
+    prepareRecording(videoOutputPath);
 
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
@@ -1265,12 +1266,41 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording() {
-    final File outputDir = applicationContext.getCacheDir();
-    try {
-      captureFile = File.createTempFile("REC", ".mp4", outputDir);
-    } catch (IOException | SecurityException e) {
-      throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+  void prepareRecording(@Nullable String videoOutputPath) {
+    if (videoOutputPath != null) {
+      validateOutputPath(videoOutputPath);
+      captureFile = new File(videoOutputPath);
+    } else {
+      final File outputDir = applicationContext.getCacheDir();
+      try {
+        captureFile = File.createTempFile("REC", ".mp4", outputDir);
+      } catch (IOException | SecurityException e) {
+        throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+      }
+    }
+  }
+
+  private void validateOutputPath(String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new Messages.FlutterError("IOError", "The output path is a directory: " + path, null);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new Messages.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
+    }
+
+    String lowerPath = path.toLowerCase();
+    if (!lowerPath.endsWith(".mp4")
+        && !lowerPath.endsWith(".mov")
+        && !lowerPath.endsWith(".3gp")
+        && !lowerPath.endsWith(".m4v")
+        && !lowerPath.endsWith(".webm")) {
+      throw new Messages.FlutterError(
+          "IOError",
+          "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm",
+          null);
     }
     try {
       prepareMediaRecorder(captureFile.getAbsolutePath());

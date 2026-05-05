@@ -470,7 +470,7 @@ void main() {
     test('Should start recording a video', () async {
       await camera.startVideoRecording(cameraId);
 
-      verify(mockApi.startVideoRecording(any));
+      verify(mockApi.startVideoRecording(any, any));
     });
 
     test(
@@ -483,7 +483,7 @@ void main() {
           ),
         );
 
-        verify(mockApi.startVideoRecording(true));
+        verify(mockApi.startVideoRecording(true, any));
       },
     );
 

@@ -214,7 +214,10 @@ class AndroidCamera extends CameraPlatform {
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    await _hostApi.startVideoRecording(options.streamCallback != null);
+    await _hostApi.startVideoRecording(
+      options.streamCallback != null,
+      videoOutputPath: options.videoOutputPath,
+    );
 
     if (options.streamCallback != null) {
       _installStreamController().stream.listen(options.streamCallback);

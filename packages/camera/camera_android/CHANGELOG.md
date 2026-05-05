@@ -1,3 +1,7 @@
+## 0.10.10+17
+
+* Adds support for custom video output path in video recording.
+
 ## 0.10.10+16
 
 * Updates build files from Groovy to Kotlin.

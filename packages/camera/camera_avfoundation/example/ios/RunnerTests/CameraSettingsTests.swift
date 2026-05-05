@@ -353,4 +353,55 @@ final class CameraSettingsTests: XCTestCase {
       "Camera should have ignored the lossy and square formats, safely falling back to 4K."
     )
   }
+
+  func test_startVideoRecording_usesCustomPath() {
+    let customPath = "/custom/path.mp4"
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+
+    var capturedOutputURL: URL?
+    configuration.assetWriterFactory = { outputURL, _ in
+      capturedOutputURL = outputURL
+      return MockAssetWriter()
+    }
+
+    let camera = CameraTestUtils.createTestCamera(configuration)
+
+    let expectation = self.expectation(description: "startVideoRecording finished")
+    camera.startVideoRecording(
+      videoOutputPath: customPath,
+      completion: { _ in
+        expectation.fulfill()
+      }, messengerForStreaming: nil)
+
+    waitForExpectations(timeout: 1)
+
+    XCTAssertEqual(capturedOutputURL?.path, customPath)
+  }
+
+  func test_startVideoRecording_errorsOnInvalidPath() {
+    let invalidPath = "/invalid/path.mp4"
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+
+    // Simulate AssetWriter error (e.g. invalid URL)
+    configuration.assetWriterFactory = { _, _ in
+      throw NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid path"])
+    }
+
+    let camera = CameraTestUtils.createTestCamera(configuration)
+
+    let expectation = self.expectation(description: "startVideoRecording finished")
+    camera.startVideoRecording(
+      videoOutputPath: invalidPath,
+      completion: { result in
+        switch result {
+        case .success:
+          XCTFail("Expected failure")
+        case .failure(let error):
+          XCTAssertEqual(error.localizedDescription, "Invalid path")
+        }
+        expectation.fulfill()
+      }, messengerForStreaming: nil)
+
+    waitForExpectations(timeout: 1)
+  }
 }

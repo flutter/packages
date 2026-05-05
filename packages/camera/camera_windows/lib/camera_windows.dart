@@ -213,7 +213,10 @@ class CameraWindows extends CameraPlatform {
     }
 
     // Currently none of `options` is supported on Windows, so it's not passed.
-    await _hostApi.startVideoRecording(options.cameraId);
+    await _hostApi.startVideoRecording(
+      options.cameraId,
+      options.videoOutputPath,
+    );
   }
 
   @override

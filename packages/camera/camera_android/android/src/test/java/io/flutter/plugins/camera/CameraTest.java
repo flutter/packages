@@ -52,6 +52,7 @@ import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationMan
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
+import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.view.TextureRegistry;
 import java.io.Closeable;
 import java.io.File;
@@ -712,6 +713,53 @@ public class CameraTest {
   }
 
   @Test
+  public void startVideoRecording_usesCustomPath() throws IOException, CameraAccessException {
+    final String customPath = "/custom/path.mp4";
+    final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+
+    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
+        Mockito.mockConstruction(
+            MediaRecorderBuilder.class,
+            (mock, context) -> {
+              MediaRecorderBuilder.RecordingParameters params =
+                  (MediaRecorderBuilder.RecordingParameters) context.arguments().get(1);
+              assertEquals(customPath, params.outputFilePath);
+              when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
+              when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockMediaRecorder);
+            })) {
+
+      camera.startVideoRecording(null, customPath);
+
+      assertEquals(1, mockedBuilder.constructed().size());
+    }
+  }
+
+  @Test
+  public void startVideoRecording_errorsOnInvalidPath() throws IOException, CameraAccessException {
+    final String invalidPath = "/non/existent/path.mp4";
+    @SuppressWarnings("unchecked")
+    final Messages.Result<Void> mockResult = mock(Messages.Result.class);
+
+    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
+        Mockito.mockConstruction(
+            MediaRecorderBuilder.class,
+            (mock, context) -> {
+              when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
+              when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
+              when(mock.build()).thenThrow(new IOException("Invalid path"));
+            })) {
+
+      camera.startVideoRecording(mockResult, invalidPath);
+
+      ArgumentCaptor<Messages.FlutterError> errorCaptor =
+          ArgumentCaptor.forClass(Messages.FlutterError.class);
+      verify(mockResult).error(errorCaptor.capture());
+      assertEquals("Invalid path", errorCaptor.getValue().getMessage());
+    }
+  }
+
+  @Test
   public void setDescriptionWhileRecording_errorsWhenUnsupported() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
@@ -939,9 +987,9 @@ public class CameraTest {
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    doNothing().when(cameraSpy).prepareRecording();
+    doNothing().when(cameraSpy).prepareRecording(any());
 
-    cameraSpy.startVideoRecording(null);
+    cameraSpy.startVideoRecording(null, null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
     verify(
@@ -1301,7 +1349,7 @@ public class CameraTest {
       assertNotNull(resolutionFeature);
       when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
-      camera.startVideoRecording(null);
+      camera.startVideoRecording(null, null);
 
       // region Check that FPS parameter affects AE range at which the camera captures frames.
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));

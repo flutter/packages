@@ -60,6 +60,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   @NonNull
   @Override
   public PendingRecording prepareRecording(Recorder pigeonInstance, @NonNull String path) {
+    validateOutputPath(path);
     final File temporaryCaptureFile = openTempFile(path);
     final FileOutputOptions fileOutputOptions =
         new FileOutputOptions.Builder(temporaryCaptureFile).build();
@@ -68,6 +69,27 @@ class RecorderProxyApi extends PigeonApiRecorder {
         pigeonInstance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
 
     return pendingRecording;
+  }
+
+  private void validateOutputPath(@NonNull String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new RuntimeException("The output path is a directory: " + path);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new RuntimeException("The parent directory does not exist: " + parent.getAbsolutePath());
+    }
+
+    String lowerPath = path.toLowerCase();
+    if (!lowerPath.endsWith(".mp4")
+        && !lowerPath.endsWith(".mov")
+        && !lowerPath.endsWith(".3gp")
+        && !lowerPath.endsWith(".m4v")
+        && !lowerPath.endsWith(".webm")) {
+      throw new RuntimeException(
+          "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm");
+    }
   }
 
   @NonNull

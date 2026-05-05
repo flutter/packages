@@ -18,7 +18,7 @@ final class MockCamera: NSObject, Camera {
   var receivedImageStreamDataStub: (() -> Void)?
   var startStub: (() -> Void)?
   var startVideoRecordingStub:
-    ((@escaping (Result<Void, any Error>) -> Void, FlutterBinaryMessenger?) -> Void)?
+    ((String?, @escaping (Result<Void, any Error>) -> Void, FlutterBinaryMessenger?) -> Void)?
   var pauseVideoRecordingStub: (() -> Void)?
   var resumeVideoRecordingStub: (() -> Void)?
   var stopVideoRecordingStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
@@ -110,10 +110,11 @@ final class MockCamera: NSObject, Camera {
   func stop() {}
 
   func startVideoRecording(
+    videoOutputPath: String?,
     completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming messenger: FlutterBinaryMessenger?
   ) {
-    startVideoRecordingStub?(completion, messenger)
+    startVideoRecordingStub?(videoOutputPath, completion, messenger)
   }
 
   func pauseVideoRecording() {

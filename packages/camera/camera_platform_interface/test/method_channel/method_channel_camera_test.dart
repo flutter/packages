@@ -683,6 +683,7 @@ void main() {
               'cameraId': cameraId,
               'maxVideoDuration': null,
               'enableStream': false,
+              'videoOutputPath': null,
             },
           ),
         ]);

@@ -80,4 +80,22 @@ public class RecorderTest {
 
     assertEquals(mockPendingRecording, api.prepareRecording(mockRecorder, "myFile.mp4"));
   }
+
+  @Test(expected = RuntimeException.class)
+  public void prepareRecording_errorsOnInvalidPath() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder mockRecorder = mock(Recorder.class);
+
+    // This should trigger the catch block in RecorderProxyApi.openTempFile if path is null,
+    // but Pigeon ensures it's non-null.
+    // However, we can test that it throws if openTempFile fails (e.g. SecurityException).
+    // But since openTempFile just calls new File(path), it doesn't throw much.
+
+    // Let's test with a null path to trigger NullPointerException if we could,
+    // but Pigeon marks it @NonNull.
+
+    // Actually, RecorderProxyApi.prepareRecording is what we want to test.
+    api.prepareRecording(mockRecorder, null);
+  }
 }

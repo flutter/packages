@@ -490,7 +490,9 @@ class CameraPlugin extends CameraPlatform {
         );
       });
 
-      return camera.startVideoRecording();
+      return camera.startVideoRecording(
+        videoOutputPath: options.videoOutputPath,
+      );
     } on web.DOMException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
     } on CameraWebException catch (e) {

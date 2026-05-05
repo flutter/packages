@@ -266,6 +266,7 @@ class MethodChannelCamera extends CameraPlatform {
       'cameraId': options.cameraId,
       'maxVideoDuration': options.maxDuration?.inMilliseconds,
       'enableStream': options.streamCallback != null,
+      'videoOutputPath': options.videoOutputPath,
     });
 
     if (options.streamCallback != null) {
