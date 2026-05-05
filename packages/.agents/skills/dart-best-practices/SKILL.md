@@ -45,6 +45,17 @@ without horizontal scrolling.
 Target 80 characters for wrapping text. Exceptions are allowed for long URLs
 or identifiers that cannot be broken.
 
+## Discovery
+
+### Multi-line Strings
+To find candidates for multi-line strings, search for string concatenation
+with `+` involving newlines:
+- **Regex**: `['"]\s*\+\s*['"]`
+- **Regex**: `\+\s*['"].*\\n`
+
+### Line Length
+- Rely on the `lines_longer_than_80_chars` lint from the analyzer.
+
 ## Related Skills
 
 - **[dart-modern-features]**: For idiomatic
