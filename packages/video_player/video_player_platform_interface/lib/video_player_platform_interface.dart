@@ -464,7 +464,7 @@ class VideoPlayerOptions {
   ///
   /// Defaults to `true`.
   ///
-  /// This option is currently only supported on iOS and macOS.
+  /// This option may not be supported on all platforms.
   final bool preventsDisplaySleepDuringVideoPlayback;
 
   /// Additional web controls
