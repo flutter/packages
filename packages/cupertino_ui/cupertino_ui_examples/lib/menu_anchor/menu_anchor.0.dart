@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Flutter code sample for a basic [CupertinoMenuAnchor].
 void main() => runApp(const CupertinoMenuAnchorApp());
