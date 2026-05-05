@@ -125,3 +125,6 @@ tool dart-test --package=camera_android_camerax
     - `tool pubspec-check --packages=camera_android_camerax --allow-dependencies=../../../script/configs/allowed_unpinned_deps.yaml`
 - Finally, run `tool publish-check --packages=camera_android_camerax`.
 
+> [!IMPORTANT]
+> If any of the above commands fail, the task is NOT complete. You must fix any errors found and re-run the checks until they all pass.
+
