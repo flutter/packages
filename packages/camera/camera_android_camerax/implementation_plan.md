@@ -86,27 +86,6 @@ Run tests using:
 tool dart-test --package=camera_android_camerax
 ```
 
-### Codebase Health Guidelines
-
-- Versions of dependencies should not change unless a feature from a newer version is required.
-- Run `tool format --package=camera_android_camerax` and `tool analyze --package=camera_android_camerax` after every code edit.
-- Run `tool fix --packages=camera_android_camerax` if errors are found in analyze before attempting any other mitigations.
-- Run tests after each test case added and after finishing a unit of code work.
-- Run `tool gradle-check --packages=camera_android_camerax` after touching `build.gradle` files.
-- Run `tool license-check --packages=camera_android_camerax` after getting new files to their final state.
-- When completely done, run `tool readme-check`, `tool version-check`, `tool pubspec-check`.
-- Finally, run `tool publish-check`.
-
-### Manual Verification
-
-1. **Example App**: Build and run the example app to check behavior visually. **Explicitly test switching between all 3 cameras** (Main, Ultrawide, and Front) to ensure torch state is handled correctly.
-2. **Integration Tests**: Run `flutter test` in `example/integration_test` to ensure nothing broke.
-3. **Emulator Testing**:
-    - Start emulator: `../../Library/Android/sdk/emulator/emulator -avd Pixel_9_API_36` (or `Pixel_9` or other available AVD). *Note: This path assumes execution from the repository root.*
-    - Run example app: `flutter run example`
-    - Check torch state via adb: `adb shell dumpsys media.camera | grep -i "torch"`
-    - Ensure emulator has camera flash enabled in settings if testing actual toggle.
-
 ## Grill Session Answers
 
 **Question 1:** The plan proposes using a map `_torchEnabledPerCamera` to track torch state per camera. Why is this approach preferred over simply resetting the state on switch or querying CameraX?
@@ -120,3 +99,29 @@ tool dart-test --package=camera_android_camerax
 
 **Question 4:** The plan proposes calling `_restoreTorchState` in `createCameraWithSettings`. However, `cameraControl` is not initialized until `initializeCamera`. Should we call `_restoreTorchState` in `initializeCamera` instead?
 **Answer:** Yes, call `_restoreTorchState` in `initializeCamera` after `cameraControl` is initialized, to ensure we don't get null pointer or uninitialized variable errors.
+
+### Manual Verification
+
+1. **Example App**: Build and run the example app to check behavior visually. **Explicitly test switching between all 3 cameras** (Main, Ultrawide, and Front) to ensure torch state is handled correctly.
+2. **Integration Tests**: Run `flutter test` in `example/integration_test` to ensure nothing broke.
+3. **Emulator Testing**:
+    - Start emulator: `../../Library/Android/sdk/emulator/emulator -avd Pixel_9_API_36` (or `Pixel_9` or other available AVD). *Note: This path assumes execution from the repository root.*
+    - Run example app: `flutter run example`
+    - Check torch state via adb: `adb shell dumpsys media.camera | grep -i "torch"`
+    - Ensure emulator has camera flash enabled in settings if testing actual toggle.
+
+
+### Required Checks for Completion
+
+- Versions of dependencies should not change unless a feature from a newer version is required.
+- Run `tool format --package=camera_android_camerax` and `tool analyze --package=camera_android_camerax` after every code edit.
+- Run `tool fix --packages=camera_android_camerax` if errors are found in analyze before attempting any other mitigations.
+- Run tests after each test case added and after finishing a unit of code work using `tool dart-test --package=camera_android_camerax`.
+- Run `tool gradle-check --packages=camera_android_camerax` after touching `build.gradle` files.
+- Run `tool license-check --packages=camera_android_camerax` after getting new files to their final state.
+- When completely done, run:
+    - `tool readme-check --packages=camera_android_camerax`
+    - `tool version-check --packages=camera_android_camerax`
+    - `tool pubspec-check --packages=camera_android_camerax --allow-dependencies=../../../script/configs/allowed_unpinned_deps.yaml`
+- Finally, run `tool publish-check --packages=camera_android_camerax`.
+
