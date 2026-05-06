@@ -218,9 +218,11 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
 
   func fileURLForAsset(name asset: String, package: String?) throws -> String? {
     let resource =
-      package == nil
-      ? assetProvider.lookupKey(forAsset: asset)
-      : assetProvider.lookupKey(forAsset: asset, fromPackage: package!)
+      if let package = package {
+        assetProvider.lookupKey(forAsset: asset, fromPackage: package)
+      } else {
+        assetProvider.lookupKey(forAsset: asset)
+      }
 
     var path = Bundle.main.path(forResource: resource, ofType: nil)
     #if os(macOS)
