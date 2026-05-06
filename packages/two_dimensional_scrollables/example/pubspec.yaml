@@ -1,6 +1,6 @@
 name: two_dimensional_examples
-description: 'A sample application that uses TableView and TreeView'
-publish_to: 'none'
+description: "A sample application that uses TableView and TreeView"
+publish_to: "none"
 
 # The following defines the version and build number for your application.
 version: 2.0.0
@@ -18,6 +18,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
 
 # The following section is specific to Flutter packages.
 flutter:
