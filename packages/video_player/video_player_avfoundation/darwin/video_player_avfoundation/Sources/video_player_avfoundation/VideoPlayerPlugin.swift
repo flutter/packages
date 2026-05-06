@@ -228,7 +228,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     #if os(macOS)
       // See https://github.com/flutter/flutter/issues/135302
       // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
-      if path == nil {
+      if path == nil, let resource = resource {
         path = URL(string: resource, relativeTo: Bundle.main.bundleURL)?.path
       }
     #endif
