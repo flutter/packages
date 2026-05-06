@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:multicast_dns/multicast_dns.dart';
 import 'package:test/fake.dart';
@@ -156,8 +157,8 @@ void main() {
           // Generate "fake" interfaces
           for (var i = 0; i < numberOfFakeInterfaces; i++) {
             fakeInterfaces.add(
-              FakeNetworkInterface('inetfake$i', <InternetAddress>[
-                InternetAddress("${testCase['interfacePrefix']! as String}$i"),
+              FakeNetworkInterface('inetfake$i', <InterfaceAddress>[
+                FakeInterfaceAddress(InternetAddress("${testCase['interfacePrefix']! as String}$i")),
               ], 0),
             );
           }
@@ -282,15 +283,51 @@ class FakeRawDatagramSocketThatSendsError extends Fake
   }
 }
 
+class FakeInterfaceAddress implements InterfaceAddress {
+  const FakeInterfaceAddress(this._internetAddress);
+
+  final InternetAddress _internetAddress;
+
+  @override
+  String get address => _internetAddress.address;
+
+  @override
+  String get host => _internetAddress.host;
+
+  @override
+  bool get isLinkLocal => _internetAddress.isLinkLocal;
+
+  @override
+  bool get isLoopback => _internetAddress.isLoopback;
+
+  @override
+  bool get isMulticast => _internetAddress.isMulticast;
+
+  @override
+  Uint8List get rawAddress => _internetAddress.rawAddress;
+
+  @override
+  Future<InternetAddress> reverse() => _internetAddress.reverse();
+
+  @override
+  InternetAddressType get type => _internetAddress.type;
+
+  @override
+  int get prefixLength => 0;
+
+  @override
+  InternetAddress? get broadcast => throw UnimplementedError();
+}
+
 class FakeNetworkInterface implements NetworkInterface {
   FakeNetworkInterface(this._name, this._addresses, this._index);
 
   final String _name;
-  final List<InternetAddress> _addresses;
+  final List<InterfaceAddress> _addresses;
   final int _index;
 
   @override
-  List<InternetAddress> get addresses => _addresses;
+  List<InterfaceAddress> get addresses => _addresses;
 
   @override
   String get name => _name;
