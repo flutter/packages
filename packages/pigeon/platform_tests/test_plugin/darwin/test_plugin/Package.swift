@@ -19,13 +19,13 @@ let package = Package(
   dependencies: [],
   targets: [
     .target(
-      name: "test_plugin_objc",
+      name: "test_plugin_objc_gen",
       dependencies: [],
       publicHeadersPath: "."
     ),
     .target(
       name: "test_plugin",
-      dependencies: ["test_plugin_objc"]
+      dependencies: ["test_plugin_objc_gen"]
     ),
   ]
 )
