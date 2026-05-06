@@ -5,7 +5,7 @@
         "matcher": "*",
         "hooks": [
           {
-            "command": "./.agents/hooks/dart_format.sh",
+            "command": "./.agents/hooks/dart_format.dart",
             "timeout": 30
           }
         ]
