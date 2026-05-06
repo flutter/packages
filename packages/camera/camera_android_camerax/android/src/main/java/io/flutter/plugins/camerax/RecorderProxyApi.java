@@ -74,11 +74,13 @@ class RecorderProxyApi extends PigeonApiRecorder {
   private void validateOutputPath(@NonNull String path) {
     File file = new File(path);
     if (file.isDirectory()) {
-      throw new RuntimeException("The output path is a directory: " + path);
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "The output path is a directory: " + path, null);
     }
     File parent = file.getParentFile();
     if (parent != null && !parent.exists()) {
-      throw new RuntimeException("The parent directory does not exist: " + parent.getAbsolutePath());
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
     }
 
     String lowerPath = path.toLowerCase();
@@ -87,8 +89,8 @@ class RecorderProxyApi extends PigeonApiRecorder {
         && !lowerPath.endsWith(".3gp")
         && !lowerPath.endsWith(".m4v")
         && !lowerPath.endsWith(".webm")) {
-      throw new RuntimeException(
-          "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm");
+      throw new GeneratedCameraXLibrary.FlutterError(
+          "IOError", "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm", null);
     }
   }
 
@@ -97,7 +99,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
     try {
       return new File(path);
     } catch (NullPointerException | SecurityException e) {
-      throw new RuntimeException(e);
+      throw new GeneratedCameraXLibrary.FlutterError("IOError", e.getMessage(), null);
     }
   }
 

@@ -738,8 +738,6 @@ public class CameraTest {
   @Test
   public void startVideoRecording_errorsOnInvalidPath() throws IOException, CameraAccessException {
     final String invalidPath = "/non/existent/path.mp4";
-    @SuppressWarnings("unchecked")
-    final Messages.Result<Void> mockResult = mock(Messages.Result.class);
 
     try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
         Mockito.mockConstruction(
@@ -750,13 +748,52 @@ public class CameraTest {
               when(mock.build()).thenThrow(new IOException("Invalid path"));
             })) {
 
-      camera.startVideoRecording(mockResult, invalidPath);
-
-      ArgumentCaptor<Messages.FlutterError> errorCaptor =
-          ArgumentCaptor.forClass(Messages.FlutterError.class);
-      verify(mockResult).error(errorCaptor.capture());
-      assertEquals("Invalid path", errorCaptor.getValue().getMessage());
+      Messages.FlutterError error =
+          assertThrows(
+              Messages.FlutterError.class,
+              () -> {
+                camera.startVideoRecording(null, invalidPath);
+              });
+      // The old test asserted "Invalid path" message. Wait, validateOutputPath will throw first!
+      // Actually, if validateOutputPath throws, it will throw IOError before building.
+      // So this test as originally written was flawed because validateOutputPath catches the
+      // invalidPath before build().
+      // Let's just assert the IOError from validateOutputPath for this test.
+      assertEquals("IOError", error.code);
     }
+  }
+
+  @Test
+  public void startVideoRecording_errorsOnDirectoryPath() {
+    Messages.FlutterError error =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> {
+              camera.startVideoRecording(null, "/");
+            });
+    assertEquals("IOError", error.code);
+  }
+
+  @Test
+  public void startVideoRecording_errorsOnNonExistentParentPath() {
+    Messages.FlutterError error =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> {
+              camera.startVideoRecording(null, "/non/existent/parent/file.mp4");
+            });
+    assertEquals("IOError", error.code);
+  }
+
+  @Test
+  public void startVideoRecording_errorsOnInvalidExtension() {
+    Messages.FlutterError error =
+        assertThrows(
+            Messages.FlutterError.class,
+            () -> {
+              camera.startVideoRecording(null, "file.txt");
+            });
+    assertEquals("IOError", error.code);
   }
 
   @Test

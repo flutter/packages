@@ -553,28 +553,6 @@ final class DefaultCamera: NSObject, Camera {
       }
     }
     self.videoRecordingPath = videoRecordingPath
-  }
-
-  private func validateOutputPath(_ path: String) throws {
-    var isDir: ObjCBool = false
-    if FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue {
-      throw PigeonError(code: "IOError", message: "Path is a directory: \(path)", details: nil)
-    }
-    let parentPath = (path as NSString).deletingLastPathComponent
-    if !FileManager.default.fileExists(atPath: parentPath) {
-      throw PigeonError(
-        code: "IOError", message: "Parent directory does not exist: \(parentPath)", details: nil)
-    }
-
-    let lowerPath = path.lowercased()
-    let validExtensions = [".mp4", ".mov", ".m4v", ".3gp"]
-    if !validExtensions.contains(where: { lowerPath.hasSuffix($0) }) {
-      throw PigeonError(
-        code: "IOError",
-        message: "Invalid video extension. Supported: \(validExtensions.joined(separator: ", "))",
-        details: nil)
-    }
-  }
 
     guard setupWriter(forPath: videoRecordingPath) else {
       completion(
@@ -609,6 +587,27 @@ final class DefaultCamera: NSObject, Camera {
     outputForOffsetAdjusting = captureVideoOutput.avOutput
     lastAppendedVideoSampleTime = CMTime.negativeInfinity
     completion(.success(()))
+  }
+
+  private func validateOutputPath(_ path: String) throws {
+    var isDir: ObjCBool = false
+    if FileManager.default.fileExists(atPath: path, isDirectory: &isDir), isDir.boolValue {
+      throw PigeonError(code: "IOError", message: "Path is a directory: \(path)", details: nil)
+    }
+    let parentPath = (path as NSString).deletingLastPathComponent
+    if !FileManager.default.fileExists(atPath: parentPath) {
+      throw PigeonError(
+        code: "IOError", message: "Parent directory does not exist: \(parentPath)", details: nil)
+    }
+
+    let lowerPath = path.lowercased()
+    let validExtensions = [".mp4", ".mov", ".m4v", ".3gp"]
+    if !validExtensions.contains(where: { lowerPath.hasSuffix($0) }) {
+      throw PigeonError(
+        code: "IOError",
+        message: "Invalid video extension. Supported: \(validExtensions.joined(separator: ", "))",
+        details: nil)
+    }
   }
 
   private func setupWriter(forPath path: String) -> Bool {

@@ -2911,6 +2911,12 @@ void main() {
         // Ignore setting target rotation for this test; tested separately.
         camera.captureOrientationLocked = true;
 
+        // Tell plugin to create detached Observer when camera info updated.
+        GenericsPigeonOverrides.observerNew =
+            <T>({required void Function(Observer<T>, T) onChanged}) {
+              return Observer<T>.detached(onChanged: onChanged);
+            };
+
         PigeonOverrides.camera2CameraInfo_from =
             ({required dynamic cameraInfo}) => mockCamera2CameraInfo;
         PigeonOverrides.videoRecordEventListener_new =

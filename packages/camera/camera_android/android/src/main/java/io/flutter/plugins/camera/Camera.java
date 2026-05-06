@@ -1298,9 +1298,7 @@ class Camera
         && !lowerPath.endsWith(".m4v")
         && !lowerPath.endsWith(".webm")) {
       throw new Messages.FlutterError(
-          "IOError",
-          "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm",
-          null);
+          "IOError", "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm", null);
     }
     try {
       prepareMediaRecorder(captureFile.getAbsolutePath());

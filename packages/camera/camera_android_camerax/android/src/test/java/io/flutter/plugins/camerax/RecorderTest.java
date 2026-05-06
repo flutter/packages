@@ -81,21 +81,32 @@ public class RecorderTest {
     assertEquals(mockPendingRecording, api.prepareRecording(mockRecorder, "myFile.mp4"));
   }
 
-  @Test(expected = RuntimeException.class)
-  public void prepareRecording_errorsOnInvalidPath() {
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnDirectoryPath() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
-
     final Recorder mockRecorder = mock(Recorder.class);
 
-    // This should trigger the catch block in RecorderProxyApi.openTempFile if path is null,
-    // but Pigeon ensures it's non-null.
-    // However, we can test that it throws if openTempFile fails (e.g. SecurityException).
-    // But since openTempFile just calls new File(path), it doesn't throw much.
+    // Pass a path that is a directory (e.g. root "/")
+    api.prepareRecording(mockRecorder, "/");
+  }
 
-    // Let's test with a null path to trigger NullPointerException if we could,
-    // but Pigeon marks it @NonNull.
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnNonExistentParent() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final Recorder mockRecorder = mock(Recorder.class);
 
-    // Actually, RecorderProxyApi.prepareRecording is what we want to test.
-    api.prepareRecording(mockRecorder, null);
+    api.prepareRecording(mockRecorder, "/non/existent/parent/file.mp4");
+  }
+
+  @Test(expected = GeneratedCameraXLibrary.FlutterError.class)
+  public void prepareRecording_errorsOnInvalidExtension() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+    final Recorder mockRecorder = mock(Recorder.class);
+
+    // A path that has an invalid extension, but whose parent exists (we can just use an empty
+    // parent or relative path if needed, but since it checks parent existence, let's use a known
+    // valid parent like current directory, or mock it. Actually, `new
+    // File("file.txt").getParentFile()` is null, which bypasses the parent existence check!)
+    api.prepareRecording(mockRecorder, "file.txt");
   }
 }

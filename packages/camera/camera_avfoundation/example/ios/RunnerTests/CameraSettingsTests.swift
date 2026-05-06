@@ -378,26 +378,74 @@ final class CameraSettingsTests: XCTestCase {
     XCTAssertEqual(capturedOutputURL?.path, customPath)
   }
 
-  func test_startVideoRecording_errorsOnInvalidPath() {
-    let invalidPath = "/invalid/path.mp4"
+  func test_startVideoRecording_errorsOnDirectoryPath() {
+    let directoryPath = "/"
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-
-    // Simulate AssetWriter error (e.g. invalid URL)
-    configuration.assetWriterFactory = { _, _ in
-      throw NSError(domain: "test", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid path"])
-    }
-
     let camera = CameraTestUtils.createTestCamera(configuration)
 
     let expectation = self.expectation(description: "startVideoRecording finished")
     camera.startVideoRecording(
-      videoOutputPath: invalidPath,
+      videoOutputPath: directoryPath,
       completion: { result in
         switch result {
         case .success:
           XCTFail("Expected failure")
         case .failure(let error):
-          XCTAssertEqual(error.localizedDescription, "Invalid path")
+          if let pigeonError = error as? PigeonError {
+            XCTAssertEqual(pigeonError.code, "IOError")
+          } else {
+            XCTFail("Expected PigeonError")
+          }
+        }
+        expectation.fulfill()
+      }, messengerForStreaming: nil)
+
+    waitForExpectations(timeout: 1)
+  }
+
+  func test_startVideoRecording_errorsOnNonExistentParentPath() {
+    let nonExistentPath = "/non/existent/parent/file.mp4"
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let camera = CameraTestUtils.createTestCamera(configuration)
+
+    let expectation = self.expectation(description: "startVideoRecording finished")
+    camera.startVideoRecording(
+      videoOutputPath: nonExistentPath,
+      completion: { result in
+        switch result {
+        case .success:
+          XCTFail("Expected failure")
+        case .failure(let error):
+          if let pigeonError = error as? PigeonError {
+            XCTAssertEqual(pigeonError.code, "IOError")
+          } else {
+            XCTFail("Expected PigeonError")
+          }
+        }
+        expectation.fulfill()
+      }, messengerForStreaming: nil)
+
+    waitForExpectations(timeout: 1)
+  }
+
+  func test_startVideoRecording_errorsOnInvalidExtension() {
+    let invalidExtensionPath = "file.txt"
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    let camera = CameraTestUtils.createTestCamera(configuration)
+
+    let expectation = self.expectation(description: "startVideoRecording finished")
+    camera.startVideoRecording(
+      videoOutputPath: invalidExtensionPath,
+      completion: { result in
+        switch result {
+        case .success:
+          XCTFail("Expected failure")
+        case .failure(let error):
+          if let pigeonError = error as? PigeonError {
+            XCTAssertEqual(pigeonError.code, "IOError")
+          } else {
+            XCTFail("Expected PigeonError")
+          }
         }
         expectation.fulfill()
       }, messengerForStreaming: nil)

@@ -1336,6 +1336,27 @@ void main() {
           throwsA(isA<UnimplementedError>()),
         );
       });
+
+      testWidgets('passes videoOutputPath to camera.startVideoRecording', (
+        WidgetTester tester,
+      ) async {
+        // Save the camera in the camera plugin.
+        (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
+
+        const customPath = 'custom_web_path.mp4';
+
+        when(
+          camera.startVideoRecording(videoOutputPath: customPath),
+        ).thenAnswer((_) async {});
+
+        await CameraPlatform.instance.startVideoCapturing(
+          VideoCaptureOptions(cameraId, videoOutputPath: customPath),
+        );
+
+        verify(
+          camera.startVideoRecording(videoOutputPath: customPath),
+        ).called(1);
+      });
     });
 
     group('stopVideoRecording', () {
