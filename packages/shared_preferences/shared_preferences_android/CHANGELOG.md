@@ -1,3 +1,7 @@
+## 2.4.24
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 2.4.23
 
 * Fixes dartdoc comments that accidentally used HTML.
