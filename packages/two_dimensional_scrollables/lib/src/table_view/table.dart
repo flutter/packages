@@ -129,34 +129,34 @@ class TableView extends TwoDimensionalScrollView {
 
   /// Creates a [TableView] of widgets that are created on demand.
   ///
-  /// This constructor is appropriate for table views with a large
-  /// number of cells because the [cellbuilder] is called only for those
-  /// cells that are actually visible.
+  /// This is appropriate for table views with a large number of cells because
+  /// the [cellBuilder] is called only for those cells that are actually
+  /// visible.
   ///
-  /// This constructor generates a [TableCellBuilderDelegate] for building
-  /// children on demand using the required [cellBuilder],
-  /// [columnBuilder], and [rowBuilder].
+  /// This generates a [TableCellBuilderDelegate] for building children on
+  /// demand using the required [cellBuilder], [columnBuilder], and
+  /// [rowBuilder].
   ///
   /// For infinite rows and columns, omit providing [columnCount] or [rowCount].
-  /// Returning null from the [columnBuilder] or [rowBuilder] will terminate
-  /// the row or column at that index, representing the end of the table in that
+  /// Returning null from the [columnBuilder] or [rowBuilder] will terminate the
+  /// row or column at that index, representing the end of the table in that
   /// axis. In this scenario, until the potential end of the table in either
   /// dimension is reached by returning null, the
   /// [ScrollPosition.maxScrollExtent] will reflect [double.infinity]. This is
   /// because as the table is built lazily, it will not know the end has been
   /// reached until the [ScrollPosition] arrives there. This is similar to
   /// returning null from [ListView.builder] to signify the end of the list.
-  TableView.builder({
-    super.key,
-    super.primary,
-    super.mainAxis,
-    super.horizontalDetails,
-    super.verticalDetails,
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.clipBehavior,
+  static Widget builder({
+    Key? key,
+    bool? primary,
+    Axis mainAxis = Axis.vertical,
+    ScrollableDetails horizontalDetails = const ScrollableDetails.horizontal(),
+    ScrollableDetails verticalDetails = const ScrollableDetails.vertical(),
+    double? cacheExtent,
+    DiagonalDragBehavior diagonalDragBehavior = DiagonalDragBehavior.none,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior,
+    Clip clipBehavior = Clip.hardEdge,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
     int trailingPinnedRowCount = 0,
@@ -166,56 +166,53 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     required TableViewCellBuilder cellBuilder,
-    this.alignment = Alignment.topLeft,
-  }) : assert(pinnedRowCount >= 0),
-       assert(trailingPinnedRowCount >= 0),
-       assert(rowCount == null || rowCount >= 0),
-       assert(
-         rowCount == null ||
-             rowCount >= pinnedRowCount + trailingPinnedRowCount,
-       ),
-       assert(columnCount == null || columnCount >= 0),
-       assert(pinnedColumnCount >= 0),
-       assert(trailingPinnedColumnCount >= 0),
-       assert(
-         columnCount == null ||
-             columnCount >= pinnedColumnCount + trailingPinnedColumnCount,
-       ),
-       super(
-         delegate: TableCellBuilderDelegate(
-           columnCount: columnCount,
-           rowCount: rowCount,
-           pinnedColumnCount: pinnedColumnCount,
-           pinnedRowCount: pinnedRowCount,
-           trailingPinnedColumnCount: trailingPinnedColumnCount,
-           trailingPinnedRowCount: trailingPinnedRowCount,
-           cellBuilder: cellBuilder,
-           columnBuilder: columnBuilder,
-           rowBuilder: rowBuilder,
-         ),
-       );
+    AlignmentGeometry alignment = Alignment.topLeft,
+  }) {
+    return _TableViewBuilder(
+      key: key,
+      primary: primary,
+      mainAxis: mainAxis,
+      horizontalDetails: horizontalDetails,
+      verticalDetails: verticalDetails,
+      cacheExtent: cacheExtent,
+      diagonalDragBehavior: diagonalDragBehavior,
+      dragStartBehavior: dragStartBehavior,
+      keyboardDismissBehavior: keyboardDismissBehavior,
+      clipBehavior: clipBehavior,
+      pinnedRowCount: pinnedRowCount,
+      pinnedColumnCount: pinnedColumnCount,
+      trailingPinnedRowCount: trailingPinnedRowCount,
+      trailingPinnedColumnCount: trailingPinnedColumnCount,
+      columnCount: columnCount,
+      rowCount: rowCount,
+      columnBuilder: columnBuilder,
+      rowBuilder: rowBuilder,
+      cellBuilder: cellBuilder,
+      alignment: alignment,
+    );
+  }
 
   /// Creates a [TableView] from an explicit two dimensional array of children.
   ///
-  /// This constructor is appropriate for list views with a small number of
-  /// children because constructing the [List] requires doing work for every
-  /// child that could possibly be displayed in the list view instead of just
-  /// those children that are actually visible.
+  /// This is appropriate for list views with a small number of children because
+  /// constructing the [List] requires doing work for every child that could
+  /// possibly be displayed in the list view instead of just those children that
+  /// are actually visible.
   ///
   /// The [children] are accessed for each [TableVicinity.column] and
   /// [TableVicinity.row] of the [TwoDimensionalViewport] as
   /// `children[vicinity.column][vicinity.row]`.
-  TableView.list({
-    super.key,
-    super.primary,
-    super.mainAxis,
-    super.horizontalDetails,
-    super.verticalDetails,
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior,
-    super.keyboardDismissBehavior,
-    super.clipBehavior,
+  static Widget list({
+    Key? key,
+    bool? primary,
+    Axis mainAxis = Axis.vertical,
+    ScrollableDetails horizontalDetails = const ScrollableDetails.horizontal(),
+    ScrollableDetails verticalDetails = const ScrollableDetails.vertical(),
+    double? cacheExtent,
+    DiagonalDragBehavior diagonalDragBehavior = DiagonalDragBehavior.none,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior,
+    Clip clipBehavior = Clip.hardEdge,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
     int trailingPinnedRowCount = 0,
@@ -223,22 +220,29 @@ class TableView extends TwoDimensionalScrollView {
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     List<List<TableViewCell>> cells = const <List<TableViewCell>>[],
-    this.alignment = Alignment.topLeft,
-  }) : assert(pinnedRowCount >= 0),
-       assert(pinnedColumnCount >= 0),
-       assert(trailingPinnedRowCount >= 0),
-       assert(trailingPinnedColumnCount >= 0),
-       super(
-         delegate: TableCellListDelegate(
-           pinnedColumnCount: pinnedColumnCount,
-           pinnedRowCount: pinnedRowCount,
-           trailingPinnedColumnCount: trailingPinnedColumnCount,
-           trailingPinnedRowCount: trailingPinnedRowCount,
-           cells: cells,
-           columnBuilder: columnBuilder,
-           rowBuilder: rowBuilder,
-         ),
-       );
+    AlignmentGeometry alignment = Alignment.topLeft,
+  }) {
+    return _TableViewList(
+      key: key,
+      primary: primary,
+      mainAxis: mainAxis,
+      horizontalDetails: horizontalDetails,
+      verticalDetails: verticalDetails,
+      cacheExtent: cacheExtent,
+      diagonalDragBehavior: diagonalDragBehavior,
+      dragStartBehavior: dragStartBehavior,
+      keyboardDismissBehavior: keyboardDismissBehavior,
+      clipBehavior: clipBehavior,
+      pinnedRowCount: pinnedRowCount,
+      pinnedColumnCount: pinnedColumnCount,
+      trailingPinnedRowCount: trailingPinnedRowCount,
+      trailingPinnedColumnCount: trailingPinnedColumnCount,
+      columnBuilder: columnBuilder,
+      rowBuilder: rowBuilder,
+      cells: cells,
+      alignment: alignment,
+    );
+  }
 
   /// The alignment of the table within the viewport when there is extra space.
   ///
@@ -261,6 +265,221 @@ class TableView extends TwoDimensionalScrollView {
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       alignment: alignment,
+    );
+  }
+}
+
+class _TableViewBuilder extends StatefulWidget {
+  const _TableViewBuilder({
+    super.key,
+    this.primary,
+    this.mainAxis = Axis.vertical,
+    this.horizontalDetails = const ScrollableDetails.horizontal(),
+    this.verticalDetails = const ScrollableDetails.vertical(),
+    this.cacheExtent,
+    this.diagonalDragBehavior = DiagonalDragBehavior.none,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior,
+    this.clipBehavior = Clip.hardEdge,
+    this.pinnedRowCount = 0,
+    this.pinnedColumnCount = 0,
+    this.trailingPinnedRowCount = 0,
+    this.trailingPinnedColumnCount = 0,
+    this.columnCount,
+    this.rowCount,
+    required this.columnBuilder,
+    required this.rowBuilder,
+    required this.cellBuilder,
+    this.alignment = Alignment.topLeft,
+  }) : assert(pinnedRowCount >= 0),
+       assert(trailingPinnedRowCount >= 0),
+       assert(rowCount == null || rowCount >= 0),
+       assert(
+         rowCount == null ||
+             rowCount >= pinnedRowCount + trailingPinnedRowCount,
+       ),
+       assert(columnCount == null || columnCount >= 0),
+       assert(pinnedColumnCount >= 0),
+       assert(trailingPinnedColumnCount >= 0),
+       assert(
+         columnCount == null ||
+             columnCount >= pinnedColumnCount + trailingPinnedColumnCount,
+       );
+
+  final bool? primary;
+  final Axis mainAxis;
+  final ScrollableDetails horizontalDetails;
+  final ScrollableDetails verticalDetails;
+  final double? cacheExtent;
+  final DiagonalDragBehavior diagonalDragBehavior;
+  final DragStartBehavior dragStartBehavior;
+  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
+  final Clip clipBehavior;
+  final int pinnedRowCount;
+  final int pinnedColumnCount;
+  final int trailingPinnedRowCount;
+  final int trailingPinnedColumnCount;
+  final int? columnCount;
+  final int? rowCount;
+  final TableSpanBuilder columnBuilder;
+  final TableSpanBuilder rowBuilder;
+  final TableViewCellBuilder cellBuilder;
+  final AlignmentGeometry alignment;
+
+  @override
+  State<_TableViewBuilder> createState() => __TableViewBuilderState();
+}
+
+class __TableViewBuilderState extends State<_TableViewBuilder> {
+  late TableCellBuilderDelegate _delegate;
+
+  @override
+  void initState() {
+    super.initState();
+    _delegate = TableCellBuilderDelegate(
+      columnCount: widget.columnCount,
+      rowCount: widget.rowCount,
+      pinnedColumnCount: widget.pinnedColumnCount,
+      pinnedRowCount: widget.pinnedRowCount,
+      trailingPinnedColumnCount: widget.trailingPinnedColumnCount,
+      trailingPinnedRowCount: widget.trailingPinnedRowCount,
+      cellBuilder: widget.cellBuilder,
+      columnBuilder: widget.columnBuilder,
+      rowBuilder: widget.rowBuilder,
+    );
+  }
+
+  @override
+  void didUpdateWidget(_TableViewBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.columnCount != oldWidget.columnCount ||
+        widget.rowCount != oldWidget.rowCount ||
+        widget.pinnedColumnCount != oldWidget.pinnedColumnCount ||
+        widget.pinnedRowCount != oldWidget.pinnedRowCount ||
+        widget.trailingPinnedColumnCount !=
+            oldWidget.trailingPinnedColumnCount ||
+        widget.trailingPinnedRowCount != oldWidget.trailingPinnedRowCount ||
+        widget.cellBuilder != oldWidget.cellBuilder ||
+        widget.columnBuilder != oldWidget.columnBuilder ||
+        widget.rowBuilder != oldWidget.rowBuilder) {
+      _delegate.dispose();
+      _delegate = TableCellBuilderDelegate(
+        columnCount: widget.columnCount,
+        rowCount: widget.rowCount,
+        pinnedColumnCount: widget.pinnedColumnCount,
+        pinnedRowCount: widget.pinnedRowCount,
+        trailingPinnedColumnCount: widget.trailingPinnedColumnCount,
+        trailingPinnedRowCount: widget.trailingPinnedRowCount,
+        cellBuilder: widget.cellBuilder,
+        columnBuilder: widget.columnBuilder,
+        rowBuilder: widget.rowBuilder,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _delegate.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TableView(
+      primary: widget.primary,
+      mainAxis: widget.mainAxis,
+      horizontalDetails: widget.horizontalDetails,
+      verticalDetails: widget.verticalDetails,
+      cacheExtent: widget.cacheExtent,
+      diagonalDragBehavior: widget.diagonalDragBehavior,
+      dragStartBehavior: widget.dragStartBehavior,
+      delegate: _delegate,
+      alignment: widget.alignment,
+    );
+  }
+}
+
+class _TableViewList extends StatefulWidget {
+  const _TableViewList({
+    super.key,
+    this.primary,
+    this.mainAxis = Axis.vertical,
+    this.horizontalDetails = const ScrollableDetails.horizontal(),
+    this.verticalDetails = const ScrollableDetails.vertical(),
+    this.cacheExtent,
+    this.diagonalDragBehavior = DiagonalDragBehavior.none,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.keyboardDismissBehavior,
+    this.clipBehavior = Clip.hardEdge,
+    this.pinnedRowCount = 0,
+    this.pinnedColumnCount = 0,
+    this.trailingPinnedRowCount = 0,
+    this.trailingPinnedColumnCount = 0,
+    required this.columnBuilder,
+    required this.rowBuilder,
+    this.cells = const <List<TableViewCell>>[],
+    this.alignment = Alignment.topLeft,
+  }) : assert(pinnedRowCount >= 0),
+       assert(pinnedColumnCount >= 0),
+       assert(trailingPinnedRowCount >= 0),
+       assert(trailingPinnedColumnCount >= 0);
+
+  final bool? primary;
+  final Axis mainAxis;
+  final ScrollableDetails horizontalDetails;
+  final ScrollableDetails verticalDetails;
+  final double? cacheExtent;
+  final DiagonalDragBehavior diagonalDragBehavior;
+  final DragStartBehavior dragStartBehavior;
+  final ScrollViewKeyboardDismissBehavior? keyboardDismissBehavior;
+  final Clip clipBehavior;
+  final int pinnedRowCount;
+  final int pinnedColumnCount;
+  final int trailingPinnedRowCount;
+  final int trailingPinnedColumnCount;
+  final TableSpanBuilder columnBuilder;
+  final TableSpanBuilder rowBuilder;
+  final AlignmentGeometry alignment;
+  final List<List<TableViewCell>> cells;
+
+  @override
+  State<_TableViewList> createState() => _TableViewListState();
+}
+
+class _TableViewListState extends State<_TableViewList> {
+  late TableCellListDelegate _delegate;
+
+  @override
+  void initState() {
+    super.initState();
+    _delegate = TableCellListDelegate(
+      pinnedColumnCount: widget.pinnedColumnCount,
+      pinnedRowCount: widget.pinnedRowCount,
+      trailingPinnedColumnCount: widget.trailingPinnedColumnCount,
+      trailingPinnedRowCount: widget.trailingPinnedRowCount,
+      cells: widget.cells,
+      columnBuilder: widget.columnBuilder,
+      rowBuilder: widget.rowBuilder,
+    );
+  }
+
+  @override
+  void dispose() {
+    _delegate.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TableView(
+      primary: widget.primary,
+      mainAxis: widget.mainAxis,
+      horizontalDetails: widget.horizontalDetails,
+      verticalDetails: widget.verticalDetails,
+      cacheExtent: widget.cacheExtent,
+      diagonalDragBehavior: widget.diagonalDragBehavior,
+      dragStartBehavior: widget.dragStartBehavior,
+      delegate: _delegate,
     );
   }
 }
