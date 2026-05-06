@@ -65,9 +65,7 @@ public final class PlatformVideoView implements PlatformView {
             });
   }
 
-  /**
-   * Binds the ExoPlayer to the provided surface.
-   */
+  /** Binds the ExoPlayer to the provided surface. */
   static void bindPlayerToSurface(@NonNull ExoPlayer exoPlayer, @NonNull Surface surface) {
     if (surface.isValid()) {
       exoPlayer.setVideoSurface(surface);

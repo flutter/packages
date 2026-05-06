@@ -19,7 +19,6 @@ import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
