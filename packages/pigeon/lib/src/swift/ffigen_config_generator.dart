@@ -47,6 +47,9 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     required String dartPackageName,
   }) {
     final indent = Indent();
+    indent.writeln('// ${getGeneratedCodeWarning()}');
+    indent.writeln('// $seeAlsoWarning');
+    indent.newln();
     indent.format('''
 import 'dart:io';
 import 'package:ffigen/ffigen.dart' as fg;
@@ -70,7 +73,7 @@ import 'package:swiftgen/swiftgen.dart';
       path.posix.dirname(
         path.posix.dirname(generatorOptions.swiftOptions.swiftOut),
       ),
-      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc',
+      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc_gen',
     );
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {

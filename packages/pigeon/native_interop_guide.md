@@ -1,66 +1,52 @@
-<?code-excerpt path-base="example/app"?>
 # Pigeon Native Interop (FFI & JNI) Guide
 
-This guide describes the new Native Interop feature in Pigeon, which allows for direct communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift and **JNI (Java Native Interface)** for Kotlin/Java, bypassing the traditional MethodChannel communication.
+This guide describes Pigeon's Native Interop feature, which allows for direct, high-performance communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift (iOS/macOS) and **JNI (Java Native Interface)** for Kotlin/Java (Android).
 
 ---
 
 ## 1. Overview
 
-Native Interop provides a way to make synchronous or asynchronous calls between Dart and platform code without the overhead of standard Message Channels. Instead of serializing data to binary format and sending it over a channel, Pigeon now generates bridging code that uses Dart's native interop capabilities.
-
-### Key Difference in Concurrency
-
-An important architectural difference in Native Interop is the shift in how asynchronous methods are handled:
--   **Old Pigeon (MethodChannels)**: Async methods relied on callbacks passed as completion handlers.
--   **New Pigeon (Native Interop)**: Async methods leverage modern concurrency models:
-    -   **Kotlin**: Uses **Kotlin Coroutines**.
-    -   **Swift**: Uses **async/await** syntax.
+Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of MethodChannel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
+For a detailed comparison between MethodChannel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#communication-options-methodchannels-vs-native-interop).
 
 ---
 
-## 2. Benefits, Drawbacks, and Use Cases
+## 2. End-to-End Workflow
 
-### Benefits
--   **High Performance**: Direct memory sharing and function calls avoid serialization and message channel machinery overhead.
--   **Direct Interaction**: Interact with native types directly in supported scenarios.
+Using Native Interop in pigeon follows the standard pigeon workflow, with a few additional configuration and compilation steps. The complete end-to-end process is:
 
-### Drawbacks
--   **Complex Setup**: Requires external tools like `jnigen` or `ffigen` which have their own prerequisites.
--   **Dual-step Generation**: Generating code requires running Pigeon first, and then running generated config scripts to produce the final bindings.
--   **Current Performance Regression**: There is currently a known performance regression on some complex classes with many fields relative to MethodChannel Pigeon. Sending complex classes frequently will cause a significant slowdown until this is resolved soon.
-
-### Use Cases
--   Plugins handling large arrays, typed data, or frequent small messages where overhead is critical.
--   *Avoid frequent complex class transfers for now due to the current performance regression.*
+1. **Define the Interface**: Create a Dart definition file outlining your `HostApi` and `FlutterApi` declarations (refer to the [Pigeon README](file:///Users/tarrinneal/work/packages/packages/pigeon/README.md#rules-for-defining-your-communication-interface) for syntax and rules).
+2. **Configure Options**: Configure `kotlinOptions.useJni` or `swiftOptions.useFfi` in your `PigeonOptions` (see [Step 1: Configure Pigeon Options](#step-1-configure-pigeon-options) below).
+3. **Prerequisites**: Ensure your local environment meets the toolchain prerequisites for `jnigen` and `ffigen` (see [Section 3: Prerequisites](#section-3-prerequisites) below).
+4. **Run Code Generation**: Run the `pigeon` tool to generate the native bridge code, Dart wrapper, and config scripts, then run the generated config scripts to produce the underlying interop bindings (see [Step 2: Automated Interop Generation](#step-2-automated-interop-generation) below).
+5. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager to compile the intermediate Objective-C bridge files (see [Step 3: iOS/macOS Build System Configuration (FFI)](#step-3-iosmacos-build-system-configuration-ffi) below).
+6. **Implement and Call**: Implement the generated protocol/class interface in your native codebase and call the generated Dart methods from your Flutter application.
 
 ---
 
-## 3. Prerequisites for External Tools
+## 3. Prerequisites
 
-To use the Native Interop feature, both your environment and the external tools must be properly configured.
+To use Native Interop, your development environment and the corresponding external tools must be configured:
 
-### JNIgen (for Kotlin)
--   **Java 17 is specifically required**. JNIgen and parts of the Android ecosystem now rely on this specific version.
--   **Maven (`mvn`)**: Required for resolving target Java dependencies.
--   **Android SDK**: Must be installed and reachable.
--   The app must be buildable to allow JNIgen to resolve classpaths correctly.
--   **Kotlin Version**: The newest version supported is **2.1.0**.
+### Android (JNI / JNIgen)
+- **Java 17**: Required by the Android build tools and JNIgen.
+- **Maven (`mvn`)**: Required to resolve dependencies during generation.
+- **Android SDK**: Must be installed and configured in your path.
+- **Kotlin Version**: The maximum supported version is **2.1.0**.
 
-### FFIgen (for Swift)
--   **LLVM (version 9+)**: Required to parse C/Objective-C headers.
-    -   On **macOS**, LLVM is included by default with Xcode Command Line Tools.
--   **`package:ffi`** and **`package:ffigen`** dependencies must be added to your project.
+### iOS/macOS (FFI / FFIgen)
+- **LLVM (version 9+)**: Required to parse header files. 
+  - On macOS, this is included with Xcode Command Line Tools.
+- **Dart Dependencies**: The `package:ffi` and `package:ffigen` packages must be added to your pubspec.
 
 ---
 
-## 4. How to Use
+## 4. Implementation Steps
 
-### Step 1: Pigeon Configuration
+### Step 1: Configure Pigeon Options
 
-To enable Native Interop, configure the `PigeonOptions` in your Pigeon file:
+Enable Native Interop for your target platforms by setting the configuration options in your Pigeon file:
 
-<?code-excerpt "pigeons/native_interop_example.dart (config)"?>
 ```dart
 @ConfigurePigeon(
   PigeonOptions(
@@ -73,46 +59,52 @@ To enable Native Interop, configure the `PigeonOptions` in your Pigeon file:
 
 ### Step 2: Automated Interop Generation
 
-Pigeon automatically handles running `jnigen` and `ffigen` as part of the generation process!
+Pigeon automatically orchestrates running `jnigen` and `ffigen` as part of the generation process.
 
-- **For JNI (Android)**: When `kotlinOptions.useJni` is enabled and `kotlinOut` is specified, Pigeon handles a multi-step flow to resolve classpaths:
-  1. Generates Kotlin code and `jnigen_config.dart`.
-  2. Invokes `flutter build apk --debug` to resolve Android dependencies.
-  3. Runs `jnigen` to create JNI Dart bindings.
-  4. Generates the final files.
-- **For FFI (iOS/macOS)**: When `swiftOptions.useFfi` is enabled and `swiftOptions.appDirectory` is specified, Pigeon will automatically run `ffigen` if `ffigen_config.dart` exists in that directory.
+- **Android (JNI)**: When `kotlinOptions.useJni` is enabled and `kotlinOut` is specified:
+  1. Generate the JNI-compatible Kotlin bridge and the `jnigen_config.dart` configuration.
+  2. Run `jnigen` (via the config script) to parse the generated Kotlin bridge and produce Dart JNI bindings.
+  3. Generate the final pigeon Dart output that wraps and imports those JNI bindings.
+- **iOS/macOS (FFI)**: When `swiftOptions.useFfi` is enabled and `swiftOptions.appDirectory` is specified:
+  1. Generate the Objective-C compatible Swift bridge and the `ffigen_config.dart` configuration.
+  2. Run `ffigen` (via the config script) to parse the generated Objective-C bridge and produce Dart FFI bindings.
+  3. Generate the final pigeon Dart output that wraps and imports those FFI bindings.
+
+### Step 3: iOS/macOS Build System Configuration (FFI)
+
+Because Dart FFI cannot directly call Swift symbols, the FFI toolchain generates an intermediate Objective-C bridging file (`.m` file) in a subdirectory named `<swift_output_dir>_objc_gen`. 
+
+To compile the generated Objective-C files alongside your Swift code, you must configure your iOS/macOS build system:
+
+#### Option A: CocoaPods (Standard Flutter Plugins)
+If you are developing a standard Flutter plugin using CocoaPods, ensure your `.podspec` file matches both Swift and Objective-C source files:
+```ruby
+s.source_files = 'Sources/**/*.{swift,m}'
+```
+This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
+
+#### Option B: Swift Package Manager (SPM)
+If your plugin uses SPM, note that Swift and Objective-C files cannot reside within the same SPM target. You must define two separate targets in your `Package.swift` file:
+1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
+2. The main Swift target that depends on the Objective-C target.
+
+Example configuration:
+```swift
+targets: [
+  .target(
+    name: "my_plugin_objc_gen",
+    dependencies: [],
+    publicHeadersPath: "."
+  ),
+  .target(
+    name: "my_plugin",
+    dependencies: ["my_plugin_objc_gen"]
+  ),
+]
+```
 
 ---
 
-## 5. Migration Guide
+## 5. Migration from Method Channels
 
-Moving from a traditional MethodChannel plugin to Native Interop involves shifting from a callback mindset to a direct call and newer concurrency paradigm.
-
-### Async Methods Comparison
-
-#### Before: Method Channel (Callback Style)
-
-<?code-excerpt "ios/Runner/NativeInteropExample.swift (callback-style)"?>
-```swift
-func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) -> Void) {
-  completion(.success(value))
-}
-```
-
-#### After: Native Interop (Concurrency Style)
-
-<?code-excerpt "ios/Runner/NativeInteropExample.swift (concurrency-style)"?>
-```swift
-func echoAsync(_ value: String) async throws -> String {
-  return value
-}
-```
-
-<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (concurrency-style)"?>
-```kotlin
-suspend fun echoAsync(value: String): String {
-  return value
-}
-```
-
-In Dart, you will await the result directly as before, but the interaction with the native layer bypasses serialization overhead.
+If you are migrating an existing Pigeon plugin from the `MethodChannel`-based model to the Native Interop model, see the [Native Interop Migration Guide](file:///Users/tarrinneal/work/packages/packages/pigeon/native_interop_migration_guide.md) for a complete comparison of the API models and transition examples.

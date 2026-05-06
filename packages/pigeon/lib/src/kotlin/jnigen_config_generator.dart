@@ -43,7 +43,9 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     required String dartPackageName,
   }) {
     final indent = Indent();
-    indent.writeln('// ignore_for_file: prefer_const_constructors');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
+    indent.writeln('// $seeAlsoWarning');
+    indent.newln();
     indent.writeln("import 'package:jnigen/jnigen.dart';");
     indent.writeln("import 'package:logging/logging.dart';");
 
