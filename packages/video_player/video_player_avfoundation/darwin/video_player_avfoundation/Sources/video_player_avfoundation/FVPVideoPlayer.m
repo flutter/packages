@@ -16,7 +16,9 @@ static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
 /// The key name for loading AVURLAsset variants property asynchronously.
-/// Note: Apple does not provide a constant for this key; it is documented in the AVURLAsset API.
+/// Note: Apple does not provide a constant for this key.
+/// AVURLAsset.variants is documented via Apple's current async-loading API docs:
+/// https://developer.apple.com/documentation/avfoundation/avpartialasyncproperty/variants
 static NSString *const kFVPAssetVariantsKey = @"variants";
 
 /// Registers KVO observers on 'object' for each entry in 'observations', which must be a
