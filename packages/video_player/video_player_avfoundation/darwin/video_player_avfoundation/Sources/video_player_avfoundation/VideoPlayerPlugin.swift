@@ -25,7 +25,7 @@ protocol DisplayLinkFactory {
 }
 
 /// Non-test implementation of the display link factory.
-class DefaultDisplayLinkFactory: NSObject, DisplayLinkFactory {
+final class DefaultDisplayLinkFactory: DisplayLinkFactory {
   func displayLink(
     with viewProvider: FVPViewProvider,
     callback: @escaping () -> Void
@@ -43,7 +43,7 @@ class DefaultDisplayLinkFactory: NSObject, DisplayLinkFactory {
 
 /// Non-test implementation of FVPAssetProvider, wrapping a Flutter plugin
 /// registrar.
-class DefaultAssetProvider: NSObject, FVPAssetProvider {
+final class DefaultAssetProvider: NSObject, FVPAssetProvider {
   private weak var registrar: FlutterPluginRegistrar?
 
   init(registrar: FlutterPluginRegistrar) {
