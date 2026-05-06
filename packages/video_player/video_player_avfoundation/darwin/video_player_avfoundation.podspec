@@ -23,5 +23,9 @@ Downloaded by pub (not CocoaPods).
   s.ios.deployment_target = '13.0'
   s.osx.deployment_target = '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
   s.resource_bundles = {'video_player_avfoundation_privacy' => ['video_player_avfoundation/Sources/video_player_avfoundation/Resources/PrivacyInfo.xcprivacy']}
 end
