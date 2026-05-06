@@ -51,14 +51,14 @@ Future<void> main(List<String> args) async {
     }
     final repoRoot = (repoRootResult.stdout as String).trim();
 
-    // Get list of all Dart files not ignored by git.
-    final ProcessResult gitResult = await Process.run('git', [
-      'ls-files',
-      '--cached',
-      '--others',
-      '--exclude-standard',
-      '*.dart',
-    ], runInShell: true);
+    // Get list of all Dart files in the package not ignored by git
+    final packageRoot = Directory.current.parent.path;
+    final ProcessResult gitResult = await Process.run(
+      'git',
+      ['ls-files', '--cached', '--others', '--exclude-standard', '.'],
+      runInShell: true,
+      workingDirectory: packageRoot,
+    );
 
     if (gitResult.exitCode != 0) {
       await log(
@@ -71,12 +71,12 @@ Future<void> main(List<String> args) async {
           'reason': 'Failed to get git files.',
         }),
       );
-      exit(0); // Exit 0 so Jetski captures the stdout JSON.
+      exit(0); // Exit 0 so Jetski captures the stdout JSON
     }
 
     final List<String> files = (gitResult.stdout as String)
         .split('\n')
-        .where((line) => line.isNotEmpty)
+        .where((line) => line.isNotEmpty && line.endsWith('.dart'))
         .map((path) => '$repoRoot/$path')
         .where((path) => File(path).existsSync())
         .toList();
