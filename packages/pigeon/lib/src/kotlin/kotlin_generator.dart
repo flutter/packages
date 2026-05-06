@@ -928,7 +928,7 @@ class ${api.name}Registrar() {
         indent.addScoped(' {', '}', () {
           indent.writeScoped('api?.let {', '}', () {
             indent.writeScoped('try {', '}', () {
-              indent.writeln('return api!!.${method.name}($argNames)');
+              indent.writeln('return it.${method.name}($argNames)');
             }, addTrailingNewline: false);
             indent.addScoped(' catch (e: Exception) {', '}', () {
               indent.writeln('throw e');

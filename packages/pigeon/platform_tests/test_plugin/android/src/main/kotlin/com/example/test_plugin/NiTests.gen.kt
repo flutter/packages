@@ -1618,7 +1618,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun noop() {
     api?.let {
       try {
-        return api!!.noop()
+        return it.noop()
       } catch (e: Exception) {
         throw e
       }
@@ -1629,7 +1629,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoAllTypes(everything: NIAllTypes): NIAllTypes {
     api?.let {
       try {
-        return api!!.echoAllTypes(everything)
+        return it.echoAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -1640,7 +1640,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun throwError(): Any? {
     api?.let {
       try {
-        return api!!.throwError()
+        return it.throwError()
       } catch (e: Exception) {
         throw e
       }
@@ -1651,7 +1651,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun throwErrorFromVoid() {
     api?.let {
       try {
-        return api!!.throwErrorFromVoid()
+        return it.throwErrorFromVoid()
       } catch (e: Exception) {
         throw e
       }
@@ -1662,7 +1662,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun throwFlutterError(): Any? {
     api?.let {
       try {
-        return api!!.throwFlutterError()
+        return it.throwFlutterError()
       } catch (e: Exception) {
         throw e
       }
@@ -1673,7 +1673,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.echoInt(anInt)
+        return it.echoInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -1684,7 +1684,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.echoDouble(aDouble)
+        return it.echoDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -1695,7 +1695,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
-        return api!!.echoBool(aBool)
+        return it.echoBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -1706,7 +1706,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoString(aString: String): String {
     api?.let {
       try {
-        return api!!.echoString(aString)
+        return it.echoString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -1717,7 +1717,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoUint8List(aUint8List: ByteArray): ByteArray {
     api?.let {
       try {
-        return api!!.echoUint8List(aUint8List)
+        return it.echoUint8List(aUint8List)
       } catch (e: Exception) {
         throw e
       }
@@ -1728,7 +1728,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoInt32List(aInt32List: IntArray): IntArray {
     api?.let {
       try {
-        return api!!.echoInt32List(aInt32List)
+        return it.echoInt32List(aInt32List)
       } catch (e: Exception) {
         throw e
       }
@@ -1739,7 +1739,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoInt64List(aInt64List: LongArray): LongArray {
     api?.let {
       try {
-        return api!!.echoInt64List(aInt64List)
+        return it.echoInt64List(aInt64List)
       } catch (e: Exception) {
         throw e
       }
@@ -1750,7 +1750,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
     api?.let {
       try {
-        return api!!.echoFloat64List(aFloat64List)
+        return it.echoFloat64List(aFloat64List)
       } catch (e: Exception) {
         throw e
       }
@@ -1761,7 +1761,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoObject(anObject: Any): Any {
     api?.let {
       try {
-        return api!!.echoObject(anObject)
+        return it.echoObject(anObject)
       } catch (e: Exception) {
         throw e
       }
@@ -1772,7 +1772,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
-        return api!!.echoList(list)
+        return it.echoList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -1783,7 +1783,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoStringList(stringList: List<String?>): List<String?> {
     api?.let {
       try {
-        return api!!.echoStringList(stringList)
+        return it.echoStringList(stringList)
       } catch (e: Exception) {
         throw e
       }
@@ -1794,7 +1794,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoIntList(intList: List<Long?>): List<Long?> {
     api?.let {
       try {
-        return api!!.echoIntList(intList)
+        return it.echoIntList(intList)
       } catch (e: Exception) {
         throw e
       }
@@ -1805,7 +1805,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
     api?.let {
       try {
-        return api!!.echoDoubleList(doubleList)
+        return it.echoDoubleList(doubleList)
       } catch (e: Exception) {
         throw e
       }
@@ -1816,7 +1816,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
     api?.let {
       try {
-        return api!!.echoBoolList(boolList)
+        return it.echoBoolList(boolList)
       } catch (e: Exception) {
         throw e
       }
@@ -1827,7 +1827,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
     api?.let {
       try {
-        return api!!.echoEnumList(enumList)
+        return it.echoEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -1838,7 +1838,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoClassList(classList: List<NIAllNullableTypes?>): List<NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.echoClassList(classList)
+        return it.echoClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -1849,7 +1849,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum> {
     api?.let {
       try {
-        return api!!.echoNonNullEnumList(enumList)
+        return it.echoNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -1860,7 +1860,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNonNullClassList(classList: List<NIAllNullableTypes>): List<NIAllNullableTypes> {
     api?.let {
       try {
-        return api!!.echoNonNullClassList(classList)
+        return it.echoNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -1871,7 +1871,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
-        return api!!.echoMap(map)
+        return it.echoMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -1882,7 +1882,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
-        return api!!.echoStringMap(stringMap)
+        return it.echoStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1893,7 +1893,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
-        return api!!.echoIntMap(intMap)
+        return it.echoIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1904,7 +1904,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoEnumMap(enumMap: Map<NIAnEnum?, NIAnEnum?>): Map<NIAnEnum?, NIAnEnum?> {
     api?.let {
       try {
-        return api!!.echoEnumMap(enumMap)
+        return it.echoEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1917,7 +1917,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.echoClassMap(classMap)
+        return it.echoClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1928,7 +1928,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
     api?.let {
       try {
-        return api!!.echoNonNullStringMap(stringMap)
+        return it.echoNonNullStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1939,7 +1939,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
     api?.let {
       try {
-        return api!!.echoNonNullIntMap(intMap)
+        return it.echoNonNullIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1950,7 +1950,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNonNullEnumMap(enumMap: Map<NIAnEnum, NIAnEnum>): Map<NIAnEnum, NIAnEnum> {
     api?.let {
       try {
-        return api!!.echoNonNullEnumMap(enumMap)
+        return it.echoNonNullEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1963,7 +1963,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long, NIAllNullableTypes> {
     api?.let {
       try {
-        return api!!.echoNonNullClassMap(classMap)
+        return it.echoNonNullClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -1974,7 +1974,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoClassWrapper(wrapper: NIAllClassesWrapper): NIAllClassesWrapper {
     api?.let {
       try {
-        return api!!.echoClassWrapper(wrapper)
+        return it.echoClassWrapper(wrapper)
       } catch (e: Exception) {
         throw e
       }
@@ -1985,7 +1985,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoEnum(anEnum: NIAnEnum): NIAnEnum {
     api?.let {
       try {
-        return api!!.echoEnum(anEnum)
+        return it.echoEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -1996,7 +1996,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
     api?.let {
       try {
-        return api!!.echoAnotherEnum(anotherEnum)
+        return it.echoAnotherEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2007,7 +2007,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNamedDefaultString(aString: String): String {
     api?.let {
       try {
-        return api!!.echoNamedDefaultString(aString)
+        return it.echoNamedDefaultString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -2018,7 +2018,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoOptionalDefaultDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.echoOptionalDefaultDouble(aDouble)
+        return it.echoOptionalDefaultDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -2029,7 +2029,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoRequiredInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.echoRequiredInt(anInt)
+        return it.echoRequiredInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -2040,7 +2040,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes? {
     api?.let {
       try {
-        return api!!.echoAllNullableTypes(everything)
+        return it.echoAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2053,7 +2053,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return api!!.echoAllNullableTypesWithoutRecursion(everything)
+        return it.echoAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2066,7 +2066,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun extractNestedNullableString(wrapper: NIAllClassesWrapper): String? {
     api?.let {
       try {
-        return api!!.extractNestedNullableString(wrapper)
+        return it.extractNestedNullableString(wrapper)
       } catch (e: Exception) {
         throw e
       }
@@ -2079,7 +2079,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun createNestedNullableString(nullableString: String?): NIAllClassesWrapper {
     api?.let {
       try {
-        return api!!.createNestedNullableString(nullableString)
+        return it.createNestedNullableString(nullableString)
       } catch (e: Exception) {
         throw e
       }
@@ -2094,7 +2094,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypes {
     api?.let {
       try {
-        return api!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
+        return it.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
       }
@@ -2109,7 +2109,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion {
     api?.let {
       try {
-        return api!!.sendMultipleNullableTypesWithoutRecursion(
+        return it.sendMultipleNullableTypesWithoutRecursion(
             aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
@@ -2121,7 +2121,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableInt(aNullableInt: Long?): Long? {
     api?.let {
       try {
-        return api!!.echoNullableInt(aNullableInt)
+        return it.echoNullableInt(aNullableInt)
       } catch (e: Exception) {
         throw e
       }
@@ -2132,7 +2132,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableDouble(aNullableDouble: Double?): Double? {
     api?.let {
       try {
-        return api!!.echoNullableDouble(aNullableDouble)
+        return it.echoNullableDouble(aNullableDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -2143,7 +2143,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
     api?.let {
       try {
-        return api!!.echoNullableBool(aNullableBool)
+        return it.echoNullableBool(aNullableBool)
       } catch (e: Exception) {
         throw e
       }
@@ -2154,7 +2154,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableString(aNullableString: String?): String? {
     api?.let {
       try {
-        return api!!.echoNullableString(aNullableString)
+        return it.echoNullableString(aNullableString)
       } catch (e: Exception) {
         throw e
       }
@@ -2165,7 +2165,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
     api?.let {
       try {
-        return api!!.echoNullableUint8List(aNullableUint8List)
+        return it.echoNullableUint8List(aNullableUint8List)
       } catch (e: Exception) {
         throw e
       }
@@ -2176,7 +2176,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
     api?.let {
       try {
-        return api!!.echoNullableInt32List(aNullableInt32List)
+        return it.echoNullableInt32List(aNullableInt32List)
       } catch (e: Exception) {
         throw e
       }
@@ -2187,7 +2187,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
     api?.let {
       try {
-        return api!!.echoNullableInt64List(aNullableInt64List)
+        return it.echoNullableInt64List(aNullableInt64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2198,7 +2198,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
     api?.let {
       try {
-        return api!!.echoNullableFloat64List(aNullableFloat64List)
+        return it.echoNullableFloat64List(aNullableFloat64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2209,7 +2209,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableObject(aNullableObject: Any?): Any? {
     api?.let {
       try {
-        return api!!.echoNullableObject(aNullableObject)
+        return it.echoNullableObject(aNullableObject)
       } catch (e: Exception) {
         throw e
       }
@@ -2220,7 +2220,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
     api?.let {
       try {
-        return api!!.echoNullableList(aNullableList)
+        return it.echoNullableList(aNullableList)
       } catch (e: Exception) {
         throw e
       }
@@ -2231,7 +2231,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.echoNullableEnumList(enumList)
+        return it.echoNullableEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -2244,7 +2244,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.echoNullableClassList(classList)
+        return it.echoNullableClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -2255,7 +2255,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullEnumList(enumList)
+        return it.echoNullableNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -2268,7 +2268,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullClassList(classList)
+        return it.echoNullableNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -2279,7 +2279,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
-        return api!!.echoNullableMap(map)
+        return it.echoNullableMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -2290,7 +2290,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
     api?.let {
       try {
-        return api!!.echoNullableStringMap(stringMap)
+        return it.echoNullableStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2301,7 +2301,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
-        return api!!.echoNullableIntMap(intMap)
+        return it.echoNullableIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2314,7 +2314,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.echoNullableEnumMap(enumMap)
+        return it.echoNullableEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2327,7 +2327,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.echoNullableClassMap(classMap)
+        return it.echoNullableClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2338,7 +2338,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullStringMap(stringMap)
+        return it.echoNullableNonNullStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2349,7 +2349,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullIntMap(intMap)
+        return it.echoNullableNonNullIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2362,7 +2362,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum, NIAnEnum>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullEnumMap(enumMap)
+        return it.echoNullableNonNullEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2375,7 +2375,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long, NIAllNullableTypes>? {
     api?.let {
       try {
-        return api!!.echoNullableNonNullClassMap(classMap)
+        return it.echoNullableNonNullClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2386,7 +2386,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
     api?.let {
       try {
-        return api!!.echoNullableEnum(anEnum)
+        return it.echoNullableEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2397,7 +2397,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
     api?.let {
       try {
-        return api!!.echoAnotherNullableEnum(anotherEnum)
+        return it.echoAnotherNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2408,7 +2408,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
     api?.let {
       try {
-        return api!!.echoOptionalNullableInt(aNullableInt)
+        return it.echoOptionalNullableInt(aNullableInt)
       } catch (e: Exception) {
         throw e
       }
@@ -2419,7 +2419,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun echoNamedNullableString(aNullableString: String?): String? {
     api?.let {
       try {
-        return api!!.echoNamedNullableString(aNullableString)
+        return it.echoNamedNullableString(aNullableString)
       } catch (e: Exception) {
         throw e
       }
@@ -2433,7 +2433,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun noopAsync() {
     api?.let {
       try {
-        return api!!.noopAsync()
+        return it.noopAsync()
       } catch (e: Exception) {
         throw e
       }
@@ -2444,7 +2444,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.echoAsyncInt(anInt)
+        return it.echoAsyncInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -2455,7 +2455,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.echoAsyncDouble(aDouble)
+        return it.echoAsyncDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -2466,7 +2466,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
     api?.let {
       try {
-        return api!!.echoAsyncBool(aBool)
+        return it.echoAsyncBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -2477,7 +2477,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncString(aString: String): String {
     api?.let {
       try {
-        return api!!.echoAsyncString(aString)
+        return it.echoAsyncString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -2488,7 +2488,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
     api?.let {
       try {
-        return api!!.echoAsyncUint8List(aUint8List)
+        return it.echoAsyncUint8List(aUint8List)
       } catch (e: Exception) {
         throw e
       }
@@ -2499,7 +2499,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
     api?.let {
       try {
-        return api!!.echoAsyncInt32List(aInt32List)
+        return it.echoAsyncInt32List(aInt32List)
       } catch (e: Exception) {
         throw e
       }
@@ -2510,7 +2510,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
     api?.let {
       try {
-        return api!!.echoAsyncInt64List(aInt64List)
+        return it.echoAsyncInt64List(aInt64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2521,7 +2521,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
     api?.let {
       try {
-        return api!!.echoAsyncFloat64List(aFloat64List)
+        return it.echoAsyncFloat64List(aFloat64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2532,7 +2532,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncObject(anObject: Any): Any {
     api?.let {
       try {
-        return api!!.echoAsyncObject(anObject)
+        return it.echoAsyncObject(anObject)
       } catch (e: Exception) {
         throw e
       }
@@ -2543,7 +2543,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
-        return api!!.echoAsyncList(list)
+        return it.echoAsyncList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -2554,7 +2554,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
     api?.let {
       try {
-        return api!!.echoAsyncEnumList(enumList)
+        return it.echoAsyncEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -2567,7 +2567,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.echoAsyncClassList(classList)
+        return it.echoAsyncClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -2578,7 +2578,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
-        return api!!.echoAsyncMap(map)
+        return it.echoAsyncMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -2589,7 +2589,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
-        return api!!.echoAsyncStringMap(stringMap)
+        return it.echoAsyncStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2600,7 +2600,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
-        return api!!.echoAsyncIntMap(intMap)
+        return it.echoAsyncIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2613,7 +2613,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?> {
     api?.let {
       try {
-        return api!!.echoAsyncEnumMap(enumMap)
+        return it.echoAsyncEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2626,7 +2626,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.echoAsyncClassMap(classMap)
+        return it.echoAsyncClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2637,7 +2637,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum {
     api?.let {
       try {
-        return api!!.echoAsyncEnum(anEnum)
+        return it.echoAsyncEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2648,7 +2648,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
     api?.let {
       try {
-        return api!!.echoAnotherAsyncEnum(anotherEnum)
+        return it.echoAnotherAsyncEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2659,7 +2659,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun throwAsyncError(): Any? {
     api?.let {
       try {
-        return api!!.throwAsyncError()
+        return it.throwAsyncError()
       } catch (e: Exception) {
         throw e
       }
@@ -2670,7 +2670,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun throwAsyncErrorFromVoid() {
     api?.let {
       try {
-        return api!!.throwAsyncErrorFromVoid()
+        return it.throwAsyncErrorFromVoid()
       } catch (e: Exception) {
         throw e
       }
@@ -2681,7 +2681,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun throwAsyncFlutterError(): Any? {
     api?.let {
       try {
-        return api!!.throwAsyncFlutterError()
+        return it.throwAsyncFlutterError()
       } catch (e: Exception) {
         throw e
       }
@@ -2692,7 +2692,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes {
     api?.let {
       try {
-        return api!!.echoAsyncNIAllTypes(everything)
+        return it.echoAsyncNIAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2705,7 +2705,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypes? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableNIAllNullableTypes(everything)
+        return it.echoAsyncNullableNIAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2718,7 +2718,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
+        return it.echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2729,7 +2729,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableInt(anInt)
+        return it.echoAsyncNullableInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -2740,7 +2740,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableDouble(aDouble)
+        return it.echoAsyncNullableDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -2751,7 +2751,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableBool(aBool)
+        return it.echoAsyncNullableBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -2762,7 +2762,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableString(aString: String?): String? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableString(aString)
+        return it.echoAsyncNullableString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -2773,7 +2773,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableUint8List(aUint8List)
+        return it.echoAsyncNullableUint8List(aUint8List)
       } catch (e: Exception) {
         throw e
       }
@@ -2784,7 +2784,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableInt32List(aInt32List)
+        return it.echoAsyncNullableInt32List(aInt32List)
       } catch (e: Exception) {
         throw e
       }
@@ -2795,7 +2795,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableInt64List(aInt64List)
+        return it.echoAsyncNullableInt64List(aInt64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2806,7 +2806,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableFloat64List(aFloat64List)
+        return it.echoAsyncNullableFloat64List(aFloat64List)
       } catch (e: Exception) {
         throw e
       }
@@ -2817,7 +2817,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableObject(anObject)
+        return it.echoAsyncNullableObject(anObject)
       } catch (e: Exception) {
         throw e
       }
@@ -2828,7 +2828,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableList(list)
+        return it.echoAsyncNullableList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -2839,7 +2839,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableEnumList(enumList)
+        return it.echoAsyncNullableEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -2852,7 +2852,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableClassList(classList)
+        return it.echoAsyncNullableClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -2863,7 +2863,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableMap(map)
+        return it.echoAsyncNullableMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -2876,7 +2876,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String?, String?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableStringMap(stringMap)
+        return it.echoAsyncNullableStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2887,7 +2887,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableIntMap(intMap)
+        return it.echoAsyncNullableIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2900,7 +2900,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableEnumMap(enumMap)
+        return it.echoAsyncNullableEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2913,7 +2913,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableClassMap(classMap)
+        return it.echoAsyncNullableClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -2924,7 +2924,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
     api?.let {
       try {
-        return api!!.echoAsyncNullableEnum(anEnum)
+        return it.echoAsyncNullableEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2935,7 +2935,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
     api?.let {
       try {
-        return api!!.echoAnotherAsyncNullableEnum(anotherEnum)
+        return it.echoAnotherAsyncNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -2946,7 +2946,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterNoop() {
     api?.let {
       try {
-        return api!!.callFlutterNoop()
+        return it.callFlutterNoop()
       } catch (e: Exception) {
         throw e
       }
@@ -2957,7 +2957,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterThrowError(): Any? {
     api?.let {
       try {
-        return api!!.callFlutterThrowError()
+        return it.callFlutterThrowError()
       } catch (e: Exception) {
         throw e
       }
@@ -2968,7 +2968,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterThrowErrorFromVoid() {
     api?.let {
       try {
-        return api!!.callFlutterThrowErrorFromVoid()
+        return it.callFlutterThrowErrorFromVoid()
       } catch (e: Exception) {
         throw e
       }
@@ -2979,7 +2979,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNIAllTypes(everything: NIAllTypes): NIAllTypes {
     api?.let {
       try {
-        return api!!.callFlutterEchoNIAllTypes(everything)
+        return it.callFlutterEchoNIAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -2992,7 +2992,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypes? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNIAllNullableTypes(everything)
+        return it.callFlutterEchoNIAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -3007,8 +3007,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypes {
     api?.let {
       try {
-        return api!!.callFlutterSendMultipleNullableTypes(
-            aNullableBool, aNullableInt, aNullableString)
+        return it.callFlutterSendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
       }
@@ -3021,7 +3020,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNIAllNullableTypesWithoutRecursion(everything)
+        return it.callFlutterEchoNIAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -3036,7 +3035,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion {
     api?.let {
       try {
-        return api!!.callFlutterSendMultipleNullableTypesWithoutRecursion(
+        return it.callFlutterSendMultipleNullableTypesWithoutRecursion(
             aNullableBool, aNullableInt, aNullableString)
       } catch (e: Exception) {
         throw e
@@ -3048,7 +3047,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
-        return api!!.callFlutterEchoBool(aBool)
+        return it.callFlutterEchoBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -3059,7 +3058,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.callFlutterEchoInt(anInt)
+        return it.callFlutterEchoInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -3070,7 +3069,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.callFlutterEchoDouble(aDouble)
+        return it.callFlutterEchoDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -3081,7 +3080,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoString(aString: String): String {
     api?.let {
       try {
-        return api!!.callFlutterEchoString(aString)
+        return it.callFlutterEchoString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -3092,7 +3091,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoUint8List(list)
+        return it.callFlutterEchoUint8List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3103,7 +3102,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoInt32List(list: IntArray): IntArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoInt32List(list)
+        return it.callFlutterEchoInt32List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3114,7 +3113,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoInt64List(list: LongArray): LongArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoInt64List(list)
+        return it.callFlutterEchoInt64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3125,7 +3124,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoFloat64List(list)
+        return it.callFlutterEchoFloat64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3136,7 +3135,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoList(list)
+        return it.callFlutterEchoList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3147,7 +3146,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoEnumList(enumList)
+        return it.callFlutterEchoEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3160,7 +3159,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoClassList(classList)
+        return it.callFlutterEchoClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3171,7 +3170,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNonNullEnumList(enumList: List<NIAnEnum>): List<NIAnEnum> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullEnumList(enumList)
+        return it.callFlutterEchoNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3184,7 +3183,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullClassList(classList)
+        return it.callFlutterEchoNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3195,7 +3194,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoMap(map)
+        return it.callFlutterEchoMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -3206,7 +3205,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoStringMap(stringMap)
+        return it.callFlutterEchoStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3217,7 +3216,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoIntMap(intMap)
+        return it.callFlutterEchoIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3230,7 +3229,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoEnumMap(enumMap)
+        return it.callFlutterEchoEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3243,7 +3242,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoClassMap(classMap)
+        return it.callFlutterEchoClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3256,7 +3255,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String, String> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullStringMap(stringMap)
+        return it.callFlutterEchoNonNullStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3267,7 +3266,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullIntMap(intMap)
+        return it.callFlutterEchoNonNullIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3280,7 +3279,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum, NIAnEnum> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullEnumMap(enumMap)
+        return it.callFlutterEchoNonNullEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3293,7 +3292,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long, NIAllNullableTypes> {
     api?.let {
       try {
-        return api!!.callFlutterEchoNonNullClassMap(classMap)
+        return it.callFlutterEchoNonNullClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3304,7 +3303,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoEnum(anEnum: NIAnEnum): NIAnEnum {
     api?.let {
       try {
-        return api!!.callFlutterEchoEnum(anEnum)
+        return it.callFlutterEchoEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3315,7 +3314,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNIAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
     api?.let {
       try {
-        return api!!.callFlutterEchoNIAnotherEnum(anotherEnum)
+        return it.callFlutterEchoNIAnotherEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3326,7 +3325,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableBool(aBool)
+        return it.callFlutterEchoNullableBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -3337,7 +3336,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableInt(anInt)
+        return it.callFlutterEchoNullableInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -3348,7 +3347,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableDouble(aDouble)
+        return it.callFlutterEchoNullableDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -3359,7 +3358,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableString(aString: String?): String? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableString(aString)
+        return it.callFlutterEchoNullableString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -3370,7 +3369,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableUint8List(list)
+        return it.callFlutterEchoNullableUint8List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3381,7 +3380,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableInt32List(list)
+        return it.callFlutterEchoNullableInt32List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3392,7 +3391,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableInt64List(list)
+        return it.callFlutterEchoNullableInt64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3403,7 +3402,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableFloat64List(list)
+        return it.callFlutterEchoNullableFloat64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3414,7 +3413,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableList(list)
+        return it.callFlutterEchoNullableList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3425,7 +3424,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableEnumList(enumList)
+        return it.callFlutterEchoNullableEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3438,7 +3437,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableClassList(classList)
+        return it.callFlutterEchoNullableClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3449,7 +3448,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableNonNullEnumList(enumList: List<NIAnEnum>?): List<NIAnEnum>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullEnumList(enumList)
+        return it.callFlutterEchoNullableNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3462,7 +3461,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullClassList(classList)
+        return it.callFlutterEchoNullableNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3473,7 +3472,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableMap(map)
+        return it.callFlutterEchoNullableMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -3486,7 +3485,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String?, String?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableStringMap(stringMap)
+        return it.callFlutterEchoNullableStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3497,7 +3496,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableIntMap(intMap)
+        return it.callFlutterEchoNullableIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3510,7 +3509,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableEnumMap(enumMap)
+        return it.callFlutterEchoNullableEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3523,7 +3522,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableClassMap(classMap)
+        return it.callFlutterEchoNullableClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3536,7 +3535,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String, String>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullStringMap(stringMap)
+        return it.callFlutterEchoNullableNonNullStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3547,7 +3546,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullIntMap(intMap)
+        return it.callFlutterEchoNullableNonNullIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3560,7 +3559,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum, NIAnEnum>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullEnumMap(enumMap)
+        return it.callFlutterEchoNullableNonNullEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3573,7 +3572,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long, NIAllNullableTypes>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableNonNullClassMap(classMap)
+        return it.callFlutterEchoNullableNonNullClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3584,7 +3583,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
     api?.let {
       try {
-        return api!!.callFlutterEchoNullableEnum(anEnum)
+        return it.callFlutterEchoNullableEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3595,7 +3594,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun callFlutterEchoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAnotherNullableEnum(anotherEnum)
+        return it.callFlutterEchoAnotherNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3606,7 +3605,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterNoopAsync() {
     api?.let {
       try {
-        return api!!.callFlutterNoopAsync()
+        return it.callFlutterNoopAsync()
       } catch (e: Exception) {
         throw e
       }
@@ -3617,7 +3616,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNIAllTypes(everything)
+        return it.callFlutterEchoAsyncNIAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -3630,7 +3629,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypes? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableNIAllNullableTypes(everything)
+        return it.callFlutterEchoAsyncNullableNIAllNullableTypes(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -3643,7 +3642,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAllNullableTypesWithoutRecursion? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
+        return it.callFlutterEchoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
       } catch (e: Exception) {
         throw e
       }
@@ -3654,7 +3653,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncBool(aBool)
+        return it.callFlutterEchoAsyncBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -3665,7 +3664,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncInt(anInt)
+        return it.callFlutterEchoAsyncInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -3676,7 +3675,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncDouble(aDouble)
+        return it.callFlutterEchoAsyncDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -3687,7 +3686,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncString(aString: String): String {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncString(aString)
+        return it.callFlutterEchoAsyncString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -3698,7 +3697,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncUint8List(list)
+        return it.callFlutterEchoAsyncUint8List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3709,7 +3708,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncInt32List(list)
+        return it.callFlutterEchoAsyncInt32List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3720,7 +3719,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncInt64List(list)
+        return it.callFlutterEchoAsyncInt64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3731,7 +3730,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncFloat64List(list)
+        return it.callFlutterEchoAsyncFloat64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3742,7 +3741,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncObject(anObject)
+        return it.callFlutterEchoAsyncObject(anObject)
       } catch (e: Exception) {
         throw e
       }
@@ -3753,7 +3752,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncList(list)
+        return it.callFlutterEchoAsyncList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3764,7 +3763,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncEnumList(enumList)
+        return it.callFlutterEchoAsyncEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3777,7 +3776,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncClassList(classList)
+        return it.callFlutterEchoAsyncClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3790,7 +3789,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAnEnum> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNonNullEnumList(enumList)
+        return it.callFlutterEchoAsyncNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -3803,7 +3802,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNonNullClassList(classList)
+        return it.callFlutterEchoAsyncNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -3814,7 +3813,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncMap(map)
+        return it.callFlutterEchoAsyncMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -3827,7 +3826,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String?, String?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncStringMap(stringMap)
+        return it.callFlutterEchoAsyncStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3838,7 +3837,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncIntMap(intMap)
+        return it.callFlutterEchoAsyncIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3851,7 +3850,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncEnumMap(enumMap)
+        return it.callFlutterEchoAsyncEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3864,7 +3863,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?> {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncClassMap(classMap)
+        return it.callFlutterEchoAsyncClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -3875,7 +3874,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncEnum(anEnum: NIAnEnum): NIAnEnum {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncEnum(anEnum)
+        return it.callFlutterEchoAsyncEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3886,7 +3885,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
     api?.let {
       try {
-        return api!!.callFlutterEchoAnotherAsyncEnum(anotherEnum)
+        return it.callFlutterEchoAnotherAsyncEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -3897,7 +3896,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableBool(aBool)
+        return it.callFlutterEchoAsyncNullableBool(aBool)
       } catch (e: Exception) {
         throw e
       }
@@ -3908,7 +3907,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableInt(anInt)
+        return it.callFlutterEchoAsyncNullableInt(anInt)
       } catch (e: Exception) {
         throw e
       }
@@ -3919,7 +3918,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableDouble(aDouble)
+        return it.callFlutterEchoAsyncNullableDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
@@ -3930,7 +3929,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableString(aString)
+        return it.callFlutterEchoAsyncNullableString(aString)
       } catch (e: Exception) {
         throw e
       }
@@ -3941,7 +3940,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableUint8List(list)
+        return it.callFlutterEchoAsyncNullableUint8List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3952,7 +3951,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableInt32List(list)
+        return it.callFlutterEchoAsyncNullableInt32List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3963,7 +3962,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableInt64List(list)
+        return it.callFlutterEchoAsyncNullableInt64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3974,7 +3973,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableFloat64List(list)
+        return it.callFlutterEchoAsyncNullableFloat64List(list)
       } catch (e: Exception) {
         throw e
       }
@@ -3985,7 +3984,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
     api?.let {
       try {
-        return api!!.callFlutterThrowFlutterErrorAsync()
+        return it.callFlutterThrowFlutterErrorAsync()
       } catch (e: Exception) {
         throw e
       }
@@ -3996,7 +3995,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableObject(anObject)
+        return it.callFlutterEchoAsyncNullableObject(anObject)
       } catch (e: Exception) {
         throw e
       }
@@ -4007,7 +4006,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableList(list)
+        return it.callFlutterEchoAsyncNullableList(list)
       } catch (e: Exception) {
         throw e
       }
@@ -4020,7 +4019,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableEnumList(enumList)
+        return it.callFlutterEchoAsyncNullableEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -4033,7 +4032,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableClassList(classList)
+        return it.callFlutterEchoAsyncNullableClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -4046,7 +4045,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAnEnum>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableNonNullEnumList(enumList)
+        return it.callFlutterEchoAsyncNullableNonNullEnumList(enumList)
       } catch (e: Exception) {
         throw e
       }
@@ -4059,7 +4058,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): List<NIAllNullableTypes>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableNonNullClassList(classList)
+        return it.callFlutterEchoAsyncNullableNonNullClassList(classList)
       } catch (e: Exception) {
         throw e
       }
@@ -4070,7 +4069,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableMap(map)
+        return it.callFlutterEchoAsyncNullableMap(map)
       } catch (e: Exception) {
         throw e
       }
@@ -4083,7 +4082,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<String?, String?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableStringMap(stringMap)
+        return it.callFlutterEchoAsyncNullableStringMap(stringMap)
       } catch (e: Exception) {
         throw e
       }
@@ -4096,7 +4095,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, Long?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableIntMap(intMap)
+        return it.callFlutterEchoAsyncNullableIntMap(intMap)
       } catch (e: Exception) {
         throw e
       }
@@ -4109,7 +4108,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<NIAnEnum?, NIAnEnum?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableEnumMap(enumMap)
+        return it.callFlutterEchoAsyncNullableEnumMap(enumMap)
       } catch (e: Exception) {
         throw e
       }
@@ -4122,7 +4121,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): Map<Long?, NIAllNullableTypes?>? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableClassMap(classMap)
+        return it.callFlutterEchoAsyncNullableClassMap(classMap)
       } catch (e: Exception) {
         throw e
       }
@@ -4133,7 +4132,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterEchoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAsyncNullableEnum(anEnum)
+        return it.callFlutterEchoAsyncNullableEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -4146,7 +4145,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   ): NIAnotherEnum? {
     api?.let {
       try {
-        return api!!.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum)
+        return it.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -4157,7 +4156,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override fun defaultIsMainThread(): Boolean {
     api?.let {
       try {
-        return api!!.defaultIsMainThread()
+        return it.defaultIsMainThread()
       } catch (e: Exception) {
         throw e
       }
@@ -4172,7 +4171,7 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
   override suspend fun callFlutterNoopOnBackgroundThread(): Boolean {
     api?.let {
       try {
-        return api!!.callFlutterNoopOnBackgroundThread()
+        return it.callFlutterNoopOnBackgroundThread()
       } catch (e: Exception) {
         throw e
       }
