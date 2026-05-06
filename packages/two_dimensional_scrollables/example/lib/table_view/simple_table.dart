@@ -51,6 +51,7 @@ class _TableExampleState extends State<TableExample> {
                 ),
               )
             : TableView.builder(
+                key: ValueKey(_selectionMode),
                 verticalDetails: ScrollableDetails.vertical(
                   controller: _verticalController,
                 ),
