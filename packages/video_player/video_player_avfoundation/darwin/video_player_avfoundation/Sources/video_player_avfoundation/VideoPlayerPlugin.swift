@@ -60,7 +60,7 @@ class DefaultAssetProvider: NSObject, FVPAssetProvider {
   }
 }
 
-class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
+public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
   private let binaryMessenger: FlutterBinaryMessenger
   private let textureRegistry: FlutterTextureRegistry
   private let displayLinkFactory: DisplayLinkFactory
@@ -70,7 +70,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
   private var nextPlayerIdentifier: Int64 = 1
   var playersByIdentifier: [Int64: FVPVideoPlayer] = [:]
 
-  static func register(with registrar: FlutterPluginRegistrar) {
+  public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = VideoPlayerPlugin(registrar: registrar)
     // Publish the instance so that it receives detachFromEngine.
     registrar.publish(instance)
@@ -80,7 +80,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
 #else
   let messenger = registrar.messenger
 #endif
-    let factory = FVPNativeVideoViewFactory(
+    let factory = NativeVideoViewFactory(
       messenger: messenger,
       playerByIdentifierProvider: { [weak instance] (playerIdentifier: NSNumber) -> FVPVideoPlayer? in
         return instance?.playersByIdentifier[playerIdentifier.int64Value]
@@ -126,7 +126,7 @@ class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
     super.init()
   }
 
-  func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     for player in playersByIdentifier.values {
       // Remove the channel and texture cleanup, and the event listener, to ensure that the player
       // doesn't message the engine that is no longer connected.

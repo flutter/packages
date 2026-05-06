@@ -14,11 +14,11 @@ flutter:
     platforms:
       ios:
         dartPluginClass: AVFoundationVideoPlayer
-        pluginClass: FVPVideoPlayerPlugin
+        pluginClass: VideoPlayerPlugin
         sharedDarwinSource: true
       macos:
         dartPluginClass: AVFoundationVideoPlayer
-        pluginClass: FVPVideoPlayerPlugin
+        pluginClass: VideoPlayerPlugin
         sharedDarwinSource: true
 
 dependencies:
