@@ -83,7 +83,9 @@ base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
           );
         case final File file:
           yield DarwinScopedStorageXFile(
-            DarwinScopedStorageXFileCreationParams(uri: file.uri.toString()),
+            DarwinScopedStorageXFileCreationParams.securityScoped(
+              uri: file.uri.toString(),
+            ),
           );
       }
     }

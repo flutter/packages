@@ -13,36 +13,83 @@ import 'package:path/path.dart' as path;
 import 'cross_file_darwin_apis.g.dart';
 import 'security_scoped_resource.dart';
 
+/// Base implementation of [PlatformScopedStorageXFileCreationParams] for iOS
+/// and macOS.
+sealed class DarwinScopedStorageXFileCreationParams
+    extends PlatformScopedStorageXFileCreationParams {
+  /// Constructs a [DarwinScopedStorageXFileCreationParams].
+  const DarwinScopedStorageXFileCreationParams({required super.uri});
+
+  /// Constructs a [DarwinScopedStorageXFileCreationParams] with a security
+  /// scoped uri.
+  factory DarwinScopedStorageXFileCreationParams.securityScoped({
+    required String uri,
+    @visibleForTesting CrossFileDarwinApi? api,
+  }) =>
+      SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri, api: api);
+
+  /// Constructs a [DarwinScopedStorageXFileCreationParams] with a security
+  /// scoped uri.
+  factory DarwinScopedStorageXFileCreationParams.photoKit({
+    required String localIdentifier,
+    @visibleForTesting CrossFileDarwinApi? api,
+  }) => PhotoKitDarwinScopedStorageXFileCreationParams(
+    localIdentifier: localIdentifier,
+  );
+}
+
 /// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
 /// macOS.
 @immutable
-base class DarwinScopedStorageXFileCreationParams
-    extends PlatformScopedStorageXFileCreationParams {
-  /// Constructs a [DarwinScopedStorageXFileCreationParams].
-  DarwinScopedStorageXFileCreationParams({
+base class SecurityScopedDarwinScopedStorageXFileCreationParams
+    extends DarwinScopedStorageXFileCreationParams {
+  /// Constructs a [SecurityScopedDarwinScopedStorageXFileCreationParams].
+  SecurityScopedDarwinScopedStorageXFileCreationParams({
     required super.uri,
     @visibleForTesting CrossFileDarwinApi? api,
   }) : api = api ?? CrossFileDarwinApi();
-
-  /// Constructs an [DarwinScopedStorageXFileCreationParams] from a
-  /// [PlatformScopedStorageXFileCreationParams].
-  factory DarwinScopedStorageXFileCreationParams.fromCreationParams(
-    PlatformXFileCreationParams params, {
-    @visibleForTesting CrossFileDarwinApi? api,
-  }) {
-    return DarwinScopedStorageXFileCreationParams(uri: params.uri, api: api);
-  }
 
   /// The API used to call to native code to interact with files.
   @visibleForTesting
   final CrossFileDarwinApi api;
 }
 
+/// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
+/// macOS.
+@immutable
+base class PhotoKitDarwinScopedStorageXFileCreationParams
+    extends DarwinScopedStorageXFileCreationParams {
+  /// Constructs a [PhotoKitDarwinScopedStorageXFileCreationParams].
+  const PhotoKitDarwinScopedStorageXFileCreationParams({
+    required String localIdentifier,
+  }) : super(uri: localIdentifier);
+}
+
+/// Base implementation of [PlatformScopedStorageXFile] for iOS and macOS.
+sealed class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
+  factory DarwinScopedStorageXFile(
+    PlatformScopedStorageXFileCreationParams params,
+  ) {
+    return switch (params) {
+      final SecurityScopedDarwinScopedStorageXFileCreationParams
+      securityScopedParams =>
+        SecurityScopedDarwinScopedStorageXFile(securityScopedParams),
+      final PhotoKitDarwinScopedStorageXFileCreationParams photoKitParams =>
+        PhotoKitDarwinScopedStorageXFile(photoKitParams),
+      _ => SecurityScopedDarwinScopedStorageXFile(params),
+    };
+  }
+
+  @protected
+  DarwinScopedStorageXFile._(super.params) : super.implementation();
+}
+
 /// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
-base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
-    with DarwinScopedStorageXFileExtension {
-  /// Constructs a [DarwinScopedStorageXFile].
-  DarwinScopedStorageXFile(super.params) : super.implementation() {
+base class SecurityScopedDarwinScopedStorageXFile
+    extends DarwinScopedStorageXFile
+    with SecurityScopedDarwinScopedStorageXFileExtension {
+  /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
+  SecurityScopedDarwinScopedStorageXFile(super.params) : super._() {
     _finalizer.attach(this, params.uri);
   }
 
@@ -56,13 +103,13 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
   late final _file = File.fromUri(Uri.parse(params.uri));
 
   @override
-  late final DarwinScopedStorageXFileCreationParams params =
-      super.params is DarwinScopedStorageXFileCreationParams
-      ? super.params as DarwinScopedStorageXFileCreationParams
-      : DarwinScopedStorageXFileCreationParams.fromCreationParams(super.params);
+  late final SecurityScopedDarwinScopedStorageXFileCreationParams params =
+      super.params is SecurityScopedDarwinScopedStorageXFileCreationParams
+      ? super.params as SecurityScopedDarwinScopedStorageXFileCreationParams
+      : SecurityScopedDarwinScopedStorageXFileCreationParams(uri: params.uri);
 
   @override
-  DarwinScopedStorageXFileExtension? get extension => this;
+  SecurityScopedDarwinScopedStorageXFileExtension? get extension => this;
 
   @override
   Future<DateTime?> lastModified() async {
@@ -115,6 +162,66 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
   }
 }
 
-/// Provides platform specific features for [DarwinScopedStorageXFile].
-mixin DarwinScopedStorageXFileExtension
+/// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
+base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
+    with PhotoKitDarwinScopedStorageXFileExtension {
+  /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
+  PhotoKitDarwinScopedStorageXFile(super.params) : super._();
+
+  @override
+  late final PhotoKitDarwinScopedStorageXFileCreationParams params =
+      super.params is PhotoKitDarwinScopedStorageXFileCreationParams
+      ? super.params as PhotoKitDarwinScopedStorageXFileCreationParams
+      : PhotoKitDarwinScopedStorageXFileCreationParams(
+          localIdentifier: params.uri,
+        );
+
+  @override
+  PhotoKitDarwinScopedStorageXFileExtension? get extension => this;
+
+  @override
+  Future<DateTime?> lastModified() async {
+    throw UnsupportedError('');
+  }
+
+  @override
+  Future<int?> length() async {
+    try {
+      throw UnsupportedError('');
+    } on FileSystemException {
+      return null;
+    }
+  }
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) =>
+      throw UnsupportedError('');
+
+  @override
+  Future<Uint8List> readAsBytes() => throw UnsupportedError('');
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) =>
+      throw UnsupportedError('');
+
+  @override
+  Future<bool> canRead() {
+    throw UnsupportedError('');
+  }
+
+  @override
+  Future<bool> exists() async => throw UnsupportedError('');
+
+  @override
+  Future<String?> name() async => throw UnsupportedError('');
+}
+
+/// Provides platform specific features for
+/// [SecurityScopedDarwinScopedStorageXFile].
+mixin SecurityScopedDarwinScopedStorageXFileExtension
     implements PlatformScopedStorageXFileExtension, SecurityScopedResource {}
+
+/// Provides platform specific features for
+/// [SecurityScopedDarwinScopedStorageXFile].
+mixin PhotoKitDarwinScopedStorageXFileExtension
+    implements PlatformScopedStorageXFileExtension {}
