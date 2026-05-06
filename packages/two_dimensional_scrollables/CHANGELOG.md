@@ -2,6 +2,7 @@
 
 * Fixes hit testing for `TreeView` row content and gestures after horizontal scrolling.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes memory leaks.
 
 ## 0.5.2
 
