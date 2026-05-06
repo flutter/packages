@@ -13,7 +13,7 @@ import AVFoundation
 #endif
 
 #if canImport(video_player_avfoundation_objc)
-import video_player_avfoundation_objc
+  import video_player_avfoundation_objc
 #endif
 
 // Protocol for an display link factory. Used for injecting display links in tests.
@@ -74,31 +74,32 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let instance = VideoPlayerPlugin(registrar: registrar)
     // Publish the instance so that it receives detachFromEngine.
     registrar.publish(instance)
-    
-#if os(iOS)
-  let messenger = registrar.messenger()
-#else
-  let messenger = registrar.messenger
-#endif
+
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
     let factory = NativeVideoViewFactory(
       messenger: messenger,
-      playerByIdentifierProvider: { [weak instance] (playerIdentifier: NSNumber) -> FVPVideoPlayer? in
+      playerByIdentifierProvider: {
+        [weak instance] (playerIdentifier: NSNumber) -> FVPVideoPlayer? in
         return instance?.playersByIdentifier[playerIdentifier.int64Value]
       }
     )
     registrar.register(factory, withId: "plugins.flutter.dev/video_player_ios")
-    
+
     AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   convenience init(registrar: FlutterPluginRegistrar) {
-#if os(iOS)
-  let messenger = registrar.messenger()
-    let textures = registrar.textures()
-#else
-  let messenger = registrar.messenger
-    let textures = registrar.textures
-#endif
+    #if os(iOS)
+      let messenger = registrar.messenger()
+      let textures = registrar.textures()
+    #else
+      let messenger = registrar.messenger
+      let textures = registrar.textures
+    #endif
     self.init(
       avFactory: FVPDefaultAVFactory(),
       displayLinkFactory: DefaultDisplayLinkFactory(),
@@ -136,11 +137,11 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       player.disposeWithError(&error)
     }
     playersByIdentifier.removeAll()
-#if os(iOS)
-  let messenger = registrar.messenger()
-#else
-  let messenger = registrar.messenger
-#endif
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
     AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: nil)
   }
 
@@ -216,7 +217,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   }
 
   func fileURLForAsset(name asset: String, package: String?) throws -> String? {
-    let resource = package == nil
+    let resource =
+      package == nil
       ? assetProvider.lookupKey(forAsset: asset)
       : assetProvider.lookupKey(forAsset: asset, fromPackage: package!)
 
@@ -237,7 +239,9 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
 
   // MARK: - Private
 
-  private func configurePlayer(_ player: FVPVideoPlayer, extraDisposeHandler: (() -> Void)?) -> Int64 {
+  private func configurePlayer(_ player: FVPVideoPlayer, extraDisposeHandler: (() -> Void)?)
+    -> Int64
+  {
     let playerId = nextPlayerIdentifier
     nextPlayerIdentifier += 1
     playersByIdentifier[playerId] = player
@@ -245,7 +249,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let channelSuffix = "\(playerId)"
     // Set up the player-specific API handler, and its onDispose unregistration.
     SetUpFVPVideoPlayerInstanceApiWithSuffix(binaryMessenger, player, channelSuffix)
-    
+
     player.onDisposed = { [weak self] in
       guard let strongSelf = self else { return }
       SetUpFVPVideoPlayerInstanceApiWithSuffix(strongSelf.binaryMessenger, nil, channelSuffix)
@@ -292,10 +296,10 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let playCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
     let recordCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
     let requiredCategories: Set<AVAudioSession.Category> = [requestedCategory, session.category]
-    
+
     let requiresPlay = !requiredCategories.isDisjoint(with: playCategories)
     let requiresRecord = !requiredCategories.isDisjoint(with: recordCategories)
-    
+
     var finalCategory = requestedCategory
     if requiresPlay && requiresRecord {
       finalCategory = .playAndRecord
@@ -304,13 +308,13 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     } else if requiresRecord {
       finalCategory = .record
     }
-    
+
     let newOptions = session.categoryOptions.subtracting(clearOptions).union(options)
-    
+
     if finalCategory == session.category && newOptions == session.categoryOptions {
       return
     }
-    
+
     try? session.setCategory(finalCategory, with: newOptions)
   }
 #endif

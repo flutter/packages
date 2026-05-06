@@ -13,7 +13,7 @@ import Foundation
 #endif
 
 #if canImport(video_player_avfoundation_objc)
-import video_player_avfoundation_objc
+  import video_player_avfoundation_objc
 #endif
 
 /// A factory class responsible for creating native video views that can be embedded in a
@@ -55,7 +55,9 @@ class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   }
 
   /// Creates a native video view for the given arguments.
-  private func createNativeVideoView(arguments args: PlatformVideoViewCreationParams) -> FVPNativeVideoView {
+  private func createNativeVideoView(arguments args: PlatformVideoViewCreationParams)
+    -> FVPNativeVideoView
+  {
     let playerIdentifier = NSNumber(value: args.playerId)
     // The Dart code should never attempt to create a platform view for a player that doesn't exist,
     // and there's no mechanism to report an error, so just force-unwrap.
