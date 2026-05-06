@@ -52,7 +52,6 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     indent.writeln('// ignore_for_file: avoid_print');
     indent.newln();
     indent.format('''
-import 'dart:io';
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swift2objc/swift2objc.dart';

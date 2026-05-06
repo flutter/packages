@@ -533,18 +533,17 @@ class TypeDeclaration {
 
   /// Returns the Type Arguments in annotation form.
   String get typeArgumentsString {
-    var typeArgumentString = '<';
+    final String typeArgumentString;
     if (baseName == 'List') {
-      typeArgumentString +=
+      typeArgumentString =
           typeArguments.firstOrNull?.getFullName() ?? 'Object?';
     } else if (baseName == 'Map') {
-      typeArgumentString +=
+      typeArgumentString =
           '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
     } else {
       return '';
     }
-    typeArgumentString += '>';
-    return typeArgumentString;
+    return '<$typeArgumentString>';
   }
 
   @override

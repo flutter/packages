@@ -2,7 +2,6 @@
 // See also: https://pub.dev/packages/pigeon
 // ignore_for_file: avoid_print
 
-import 'dart:io';
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swift2objc/swift2objc.dart';
