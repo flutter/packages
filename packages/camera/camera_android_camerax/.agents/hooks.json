@@ -5,7 +5,7 @@
         "matcher": "*",
         "hooks": [
           {
-            "command": "./hooks/dart_format.dart --source hook",
+            "command": "./hooks/dart_hooks/bin/agent_dart_format.dart --source hook",
             "timeout": 30
           }
         ]
@@ -16,7 +16,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "./hooks/dart_analyze.dart --source hook",
+        "command": "./hooks/dart_hooks/bin/agent_dart_analyze.dart --source hook",
         "timeout": 90
       }
     ]
