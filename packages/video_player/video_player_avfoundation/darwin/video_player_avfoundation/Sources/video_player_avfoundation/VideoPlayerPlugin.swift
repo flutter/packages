@@ -239,9 +239,10 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
 
   // MARK: - Private
 
-  private func configurePlayer(_ player: FVPVideoPlayer, extraDisposeHandler: (() -> Void)?)
-    -> Int64
-  {
+  private func configurePlayer(
+    _ player: FVPVideoPlayer,
+    extraDisposeHandler: (() -> Void)?
+  ) -> Int64 {
     let playerId = nextPlayerIdentifier
     nextPlayerIdentifier += 1
     playersByIdentifier[playerId] = player
