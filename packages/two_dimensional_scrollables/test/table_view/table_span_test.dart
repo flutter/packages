@@ -212,7 +212,7 @@ void main() {
     testWidgets('Vertical main axis, vertical reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
           reverse: true,
@@ -318,7 +318,7 @@ void main() {
     testWidgets('Vertical main axis, horizontal reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
         ),
@@ -424,7 +424,7 @@ void main() {
     testWidgets('Vertical main axis, both reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
           reverse: true,
@@ -531,7 +531,7 @@ void main() {
     testWidgets('Horizontal main axis, vertical reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -638,7 +638,7 @@ void main() {
     testWidgets('Horizontal main axis, horizontal reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -745,7 +745,7 @@ void main() {
     testWidgets('Horizontal main axis, both reversed', (
       WidgetTester tester,
     ) async {
-      final table = TableView.builder(
+      final Widget table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -854,7 +854,7 @@ void main() {
       'paints borders correctly when cross axis is reversed (TableView)',
       (WidgetTester tester) async {
         // Regression test for https://github.com/flutter/flutter/issues/177117
-        final tableView = TableView.builder(
+        final Widget tableView = TableView.builder(
           horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
           rowCount: 1,
           columnCount: 1,
@@ -906,7 +906,7 @@ void main() {
       'paints borders correctly when vertical scrolling is reversed (TableView)',
       (WidgetTester tester) async {
         // Regression test for https://github.com/flutter/flutter/issues/177117
-        final tableView = TableView.builder(
+        final Widget tableView = TableView.builder(
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
           rowCount: 1,
           columnCount: 1,
@@ -958,7 +958,7 @@ void main() {
       'TableView row decoration rect is correct when vertical axis is reversed and padding is used',
       (WidgetTester tester) async {
         // Regression test for https://github.com/flutter/flutter/issues/177117
-        final tableView = TableView.builder(
+        final Widget tableView = TableView.builder(
           verticalDetails: const ScrollableDetails.vertical(reverse: true),
           rowCount: 1,
           columnCount: 1,
@@ -1037,7 +1037,7 @@ void main() {
       const TableVicinity(row: 3, column: 2): (2, 2),
     };
 
-    TableView buildScenario1({
+    Widget buildScenario1({
       bool reverseVertical = false,
       bool reverseHorizontal = false,
     }) {
@@ -1099,7 +1099,7 @@ void main() {
       const TableVicinity(row: 2, column: 3): (2, 2),
     };
 
-    TableView buildScenario2({
+    Widget buildScenario2({
       bool reverseVertical = false,
       bool reverseHorizontal = false,
     }) {
@@ -1176,7 +1176,7 @@ void main() {
       const TableVicinity(row: 2, column: 3): (2, 2),
     };
 
-    TableView buildScenario3({
+    Widget buildScenario3({
       Axis mainAxis = Axis.vertical,
       bool reverseVertical = false,
       bool reverseHorizontal = false,

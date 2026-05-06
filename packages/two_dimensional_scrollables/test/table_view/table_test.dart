@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
@@ -41,14 +42,21 @@ TableSpan getMouseTrackingSpan(
 
 void main() {
   group('TableView.builder', () {
-    test('creates correct delegate', () {
-      final tableView = TableView.builder(
+    testWidgets('creates correct delegate', (WidgetTester tester) async {
+      final Widget widget = TableView.builder(
         columnCount: 3,
         rowCount: 2,
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cellBuilder: (_, __) => cell,
       );
+
+      await tester.pumpWidget(widget);
+
+      final TableView tableView = tester.widget<TableView>(
+        find.byType(TableView),
+      );
+
       final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
@@ -60,7 +68,7 @@ void main() {
     });
 
     test('asserts correct counts', () {
-      TableView? tableView;
+      Widget? tableView;
       expect(
         () {
           tableView = TableView.builder(
@@ -191,7 +199,7 @@ void main() {
         horizontalController.dispose();
       });
 
-      TableView getTableView({
+      Widget getTableView({
         int? columnCount,
         int? rowCount,
         TableSpanBuilder? columnBuilder,
@@ -2030,106 +2038,118 @@ void main() {
         );
       });
 
-      testWidgets('merged column that exceeds metrics will assert', (
-        WidgetTester tester,
-      ) async {
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
-        await tester.pumpWidget(
-          MaterialApp(
-            home: getTableView(
-              columnBuilder: (int index) {
-                // There will only be 8 columns, but the merge is set up for 10.
-                if (index == 8) {
-                  return null;
-                }
-                return largeSpan;
-              },
-              cellBuilder: (_, TableVicinity vicinity) {
-                // Merged column
-                if (mergedColumns.contains(vicinity.column) &&
-                    vicinity.row == 0) {
+      testWidgets(
+        'merged column that exceeds metrics will assert',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          const ({int start, int span}) columnConfig = (start: 1, span: 10);
+          final mergedColumns = List<int>.generate(
+            10,
+            (int index) => index + 1,
+          );
+          await tester.pumpWidget(
+            MaterialApp(
+              home: getTableView(
+                columnBuilder: (int index) {
+                  // There will only be 8 columns, but the merge is set up for 10.
+                  if (index == 8) {
+                    return null;
+                  }
+                  return largeSpan;
+                },
+                cellBuilder: (_, TableVicinity vicinity) {
+                  // Merged column
+                  if (mergedColumns.contains(vicinity.column) &&
+                      vicinity.row == 0) {
+                    return TableViewCell(
+                      columnMergeStart: columnConfig.start,
+                      columnMergeSpan: columnConfig.span,
+                      child: const Text('R0:C1'),
+                    );
+                  }
                   return TableViewCell(
-                    columnMergeStart: columnConfig.start,
-                    columnMergeSpan: columnConfig.span,
-                    child: const Text('R0:C1'),
+                    child: Text('R${vicinity.row}:C${vicinity.column}'),
                   );
-                }
-                return TableViewCell(
-                  child: Text('R${vicinity.row}:C${vicinity.column}'),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        );
-        await tester.pumpWidget(Container());
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 3);
-        expect(
-          exceptions.first.toString(),
-          contains(
-            'The merged cell containing (row: 0, column: 1) is '
-            'missing TableSpan information necessary for layout. The '
-            'columnBuilder returned null, signifying the end, at column 8 but '
-            'the merged cell is configured to end with column 10.',
-          ),
-        );
-      });
+          );
+          await tester.pumpWidget(const SizedBox());
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(3));
+          expect(
+            exceptions.first.toString(),
+            contains(
+              'The merged cell containing (row: 0, column: 1) is '
+              'missing TableSpan information necessary for layout. The '
+              'columnBuilder returned null, signifying the end, at column 8 but '
+              'the merged cell is configured to end with column 10.',
+            ),
+          );
+        },
+      );
 
-      testWidgets('merged row that exceeds metrics will assert', (
-        WidgetTester tester,
-      ) async {
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final mergedRows = List<int>.generate(10, (int index) => index);
-        await tester.pumpWidget(
-          MaterialApp(
-            home: getTableView(
-              rowBuilder: (int index) {
-                // There will only be 8 rows, but the merge is set up for 9.
-                if (index == 8) {
-                  return null;
-                }
-                return largeSpan;
-              },
-              cellBuilder: (_, TableVicinity vicinity) {
-                // Merged column
-                if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+      testWidgets(
+        'merged row that exceeds metrics will assert',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          const ({int start, int span}) rowConfig = (start: 0, span: 10);
+          final mergedRows = List<int>.generate(10, (int index) => index);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: getTableView(
+                rowBuilder: (int index) {
+                  // There will only be 8 rows, but the merge is set up for 9.
+                  if (index == 8) {
+                    return null;
+                  }
+                  return largeSpan;
+                },
+                cellBuilder: (_, TableVicinity vicinity) {
+                  // Merged column
+                  if (mergedRows.contains(vicinity.row) &&
+                      vicinity.column == 0) {
+                    return TableViewCell(
+                      rowMergeStart: rowConfig.start,
+                      rowMergeSpan: rowConfig.span,
+                      child: const Text('R0:C0'),
+                    );
+                  }
                   return TableViewCell(
-                    rowMergeStart: rowConfig.start,
-                    rowMergeSpan: rowConfig.span,
-                    child: const Text('R0:C0'),
+                    child: Text('R${vicinity.row}:C${vicinity.column}'),
                   );
-                }
-                return TableViewCell(
-                  child: Text('R${vicinity.row}:C${vicinity.column}'),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        );
-        await tester.pumpWidget(Container());
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 3);
-        expect(
-          exceptions.first.toString(),
-          contains(
-            'The merged cell containing (row: 0, column: 0) is '
-            'missing TableSpan information necessary for layout. The '
-            'rowBuilder returned null, signifying the end, at row 8 but '
-            'the merged cell is configured to end with row 9.',
-          ),
-        );
-      });
+          );
+          await tester.pumpWidget(const SizedBox());
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(3));
+          expect(
+            exceptions.first.toString(),
+            contains(
+              'The merged cell containing (row: 0, column: 0) is '
+              'missing TableSpan information necessary for layout. The '
+              'rowBuilder returned null, signifying the end, at row 8 but '
+              'the merged cell is configured to end with row 9.',
+            ),
+          );
+        },
+      );
 
       testWidgets('Binary search correctly finds first/last non-pinned cells', (
         WidgetTester tester,
@@ -2163,8 +2183,8 @@ void main() {
   });
 
   group('TableView.list', () {
-    test('creates correct delegate', () {
-      final tableView = TableView.list(
+    testWidgets('creates correct delegate', (WidgetTester tester) async {
+      final Widget widget = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cells: const <List<TableViewCell>>[
@@ -2172,6 +2192,13 @@ void main() {
           <TableViewCell>[cell, cell, cell],
         ],
       );
+
+      await tester.pumpWidget(widget);
+
+      final TableView tableView = tester.widget<TableView>(
+        find.byType(TableView),
+      );
+
       final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
@@ -2183,7 +2210,7 @@ void main() {
     });
 
     test('asserts correct counts', () {
-      TableView? tableView;
+      Widget? tableView;
       expect(
         () {
           tableView = TableView.list(
@@ -2232,7 +2259,7 @@ void main() {
     ) async {
       final childKeys = <TableVicinity, UniqueKey>{};
       const span = TableSpan(extent: FixedTableSpanExtent(200));
-      final tableView = TableView.builder(
+      final Widget tableView = TableView.builder(
         rowCount: 5,
         columnCount: 5,
         columnBuilder: (_) => span,
@@ -2297,7 +2324,7 @@ void main() {
         extent: FixedTableSpanExtent(200),
         padding: TableSpanPadding(leading: 30.0, trailing: 40.0),
       );
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (_) => columnSpan,
@@ -2397,7 +2424,7 @@ void main() {
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
       var tapCounter = 0;
       // Rows
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2573,7 +2600,11 @@ void main() {
       final rowExtent = TestTableSpanExtent();
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 10,
         columnCount: 10,
         columnBuilder: (_) => TableSpan(extent: columnExtent),
@@ -2625,7 +2656,7 @@ void main() {
     ) async {
       // Huge padding, first span layout
       // Column-wise
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => const TableSpan(
@@ -2696,7 +2727,7 @@ void main() {
     ) async {
       // Check with gradually accrued paddings
       // Column-wise
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) =>
@@ -2818,7 +2849,11 @@ void main() {
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2897,7 +2932,11 @@ void main() {
       // Just pinned rows
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      var tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      Widget tableView = TableView.builder(
         rowCount: 50,
         pinnedRowCount: 1,
         columnCount: 50,
@@ -3139,7 +3178,11 @@ void main() {
     testWidgets('only paints visible cells', (WidgetTester tester) async {
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3206,7 +3249,7 @@ void main() {
     testWidgets('paints decorations in correct order', (
       WidgetTester tester,
     ) async {
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (int index) => TableSpan(
@@ -3483,7 +3526,7 @@ void main() {
       WidgetTester tester,
     ) async {
       // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
-      var tableView = TableView.builder(
+      Widget tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
@@ -3578,7 +3621,7 @@ void main() {
     testWidgets('mouse handling', (WidgetTester tester) async {
       var enterCounter = 0;
       var exitCounter = 0;
-      final tableView = TableView.builder(
+      final Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3729,7 +3772,11 @@ void main() {
       testWidgets('Normal axes', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -3839,7 +3886,11 @@ void main() {
       testWidgets('Vertical reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -3950,7 +4001,11 @@ void main() {
       testWidgets('Horizontal reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -4061,7 +4116,11 @@ void main() {
       testWidgets('Both reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -4177,13 +4236,17 @@ void main() {
     (WidgetTester tester) async {
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
       final mergedCell = <TableVicinity>{
         const TableVicinity(row: 2, column: 2),
         const TableVicinity(row: 3, column: 2),
         const TableVicinity(row: 2, column: 3),
         const TableVicinity(row: 3, column: 3),
       };
-      final tableView = TableView.builder(
+      final Widget tableView = TableView.builder(
         columnCount: 10,
         rowCount: 10,
         columnBuilder: (_) =>
@@ -4472,6 +4535,10 @@ void main() {
   ) async {
     final horizontalController = ScrollController();
     final verticalController = ScrollController();
+    addTearDown(() {
+      verticalController.dispose();
+      horizontalController.dispose();
+    });
 
     Widget getTableView({
       int? columnCount = 10,
