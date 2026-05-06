@@ -224,15 +224,16 @@ void main() {
 
     test('hsl with integer percentages', () {
       expect(
-        parser.parseColor('hsl(270, 100%, 76%)', attributeName: 'fill', id: null),
+        parser.parseColor(
+          'hsl(270, 100%, 76%)',
+          attributeName: 'fill',
+          id: null,
+        ),
         const Color.fromARGB(255, 194, 133, 255),
       );
     });
 
     test('hsl with decimal lightness percentage (issue #185833)', () {
-      // 76.2745098039% must NOT be multiplied by 2.55 (that is only correct
-      // for rgb percentages).  Before the fix this produced #efdeff; the
-      // correct value is #c286ff.
       expect(
         parser.parseColor(
           'hsl(270, 100%, 76.2745098039%)',
@@ -244,7 +245,6 @@ void main() {
     });
 
     test('hsla with integer percentages and decimal alpha', () {
-      // Alpha 0.5 must be converted to 0–255 via *255, not *2.55.
       expect(
         parser.parseColor(
           'hsla(270, 100%, 76%, 0.5)',
@@ -252,6 +252,17 @@ void main() {
           id: null,
         ),
         const Color.fromARGB(128, 194, 133, 255),
+      );
+    });
+
+    test('hsla with integer percentages and alpha 1', () {
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 1)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
       );
     });
 
