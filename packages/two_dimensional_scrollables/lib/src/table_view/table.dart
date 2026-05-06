@@ -393,6 +393,8 @@ class __TableViewBuilderState extends State<_TableViewBuilder> {
       cacheExtent: widget.cacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
+      keyboardDismissBehavior: widget.keyboardDismissBehavior,
+      clipBehavior: widget.clipBehavior,
       delegate: _delegate,
       alignment: widget.alignment,
     );
@@ -464,6 +466,30 @@ class _TableViewListState extends State<_TableViewList> {
   }
 
   @override
+  void didUpdateWidget(_TableViewList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.pinnedColumnCount != widget.pinnedColumnCount ||
+        oldWidget.pinnedRowCount != widget.pinnedRowCount ||
+        oldWidget.trailingPinnedColumnCount !=
+            widget.trailingPinnedColumnCount ||
+        oldWidget.trailingPinnedRowCount != widget.trailingPinnedRowCount ||
+        oldWidget.cells != widget.cells ||
+        oldWidget.columnBuilder != widget.columnBuilder ||
+        oldWidget.rowBuilder != widget.rowBuilder) {
+      _delegate.dispose();
+      _delegate = TableCellListDelegate(
+        pinnedColumnCount: widget.pinnedColumnCount,
+        pinnedRowCount: widget.pinnedRowCount,
+        trailingPinnedColumnCount: widget.trailingPinnedColumnCount,
+        trailingPinnedRowCount: widget.trailingPinnedRowCount,
+        cells: widget.cells,
+        columnBuilder: widget.columnBuilder,
+        rowBuilder: widget.rowBuilder,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _delegate.dispose();
     super.dispose();
@@ -479,7 +505,10 @@ class _TableViewListState extends State<_TableViewList> {
       cacheExtent: widget.cacheExtent,
       diagonalDragBehavior: widget.diagonalDragBehavior,
       dragStartBehavior: widget.dragStartBehavior,
+      keyboardDismissBehavior: widget.keyboardDismissBehavior,
+      clipBehavior: widget.clipBehavior,
       delegate: _delegate,
+      alignment: widget.alignment,
     );
   }
 }
