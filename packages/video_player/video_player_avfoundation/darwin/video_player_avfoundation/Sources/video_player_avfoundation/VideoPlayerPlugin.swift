@@ -83,8 +83,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let factory = NativeVideoViewFactory(
       messenger: messenger,
       playerByIdentifierProvider: {
-        [weak instance] (playerIdentifier: NSNumber) -> FVPVideoPlayer? in
-        return instance?.playersByIdentifier[playerIdentifier.int64Value]
+        [weak instance] (playerIdentifier: Int64) -> FVPVideoPlayer? in
+        return instance?.playersByIdentifier[playerIdentifier]
       }
     )
     registrar.register(factory, withId: "plugins.flutter.dev/video_player_ios")

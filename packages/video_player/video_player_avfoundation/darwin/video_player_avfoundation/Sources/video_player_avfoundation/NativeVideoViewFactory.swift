@@ -20,13 +20,13 @@ import Foundation
 /// Flutter app.
 class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   private let messenger: FlutterBinaryMessenger
-  private let playerByIdentifierProvider: (NSNumber) -> FVPVideoPlayer?
+  private let playerByIdentifierProvider: (Int64) -> FVPVideoPlayer?
 
   /// Initializes a new instance of NativeVideoViewFactory with the given messenger and
   /// a block that provides video players associated with their identifiers.
   init(
     messenger: FlutterBinaryMessenger,
-    playerByIdentifierProvider: @escaping (NSNumber) -> FVPVideoPlayer?
+    playerByIdentifierProvider: @escaping (Int64) -> FVPVideoPlayer?
   ) {
     self.messenger = messenger
     self.playerByIdentifierProvider = playerByIdentifierProvider
@@ -58,10 +58,9 @@ class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   private func createNativeVideoView(
     arguments args: PlatformVideoViewCreationParams
   ) -> FVPNativeVideoView {
-    let playerIdentifier = NSNumber(value: args.playerId)
     // The Dart code should never attempt to create a platform view for a player that doesn't exist,
     // and there's no mechanism to report an error, so just force-unwrap.
-    let player = playerByIdentifierProvider(playerIdentifier)!
+    let player = playerByIdentifierProvider(args.playerId)!
     return FVPNativeVideoView(player: player.player)
   }
 }
