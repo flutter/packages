@@ -16,7 +16,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": "./.agents/hooks/dart_analyze.sh",
+        "command": "./.agents/hooks/dart_analyze.dart",
         "timeout": 90
       }
     ]
