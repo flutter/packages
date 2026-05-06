@@ -6,76 +6,125 @@
 import 'dart:convert';
 import 'dart:io';
 
-void main() async {
-  const logFile = '/tmp/dart_analyze.log';
-  final now = DateTime.now();
-  
-  // Log start
-  await File(logFile).writeAsString(
-    '[$now] dart_analyze.dart started in ${Directory.current.path}\n',
-    mode: FileMode.append,
-  );
+/// Runs Dart analysis on all tracked and untracked Dart files in the repository.
+///
+/// This script is intended to be used as a Jetski hook (e.g., Stop).
+/// It gathers files via `git ls-files` and runs `dart analyze --fatal-infos`.
+///
+/// Supported flags:
+///   --source <value>  Specifies the trigger source (e.g., 'hook'). Logs this value.
+///                     Defaults to 'MANUAL' if not provided.
+Future<void> main(List<String> args) async {
+  final scriptDir = File(Platform.script.toFilePath()).parent.path;
+  final logFilePath = '$scriptDir/dart_analyze.log';
+  final logFile = File(logFilePath);
+  final now = DateTime.now().toIso8601String();
 
-  // Get list of all Dart files not ignored by git
-  final ProcessResult gitResult = await Process.run(
-    'git',
-    ['ls-files', '--cached', '--others', '--exclude-standard', '*.dart'],
-    runInShell: true,
-  );
+  final sourceIdx = args.indexOf('--source');
+  final triggerSource = (sourceIdx != -1 && sourceIdx + 1 < args.length)
+      ? args[sourceIdx + 1].toUpperCase()
+      : 'MANUAL';
 
-  if (gitResult.exitCode != 0) {
-    await File(logFile).writeAsString(
-      '[$now] Failed to get git files. Exit code ${gitResult.exitCode}\n',
-      mode: FileMode.append,
-    );
-    stdout.writeln(jsonEncode({'decision': 'continue', 'reason': 'Failed to get git files.'}));
-    exit(0);
+  Future<void> log(String message) async {
+    await logFile.writeAsString('[$now] $message\n', mode: FileMode.append);
   }
 
-  final List<String> files = (gitResult.stdout as String)
-      .split('\n')
-      .where((line) => line.isNotEmpty)
-      .toList();
-
-  // Run dart analyze on those files
-  final ProcessResult result = await Process.run(
-    'dart',
-    ['analyze', '--fatal-infos', ...files],
-    runInShell: true,
+  await log(
+    'dart_analyze.dart started in ${Directory.current.path} (Trigger: $triggerSource)',
   );
 
-  final int exitCode = result.exitCode;
-  // Ignored due to conflict between specify_nonobvious_local_variable_types and omit_obvious_local_variable_types.
-  // ignore: omit_obvious_local_variable_types
-  final String output = result.stdout as String;
-  // Ignored due to conflict between specify_nonobvious_local_variable_types and omit_obvious_local_variable_types.
-  // ignore: omit_obvious_local_variable_types
-  final String error = result.stderr as String;
+  try {
+    // Get the repo root to resolve paths in monorepo.
+    final repoRootResult = await Process.run('git', [
+      'rev-parse',
+      '--show-toplevel',
+    ], runInShell: true);
+    if (repoRootResult.exitCode != 0) {
+      await log('ERROR: Failed to get git repo root.');
+      stdout.writeln(
+        jsonEncode({
+          'decision': 'continue',
+          'reason': 'Failed to get git repo root.',
+        }),
+      );
+      exit(1);
+    }
+    final repoRoot = (repoRootResult.stdout as String).trim();
 
-  await File(logFile).writeAsString(
-    '[$now] Analysis finished with code $exitCode\n',
-    mode: FileMode.append,
-  );
+    // Get list of all Dart files not ignored by git.
+    final ProcessResult gitResult = await Process.run('git', [
+      'ls-files',
+      '--cached',
+      '--others',
+      '--exclude-standard',
+      '*.dart',
+    ], runInShell: true);
 
-  // If exit code is 0 (no issues), allow the agent to stop
-  if (exitCode == 0) {
-    await File(logFile).writeAsString(
-      '[$now] Analysis passed\n',
-      mode: FileMode.append,
+    if (gitResult.exitCode != 0) {
+      await log(
+        'ERROR: Failed to get git files. Exit code ${gitResult.exitCode}',
+      );
+      await log(gitResult.stderr as String);
+      stdout.writeln(
+        jsonEncode({
+          'decision': 'continue',
+          'reason': 'Failed to get git files.',
+        }),
+      );
+      exit(0); // Exit 0 so Jetski captures the stdout JSON.
+    }
+
+    final List<String> files = (gitResult.stdout as String)
+        .split('\n')
+        .where((line) => line.isNotEmpty)
+        .map((path) => '$repoRoot/$path')
+        .where((path) => File(path).existsSync())
+        .toList();
+
+    if (files.isEmpty) {
+      await log('No dart files found to analyze.');
+      stdout.writeln(jsonEncode({'decision': 'stop'}));
+      exit(0);
+    }
+
+    await log('Running dart analyze on ${files.length} files...');
+
+    // Run dart analyze on those files.
+    final ProcessResult result = await Process.run('dart', [
+      'analyze',
+      '--fatal-infos',
+      ...files,
+    ], runInShell: true);
+
+    final int exitCode = result.exitCode;
+    final String output = result.stdout as String;
+    final String error = result.stderr as String;
+
+    await log('Analysis finished with code $exitCode');
+
+    // If exit code is 0 (no issues), allow the agent to stop.
+    if (exitCode == 0) {
+      await log('Analysis passed');
+      stdout.writeln(jsonEncode({'decision': 'stop'}));
+      exit(0);
+    }
+
+    // If there are issues, tell Jetski to CONTINUE and provide the reason.
+    await log('Analysis failed');
+
+    final reason =
+        'Analyzer issues found. Please fix these before finishing:\n\n$output$error';
+    stdout.writeln(jsonEncode({'decision': 'continue', 'reason': reason}));
+    exit(0); // Exit 0 so Jetski captures the stdout JSON.
+  } catch (e, stackTrace) {
+    await log('UNHANDLED EXCEPTION: $e');
+    await log(stackTrace.toString());
+    stdout.writeln(
+      jsonEncode({
+        'decision': 'continue',
+        'reason': 'Unhandled exception in dart_analyze hook.',
+      }),
     );
-    stdout.writeln(jsonEncode({'decision': 'stop'}));
-    exit(0);
+    exit(1);
   }
-
-  // If there are issues, tell Jetski to CONTINUE and provide the reason
-  await File(logFile).writeAsString(
-    '[$now] Analysis failed\n',
-    mode: FileMode.append,
-  );
-
-  final reason =
-      'Analyzer issues found. Please fix these before finishing:\n\n$output$error';
-
-  stdout.writeln(jsonEncode({'decision': 'continue', 'reason': reason}));
-  exit(0); // Exit 0 so Jetski captures the stdout JSON
 }
