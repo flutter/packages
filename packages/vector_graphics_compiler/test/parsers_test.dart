@@ -310,6 +310,41 @@ void main() {
       );
     });
 
+    test('hsl saturation and lightness clamp to percentages', () {
+      expect(
+        parser.parseColor(
+          'hsl(270, 150%, 76%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, -10%, 76%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 194, 194),
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, 100%, -10%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        Color.opaqueBlack,
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, 100%, 150%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 255, 255, 255),
+      );
+    });
+
     test('hsla alpha accepts boundary values', () {
       expect(
         parser.parseColor(

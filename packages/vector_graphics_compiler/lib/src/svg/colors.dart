@@ -350,44 +350,49 @@ Color _cssRgbRecordToColor(CssRgbRecord record) {
 /// Converts a [CssHslRecord] to a [Color].
 Color _cssHslRecordToColor(CssHslRecord record) {
   final double hue = _parseHslValue(record.h) / 360 % 1;
-  final double saturation = _parseHslValue(record.s) / 100;
-  final double luminance = _parseHslValue(record.l) / 100;
+  final double saturation = _parseHslValue(record.s).clamp(0, 100) / 100;
+  final double luminance = _parseHslValue(record.l).clamp(0, 100) / 100;
   final int alpha = _parseHslAlpha(record.a);
-  var rgb = <double>[0, 0, 0];
+  double red = 0;
+  double green = 0;
+  double blue = 0;
 
   if (hue < 1 / 6) {
-    rgb[0] = 1;
-    rgb[1] = hue * 6;
+    red = 1;
+    green = hue * 6;
   } else if (hue < 2 / 6) {
-    rgb[0] = 2 - hue * 6;
-    rgb[1] = 1;
+    red = 2 - hue * 6;
+    green = 1;
   } else if (hue < 3 / 6) {
-    rgb[1] = 1;
-    rgb[2] = hue * 6 - 2;
+    green = 1;
+    blue = hue * 6 - 2;
   } else if (hue < 4 / 6) {
-    rgb[1] = 4 - hue * 6;
-    rgb[2] = 1;
+    green = 4 - hue * 6;
+    blue = 1;
   } else if (hue < 5 / 6) {
-    rgb[0] = hue * 6 - 4;
-    rgb[2] = 1;
+    red = hue * 6 - 4;
+    blue = 1;
   } else {
-    rgb[0] = 1;
-    rgb[2] = 6 - hue * 6;
+    red = 1;
+    blue = 6 - hue * 6;
   }
 
-  rgb = rgb.map((double val) => val + (1 - saturation) * (0.5 - val)).toList();
+  return Color.fromARGB(
+    alpha,
+    _hslChannelToRgb(red, saturation, luminance),
+    _hslChannelToRgb(green, saturation, luminance),
+    _hslChannelToRgb(blue, saturation, luminance),
+  );
+}
 
+int _hslChannelToRgb(double channel, double saturation, double luminance) {
+  channel = channel + (1 - saturation) * (0.5 - channel);
   if (luminance < 0.5) {
-    rgb = rgb.map((double val) => luminance * 2 * val).toList();
+    channel = luminance * 2 * channel;
   } else {
-    rgb = rgb
-        .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
-        .toList();
+    channel = luminance * 2 * (1 - channel) + 2 * channel - 1;
   }
-
-  rgb = rgb.map((double val) => val * 255).toList();
-
-  return Color.fromARGB(alpha, rgb[0].round(), rgb[1].round(), rgb[2].round());
+  return (channel.clamp(0, 1) * 255).round();
 }
 
 /// Parses a single color component value and returns an integer 0-255.
