@@ -49,12 +49,13 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     final indent = Indent();
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
+    indent.writeln('// ignore_for_file: avoid_print');
     indent.newln();
     indent.format('''
 import 'dart:io';
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:pub_semver/pub_semver.dart';
-import 'package:swift2objc/src/ast/_core/interfaces/declaration.dart';
+import 'package:swift2objc/swift2objc.dart';
 import 'package:swiftgen/src/config.dart';
 import 'package:swiftgen/swiftgen.dart';
 
@@ -77,34 +78,14 @@ import 'package:swiftgen/swiftgen.dart';
     );
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
-      if (configuredSdkPath != null) {
-        indent.writeln("String sdkPath = '$configuredSdkPath';");
-        indent.writeln('if (args.isNotEmpty) {');
-        indent.writeln('  sdkPath = args[0];');
-        indent.writeln('}');
-      } else {
-        indent.format('''
-  var sdkPath = '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk';
+      indent.format('''
+  final Uri sdk;
   if (args.isNotEmpty) {
-    sdkPath = args[0];
+    sdk = Uri.directory(args[0]);
   } else {
-    var didFallback = true;
-    try {
-      final ProcessResult result = await Process.run('xcrun', <String>['--sdk', 'iphoneos', '--show-sdk-path']);
-      if (result.exitCode == 0) {
-        sdkPath = (result.stdout as String).trim();
-        didFallback = false;
-      }
-    } catch (_) {}
-    if (didFallback) {
-      // ignore: avoid_print
-      print('Failed to find iOS SDK path with xcrun. Falling back to default iOS SDK path.');
-      // ignore: avoid_print
-      print('If FFI generation fails, please provide a valid iOS SDK path in the Pigeon configuration for SwiftOptions(appleSdkPath: ...), or pass it as an argument when running ffigen.');
-    }
+    sdk = ${configuredSdkPath != null ? "Uri.directory('$configuredSdkPath')" : "await iOSSdk"};
   }
 ''');
-      }
       final String prefix =
           generatorOptions.swiftOptions.fileSpecificClassNameComponent ?? '';
       indent.writeScoped('final classes = <String>[', '];', () {
@@ -148,15 +129,15 @@ import 'package:swiftgen/swiftgen.dart';
       indent.format('''
   var targetTriple = '${configuredSdkTriple ?? ''}';
   if (targetTriple.isEmpty) {
-    targetTriple = sdkPath.toLowerCase().contains('macosx') ? 'x86_64-apple-macosx14.0' : 'arm64-apple-ios';
+    targetTriple = sdk.path.toLowerCase().contains('macosx')
+        ? await macOSX64TargetTripleLatest
+        : await iOSArm64TargetTripleLatest;
   }
 
   await SwiftGenerator(
     target: Target(
       triple: targetTriple,
-      sdk: Uri.directory(
-        sdkPath,
-      ),
+      sdk: sdk,
     ),
     inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
         Uri.file('${path.relative(generatorOptions.swiftOptions.swiftOut, from: generatorOptions.exampleAppDirectory ?? './')}')
