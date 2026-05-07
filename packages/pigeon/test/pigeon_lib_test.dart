@@ -318,6 +318,16 @@ abstract class Api1 {
     );
   });
 
+  test('missing part file returns parse error', () {
+    const source = '''
+part 'missing.dart';
+''';
+    final ParseResults parseResult = parseSource(source);
+    expect(parseResult.root.apis, isEmpty);
+    expect(parseResult.root.classes, isEmpty);
+    expect(parseResult.errors, isNotEmpty);
+  });
+
   test('invalid datatype', () {
     const source = '''
 class InvalidDatatype {
