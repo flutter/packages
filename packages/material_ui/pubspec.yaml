@@ -3,12 +3,19 @@ description: The official Flutter Material UI Library, implementing Google's Mat
 version: 0.0.1
 repository: https://github.com/flutter/packages/tree/main/packages/material_ui
 issue_tracker:  https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20material%20design%22
+publish_to: 'none'
 
 environment:
   sdk: ^3.9.0
   flutter: ">=3.35.0"
 
+workspace:
+  - material_ui_examples
+
 dependencies:
+  cupertino_ui:
+    # TODO(justinmc): Use the pub.dev package when published.
+    path: ../cupertino_ui
   flutter:
     sdk: flutter
 

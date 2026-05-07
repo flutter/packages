@@ -3,10 +3,14 @@ description: The official Flutter Cupertino Design Library, implementing the iOS
 version: 0.0.1
 repository: https://github.com/flutter/packages/tree/main/packages/cupertino_ui
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20cupertino%22
+publish_to: 'none'
 
 environment:
   sdk: ^3.9.0
   flutter: ">=3.35.0"
+
+workspace:
+  - cupertino_ui_examples
 
 dependencies:
   flutter:
@@ -15,6 +19,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  material_ui:
+    # TODO(justinmc): Use the pub.dev package when published.
+    path: ../material_ui
 
 topics:
   - ui
