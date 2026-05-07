@@ -6,6 +6,8 @@
 
 #import "FVPViewProvider.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 // A cross-platform display link abstraction.
 @protocol FVPDisplayLink <NSObject>
 
@@ -49,3 +51,5 @@ API_AVAILABLE(ios(4.0), macos(14.0))
 
 @end
 #endif
+
+NS_ASSUME_NONNULL_END

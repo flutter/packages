@@ -4,6 +4,8 @@
 
 @import Foundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Handles event/status callbacks from FVPVideoPlayer.
 ///
 /// This is an abstraction around the event channel to avoid coupling FVPVideoPlayer directly to
@@ -30,3 +32,5 @@
 /// Called when the video player has been disposed on the Dart side.
 - (void)videoPlayerWasDisposed;
 @end
+
+NS_ASSUME_NONNULL_END

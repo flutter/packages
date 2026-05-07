@@ -4,7 +4,7 @@
 
 @import AVFoundation;
 
-#import "./messages.g.h"
+#import "./VideoPlayerInstanceMessages.g.h"
 #import "FVPAVFactory.h"
 #import "FVPVideoEventListener.h"
 #import "FVPViewProvider.h"
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// FVPVideoPlayer manages video playback using AVPlayer.
 /// It provides methods for controlling playback, adjusting volume, and handling seeking.
 /// This class contains all functionalities needed to manage video playback in platform views and is
-/// typically used alongside FVPNativeVideoViewFactory. If you need to display a video using a
+/// typically used alongside NativeVideoViewFactory. If you need to display a video using a
 /// texture, use FVPTextureBasedVideoPlayer instead.
 @interface FVPVideoPlayer : NSObject <FVPVideoPlayerInstanceApi>
 /// The AVPlayer instance used for video playback.
