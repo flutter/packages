@@ -46,7 +46,7 @@ class XFile extends XFileBase {
   /// [name] is ignored; the parameter exists only to match the web version of
   /// the constructor.
   ///
-  /// [mimeType] is returned from [mimeType] only if it is explicitly provided.
+  /// The [mimeType] property returns the value explicitly provided here, if any.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
