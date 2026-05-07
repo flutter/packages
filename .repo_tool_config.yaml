@@ -61,7 +61,6 @@ allowed_dependencies:
     - build_config
     - build_runner
     - build_test
-    - clock
     - code_builder
     - collection
     - convert
