@@ -18,7 +18,7 @@ import Foundation
 
 /// A factory class responsible for creating native video views that can be embedded in a
 /// Flutter app.
-class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
+final class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
   private let messenger: FlutterBinaryMessenger
   private let playerByIdentifierProvider: (Int64) -> FVPVideoPlayer?
 
@@ -35,18 +35,18 @@ class NativeVideoViewFactory: NSObject, FlutterPlatformViewFactory {
 
   #if os(macOS)
     func create(
-      withViewIdentifier viewId: Int64,
-      arguments args: Any?
+      withViewIdentifier viewIdentifier: Int64,
+      arguments: Any?
     ) -> NSView {
-      return createNativeVideoView(arguments: args as! PlatformVideoViewCreationParams)
+      return createNativeVideoView(arguments: arguments as! PlatformVideoViewCreationParams)
     }
   #elseif os(iOS)
     func create(
       withFrame frame: CGRect,
-      viewIdentifier viewId: Int64,
-      arguments args: Any?
+      viewIdentifier: Int64,
+      arguments: Any?
     ) -> FlutterPlatformView {
-      return createNativeVideoView(arguments: args as! PlatformVideoViewCreationParams)
+      return createNativeVideoView(arguments: arguments as! PlatformVideoViewCreationParams)
     }
   #endif
 
