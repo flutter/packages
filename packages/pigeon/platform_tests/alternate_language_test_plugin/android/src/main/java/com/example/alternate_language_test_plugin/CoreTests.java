@@ -3400,6 +3400,22 @@ public class CoreTests {
 
     /** Returns the passed list, to test serialization and deserialization. */
     @NonNull
+    List<String> echoStringList(@NonNull List<String> stringList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Long> echoIntList(@NonNull List<Long> intList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Double> echoDoubleList(@NonNull List<Double> doubleList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
+    List<Boolean> echoBoolList(@NonNull List<Boolean> boolList);
+
+    /** Returns the passed list, to test serialization and deserialization. */
+    @NonNull
     List<AnEnum> echoEnumList(@NonNull List<AnEnum> enumList);
 
     /** Returns the passed list, to test serialization and deserialization. */
@@ -4231,6 +4247,106 @@ public class CoreTests {
                 List<Object> listArg = (List<Object>) args.get(0);
                 try {
                   List<Object> output = api.echoList(listArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<String> stringListArg = (List<String>) args.get(0);
+                try {
+                  List<String> output = api.echoStringList(stringListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Long> intListArg = (List<Long>) args.get(0);
+                try {
+                  List<Long> output = api.echoIntList(intListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Double> doubleListArg = (List<Double>) args.get(0);
+                try {
+                  List<Double> output = api.echoDoubleList(doubleListArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<Boolean> boolListArg = (List<Boolean>) args.get(0);
+                try {
+                  List<Boolean> output = api.echoBoolList(boolListArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

@@ -2047,6 +2047,134 @@ core_tests_pigeon_test_host_integration_core_api_echo_list_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_string_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_STRING_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoStringList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoStringList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_int_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_INT_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoIntList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoIntList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_double_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_DOUBLE_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoDoubleList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoDoubleList.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response,
+    CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_BOOL_LIST_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.echoBoolList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new(
+    FlValue* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.echoBoolList.
+ *
+ * Returns: a new #CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse,
     core_tests_pigeon_test_host_integration_core_api_echo_enum_list_response,
     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_ECHO_ENUM_LIST_RESPONSE,
@@ -3881,6 +4009,14 @@ typedef struct {
       FlValue* an_object, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse* (*echo_list)(
       FlValue* list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* (
+      *echo_string_list)(FlValue* string_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* (
+      *echo_int_list)(FlValue* int_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* (
+      *echo_double_list)(FlValue* double_list, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* (
+      *echo_bool_list)(FlValue* bool_list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse* (
       *echo_enum_list)(FlValue* enum_list, gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoClassListResponse* (

@@ -1147,6 +1147,14 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   func echo(_ list: [Any?]) throws -> [Any?]
   /// Returns the passed list, to test serialization and deserialization.
+  func echo(stringList: [String?]) throws -> [String?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echo(intList: [Int64?]) throws -> [Int64?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echo(doubleList: [Double?]) throws -> [Double?]
+  /// Returns the passed list, to test serialization and deserialization.
+  func echo(boolList: [Bool?]) throws -> [Bool?]
+  /// Returns the passed list, to test serialization and deserialization.
   func echo(enumList: [AnEnum?]) throws -> [AnEnum?]
   /// Returns the passed list, to test serialization and deserialization.
   func echo(classList: [AllNullableTypes?]) throws -> [AllNullableTypes?]
@@ -1721,6 +1729,82 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoStringListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoStringList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoStringListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let stringListArg = args[0] as! [String?]
+        do {
+          let result = try api.echo(stringList: stringListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoStringListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoIntListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoIntList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoIntListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let intListArg = args[0] as! [Int64?]
+        do {
+          let result = try api.echo(intList: intListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoIntListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoDoubleListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDoubleList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoDoubleListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let doubleListArg = args[0] as! [Double?]
+        do {
+          let result = try api.echo(doubleList: doubleListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoDoubleListChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed list, to test serialization and deserialization.
+    let echoBoolListChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBoolList\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoBoolListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let boolListArg = args[0] as! [Bool?]
+        do {
+          let result = try api.echo(boolList: boolListArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoBoolListChannel.setMessageHandler(nil)
     }
     /// Returns the passed list, to test serialization and deserialization.
     let echoEnumListChannel = FlutterBasicMessageChannel(

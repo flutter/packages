@@ -95,6 +95,26 @@
   return list;
 }
 
+- (nullable NSArray<NSString *> *)echoStringList:(NSArray<NSString *> *)stringList
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return stringList;
+}
+
+- (nullable NSArray<NSNumber *> *)echoIntList:(NSArray<NSNumber *> *)intList
+                                        error:(FlutterError *_Nullable *_Nonnull)error {
+  return intList;
+}
+
+- (nullable NSArray<NSNumber *> *)echoDoubleList:(NSArray<NSNumber *> *)doubleList
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return doubleList;
+}
+
+- (nullable NSArray<NSNumber *> *)echoBoolList:(NSArray<NSNumber *> *)boolList
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  return boolList;
+}
+
 - (nullable NSArray<FLTAnEnumBox *> *)echoEnumList:(NSArray<FLTAnEnumBox *> *)enumList
                                              error:(FlutterError *_Nullable *_Nonnull)error {
   return enumList;

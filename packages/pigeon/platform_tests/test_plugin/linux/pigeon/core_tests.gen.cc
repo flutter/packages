@@ -4903,6 +4903,264 @@ core_tests_pigeon_test_host_integration_core_api_echo_list_response_new_error(
   return self;
 }
 
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_string_list_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_LIST_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_STRING_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_string_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_int_list_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_LIST_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_INT_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_int_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_double_list_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_DOUBLE_LIST_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_DOUBLE_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_DOUBLE_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_double_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_BOOL_LIST_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_dispose;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new(
+    FlValue* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_BOOL_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_ref(return_value));
+  return self;
+}
+
+CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_BOOL_LIST_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_bool_list_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumListResponse {
   GObject parent_instance;
 
@@ -15664,6 +15922,120 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_list_cb(
   }
 }
 
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_string_list_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_string_list == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* string_list = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoStringListResponse)
+      response = self->vtable->echo_string_list(string_list, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoStringList");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoStringList", error->message);
+  }
+}
+
+static void core_tests_pigeon_test_host_integration_core_api_echo_int_list_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_int_list == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* int_list = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoIntListResponse)
+      response = self->vtable->echo_int_list(int_list, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoIntList");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoIntList", error->message);
+  }
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_double_list_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_double_list == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* double_list = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoDoubleListResponse)
+      response = self->vtable->echo_double_list(double_list, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoDoubleList");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoDoubleList", error->message);
+  }
+}
+
+static void core_tests_pigeon_test_host_integration_core_api_echo_bool_list_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->echo_bool_list == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  FlValue* bool_list = value0;
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoBoolListResponse)
+      response = self->vtable->echo_bool_list(bool_list, self->user_data);
+  if (response == nullptr) {
+    g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
+              "echoBoolList");
+    return;
+  }
+
+  g_autoptr(GError) error = NULL;
+  if (!fl_basic_message_channel_respond(channel, response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoBoolList", error->message);
+  }
+}
+
 static void core_tests_pigeon_test_host_integration_core_api_echo_enum_list_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -19480,6 +19852,50 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_list_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_string_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoStringList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_string_list_channel =
+      fl_basic_message_channel_new(messenger, echo_string_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_string_list_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_string_list_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_int_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoIntList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_int_list_channel =
+      fl_basic_message_channel_new(messenger, echo_int_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_int_list_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_int_list_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_double_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoDoubleList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_double_list_channel =
+      fl_basic_message_channel_new(messenger, echo_double_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_double_list_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_double_list_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_bool_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoBoolList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_bool_list_channel =
+      fl_basic_message_channel_new(messenger, echo_bool_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_bool_list_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_bool_list_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_enum_list_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
       "echoEnumList%s",
@@ -21391,6 +21807,42 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
       fl_basic_message_channel_new(messenger, echo_list_channel_name,
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(echo_list_channel, nullptr,
+                                               nullptr, nullptr);
+  g_autofree gchar* echo_string_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoStringList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_string_list_channel =
+      fl_basic_message_channel_new(messenger, echo_string_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_string_list_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_int_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoIntList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_int_list_channel =
+      fl_basic_message_channel_new(messenger, echo_int_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_int_list_channel, nullptr,
+                                               nullptr, nullptr);
+  g_autofree gchar* echo_double_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoDoubleList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_double_list_channel =
+      fl_basic_message_channel_new(messenger, echo_double_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_double_list_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_bool_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoBoolList%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) echo_bool_list_channel =
+      fl_basic_message_channel_new(messenger, echo_bool_list_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(echo_bool_list_channel, nullptr,
                                                nullptr, nullptr);
   g_autofree gchar* echo_enum_list_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."

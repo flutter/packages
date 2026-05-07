@@ -867,6 +867,18 @@ class HostIntegrationCoreApi {
   virtual ErrorOr<::flutter::EncodableList> EchoList(
       const ::flutter::EncodableList& list) = 0;
   // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoStringList(
+      const ::flutter::EncodableList& string_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoIntList(
+      const ::flutter::EncodableList& int_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoDoubleList(
+      const ::flutter::EncodableList& double_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
+  virtual ErrorOr<::flutter::EncodableList> EchoBoolList(
+      const ::flutter::EncodableList& bool_list) = 0;
+  // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<::flutter::EncodableList> EchoEnumList(
       const ::flutter::EncodableList& enum_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
