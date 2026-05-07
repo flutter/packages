@@ -3323,7 +3323,7 @@ void main() {
     expect(textField.textInputAction, TextInputAction.previous);
   });
 
-  testWidgets('SearchAnchor.bar respects focusNode property', (WidgetTester tester) async {
+  testWidgets('SearchAnchor.bar respects barFocusNode property', (WidgetTester tester) async {
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
 
