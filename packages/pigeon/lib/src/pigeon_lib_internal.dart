@@ -15,6 +15,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
+import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -595,7 +596,17 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
       : null;
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    if (!(options.swiftOptions?.useFfi ?? false)) {
+      return <Error>[];
+    }
+    return _validateDependencies(
+      appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+      dartOutPath: options.dartOptions?.dartOut,
+      apiName: 'Swift FFI',
+      requiredDeps: const <String>['ffi', 'objective_c', 'ffigen'],
+    );
+  }
 }
 
 /// A [GeneratorAdapter] that generates C++ source code.
@@ -817,7 +828,17 @@ class JnigenConfigGeneratorAdapter implements GeneratorAdapter {
       : null;
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    if (!(options.kotlinOptions?.useJni ?? false)) {
+      return <Error>[];
+    }
+    return _validateDependencies(
+      appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+      dartOutPath: options.dartOptions?.dartOut,
+      apiName: 'Kotlin JNI',
+      requiredDeps: const <String>['jni', 'jnigen'],
+    );
+  }
 }
 
 dart_ast.Annotation? _findMetadata(
@@ -2437,4 +2458,57 @@ int calculateLineNumber(String contents, int offset) {
     }
   }
   return result;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  required String apiName,
+  required List<String> requiredDeps,
+}) {
+  final errors = <Error>[];
+
+  String? pubspecPath;
+  if (appDirectory != null && appDirectory.isNotEmpty) {
+    pubspecPath = findPubspecPath(path.join(appDirectory, 'placeholder.dart'));
+  }
+  if (pubspecPath == null && dartOutPath != null && dartOutPath.isNotEmpty) {
+    pubspecPath = findPubspecPath(dartOutPath);
+  }
+  pubspecPath ??= findPubspecPath(
+    path.join(Directory.current.path, 'placeholder.dart'),
+  );
+
+  if (pubspecPath == null) {
+    return errors;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+
+  try {
+    final String content = resolvedPubspec.readAsStringSync();
+    final dynamic doc = yaml.loadYaml(content);
+    if (doc is yaml.YamlMap) {
+      final dependencies = doc['dependencies'] as yaml.YamlMap?;
+      final devDependencies = doc['dev_dependencies'] as yaml.YamlMap?;
+      final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+
+      for (final dep in requiredDeps) {
+        final bool inDeps = dependencies?.containsKey(dep) ?? false;
+        final bool inDevDeps = devDependencies?.containsKey(dep) ?? false;
+        final bool inOverrides = dependencyOverrides?.containsKey(dep) ?? false;
+        if (!inDeps && !inDevDeps && !inOverrides) {
+          errors.add(
+            Error(
+              message:
+                  'Missing required dependency "$dep" in pubspec.yaml for $apiName native interop support.\n'
+                  'Please add "$dep" to your dependencies or dev_dependencies in your pubspec.yaml file.',
+            ),
+          );
+        }
+      }
+    }
+  } catch (_) {}
+
+  return errors;
 }

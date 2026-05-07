@@ -765,7 +765,7 @@ Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
 /// parent directory and returns its path.
-String? _findPubspecPath(String dartFilePath) {
+String? findPubspecPath(String dartFilePath) {
   try {
     Directory dir = File(dartFilePath).parent;
     String? pubspecPath;
@@ -777,12 +777,12 @@ String? _findPubspecPath(String dartFilePath) {
             .where((String path) => path.endsWith('pubspec.yaml'));
         if (pubspecPaths.isNotEmpty) {
           pubspecPath = pubspecPaths.first;
-        } else {
-          dir = dir.parent;
         }
-      } else {
+      }
+      if (dir.path == dir.parent.path) {
         break;
       }
+      dir = dir.parent;
     }
     return pubspecPath;
   } catch (ex) {
@@ -793,7 +793,7 @@ String? _findPubspecPath(String dartFilePath) {
 /// Given the path of a Dart file, [mainDartFile], the name of the package will
 /// be deduced by locating and parsing its associated pubspec.yaml.
 String? deducePackageName(String mainDartFile) {
-  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  final String? pubspecPath = findPubspecPath(mainDartFile);
   if (pubspecPath == null) {
     return null;
   }

@@ -7,6 +7,8 @@ import 'dart:io';
 
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/kotlin/kotlin_generator.dart';
+import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:pigeon/src/pigeon_lib.dart';
 import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:test/test.dart';
@@ -1979,5 +1981,162 @@ abstract class events {
         contains('Sealed class: "DataClass" must not contain fields.'),
       );
     });
+  });
+
+  group('Dependency Validation', () {
+    test(
+      'FfigenConfigGeneratorAdapter validation passes if ffi, objective_c, ffigen exist',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync(
+          'pigeon_dependency_test_',
+        );
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^1.0.0
+dev_dependencies:
+  ffigen: ^20.0.0
+''');
+          final InternalPigeonOptions options =
+              InternalPigeonOptions.fromPigeonOptions(
+                PigeonOptions(
+                  input: 'foo.dart',
+                  dartOut: '${tempDir.path}/lib/messages.dart',
+                  swiftOut: '${tempDir.path}/lib/messages.swift',
+                  swiftOptions: const SwiftOptions(useFfi: true),
+                  dartPackageName: 'my_package',
+                ),
+              );
+          const adapter = FfigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isEmpty);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'FfigenConfigGeneratorAdapter validation fails if objective_c is missing',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync(
+          'pigeon_dependency_test_',
+        );
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+dev_dependencies:
+  ffigen: ^20.0.0
+''');
+          final InternalPigeonOptions options =
+              InternalPigeonOptions.fromPigeonOptions(
+                PigeonOptions(
+                  input: 'foo.dart',
+                  dartOut: '${tempDir.path}/lib/messages.dart',
+                  swiftOut: '${tempDir.path}/lib/messages.swift',
+                  swiftOptions: const SwiftOptions(useFfi: true),
+                  dartPackageName: 'my_package',
+                ),
+              );
+          const adapter = FfigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isNotEmpty);
+          expect(
+            errors[0].message,
+            contains('Missing required dependency "objective_c"'),
+          );
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'JnigenConfigGeneratorAdapter validation passes if jni and jnigen exist',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync(
+          'pigeon_dependency_test_',
+        );
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^2.0.0
+dev_dependencies:
+  jnigen: ^20.0.0
+''');
+          final InternalPigeonOptions options =
+              InternalPigeonOptions.fromPigeonOptions(
+                PigeonOptions(
+                  input: 'foo.dart',
+                  dartOut: '${tempDir.path}/lib/messages.dart',
+                  kotlinOut: '${tempDir.path}/lib/messages.kt',
+                  kotlinOptions: const KotlinOptions(useJni: true),
+                  dartPackageName: 'my_package',
+                ),
+              );
+          const adapter = JnigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isEmpty);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'JnigenConfigGeneratorAdapter validation fails if jni is missing',
+      () async {
+        final Directory tempDir = Directory.systemTemp.createTempSync(
+          'pigeon_dependency_test_',
+        );
+        try {
+          final pubspecFile = File('${tempDir.path}/pubspec.yaml');
+          pubspecFile.writeAsStringSync('''
+name: my_package
+dev_dependencies:
+  jnigen: ^20.0.0
+''');
+          final InternalPigeonOptions options =
+              InternalPigeonOptions.fromPigeonOptions(
+                PigeonOptions(
+                  input: 'foo.dart',
+                  dartOut: '${tempDir.path}/lib/messages.dart',
+                  kotlinOut: '${tempDir.path}/lib/messages.kt',
+                  kotlinOptions: const KotlinOptions(useJni: true),
+                  dartPackageName: 'my_package',
+                ),
+              );
+          const adapter = JnigenConfigGeneratorAdapter();
+          final List<Error> errors = adapter.validate(
+            options,
+            Root(apis: [], classes: [], enums: []),
+          );
+          expect(errors, isNotEmpty);
+          expect(
+            errors[0].message,
+            contains('Missing required dependency "jni"'),
+          );
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
   });
 }
