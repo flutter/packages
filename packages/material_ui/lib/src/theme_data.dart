@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// @docImport 'package:flutter/material.dart';
+/// @docImport 'package:material_ui/material_ui.dart';
 library;
 
 import 'dart:ui' show Color, SystemColor, SystemColorPalette, lerpDouble;
