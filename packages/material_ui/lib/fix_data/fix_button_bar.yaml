@@ -31,7 +31,7 @@ transforms:
   - title: "Migrate to 'OverflowBar'"
     date: 2024-02-28
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       class: 'ButtonBar'
     changes:
       - kind: 'rename'

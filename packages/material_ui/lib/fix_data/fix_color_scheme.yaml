@@ -31,7 +31,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ColorScheme'
     oneOf:
@@ -53,7 +53,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ColorScheme'
     oneOf:
@@ -75,7 +75,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ColorScheme'
     oneOf:
@@ -97,7 +97,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'light'
       inClass: 'ColorScheme'
     oneOf:
@@ -119,7 +119,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'light'
       inClass: 'ColorScheme'
     oneOf:
@@ -141,7 +141,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'light'
       inClass: 'ColorScheme'
     oneOf:
@@ -163,7 +163,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'dark'
       inClass: 'ColorScheme'
     oneOf:
@@ -185,7 +185,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'dark'
       inClass: 'ColorScheme'
     oneOf:
@@ -207,7 +207,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'dark'
       inClass: 'ColorScheme'
     oneOf:
@@ -229,7 +229,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastLight'
       inClass: 'ColorScheme'
     oneOf:
@@ -251,7 +251,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastLight'
       inClass: 'ColorScheme'
     oneOf:
@@ -273,7 +273,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastLight'
       inClass: 'ColorScheme'
     oneOf:
@@ -295,7 +295,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastDark'
       inClass: 'ColorScheme'
     oneOf:
@@ -317,7 +317,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastDark'
       inClass: 'ColorScheme'
     oneOf:
@@ -339,7 +339,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastDark'
       inClass: 'ColorScheme'
     oneOf:
@@ -361,7 +361,7 @@ transforms:
   - title: "Migrate background"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ColorScheme'
     oneOf:
@@ -383,7 +383,7 @@ transforms:
   - title: "Migrate onBackground"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ColorScheme'
     oneOf:
@@ -405,7 +405,7 @@ transforms:
   - title: "Migrate surfaceVariant"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ColorScheme'
     oneOf:
@@ -427,7 +427,7 @@ transforms:
   - title: "Migrate 'background' to 'surface'"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: 'background'
       inClass: 'ColorScheme'
     changes:
@@ -438,7 +438,7 @@ transforms:
   - title: "Migrate 'onBackground' to 'onSurface'"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: 'onBackground'
       inClass: 'ColorScheme'
     changes:
@@ -449,7 +449,7 @@ transforms:
   - title: "Migrate 'surfaceVariant' to 'surfaceContainerHighest'"
     date: 2023-12-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: 'surfaceVariant'
       inClass: 'ColorScheme'
     changes:
@@ -460,7 +460,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ColorScheme'
     changes:
@@ -473,7 +473,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'light'
       inClass: 'ColorScheme'
     changes:
@@ -486,7 +486,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'dark'
       inClass: 'ColorScheme'
     changes:
@@ -499,7 +499,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastLight'
       inClass: 'ColorScheme'
     changes:
@@ -512,7 +512,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'highContrastDark'
       inClass: 'ColorScheme'
     changes:
@@ -525,7 +525,7 @@ transforms:
   - title: "Remove 'primaryVariant' and 'secondaryVariant'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ColorScheme'
     changes:
@@ -538,7 +538,7 @@ transforms:
   - title: "Migrate 'primaryVariant' to 'primaryContainer'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: 'primaryVariant'
       inClass: 'ColorScheme'
     changes:
@@ -549,7 +549,7 @@ transforms:
   - title: "Migrate 'secondaryVariant' to 'secondaryContainer'"
     date: 2021-11-19
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: 'secondaryVariant'
       inClass: 'ColorScheme'
     changes:

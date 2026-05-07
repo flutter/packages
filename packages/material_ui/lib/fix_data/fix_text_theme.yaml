@@ -30,7 +30,7 @@ transforms:
   - title: "Rename to 'headline1'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: display4
       inClass: 'TextTheme'
     changes:
@@ -41,7 +41,7 @@ transforms:
   - title: "Rename to 'headline2'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: display3
       inClass: 'TextTheme'
     changes:
@@ -52,7 +52,7 @@ transforms:
   - title: "Rename to 'headline3'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: display2
       inClass: 'TextTheme'
     changes:
@@ -63,7 +63,7 @@ transforms:
   - title: "Rename to 'headline4'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: display1
       inClass: 'TextTheme'
     changes:
@@ -74,7 +74,7 @@ transforms:
   - title: "Rename to 'headline5'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline
       inClass: 'TextTheme'
     changes:
@@ -85,7 +85,7 @@ transforms:
   - title: "Rename to 'headline6'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: title
       inClass: 'TextTheme'
     changes:
@@ -96,7 +96,7 @@ transforms:
   - title: "Rename to 'subtitle1'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: subhead
       inClass: 'TextTheme'
     changes:
@@ -107,7 +107,7 @@ transforms:
   - title: "Rename to 'bodyText1'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: body2
       inClass: 'TextTheme'
     changes:
@@ -118,7 +118,7 @@ transforms:
   - title: "Rename to 'bodyText2'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: body1
       inClass: 'TextTheme'
     changes:
@@ -129,7 +129,7 @@ transforms:
   - title: "Rename to 'subtitle2'"
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: subtitle
       inClass: 'TextTheme'
     changes:
@@ -140,7 +140,7 @@ transforms:
   - title: 'Rename arguments'
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'TextTheme'
     changes:
@@ -179,7 +179,7 @@ transforms:
   - title: 'Rename arguments'
     date: 2020-01-24
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'TextTheme'
     changes:
@@ -218,7 +218,7 @@ transforms:
   - title: "Rename to 'displayLarge'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline1
       inClass: 'TextTheme'
     changes:
@@ -229,7 +229,7 @@ transforms:
   - title: "Rename to 'displayMedium'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline2
       inClass: 'TextTheme'
     changes:
@@ -240,7 +240,7 @@ transforms:
   - title: "Rename to 'displaySmall'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline3
       inClass: 'TextTheme'
     changes:
@@ -251,7 +251,7 @@ transforms:
   - title: "Rename to 'headlineMedium'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline4
       inClass: 'TextTheme'
     changes:
@@ -262,7 +262,7 @@ transforms:
   - title: "Rename to 'headlineSmall'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline5
       inClass: 'TextTheme'
     changes:
@@ -273,7 +273,7 @@ transforms:
   - title: "Rename to 'titleLarge'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: headline6
       inClass: 'TextTheme'
     changes:
@@ -284,7 +284,7 @@ transforms:
   - title: "Rename to 'titleMedium'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: subtitle1
       inClass: 'TextTheme'
     changes:
@@ -295,7 +295,7 @@ transforms:
   - title: "Rename to 'titleSmall'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: subtitle2
       inClass: 'TextTheme'
     changes:
@@ -306,7 +306,7 @@ transforms:
   - title: "Rename to 'bodyLarge'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: bodyText1
       inClass: 'TextTheme'
     changes:
@@ -317,7 +317,7 @@ transforms:
   - title: "Rename to 'bodyMedium'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: bodyText2
       inClass: 'TextTheme'
     changes:
@@ -328,7 +328,7 @@ transforms:
   - title: "Rename to 'bodySmall'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: caption
       inClass: 'TextTheme'
     changes:
@@ -339,7 +339,7 @@ transforms:
   - title: "Rename to 'labelLarge'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: button
       inClass: 'TextTheme'
     changes:
@@ -350,7 +350,7 @@ transforms:
   - title: "Rename to 'labelSmall'"
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: overline
       inClass: 'TextTheme'
     changes:
@@ -361,7 +361,7 @@ transforms:
   - title: 'Rename arguments'
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'TextTheme'
     changes:
@@ -409,7 +409,7 @@ transforms:
   - title: 'Rename arguments'
     date: 2022-08-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'TextTheme'
     changes:

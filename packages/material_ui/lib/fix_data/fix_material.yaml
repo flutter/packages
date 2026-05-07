@@ -30,19 +30,19 @@ transforms:
   - title: 'Replaced by cupertino CupertinoPageTransitionsBuilder'
     date: 2026-01-15
     element:
-      uris: ['material.dart']
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       class: 'CupertinoPageTransitionsBuilder'
     changes:
     - kind: 'replacedBy'
       newElement:
-        uris: ['cupertino.dart']
+        uris: [ 'package:flutter/cupertino.dart' ]
         class: 'CupertinoPageTransitionsBuilder'
 
   # Changes made in https://github.com/flutter/flutter/pull/15303
   - title: "Replace 'child' with 'builder'"
     date: 2020-12-17
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       function: 'showDialog'
     changes:
       - kind: 'addParameter'
@@ -63,7 +63,7 @@ transforms:
   - title: "Migrate to 'autovalidateMode'"
     date: 2020-09-02
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'TextFormField'
     oneOf:
@@ -98,7 +98,7 @@ transforms:
   - title: "Migrate to 'autovalidateMode'"
     date: 2020-09-02
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'DropdownButtonFormField'
     oneOf:
@@ -133,7 +133,7 @@ transforms:
   - title: "Rename to 'resizeToAvoidBottomInset'"
     date: 2020-12-23
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'resizeToAvoidBottomPadding'
       inClass: 'Scaffold'
     changes:
@@ -144,7 +144,7 @@ transforms:
   - title: "Rename to 'resizeToAvoidBottomInset'"
     date: 2020-12-23
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'Scaffold'
     changes:
@@ -156,7 +156,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'of'
       inClass: 'Scaffold'
     oneOf:
@@ -179,7 +179,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'of'
       inClass: 'ScaffoldMessenger'
     oneOf:
@@ -202,7 +202,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'resolveFrom'
       inClass: 'MaterialBasedCupertinoThemeData'
     changes:
@@ -213,7 +213,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'TextFormField'
     oneOf:
@@ -248,7 +248,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'maxLengthEnforced'
       inClass: 'TextField'
     changes:
@@ -259,7 +259,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'TextField'
     oneOf:
@@ -294,7 +294,7 @@ transforms:
   - title: "Remove 'disabledThumbGapWidth'"
     date: 2020-11-17
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'RectangularSliderTrackShape'
     changes:
@@ -305,7 +305,7 @@ transforms:
   - title: "Migrate 'Icons.pie_chart_outlined' to 'Icons.pie_chart_outline'"
     date: 2022-01-04
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'pie_chart_outlined'
       inClass: 'Icons'
     changes:
@@ -316,7 +316,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'isAlwaysShown'
       inClass: 'Scrollbar'
     changes:
@@ -327,7 +327,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'Scrollbar'
     changes:
@@ -339,7 +339,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'isAlwaysShown'
       inClass: 'ScrollbarThemeData'
     changes:
@@ -350,7 +350,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ScrollbarThemeData'
     changes:
@@ -362,7 +362,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ScrollbarThemeData'
     changes:
@@ -374,7 +374,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'Chip'
     changes:
@@ -399,7 +399,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'InputChip'
     changes:
@@ -424,7 +424,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'RawChip'
     changes:
@@ -449,7 +449,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'useDeleteButtonTooltip'
       inClass: 'Chip'
     changes:
@@ -460,7 +460,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'useDeleteButtonTooltip'
       inClass: 'InputChip'
     changes:
@@ -471,7 +471,7 @@ transforms:
   - title: "Migrate 'useDeleteButtonTooltip' to 'deleteButtonTooltipMessage'"
     date: 2022-01-05
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'useDeleteButtonTooltip'
       inClass: 'RawChip'
     changes:
@@ -482,7 +482,7 @@ transforms:
   - title: "Migrate 'ElevatedButton.styleFrom(primary)' to 'ElevatedButton.styleFrom(backgroundColor)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'ElevatedButton'
     changes:
@@ -504,7 +504,7 @@ transforms:
   - title: "Migrate 'ElevatedButton.styleFrom(onPrimary)' to 'ElevatedButton.styleFrom(foregroundColor)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'ElevatedButton'
     changes:
@@ -526,7 +526,7 @@ transforms:
   - title: "Migrate 'ElevatedButton.styleFrom(onSurface)' to 'ElevatedButton.styleFrom(disabledForegroundColor)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'ElevatedButton'
     changes:
@@ -555,7 +555,7 @@ transforms:
   - title: "Migrate 'OutlinedButton.styleFrom(primary)' to 'OutlinedButton.styleFrom(foregroundColor)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'OutlinedButton'
     changes:
@@ -577,7 +577,7 @@ transforms:
   - title: "Migrate 'OutlinedButton.styleFrom(onSurface)' to 'OutlinedButton.styleFrom(disabledForeground)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'OutlinedButton'
     changes:
@@ -599,7 +599,7 @@ transforms:
   - title: "Migrate 'TextButton.styleFrom(primary)' to 'TextButton.styleFrom(foregroundColor)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'TextButton'
     changes:
@@ -621,7 +621,7 @@ transforms:
   - title: "Migrate 'TextButton.styleFrom(onSurface)' to 'TextButton.styleFrom(disabledForeground)'"
     date: 2022-05-27
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'styleFrom'
       inClass: 'TextButton'
     changes:
@@ -643,7 +643,7 @@ transforms:
   - title: "Migrate to 'buildOverscrollIndicator'"
     date: 2021-03-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'buildViewportChrome'
       inClass: 'MaterialScrollBehavior'
     changes:
@@ -654,7 +654,7 @@ transforms:
   - title: "Migrate to 'trackVisibility'"
     date: 2022-09-15
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'showTrackOnHover'
       inClass: 'Scrollbar'
     changes:
@@ -665,7 +665,7 @@ transforms:
   - title: "Migrate to 'trackVisibility'"
     date: 2022-09-15
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'Scrollbar'
     changes:
@@ -678,7 +678,7 @@ transforms:
     date: 2022-09-15
     bulkApply: false
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'showTrackOnHover'
       inClass: 'ScrollbarThemeData'
     changes:
@@ -690,7 +690,7 @@ transforms:
     date: 2022-09-15
     bulkApply: false
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'ScrollbarThemeData'
     changes:
@@ -703,7 +703,7 @@ transforms:
     date: 2022-09-15
     bulkApply: false
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       method: 'copyWith'
       inClass: 'ScrollbarThemeData'
     changes:
@@ -715,12 +715,12 @@ transforms:
   - title: "Migrate to 'Easing.legacy'"
     date: 2023-12-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       variable: 'standardEasing'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'material.dart' ]
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           field: legacy
           inClass: Easing
 
@@ -728,12 +728,12 @@ transforms:
   - title: "Migrate to 'Easing.legacyAccelerate'"
     date: 2023-12-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       variable: 'accelerateEasing'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'material.dart' ]
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           field: legacyAccelerate
           inClass: Easing
 
@@ -741,12 +741,12 @@ transforms:
   - title: "Migrate to 'Easing.legacyDecelerate'"
     date: 2023-12-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       variable: 'decelerateEasing'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'material.dart' ]
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           field: legacyDecelerate
           inClass: Easing
 
@@ -754,13 +754,13 @@ transforms:
   - title: "Migrate 'ShowValueIndicator.always' to 'ShowValueIndicator.onDrag'"
     date: 2025-03-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constant: 'always'
       inEnum: 'ShowValueIndicator'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: ['material.dart']
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           constant: 'onDrag'
           inEnum: 'ShowValueIndicator'
 
@@ -768,7 +768,7 @@ transforms:
   - title: "Migrate to 'activeThumbColor'"
     date: 2025-04-03
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'Switch'
     changes:
@@ -780,7 +780,7 @@ transforms:
   - title: "Migrate to 'activeThumbColor'"
     date: 2025-04-03
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'SwitchListTile'
     changes:

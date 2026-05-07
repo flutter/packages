@@ -30,7 +30,7 @@ transforms:
   - title: "Migrate to 'systemOverlayStyle'"
     date: 2020-07-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'SliverAppBar'
     oneOf:
@@ -46,7 +46,7 @@ transforms:
             variables:
               SystemUiOverlayStyle:
                 kind: 'import'
-                uris: [ 'services.dart' ]
+                uris: [ 'package:flutter/services.dart' ]
                 name: 'SystemUiOverlayStyle'
         - kind: 'removeParameter'
           name: 'brightness'
@@ -62,7 +62,7 @@ transforms:
             variables:
               SystemUiOverlayStyle:
                 kind: 'import'
-                uris: [ 'services.dart' ]
+                uris: [ 'package:flutter/services.dart' ]
                 name: 'SystemUiOverlayStyle'
         - kind: 'removeParameter'
           name: 'brightness'
@@ -75,7 +75,7 @@ transforms:
   - title: "Migrate to 'systemOverlayStyle'"
     date: 2021-07-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'brightness'
       inClass: 'SliverAppBar'
     changes:
@@ -86,7 +86,7 @@ transforms:
   - title: "Migrate to 'toolbarTextStyle' & 'titleTextStyle'"
     date: 2020-07-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'SliverAppBar'
     changes:
@@ -117,7 +117,7 @@ transforms:
     # TODO(Piinks): Add tests when `bulkApply:false` testing is supported, https://github.com/dart-lang/sdk/issues/44639
     bulkApply: false
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'textTheme'
       inClass: 'SliverAppBar'
     changes:
@@ -130,7 +130,7 @@ transforms:
     # TODO(Piinks): Add tests when `bulkApply:false` testing is supported, https://github.com/dart-lang/sdk/issues/44639
     bulkApply: false
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       field: 'textTheme'
       inClass: 'SliverAppBar'
     changes:
@@ -141,7 +141,7 @@ transforms:
   - title: "Remove 'backwardsCompatibility'"
     date: 2020-07-12
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'SliverAppBar'
     changes:

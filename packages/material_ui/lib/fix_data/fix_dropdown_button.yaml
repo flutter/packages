@@ -22,7 +22,7 @@ transforms:
   - title: "Migrate to 'initialValue'"
     date: 2025-06-18
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: 'DropdownButtonFormField'
     changes:

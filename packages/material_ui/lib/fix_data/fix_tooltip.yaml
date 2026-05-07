@@ -21,7 +21,7 @@ transforms:
   - title: "Migrate to 'constraints'"
     date: 2025-02-14
     element:
-      uris: ["package:flutter/material.dart"]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ""
       inClass: "Tooltip"
     oneOf:
@@ -66,14 +66,14 @@ transforms:
         value: "arguments[height]"
       BoxConstraints:
         kind: "import"
-        uris: ["package:flutter/rendering.dart"]
+        uris: [ 'package:flutter/rendering.dart' ]
         name: "BoxConstraints"
 
   # Changes made in https://github.com/flutter/flutter/pull/163314
   - title: "Migrate to 'constraints'"
     date: 2025-02-14
     element:
-      uris: ["package:flutter/material.dart"]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       getter: "height"
       inClass: "Tooltip"
     changes:

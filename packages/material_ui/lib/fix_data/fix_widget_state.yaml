@@ -30,13 +30,13 @@ transforms:
   - title: "Replace with 'WidgetStateInputBorder'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'resolveWith'
       inClass: 'MaterialStateOutlineInputBorder'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'material.dart' ]
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           constructor: 'resolveWith'
           inClass: 'WidgetStateInputBorder'
 
@@ -44,13 +44,13 @@ transforms:
   - title: "Replace with 'WidgetStateInputBorder'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: 'resolveWith'
       inClass: 'MaterialStateUnderlineInputBorder'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'material.dart' ]
+          uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
           constructor: 'resolveWith'
           inClass: 'WidgetStateInputBorder'
 
@@ -58,7 +58,7 @@ transforms:
   - title: "Replace with 'WidgetState'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       enum: 'MaterialState'
     changes:
       - kind: 'rename'
@@ -68,7 +68,7 @@ transforms:
   - title: "Replace with 'WidgetPropertyResolver'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       typedef: 'MaterialPropertyResolver'
     changes:
       - kind: 'rename'
@@ -78,7 +78,7 @@ transforms:
   - title: "Replace with 'WidgetStateColor'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateColor'
     changes:
       - kind: 'rename'
@@ -88,7 +88,7 @@ transforms:
   - title: "Replace with 'WidgetStateMouseCursor'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateMouseCursor'
     changes:
       - kind: 'rename'
@@ -98,7 +98,7 @@ transforms:
   - title: "Replace with 'WidgetStateBorderSide'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateBorderSide'
     changes:
       - kind: 'rename'
@@ -108,7 +108,7 @@ transforms:
   - title: "Replace with 'WidgetStateOutlinedBorder'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateOutlinedBorder'
     changes:
       - kind: 'rename'
@@ -118,7 +118,7 @@ transforms:
   - title: "Replace with 'WidgetStateTextStyle'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateTextStyle'
     changes:
       - kind: 'rename'
@@ -128,7 +128,7 @@ transforms:
   - title: "Replace with 'WidgetStateProperty'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStateProperty'
     changes:
       - kind: 'rename'
@@ -138,7 +138,7 @@ transforms:
   - title: "Replace with 'WidgetStatePropertyAll'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStatePropertyAll'
     changes:
       - kind: 'rename'
@@ -148,7 +148,7 @@ transforms:
   - title: "Replace with 'WidgetStatesController'"
     date: 2024-02-01
     element:
-      uris: [ 'material.dart', 'widgets.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart', 'package:flutter/widgets.dart' ]
       class: 'MaterialStatesController'
     changes:
       - kind: 'rename'
