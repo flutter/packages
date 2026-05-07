@@ -10,9 +10,6 @@ package com.example.test_plugin
 
 import android.util.Log
 import androidx.annotation.Keep
-import io.flutter.plugin.common.StandardMessageCodec
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
 
 private object NiTestsPigeonUtils {
 
@@ -957,71 +954,6 @@ data class NIAllClassesWrapper(
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.classMap)
     result = 31 * result + NiTestsPigeonUtils.deepHash(this.nullableClassMap)
     return result
-  }
-}
-
-private open class NiTestsPigeonCodec : StandardMessageCodec() {
-  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
-    return when (type) {
-      129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { NIAnEnum.ofRaw(it.toInt()) }
-      }
-      130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { NIAnotherEnum.ofRaw(it.toInt()) }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NIUnusedClass.fromList(it) }
-      }
-      132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NIAllTypes.fromList(it) }
-      }
-      133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NIAllNullableTypes.fromList(it) }
-      }
-      134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NIAllNullableTypesWithoutRecursion.fromList(it)
-        }
-      }
-      135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NIAllClassesWrapper.fromList(it) }
-      }
-      else -> super.readValueOfType(type, buffer)
-    }
-  }
-
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    when (value) {
-      is NIAnEnum -> {
-        stream.write(129)
-        writeValue(stream, value.raw.toLong())
-      }
-      is NIAnotherEnum -> {
-        stream.write(130)
-        writeValue(stream, value.raw.toLong())
-      }
-      is NIUnusedClass -> {
-        stream.write(131)
-        writeValue(stream, value.toList())
-      }
-      is NIAllTypes -> {
-        stream.write(132)
-        writeValue(stream, value.toList())
-      }
-      is NIAllNullableTypes -> {
-        stream.write(133)
-        writeValue(stream, value.toList())
-      }
-      is NIAllNullableTypesWithoutRecursion -> {
-        stream.write(134)
-        writeValue(stream, value.toList())
-      }
-      is NIAllClassesWrapper -> {
-        stream.write(135)
-        writeValue(stream, value.toList())
-      }
-      else -> super.writeValue(stream, value)
-    }
   }
 }
 

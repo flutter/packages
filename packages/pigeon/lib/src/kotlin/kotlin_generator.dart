@@ -261,14 +261,18 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     if (generatorOptions.useJni) {
       indent.writeln('import androidx.annotation.Keep');
     }
-    indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
-    indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
-    indent.writeln('import io.flutter.plugin.common.EventChannel');
-    indent.writeln('import io.flutter.plugin.common.MessageCodec');
-    indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
-    indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
-    indent.writeln('import java.io.ByteArrayOutputStream');
-    indent.writeln('import java.nio.ByteBuffer');
+    if (!generatorOptions.useJni ||
+        root.containsEventChannel ||
+        root.containsProxyApi) {
+      indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
+      indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
+      indent.writeln('import io.flutter.plugin.common.EventChannel');
+      indent.writeln('import io.flutter.plugin.common.MessageCodec');
+      indent.writeln('import io.flutter.plugin.common.StandardMethodCodec');
+      indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
+      indent.writeln('import java.io.ByteArrayOutputStream');
+      indent.writeln('import java.nio.ByteBuffer');
+    }
     if (generatorOptions.useGeneratedAnnotation) {
       indent.writeln('import javax.annotation.Generated');
     }
@@ -559,6 +563,11 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     if (generatorOptions.useJni &&
         !root.containsEventChannel &&
         !root.containsFlutterApi &&
+        !root.containsProxyApi) {
+      return;
+    }
+    if (generatorOptions.useJni &&
+        !root.containsEventChannel &&
         !root.containsProxyApi) {
       return;
     }
