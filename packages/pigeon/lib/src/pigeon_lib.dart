@@ -13,6 +13,7 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
     show AnalysisContextCollection;
 import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
+import 'package:analyzer/dart/analysis/utilities.dart' show parseString;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
@@ -454,14 +455,28 @@ class Pigeon {
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
-    final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
+    final String normalizedInputPath = path.absolute(path.normalize(inputPath));
+    final String mainContent = _readFileOrThrow(normalizedInputPath);
+    final List<String> parts = _getPartPaths(
+      sourcePath: normalizedInputPath,
+      sourceContent: mainContent,
+    );
+
+    final includedPaths = <String>[normalizedInputPath, ...parts];
+
     final collection = AnalysisContextCollection(
       includedPaths: includedPaths,
       sdkPath: sdkPath,
     );
 
     final compilationErrors = <Error>[];
-    final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
+    final rootBuilder = RootBuilder(
+      _getInputString(
+        inputPath: normalizedInputPath,
+        inputContent: mainContent,
+        partPaths: parts,
+      ),
+    );
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
@@ -495,6 +510,117 @@ class Pigeon {
         pigeonOptions: null,
       );
     }
+  }
+
+  String _readFileOrThrow(String filePath) {
+    final file = File(filePath);
+    if (!file.existsSync()) {
+      throw Exception('File ${file.path} does not exist');
+    }
+    return file.readAsStringSync();
+  }
+
+  List<String> _getPartPaths({
+    required String sourcePath,
+    required String sourceContent,
+  }) {
+    final dart_ast.CompilationUnit unit = parseString(
+      content: sourceContent,
+      path: sourcePath,
+      throwIfDiagnostics: false,
+    ).unit;
+    final parts = <String>[];
+    for (final dart_ast.Directive directive in unit.directives) {
+      if (directive is dart_ast.PartDirective) {
+        final String? uri = directive.uri.stringValue;
+        if (uri != null) {
+          parts.add(
+            path.absolute(
+              path.normalize(path.join(path.dirname(sourcePath), uri)),
+            ),
+          );
+        }
+      }
+    }
+    return parts;
+  }
+
+  ({String body, List<String> imports}) _stripPartsAndCollectImports({
+    required String sourceContent,
+    required String sourcePath,
+    required bool collectImports,
+  }) {
+    final dart_ast.CompilationUnit unit = parseString(
+      content: sourceContent,
+      path: sourcePath,
+      throwIfDiagnostics: false,
+    ).unit;
+    final imports = <String>[];
+    final removalRanges = <({int start, int end})>[];
+    for (final dart_ast.Directive directive in unit.directives) {
+      if (directive is dart_ast.ImportDirective) {
+        if (collectImports) {
+          imports.add(
+            sourceContent
+                .substring(directive.offset, directive.end)
+                .trimRight(),
+          );
+        }
+        removalRanges.add((start: directive.offset, end: directive.end));
+      } else if (directive is dart_ast.PartDirective ||
+          directive is dart_ast.PartOfDirective) {
+        removalRanges.add((start: directive.offset, end: directive.end));
+      }
+    }
+
+    final body = StringBuffer();
+    var start = 0;
+    for (final range in removalRanges) {
+      body.write(sourceContent.substring(start, range.start));
+      start = range.end;
+    }
+    body.write(sourceContent.substring(start));
+    return (body: body.toString().trim(), imports: imports);
+  }
+
+  String _getInputString({
+    required String inputPath,
+    required String inputContent,
+    required List<String> partPaths,
+  }) {
+    final ({String body, List<String> imports}) mainResult =
+        _stripPartsAndCollectImports(
+          sourceContent: inputContent,
+          sourcePath: inputPath,
+          collectImports: true,
+        );
+    final List<String> imports = mainResult.imports;
+
+    final partBodies = <String>[];
+    for (final partPath in partPaths) {
+      final ({String body, List<String> imports}) partResult =
+          _stripPartsAndCollectImports(
+            sourceContent: _readFileOrThrow(partPath),
+            sourcePath: partPath,
+            collectImports: false,
+          );
+      partBodies.add(partResult.body);
+    }
+
+    final output = StringBuffer();
+    if (imports.isNotEmpty) {
+      output.writeln(imports.join('\n'));
+      output.writeln();
+    }
+    output.writeln(mainResult.body);
+    for (final partBody in partBodies) {
+      if (partBody.isNotEmpty) {
+        output.writeln();
+        output.writeln();
+        output.write(partBody);
+      }
+    }
+    return output.toString().trimRight();
   }
 
   /// String that describes how the tool is used.
