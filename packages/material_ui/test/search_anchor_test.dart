@@ -3332,7 +3332,7 @@ void main() {
         home: Center(
           child: Material(
             child: SearchAnchor.bar(
-              focusNode: focusNode,
+              barFocusNode: focusNode,
               suggestionsBuilder: (context, controller) {
                 return <Widget>[];
               },
@@ -3357,7 +3357,7 @@ void main() {
         home: Center(
           child: Material(
             child: SearchAnchor.bar(
-              focusNode: focusNode,
+              barFocusNode: focusNode,
               suggestionsBuilder: (context, controller) {
                 return <Widget>[];
               },
