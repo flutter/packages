@@ -35,6 +35,7 @@ sealed class DarwinScopedStorageXFileCreationParams
     @visibleForTesting CrossFileDarwinApi? api,
   }) => PhotoKitDarwinScopedStorageXFileCreationParams(
     localIdentifier: localIdentifier,
+    api: api,
   );
 }
 
@@ -60,9 +61,15 @@ base class SecurityScopedDarwinScopedStorageXFileCreationParams
 base class PhotoKitDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
   /// Constructs a [PhotoKitDarwinScopedStorageXFileCreationParams].
-  const PhotoKitDarwinScopedStorageXFileCreationParams({
+  PhotoKitDarwinScopedStorageXFileCreationParams({
     required String localIdentifier,
-  }) : super(uri: localIdentifier);
+    @visibleForTesting CrossFileDarwinApi? api,
+  }) : api = api ?? CrossFileDarwinApi(),
+       super(uri: localIdentifier);
+
+  /// The API used to call to native code to interact with files.
+  @visibleForTesting
+  final CrossFileDarwinApi api;
 }
 
 /// Base implementation of [PlatformScopedStorageXFile] for iOS and macOS.
