@@ -24,7 +24,7 @@ transforms:
     date: 2021-01-07
     bulkApply: false
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       class: 'CupertinoDialog'
     changes:
       - kind: 'rename'
@@ -36,7 +36,7 @@ transforms:
     date: 2021-01-07
     bulkApply: false
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       class: 'CupertinoDialog'
     changes:
       - kind: 'rename'
@@ -49,7 +49,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'resolveFrom'
       inClass: 'CupertinoTextThemeData'
     changes:
@@ -60,7 +60,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'resolveFrom'
       inClass: 'NoDefaultCupertinoThemeData'
     changes:
@@ -71,7 +71,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'resolveFrom'
       inClass: 'CupertinoThemeData'
     changes:
@@ -82,7 +82,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'brightnessOf'
       inClass: 'CupertinoTheme'
     oneOf:
@@ -105,7 +105,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'of'
       inClass: 'CupertinoUserInterfaceLevel'
     oneOf:
@@ -128,7 +128,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'resolveFrom'
       inClass: 'CupertinoDynamicColor'
     changes:
@@ -139,7 +139,7 @@ transforms:
   - title: "Migrate from 'nullOk'"
     date: 2021-01-27
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'resolve'
       inClass: 'CupertinoDynamicColor'
     oneOf:
@@ -162,7 +162,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       field: 'maxLengthEnforced'
       inClass: 'CupertinoTextField'
     changes:
@@ -173,7 +173,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: 'borderless'
       inClass: 'CupertinoTextField'
     oneOf:
@@ -208,7 +208,7 @@ transforms:
   - title: "Migrate to 'maxLengthEnforcement'"
     date: 2020-12-13
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoTextField'
     oneOf:
@@ -243,7 +243,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       field: 'isAlwaysShown'
       inClass: 'CupertinoScrollbar'
     changes:
@@ -254,7 +254,7 @@ transforms:
   - title: "Migrate to 'thumbVisibility'"
     date: 2022-01-20
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoScrollbar'
     changes:
@@ -266,7 +266,7 @@ transforms:
   - title: "Remove 'brightness'"
     date: 2020-12-10
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoTextThemeData'
     changes:
@@ -277,7 +277,7 @@ transforms:
   - title: "Remove 'brightness'"
     date: 2020-12-10
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'copyWith'
       inClass: 'CupertinoTextThemeData'
     changes:
@@ -288,7 +288,7 @@ transforms:
   - title: "Migrate to 'buildOverscrollIndicator'"
     date: 2021-03-18
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'buildViewportChrome'
       inClass: 'CupertinoScrollBehavior'
     changes:
@@ -299,7 +299,7 @@ transforms:
   - title: "Rename to 'activeTrackColor'"
     date: 2024-07-15
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       getter: 'activeColor'
       inClass: 'CupertinoSwitch'
     changes:
@@ -310,7 +310,7 @@ transforms:
   - title: "Migrate to 'activeTrackColor'"
     date: 2024-07-15
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoSwitch'
     changes:
@@ -322,7 +322,7 @@ transforms:
   - title: "Rename to 'inactiveTrackColor'"
     date: 2024-07-15
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       getter: 'trackColor'
       inClass: 'CupertinoSwitch'
     changes:
@@ -333,7 +333,7 @@ transforms:
   - title: "Migrate to 'inactiveTrackColor'"
     date: 2024-07-15
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoSwitch'
     changes:
@@ -345,7 +345,7 @@ transforms:
   - title: "Replace with 'fillColor'"
     date: 2024-08-08
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoCheckbox'
     oneOf:
@@ -409,7 +409,7 @@ transforms:
   - title: "Migrate 'minSize' to 'minimumSize'"
     date: 2025-01-09
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       constructor: ''
       inClass: 'CupertinoButton'
     oneOf:
@@ -433,7 +433,7 @@ transforms:
   - title: "Migrate to 'builder'"
     date: 2025-06-14
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       function: 'showCupertinoSheet'
     oneOf:
       - if: "pageBuilder != ''"
@@ -456,7 +456,7 @@ transforms:
   - title: "Rename from 'opacity' to 'a'"
     date: 2025-06-24
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'opacity'
       inClass: 'CupertinoDynamicColor'
     changes:
@@ -467,13 +467,13 @@ transforms:
   - title: "Replace 'value' with 'toARGB32()'"
     date: 2025-06-24
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'value'
       inClass: 'CupertinoDynamicColor'
     changes:
       - kind: 'replacedBy'
         newElement:
-          uris: [ 'cupertino.dart' ]
+          uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
           method: 'toARGB32'
           inClass: 'CupertinoDynamicColor'
 
@@ -481,7 +481,7 @@ transforms:
   - title: "Rename 'withOpacity'"
     date: 2025-06-24
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       method: 'withOpacity'
       inClass: 'CupertinoDynamicColor'
     changes:
@@ -505,7 +505,7 @@ transforms:
   - title: "Migrate to 'scrollableBuilder'"
     date: 2026-01-14
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       function: 'showCupertinoSheet'
     oneOf:
       - if: "builder != ''"
@@ -531,7 +531,7 @@ transforms:
   - title: "Migrate to 'scrollableBuilder'"
     date: 2026-01-14
     element:
-      uris: [ 'cupertino.dart' ]
+      uris: [ 'cupertino_ui.dart', 'package:cupertino_ui/cupertino_ui.dart' ]
       class: 'CupertinoSheetRoute'
     oneOf:
       - if: "builder != ''"
