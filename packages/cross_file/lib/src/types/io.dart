@@ -24,8 +24,8 @@ class XFile extends XFileBase {
   /// [length] is ignored; the parameter exists only to match the web version of
   /// the constructor.
   ///
-  /// [mimeType] is not inferred from [path]. It is returned from [mimeType] only
-  /// if it is explicitly provided.
+  /// [mimeType] is not inferred from [path]. The [mimeType] property returns the
+  /// value explicitly provided here, if any.
   ///
   // ignore: use_super_parameters
   XFile(
