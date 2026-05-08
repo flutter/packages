@@ -1115,10 +1115,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         _firstTrailingPinnedRow == null &&
         _firstTrailingPinnedColumn == null) {
       assert(_lastNonPinnedCell == null);
-      // To satisfy older framework versions that require at least one vicinity
-      // to be laid out (even if no child is built).
-      // See also: https://github.com/flutter/flutter/pull/180563
-      buildOrObtainChildFor(TableVicinity.zero);
       return;
     }
 
