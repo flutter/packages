@@ -10,6 +10,8 @@
 @import Flutter;
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// A class used to create a native video view that can be embedded in a Flutter app.
 /// This class wraps an AVPlayer instance and displays its video content.
 #if TARGET_OS_IOS
@@ -21,3 +23,5 @@
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
 - (instancetype)initWithPlayer:(AVPlayer *)player;
 @end
+
+NS_ASSUME_NONNULL_END

@@ -6,6 +6,8 @@
 
 #import "FVPVideoEventListener.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #if TARGET_OS_OSX
 @import FlutterMacOS;
 #else
@@ -20,3 +22,5 @@
                       channelName:(NSString *)channelName;
 
 @end
+
+NS_ASSUME_NONNULL_END

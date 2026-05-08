@@ -2,6 +2,7 @@
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.
 * Video track selection requires iOS 15+ / macOS 12+ for HLS streams.
+* Converts portions of the native code to Swift for improved maintainability.
 
 ## 2.9.4
 
