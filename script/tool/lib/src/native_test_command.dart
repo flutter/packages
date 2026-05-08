@@ -696,8 +696,7 @@ this command.
     if (arch == null) {
       return _PlatformResult(
         RunState.failed,
-        error:
-            'Google Test testing is not supported on $platform $_abi.',
+        error: 'Google Test testing is not supported on $platform $_abi.',
       );
     }
 
