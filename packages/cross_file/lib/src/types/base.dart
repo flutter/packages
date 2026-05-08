@@ -49,7 +49,7 @@ abstract class XFileBase {
   ///
   /// Native implementations do not infer this value from the file path or
   /// contents. On those platforms, this returns the value passed to the
-  /// constructor, if any.
+  /// implementation's constructor, if any.
   String? get mimeType {
     throw UnimplementedError('.mimeType has not been implemented.');
   }
