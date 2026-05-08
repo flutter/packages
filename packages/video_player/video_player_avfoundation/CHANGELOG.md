@@ -1,3 +1,7 @@
+## 2.9.6
+
+* Adds a Swift version to fix a potential build issue when using CocoaPods.
+
 ## 2.9.5
 
 * Converts portions of the native code to Swift for improved maintainability.
