@@ -728,8 +728,6 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       // within the chunk.
       _chunkAdvance = dx - _chunkOriginX!;
     }
-    final double offsetWithinChunk = _chunkAdvance;
-
     Paragraph buildParagraph(int paintId) {
       final Paint paint = _paints[paintId];
       if (patternId != null) {
@@ -760,16 +758,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     if (fillId != null) {
       final Paragraph p = buildParagraph(fillId);
       paragraphWidth = p.maxIntrinsicWidth;
-      _pendingChunk.add(
-        _PendingTextDraw(p, offsetWithinChunk, dy, _textTransform),
-      );
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
     }
     if (strokeId != null) {
       final Paragraph p = buildParagraph(strokeId);
       paragraphWidth = p.maxIntrinsicWidth;
-      _pendingChunk.add(
-        _PendingTextDraw(p, offsetWithinChunk, dy, _textTransform),
-      );
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
     }
 
     _chunkAdvance += paragraphWidth;
