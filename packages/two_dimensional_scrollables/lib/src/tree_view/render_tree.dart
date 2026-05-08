@@ -404,6 +404,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       // before returning to ensure the horizontal scroll controller
       // has the latest information.
       _updateHorizontalScrollBounds();
+      // To satisfy older framework versions that require at least one vicinity
+      // to be laid out (even if no child is built).
+      // See also: https://github.com/flutter/flutter/pull/180563
+      buildOrObtainChildFor(const TreeVicinity(depth: 0, row: 0));
       // Return early to avoid a framework crash in RenderTwoDimensionalViewport
       // where it expects at least one child to be laid out if the layout
       // pass completes.
