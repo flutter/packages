@@ -11,7 +11,6 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
 /// Main method that can be used in a `flutter_test_config.dart` file to set
@@ -102,7 +101,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
     final Directory comparisonRoot = switch (suffix) {
       null =>
         fs
-            .directory(path.fromUri(defaultComparator.basedir))
+            .directory(fs.path.fromUri(defaultComparator.basedir))
             .childDirectory('skia_goldens'),
       _ => fs.systemTempDirectory.createTempSync(suffix),
     };
@@ -113,8 +112,8 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
   @protected
   File getGoldenFile(Uri uri) {
     final File goldenFile = fs
-        .directory(path.fromUri(basedir))
-        .childFile(path.fromUri(uri));
+        .directory(fs.path.fromUri(basedir))
+        .childFile(fs.path.fromUri(uri));
 
     return goldenFile;
   }
