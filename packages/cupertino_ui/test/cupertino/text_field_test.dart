@@ -10,7 +10,7 @@ library;
 
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle, Color, SemanticsInputType;
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart'
     show
