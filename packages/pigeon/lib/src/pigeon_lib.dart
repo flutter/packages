@@ -456,56 +456,32 @@ class Pigeon {
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final String normalizedInputPath = path.absolute(path.normalize(inputPath));
-    final String? mainContent = _readFileOrNull(normalizedInputPath);
-    if (mainContent == null) {
+    final _CollectedInput input = _collectInputAndParts(normalizedInputPath);
+    if (input.missingPath != null) {
       return ParseResults(
         root: Root.makeEmpty(),
         errors: <Error>[
           Error(
-            message: 'File $normalizedInputPath does not exist',
-            filename: normalizedInputPath,
+            message: 'File ${input.missingPath} does not exist',
+            filename: input.missingPath,
           ),
         ],
         pigeonOptions: null,
       );
     }
-    final dart_ast.CompilationUnit mainUnit = parseString(
-      content: mainContent,
-      path: normalizedInputPath,
-      throwIfDiagnostics: false,
-    ).unit;
-    final List<String> parts = _getPartPaths(
-      mainUnit.directives,
-      sourcePath: normalizedInputPath,
-    );
-
-    final includedPaths = <String>[normalizedInputPath, ...parts];
 
     final collection = AnalysisContextCollection(
-      includedPaths: includedPaths,
+      includedPaths: input.paths,
       sdkPath: sdkPath,
     );
 
     final compilationErrors = <Error>[];
-    final String? rootInputString = _getInputString(
+    final String rootInputString = _getInputString(
       inputPath: normalizedInputPath,
-      inputContent: mainContent,
-      inputUnit: mainUnit,
-      partPaths: parts,
+      contents: input.contents,
+      units: input.units,
+      paths: input.paths,
     );
-    if (rootInputString == null) {
-      return ParseResults(
-        root: Root.makeEmpty(),
-        errors: <Error>[
-          Error(
-            message:
-                'Part file referenced by $normalizedInputPath does not exist',
-            filename: normalizedInputPath,
-          ),
-        ],
-        pigeonOptions: null,
-      );
-    }
     final rootBuilder = RootBuilder(rootInputString);
     final dart_ast.CompilationUnit mergedUnit = parseString(
       content: rootInputString,
@@ -514,7 +490,7 @@ class Pigeon {
     ).unit;
     mergedUnit.accept(rootBuilder);
     for (final AnalysisContext context in collection.contexts) {
-      for (final String path in context.contextRoot.analyzedFiles()) {
+      for (final String path in input.paths) {
         final AnalysisSession session = context.currentSession;
         final result = session.getParsedUnit(path) as ParsedUnitResult;
         if (result.diagnostics.isNotEmpty) {
@@ -591,7 +567,8 @@ class Pigeon {
         }
         removalRanges.add((start: directive.offset, end: directive.end));
       } else if (directive is dart_ast.PartDirective ||
-          directive is dart_ast.PartOfDirective) {
+          directive is dart_ast.PartOfDirective ||
+          directive is dart_ast.LibraryDirective) {
         removalRanges.add((start: directive.offset, end: directive.end));
       }
     }
@@ -606,35 +583,25 @@ class Pigeon {
     return (body: body.toString().trim(), imports: imports);
   }
 
-  String? _getInputString({
+  String _getInputString({
     required String inputPath,
-    required String inputContent,
-    required dart_ast.CompilationUnit inputUnit,
-    required List<String> partPaths,
+    required List<String> paths,
+    required Map<String, String> contents,
+    required Map<String, dart_ast.CompilationUnit> units,
   }) {
     final ({String body, List<String> imports}) mainResult =
         _stripPartsAndCollectImports(
-          sourceContent: inputContent,
-          unit: inputUnit,
+          sourceContent: contents[inputPath]!,
+          unit: units[inputPath]!,
           collectImports: true,
         );
     final List<String> imports = mainResult.imports;
-
     final partBodies = <String>[];
-    for (final partPath in partPaths) {
-      final String? partContent = _readFileOrNull(partPath);
-      if (partContent == null) {
-        return null;
-      }
-      final dart_ast.CompilationUnit partUnit = parseString(
-        content: partContent,
-        path: partPath,
-        throwIfDiagnostics: false,
-      ).unit;
+    for (final String currentPath in paths.skip(1)) {
       final ({String body, List<String> imports}) partResult =
           _stripPartsAndCollectImports(
-            sourceContent: partContent,
-            unit: partUnit,
+            sourceContent: contents[currentPath]!,
+            unit: units[currentPath]!,
             collectImports: false,
           );
       partBodies.add(partResult.body);
@@ -654,6 +621,49 @@ class Pigeon {
       }
     }
     return output.toString().trimRight();
+  }
+
+  _CollectedInput _collectInputAndParts(String inputPath) {
+    final paths = <String>[];
+    final contents = <String, String>{};
+    final units = <String, dart_ast.CompilationUnit>{};
+    final pending = <String>[inputPath];
+    final seen = <String>{};
+    while (pending.isNotEmpty) {
+      final String currentPath = pending.removeAt(0);
+      if (seen.contains(currentPath)) {
+        continue;
+      }
+      seen.add(currentPath);
+      final String? content = _readFileOrNull(currentPath);
+      if (content == null) {
+        return _CollectedInput(
+          paths: paths,
+          contents: contents,
+          units: units,
+          missingPath: currentPath,
+        );
+      }
+      final dart_ast.CompilationUnit unit = parseString(
+        content: content,
+        path: currentPath,
+        throwIfDiagnostics: false,
+      ).unit;
+      paths.add(currentPath);
+      contents[currentPath] = content;
+      units[currentPath] = unit;
+      final List<String> partPaths = _getPartPaths(
+        unit.directives,
+        sourcePath: currentPath,
+      );
+      pending.addAll(partPaths);
+    }
+    return _CollectedInput(
+      paths: paths,
+      contents: contents,
+      units: units,
+      missingPath: null,
+    );
   }
 
   /// String that describes how the tool is used.
@@ -1020,4 +1030,18 @@ class ParseResults {
   /// The Map representation of any [PigeonOptions] specified with
   /// [ConfigurePigeon] during parsing.
   final Map<String, Object>? pigeonOptions;
+}
+
+class _CollectedInput {
+  _CollectedInput({
+    required this.paths,
+    required this.contents,
+    required this.units,
+    required this.missingPath,
+  });
+
+  final List<String> paths;
+  final Map<String, String> contents;
+  final Map<String, dart_ast.CompilationUnit> units;
+  final String? missingPath;
 }

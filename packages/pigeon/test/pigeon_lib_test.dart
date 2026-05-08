@@ -73,7 +73,9 @@ void main() {
     final Directory dir = Directory.systemTemp.createTempSync();
     try {
       for (final MapEntry<String, String> part in partSources.entries) {
-        File('${dir.path}/${part.key}').writeAsStringSync(part.value);
+        final partFile = File('${dir.path}/${part.key}');
+        partFile.createSync(recursive: true);
+        partFile.writeAsStringSync(part.value);
       }
       final mainFile = File('${dir.path}/source.dart')
         ..writeAsStringSync(mainSource);
@@ -326,6 +328,40 @@ part 'missing.dart';
     expect(parseResult.root.apis, isEmpty);
     expect(parseResult.root.classes, isEmpty);
     expect(parseResult.errors, isNotEmpty);
+  });
+
+  test('part errors keep part file line numbers', () {
+    const mainSource = '''
+part 'api.dart';
+part 'extra.dart';
+''';
+    const apiPart = '''
+part of 'source.dart';
+
+@HostApi()
+@FlutterApi()
+abstract class Api1 {
+  void ping();
+}
+''';
+    const extraPart = '''
+part of 'source.dart';
+class Extra {
+  int? value;
+}
+''';
+    final ParseResults parseResult = parseSourceWithParts(
+      mainSource: mainSource,
+      partSources: <String, String>{
+        'api.dart': apiPart,
+        'extra.dart': extraPart,
+      },
+    );
+    final Error apiAnnotationError = parseResult.errors.firstWhere(
+      (Error error) =>
+          error.message.contains('can only have one API annotation'),
+    );
+    expect(apiAnnotationError.lineNumber, 4);
   });
 
   test('invalid datatype', () {
