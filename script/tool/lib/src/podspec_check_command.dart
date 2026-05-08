@@ -137,11 +137,15 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       File entity,
     ) {
       final String filename = entity.basename;
+      final String relativePath = getRelativePosixPath(
+        entity,
+        from: package.directory,
+      );
       return path.extension(filename) == '.podspec' &&
           filename != 'Flutter.podspec' &&
           filename != 'FlutterMacOS.podspec' &&
           // Ignore build intermediates, such as transitive pod dependencies.
-          !entity.absolute.path.contains('/build/') &&
+          !relativePath.split('/').contains('build') &&
           !entity.path.contains('packages/pigeon/platform_tests/');
     }).toList();
 
@@ -196,8 +200,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         return false;
       }
       // Ignore build intermediates.
-      if (relativePath.contains('/build/') ||
-          relativePath.startsWith('build/')) {
+      if (relativePath.split('/').contains('build')) {
         return false;
       }
       // Ignore test code.
@@ -251,6 +254,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   bool _isPodspecMissingSwiftVersion(File podspec) {
-    return !RegExp(r'swift_version\s*=').hasMatch(podspec.readAsStringSync());
+    return !RegExp(r'\bswift_version\s*=').hasMatch(podspec.readAsStringSync());
   }
 }
