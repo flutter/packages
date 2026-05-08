@@ -682,6 +682,8 @@ void main() {
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
         expect(verticalController.position.pixels, 0.0);
+        // The total height accounts for all visible nodes (7 nodes * 400 = 2800).
+        // With a default viewport height of 600, the max scroll extent is 2200 (2800 - 600).
         expect(verticalController.position.maxScrollExtent, 2200.0);
 
         bool rowNeedsPaint(String row) {
@@ -868,9 +870,11 @@ void main() {
     });
 
     group('Scroll bounds', () {
+      // Regression tests for https://github.com/flutter/flutter/issues/164981
       testWidgets(
         'shrinking to 0 rows updates scroll bounds and does not crash',
         (WidgetTester tester) async {
+        // Setup a TreeView with 10 rows to ensure the content exceeds the viewport height.
           var rows = 10;
           late StateSetter setState;
           final controller = ScrollController();
@@ -910,6 +914,8 @@ void main() {
           await tester.pump();
           final double oldMax = controller.position.maxScrollExtent;
           expect(oldMax, greaterThan(0));
+          
+        // Jump to the maximum scroll extent to test position correction.
           controller.jumpTo(oldMax);
           await tester.pump();
           expect(controller.offset, oldMax);
@@ -921,6 +927,7 @@ void main() {
           // This should not crash and should update scroll bounds.
           await tester.pump();
 
+        // Verify that the scroll bounds are updated to 0.0 and the offset is corrected to 0.0.
           expect(controller.position.maxScrollExtent, 0.0);
           expect(controller.offset, 0.0);
         },
@@ -932,6 +939,7 @@ void main() {
           final treeController = TreeViewController();
           final scrollController = ScrollController();
 
+        // Setup a TreeView with one expanded root node and one child node.
           final treeNodes = <TreeViewNode<String>>[
             TreeViewNode<String>(
               'Root',
@@ -967,15 +975,18 @@ void main() {
           );
 
           await tester.pump();
-          // Root (60) + Child (60) = 120. Viewport is 100.
+        // Root (60) + Child (60) = 120. Viewport is 100. Max scroll extent is 20.
           expect(scrollController.position.maxScrollExtent, 20.0);
+          
+        // Jump to the maximum scroll extent.
           scrollController.jumpTo(20.0);
           await tester.pump();
 
-          // Collapse Root. Now only Root (60) is visible.
+        // Collapse the Root node. Now only Root (60) is visible, fitting within the viewport (100).
           treeController.toggleNode(treeNodes[0]);
           await tester.pumpAndSettle();
 
+        // Verify that the scroll bounds are updated to 0.0 and the offset is corrected to 0.0.
           expect(scrollController.position.maxScrollExtent, 0.0);
           expect(scrollController.offset, 0.0);
         },

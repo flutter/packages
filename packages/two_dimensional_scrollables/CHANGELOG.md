@@ -1,6 +1,6 @@
 ## 0.5.2
 
-* Fixes a crash in `TreeView` when it shrinks to 0 rows or the last node is collapsed.
+* Fixes a crash in `TreeView` when it collapses to 0 rows or the last node is collapsed.
 
 ## 0.5.1
 
