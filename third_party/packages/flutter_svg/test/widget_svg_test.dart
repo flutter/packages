@@ -983,6 +983,10 @@ void main() {
   });
 
   group('SvgPicture - imageBuilder', () {
+    setUp(() {
+      svg.cache.clear();
+    });
+
     testWidgets('wraps successfully loaded SVG', (WidgetTester tester) async {
       await tester.pumpWidget(
         MediaQuery(
