@@ -353,6 +353,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       maxVerticalExtent,
     );
     if (!acceptedDimension) {
+      // If the scroll offset was corrected (e.g., clamped), we must
+      // re-calculate which rows are now visible.
       _updateFirstAndLastVisibleRow();
     }
   }
@@ -391,44 +393,57 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
     }
 
+    // Ensure vertical scroll bounds are updated before layout. This allows
+    // any scroll corrections (e.g., clamping when the tree shrinks) to
+    // be applied immediately, ensuring the layout loop builds the rows
+    // that will actually be visible at the corrected offset.
     _updateVerticalScrollBounds();
 
-    if (_firstRow != null) {
-      assert(_lastRow != null);
-      _Span rowSpan;
-      double rowOffset =
-          -verticalOffset.pixels +
-          _rowMetrics[_firstRow!]!.leadingOffset +
-          _vAlignmentOffset;
-      for (int row = _firstRow!; row <= _lastRow!; row++) {
-        rowSpan = _rowMetrics[row]!;
-        final double rowHeight = rowSpan.extent;
-        if (_animationLeadingIndices.keys.contains(row)) {
-          rowOffset -= rowSpan.animationOffset;
-        }
-        rowOffset += rowSpan.configuration.padding.leading;
+    if (_firstRow == null) {
+      // If no rows are visible, we must still update horizontal bounds
+      // before returning to ensure the horizontal scroll controller
+      // has the latest information.
+      _updateHorizontalScrollBounds();
+      // Return early to avoid a framework crash in RenderTwoDimensionalViewport
+      // where it expects at least one child to be laid out if the layout
+      // pass completes.
+      return;
+    }
 
-        final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
-        final RenderBox child = buildOrObtainChildFor(vicinity)!;
-        final TwoDimensionalViewportParentData parentData = parentDataOf(child);
-        final childConstraints = BoxConstraints(
-          minHeight: rowHeight,
-          maxHeight: rowHeight,
-          // Width is allowed to be unbounded.
-        );
-        child.layout(childConstraints, parentUsesSize: true);
-        parentData.layoutOffset = Offset(
-          (_rowDepths[row]! * indentation) - horizontalOffset.pixels,
-          rowOffset,
-        );
-        rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
-        _furthestHorizontalExtent = math.max(
-          parentData.layoutOffset!.dx +
-              horizontalOffset.pixels +
-              child.size.width,
-          _furthestHorizontalExtent,
-        );
+    assert(_lastRow != null);
+    _Span rowSpan;
+    double rowOffset =
+        -verticalOffset.pixels +
+        _rowMetrics[_firstRow!]!.leadingOffset +
+        _vAlignmentOffset;
+    for (int row = _firstRow!; row <= _lastRow!; row++) {
+      rowSpan = _rowMetrics[row]!;
+      final double rowHeight = rowSpan.extent;
+      if (_animationLeadingIndices.keys.contains(row)) {
+        rowOffset -= rowSpan.animationOffset;
       }
+      rowOffset += rowSpan.configuration.padding.leading;
+
+      final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
+      final RenderBox child = buildOrObtainChildFor(vicinity)!;
+      final TwoDimensionalViewportParentData parentData = parentDataOf(child);
+      final childConstraints = BoxConstraints(
+        minHeight: rowHeight,
+        maxHeight: rowHeight,
+        // Width is allowed to be unbounded.
+      );
+      child.layout(childConstraints, parentUsesSize: true);
+      parentData.layoutOffset = Offset(
+        (_rowDepths[row]! * indentation) - horizontalOffset.pixels,
+        rowOffset,
+      );
+      rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
+      _furthestHorizontalExtent = math.max(
+        parentData.layoutOffset!.dx +
+            horizontalOffset.pixels +
+            child.size.width,
+        _furthestHorizontalExtent,
+      );
     }
     _updateHorizontalScrollBounds();
   }
