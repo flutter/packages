@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/imagepicker/Messages.java',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.imagepicker'),
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/imagepicker/Messages.kt',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.imagepicker'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

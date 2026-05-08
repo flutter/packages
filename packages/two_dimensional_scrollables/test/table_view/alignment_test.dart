@@ -604,5 +604,134 @@ void main() {
         const Offset(0.0, 150.0),
       );
     });
+
+    testWidgets('Alignment with trailing pinned columns', (
+      WidgetTester tester,
+    ) async {
+      const viewportWidth = 600.0;
+
+      await tester.pumpWidget(
+        WidgetsApp(
+          color: const Color(0xFFFFFFFF),
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: viewportWidth,
+                height: 400,
+                child: TableView.builder(
+                  columnCount: 3,
+                  rowCount: 1,
+                  trailingPinnedColumnCount: 1,
+                  alignment: Alignment.topCenter,
+                  columnBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (context, vicinity) {
+                    return TableViewCell(
+                      child: SizedBox(
+                        key: ValueKey<String>(
+                          'cell ${vicinity.column}:${vicinity.row}',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Offset tableTopLeft = tester.getTopLeft(find.byType(TableView));
+      // Total width 300. Viewport 600. Offset 150.
+      // Columns 0 and 1 are unpinned. Column 2 is trailing pinned.
+      // If it sticks to table flow, it should be at 350.
+      // If it sticks to viewport edge, it should be at 500.
+      final Finder cell00 = find.byKey(const ValueKey<String>('cell 0:0'));
+      expect(
+        tester.getTopLeft(cell00) - tableTopLeft,
+        const Offset(200.0, 0.0),
+      );
+
+      final Finder cell10 = find.byKey(const ValueKey<String>('cell 1:0'));
+      expect(
+        tester.getTopLeft(cell10) - tableTopLeft,
+        const Offset(300.0, 0.0),
+      );
+
+      final Finder cell20 = find.byKey(const ValueKey<String>('cell 2:0'));
+      expect(
+        tester.getTopLeft(cell20) - tableTopLeft,
+        const Offset(500.0, 0.0),
+      );
+    });
+
+    testWidgets('Alignment with trailing pinned rows', (
+      WidgetTester tester,
+    ) async {
+      const viewportHeight = 600.0;
+
+      await tester.pumpWidget(
+        WidgetsApp(
+          color: const Color(0xFFFFFFFF),
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 400,
+                height: viewportHeight,
+                child: TableView.builder(
+                  columnCount: 1,
+                  rowCount: 3,
+                  trailingPinnedRowCount: 1,
+                  alignment: Alignment.centerLeft,
+                  columnBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (index) =>
+                      const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (context, vicinity) {
+                    return TableViewCell(
+                      child: SizedBox(
+                        key: ValueKey<String>(
+                          'cell ${vicinity.column}:${vicinity.row}',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Offset tableTopLeft = tester.getTopLeft(find.byType(TableView));
+      // Total height 300. Viewport 600. Offset 150.
+      // Rows 0 and 1 are unpinned. Row 2 is trailing pinned.
+      // If it sticks to table flow, it should be at 350.
+      final Finder cell00 = find.byKey(const ValueKey<String>('cell 0:0'));
+      expect(
+        tester.getTopLeft(cell00) - tableTopLeft,
+        const Offset(0.0, 200.0),
+      );
+
+      final Finder cell01 = find.byKey(const ValueKey<String>('cell 0:1'));
+      expect(
+        tester.getTopLeft(cell01) - tableTopLeft,
+        const Offset(0.0, 300.0),
+      );
+
+      final Finder cell02 = find.byKey(const ValueKey<String>('cell 0:2'));
+      expect(
+        tester.getTopLeft(cell02) - tableTopLeft,
+        const Offset(0.0, 500.0),
+      );
+    });
   });
 }

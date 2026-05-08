@@ -1434,27 +1434,29 @@ class SvgParser {
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
     if (colorString.toLowerCase().startsWith('hsl')) {
-      final List<int> values = colorString
+      final List<String> values = colorString
           .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
           .split(',')
-          .map((String rawColor) {
-            rawColor = rawColor.trim();
-
-            if (rawColor.endsWith('%')) {
-              rawColor = rawColor.substring(0, rawColor.length - 1);
-            }
-
-            if (rawColor.contains('.')) {
-              return (parseDouble(rawColor)! * 2.55).round();
-            }
-
-            return int.parse(rawColor);
-          })
+          .map((String rawColor) => rawColor.trim())
           .toList();
-      final double hue = values[0] / 360 % 1;
-      final double saturation = values[1] / 100;
-      final double luminance = values[2] / 100;
-      final int alpha = values.length > 3 ? values[3] : 255;
+      double parseHslValue(String rawColor) {
+        if (rawColor.endsWith('%')) {
+          rawColor = rawColor.substring(0, rawColor.length - 1);
+        }
+        return parseDouble(rawColor)!;
+      }
+
+      int parseHslAlpha(String rawAlpha) {
+        if (rawAlpha.endsWith('%')) {
+          return (parseHslValue(rawAlpha).clamp(0, 100) * 2.55).round();
+        }
+        return (parseDouble(rawAlpha)!.clamp(0, 1) * 255).round();
+      }
+
+      final double hue = parseHslValue(values[0]) / 360 % 1;
+      final double saturation = parseHslValue(values[1]) / 100;
+      final double luminance = parseHslValue(values[2]) / 100;
+      final int alpha = values.length > 3 ? parseHslAlpha(values[3]) : 255;
       var rgb = <double>[0, 0, 0];
 
       if (hue < 1 / 6) {
