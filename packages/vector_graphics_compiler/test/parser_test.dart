@@ -284,7 +284,9 @@ void main() {
     // That caused `<tspan>A</tspan><tspan>B</tspan>` to render as "A B"
     // (a visible gap), instead of "AB" as every browser does.
     const svg =
+        // ignore: missing_whitespace_between_adjacent_strings
         '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">'
+        // ignore: missing_whitespace_between_adjacent_strings
         '<text x="100" y="50" '
         // ignore: missing_whitespace_between_adjacent_strings
         'text-anchor="middle"><tspan>ABCDEFG</tspan><tspan>HIJKLMN</tspan>'
