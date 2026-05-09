@@ -283,15 +283,10 @@ void main() {
     // source XML contained no whitespace between </tspan> and <tspan>.
     // That caused `<tspan>A</tspan><tspan>B</tspan>` to render as "A B"
     // (a visible gap), instead of "AB" as every browser does.
-    const svg =
-        // ignore: missing_whitespace_between_adjacent_strings
-        '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">'
-        // ignore: missing_whitespace_between_adjacent_strings
-        '<text x="100" y="50" '
-        // ignore: missing_whitespace_between_adjacent_strings
-        'text-anchor="middle"><tspan>ABCDEFG</tspan><tspan>HIJKLMN</tspan>'
-        // ignore: missing_whitespace_between_adjacent_strings
-        '</text></svg>';
+    const svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+<text x="100" y="50" text-anchor="middle"><tspan>ABCDEFG</tspan><tspan>HIJKLMN</tspan></text>
+</svg>''';
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
 
@@ -305,11 +300,10 @@ void main() {
     // Sibling case to the regression test above: when there *is* source
     // whitespace between </tspan> and <tspan>, that whitespace must be
     // preserved as a single space prepended to the second tspan.
-    const svg =
-        // ignore: missing_whitespace_between_adjacent_strings
-        '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50">'
-        // ignore: missing_whitespace_between_adjacent_strings
-        '<text x="0" y="40"><tspan>A</tspan> <tspan>B</tspan></text></svg>';
+    const svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50">
+<text x="0" y="40"><tspan>A</tspan> <tspan>B</tspan></text>
+</svg>''';
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
 
