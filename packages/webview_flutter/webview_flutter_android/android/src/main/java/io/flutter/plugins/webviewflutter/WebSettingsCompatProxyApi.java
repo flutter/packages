@@ -6,7 +6,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
 import android.webkit.WebSettings;
-
 import androidx.annotation.NonNull;
 import androidx.webkit.WebSettingsCompat;
 
@@ -17,28 +16,28 @@ import androidx.webkit.WebSettingsCompat;
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class WebSettingsCompatProxyApi extends PigeonApiWebSettingsCompat {
-    public WebSettingsCompatProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
-        super(pigeonRegistrar);
-    }
+  public WebSettingsCompatProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
 
-    /**
-     * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
-     * with PAYMENT_REQUEST returns true.
-     */
-    @SuppressLint("RequiresFeature")
-    @Override
-    public void setPaymentRequestEnabled(@NonNull WebSettings webSettings, boolean enabled) {
-        WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
-    }
+  /**
+   * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
+   * with PAYMENT_REQUEST returns true.
+   */
+  @SuppressLint("RequiresFeature")
+  @Override
+  public void setPaymentRequestEnabled(@NonNull WebSettings webSettings, boolean enabled) {
+    WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
+  }
 
-    /**
-     * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
-     * with WEB_AUTHENTICATION returns true.
-     */
-    @SuppressLint("RequiresFeature")
-    @Override
-    public void setWebAuthenticationSupport(@NonNull WebSettings webSettings, long support) {
-        final int supportValue = Math.toIntExact(support);
-        WebSettingsCompat.setWebAuthenticationSupport(webSettings, supportValue);
-    }
+  /**
+   * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
+   * with WEB_AUTHENTICATION returns true.
+   */
+  @SuppressLint("RequiresFeature")
+  @Override
+  public void setWebAuthenticationSupport(@NonNull WebSettings webSettings, long support) {
+    final int supportValue = Math.toIntExact(support);
+    WebSettingsCompat.setWebAuthenticationSupport(webSettings, supportValue);
+  }
 }
