@@ -929,21 +929,6 @@ class AndroidWebViewController extends PlatformWebViewController {
     );
   }
 
-  /// Enables WebAuthn support for this WebView when available.
-  ///
-  /// This is a convenience method that maps boolean values to [WebAuthenticationSupport]
-  /// levels:
-  /// - `true` → [WebAuthenticationSupport.forApp]
-  /// - `false` → [WebAuthenticationSupport.none]
-  ///
-  /// @deprecated Use [setWebAuthenticationSupport] instead for explicit control
-  /// over all WebAuthentication support levels (none, forApp, forBrowser).
-  Future<void> setWebAuthenticationEnabled(bool enabled) {
-    return setWebAuthenticationSupport(
-      enabled ? WebAuthenticationSupport.forApp : WebAuthenticationSupport.none,
-    );
-  }
-
   static int _webAuthenticationSupportToInt(WebAuthenticationSupport support) {
     return switch (support) {
       WebAuthenticationSupport.none => WebAuthenticationSupportConstants.none,

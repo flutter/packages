@@ -637,7 +637,9 @@ class SampleMenu extends StatelessWidget {
       return;
     }
 
-    await androidController.setWebAuthenticationEnabled(true);
+    await androidController.setWebAuthenticationSupport(
+      WebAuthenticationSupport.forApp,
+    );
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
