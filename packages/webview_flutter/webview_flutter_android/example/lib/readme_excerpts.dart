@@ -28,11 +28,18 @@ Future<void> enableWebAuthentication() async {
   );
   final androidController = controller as AndroidWebViewController;
   // #docregion web_authentication_example
-  final bool webAuthenticationEnabled = await androidController
+  final bool webAuthenticationSupported = await androidController
       .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
 
-  if (webAuthenticationEnabled) {
-    await androidController.setWebAuthenticationEnabled(true);
+  if (webAuthenticationSupported) {
+    // Enable WebAuthn for the embedded app
+    await androidController.setWebAuthenticationSupport(
+      WebAuthenticationSupport.forApp,
+    );
+    // Or for browser-like behavior supporting any website:
+    // await androidController.setWebAuthenticationSupport(
+    //   WebAuthenticationSupport.forBrowser,
+    // );
   }
   // #enddocregion web_authentication_example
 }

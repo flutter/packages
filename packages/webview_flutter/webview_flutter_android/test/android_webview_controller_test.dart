@@ -2169,6 +2169,116 @@ void main() {
     expect(capturedSupport, isNull);
   });
 
+  test('setWebAuthenticationSupport with forApp', () async {
+    android_webview.WebSettings? capturedSettings;
+    int? capturedSupport;
+
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      isWebViewFeatureSupported: (String feature) async {
+        expect(WebViewFeatureConstants.webAuthentication, feature);
+        return true;
+      },
+      setWebAuthenticationSupport:
+          (android_webview.WebSettings settings, int support) async {
+            capturedSettings = settings;
+            capturedSupport = support;
+          },
+    );
+
+    await controller.setWebAuthenticationSupport(
+      WebAuthenticationSupport.forApp,
+    );
+
+    expect(mockSettings, capturedSettings);
+    expect(WebAuthenticationSupportConstants.forApp, capturedSupport);
+  });
+
+  test('setWebAuthenticationSupport with forBrowser', () async {
+    android_webview.WebSettings? capturedSettings;
+    int? capturedSupport;
+
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      isWebViewFeatureSupported: (String feature) async {
+        expect(WebViewFeatureConstants.webAuthentication, feature);
+        return true;
+      },
+      setWebAuthenticationSupport:
+          (android_webview.WebSettings settings, int support) async {
+            capturedSettings = settings;
+            capturedSupport = support;
+          },
+    );
+
+    await controller.setWebAuthenticationSupport(
+      WebAuthenticationSupport.forBrowser,
+    );
+
+    expect(mockSettings, capturedSettings);
+    expect(WebAuthenticationSupportConstants.forBrowser, capturedSupport);
+  });
+
+  test('setWebAuthenticationSupport with none', () async {
+    android_webview.WebSettings? capturedSettings;
+    int? capturedSupport;
+
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      isWebViewFeatureSupported: (String feature) async {
+        expect(WebViewFeatureConstants.webAuthentication, feature);
+        return true;
+      },
+      setWebAuthenticationSupport:
+          (android_webview.WebSettings settings, int support) async {
+            capturedSettings = settings;
+            capturedSupport = support;
+          },
+    );
+
+    await controller.setWebAuthenticationSupport(WebAuthenticationSupport.none);
+
+    expect(mockSettings, capturedSettings);
+    expect(WebAuthenticationSupportConstants.none, capturedSupport);
+  });
+
+  test('setWebAuthenticationSupport skips when unsupported', () async {
+    android_webview.WebSettings? capturedSettings;
+    int? capturedSupport;
+
+    final mockWebView = MockWebView();
+    final mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      isWebViewFeatureSupported: (String feature) async {
+        expect(WebViewFeatureConstants.webAuthentication, feature);
+        return false;
+      },
+      setWebAuthenticationSupport:
+          (android_webview.WebSettings settings, int support) async {
+            capturedSettings = settings;
+            capturedSupport = support;
+          },
+    );
+
+    await controller.setWebAuthenticationSupport(
+      WebAuthenticationSupport.forApp,
+    );
+
+    expect(capturedSettings, isNull);
+    expect(capturedSupport, isNull);
+  });
+
   test('setInsetsForWebContentToIgnore', () async {
     final mockWebView = MockWebView();
     final AndroidWebViewController controller = createControllerWithMocks(

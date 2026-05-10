@@ -889,25 +889,69 @@ class AndroidWebViewController extends PlatformWebViewController {
     return android_webview.WebViewFeature.isFeatureSupported(feature);
   }
 
-  /// Enables WebAuthn support for this WebView when available.
+  /// Sets the WebAuthentication support level for this WebView when available.
   ///
-  /// When enabled, this configures the WebView to allow WebAuthn requests for
-  /// the embedded app.
-  Future<void> setWebAuthenticationEnabled(bool enabled) async {
+  /// This method configures which contexts can use WebAuthn APIs in the WebView.
+  /// The WebView must support the feature (check with [isWebViewFeatureSupported]
+  /// before calling).
+  ///
+  /// **Parameters:**
+  /// * [support] - The desired WebAuthentication support level:
+  ///   - [WebAuthenticationSupport.none]: Disables all WebAuthn requests
+  ///   - [WebAuthenticationSupport.forApp]: Allows WebAuthn for the embedded app
+  ///   - [WebAuthenticationSupport.forBrowser]: Allows WebAuthn for any website
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final isSupported = await controller
+  ///     .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+  /// if (isSupported) {
+  ///   await controller.setWebAuthenticationSupport(
+  ///     WebAuthenticationSupport.forApp,
+  ///   );
+  /// }
+  /// ```
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setWebAuthenticationSupport.
+  Future<void> setWebAuthenticationSupport(
+    WebAuthenticationSupport support,
+  ) async {
     if (!await isWebViewFeatureSupported(
       WebViewFeatureType.webAuthentication,
     )) {
       return;
     }
 
-    final int supportLevel = enabled
-        ? WebAuthenticationSupportConstants.forApp
-        : WebAuthenticationSupportConstants.none;
-
+    final int supportValue = _webAuthenticationSupportToInt(support);
     await android_webview.WebSettingsCompat.setWebAuthenticationSupport(
       _webView.settings,
-      supportLevel,
+      supportValue,
     );
+  }
+
+  /// Enables WebAuthn support for this WebView when available.
+  ///
+  /// This is a convenience method that maps boolean values to [WebAuthenticationSupport]
+  /// levels:
+  /// - `true` → [WebAuthenticationSupport.forApp]
+  /// - `false` → [WebAuthenticationSupport.none]
+  ///
+  /// @deprecated Use [setWebAuthenticationSupport] instead for explicit control
+  /// over all WebAuthentication support levels (none, forApp, forBrowser).
+  Future<void> setWebAuthenticationEnabled(bool enabled) {
+    return setWebAuthenticationSupport(
+      enabled ? WebAuthenticationSupport.forApp : WebAuthenticationSupport.none,
+    );
+  }
+
+  static int _webAuthenticationSupportToInt(WebAuthenticationSupport support) {
+    return switch (support) {
+      WebAuthenticationSupport.none => WebAuthenticationSupportConstants.none,
+      WebAuthenticationSupport.forApp =>
+        WebAuthenticationSupportConstants.forApp,
+      WebAuthenticationSupport.forBrowser =>
+        WebAuthenticationSupportConstants.forBrowser,
+    };
   }
 
   /// Sets whether the WebView should enable the Payment Request API.

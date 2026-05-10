@@ -135,6 +135,33 @@ class WebViewFeatureConstants {
 }
 
 /// Support levels for [WebSettingsCompat.setWebAuthenticationSupport].
+///
+/// This enum provides a type-safe way to specify the WebAuthentication support
+/// level for a WebView.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setWebAuthenticationSupport.
+enum WebAuthenticationSupport {
+  /// Disables WebAuthn requests from WebView.
+  ///
+  /// No WebAuthn APIs are available to web content in the WebView.
+  none,
+
+  /// Allows WebAuthn requests for the embedded app.
+  ///
+  /// WebAuthn is available for Relying Party IDs that are registered for the
+  /// embedding application.
+  forApp,
+
+  /// Allows WebAuthn calls for any website.
+  ///
+  /// WebAuthn is available for any Relying Party ID. This is the typical
+  /// configuration for a browser-like experience.
+  forBrowser,
+}
+
+/// Support levels for [WebSettingsCompat.setWebAuthenticationSupport].
+///
+/// @deprecated Use [WebAuthenticationSupport] enum instead for type-safe support level selection.
 class WebAuthenticationSupportConstants {
   /// Disables WebAuthn requests from WebView.
   static const int none = 0;
