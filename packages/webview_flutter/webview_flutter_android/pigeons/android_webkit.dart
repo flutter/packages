@@ -1122,6 +1122,9 @@ abstract class Certificate {
 abstract class WebSettingsCompat {
   @static
   void setPaymentRequestEnabled(WebSettings webSettings, bool enabled);
+
+  @static
+  void setWebAuthenticationSupport(WebSettings webSettings, int support);
 }
 
 /// Utility class for checking which WebView Support Library features are supported on the device.

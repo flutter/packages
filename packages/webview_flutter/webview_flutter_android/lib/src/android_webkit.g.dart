@@ -263,6 +263,10 @@ class PigeonOverrides {
   static Future<void> Function(WebSettings, bool)?
   webSettingsCompat_setPaymentRequestEnabled;
 
+  /// Overrides [WebSettingsCompat.setWebAuthenticationSupport].
+  static Future<void> Function(WebSettings, int)?
+  webSettingsCompat_setWebAuthenticationSupport;
+
   /// Overrides [WebViewFeature.isFeatureSupported].
   static Future<bool> Function(String)? webViewFeature_isFeatureSupported;
 
@@ -278,6 +282,7 @@ class PigeonOverrides {
     flutterAssetManager_instance = null;
     webStorage_instance = null;
     webSettingsCompat_setPaymentRequestEnabled = null;
+    webSettingsCompat_setWebAuthenticationSupport = null;
     webViewFeature_isFeatureSupported = null;
   }
 }
@@ -8109,6 +8114,42 @@ class WebSettingsCompat extends PigeonInternalProxyApiBaseClass {
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[webSettings, enabled],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+  }
+
+  static Future<void> setWebAuthenticationSupport(
+    WebSettings webSettings,
+    int support, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) async {
+    if (PigeonOverrides.webSettingsCompat_setWebAuthenticationSupport != null) {
+      return PigeonOverrides.webSettingsCompat_setWebAuthenticationSupport!(
+        webSettings,
+        support,
+      );
+    }
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebSettingsCompat.setWebAuthenticationSupport';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[webSettings, support],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 

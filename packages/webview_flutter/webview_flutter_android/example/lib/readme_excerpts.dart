@@ -21,6 +21,22 @@ Future<void> enablePaymentRequest() async {
   // #enddocregion payment_request_example
 }
 
+/// Example function for README demonstration of Web Authentication support.
+Future<void> enableWebAuthentication() async {
+  final controller = PlatformWebViewController(
+    AndroidWebViewControllerCreationParams(),
+  );
+  final androidController = controller as AndroidWebViewController;
+  // #docregion web_authentication_example
+  final bool webAuthenticationEnabled = await androidController
+      .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+
+  if (webAuthenticationEnabled) {
+    await androidController.setWebAuthenticationEnabled(true);
+  }
+  // #enddocregion web_authentication_example
+}
+
 /// Example function for README demonstration of geolocation permissions for
 /// a use case where the content is always trusted (for example, it only shows
 /// content from a domain controlled by the app developer) and geolocation

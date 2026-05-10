@@ -83,6 +83,21 @@ Add intent filters to your AndroidManifest.xml to discover and invoke Android pa
 </queries>
 ```
 
+## Enable Web Authentication in WebView
+
+Web Authentication can be enabled by calling `AndroidWebViewController.setWebAuthenticationEnabled` after
+checking `AndroidWebViewController.isWebViewFeatureSupported`.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (web_authentication_example)"?>
+```dart
+final bool webAuthenticationEnabled = await androidController
+    .isWebViewFeatureSupported(WebViewFeatureType.webAuthentication);
+
+if (webAuthenticationEnabled) {
+  await androidController.setWebAuthenticationEnabled(true);
+}
+```
+
 ## Fullscreen Video
 
 To display a video as fullscreen, an app must manually handle the notification that the current page

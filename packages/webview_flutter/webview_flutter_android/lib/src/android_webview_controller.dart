@@ -883,8 +883,31 @@ class AndroidWebViewController extends PlatformWebViewController {
     final String feature = switch (featureType) {
       WebViewFeatureType.paymentRequest =>
         WebViewFeatureConstants.paymentRequest,
+      WebViewFeatureType.webAuthentication =>
+        WebViewFeatureConstants.webAuthentication,
     };
     return android_webview.WebViewFeature.isFeatureSupported(feature);
+  }
+
+  /// Enables WebAuthn support for this WebView when available.
+  ///
+  /// When enabled, this configures the WebView to allow WebAuthn requests for
+  /// the embedded app.
+  Future<void> setWebAuthenticationEnabled(bool enabled) async {
+    if (!await isWebViewFeatureSupported(
+      WebViewFeatureType.webAuthentication,
+    )) {
+      return;
+    }
+
+    final int supportLevel = enabled
+        ? WebAuthenticationSupportConstants.forApp
+        : WebAuthenticationSupportConstants.none;
+
+    await android_webview.WebSettingsCompat.setWebAuthenticationSupport(
+      _webView.settings,
+      supportLevel,
+    );
   }
 
   /// Sets whether the WebView should enable the Payment Request API.
@@ -1072,6 +1095,11 @@ enum WebViewFeatureType {
   ///
   /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
   paymentRequest,
+
+  /// Feature for isFeatureSupported.
+  ///
+  /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
+  webAuthentication,
 }
 
 /// Parameters received when the `WebView` should show a file selector.

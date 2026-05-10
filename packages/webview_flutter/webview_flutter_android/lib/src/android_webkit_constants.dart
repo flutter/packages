@@ -127,4 +127,21 @@ class WebViewFeatureConstants {
   ///
   /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#PAYMENT_REQUEST.
   static const String paymentRequest = 'PAYMENT_REQUEST';
+
+  /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#WEB_AUTHENTICATION.
+  static const String webAuthentication = 'WEB_AUTHENTICATION';
+}
+
+/// Support levels for [WebSettingsCompat.setWebAuthenticationSupport].
+class WebAuthenticationSupportConstants {
+  /// Disables WebAuthn requests from WebView.
+  static const int none = 0;
+
+  /// Allows WebAuthn requests for the embedded app.
+  static const int forApp = 1;
+
+  /// Allows WebAuthn calls for any website.
+  static const int forBrowser = 2;
 }
