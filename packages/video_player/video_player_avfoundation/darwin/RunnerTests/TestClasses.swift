@@ -4,7 +4,9 @@
 
 import AVFoundation
 import Testing
-import video_player_avfoundation
+import video_player_avfoundation_objc
+
+@testable import video_player_avfoundation
 
 #if os(iOS)
   import Flutter
@@ -249,7 +251,7 @@ final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
   }
 }
 
-final class StubFVPDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
+final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
   let displayLink = StubFVPDisplayLink()
   var fireDisplayLink: (() -> Void)?
 

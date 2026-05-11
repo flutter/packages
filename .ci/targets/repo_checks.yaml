@@ -13,6 +13,10 @@ tasks:
     script: .ci/scripts/plugin_tools_tests.sh
   - name: tool format
     script: .ci/scripts/plugin_tools_format.sh
+  - name: flutter_goldens unit tests
+    script: .ci/scripts/flutter_goldens_tests.sh
+  - name: flutter_goldens format
+    script: .ci/scripts/flutter_goldens_format.sh
   - name: format
     script: .ci/scripts/tool_runner.sh
     # Skip Swift formatting on Linux builders.

@@ -1432,73 +1432,10 @@ class SvgParser {
       return parseRgbFunction(colorString);
     }
 
-    // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
+    // handle hsla() colors e.g. hsl(270, 100%, 76%) and hsla(270, 100%, 76%, 1.0)
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/hsl
     if (colorString.toLowerCase().startsWith('hsl')) {
-      final List<String> values = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
-          .map((String rawColor) => rawColor.trim())
-          .toList();
-      double parseHslValue(String rawColor) {
-        if (rawColor.endsWith('%')) {
-          rawColor = rawColor.substring(0, rawColor.length - 1);
-        }
-        return parseDouble(rawColor)!;
-      }
-
-      int parseHslAlpha(String rawAlpha) {
-        if (rawAlpha.endsWith('%')) {
-          return (parseHslValue(rawAlpha).clamp(0, 100) * 2.55).round();
-        }
-        return (parseDouble(rawAlpha)!.clamp(0, 1) * 255).round();
-      }
-
-      final double hue = parseHslValue(values[0]) / 360 % 1;
-      final double saturation = parseHslValue(values[1]) / 100;
-      final double luminance = parseHslValue(values[2]) / 100;
-      final int alpha = values.length > 3 ? parseHslAlpha(values[3]) : 255;
-      var rgb = <double>[0, 0, 0];
-
-      if (hue < 1 / 6) {
-        rgb[0] = 1;
-        rgb[1] = hue * 6;
-      } else if (hue < 2 / 6) {
-        rgb[0] = 2 - hue * 6;
-        rgb[1] = 1;
-      } else if (hue < 3 / 6) {
-        rgb[1] = 1;
-        rgb[2] = hue * 6 - 2;
-      } else if (hue < 4 / 6) {
-        rgb[1] = 4 - hue * 6;
-        rgb[2] = 1;
-      } else if (hue < 5 / 6) {
-        rgb[0] = hue * 6 - 4;
-        rgb[2] = 1;
-      } else {
-        rgb[0] = 1;
-        rgb[2] = 6 - hue * 6;
-      }
-
-      rgb = rgb
-          .map((double val) => val + (1 - saturation) * (0.5 - val))
-          .toList();
-
-      if (luminance < 0.5) {
-        rgb = rgb.map((double val) => luminance * 2 * val).toList();
-      } else {
-        rgb = rgb
-            .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
-            .toList();
-      }
-
-      rgb = rgb.map((double val) => val * 255).toList();
-
-      return Color.fromARGB(
-        alpha,
-        rgb[0].round(),
-        rgb[1].round(),
-        rgb[2].round(),
-      );
+      return parseHslFunction(colorString);
     }
 
     // handle named colors ('red', 'green', etc.).

@@ -1,3 +1,11 @@
+## 2.9.6
+
+* Adds a Swift version to fix a potential build issue when using CocoaPods.
+
+## 2.9.5
+
+* Converts portions of the native code to Swift for improved maintainability.
+
 ## 2.9.4
 
 * Ensures that the display link does not continue requesting frames after a player is disposed.
