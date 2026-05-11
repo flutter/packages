@@ -60,9 +60,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     SetUpFIAInAppPurchaseAPI(messenger, instance)
     if #available(iOS 15.0, macOS 12.0, *) {
       InAppPurchase2APISetup.setUp(binaryMessenger: messenger, api: instance)
-      #if os(iOS)
-        registrar.addSceneDelegate(instance)
-      #endif
     }
   }
 
@@ -469,6 +466,4 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   }
 }
 
-#if os(iOS)
-  extension InAppPurchasePlugin: FlutterSceneLifeCycleDelegate {}
-#endif
+

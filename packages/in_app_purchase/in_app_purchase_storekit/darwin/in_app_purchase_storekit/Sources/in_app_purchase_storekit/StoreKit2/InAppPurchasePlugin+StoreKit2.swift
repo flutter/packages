@@ -341,6 +341,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             completion(.failure(error))
           }
         }
+      } else {
+        completion(.failure(PigeonError(
+          code: "storekit2_unsupported_platform_version",
+          message: "Offer code redemption requires iOS 16+",
+          details: nil
+        )))
       }
     #elseif os(macOS)
       if #available(macOS 15.0, *) {
@@ -362,6 +368,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             completion(.failure(error))
           }
         }
+      } else {
+        completion(.failure(PigeonError(
+          code: "storekit2_unsupported_platform_version",
+          message: "Offer code redemption requires macOS 15+",
+          details: nil
+        )))
       }
     #endif
   }
