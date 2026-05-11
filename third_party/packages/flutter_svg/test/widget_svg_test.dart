@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -981,6 +982,70 @@ void main() {
     }
   });
 
+  group('SvgPicture - imageBuilder', () {
+    setUp(() {
+      svg.cache.clear();
+    });
+
+    testWidgets('wraps successfully loaded SVG', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.string(
+            simpleSvg,
+            imageBuilder: (BuildContext context, Widget child) {
+              return Container(
+                key: const ValueKey<String>('image-builder'),
+                child: child,
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('image-builder')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('does not wrap placeholder state', (WidgetTester tester) async {
+      final response = Completer<http.Response>();
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.network(
+            'test.svg',
+            httpClient: DelayedHttpClient(response.future),
+            imageBuilder: (BuildContext context, Widget child) {
+              return Container(
+                key: const ValueKey<String>('image-builder'),
+                child: child,
+              );
+            },
+            placeholderBuilder: (BuildContext context) {
+              return Container(key: const ValueKey<String>('placeholder'));
+            },
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey<String>('placeholder')), findsOneWidget);
+      expect(find.byKey(const ValueKey<String>('image-builder')), findsNothing);
+
+      response.complete(http.Response(svgStr, 200));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const ValueKey<String>('image-builder')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey<String>('placeholder')), findsNothing);
+    });
+  });
+
   group('SvgPicture - errorBuilder', () {
     testWidgets('SvgPicture.string handles failure', (
       WidgetTester tester,
@@ -1099,6 +1164,17 @@ class FakeHttpClient extends Fake implements http.Client {
       this.headers.addAll(headers);
     }
     return http.Response(svgStr, statusCode);
+  }
+}
+
+class DelayedHttpClient extends Fake implements http.Client {
+  DelayedHttpClient(this.response);
+
+  final Future<http.Response> response;
+
+  @override
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) {
+    return response;
   }
 }
 

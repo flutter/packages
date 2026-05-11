@@ -75,7 +75,9 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     }
 
     if (await _hasIOSSwiftCode(package)) {
-      print('iOS Swift code found, checking for search paths settings...');
+      print(
+        'iOS Swift code found, checking for search paths settings and Swift version...',
+      );
       for (final podspec in podspecs) {
         if (_isPodspecMissingSearchPaths(podspec)) {
           const workaroundBlock = r'''
@@ -94,6 +96,20 @@ class PodspecCheckCommand extends PackageLoopingCommand {
             'needs to contain the following:\n\n'
             '$workaroundBlock\n'
             'For more details, see https://github.com/flutter/flutter/issues/118418.',
+          );
+          errors.add(podspec.basename);
+        }
+
+        if (_isPodspecMissingSwiftVersion(podspec)) {
+          final String path = getRelativePosixPath(
+            podspec,
+            from: package.directory,
+          );
+          printError(
+            '$path is missing Swift version configuration. Any iOS '
+            'plugin implementation that contains Swift implementation code '
+            'needs to contain a Swift version. For example:\n\n'
+            "s.swift_version = '5.0'",
           );
           errors.add(podspec.basename);
         }
@@ -121,9 +137,15 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       File entity,
     ) {
       final String filename = entity.basename;
+      final String relativePath = getRelativePosixPath(
+        entity,
+        from: package.directory,
+      );
       return path.extension(filename) == '.podspec' &&
           filename != 'Flutter.podspec' &&
           filename != 'FlutterMacOS.podspec' &&
+          // Ignore build intermediates, such as transitive pod dependencies.
+          !relativePath.split('/').contains('build') &&
           !entity.path.contains('packages/pigeon/platform_tests/');
     }).toList();
 
@@ -177,6 +199,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       if (relativePath.startsWith('example/')) {
         return false;
       }
+      // Ignore build intermediates.
+      if (relativePath.split('/').contains('build')) {
+        return false;
+      }
       // Ignore test code.
       if (relativePath.contains('/Tests/') ||
           relativePath.contains('/RunnerTests/') ||
@@ -225,5 +251,9 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       dotAll: true,
     );
     return manifestBundling.hasMatch(podspec.readAsStringSync());
+  }
+
+  bool _isPodspecMissingSwiftVersion(File podspec) {
+    return !RegExp(r'\bswift_version\s*=').hasMatch(podspec.readAsStringSync());
   }
 }
