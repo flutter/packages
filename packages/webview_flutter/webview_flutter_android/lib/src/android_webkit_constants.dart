@@ -160,8 +160,6 @@ enum WebAuthenticationSupport {
 }
 
 /// Support levels for [WebSettingsCompat.setWebAuthenticationSupport].
-///
-/// @deprecated Use [WebAuthenticationSupport] enum instead for type-safe support level selection.
 class WebAuthenticationSupportConstants {
   /// Disables WebAuthn requests from WebView.
   static const int none = 0;
