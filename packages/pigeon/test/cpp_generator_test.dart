@@ -2761,7 +2761,7 @@ void main() {
     final code = sink.toString();
     expect(code, contains('std::string Foo::ToString() const {'));
     expect(code, contains('ss << "bar: ";'));
-    expect(code, contains('ss << bar_;'));
+    expect(code, contains('ss << PigeonInternalToString(bar_);'));
   });
 
   test('data classes implement Hash', () {

@@ -863,6 +863,7 @@ class GObjectSourceGenerator
     _writeHashHelpers(indent);
     _writeDeepEquals(indent);
     _writeDeepHash(indent);
+    _writeDeepToString(indent);
   }
 
   @override
@@ -1395,10 +1396,51 @@ class GObjectSourceGenerator
           indent.writeScoped('else {', '}', () {
             indent.writeln('g_string_append(str, "null");');
           });
+        } else if (field.type.isEnum) {
+          if (field.type.isNullable) {
+            indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+              indent.writeln(
+                'g_string_append_printf(str, "%d", static_cast<int>(*self->$fieldName));',
+              );
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('g_string_append(str, "null");');
+            });
+          } else {
+            indent.writeln(
+              'g_string_append_printf(str, "%d", static_cast<int>(self->$fieldName));',
+            );
+          }
         } else if (_isNumericListType(field.type)) {
-          indent.writeln(
-            'g_string_append_printf(str, "[...], length: %zu", self->${fieldName}_length);',
-          );
+          indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+            indent.writeln('g_string_append(str, "[");');
+            indent.writeln('size_t len = self->${fieldName}_length;');
+            final String elementTypeName = _getType(
+              module,
+              field.type,
+              isElementType: true,
+            );
+            indent.writeln('const $elementTypeName* data = self->$fieldName;');
+            indent.writeScoped('for (size_t i = 0; i < len; i++) {', '}', () {
+              indent.writeln('if (i > 0) g_string_append(str, ", ");');
+              if (field.type.baseName == 'Int64List') {
+                indent.writeln(
+                  'g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);',
+                );
+              } else if (field.type.baseName == 'Float32List' ||
+                  field.type.baseName == 'Float64List') {
+                indent.writeln('g_string_append_printf(str, "%g", data[i]);');
+              } else {
+                indent.writeln(
+                  'g_string_append_printf(str, "%d", static_cast<int>(data[i]));',
+                );
+              }
+            });
+            indent.writeln('g_string_append(str, "]");');
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('g_string_append(str, "null");');
+          });
         } else if (field.type.baseName == 'bool') {
           indent.writeln(
             'g_string_append(str, self->$fieldName ? "true" : "false");',
@@ -1434,7 +1476,16 @@ class GObjectSourceGenerator
             );
           }
         } else {
-          indent.writeln('g_string_append(str, "...");');
+          indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+            indent.writeln(
+              'gchar* val_str = flpigeon_to_string(self->$fieldName);',
+            );
+            indent.writeln('g_string_append(str, val_str);');
+            indent.writeln('g_free(val_str);');
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('g_string_append(str, "null");');
+          });
         }
       });
 
@@ -3188,6 +3239,129 @@ void _writeDeepHash(Indent indent) {
         );
       });
       indent.writeln('return 0;');
+    },
+  );
+}
+
+void _writeDeepToString(Indent indent) {
+  indent.writeScoped(
+    'static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {',
+    '}',
+    () {
+      indent.writeScoped('if (value == nullptr) {', '}', () {
+        indent.writeln('return g_strdup("null");');
+      });
+      indent.writeScoped('switch (fl_value_get_type(value)) {', '}', () {
+        indent.writeln('case FL_VALUE_TYPE_NULL:');
+        indent.writeln('  return g_strdup("null");');
+        indent.writeln('case FL_VALUE_TYPE_BOOL:');
+        indent.writeln(
+          '  return g_strdup(fl_value_get_bool(value) ? "true" : "false");',
+        );
+        indent.writeln('case FL_VALUE_TYPE_INT:');
+        indent.writeln(
+          '  return g_strdup_printf("%" G_GINT64_FORMAT, fl_value_get_int(value));',
+        );
+        indent.writeln('case FL_VALUE_TYPE_FLOAT:');
+        indent.writeln(
+          '  return g_strdup_printf("%g", fl_value_get_float(value));',
+        );
+        indent.writeln('case FL_VALUE_TYPE_STRING:');
+        indent.writeln(
+          r'  return g_strdup_printf("\"%s\"", fl_value_get_string(value));',
+        );
+        indent.writeln('case FL_VALUE_TYPE_UINT8_LIST: {');
+        indent.writeln('  GString* str = g_string_new("[");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeln(
+          '  const uint8_t* data = fl_value_get_uint8_list(value);',
+        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln('  g_string_append_printf(str, "%d", data[i]);');
+        });
+        indent.writeln('  g_string_append(str, "]");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('case FL_VALUE_TYPE_INT32_LIST: {');
+        indent.writeln('  GString* str = g_string_new("[");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeln(
+          '  const int32_t* data = fl_value_get_int32_list(value);',
+        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln('  g_string_append_printf(str, "%d", data[i]);');
+        });
+        indent.writeln('  g_string_append(str, "]");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('case FL_VALUE_TYPE_INT64_LIST: {');
+        indent.writeln('  GString* str = g_string_new("[");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeln(
+          '  const int64_t* data = fl_value_get_int64_list(value);',
+        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln(
+            '  g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);',
+          );
+        });
+        indent.writeln('  g_string_append(str, "]");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('case FL_VALUE_TYPE_FLOAT_LIST: {');
+        indent.writeln('  GString* str = g_string_new("[");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeln(
+          '  const double* data = fl_value_get_float_list(value);',
+        );
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln('  g_string_append_printf(str, "%g", data[i]);');
+        });
+        indent.writeln('  g_string_append(str, "]");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('case FL_VALUE_TYPE_LIST: {');
+        indent.writeln('  GString* str = g_string_new("[");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln(
+            '  gchar* item_str = flpigeon_to_string(fl_value_get_list_value(value, i));',
+          );
+          indent.writeln('  g_string_append(str, item_str);');
+          indent.writeln('  g_free(item_str);');
+        });
+        indent.writeln('  g_string_append(str, "]");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('case FL_VALUE_TYPE_MAP: {');
+        indent.writeln('  GString* str = g_string_new("{");');
+        indent.writeln('  size_t len = fl_value_get_length(value);');
+        indent.writeScoped('  for (size_t i = 0; i < len; i++) {', '  }', () {
+          indent.writeln('  if (i > 0) g_string_append(str, ", ");');
+          indent.writeln(
+            '  gchar* key_str = flpigeon_to_string(fl_value_get_map_key(value, i));',
+          );
+          indent.writeln(
+            '  gchar* val_str = flpigeon_to_string(fl_value_get_map_value(value, i));',
+          );
+          indent.writeln(
+            '  g_string_append_printf(str, "%s: %s", key_str, val_str);',
+          );
+          indent.writeln('  g_free(key_str);');
+          indent.writeln('  g_free(val_str);');
+        });
+        indent.writeln('  g_string_append(str, "}");');
+        indent.writeln('  return g_string_free(str, FALSE);');
+        indent.writeln('}');
+        indent.writeln('default:');
+        indent.writeln('  return g_strdup("[custom]");');
+      });
+      indent.writeln('return g_strdup("null");');
     },
   );
 }

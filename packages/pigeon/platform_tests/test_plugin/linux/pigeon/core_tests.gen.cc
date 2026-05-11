@@ -197,6 +197,96 @@ static guint G_GNUC_UNUSED flpigeon_deep_hash(FlValue* value) {
   }
   return 0;
 }
+static gchar* G_GNUC_UNUSED flpigeon_to_string(FlValue* value) {
+  if (value == nullptr) {
+    return g_strdup("null");
+  }
+  switch (fl_value_get_type(value)) {
+    case FL_VALUE_TYPE_NULL:
+      return g_strdup("null");
+    case FL_VALUE_TYPE_BOOL:
+      return g_strdup(fl_value_get_bool(value) ? "true" : "false");
+    case FL_VALUE_TYPE_INT:
+      return g_strdup_printf("%" G_GINT64_FORMAT, fl_value_get_int(value));
+    case FL_VALUE_TYPE_FLOAT:
+      return g_strdup_printf("%g", fl_value_get_float(value));
+    case FL_VALUE_TYPE_STRING:
+      return g_strdup_printf("\"%s\"", fl_value_get_string(value));
+    case FL_VALUE_TYPE_UINT8_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const uint8_t* data = fl_value_get_uint8_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        g_string_append_printf(str, "%d", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_INT32_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const int32_t* data = fl_value_get_int32_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        g_string_append_printf(str, "%d", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_INT64_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const int64_t* data = fl_value_get_int64_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_FLOAT_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      const double* data = fl_value_get_float_list(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        g_string_append_printf(str, "%g", data[i]);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_LIST: {
+      GString* str = g_string_new("[");
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        gchar* item_str = flpigeon_to_string(fl_value_get_list_value(value, i));
+        g_string_append(str, item_str);
+        g_free(item_str);
+      }
+      g_string_append(str, "]");
+      return g_string_free(str, FALSE);
+    }
+    case FL_VALUE_TYPE_MAP: {
+      GString* str = g_string_new("{");
+      size_t len = fl_value_get_length(value);
+      for (size_t i = 0; i < len; i++) {
+        if (i > 0) g_string_append(str, ", ");
+        gchar* key_str = flpigeon_to_string(fl_value_get_map_key(value, i));
+        gchar* val_str = flpigeon_to_string(fl_value_get_map_value(value, i));
+        g_string_append_printf(str, "%s: %s", key_str, val_str);
+        g_free(key_str);
+        g_free(val_str);
+      }
+      g_string_append(str, "}");
+      return g_string_free(str, FALSE);
+    }
+    default:
+      return g_strdup("[custom]");
+  }
+  return g_strdup("null");
+}
 
 struct _CoreTestsPigeonTestUnusedClass {
   GObject parent_instance;
@@ -287,7 +377,13 @@ gchar* core_tests_pigeon_test_unused_class_to_string(
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_UNUSED_CLASS(self), NULL);
   GString* str = g_string_new("UnusedClass(");
   g_string_append(str, "a_field: ");
-  g_string_append(str, "...");
+  if (self->a_field != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->a_field);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
@@ -932,17 +1028,61 @@ gchar* core_tests_pigeon_test_all_types_to_string(
   g_string_append(str, ", a_double: ");
   g_string_append_printf(str, "%g", self->a_double);
   g_string_append(str, ", a_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu", self->a_byte_array_length);
+  if (self->a_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_byte_array_length;
+    const uint8_t* data = self->a_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a4_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu", self->a4_byte_array_length);
+  if (self->a4_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a4_byte_array_length;
+    const int32_t* data = self->a4_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a8_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu", self->a8_byte_array_length);
+  if (self->a8_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a8_byte_array_length;
+    const int64_t* data = self->a8_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_float_array: ");
-  g_string_append_printf(str, "[...], length: %zu", self->a_float_array_length);
+  if (self->a_float_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_float_array_length;
+    const double* data = self->a_float_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%g", data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", an_enum: ");
-  g_string_append(str, "...");
+  g_string_append_printf(str, "%d", static_cast<int>(self->an_enum));
   g_string_append(str, ", another_enum: ");
-  g_string_append(str, "...");
+  g_string_append_printf(str, "%d", static_cast<int>(self->another_enum));
   g_string_append(str, ", a_string: ");
   if (self->a_string != nullptr) {
     g_string_append_printf(str, "\"%s\"", self->a_string);
@@ -950,39 +1090,141 @@ gchar* core_tests_pigeon_test_all_types_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", an_object: ");
-  g_string_append(str, "...");
+  if (self->an_object != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->an_object);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list: ");
-  g_string_append(str, "...");
+  if (self->list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_list: ");
-  g_string_append(str, "...");
+  if (self->string_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_list: ");
-  g_string_append(str, "...");
+  if (self->int_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", double_list: ");
-  g_string_append(str, "...");
+  if (self->double_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->double_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", bool_list: ");
-  g_string_append(str, "...");
+  if (self->bool_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->bool_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_list: ");
-  g_string_append(str, "...");
+  if (self->enum_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_list: ");
-  g_string_append(str, "...");
+  if (self->object_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_list: ");
-  g_string_append(str, "...");
+  if (self->list_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_list: ");
-  g_string_append(str, "...");
+  if (self->map_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map: ");
-  g_string_append(str, "...");
+  if (self->map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_map: ");
-  g_string_append(str, "...");
+  if (self->string_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_map: ");
-  g_string_append(str, "...");
+  if (self->int_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_map: ");
-  g_string_append(str, "...");
+  if (self->enum_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_map: ");
-  g_string_append(str, "...");
+  if (self->object_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_map: ");
-  g_string_append(str, "...");
+  if (self->list_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_map: ");
-  g_string_append(str, "...");
+  if (self->map_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
@@ -2105,21 +2347,70 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", a_nullable_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable_byte_array_length);
+  if (self->a_nullable_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable_byte_array_length;
+    const uint8_t* data = self->a_nullable_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable4_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable4_byte_array_length);
+  if (self->a_nullable4_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable4_byte_array_length;
+    const int32_t* data = self->a_nullable4_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable8_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable8_byte_array_length);
+  if (self->a_nullable8_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable8_byte_array_length;
+    const int64_t* data = self->a_nullable8_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_float_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable_float_array_length);
+  if (self->a_nullable_float_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable_float_array_length;
+    const double* data = self->a_nullable_float_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%g", data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_enum: ");
-  g_string_append(str, "...");
+  if (self->a_nullable_enum != nullptr) {
+    g_string_append_printf(str, "%d", static_cast<int>(*self->a_nullable_enum));
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", another_nullable_enum: ");
-  g_string_append(str, "...");
+  if (self->another_nullable_enum != nullptr) {
+    g_string_append_printf(str, "%d",
+                           static_cast<int>(*self->another_nullable_enum));
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_string: ");
   if (self->a_nullable_string != nullptr) {
     g_string_append_printf(str, "\"%s\"", self->a_nullable_string);
@@ -2127,7 +2418,13 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", a_nullable_object: ");
-  g_string_append(str, "...");
+  if (self->a_nullable_object != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->a_nullable_object);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", all_nullable_types: ");
   if (self->all_nullable_types != nullptr) {
     gchar* field_str = core_tests_pigeon_test_all_nullable_types_to_string(
@@ -2138,41 +2435,149 @@ gchar* core_tests_pigeon_test_all_nullable_types_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", list: ");
-  g_string_append(str, "...");
+  if (self->list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_list: ");
-  g_string_append(str, "...");
+  if (self->string_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_list: ");
-  g_string_append(str, "...");
+  if (self->int_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", double_list: ");
-  g_string_append(str, "...");
+  if (self->double_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->double_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", bool_list: ");
-  g_string_append(str, "...");
+  if (self->bool_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->bool_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_list: ");
-  g_string_append(str, "...");
+  if (self->enum_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_list: ");
-  g_string_append(str, "...");
+  if (self->object_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_list: ");
-  g_string_append(str, "...");
+  if (self->list_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_list: ");
-  g_string_append(str, "...");
+  if (self->map_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", recursive_class_list: ");
-  g_string_append(str, "...");
+  if (self->recursive_class_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->recursive_class_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map: ");
-  g_string_append(str, "...");
+  if (self->map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_map: ");
-  g_string_append(str, "...");
+  if (self->string_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_map: ");
-  g_string_append(str, "...");
+  if (self->int_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_map: ");
-  g_string_append(str, "...");
+  if (self->enum_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_map: ");
-  g_string_append(str, "...");
+  if (self->object_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_map: ");
-  g_string_append(str, "...");
+  if (self->list_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_map: ");
-  g_string_append(str, "...");
+  if (self->map_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", recursive_class_map: ");
-  g_string_append(str, "...");
+  if (self->recursive_class_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->recursive_class_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
@@ -3263,21 +3668,70 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", a_nullable_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable_byte_array_length);
+  if (self->a_nullable_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable_byte_array_length;
+    const uint8_t* data = self->a_nullable_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable4_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable4_byte_array_length);
+  if (self->a_nullable4_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable4_byte_array_length;
+    const int32_t* data = self->a_nullable4_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%d", static_cast<int>(data[i]));
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable8_byte_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable8_byte_array_length);
+  if (self->a_nullable8_byte_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable8_byte_array_length;
+    const int64_t* data = self->a_nullable8_byte_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%" G_GINT64_FORMAT, data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_float_array: ");
-  g_string_append_printf(str, "[...], length: %zu",
-                         self->a_nullable_float_array_length);
+  if (self->a_nullable_float_array != nullptr) {
+    g_string_append(str, "[");
+    size_t len = self->a_nullable_float_array_length;
+    const double* data = self->a_nullable_float_array;
+    for (size_t i = 0; i < len; i++) {
+      if (i > 0) g_string_append(str, ", ");
+      g_string_append_printf(str, "%g", data[i]);
+    }
+    g_string_append(str, "]");
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_enum: ");
-  g_string_append(str, "...");
+  if (self->a_nullable_enum != nullptr) {
+    g_string_append_printf(str, "%d", static_cast<int>(*self->a_nullable_enum));
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", another_nullable_enum: ");
-  g_string_append(str, "...");
+  if (self->another_nullable_enum != nullptr) {
+    g_string_append_printf(str, "%d",
+                           static_cast<int>(*self->another_nullable_enum));
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", a_nullable_string: ");
   if (self->a_nullable_string != nullptr) {
     g_string_append_printf(str, "\"%s\"", self->a_nullable_string);
@@ -3285,39 +3739,141 @@ gchar* core_tests_pigeon_test_all_nullable_types_without_recursion_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", a_nullable_object: ");
-  g_string_append(str, "...");
+  if (self->a_nullable_object != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->a_nullable_object);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list: ");
-  g_string_append(str, "...");
+  if (self->list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_list: ");
-  g_string_append(str, "...");
+  if (self->string_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_list: ");
-  g_string_append(str, "...");
+  if (self->int_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", double_list: ");
-  g_string_append(str, "...");
+  if (self->double_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->double_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", bool_list: ");
-  g_string_append(str, "...");
+  if (self->bool_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->bool_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_list: ");
-  g_string_append(str, "...");
+  if (self->enum_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_list: ");
-  g_string_append(str, "...");
+  if (self->object_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_list: ");
-  g_string_append(str, "...");
+  if (self->list_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_list: ");
-  g_string_append(str, "...");
+  if (self->map_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map: ");
-  g_string_append(str, "...");
+  if (self->map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", string_map: ");
-  g_string_append(str, "...");
+  if (self->string_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->string_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", int_map: ");
-  g_string_append(str, "...");
+  if (self->int_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->int_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", enum_map: ");
-  g_string_append(str, "...");
+  if (self->enum_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->enum_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", object_map: ");
-  g_string_append(str, "...");
+  if (self->object_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->object_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", list_map: ");
-  g_string_append(str, "...");
+  if (self->list_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->list_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", map_map: ");
-  g_string_append(str, "...");
+  if (self->map_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->map_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
@@ -3611,13 +4167,37 @@ gchar* core_tests_pigeon_test_all_classes_wrapper_to_string(
     g_string_append(str, "null");
   }
   g_string_append(str, ", class_list: ");
-  g_string_append(str, "...");
+  if (self->class_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->class_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", nullable_class_list: ");
-  g_string_append(str, "...");
+  if (self->nullable_class_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->nullable_class_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", class_map: ");
-  g_string_append(str, "...");
+  if (self->class_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->class_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ", nullable_class_map: ");
-  g_string_append(str, "...");
+  if (self->nullable_class_map != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->nullable_class_map);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
@@ -3711,7 +4291,13 @@ gchar* core_tests_pigeon_test_test_message_to_string(
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_TEST_MESSAGE(self), NULL);
   GString* str = g_string_new("TestMessage(");
   g_string_append(str, "test_list: ");
-  g_string_append(str, "...");
+  if (self->test_list != nullptr) {
+    gchar* val_str = flpigeon_to_string(self->test_list);
+    g_string_append(str, val_str);
+    g_free(val_str);
+  } else {
+    g_string_append(str, "null");
+  }
   g_string_append(str, ")");
   return g_string_free(str, FALSE);
 }
