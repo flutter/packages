@@ -1,3 +1,7 @@
+## 4.13.0
+
+* Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport`.
+
 ## 4.12.0
 
 * Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
