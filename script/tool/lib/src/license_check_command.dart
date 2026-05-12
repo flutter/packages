@@ -9,6 +9,7 @@ import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 
@@ -68,23 +69,10 @@ const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
 // When adding license regexes here, include the copyright info to ensure that
 // any new additions are flagged for added scrutiny in review.
 final List<RegExp> _thirdPartyLicenseBlockRegexes = <RegExp>[
-  // Third-party code used in url_launcher_web.
-  RegExp(
-    r'^// Copyright 2017 Workiva Inc\..*'
-    r'^// Licensed under the Apache License, Version 2\.0',
-    multiLine: true,
-    dotAll: true,
-  ),
   // Third-party code used in google_maps_flutter_web.
   RegExp(
     r'^// The MIT License [^C]+ Copyright \(c\) 2008 Krasimir Tsonev',
     multiLine: true,
-  ),
-  // bsdiff in flutter/packages.
-  RegExp(
-    r'// Copyright 2003-2005 Colin Percival\. All rights reserved\.\n'
-    r'// Use of this source code is governed by a BSD-style license that can be\n'
-    r'// found in the LICENSE file\.\n',
   ),
   // packages/third_party/mustache_template.
   RegExp(
@@ -393,10 +381,10 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return p.posix.joinAll(
-      path.split(
-        path.relative(file.absolute.path, from: packagesDir.parent.path),
-      ),
+    return relativePosixPath(
+      file,
+      from: packagesDir.parent,
+      platformContext: path,
     );
   }
 }

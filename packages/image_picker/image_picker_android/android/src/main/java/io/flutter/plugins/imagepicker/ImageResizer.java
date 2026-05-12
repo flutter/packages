@@ -182,7 +182,8 @@ class ImageResizer {
     if (saveAsPNG) {
       Log.d(
           "ImageResizer",
-          "image_picker: compressing is not supported for type PNG. Returning the image with original quality");
+          "image_picker: compressing is not supported for type PNG. Returning the image with"
+              + " original quality");
     }
     bitmap.compress(
         saveAsPNG ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,

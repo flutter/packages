@@ -2,7 +2,7 @@ name: Batch Release
 on:
   push:
     branches:
-      - 'release-go_router'
+      - 'release-go_router-*'
 permissions:
   # Release needs to push a tag back to the repo.
   contents: write

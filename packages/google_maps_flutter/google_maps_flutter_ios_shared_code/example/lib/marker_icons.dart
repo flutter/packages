@@ -16,8 +16,8 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class MarkerIconsPage extends GoogleMapExampleAppPage {
-  const MarkerIconsPage({Key? key})
-    : super(const Icon(Icons.image), 'Marker icons', key: key);
+  const MarkerIconsPage({super.key})
+    : super(const Icon(Icons.image), 'Marker icons');
 
   @override
   Widget build(BuildContext context) {
