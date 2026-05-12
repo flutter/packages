@@ -53,15 +53,13 @@ const PurchaseWrapper dummyUnacknowledgedPurchase = PurchaseWrapper(
 void main() {
   group('PurchaseWrapper', () {
     test('fromPurchase() should return correct PurchaseDetail object', () {
-      final List<GooglePlayPurchaseDetails> details =
-          GooglePlayPurchaseDetails.fromPurchase(dummyMultipleProductsPurchase);
+      final List<GooglePlayPurchaseDetails> details = GooglePlayPurchaseDetails.fromPurchase(
+        dummyMultipleProductsPurchase,
+      );
 
       expect(details[0].purchaseID, dummyMultipleProductsPurchase.orderId);
       expect(details[0].productID, dummyMultipleProductsPurchase.products[0]);
-      expect(
-        details[0].transactionDate,
-        dummyMultipleProductsPurchase.purchaseTime.toString(),
-      );
+      expect(details[0].transactionDate, dummyMultipleProductsPurchase.purchaseTime.toString());
       expect(details[0].verificationData, isNotNull);
       expect(details[0].verificationData.source, kIAPSource);
       expect(
@@ -77,10 +75,7 @@ void main() {
 
       expect(details[1].purchaseID, dummyMultipleProductsPurchase.orderId);
       expect(details[1].productID, dummyMultipleProductsPurchase.products[1]);
-      expect(
-        details[1].transactionDate,
-        dummyMultipleProductsPurchase.purchaseTime.toString(),
-      );
+      expect(details[1].transactionDate, dummyMultipleProductsPurchase.purchaseTime.toString());
       expect(details[1].verificationData, isNotNull);
       expect(details[1].verificationData.source, kIAPSource);
       expect(
@@ -98,24 +93,17 @@ void main() {
     test(
       'fromPurchase() should return set pendingCompletePurchase to true for unacknowledged purchase',
       () {
-        final GooglePlayPurchaseDetails details =
-            GooglePlayPurchaseDetails.fromPurchase(
-              dummyUnacknowledgedPurchase,
-            ).first;
+        final GooglePlayPurchaseDetails details = GooglePlayPurchaseDetails.fromPurchase(
+          dummyUnacknowledgedPurchase,
+        ).first;
 
         expect(details.purchaseID, dummyPurchase.orderId);
         expect(details.productID, dummyPurchase.products.first);
         expect(details.transactionDate, dummyPurchase.purchaseTime.toString());
         expect(details.verificationData, isNotNull);
         expect(details.verificationData.source, kIAPSource);
-        expect(
-          details.verificationData.localVerificationData,
-          dummyPurchase.originalJson,
-        );
-        expect(
-          details.verificationData.serverVerificationData,
-          dummyPurchase.purchaseToken,
-        );
+        expect(details.verificationData.localVerificationData, dummyPurchase.originalJson);
+        expect(details.verificationData.serverVerificationData, dummyPurchase.purchaseToken);
         expect(details.billingClientPurchase, dummyUnacknowledgedPurchase);
         expect(details.pendingCompletePurchase, true);
       },

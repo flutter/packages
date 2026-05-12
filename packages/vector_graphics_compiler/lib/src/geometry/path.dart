@@ -205,13 +205,7 @@ class CubicToCommand extends PathCommand {
   /// The returned list describes two cubics, where elements `0, 1, 2, 3` are
   /// the start, cp1, cp2, and end points of the first cubic and `3, 4, 5, 6`
   /// are the start, cp1, cp2, and end points of the second cubic.
-  static List<Point> subdivide(
-    Point start,
-    Point control1,
-    Point control2,
-    Point end,
-    double t,
-  ) {
+  static List<Point> subdivide(Point start, Point control1, Point control2, Point end, double t) {
     final Point ab = Point.lerp(start, control1, t);
     final Point bc = Point.lerp(control1, control2, t);
     final Point cd = Point.lerp(control2, end, t);
@@ -236,20 +230,8 @@ class CubicToCommand extends PathCommand {
       if (Point.distance(cp1, Point.lerp(p1, p2, 1 / 3)) > tolerance ||
           Point.distance(cp2, Point.lerp(p1, p2, 2 / 3)) > tolerance) {
         final List<Point> points = subdivide(p1, cp1, cp2, p2, .5);
-        distance = compute(
-          points[0],
-          points[1],
-          points[2],
-          points[3],
-          distance,
-        );
-        distance = compute(
-          points[3],
-          points[4],
-          points[5],
-          points[6],
-          distance,
-        );
+        distance = compute(points[0], points[1], points[2], points[3], distance);
+        distance = compute(points[3], points[4], points[5], points[6], distance);
       } else {
         // It's collinear enough to just treat as a line.
         distance += Point.distance(p1, p2);
@@ -319,8 +301,7 @@ class PathBuilder implements PathProxy {
   /// Creates a new path builder for paths of the specified fill type.
   ///
   /// By default, will create non-zero filled paths.
-  PathBuilder([PathFillType? fillType])
-    : fillType = fillType ?? PathFillType.nonZero;
+  PathBuilder([PathFillType? fillType]) : fillType = fillType ?? PathFillType.nonZero;
 
   /// Creates a new mutable path builder object from an existing [Path].
   PathBuilder.fromPath(Path path) {
@@ -337,14 +318,7 @@ class PathBuilder implements PathProxy {
   }
 
   @override
-  PathBuilder cubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+  PathBuilder cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
     _commands.add(CubicToCommand(x1, y1, x2, y2, x3, y3));
     return this;
   }
@@ -370,14 +344,8 @@ class PathBuilder implements PathProxy {
   /// Adds an oval command to new path.
   PathBuilder addOval(Rect oval) {
     final r = Point(oval.width * 0.5, oval.height * 0.5);
-    final c = Point(
-      oval.left + (oval.width * 0.5),
-      oval.top + (oval.height * 0.5),
-    );
-    final m = Point(
-      _kArcApproximationMagic * r.x,
-      _kArcApproximationMagic * r.y,
-    );
+    final c = Point(oval.left + (oval.width * 0.5), oval.top + (oval.height * 0.5));
+    final m = Point(_kArcApproximationMagic * r.x, _kArcApproximationMagic * r.y);
 
     moveTo(c.x, c.y - r.y);
 
@@ -496,10 +464,7 @@ class PathBuilder implements PathProxy {
 @immutable
 class Path {
   /// Creates a new immutable collection of [PathCommand]s.
-  Path({
-    List<PathCommand> commands = const <PathCommand>[],
-    this.fillType = PathFillType.nonZero,
-  }) {
+  Path({List<PathCommand> commands = const <PathCommand>[], this.fillType = PathFillType.nonZero}) {
     _commands.addAll(commands);
   }
 
@@ -536,9 +501,7 @@ class Path {
 
   @override
   bool operator ==(Object other) {
-    return other is Path &&
-        listEquals(_commands, other._commands) &&
-        other.fillType == fillType;
+    return other is Path && listEquals(_commands, other._commands) && other.fillType == fillType;
   }
 
   /// Creates a dashed version of this path.
@@ -715,9 +678,7 @@ class _PathDasher {
       );
       currentPoint = dividedPoints[3];
       if (draw) {
-        _dashedCommands.add(
-          CubicToCommand._fromIterablePoints(dividedPoints.skip(1).take(3)),
-        );
+        _dashedCommands.add(CubicToCommand._fromIterablePoints(dividedPoints.skip(1).take(3)));
       } else {
         _dashedCommands.add(MoveToCommand(currentPoint.x, currentPoint.y));
       }

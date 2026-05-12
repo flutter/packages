@@ -17,8 +17,7 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   List<int> createdIds = <int>[];
 
   /// A map of creation IDs to fake map instances.
-  Map<int, PlatformMapStateRecorder> mapInstances =
-      <int, PlatformMapStateRecorder>{};
+  Map<int, PlatformMapStateRecorder> mapInstances = <int, PlatformMapStateRecorder>{};
 
   PlatformMapStateRecorder get lastCreatedMap => mapInstances[createdIds.last]!;
 
@@ -41,46 +40,31 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<void> init(int mapId) async {}
 
   @override
-  Future<void> updateMapConfiguration(
-    MapConfiguration update, {
-    required int mapId,
-  }) async {
+  Future<void> updateMapConfiguration(MapConfiguration update, {required int mapId}) async {
     mapInstances[mapId]?.mapConfiguration = update;
     await _fakeDelay();
   }
 
   @override
-  Future<void> updateMarkers(
-    MarkerUpdates markerUpdates, {
-    required int mapId,
-  }) async {
+  Future<void> updateMarkers(MarkerUpdates markerUpdates, {required int mapId}) async {
     mapInstances[mapId]?.markerUpdates.add(markerUpdates);
     await _fakeDelay();
   }
 
   @override
-  Future<void> updatePolygons(
-    PolygonUpdates polygonUpdates, {
-    required int mapId,
-  }) async {
+  Future<void> updatePolygons(PolygonUpdates polygonUpdates, {required int mapId}) async {
     mapInstances[mapId]?.polygonUpdates.add(polygonUpdates);
     await _fakeDelay();
   }
 
   @override
-  Future<void> updatePolylines(
-    PolylineUpdates polylineUpdates, {
-    required int mapId,
-  }) async {
+  Future<void> updatePolylines(PolylineUpdates polylineUpdates, {required int mapId}) async {
     mapInstances[mapId]?.polylineUpdates.add(polylineUpdates);
     await _fakeDelay();
   }
 
   @override
-  Future<void> updateCircles(
-    CircleUpdates circleUpdates, {
-    required int mapId,
-  }) async {
+  Future<void> updateCircles(CircleUpdates circleUpdates, {required int mapId}) async {
     mapInstances[mapId]?.circleUpdates.add(circleUpdates);
     await _fakeDelay();
   }
@@ -113,16 +97,10 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Future<void> clearTileCache(
-    TileOverlayId tileOverlayId, {
-    required int mapId,
-  }) async {}
+  Future<void> clearTileCache(TileOverlayId tileOverlayId, {required int mapId}) async {}
 
   @override
-  Future<void> animateCamera(
-    CameraUpdate cameraUpdate, {
-    required int mapId,
-  }) async {}
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {required int mapId}) async {}
 
   @override
   Future<void> animateCameraWithConfiguration(
@@ -132,55 +110,34 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }) async {}
 
   @override
-  Future<void> moveCamera(
-    CameraUpdate cameraUpdate, {
-    required int mapId,
-  }) async {}
+  Future<void> moveCamera(CameraUpdate cameraUpdate, {required int mapId}) async {}
 
   @override
   Future<void> setMapStyle(String? mapStyle, {required int mapId}) async {}
 
   @override
   Future<LatLngBounds> getVisibleRegion({required int mapId}) async {
-    return LatLngBounds(
-      southwest: const LatLng(0, 0),
-      northeast: const LatLng(0, 0),
-    );
+    return LatLngBounds(southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
   }
 
   @override
-  Future<ScreenCoordinate> getScreenCoordinate(
-    LatLng latLng, {
-    required int mapId,
-  }) async {
+  Future<ScreenCoordinate> getScreenCoordinate(LatLng latLng, {required int mapId}) async {
     return const ScreenCoordinate(x: 0, y: 0);
   }
 
   @override
-  Future<LatLng> getLatLng(
-    ScreenCoordinate screenCoordinate, {
-    required int mapId,
-  }) async {
+  Future<LatLng> getLatLng(ScreenCoordinate screenCoordinate, {required int mapId}) async {
     return const LatLng(0, 0);
   }
 
   @override
-  Future<void> showMarkerInfoWindow(
-    MarkerId markerId, {
-    required int mapId,
-  }) async {}
+  Future<void> showMarkerInfoWindow(MarkerId markerId, {required int mapId}) async {}
 
   @override
-  Future<void> hideMarkerInfoWindow(
-    MarkerId markerId, {
-    required int mapId,
-  }) async {}
+  Future<void> hideMarkerInfoWindow(MarkerId markerId, {required int mapId}) async {}
 
   @override
-  Future<bool> isMarkerInfoWindowShown(
-    MarkerId markerId, {
-    required int mapId,
-  }) async {
+  Future<bool> isMarkerInfoWindowShown(MarkerId markerId, {required int mapId}) async {
     return false;
   }
 
@@ -312,24 +269,14 @@ class PlatformMapStateRecorder {
     this.mapConfiguration = const MapConfiguration(),
   }) {
     clusterManagerUpdates.add(
-      ClusterManagerUpdates.from(
-        const <ClusterManager>{},
-        mapObjects.clusterManagers,
-      ),
+      ClusterManagerUpdates.from(const <ClusterManager>{}, mapObjects.clusterManagers),
     );
     groundOverlayUpdates.add(
-      GroundOverlayUpdates.from(
-        const <GroundOverlay>{},
-        mapObjects.groundOverlays,
-      ),
+      GroundOverlayUpdates.from(const <GroundOverlay>{}, mapObjects.groundOverlays),
     );
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
-    polygonUpdates.add(
-      PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons),
-    );
-    polylineUpdates.add(
-      PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines),
-    );
+    polygonUpdates.add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
+    polylineUpdates.add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
     circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
     tileOverlaySets.add(mapObjects.tileOverlays);
   }
@@ -343,8 +290,6 @@ class PlatformMapStateRecorder {
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
-  final List<ClusterManagerUpdates> clusterManagerUpdates =
-      <ClusterManagerUpdates>[];
-  final List<GroundOverlayUpdates> groundOverlayUpdates =
-      <GroundOverlayUpdates>[];
+  final List<ClusterManagerUpdates> clusterManagerUpdates = <ClusterManagerUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates = <GroundOverlayUpdates>[];
 }

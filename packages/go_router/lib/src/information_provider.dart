@@ -44,16 +44,9 @@ enum NavigatingType {
 class RouteInformationState<T> {
   /// Creates an InternalRouteInformationState.
   @visibleForTesting
-  RouteInformationState({
-    this.extra,
-    this.completer,
-    this.baseRouteMatchList,
-    required this.type,
-  }) : assert(
-         (type == NavigatingType.go || type == NavigatingType.restore) ==
-             (completer == null),
-       ),
-       assert((type != NavigatingType.go) == (baseRouteMatchList != null));
+  RouteInformationState({this.extra, this.completer, this.baseRouteMatchList, required this.type})
+    : assert((type == NavigatingType.go || type == NavigatingType.restore) == (completer == null)),
+      assert((type != NavigatingType.go) == (baseRouteMatchList != null));
 
   /// The extra object used when navigating with [GoRouter].
   final Object? extra;
@@ -78,14 +71,12 @@ class RouteInformationState<T> {
       RouteInformationState<void>(extra: extra, type: NavigatingType.go);
 
   /// Factory constructor for 'restore' navigation type.
-  static RouteInformationState<void> restore({
-    required RouteMatchList base,
-    Object? extra,
-  }) => RouteInformationState<void>(
-    extra: extra ?? base.extra,
-    baseRouteMatchList: base,
-    type: NavigatingType.restore,
-  );
+  static RouteInformationState<void> restore({required RouteMatchList base, Object? extra}) =>
+      RouteInformationState<void>(
+        extra: extra ?? base.extra,
+        baseRouteMatchList: base,
+        type: NavigatingType.restore,
+      );
 }
 
 /// The [RouteInformationProvider] created by go_router.
@@ -100,10 +91,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }) : _refreshListenable = refreshListenable,
        _value = RouteInformation(
          uri: Uri.parse(initialLocation),
-         state: RouteInformationState<void>(
-           extra: initialExtra,
-           type: NavigatingType.go,
-         ),
+         state: RouteInformationState<void>(extra: initialExtra, type: NavigatingType.go),
        ),
        _valueInEngine = _kEmptyRouteInformation,
        _routerNeglect = routerNeglect {
@@ -115,9 +103,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   final bool _routerNeglect;
 
   static WidgetsBinding get _binding => WidgetsBinding.instance;
-  static final RouteInformation _kEmptyRouteInformation = RouteInformation(
-    uri: Uri.parse(''),
-  );
+  static final RouteInformation _kEmptyRouteInformation = RouteInformation(uri: Uri.parse(''));
 
   @override
   void routerReportsNewRouteInformation(
@@ -168,10 +154,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       uri = concatenateUris(_value.uri, uri);
     }
 
-    final bool shouldNotify = _valueHasChanged(
-      newLocationUri: uri,
-      newState: state,
-    );
+    final bool shouldNotify = _valueHasChanged(newLocationUri: uri, newState: state);
     _value = RouteInformation(uri: uri, state: state);
     if (shouldNotify) {
       notifyListeners();
@@ -179,11 +162,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   /// Pushes the `location` as a new route on top of `base`.
-  Future<T?> push<T>(
-    String location, {
-    required RouteMatchList base,
-    Object? extra,
-  }) {
+  Future<T?> push<T>(String location, {required RouteMatchList base, Object? extra}) {
     final completer = Completer<T?>();
     _setValue(
       location,
@@ -199,10 +178,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   /// Replace the current route matches with the `location`.
   void go(String location, {Object? extra}) {
-    _setValue(
-      location,
-      RouteInformationState<void>(extra: extra, type: NavigatingType.go),
-    );
+    _setValue(location, RouteInformationState<void>(extra: extra, type: NavigatingType.go));
   }
 
   /// Restores the current route matches with the `matchList`.
@@ -219,11 +195,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   /// Removes the top-most route match from `base` and pushes the `location` as a
   /// new route on top.
-  Future<T?> pushReplacement<T>(
-    String location, {
-    required RouteMatchList base,
-    Object? extra,
-  }) {
+  Future<T?> pushReplacement<T>(String location, {required RouteMatchList base, Object? extra}) {
     final completer = Completer<T?>();
     _setValue(
       location,
@@ -238,11 +210,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   /// Replaces the top-most route match from `base` with the `location`.
-  Future<T?> replace<T>(
-    String location, {
-    required RouteMatchList base,
-    Object? extra,
-  }) {
+  Future<T?> replace<T>(String location, {required RouteMatchList base, Object? extra}) {
     final completer = Completer<T?>();
     _setValue(
       location,
@@ -265,32 +233,20 @@ class GoRouteInformationProvider extends RouteInformationProvider
     if (routeInformation.state != null) {
       _value = _valueInEngine = routeInformation;
     } else {
-      _value = RouteInformation(
-        uri: routeInformation.uri,
-        state: RouteInformationState.go(),
-      );
+      _value = RouteInformation(uri: routeInformation.uri, state: RouteInformationState.go());
       _valueInEngine = _kEmptyRouteInformation;
     }
     notifyListeners();
   }
 
-  bool _valueHasChanged({
-    required Uri newLocationUri,
-    required Object? newState,
-  }) {
+  bool _valueHasChanged({required Uri newLocationUri, required Object? newState}) {
     const deepCollectionEquality = DeepCollectionEquality();
-    return !deepCollectionEquality.equals(
-          _value.uri.path,
-          newLocationUri.path,
-        ) ||
+    return !deepCollectionEquality.equals(_value.uri.path, newLocationUri.path) ||
         !deepCollectionEquality.equals(
           _value.uri.queryParameters,
           newLocationUri.queryParameters,
         ) ||
-        !deepCollectionEquality.equals(
-          _value.uri.fragment,
-          newLocationUri.fragment,
-        ) ||
+        !deepCollectionEquality.equals(_value.uri.fragment, newLocationUri.fragment) ||
         !deepCollectionEquality.equals(_value.state, newState);
   }
 

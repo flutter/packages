@@ -53,45 +53,24 @@ final Uri _kotlinFormatterUrl = Uri.https(
 /// A command to format all package code.
 class FormatCommand extends PackageLoopingCommand {
   /// Creates an instance of the format command.
-  FormatCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.platform,
-    super.gitDir,
-  }) {
+  FormatCommand(super.packagesDir, {super.processRunner, super.platform, super.gitDir}) {
     argParser.addFlag(_failonChangeArg, hide: true);
     argParser.addFlag(_dartArg, help: 'Format Dart files', defaultsTo: true);
-    argParser.addFlag(
-      _clangFormatArg,
-      help: 'Format with "clang-format"',
-      defaultsTo: true,
-    );
-    argParser.addFlag(
-      _kotlinArg,
-      help: 'Format Kotlin files',
-      defaultsTo: true,
-    );
+    argParser.addFlag(_clangFormatArg, help: 'Format with "clang-format"', defaultsTo: true);
+    argParser.addFlag(_kotlinArg, help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
     // Currently swift-format is run via xcrun, so only works on macOS. If that
     // ever becomes an issue, the ability to find it in the path and/or allow
     // providing a path could be restored, to allow developers on Linux or
     // Windows to build swift-format from source and use that. See
     // https://github.com/flutter/packages/pull/9460.
-    argParser.addFlag(
-      _swiftArg,
-      help: 'Format and lint Swift files',
-      defaultsTo: platform.isMacOS,
-    );
+    argParser.addFlag(_swiftArg, help: 'Format and lint Swift files', defaultsTo: platform.isMacOS);
     argParser.addOption(
       _clangFormatPathArg,
       defaultsTo: 'clang-format',
       help: 'Path to "clang-format" executable.',
     );
-    argParser.addOption(
-      _javaPathArg,
-      defaultsTo: 'java',
-      help: 'Path to "java" executable.',
-    );
+    argParser.addOption(_javaPathArg, defaultsTo: 'java', help: 'Path to "java" executable.');
   }
 
   static const String _dartArg = 'dart';
@@ -125,10 +104,7 @@ class FormatCommand extends PackageLoopingCommand {
     // Dart has to be run per-package because the formatter can have different
     // behavior based on the package's SDK, which can't be determined if the
     // formatter isn't running in the context of the package.
-    final Iterable<String> files = await _getFilteredFilePaths(
-      getFiles(),
-      relativeTo: packagesDir,
-    );
+    final Iterable<String> files = await _getFilteredFilePaths(getFiles(), relativeTo: packagesDir);
     if (getBoolArg(_javaArg)) {
       await _formatJava(files, javaFormatterPath);
     }
@@ -176,12 +152,7 @@ class FormatCommand extends PackageLoopingCommand {
   Future<bool> _didModifyAnything() async {
     final io.ProcessResult modifiedFiles = await processRunner.run(
       'git',
-      <String>[
-        'ls-files',
-        '--modified',
-        packagesDir.path,
-        thirdPartyPackagesDir.path,
-      ],
+      <String>['ls-files', '--modified', packagesDir.path, thirdPartyPackagesDir.path],
       workingDir: packagesDir.parent,
       logOnError: true,
     );
@@ -240,18 +211,14 @@ class FormatCommand extends PackageLoopingCommand {
         '--style=file',
       ], files: clangFiles);
       if (exitCode != 0) {
-        printError(
-          'Failed to format C, C++, and Objective-C files: exit code $exitCode.',
-        );
+        printError('Failed to format C, C++, and Objective-C files: exit code $exitCode.');
         throw ToolExit(_exitClangFormatFailed);
       }
     }
   }
 
   Future<void> _formatAndLintSwift(Iterable<String> files) async {
-    final Iterable<String> swiftFiles = _getPathsWithExtensions(files, <String>{
-      '.swift',
-    });
+    final Iterable<String> swiftFiles = _getPathsWithExtensions(files, <String>{'.swift'});
     if (swiftFiles.isNotEmpty) {
       print('Formatting .swift files...');
       final int formatExitCode = await _runBatched('xcrun', <String>[
@@ -303,9 +270,7 @@ class FormatCommand extends PackageLoopingCommand {
   }
 
   Future<void> _formatJava(Iterable<String> files, String formatterPath) async {
-    final Iterable<String> javaFiles = _getPathsWithExtensions(files, <String>{
-      '.java',
-    });
+    final Iterable<String> javaFiles = _getPathsWithExtensions(files, <String>{'.java'});
     if (javaFiles.isNotEmpty) {
       final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
@@ -329,14 +294,8 @@ class FormatCommand extends PackageLoopingCommand {
     }
   }
 
-  Future<void> _formatKotlin(
-    Iterable<String> files,
-    String formatterPath,
-  ) async {
-    final Iterable<String> kotlinFiles = _getPathsWithExtensions(
-      files,
-      <String>{'.kt'},
-    );
+  Future<void> _formatKotlin(Iterable<String> files, String formatterPath) async {
+    final Iterable<String> kotlinFiles = _getPathsWithExtensions(files, <String>{'.kt'});
     if (kotlinFiles.isNotEmpty) {
       final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
@@ -368,9 +327,7 @@ class FormatCommand extends PackageLoopingCommand {
     Iterable<String> files, {
     Directory? workingDir,
   }) async {
-    final Iterable<String> dartFiles = _getPathsWithExtensions(files, <String>{
-      '.dart',
-    });
+    final Iterable<String> dartFiles = _getPathsWithExtensions(files, <String>{'.dart'});
     if (dartFiles.isNotEmpty) {
       final packagesToGet = <RepositoryPackage>[
         package,
@@ -448,28 +405,19 @@ class FormatCommand extends PackageLoopingCommand {
           (String path) =>
               // Ignore files in build/ directories (e.g., headers of frameworks)
               // to avoid useless extra work in local repositories.
-              !path.contains(
-                pathFragmentForDirectories(<String>['example', 'build']),
-              ) &&
+              !path.contains(pathFragmentForDirectories(<String>['example', 'build'])) &&
               // Ignore files in Pods, which are not part of the repository.
               !path.contains(pathFragmentForDirectories(<String>['Pods'])) &&
               // See https://github.com/flutter/flutter/issues/144039
               !path.endsWith('GeneratedPluginRegistrant.swift') &&
               // Ignore .dart_tool/, which can have various intermediate files.
-              !path.contains(
-                pathFragmentForDirectories(<String>['.dart_tool']),
-              ),
+              !path.contains(pathFragmentForDirectories(<String>['.dart_tool'])),
         )
         .toList();
   }
 
-  Iterable<String> _getPathsWithExtensions(
-    Iterable<String> files,
-    Set<String> extensions,
-  ) {
-    return files.where(
-      (String filePath) => extensions.contains(path.extension(filePath)),
-    );
+  Iterable<String> _getPathsWithExtensions(Iterable<String> files, Set<String> extensions) {
+    return files.where((String filePath) => extensions.contains(path.extension(filePath)));
   }
 
   Future<String> _getJavaFormatterPath() async {
@@ -477,9 +425,7 @@ class FormatCommand extends PackageLoopingCommand {
       path.dirname(path.fromUri(platform.script)),
       'google-java-format-1.28.0-all-deps.jar',
     );
-    final File javaFormatterFile = packagesDir.fileSystem.file(
-      javaFormatterPath,
-    );
+    final File javaFormatterFile = packagesDir.fileSystem.file(javaFormatterPath);
 
     if (!javaFormatterFile.existsSync()) {
       print('Downloading Google Java Format...');
@@ -495,9 +441,7 @@ class FormatCommand extends PackageLoopingCommand {
       path.dirname(path.fromUri(platform.script)),
       'ktfmt-0.46-jar-with-dependencies.jar',
     );
-    final File kotlinFormatterFile = packagesDir.fileSystem.file(
-      kotlinFormatterPath,
-    );
+    final File kotlinFormatterFile = packagesDir.fileSystem.file(kotlinFormatterPath);
 
     if (!kotlinFormatterFile.existsSync()) {
       print('Downloading ktfmt...');
@@ -514,9 +458,7 @@ class FormatCommand extends PackageLoopingCommand {
     // accept -version.
     final versionFlag = command == 'java' ? '-version' : '--version';
     try {
-      final io.ProcessResult result = await processRunner.run(command, <String>[
-        versionFlag,
-      ]);
+      final io.ProcessResult result = await processRunner.run(command, <String>[versionFlag]);
       if (result.exitCode != 0) {
         return false;
       }
@@ -530,10 +472,7 @@ class FormatCommand extends PackageLoopingCommand {
   /// Returns all instances of [command] executable found on user path.
   Future<List<String>> _whichAll(String command) async {
     try {
-      final io.ProcessResult result = await processRunner.run('which', <String>[
-        '-a',
-        command,
-      ]);
+      final io.ProcessResult result = await processRunner.run('which', <String>['-a', command]);
 
       if (result.exitCode != 0) {
         return <String>[];
@@ -570,8 +509,7 @@ class FormatCommand extends PackageLoopingCommand {
       0,
       (int sum, String arg) => sum + arg.length + 1,
     );
-    final int batchMaxTotalLength =
-        commandLineMax - command.length - argumentTotalLength;
+    final int batchMaxTotalLength = commandLineMax - command.length - argumentTotalLength;
 
     // Run the command in batches.
     final List<List<String>> batches = _partitionFileList(
@@ -594,10 +532,7 @@ class FormatCommand extends PackageLoopingCommand {
   /// Partitions [files] into batches whose max string length as parameters to
   /// a command (including the spaces between them, and between the list and
   /// the command itself) is no longer than [maxStringLength].
-  List<List<String>> _partitionFileList(
-    Iterable<String> files, {
-    required int maxStringLength,
-  }) {
+  List<List<String>> _partitionFileList(Iterable<String> files, {required int maxStringLength}) {
     final batches = <List<String>>[<String>[]];
     var currentBatchTotalLength = 0;
     for (final file in files) {
@@ -626,9 +561,7 @@ class FormatCommand extends PackageLoopingCommand {
     final Pubspec pubspec = package.parsePubspec();
     final VersionConstraint? dartSdkConstraint = pubspec.environment['sdk'];
     if (dartSdkConstraint == null) {
-      printError(
-        '${package.pubspecFile.absolute.path} is missing a Dart SDK constraint',
-      );
+      printError('${package.pubspecFile.absolute.path} is missing a Dart SDK constraint');
       throw ToolExit(_exitDartLanguageVersionIssue);
     }
     final String minDartSdkVersion = switch (dartSdkConstraint) {
@@ -638,21 +571,17 @@ class FormatCommand extends PackageLoopingCommand {
     };
     final String packageName = pubspec.name;
 
-    final configJson =
-        jsonDecode(configFile.readAsStringSync()) as Map<Object, Object?>;
-    final Map<Object, Object?>? packageInfo =
-        (configJson['packages'] as List<Object?>?)
-            ?.cast<Map<Object, Object?>>()
-            .where((Map<Object, Object?> p) => p['name'] == packageName)
-            .firstOrNull;
+    final configJson = jsonDecode(configFile.readAsStringSync()) as Map<Object, Object?>;
+    final Map<Object, Object?>? packageInfo = (configJson['packages'] as List<Object?>?)
+        ?.cast<Map<Object, Object?>>()
+        .where((Map<Object, Object?> p) => p['name'] == packageName)
+        .firstOrNull;
     final String? resolvedLanguageVersion = packageInfo == null
         ? null
         : packageInfo['languageVersion'] as String?;
     if (resolvedLanguageVersion == null) {
       // This shouldn't ever happen, so log for potential investigation.
-      printWarning(
-        'No language version found for $packageName in ${configFile.absolute.path}',
-      );
+      printWarning('No language version found for $packageName in ${configFile.absolute.path}');
       return false;
     }
     // Check for startsWith rather than equality since the JSON languageVerison

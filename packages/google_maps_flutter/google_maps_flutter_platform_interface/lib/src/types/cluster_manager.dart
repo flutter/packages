@@ -63,8 +63,7 @@ class ClusterManager implements MapsObject<ClusterManager> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ClusterManager &&
-        clusterManagerId == other.clusterManagerId;
+    return other is ClusterManager && clusterManagerId == other.clusterManagerId;
   }
 
   @override

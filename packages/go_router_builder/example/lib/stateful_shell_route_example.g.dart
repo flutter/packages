@@ -16,34 +16,22 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
   factory: $MyShellRouteDataExtension._fromState,
   branches: [
     StatefulShellBranchData.$branch(
-      routes: [
-        GoRouteData.$route(
-          path: '/detailsA',
-          factory: $DetailsARouteData._fromState,
-        ),
-      ],
+      routes: [GoRouteData.$route(path: '/detailsA', factory: $DetailsARouteData._fromState)],
     ),
     StatefulShellBranchData.$branch(
       navigatorKey: BranchBData.$navigatorKey,
       restorationScopeId: BranchBData.$restorationScopeId,
-      routes: [
-        GoRouteData.$route(
-          path: '/detailsB',
-          factory: $DetailsBRouteData._fromState,
-        ),
-      ],
+      routes: [GoRouteData.$route(path: '/detailsB', factory: $DetailsBRouteData._fromState)],
     ),
   ],
 );
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
-  static MyShellRouteData _fromState(GoRouterState state) =>
-      const MyShellRouteData();
+  static MyShellRouteData _fromState(GoRouterState state) => const MyShellRouteData();
 }
 
 mixin $DetailsARouteData on GoRouteData {
-  static DetailsARouteData _fromState(GoRouterState state) =>
-      const DetailsARouteData();
+  static DetailsARouteData _fromState(GoRouterState state) => const DetailsARouteData();
 
   @override
   String get location => GoRouteData.$location('/detailsA');
@@ -55,16 +43,14 @@ mixin $DetailsARouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin $DetailsBRouteData on GoRouteData {
-  static DetailsBRouteData _fromState(GoRouterState state) =>
-      const DetailsBRouteData();
+  static DetailsBRouteData _fromState(GoRouterState state) => const DetailsBRouteData();
 
   @override
   String get location => GoRouteData.$location('/detailsB');
@@ -76,8 +62,7 @@ mixin $DetailsBRouteData on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

@@ -136,10 +136,8 @@ final List<Family> familyData = <Family>[
 Family familyById(String fid) => familyData.family(fid);
 
 extension on List<Family> {
-  Family family(String fid) => singleWhere(
-    (Family f) => f.id == fid,
-    orElse: () => throw Exception('unknown family $fid'),
-  );
+  Family family(String fid) =>
+      singleWhere((Family f) => f.id == fid, orElse: () => throw Exception('unknown family $fid'));
 }
 
 class LoginInfo extends ChangeNotifier {
@@ -179,8 +177,7 @@ class Repository {
     return familyData;
   }
 
-  Future<Family> getFamily(String fid) async =>
-      (await getFamilies()).family(fid);
+  Future<Family> getFamily(String fid) async => (await getFamilies()).family(fid);
 
   Future<FamilyPerson> getPerson(String fid, int pid) async {
     final Family family = await getFamily(fid);

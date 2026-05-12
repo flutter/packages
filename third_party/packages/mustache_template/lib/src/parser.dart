@@ -6,12 +6,7 @@ import 'scanner.dart';
 import 'template_exception.dart';
 import 'token.dart';
 
-List<Node> parse(
-  String source,
-  bool lenient,
-  String? templateName,
-  String delimiters,
-) {
+List<Node> parse(String source, bool lenient, String? templateName, String delimiters) {
   final parser = Parser(source, templateName, delimiters, lenient: lenient);
   return parser.parse();
 }
@@ -40,16 +35,12 @@ class TagType {
 }
 
 class Parser {
-  Parser(
-    String source,
-    String? templateName,
-    String delimiters, {
-    bool lenient = false,
-  }) : _source = source,
-       _templateName = templateName,
-       _delimiters = delimiters,
-       _lenient = lenient,
-       _scanner = Scanner(source, templateName, delimiters);
+  Parser(String source, String? templateName, String delimiters, {bool lenient = false})
+    : _source = source,
+      _templateName = templateName,
+      _delimiters = delimiters,
+      _lenient = lenient,
+      _scanner = Scanner(source, templateName, delimiters);
 
   final String _source;
   final bool _lenient;
@@ -146,8 +137,7 @@ class Parser {
     return token != null && token.type == type ? _read() : null;
   }
 
-  TemplateException _errorEof() =>
-      _error('Unexpected end of input.', _source.length - 1);
+  TemplateException _errorEof() => _error('Unexpected end of input.', _source.length - 1);
 
   TemplateException _error(String msg, int offset) =>
       TemplateException(msg, _templateName, _source, offset);
@@ -237,19 +227,11 @@ class Parser {
     // standalone line.
     while (_peek() != null) {
       _readIf(TokenType.lineEnd, eofOk: true);
-      final Token? precedingWhitespace = _readIf(
-        TokenType.whitespace,
-        eofOk: true,
-      );
-      final String indent = precedingWhitespace == null
-          ? ''
-          : precedingWhitespace.value;
+      final Token? precedingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
+      final String indent = precedingWhitespace == null ? '' : precedingWhitespace.value;
       final Tag? tag = _readTag();
       final Node? tagNode = _createNodeFromTag(tag, partialIndent: indent);
-      final Token? followingWhitespace = _readIf(
-        TokenType.whitespace,
-        eofOk: true,
-      );
+      final Token? followingWhitespace = _readIf(TokenType.whitespace, eofOk: true);
 
       const standaloneTypes = <TagType>[
         TagType.openSection,
@@ -299,9 +281,7 @@ class Parser {
   // If EOF or any another token then return null.
   Tag? _readTag() {
     final Token? t = _peek();
-    if (t == null ||
-        (t.type != TokenType.changeDelimiter &&
-            t.type != TokenType.openDelimiter)) {
+    if (t == null || (t.type != TokenType.changeDelimiter && t.type != TokenType.openDelimiter)) {
       return null;
     } else if (t.type == TokenType.changeDelimiter) {
       _read();
@@ -338,11 +318,7 @@ class Parser {
     // TODOsplit up names here instead of during render.
     // Also check that they are valid token types.
     final list = <Token>[];
-    for (
-      Token? t = _peek();
-      t != null && t.type != TokenType.closeDelimiter;
-      t = _peek()
-    ) {
+    for (Token? t = _peek(); t != null && t.type != TokenType.closeDelimiter; t = _peek()) {
       _read();
       list.add(t);
     }
@@ -387,13 +363,7 @@ class Parser {
       case TagType.openSection:
       case TagType.openInverseSection:
         final inverse = tag.type == TagType.openInverseSection;
-        node = SectionNode(
-          tag.name,
-          tag.start,
-          tag.end,
-          _currentDelimiters,
-          inverse: inverse,
-        );
+        node = SectionNode(tag.name, tag.start, tag.end, _currentDelimiters, inverse: inverse);
 
       case TagType.variable:
       case TagType.unescapedVariable:

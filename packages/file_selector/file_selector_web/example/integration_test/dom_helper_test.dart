@@ -41,8 +41,7 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input = (document.createElement('input') as HTMLInputElement)
-        ..type = 'file';
+      input = (document.createElement('input') as HTMLInputElement)..type = 'file';
     });
 
     group('getFiles', () {
@@ -50,9 +49,7 @@ void main() {
       final mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
 
       testWidgets('works', (_) async {
-        final Future<List<XFile>> futureFiles = domHelper.getFiles(
-          input: input,
-        );
+        final Future<List<XFile>> futureFiles = domHelper.getFiles(input: input);
 
         setFilesAndTriggerChange(<File>[mockFile1, mockFile2]);
 
@@ -72,9 +69,7 @@ void main() {
       });
 
       testWidgets('"cancel" returns an empty selection', (_) async {
-        final Future<List<XFile>> futureFiles = domHelper.getFiles(
-          input: input,
-        );
+        final Future<List<XFile>> futureFiles = domHelper.getFiles(input: input);
 
         setFilesAndTriggerCancel(<File>[mockFile1, mockFile2]);
 
@@ -117,18 +112,13 @@ void main() {
           input: input,
         );
 
-        expect(
-          input.isConnected,
-          true,
-          reason: 'input must be injected into the DOM',
-        );
+        expect(input.isConnected, true, reason: 'input must be injected into the DOM');
         expect(input.accept, accept);
         expect(input.multiple, multiple);
         expect(
           await wasClicked,
           true,
-          reason:
-              'The <input /> should be clicked otherwise no dialog will be shown',
+          reason: 'The <input /> should be clicked otherwise no dialog will be shown',
         );
 
         setFilesAndTriggerChange(<File>[]);

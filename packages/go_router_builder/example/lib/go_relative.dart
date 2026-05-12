@@ -24,21 +24,15 @@ class MyApp extends StatelessWidget {
 
 /// The route configuration.
 final GoRouter _router = GoRouter(routes: $appRoutes);
-const TypedRelativeGoRoute<DetailsRoute> detailRoute =
-    TypedRelativeGoRoute<DetailsRoute>(
-      path: 'details/:detailId',
-      routes: <TypedRoute<RouteData>>[
-        TypedRelativeGoRoute<SettingsRoute>(path: 'settings/:settingId'),
-      ],
-    );
+const TypedRelativeGoRoute<DetailsRoute> detailRoute = TypedRelativeGoRoute<DetailsRoute>(
+  path: 'details/:detailId',
+  routes: <TypedRoute<RouteData>>[TypedRelativeGoRoute<SettingsRoute>(path: 'settings/:settingId')],
+);
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedRoute<RouteData>>[
-    TypedGoRoute<DashboardRoute>(
-      path: '/dashboard',
-      routes: <TypedRoute<RouteData>>[detailRoute],
-    ),
+    TypedGoRoute<DashboardRoute>(path: '/dashboard', routes: <TypedRoute<RouteData>>[detailRoute]),
     detailRoute,
   ],
 )
@@ -123,10 +117,7 @@ class DashboardScreen extends StatelessWidget {
             },
             child: const Text('Go to the Details screen'),
           ),
-          ElevatedButton(
-            onPressed: () => context.pop(),
-            child: const Text('Go back'),
-          ),
+          ElevatedButton(onPressed: () => context.pop(), child: const Text('Go back')),
         ],
       ),
     );
@@ -147,14 +138,9 @@ class DetailsScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: <Widget>[
+            ElevatedButton(onPressed: () => context.pop(), child: const Text('Go back')),
             ElevatedButton(
-              onPressed: () => context.pop(),
-              child: const Text('Go back'),
-            ),
-            ElevatedButton(
-              onPressed: () => const SettingsRoute(
-                settingId: 'SettingsId',
-              ).goRelative(context),
+              onPressed: () => const SettingsRoute(settingId: 'SettingsId').goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],
@@ -176,10 +162,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Settings Screen $id')),
       body: Center(
-        child: TextButton(
-          onPressed: () => context.pop(),
-          child: const Text('Go back'),
-        ),
+        child: TextButton(onPressed: () => context.pop(), child: const Text('Go back')),
       ),
     );
   }

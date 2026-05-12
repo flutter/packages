@@ -7,9 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router_builder_example/on_exit_example.dart';
 
 void main() {
-  testWidgets('It should trigger the on exit when leaving the route', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('It should trigger the on exit when leaving the route', (WidgetTester tester) async {
     await tester.pumpWidget(App());
     expect(find.byType(HomeScreen), findsOne);
 
@@ -21,10 +19,7 @@ void main() {
     await tester.tap(find.widgetWithText(ElevatedButton, 'Go back'));
     await tester.pumpAndSettle();
 
-    expect(
-      find.widgetWithText(AlertDialog, 'Are you sure to leave this page?'),
-      findsOne,
-    );
+    expect(find.widgetWithText(AlertDialog, 'Are you sure to leave this page?'), findsOne);
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
 
@@ -34,10 +29,7 @@ void main() {
     await tester.tap(find.widgetWithText(ElevatedButton, 'Go back'));
     await tester.pumpAndSettle();
 
-    expect(
-      find.widgetWithText(AlertDialog, 'Are you sure to leave this page?'),
-      findsOne,
-    );
+    expect(find.widgetWithText(AlertDialog, 'Are you sure to leave this page?'), findsOne);
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
 

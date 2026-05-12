@@ -8,16 +8,10 @@ part of 'extra_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-  $requiredExtraRoute,
-  $optionalExtraRoute,
-  $splashRoute,
-];
+List<RouteBase> get $appRoutes => [$requiredExtraRoute, $optionalExtraRoute, $splashRoute];
 
-RouteBase get $requiredExtraRoute => GoRouteData.$route(
-  path: '/requiredExtra',
-  factory: $RequiredExtraRoute._fromState,
-);
+RouteBase get $requiredExtraRoute =>
+    GoRouteData.$route(path: '/requiredExtra', factory: $RequiredExtraRoute._fromState);
 
 mixin $RequiredExtraRoute on GoRouteData {
   static RequiredExtraRoute _fromState(GoRouterState state) =>
@@ -32,22 +26,18 @@ mixin $RequiredExtraRoute on GoRouteData {
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: _self.$extra);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) =>
-      context.replace(location, extra: _self.$extra);
+  void replace(BuildContext context) => context.replace(location, extra: _self.$extra);
 }
 
-RouteBase get $optionalExtraRoute => GoRouteData.$route(
-  path: '/optionalExtra',
-  factory: $OptionalExtraRoute._fromState,
-);
+RouteBase get $optionalExtraRoute =>
+    GoRouteData.$route(path: '/optionalExtra', factory: $OptionalExtraRoute._fromState);
 
 mixin $OptionalExtraRoute on GoRouteData {
   static OptionalExtraRoute _fromState(GoRouterState state) =>
@@ -62,20 +52,17 @@ mixin $OptionalExtraRoute on GoRouteData {
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: _self.$extra);
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) =>
-      context.replace(location, extra: _self.$extra);
+  void replace(BuildContext context) => context.replace(location, extra: _self.$extra);
 }
 
-RouteBase get $splashRoute =>
-    GoRouteData.$route(path: '/splash', factory: $SplashRoute._fromState);
+RouteBase get $splashRoute => GoRouteData.$route(path: '/splash', factory: $SplashRoute._fromState);
 
 mixin $SplashRoute on GoRouteData {
   static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
@@ -90,8 +77,7 @@ mixin $SplashRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);

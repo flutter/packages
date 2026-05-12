@@ -18,50 +18,23 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       path: 'big-int-route/:requiredBigIntField',
       factory: $BigIntRoute._fromState,
     ),
-    GoRouteData.$route(
-      path: 'bool-route/:requiredBoolField',
-      factory: $BoolRoute._fromState,
-    ),
+    GoRouteData.$route(path: 'bool-route/:requiredBoolField', factory: $BoolRoute._fromState),
     GoRouteData.$route(
       path: 'date-time-route/:requiredDateTimeField',
       factory: $DateTimeRoute._fromState,
     ),
-    GoRouteData.$route(
-      path: 'double-route/:requiredDoubleField',
-      factory: $DoubleRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'int-route/:requiredIntField',
-      factory: $IntRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'num-route/:requiredNumField',
-      factory: $NumRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'double-route/:requiredDoubleField',
-      factory: $DoubleRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'enum-route/:requiredEnumField',
-      factory: $EnumRoute._fromState,
-    ),
+    GoRouteData.$route(path: 'double-route/:requiredDoubleField', factory: $DoubleRoute._fromState),
+    GoRouteData.$route(path: 'int-route/:requiredIntField', factory: $IntRoute._fromState),
+    GoRouteData.$route(path: 'num-route/:requiredNumField', factory: $NumRoute._fromState),
+    GoRouteData.$route(path: 'double-route/:requiredDoubleField', factory: $DoubleRoute._fromState),
+    GoRouteData.$route(path: 'enum-route/:requiredEnumField', factory: $EnumRoute._fromState),
     GoRouteData.$route(
       path: 'enhanced-enum-route/:requiredEnumField',
       factory: $EnhancedEnumRoute._fromState,
     ),
-    GoRouteData.$route(
-      path: 'string-route/:requiredStringField',
-      factory: $StringRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'uri-route/:requiredUriField',
-      factory: $UriRoute._fromState,
-    ),
-    GoRouteData.$route(
-      path: 'iterable-route',
-      factory: $IterableRoute._fromState,
-    ),
+    GoRouteData.$route(path: 'string-route/:requiredStringField', factory: $StringRoute._fromState),
+    GoRouteData.$route(path: 'uri-route/:requiredUriField', factory: $UriRoute._fromState),
+    GoRouteData.$route(path: 'iterable-route', factory: $IterableRoute._fromState),
     GoRouteData.$route(
       path: 'iterable-route-with-default-values',
       factory: $IterableRouteWithDefaultValues._fromState,
@@ -70,8 +43,7 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
 );
 
 mixin $AllTypesBaseRoute on GoRouteData {
-  static AllTypesBaseRoute _fromState(GoRouterState state) =>
-      const AllTypesBaseRoute();
+  static AllTypesBaseRoute _fromState(GoRouterState state) => const AllTypesBaseRoute();
 
   @override
   String get location => GoRouteData.$location('/');
@@ -83,8 +55,7 @@ mixin $AllTypesBaseRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -92,14 +63,8 @@ mixin $AllTypesBaseRoute on GoRouteData {
 
 mixin $BigIntRoute on GoRouteData {
   static BigIntRoute _fromState(GoRouterState state) => BigIntRoute(
-    requiredBigIntField: BigInt.parse(
-      state.pathParameters['requiredBigIntField']!,
-    ),
-    bigIntField: _$convertMapValue(
-      'big-int-field',
-      state.uri.queryParameters,
-      BigInt.tryParse,
-    ),
+    requiredBigIntField: BigInt.parse(state.pathParameters['requiredBigIntField']!),
+    bigIntField: _$convertMapValue('big-int-field', state.uri.queryParameters, BigInt.tryParse),
   );
 
   BigIntRoute get _self => this as BigIntRoute;
@@ -107,10 +72,7 @@ mixin $BigIntRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/big-int-route/${Uri.encodeComponent(_self.requiredBigIntField.toString())}',
-    queryParams: {
-      if (_self.bigIntField != null)
-        'big-int-field': _self.bigIntField!.toString(),
-    },
+    queryParams: {if (_self.bigIntField != null) 'big-int-field': _self.bigIntField!.toString()},
   );
 
   @override
@@ -120,8 +82,7 @@ mixin $BigIntRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -129,14 +90,8 @@ mixin $BigIntRoute on GoRouteData {
 
 mixin $BoolRoute on GoRouteData {
   static BoolRoute _fromState(GoRouterState state) => BoolRoute(
-    requiredBoolField: _$boolConverter(
-      state.pathParameters['requiredBoolField']!,
-    ),
-    boolField: _$convertMapValue(
-      'bool-field',
-      state.uri.queryParameters,
-      _$boolConverter,
-    ),
+    requiredBoolField: _$boolConverter(state.pathParameters['requiredBoolField']!),
+    boolField: _$convertMapValue('bool-field', state.uri.queryParameters, _$boolConverter),
     boolFieldWithDefaultValue:
         _$convertMapValue(
           'bool-field-with-default-value',
@@ -154,8 +109,7 @@ mixin $BoolRoute on GoRouteData {
     queryParams: {
       if (_self.boolField != null) 'bool-field': _self.boolField!.toString(),
       if (_self.boolFieldWithDefaultValue != true)
-        'bool-field-with-default-value': _self.boolFieldWithDefaultValue
-            .toString(),
+        'bool-field-with-default-value': _self.boolFieldWithDefaultValue.toString(),
     },
   );
 
@@ -166,8 +120,7 @@ mixin $BoolRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -175,9 +128,7 @@ mixin $BoolRoute on GoRouteData {
 
 mixin $DateTimeRoute on GoRouteData {
   static DateTimeRoute _fromState(GoRouterState state) => DateTimeRoute(
-    requiredDateTimeField: DateTime.parse(
-      state.pathParameters['requiredDateTimeField']!,
-    ),
+    requiredDateTimeField: DateTime.parse(state.pathParameters['requiredDateTimeField']!),
     dateTimeField: _$convertMapValue(
       'date-time-field',
       state.uri.queryParameters,
@@ -191,8 +142,7 @@ mixin $DateTimeRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/date-time-route/${Uri.encodeComponent(_self.requiredDateTimeField.toString())}',
     queryParams: {
-      if (_self.dateTimeField != null)
-        'date-time-field': _self.dateTimeField!.toString(),
+      if (_self.dateTimeField != null) 'date-time-field': _self.dateTimeField!.toString(),
     },
   );
 
@@ -203,8 +153,7 @@ mixin $DateTimeRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -212,14 +161,8 @@ mixin $DateTimeRoute on GoRouteData {
 
 mixin $DoubleRoute on GoRouteData {
   static DoubleRoute _fromState(GoRouterState state) => DoubleRoute(
-    requiredDoubleField: double.parse(
-      state.pathParameters['requiredDoubleField']!,
-    ),
-    doubleField: _$convertMapValue(
-      'double-field',
-      state.uri.queryParameters,
-      double.tryParse,
-    ),
+    requiredDoubleField: double.parse(state.pathParameters['requiredDoubleField']!),
+    doubleField: _$convertMapValue('double-field', state.uri.queryParameters, double.tryParse),
     doubleFieldWithDefaultValue:
         _$convertMapValue(
           'double-field-with-default-value',
@@ -235,11 +178,9 @@ mixin $DoubleRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/double-route/${Uri.encodeComponent(_self.requiredDoubleField.toString())}',
     queryParams: {
-      if (_self.doubleField != null)
-        'double-field': _self.doubleField!.toString(),
+      if (_self.doubleField != null) 'double-field': _self.doubleField!.toString(),
       if (_self.doubleFieldWithDefaultValue != 1.0)
-        'double-field-with-default-value': _self.doubleFieldWithDefaultValue
-            .toString(),
+        'double-field-with-default-value': _self.doubleFieldWithDefaultValue.toString(),
     },
   );
 
@@ -250,8 +191,7 @@ mixin $DoubleRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -260,17 +200,9 @@ mixin $DoubleRoute on GoRouteData {
 mixin $IntRoute on GoRouteData {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
     requiredIntField: int.parse(state.pathParameters['requiredIntField']!),
-    intField: _$convertMapValue(
-      'int-field',
-      state.uri.queryParameters,
-      int.tryParse,
-    ),
+    intField: _$convertMapValue('int-field', state.uri.queryParameters, int.tryParse),
     intFieldWithDefaultValue:
-        _$convertMapValue(
-          'int-field-with-default-value',
-          state.uri.queryParameters,
-          int.parse,
-        ) ??
+        _$convertMapValue('int-field-with-default-value', state.uri.queryParameters, int.parse) ??
         1,
   );
 
@@ -282,8 +214,7 @@ mixin $IntRoute on GoRouteData {
     queryParams: {
       if (_self.intField != null) 'int-field': _self.intField!.toString(),
       if (_self.intFieldWithDefaultValue != 1)
-        'int-field-with-default-value': _self.intFieldWithDefaultValue
-            .toString(),
+        'int-field-with-default-value': _self.intFieldWithDefaultValue.toString(),
     },
   );
 
@@ -294,8 +225,7 @@ mixin $IntRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -304,17 +234,9 @@ mixin $IntRoute on GoRouteData {
 mixin $NumRoute on GoRouteData {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
     requiredNumField: num.parse(state.pathParameters['requiredNumField']!),
-    numField: _$convertMapValue(
-      'num-field',
-      state.uri.queryParameters,
-      num.tryParse,
-    ),
+    numField: _$convertMapValue('num-field', state.uri.queryParameters, num.tryParse),
     numFieldWithDefaultValue:
-        _$convertMapValue(
-          'num-field-with-default-value',
-          state.uri.queryParameters,
-          num.parse,
-        ) ??
+        _$convertMapValue('num-field-with-default-value', state.uri.queryParameters, num.parse) ??
         1,
   );
 
@@ -326,8 +248,7 @@ mixin $NumRoute on GoRouteData {
     queryParams: {
       if (_self.numField != null) 'num-field': _self.numField!.toString(),
       if (_self.numFieldWithDefaultValue != 1)
-        'num-field-with-default-value': _self.numFieldWithDefaultValue
-            .toString(),
+        'num-field-with-default-value': _self.numFieldWithDefaultValue.toString(),
     },
   );
 
@@ -338,8 +259,7 @@ mixin $NumRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -370,11 +290,9 @@ mixin $EnumRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[_self.requiredEnumField]!)}',
     queryParams: {
-      if (_self.enumField != null)
-        'enum-field': _$PersonDetailsEnumMap[_self.enumField!],
+      if (_self.enumField != null) 'enum-field': _$PersonDetailsEnumMap[_self.enumField!],
       if (_self.enumFieldWithDefaultValue != PersonDetails.favoriteFood)
-        'enum-field-with-default-value':
-            _$PersonDetailsEnumMap[_self.enumFieldWithDefaultValue],
+        'enum-field-with-default-value': _$PersonDetailsEnumMap[_self.enumFieldWithDefaultValue],
     },
   );
 
@@ -385,8 +303,7 @@ mixin $EnumRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -423,11 +340,9 @@ mixin $EnhancedEnumRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[_self.requiredEnumField]!)}',
     queryParams: {
-      if (_self.enumField != null)
-        'enum-field': _$SportDetailsEnumMap[_self.enumField!],
+      if (_self.enumField != null) 'enum-field': _$SportDetailsEnumMap[_self.enumField!],
       if (_self.enumFieldWithDefaultValue != SportDetails.football)
-        'enum-field-with-default-value':
-            _$SportDetailsEnumMap[_self.enumFieldWithDefaultValue],
+        'enum-field-with-default-value': _$SportDetailsEnumMap[_self.enumFieldWithDefaultValue],
     },
   );
 
@@ -438,8 +353,7 @@ mixin $EnhancedEnumRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -457,8 +371,7 @@ mixin $StringRoute on GoRouteData {
     requiredStringField: state.pathParameters['requiredStringField']!,
     stringField: state.uri.queryParameters['string-field'],
     stringFieldWithDefaultValue:
-        state.uri.queryParameters['string-field-with-default-value'] ??
-        'defaultValue',
+        state.uri.queryParameters['string-field-with-default-value'] ?? 'defaultValue',
   );
 
   StringRoute get _self => this as StringRoute;
@@ -480,8 +393,7 @@ mixin $StringRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -490,11 +402,7 @@ mixin $StringRoute on GoRouteData {
 mixin $UriRoute on GoRouteData {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
     requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!),
-    uriField: _$convertMapValue(
-      'uri-field',
-      state.uri.queryParameters,
-      Uri.tryParse,
-    ),
+    uriField: _$convertMapValue('uri-field', state.uri.queryParameters, Uri.tryParse),
   );
 
   UriRoute get _self => this as UriRoute;
@@ -502,9 +410,7 @@ mixin $UriRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/uri-route/${Uri.encodeComponent(_self.requiredUriField.toString())}',
-    queryParams: {
-      if (_self.uriField != null) 'uri-field': _self.uriField!.toString(),
-    },
+    queryParams: {if (_self.uriField != null) 'uri-field': _self.uriField!.toString()},
   );
 
   @override
@@ -514,8 +420,7 @@ mixin $UriRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -529,17 +434,14 @@ mixin $IterableRoute on GoRouteData {
     doubleIterableField: state.uri.queryParametersAll['double-iterable-field']
         ?.map(double.parse)
         .cast<double>(),
-    stringIterableField: state.uri.queryParametersAll['string-iterable-field']
-        ?.map((e) => e),
+    stringIterableField: state.uri.queryParametersAll['string-iterable-field']?.map((e) => e),
     boolIterableField: state.uri.queryParametersAll['bool-iterable-field']
         ?.map(_$boolConverter)
         .cast<bool>(),
     enumIterableField: state.uri.queryParametersAll['enum-iterable-field']
         ?.map(_$SportDetailsEnumMap._$fromName)
         .cast<SportDetails>(),
-    enumOnlyInIterableField: state
-        .uri
-        .queryParametersAll['enum-only-in-iterable-field']
+    enumOnlyInIterableField: state.uri.queryParametersAll['enum-only-in-iterable-field']
         ?.map(_$CookingRecipeEnumMap._$fromName)
         .cast<CookingRecipe>(),
     intListField: state.uri.queryParametersAll['int-list-field']
@@ -550,9 +452,7 @@ mixin $IterableRoute on GoRouteData {
         ?.map(double.parse)
         .cast<double>()
         .toList(),
-    stringListField: state.uri.queryParametersAll['string-list-field']
-        ?.map((e) => e)
-        .toList(),
+    stringListField: state.uri.queryParametersAll['string-list-field']?.map((e) => e).toList(),
     boolListField: state.uri.queryParametersAll['bool-list-field']
         ?.map(_$boolConverter)
         .cast<bool>()
@@ -565,17 +465,12 @@ mixin $IterableRoute on GoRouteData {
         ?.map(_$CookingRecipeEnumMap._$fromName)
         .cast<CookingRecipe>()
         .toList(),
-    intSetField: state.uri.queryParametersAll['int-set-field']
-        ?.map(int.parse)
-        .cast<int>()
-        .toSet(),
+    intSetField: state.uri.queryParametersAll['int-set-field']?.map(int.parse).cast<int>().toSet(),
     doubleSetField: state.uri.queryParametersAll['double-set-field']
         ?.map(double.parse)
         .cast<double>()
         .toSet(),
-    stringSetField: state.uri.queryParametersAll['string-set-field']
-        ?.map((e) => e)
-        .toSet(),
+    stringSetField: state.uri.queryParametersAll['string-set-field']?.map((e) => e).toSet(),
     boolSetField: state.uri.queryParametersAll['bool-set-field']
         ?.map(_$boolConverter)
         .cast<bool>()
@@ -597,21 +492,13 @@ mixin $IterableRoute on GoRouteData {
     '/iterable-route',
     queryParams: {
       if (_self.intIterableField != null)
-        'int-iterable-field': _self.intIterableField
-            ?.map((e) => e.toString())
-            .toList(),
+        'int-iterable-field': _self.intIterableField?.map((e) => e.toString()).toList(),
       if (_self.doubleIterableField != null)
-        'double-iterable-field': _self.doubleIterableField
-            ?.map((e) => e.toString())
-            .toList(),
+        'double-iterable-field': _self.doubleIterableField?.map((e) => e.toString()).toList(),
       if (_self.stringIterableField != null)
-        'string-iterable-field': _self.stringIterableField
-            ?.map((e) => e)
-            .toList(),
+        'string-iterable-field': _self.stringIterableField?.map((e) => e).toList(),
       if (_self.boolIterableField != null)
-        'bool-iterable-field': _self.boolIterableField
-            ?.map((e) => e.toString())
-            .toList(),
+        'bool-iterable-field': _self.boolIterableField?.map((e) => e.toString()).toList(),
       if (_self.enumIterableField != null)
         'enum-iterable-field': _self.enumIterableField
             ?.map((e) => _$SportDetailsEnumMap[e])
@@ -623,19 +510,13 @@ mixin $IterableRoute on GoRouteData {
       if (_self.intListField != null)
         'int-list-field': _self.intListField?.map((e) => e.toString()).toList(),
       if (_self.doubleListField != null)
-        'double-list-field': _self.doubleListField
-            ?.map((e) => e.toString())
-            .toList(),
+        'double-list-field': _self.doubleListField?.map((e) => e.toString()).toList(),
       if (_self.stringListField != null)
         'string-list-field': _self.stringListField?.map((e) => e).toList(),
       if (_self.boolListField != null)
-        'bool-list-field': _self.boolListField
-            ?.map((e) => e.toString())
-            .toList(),
+        'bool-list-field': _self.boolListField?.map((e) => e.toString()).toList(),
       if (_self.enumListField != null)
-        'enum-list-field': _self.enumListField
-            ?.map((e) => _$SportDetailsEnumMap[e])
-            .toList(),
+        'enum-list-field': _self.enumListField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
       if (_self.enumOnlyInListField != null)
         'enum-only-in-list-field': _self.enumOnlyInListField
             ?.map((e) => _$CookingRecipeEnumMap[e])
@@ -643,17 +524,13 @@ mixin $IterableRoute on GoRouteData {
       if (_self.intSetField != null)
         'int-set-field': _self.intSetField?.map((e) => e.toString()).toList(),
       if (_self.doubleSetField != null)
-        'double-set-field': _self.doubleSetField
-            ?.map((e) => e.toString())
-            .toList(),
+        'double-set-field': _self.doubleSetField?.map((e) => e.toString()).toList(),
       if (_self.stringSetField != null)
         'string-set-field': _self.stringSetField?.map((e) => e).toList(),
       if (_self.boolSetField != null)
         'bool-set-field': _self.boolSetField?.map((e) => e.toString()).toList(),
       if (_self.enumSetField != null)
-        'enum-set-field': _self.enumSetField
-            ?.map((e) => _$SportDetailsEnumMap[e])
-            .toList(),
+        'enum-set-field': _self.enumSetField?.map((e) => _$SportDetailsEnumMap[e]).toList(),
       if (_self.enumOnlyInSetField != null)
         'enum-only-in-set-field': _self.enumOnlyInSetField
             ?.map((e) => _$CookingRecipeEnumMap[e])
@@ -668,8 +545,7 @@ mixin $IterableRoute on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
@@ -682,118 +558,87 @@ const _$CookingRecipeEnumMap = {
 };
 
 mixin $IterableRouteWithDefaultValues on GoRouteData {
-  static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
-      IterableRouteWithDefaultValues(
-        intIterableField:
-            state.uri.queryParametersAll['int-iterable-field']
-                ?.map(int.parse)
-                .cast<int>() ??
-            const <int>[0],
-        doubleIterableField:
-            state.uri.queryParametersAll['double-iterable-field']
-                ?.map(double.parse)
-                .cast<double>() ??
-            const <double>[0, 1, 2],
-        stringIterableField:
-            state.uri.queryParametersAll['string-iterable-field']?.map(
-              (e) => e,
-            ) ??
-            const <String>['defaultValue'],
-        boolIterableField:
-            state.uri.queryParametersAll['bool-iterable-field']
-                ?.map(_$boolConverter)
-                .cast<bool>() ??
-            const <bool>[false],
-        enumIterableField:
-            state.uri.queryParametersAll['enum-iterable-field']
-                ?.map(_$SportDetailsEnumMap._$fromName)
-                .cast<SportDetails>() ??
-            const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
-        intListField:
-            state.uri.queryParametersAll['int-list-field']
-                ?.map(int.parse)
-                .cast<int>()
-                .toList() ??
-            const <int>[0],
-        doubleListField:
-            state.uri.queryParametersAll['double-list-field']
-                ?.map(double.parse)
-                .cast<double>()
-                .toList() ??
-            const <double>[1, 2, 3],
-        stringListField:
-            state.uri.queryParametersAll['string-list-field']
-                ?.map((e) => e)
-                .toList() ??
-            const <String>['defaultValue0', 'defaultValue1'],
-        boolListField:
-            state.uri.queryParametersAll['bool-list-field']
-                ?.map(_$boolConverter)
-                .cast<bool>()
-                .toList() ??
-            const <bool>[true],
-        enumListField:
-            state.uri.queryParametersAll['enum-list-field']
-                ?.map(_$SportDetailsEnumMap._$fromName)
-                .cast<SportDetails>()
-                .toList() ??
-            const <SportDetails>[SportDetails.football],
-        intSetField:
-            state.uri.queryParametersAll['int-set-field']
-                ?.map(int.parse)
-                .cast<int>()
-                .toSet() ??
-            const <int>{0, 1},
-        doubleSetField:
-            state.uri.queryParametersAll['double-set-field']
-                ?.map(double.parse)
-                .cast<double>()
-                .toSet() ??
-            const <double>{},
-        stringSetField:
-            state.uri.queryParametersAll['string-set-field']
-                ?.map((e) => e)
-                .toSet() ??
-            const <String>{'defaultValue'},
-        boolSetField:
-            state.uri.queryParametersAll['bool-set-field']
-                ?.map(_$boolConverter)
-                .cast<bool>()
-                .toSet() ??
-            const <bool>{true, false},
-        enumSetField:
-            state.uri.queryParametersAll['enum-set-field']
-                ?.map(_$SportDetailsEnumMap._$fromName)
-                .cast<SportDetails>()
-                .toSet() ??
-            const <SportDetails>{SportDetails.hockey},
-      );
+  static IterableRouteWithDefaultValues _fromState(
+    GoRouterState state,
+  ) => IterableRouteWithDefaultValues(
+    intIterableField:
+        state.uri.queryParametersAll['int-iterable-field']?.map(int.parse).cast<int>() ??
+        const <int>[0],
+    doubleIterableField:
+        state.uri.queryParametersAll['double-iterable-field']?.map(double.parse).cast<double>() ??
+        const <double>[0, 1, 2],
+    stringIterableField:
+        state.uri.queryParametersAll['string-iterable-field']?.map((e) => e) ??
+        const <String>['defaultValue'],
+    boolIterableField:
+        state.uri.queryParametersAll['bool-iterable-field']?.map(_$boolConverter).cast<bool>() ??
+        const <bool>[false],
+    enumIterableField:
+        state.uri.queryParametersAll['enum-iterable-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .cast<SportDetails>() ??
+        const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
+    intListField:
+        state.uri.queryParametersAll['int-list-field']?.map(int.parse).cast<int>().toList() ??
+        const <int>[0],
+    doubleListField:
+        state.uri.queryParametersAll['double-list-field']
+            ?.map(double.parse)
+            .cast<double>()
+            .toList() ??
+        const <double>[1, 2, 3],
+    stringListField:
+        state.uri.queryParametersAll['string-list-field']?.map((e) => e).toList() ??
+        const <String>['defaultValue0', 'defaultValue1'],
+    boolListField:
+        state.uri.queryParametersAll['bool-list-field']
+            ?.map(_$boolConverter)
+            .cast<bool>()
+            .toList() ??
+        const <bool>[true],
+    enumListField:
+        state.uri.queryParametersAll['enum-list-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .cast<SportDetails>()
+            .toList() ??
+        const <SportDetails>[SportDetails.football],
+    intSetField:
+        state.uri.queryParametersAll['int-set-field']?.map(int.parse).cast<int>().toSet() ??
+        const <int>{0, 1},
+    doubleSetField:
+        state.uri.queryParametersAll['double-set-field']
+            ?.map(double.parse)
+            .cast<double>()
+            .toSet() ??
+        const <double>{},
+    stringSetField:
+        state.uri.queryParametersAll['string-set-field']?.map((e) => e).toSet() ??
+        const <String>{'defaultValue'},
+    boolSetField:
+        state.uri.queryParametersAll['bool-set-field']?.map(_$boolConverter).cast<bool>().toSet() ??
+        const <bool>{true, false},
+    enumSetField:
+        state.uri.queryParametersAll['enum-set-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            .cast<SportDetails>()
+            .toSet() ??
+        const <SportDetails>{SportDetails.hockey},
+  );
 
-  IterableRouteWithDefaultValues get _self =>
-      this as IterableRouteWithDefaultValues;
+  IterableRouteWithDefaultValues get _self => this as IterableRouteWithDefaultValues;
 
   @override
   String get location => GoRouteData.$location(
     '/iterable-route-with-default-values',
     queryParams: {
       if (!_$iterablesEqual(_self.intIterableField, const <int>[0]))
-        'int-iterable-field': _self.intIterableField
-            .map((e) => e.toString())
-            .toList(),
+        'int-iterable-field': _self.intIterableField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.doubleIterableField, const <double>[0, 1, 2]))
-        'double-iterable-field': _self.doubleIterableField
-            .map((e) => e.toString())
-            .toList(),
-      if (!_$iterablesEqual(_self.stringIterableField, const <String>[
-        'defaultValue',
-      ]))
-        'string-iterable-field': _self.stringIterableField
-            .map((e) => e)
-            .toList(),
+        'double-iterable-field': _self.doubleIterableField.map((e) => e.toString()).toList(),
+      if (!_$iterablesEqual(_self.stringIterableField, const <String>['defaultValue']))
+        'string-iterable-field': _self.stringIterableField.map((e) => e).toList(),
       if (!_$iterablesEqual(_self.boolIterableField, const <bool>[false]))
-        'bool-iterable-field': _self.boolIterableField
-            .map((e) => e.toString())
-            .toList(),
+        'bool-iterable-field': _self.boolIterableField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.enumIterableField, const <SportDetails>[
         SportDetails.tennis,
         SportDetails.hockey,
@@ -804,42 +649,26 @@ mixin $IterableRouteWithDefaultValues on GoRouteData {
       if (!_$iterablesEqual(_self.intListField, const <int>[0]))
         'int-list-field': _self.intListField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.doubleListField, const <double>[1, 2, 3]))
-        'double-list-field': _self.doubleListField
-            .map((e) => e.toString())
-            .toList(),
+        'double-list-field': _self.doubleListField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.stringListField, const <String>[
         'defaultValue0',
         'defaultValue1',
       ]))
         'string-list-field': _self.stringListField.map((e) => e).toList(),
       if (!_$iterablesEqual(_self.boolListField, const <bool>[true]))
-        'bool-list-field': _self.boolListField
-            .map((e) => e.toString())
-            .toList(),
-      if (!_$iterablesEqual(_self.enumListField, const <SportDetails>[
-        SportDetails.football,
-      ]))
-        'enum-list-field': _self.enumListField
-            .map((e) => _$SportDetailsEnumMap[e])
-            .toList(),
+        'bool-list-field': _self.boolListField.map((e) => e.toString()).toList(),
+      if (!_$iterablesEqual(_self.enumListField, const <SportDetails>[SportDetails.football]))
+        'enum-list-field': _self.enumListField.map((e) => _$SportDetailsEnumMap[e]).toList(),
       if (!_$iterablesEqual(_self.intSetField, const <int>{0, 1}))
         'int-set-field': _self.intSetField.map((e) => e.toString()).toList(),
       if (!_$iterablesEqual(_self.doubleSetField, const <double>{}))
-        'double-set-field': _self.doubleSetField
-            .map((e) => e.toString())
-            .toList(),
-      if (!_$iterablesEqual(_self.stringSetField, const <String>{
-        'defaultValue',
-      }))
+        'double-set-field': _self.doubleSetField.map((e) => e.toString()).toList(),
+      if (!_$iterablesEqual(_self.stringSetField, const <String>{'defaultValue'}))
         'string-set-field': _self.stringSetField.map((e) => e).toList(),
       if (!_$iterablesEqual(_self.boolSetField, const <bool>{true, false}))
         'bool-set-field': _self.boolSetField.map((e) => e.toString()).toList(),
-      if (!_$iterablesEqual(_self.enumSetField, const <SportDetails>{
-        SportDetails.hockey,
-      }))
-        'enum-set-field': _self.enumSetField
-            .map((e) => _$SportDetailsEnumMap[e])
-            .toList(),
+      if (!_$iterablesEqual(_self.enumSetField, const <SportDetails>{SportDetails.hockey}))
+        'enum-set-field': _self.enumSetField.map((e) => _$SportDetailsEnumMap[e]).toList(),
     },
   );
 
@@ -850,18 +679,13 @@ mixin $IterableRouteWithDefaultValues on GoRouteData {
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
   @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+  void pushReplacement(BuildContext context) => context.pushReplacement(location);
 
   @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-T? _$convertMapValue<T>(
-  String key,
-  Map<String, String> map,
-  T? Function(String) converter,
-) {
+T? _$convertMapValue<T>(String key, Map<String, String> map, T? Function(String) converter) {
   final value = map[key];
   return value == null ? null : converter(value);
 }

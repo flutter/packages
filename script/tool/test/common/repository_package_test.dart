@@ -13,22 +13,15 @@ void main() {
   late Directory packagesDir;
 
   setUp(() {
-    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
-        configureBaseCommandMocks();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks();
   });
 
   group('displayName', () {
     test('prints packageDir-relative paths by default', () async {
-      expect(
-        RepositoryPackage(packagesDir.childDirectory('foo')).displayName,
-        'foo',
-      );
+      expect(RepositoryPackage(packagesDir.childDirectory('foo')).displayName, 'foo');
       expect(
         RepositoryPackage(
-          packagesDir
-              .childDirectory('foo')
-              .childDirectory('bar')
-              .childDirectory('baz'),
+          packagesDir.childDirectory('foo').childDirectory('bar').childDirectory('baz'),
         ).displayName,
         'foo/bar/baz',
       );
@@ -53,16 +46,10 @@ void main() {
         MemoryFileSystem(style: FileSystemStyle.windows),
       );
 
-      expect(
-        RepositoryPackage(windowsPackagesDir.childDirectory('foo')).displayName,
-        'foo',
-      );
+      expect(RepositoryPackage(windowsPackagesDir.childDirectory('foo')).displayName, 'foo');
       expect(
         RepositoryPackage(
-          windowsPackagesDir
-              .childDirectory('foo')
-              .childDirectory('bar')
-              .childDirectory('baz'),
+          windowsPackagesDir.childDirectory('foo').childDirectory('bar').childDirectory('baz'),
         ).displayName,
         'foo/bar/baz',
       );
@@ -71,17 +58,13 @@ void main() {
     test('elides group name in grouped federated plugin structure', () async {
       expect(
         RepositoryPackage(
-          packagesDir
-              .childDirectory('a_plugin')
-              .childDirectory('a_plugin_platform_interface'),
+          packagesDir.childDirectory('a_plugin').childDirectory('a_plugin_platform_interface'),
         ).displayName,
         'a_plugin_platform_interface',
       );
       expect(
         RepositoryPackage(
-          packagesDir
-              .childDirectory('a_plugin')
-              .childDirectory('a_plugin_platform_web'),
+          packagesDir.childDirectory('a_plugin').childDirectory('a_plugin_platform_web'),
         ).displayName,
         'a_plugin_platform_web',
       );
@@ -101,10 +84,7 @@ void main() {
 
   group('getExamples', () {
     test('handles a single Flutter example', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'a_plugin',
-        packagesDir,
-      );
+      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
 
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
@@ -125,21 +105,12 @@ void main() {
       expect(examples.length, 2);
       expect(examples[0].isExample, isTrue);
       expect(examples[1].isExample, isTrue);
-      expect(
-        examples[0].path,
-        getExampleDir(plugin).childDirectory('example1').path,
-      );
-      expect(
-        examples[1].path,
-        getExampleDir(plugin).childDirectory('example2').path,
-      );
+      expect(examples[0].path, getExampleDir(plugin).childDirectory('example1').path);
+      expect(examples[1].path, getExampleDir(plugin).childDirectory('example2').path);
     });
 
     test('handles a single non-Flutter example', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
@@ -160,23 +131,14 @@ void main() {
       expect(examples.length, 2);
       expect(examples[0].isExample, isTrue);
       expect(examples[1].isExample, isTrue);
-      expect(
-        examples[0].path,
-        getExampleDir(package).childDirectory('example1').path,
-      );
-      expect(
-        examples[1].path,
-        getExampleDir(package).childDirectory('example2').path,
-      );
+      expect(examples[0].path, getExampleDir(package).childDirectory('example1').path);
+      expect(examples[1].path, getExampleDir(package).childDirectory('example2').path);
     });
   });
 
   group('federated plugin queries', () {
     test('all return false for a simple plugin', () {
-      final RepositoryPackage plugin = createFakePlugin(
-        'a_plugin',
-        packagesDir,
-      );
+      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
       expect(plugin.isFederated, false);
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
@@ -225,10 +187,7 @@ void main() {
 
   group('pubspec', () {
     test('file', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'a_plugin',
-        packagesDir,
-      );
+      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
 
       final File pubspecFile = plugin.pubspecFile;
 
@@ -259,10 +218,7 @@ void main() {
     });
 
     test('returns true for a dev dependency on Flutter', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       final File pubspecFile = package.pubspecFile;
       final Pubspec pubspec = package.parsePubspec();
       pubspec.devDependencies['flutter'] = SdkDependency('flutter');
@@ -272,58 +228,40 @@ void main() {
     });
 
     test('returns false for non-Flutter package', () async {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       expect(package.requiresFlutter(), false);
     });
   });
 
   group('getPendingChangelogs', () {
     test('returns an error if the directory is missing', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
 
       expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
 
     test('returns empty lists if the directory is empty', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
 
-      final List<PendingChangelogEntry> changelogs = package
-          .getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package.getPendingChangelogs();
 
       expect(changelogs, isEmpty);
     });
 
     test('returns entries for valid files', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
-      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
-        '''
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync('''
 changelog: A
 version: patch
-''',
-      );
-      package.pendingChangelogsDirectory.childFile('b.yaml').writeAsStringSync(
-        '''
+''');
+      package.pendingChangelogsDirectory.childFile('b.yaml').writeAsStringSync('''
 changelog: B
 version: minor
-''',
-      );
+''');
 
-      final List<PendingChangelogEntry> changelogs = package
-          .getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package.getPendingChangelogs();
 
       expect(changelogs, hasLength(2));
       expect(changelogs[0].changelog, 'A');
@@ -333,14 +271,9 @@ version: minor
     });
 
     test('returns an error for a malformed file', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
-      final File changelogFile = package.pendingChangelogsDirectory.childFile(
-        'a.yaml',
-      );
+      final File changelogFile = package.pendingChangelogsDirectory.childFile('a.yaml');
       changelogFile.writeAsStringSync('not yaml');
 
       expect(
@@ -356,36 +289,25 @@ version: minor
     });
 
     test('ignores template.yaml', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
-      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
-        '''
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync('''
 changelog: A
 version: patch
-''',
-      );
-      package.pendingChangelogsDirectory
-          .childFile('template.yaml')
-          .writeAsStringSync('''
+''');
+      package.pendingChangelogsDirectory.childFile('template.yaml').writeAsStringSync('''
 changelog: TEMPLATE
 version: skip
 ''');
 
-      final List<PendingChangelogEntry> changelogs = package
-          .getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package.getPendingChangelogs();
 
       expect(changelogs, hasLength(1));
       expect(changelogs[0].changelog, 'A');
     });
 
     test('returns an error for non-YAML files', () {
-      final RepositoryPackage package = createFakePackage(
-        'a_package',
-        packagesDir,
-      );
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
       package.pendingChangelogsDirectory
           .childFile('readme.txt')

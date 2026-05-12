@@ -39,8 +39,7 @@ class TextNode extends Node {
 }
 
 class VariableNode extends Node {
-  VariableNode(this.name, int start, int end, {this.escape = true})
-    : super(start, end);
+  VariableNode(this.name, int start, int end, {this.escape = true}) : super(start, end);
 
   final String name;
   final bool escape;
@@ -53,14 +52,9 @@ class VariableNode extends Node {
 }
 
 class SectionNode extends Node {
-  SectionNode(
-    this.name,
-    int start,
-    int end,
-    this.delimiters, {
-    this.inverse = false,
-  }) : contentStart = end,
-       super(start, end);
+  SectionNode(this.name, int start, int end, this.delimiters, {this.inverse = false})
+    : contentStart = end,
+      super(start, end);
 
   final String name;
   final String delimiters;

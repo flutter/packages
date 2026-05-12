@@ -39,9 +39,7 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
@@ -92,9 +90,7 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
@@ -129,16 +125,12 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
     });
 
-    testWidgets('Builds a Navigator for ShellRoute', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Builds a Navigator for ShellRoute', (WidgetTester tester) async {
       final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
       final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
@@ -185,9 +177,7 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       expect(find.byType(_HomeScreen, skipOffstage: false), findsOneWidget);
       expect(find.byType(_DetailsScreen), findsOneWidget);
@@ -246,9 +236,7 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       // The Details screen should be visible, but the HomeScreen should be
       // offstage (underneath) the DetailsScreen.
@@ -256,9 +244,7 @@ void main() {
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
-    testWidgets('Uses the correct restorationScopeId for ShellRoute', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('Uses the correct restorationScopeId for ShellRoute', (WidgetTester tester) async {
       final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
       final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
@@ -306,16 +292,11 @@ void main() {
         pathParameters: const <String, String>{},
       );
 
-      await tester.pumpWidget(
-        _BuilderTestWidget(routeConfiguration: config, matches: matches),
-      );
+      await tester.pumpWidget(_BuilderTestWidget(routeConfiguration: config, matches: matches));
 
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
       expect(find.byKey(shellNavigatorKey), findsOneWidget);
-      expect(
-        (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
-        'scope1',
-      );
+      expect((shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId, 'scope1');
     });
 
     testWidgets('Uses the correct restorationScopeId for StatefulShellRoute', (
@@ -358,21 +339,17 @@ void main() {
 
       expect(find.byKey(rootNavigatorKey), findsOneWidget);
       expect(find.byKey(shellNavigatorKey), findsOneWidget);
-      expect(
-        (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
-        'scope1',
-      );
+      expect((shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId, 'scope1');
     });
 
-    testWidgets('GoRouter requestFocus defaults to true', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('GoRouter requestFocus defaults to true', (WidgetTester tester) async {
       final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Scaffold(body: Center(child: Text('Home'))),
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
       );
@@ -381,21 +358,18 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final Navigator navigator = tester.widget<Navigator>(
-        find.byType(Navigator),
-      );
+      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isTrue);
     });
 
-    testWidgets('GoRouter requestFocus can be set to false', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('GoRouter requestFocus can be set to false', (WidgetTester tester) async {
       final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Scaffold(body: Center(child: Text('Home'))),
+            builder:
+                (BuildContext context, GoRouterState state) =>
+                    const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
         requestFocus: false,
@@ -405,9 +379,7 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final Navigator navigator = tester.widget<Navigator>(
-        find.byType(Navigator),
-      );
+      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isFalse);
     });
   });
@@ -421,12 +393,7 @@ class _HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const Text('Home Screen'),
-          Expanded(child: child),
-        ],
-      ),
+      body: Column(children: <Widget>[const Text('Home Screen'), Expanded(child: child)]),
     );
   }
 }

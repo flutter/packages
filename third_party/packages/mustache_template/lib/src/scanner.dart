@@ -27,12 +27,7 @@ class Scanner {
       _closeDelimiterInner = delimiters.codeUnits[3];
       _closeDelimiter = delimiters.codeUnits[4];
     } else {
-      throw TemplateException(
-        'Invalid delimiter string $delimiters',
-        null,
-        null,
-        null,
-      );
+      throw TemplateException('Invalid delimiter string $delimiters', null, null, null);
     }
   }
 
@@ -138,12 +133,7 @@ class Scanner {
     final int c = _read();
 
     if (c == _EOF) {
-      throw TemplateException(
-        'Unexpected end of input',
-        _templateName,
-        _source,
-        _offset - 1,
-      );
+      throw TemplateException('Unexpected end of input', _templateName, _source, _offset - 1);
     }
     if (c != expectedCharCode) {
       throw TemplateException(
@@ -160,8 +150,7 @@ class Scanner {
   void _append(TokenType type, String value, int start, int end) =>
       _tokens.add(Token(type, value, start, end));
 
-  bool _isWhitespace(int c) =>
-      const <int>[_SPACE, _TAB, _NEWLINE, _RETURN].contains(c);
+  bool _isWhitespace(int c) => const <int>[_SPACE, _TAB, _NEWLINE, _RETURN].contains(c);
 
   // Scan text. This adds text tokens, line end tokens, and whitespace
   // tokens for whitespace at the beginning of a line. This is because the

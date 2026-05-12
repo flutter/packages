@@ -117,14 +117,13 @@ class _TestAppState extends State<_TestApp> {
         },
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
-            builder:
-                (
-                  BuildContext context,
-                  GoRouterState state,
-                  StatefulNavigationShell navigationShell,
-                ) {
-                  return navigationShell;
-                },
+            builder: (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              return navigationShell;
+            },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
                 routes: <GoRoute>[
@@ -147,9 +146,7 @@ class _TestAppState extends State<_TestApp> {
                       GoRoute(
                         path: 'comment',
                         builder: (BuildContext context, GoRouterState state) {
-                          return Scaffold(
-                            appBar: AppBar(title: const Text('Comment')),
-                          );
+                          return Scaffold(appBar: AppBar(title: const Text('Comment')));
                         },
                       ),
                     ],

@@ -16,28 +16,26 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
@@ -86,28 +84,26 @@ void main() {
         child: Center(
           child: DualTransitionBuilder(
             animation: controller,
-            forwardBuilder:
-                (
-                  BuildContext context,
-                  Animation<double> animation,
-                  Widget? child,
-                ) {
-                  return ScaleTransition(scale: animation, child: child);
-                },
-            reverseBuilder:
-                (
-                  BuildContext context,
-                  Animation<double> animation,
-                  Widget? child,
-                ) {
-                  return FadeTransition(
-                    opacity: Tween<double>(
-                      begin: 1.0,
-                      end: 0.0,
-                    ).animate(animation),
-                    child: child,
-                  );
-                },
+            forwardBuilder: (
+              BuildContext context,
+              Animation<double> animation,
+              Widget? child,
+            ) {
+              return ScaleTransition(scale: animation, child: child);
+            },
+            reverseBuilder: (
+              BuildContext context,
+              Animation<double> animation,
+              Widget? child,
+            ) {
+              return FadeTransition(
+                opacity: Tween<double>(
+                  begin: 1.0,
+                  end: 0.0,
+                ).animate(animation),
+                child: child,
+              );
+            },
             child: const _StatefulTestWidget(name: 'Foo'),
           ),
         ),
@@ -154,28 +150,26 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),
@@ -221,28 +215,26 @@ void main() {
       Center(
         child: DualTransitionBuilder(
           animation: controller,
-          forwardBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return ScaleTransition(scale: animation, child: child);
-              },
-          reverseBuilder:
-              (
-                BuildContext context,
-                Animation<double> animation,
-                Widget? child,
-              ) {
-                return FadeTransition(
-                  opacity: Tween<double>(
-                    begin: 1.0,
-                    end: 0.0,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
+          forwardBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return ScaleTransition(scale: animation, child: child);
+          },
+          reverseBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Widget? child,
+          ) {
+            return FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(animation),
+              child: child,
+            );
+          },
           child: Container(color: Colors.green, height: 100, width: 100),
         ),
       ),

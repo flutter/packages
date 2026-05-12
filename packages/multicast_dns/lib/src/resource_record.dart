@@ -73,11 +73,8 @@ class ResourceRecordQuery {
   /// Creates a new ResourceRecordQuery.
   ///
   /// Most callers should prefer one of the named constructors.
-  ResourceRecordQuery(
-    this.resourceRecordType,
-    this.fullyQualifiedName,
-    this.questionType,
-  ) : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
+  ResourceRecordQuery(this.resourceRecordType, this.fullyQualifiedName, this.questionType)
+    : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
 
   /// An A (IPv4) query.
   ResourceRecordQuery.addressIPv4(String name, {bool isMulticast = true})
@@ -136,16 +133,11 @@ class ResourceRecordQuery {
 
   /// Encodes this query to the raw wire format.
   List<int> encode() {
-    return encodeMDnsQuery(
-      fullyQualifiedName,
-      type: resourceRecordType,
-      multicast: isMulticast,
-    );
+    return encodeMDnsQuery(fullyQualifiedName, type: resourceRecordType, multicast: isMulticast);
   }
 
   @override
-  int get hashCode =>
-      Object.hash(resourceRecordType, fullyQualifiedName, questionType);
+  int get hashCode => Object.hash(resourceRecordType, fullyQualifiedName, questionType);
 
   @override
   bool operator ==(Object other) {
@@ -203,11 +195,8 @@ abstract class ResourceRecord {
 /// A Service Pointer for reverse mapping an IP address (DNS "PTR").
 class PtrResourceRecord extends ResourceRecord {
   /// Creates a new PtrResourceRecord.
-  const PtrResourceRecord(
-    String name,
-    int validUntil, {
-    required this.domainName,
-  }) : super(ResourceRecordType.serverPointer, name, validUntil);
+  const PtrResourceRecord(String name, int validUntil, {required this.domainName})
+    : super(ResourceRecordType.serverPointer, name, validUntil);
 
   /// The FQDN for this record.
   final String domainName;
@@ -220,9 +209,7 @@ class PtrResourceRecord extends ResourceRecord {
 
   @override
   bool operator ==(Object other) {
-    return super == other &&
-        other is PtrResourceRecord &&
-        other.domainName == domainName;
+    return super == other && other is PtrResourceRecord && other.domainName == domainName;
   }
 
   @override
@@ -254,9 +241,7 @@ class IPAddressResourceRecord extends ResourceRecord {
 
   @override
   bool operator ==(Object other) {
-    return super == other &&
-        other is IPAddressResourceRecord &&
-        other.address == address;
+    return super == other && other is IPAddressResourceRecord && other.address == address;
   }
 
   @override
@@ -294,8 +279,7 @@ class SrvResourceRecord extends ResourceRecord {
       'target: $target, port: $port, priority: $priority, weight: $weight';
 
   @override
-  int get hashCode =>
-      Object.hash(target, port, priority, weight, super.hashCode);
+  int get hashCode => Object.hash(target, port, priority, weight, super.hashCode);
 
   @override
   bool operator ==(Object other) {

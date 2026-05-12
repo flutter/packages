@@ -20,9 +20,7 @@ abstract base class InteractiveMediaAdsPlatform {
   static InteractiveMediaAdsPlatform? instance;
 
   /// Creates a new [PlatformAdsLoader].
-  PlatformAdsLoader createPlatformAdsLoader(
-    PlatformAdsLoaderCreationParams params,
-  );
+  PlatformAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params);
 
   /// Creates a new [PlatformAdsManagerDelegate].
   PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
@@ -50,7 +48,5 @@ abstract base class InteractiveMediaAdsPlatform {
   );
 
   /// Creates a new [PlatformImaSettings].
-  PlatformImaSettings createPlatformImaSettings(
-    PlatformImaSettingsCreationParams params,
-  );
+  PlatformImaSettings createPlatformImaSettings(PlatformImaSettingsCreationParams params);
 }

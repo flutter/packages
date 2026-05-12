@@ -19,6 +19,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
     return aString ?? '';
   }
 }
+
 // #enddocregion main-dart-flutter
 
 void main() {
@@ -86,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return Future<bool>(() => true);
     }
   }
+
   // #enddocregion main-dart
 
   // #docregion main-dart-event
@@ -102,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
   }
+
   // #enddocregion main-dart-event
 
   @override
@@ -137,14 +140,13 @@ class _MyHomePageState extends State<MyHomePage> {
             if (Platform.isAndroid || Platform.isIOS)
               StreamBuilder<String>(
                 stream: getEventStream(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.hasData) {
-                        return Text(snapshot.data ?? '');
-                      } else {
-                        return const CircularProgressIndicator();
-                      }
-                    },
+                builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(snapshot.data ?? '');
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
               )
             else
               const Text('event channels are not supported on this platform'),

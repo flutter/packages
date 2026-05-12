@@ -31,7 +31,10 @@ void main() {
   });
 
   testWidgets('parseLibraryFile: source location tracking', (WidgetTester tester) async {
-    String extract(BlobNode node) => (node.source!.start.source as String).substring(node.source!.start.offset, node.source!.end.offset);
+    String extract(BlobNode node) => (node.source!.start.source as String).substring(
+      node.source!.start.offset,
+      node.source!.end.offset,
+    );
     // We use the actual source text as the sourceIdentifier to make it trivial to find the source contents.
     // In normal operation, the sourceIdentifier would be the file name or some similar object.
     final RemoteWidgetLibrary test = parseLibraryFile(sourceFile, sourceIdentifier: sourceFile);
@@ -48,19 +51,26 @@ widget verify { state: true } = switch args.value.c.0 {
       if (node.source == null) {
         printOnFailure('This node had no source information: ${node.runtimeType} $node');
       }
-      return (node.source!.start.source as String).substring(node.source!.start.offset, node.source!.end.offset);
+      return (node.source!.start.source as String).substring(
+        node.source!.start.offset,
+        node.source!.end.offset,
+      );
     }
+
     final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       // We use the actual source text as the sourceIdentifier to make it trivial to find the source contents.
       // In normal operation, the sourceIdentifier would be the file name or some similar object.
-      ..update(const LibraryName(<String>['test']), parseLibraryFile(sourceFile, sourceIdentifier: sourceFile));
+      ..update(
+        const LibraryName(<String>['test']),
+        parseLibraryFile(sourceFile, sourceIdentifier: sourceFile),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{
-          'a': <String, Object?>{ 'b': 0xEE },
-          'c': <Object?>[ 0xDD ],
+          'a': <String, Object?>{'b': 0xEE},
+          'c': <Object?>[0xDD],
         },
       ],
     });
@@ -74,6 +84,9 @@ widget verify { state: true } = switch args.value.c.0 {
         },
       ),
     );
-    expect(extract(Runtime.blobNodeFor(tester.firstElement(find.byType(ColoredBox)))!), 'ColoredBox(color: 0xFF0D0D0D)');
+    expect(
+      extract(Runtime.blobNodeFor(tester.firstElement(find.byType(ColoredBox)))!),
+      'ColoredBox(color: 0xFF0D0D0D)',
+    );
   });
 }

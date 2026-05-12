@@ -394,9 +394,7 @@ void main() {
         matching: find.byType(DecoratedBox),
       ),
     );
-    final decoration =
-        (decoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+    final decoration = (decoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     expect(decoration.shadows, closedShadows);
 
     // Open the container.
@@ -407,8 +405,7 @@ void main() {
     final Element transitioningMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final transitioningMaterial =
-        transitioningMaterialElement.widget as Material;
+    final transitioningMaterial = transitioningMaterialElement.widget as Material;
     expect(transitioningMaterial.elevation, 0.0);
 
     final Element transitioningDecoratedBoxElement = tester.firstElement(
@@ -420,8 +417,7 @@ void main() {
       ),
     );
     final transitioningDecoration =
-        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
 
     // Verify shadows are lerping.
     final double expectedT = Curves.fastOutSlowIn.transform(0.5);
@@ -450,8 +446,7 @@ void main() {
       ),
     );
     final openDecoration =
-        (openDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (openDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     expect(openDecoration.shadows, openShadows);
   });
 
@@ -499,8 +494,7 @@ void main() {
     final Element transitioningMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final transitioningMaterial =
-        transitioningMaterialElement.widget as Material;
+    final transitioningMaterial = transitioningMaterialElement.widget as Material;
     expect(transitioningMaterial.elevation, lessThan(4.0));
     expect(transitioningMaterial.elevation, greaterThan(0.0));
 
@@ -513,14 +507,14 @@ void main() {
       ),
     );
     final transitioningDecoration =
-        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     final double expectedT = Curves.fastOutSlowIn.transform(0.5);
     final BoxShadow expectedShadow = BoxShadow.lerpList(
       null,
       openShadows,
       expectedT,
-    )!.single;
+    )!
+        .single;
     expect(transitioningDecoration.shadows, hasLength(1));
     expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
     expect(
@@ -548,8 +542,7 @@ void main() {
       ),
     );
     final openDecoration =
-        (openDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (openDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     expect(openDecoration.shadows, openShadows);
   });
 
@@ -590,8 +583,7 @@ void main() {
       ),
     );
     final srcDecoration =
-        (srcDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (srcDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     expect(srcDecoration.shadows, closedShadows);
 
     await tester.tap(find.text('Closed'));
@@ -601,8 +593,7 @@ void main() {
     final Element transitioningMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final transitioningMaterial =
-        transitioningMaterialElement.widget as Material;
+    final transitioningMaterial = transitioningMaterialElement.widget as Material;
     expect(transitioningMaterial.elevation, greaterThan(0.0));
     expect(transitioningMaterial.elevation, lessThan(8.0));
 
@@ -615,14 +606,14 @@ void main() {
       ),
     );
     final transitioningDecoration =
-        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration
-            as ShapeDecoration;
+        (transitioningDecoratedBoxElement.widget as DecoratedBox).decoration as ShapeDecoration;
     final double expectedT = Curves.fastOutSlowIn.transform(0.5);
     final BoxShadow expectedShadow = BoxShadow.lerpList(
       closedShadows,
       null,
       expectedT,
-    )!.single;
+    )!
+        .single;
     expect(transitioningDecoration.shadows, hasLength(1));
     expect(transitioningDecoration.shadows![0].color, expectedShadow.color);
     expect(
@@ -1215,9 +1206,7 @@ void main() {
     await tester.pumpWidget(openContainer);
 
     final Size orignalClosedRect = tester.getSize(
-      find
-          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
-          .first,
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)).first,
     );
     expect(orignalClosedRect, const Size(100, 100));
 
@@ -1241,9 +1230,7 @@ void main() {
     expect(find.text('Closed'), findsOneWidget);
 
     final Size transitionEndSize = tester.getSize(
-      find
-          .ancestor(of: find.text('Open'), matching: find.byType(Material))
-          .first,
+      find.ancestor(of: find.text('Open'), matching: find.byType(Material)).first,
     );
     expect(transitionEndSize, const Size(200, 200));
 
@@ -1252,9 +1239,7 @@ void main() {
     expect(find.text('Closed'), findsOneWidget);
 
     final Size finalSize = tester.getSize(
-      find
-          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
-          .first,
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)).first,
     );
     expect(finalSize, const Size(200, 200));
   });
@@ -1333,9 +1318,7 @@ void main() {
 
     expect(tester.getRect(find.byType(Navigator)), fullNavigator);
     final Rect materialRectClosed = tester.getRect(
-      find
-          .ancestor(of: find.text('Closed'), matching: find.byType(Material))
-          .first,
+      find.ancestor(of: find.text('Closed'), matching: find.byType(Material)).first,
     );
 
     await tester.tap(find.text('Closed'));
@@ -1823,13 +1806,12 @@ void main() {
         closedBuilder: (BuildContext context, VoidCallback action) {
           return GestureDetector(onTap: action, child: const Text('Closed'));
         },
-        openBuilder:
-            (BuildContext context, CloseContainerActionCallback<bool> action) {
-              return GestureDetector(
-                onTap: () => action(returnValue: true),
-                child: const Text('Open'),
-              );
-            },
+        openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action) {
+          return GestureDetector(
+            onTap: () => action(returnValue: true),
+            child: const Text('Open'),
+          );
+        },
       );
 
       await tester.pumpWidget(_boilerplate(child: openContainer));
@@ -1861,10 +1843,9 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
-            return const Text('Open');
-          },
+      openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action) {
+        return const Text('Open');
+      },
     );
 
     await tester.pumpWidget(_boilerplate(child: openContainer));
@@ -1886,10 +1867,9 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder:
-          (BuildContext context, CloseContainerActionCallback<bool> action) {
-            return const Text('Open');
-          },
+      openBuilder: (BuildContext context, CloseContainerActionCallback<bool> action) {
+        return const Text('Open');
+      },
       clipBehavior: Clip.none,
     );
 
@@ -2186,12 +2166,10 @@ class _SizableContainerState extends State<_SizableContainer> {
 
 class _RemoveOpenContainerExample extends StatefulWidget {
   @override
-  __RemoveOpenContainerExampleState createState() =>
-      __RemoveOpenContainerExampleState();
+  __RemoveOpenContainerExampleState createState() => __RemoveOpenContainerExampleState();
 }
 
-class __RemoveOpenContainerExampleState
-    extends State<_RemoveOpenContainerExample> {
+class __RemoveOpenContainerExampleState extends State<_RemoveOpenContainerExample> {
   bool removeOpenContainerWidget = false;
 
   @override
@@ -2199,16 +2177,15 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-            closedBuilder: (BuildContext context, VoidCallback action) =>
-                Column(
-                  children: <Widget>[
-                    const Text('Closed'),
-                    ElevatedButton(
-                      onPressed: action,
-                      child: const Text('Open the container'),
-                    ),
-                  ],
+            closedBuilder: (BuildContext context, VoidCallback action) => Column(
+              children: <Widget>[
+                const Text('Closed'),
+                ElevatedButton(
+                  onPressed: action,
+                  child: const Text('Open the container'),
                 ),
+              ],
+            ),
             openBuilder: (BuildContext context, VoidCallback action) => Column(
               children: <Widget>[
                 const Text('Open'),

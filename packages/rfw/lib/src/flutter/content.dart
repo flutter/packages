@@ -26,11 +26,16 @@ Object? deepClone(Object? template) {
   if (template == null) {
     return null;
   } else if (template is DynamicMap) {
-    return template.map((String key, Object? value) => MapEntry<String, Object?>(key, deepClone(value)));
+    return template.map(
+      (String key, Object? value) => MapEntry<String, Object?>(key, deepClone(value)),
+    );
   } else if (template is DynamicList) {
     return template.map((Object? value) => deepClone(value)).toList();
   } else {
-    assert(template is int || template is double || template is bool || template is String, 'unexpected state object type: ${template.runtimeType} ($template)');
+    assert(
+      template is int || template is double || template is bool || template is String,
+      'unexpected state object type: ${template.runtimeType} ($template)',
+    );
     return template;
   }
 }
@@ -134,7 +139,7 @@ class DynamicContent {
   ///
   /// The `initialData` argument, if provided, is used to update all the keys
   /// in the [DynamicContent], as if [updateAll] had been called.
-  DynamicContent([ DynamicMap? initialData ]) {
+  DynamicContent([DynamicMap? initialData]) {
     if (initialData != null) {
       updateAll(initialData);
     }
@@ -219,9 +224,13 @@ class DynamicContent {
 
 // Node in the [DynamicContent] tree. This should contain no [BlobNode]s.
 class _DynamicNode {
-  _DynamicNode(this._key, this._parent, this._value) : assert(_value == missing || _hasValidType(_value));
+  _DynamicNode(this._key, this._parent, this._value)
+    : assert(_value == missing || _hasValidType(_value));
 
-  _DynamicNode.root() : _key = missing, _parent = null, _value = DynamicMap(); // ignore: prefer_collection_literals
+  _DynamicNode.root()
+    : _key = missing,
+      _parent = null,
+      _value = DynamicMap(); // ignore: prefer_collection_literals
 
   final Object _key;
   final _DynamicNode? _parent;
@@ -269,10 +278,7 @@ class _DynamicNode {
     if (value is DynamicList) {
       return value.every(_hasValidType);
     }
-    return value is int
-        || value is double
-        || value is bool
-        || value is String;
+    return value is int || value is double || value is bool || value is String;
   }
 
   _DynamicNode _prepare(Object childKey) {

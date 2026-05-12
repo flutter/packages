@@ -10,11 +10,7 @@ import 'package:test/test.dart';
 
 import 'specs/specs.dart';
 
-String render(
-  String source,
-  dynamic values, {
-  required String? Function(String) partial,
-}) {
+String render(String source, dynamic values, {required String? Function(String) partial}) {
   late Template? Function(String) resolver;
   resolver = (String name) {
     final String? source = partial(name);
@@ -36,8 +32,8 @@ void defineTests(List<String> unsupportedSpecs) {
 }
 
 void _defineGroupFromFile(String filename, String text) {
-  final Map<String, Object?> jsondata =
-      (json.decode(text) as Map<dynamic, dynamic>).cast<String, Object?>();
+  final Map<String, Object?> jsondata = (json.decode(text) as Map<dynamic, dynamic>)
+      .cast<String, Object?>();
   final List<Map<String, Object?>> tests = (jsondata['tests']! as List<dynamic>)
       .cast<Map<String, Object?>>();
   filename = filename.substring(filename.lastIndexOf('/') + 1);
@@ -48,12 +44,8 @@ void _defineGroupFromFile(String filename, String text) {
       testDescription.write(t['desc']);
       final template = t['template']! as String;
       final Object? data = t['data'];
-      final String templateOneline = template
-          .replaceAll('\n', r'\n')
-          .replaceAll('\r', r'\r');
-      final reason = StringBuffer(
-        "Could not render right '''$templateOneline'''",
-      );
+      final String templateOneline = template.replaceAll('\n', r'\n').replaceAll('\r', r'\r');
+      final reason = StringBuffer("Could not render right '''$templateOneline'''");
       final Object? expected = t['expected'];
       final partials = t['partials'] as Map<String, Object?>?;
       String? partial(String name) {
@@ -73,11 +65,7 @@ void _defineGroupFromFile(String filename, String text) {
       }
       test(
         testDescription.toString(),
-        () => expect(
-          render(template, data, partial: partial),
-          expected,
-          reason: reason.toString(),
-        ),
+        () => expect(render(template, data, partial: partial), expected, reason: reason.toString()),
       );
     }
   });
@@ -101,18 +89,14 @@ String Function(LambdaContext) wrapLambda(Object? Function(Object?) f) =>
 Map<String, Function> lambdas = <String, Function>{
   'Interpolation': wrapLambda((Object? t) => 'world'),
   'Interpolation - Expansion': wrapLambda((Object? t) => '{{planet}}'),
-  'Interpolation - Alternate Delimiters': wrapLambda(
-    (Object? t) => '|planet| => {{planet}}',
-  ),
+  'Interpolation - Alternate Delimiters': wrapLambda((Object? t) => '|planet| => {{planet}}'),
   'Interpolation - Multiple Calls': wrapLambda(
     _dummyCallableWithState(),
   ), //function() { return (g=(function(){return this})()).calls=(g.calls||0)+1 }
   'Escaping': wrapLambda((Object? t) => '>'),
   'Section': wrapLambda((Object? txt) => txt == '{{x}}' ? 'yes' : 'no'),
   'Section - Expansion': wrapLambda((Object? txt) => '$txt{{planet}}$txt'),
-  'Section - Alternate Delimiters': wrapLambda(
-    (Object? txt) => '$txt{{planet}} => |planet|$txt',
-  ),
+  'Section - Alternate Delimiters': wrapLambda((Object? txt) => '$txt{{planet}} => |planet|$txt'),
   'Section - Multiple Calls': wrapLambda((Object? t) => '__${t}__'),
   'Inverted Section': wrapLambda((Object? txt) => false),
 };

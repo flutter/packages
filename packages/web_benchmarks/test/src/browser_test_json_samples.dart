@@ -8,8 +8,7 @@ import 'dart:convert' show jsonDecode;
 // integration tests of this package that dumped all the data as captured.
 
 /// To test isBeginFrame. (Sampled from Chrome 89+)
-final Map<String, dynamic> beginMainFrameJson_89plus =
-    jsonDecode('''
+final Map<String, dynamic> beginMainFrameJson_89plus = jsonDecode('''
 {
     "args": {
         "frameTime": 2338687248768
@@ -24,12 +23,10 @@ final Map<String, dynamic> beginMainFrameJson_89plus =
     "ts": 2338687258440,
     "tts": 375499
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;
 
 /// To test isUpdateAllLifecyclePhases. (Sampled from Chrome 89+)
-final Map<String, dynamic> updateLifecycleJson_89plus =
-    jsonDecode('''
+final Map<String, dynamic> updateLifecycleJson_89plus = jsonDecode('''
 {
     "args": {},
     "cat": "blink",
@@ -42,12 +39,10 @@ final Map<String, dynamic> updateLifecycleJson_89plus =
     "ts": 2338687265284,
     "tts": 375900
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;
 
 /// To test isBeginMeasuredFrame. (Sampled from Chrome 89+)
-final Map<String, dynamic> beginMeasuredFrameJson_89plus =
-    jsonDecode('''
+final Map<String, dynamic> beginMeasuredFrameJson_89plus = jsonDecode('''
 {
     "args": {},
     "cat": "blink.user_timing",
@@ -59,12 +54,10 @@ final Map<String, dynamic> beginMeasuredFrameJson_89plus =
     "tid": 1,
     "ts": 2338687265932
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;
 
 /// To test isEndMeasuredFrame. (Sampled from Chrome 89+)
-final Map<String, dynamic> endMeasuredFrameJson_89plus =
-    jsonDecode('''
+final Map<String, dynamic> endMeasuredFrameJson_89plus = jsonDecode('''
 {
     "args": {},
     "cat": "blink.user_timing",
@@ -76,12 +69,10 @@ final Map<String, dynamic> endMeasuredFrameJson_89plus =
     "tid": 1,
     "ts": 2338687440485
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;
 
 /// An unrelated data frame to test negative cases.
-final Map<String, dynamic> unrelatedPhXJson =
-    jsonDecode('''
+final Map<String, dynamic> unrelatedPhXJson = jsonDecode('''
 {
     "args": {},
     "cat": "blink,rail",
@@ -94,12 +85,10 @@ final Map<String, dynamic> unrelatedPhXJson =
     "ts": 2338691143317,
     "tts": 1685405
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;
 
 /// Another unrelated data frame to test negative cases.
-final Map<String, dynamic> anotherUnrelatedJson =
-    jsonDecode('''
+final Map<String, dynamic> anotherUnrelatedJson = jsonDecode('''
 {
     "args": {
         "sort_index": -1
@@ -111,5 +100,4 @@ final Map<String, dynamic> anotherUnrelatedJson =
     "tid": 1,
     "ts": 2338692906482
 }
-''')
-        as Map<String, dynamic>;
+''') as Map<String, dynamic>;

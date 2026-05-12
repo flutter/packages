@@ -45,15 +45,12 @@ void main() {
   );
 
   test('test SKPriceLocale pigeon converters', () {
-    final SKPriceLocaleMessage msg = SKPriceLocaleWrapper.convertToPigeon(
-      locale,
-    );
+    final SKPriceLocaleMessage msg = SKPriceLocaleWrapper.convertToPigeon(locale);
     expect(msg.currencySymbol, r'$');
     expect(msg.currencyCode, 'USD');
     expect(msg.countryCode, 'USA');
 
-    final SKPriceLocaleWrapper convertedWrapper =
-        SKPriceLocaleWrapper.convertFromPigeon(msg);
+    final SKPriceLocaleWrapper convertedWrapper = SKPriceLocaleWrapper.convertFromPigeon(msg);
     expect(convertedWrapper, locale);
   });
 
@@ -68,16 +65,16 @@ void main() {
   });
 
   test('test SKProductDiscount pigeon converters', () {
-    final SKProductDiscountMessage msg =
-        SKProductDiscountWrapper.convertToPigeon(discount);
+    final SKProductDiscountMessage msg = SKProductDiscountWrapper.convertToPigeon(discount);
     expect(msg.price, '0.99');
     expect(msg.numberOfPeriods, 1);
     expect(msg.paymentMode, SKProductDiscountPaymentModeMessage.payUpFront);
     expect(msg.identifier, 'discount');
     expect(msg.type, SKProductDiscountTypeMessage.subscription);
 
-    final SKProductDiscountWrapper convertedWrapper =
-        SKProductDiscountWrapper.convertFromPigeon(msg);
+    final SKProductDiscountWrapper convertedWrapper = SKProductDiscountWrapper.convertFromPigeon(
+      msg,
+    );
     expect(convertedWrapper, discount);
   });
 
@@ -89,19 +86,18 @@ void main() {
     expect(msg.price, '3.99');
     expect(msg.discounts?.length, 1);
 
-    final SKProductWrapper convertedWrapper =
-        SKProductWrapper.convertFromPigeon(msg);
+    final SKProductWrapper convertedWrapper = SKProductWrapper.convertFromPigeon(msg);
     expect(convertedWrapper, product);
   });
 
   test('test SKProductResponse pigeon converters', () {
-    final SKProductsResponseMessage msg =
-        SkProductResponseWrapper.convertToPigeon(productResponse);
+    final SKProductsResponseMessage msg = SkProductResponseWrapper.convertToPigeon(productResponse);
     expect(msg.products?.length, 1);
     expect(msg.invalidProductIdentifiers, <String>['invalid_identifier']);
 
-    final SkProductResponseWrapper convertedWrapper =
-        SkProductResponseWrapper.convertFromPigeon(msg);
+    final SkProductResponseWrapper convertedWrapper = SkProductResponseWrapper.convertFromPigeon(
+      msg,
+    );
     expect(convertedWrapper, productResponse);
   });
 

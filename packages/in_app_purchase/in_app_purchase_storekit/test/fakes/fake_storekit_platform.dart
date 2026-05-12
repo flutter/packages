@@ -39,9 +39,7 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
     validProductIDs = <String>{'123', '456', '789'};
     validProducts = <String, SKProductWrapper>{};
     for (final String validID in validProductIDs) {
-      final Map<String, dynamic> productWrapperMap = buildProductMap(
-        dummyProductWrapper,
-      );
+      final Map<String, dynamic> productWrapperMap = buildProductMap(dummyProductWrapper);
       productWrapperMap['productIdentifier'] = validID;
       if (validID == '456') {
         productWrapperMap['priceLocale'] = buildLocaleMap(noSymbolLocale);
@@ -67,10 +65,7 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
     _countryIdentifier = 'LL';
   }
 
-  SKPaymentTransactionWrapper createPendingTransaction(
-    String id, {
-    int quantity = 1,
-  }) {
+  SKPaymentTransactionWrapper createPendingTransaction(String id, {int quantity = 1}) {
     return SKPaymentTransactionWrapper(
       transactionIdentifier: '',
       payment: SKPaymentWrapper(productIdentifier: id, quantity: quantity),
@@ -85,26 +80,17 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
     int quantity = 1,
   }) {
     return SKPaymentTransactionWrapper(
-      payment: SKPaymentWrapper(
-        productIdentifier: productId,
-        quantity: quantity,
-      ),
+      payment: SKPaymentWrapper(productIdentifier: productId, quantity: quantity),
       transactionState: SKPaymentTransactionStateWrapper.purchased,
       transactionTimeStamp: 123123.121,
       transactionIdentifier: transactionId,
     );
   }
 
-  SKPaymentTransactionWrapper createFailedTransaction(
-    String productId, {
-    int quantity = 1,
-  }) {
+  SKPaymentTransactionWrapper createFailedTransaction(String productId, {int quantity = 1}) {
     return SKPaymentTransactionWrapper(
       transactionIdentifier: '',
-      payment: SKPaymentWrapper(
-        productIdentifier: productId,
-        quantity: quantity,
-      ),
+      payment: SKPaymentWrapper(productIdentifier: productId, quantity: quantity),
       transactionState: SKPaymentTransactionStateWrapper.failed,
       transactionTimeStamp: 123123.121,
       error: const SKError(
@@ -122,10 +108,7 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
   }) {
     return SKPaymentTransactionWrapper(
       transactionIdentifier: '',
-      payment: SKPaymentWrapper(
-        productIdentifier: productId,
-        quantity: quantity,
-      ),
+      payment: SKPaymentWrapper(productIdentifier: productId, quantity: quantity),
       transactionState: SKPaymentTransactionStateWrapper.failed,
       transactionTimeStamp: 123123.121,
       error: SKError(
@@ -142,10 +125,7 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
     int quantity = 1,
   }) {
     return SKPaymentTransactionWrapper(
-      payment: SKPaymentWrapper(
-        productIdentifier: productId,
-        quantity: quantity,
-      ),
+      payment: SKPaymentWrapper(productIdentifier: productId, quantity: quantity),
       transactionState: SKPaymentTransactionStateWrapper.restored,
       transactionTimeStamp: 123123.121,
       transactionIdentifier: transactionId,
@@ -164,8 +144,7 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
 
     // Keep the received paymentDiscount parameter when testing payment with discount.
     if (paymentMap['applicationUsername']! == 'userWithDiscount') {
-      final discountArgument =
-          paymentMap['paymentDiscount'] as Map<Object?, Object?>?;
+      final discountArgument = paymentMap['paymentDiscount'] as Map<Object?, Object?>?;
       if (discountArgument != null) {
         discountReceived = discountArgument.cast<String, Object?>();
       } else {
@@ -182,48 +161,42 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
       transactions: <SKPaymentTransactionWrapper>[transaction],
     );
     if (testTransactionFail) {
-      final SKPaymentTransactionWrapper transactionFailed =
-          createFailedTransaction(id, quantity: quantity);
+      final SKPaymentTransactionWrapper transactionFailed = createFailedTransaction(
+        id,
+        quantity: quantity,
+      );
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
         transactions: <SKPaymentTransactionWrapper>[transactionFailed],
       );
     } else if (testTransactionCancel > 0) {
-      final SKPaymentTransactionWrapper transactionCanceled =
-          createCanceledTransaction(
-            id,
-            testTransactionCancel,
-            quantity: quantity,
-          );
+      final SKPaymentTransactionWrapper transactionCanceled = createCanceledTransaction(
+        id,
+        testTransactionCancel,
+        quantity: quantity,
+      );
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
         transactions: <SKPaymentTransactionWrapper>[transactionCanceled],
       );
     } else {
-      final SKPaymentTransactionWrapper transactionFinished =
-          createPurchasedTransaction(
-            id,
-            transaction.transactionIdentifier ?? '',
-            quantity: quantity,
-          );
+      final SKPaymentTransactionWrapper transactionFinished = createPurchasedTransaction(
+        id,
+        transaction.transactionIdentifier ?? '',
+        quantity: quantity,
+      );
       InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
         transactions: <SKPaymentTransactionWrapper>[transactionFinished],
       );
     }
   }
 
-  void setStoreFrontInfo({
-    required String countryCode,
-    required String identifier,
-  }) {
+  void setStoreFrontInfo({required String countryCode, required String identifier}) {
     _countryCode = countryCode;
     _countryIdentifier = identifier;
   }
 
   @override
   Future<SKStorefrontMessage> storefront() async {
-    return SKStorefrontMessage(
-      countryCode: _countryCode,
-      identifier: _countryIdentifier,
-    );
+    return SKStorefrontMessage(countryCode: _countryCode, identifier: _countryIdentifier);
   }
 
   @override
@@ -257,18 +230,13 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
       return;
     }
     if (!testRestoredTransactionsNull) {
-      InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
-        transactions: transactionList,
-      );
+      InAppPurchaseStoreKitPlatform.observer.updatedTransactions(transactions: transactionList);
     }
-    InAppPurchaseStoreKitPlatform.observer
-        .paymentQueueRestoreCompletedTransactionsFinished();
+    InAppPurchaseStoreKitPlatform.observer.paymentQueueRestoreCompletedTransactionsFinished();
   }
 
   @override
-  Future<SKProductsResponseMessage> startProductRequest(
-    List<String?> productIdentifiers,
-  ) {
+  Future<SKProductsResponseMessage> startProductRequest(List<String?> productIdentifiers) {
     if (queryProductException != null) {
       throw queryProductException!;
     }
@@ -360,8 +328,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   /// Simulates purchase result for testing non-success scenarios.
   /// Set to userCancelled, pending, or unverified to test those cases.
-  SK2ProductPurchaseResultMessage simulatedPurchaseResult =
-      SK2ProductPurchaseResultMessage.success;
+  SK2ProductPurchaseResultMessage simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
 
   void reset() {
     validProductIDs = <String>{'123', '456'};
@@ -445,8 +412,9 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
           jsonRepresentation: 'jsonRepresentation',
           status: SK2PurchaseStatusMessage.purchased,
         );
-        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
-            .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
+          <SK2TransactionMessage>[transaction],
+        );
       case SK2ProductPurchaseResultMessage.pending:
         // Create minimal message for pending status (without purchaseDate)
         final pendingTransaction = SK2TransactionMessage(
@@ -455,8 +423,9 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
           productId: id,
           status: SK2PurchaseStatusMessage.pending,
         );
-        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
-            .onTransactionsUpdated(<SK2TransactionMessage>[pendingTransaction]);
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
+          <SK2TransactionMessage>[pendingTransaction],
+        );
       case SK2ProductPurchaseResultMessage.userCancelled:
         // Create minimal message for cancelled status (without purchaseDate)
         final cancelledTransaction = SK2TransactionMessage(
@@ -465,15 +434,12 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
           productId: id,
           status: SK2PurchaseStatusMessage.cancelled,
         );
-        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
-            .onTransactionsUpdated(<SK2TransactionMessage>[
-              cancelledTransaction,
-            ]);
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
+          <SK2TransactionMessage>[cancelledTransaction],
+        );
     }
 
-    return Future<SK2ProductPurchaseResultMessage>.value(
-      simulatedPurchaseResult,
-    );
+    return Future<SK2ProductPurchaseResultMessage>.value(simulatedPurchaseResult);
   }
 
   @override
@@ -521,9 +487,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<void> restorePurchases() async {
-    InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
-      transactionList,
-    );
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(transactionList);
   }
 
   @override

@@ -62,15 +62,21 @@ void main() {
     var buildCount = 0;
     final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
-      ..update(const LibraryName(<String>['builder']), LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        'Test': (BuildContext context, DataSource source) {
-          buildCount += 1;
-          duration = AnimationDefaults.durationOf(context);
-          curve = AnimationDefaults.curveOf(context);
-          return const SizedBox.shrink();
-        },
-      }))
-      ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+      ..update(
+        const LibraryName(<String>['builder']),
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          'Test': (BuildContext context, DataSource source) {
+            buildCount += 1;
+            duration = AnimationDefaults.durationOf(context);
+            curve = AnimationDefaults.curveOf(context);
+            return const SizedBox.shrink();
+          },
+        }),
+      )
+      ..update(
+        const LibraryName(<String>['test']),
+        parseLibraryFile('import core; widget root = SizedBox();'),
+      );
     addTearDown(runtime.dispose);
     final data = DynamicContent();
     final eventLog = <String>[];
@@ -81,134 +87,188 @@ void main() {
         widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
         onEvent: (String eventName, DynamicMap eventArguments) {
           eventLog.add(eventName);
-          expect(eventArguments, const <String, Object?>{ 'argument': true });
+          expect(eventArguments, const <String, Object?>{'argument': true});
         },
       ),
     );
     expect(find.byType(SizedBox), findsOneWidget);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Align(alignment: { x: 0.25, y: 0.75 });
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<Align>(find.byType(Align)).alignment, const Alignment(0.25, 0.75));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Align(alignment: { start: 0.25, y: 0.75 });
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<Align>(find.byType(Align)).alignment, const Alignment(0.25, 0.75));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       import builder;
       widget root = AnimationDefaults(curve: "easeOut", duration: 5000, child: Test());
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(buildCount, 1);
     expect(duration, const Duration(seconds: 5));
     expect(curve, Curves.easeOut);
 
-    ArgumentDecoders.curveDecoders['saw3'] = (DataSource source, List<Object> key) => const SawTooth(3);
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    ArgumentDecoders.curveDecoders['saw3'] = (DataSource source, List<Object> key) =>
+        const SawTooth(3);
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       import builder;
       widget root = AnimationDefaults(curve: "saw3", child: Test());
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(curve, isA<SawTooth>());
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = AspectRatio(aspectRatio: 0.5);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<AspectRatio>(find.byType(AspectRatio)).aspectRatio, 0.5);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Center(widthFactor: 0.25);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<Center>(find.byType(Center)).widthFactor, 0.25);
     expect(tester.widget<Center>(find.byType(Center)).heightFactor, null);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF112233);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF112233));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Column(
         mainAxisAlignment: "center",
         children: [ ColoredBox(color: 1), ColoredBox(color: 2) ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<Column>(find.byType(Column)).mainAxisAlignment, MainAxisAlignment.center);
-    expect(tester.widget<Column>(find.byType(Column)).crossAxisAlignment, CrossAxisAlignment.center);
+    expect(
+      tester.widget<Column>(find.byType(Column)).crossAxisAlignment,
+      CrossAxisAlignment.center,
+    );
     expect(tester.widget<Column>(find.byType(Column)).verticalDirection, VerticalDirection.down);
     expect(tester.widget<Column>(find.byType(Column)).children, hasLength(2));
-    expect(tester.widgetList<ColoredBox>(find.byType(ColoredBox)).toList()[0].color, const Color(0x00000001));
-    expect(tester.widgetList<ColoredBox>(find.byType(ColoredBox)).toList()[1].color, const Color(0x00000002));
+    expect(
+      tester.widgetList<ColoredBox>(find.byType(ColoredBox)).toList()[0].color,
+      const Color(0x00000001),
+    );
+    expect(
+      tester.widgetList<ColoredBox>(find.byType(ColoredBox)).toList()[1].color,
+      const Color(0x00000002),
+    );
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = ColoredBox(color: 0xFF112233);
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xFF112233));
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = DefaultTextStyle(
         textHeightBehavior: { applyHeightToLastDescent: false },
         child: SizedBoxShrink(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(
       tester.widget<DefaultTextStyle>(find.byType(DefaultTextStyle)).textHeightBehavior,
       const TextHeightBehavior(applyHeightToLastDescent: false),
     );
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Directionality(
         textDirection: "ltr",
         child: SizedBoxShrink(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
-    expect(tester.widget<Directionality>(find.byType(Directionality)).textDirection, TextDirection.ltr);
+    expect(
+      tester.widget<Directionality>(find.byType(Directionality)).textDirection,
+      TextDirection.ltr,
+    );
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = FittedBox(
         fit: "cover",
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<FittedBox>(find.byType(FittedBox)).fit, BoxFit.cover);
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GestureDetector(
         onTap: event 'tap' { argument: true },
         child: ColoredBox(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await tester.tap(find.byType(ColoredBox));
     expect(eventLog, <String>['tap']);
     eventLog.clear();
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Directionality(
         textDirection: "ltr",
@@ -217,18 +277,22 @@ void main() {
           fontFamily: 'FONT',
         ),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<Icon>(find.byType(Icon)).icon!.codePoint, 1);
     expect(tester.widget<Icon>(find.byType(Icon)).icon!.fontFamily, 'FONT');
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = IconTheme(
         color: 0x12345678,
         child: SizedBoxShrink(),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     expect(tester.widget<IconTheme>(find.byType(IconTheme)).data.color, const Color(0x12345678));
   });
@@ -236,8 +300,11 @@ void main() {
   testWidgets('golden checks', (WidgetTester tester) async {
     final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
-      ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
-      addTearDown(runtime.dispose);
+      ..update(
+        const LibraryName(<String>['test']),
+        parseLibraryFile('import core; widget root = SizedBox();'),
+      );
+    addTearDown(runtime.dispose);
     final data = DynamicContent();
     final eventLog = <String>[];
     await tester.pumpWidget(
@@ -257,7 +324,9 @@ void main() {
 
     ArgumentDecoders.decorationDecoders['tab'] = (DataSource source, List<Object> key) {
       return UnderlineTabIndicator(
-        borderSide: ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ?? const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
+        borderSide:
+            ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ??
+            const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
         insets: ArgumentDecoders.edgeInsets(source, <Object>['insets']) ?? EdgeInsets.zero,
       );
     };
@@ -265,18 +334,22 @@ void main() {
       return const RadialGradient(
         center: Alignment(0.7, -0.6),
         radius: 0.2,
-        colors: <Color>[ Color(0xFFFFFF00), Color(0xFF0099FF) ],
+        colors: <Color>[Color(0xFFFFFF00), Color(0xFF0099FF)],
         stops: <double>[0.4, 1.0],
       );
     };
     ArgumentDecoders.shapeBorderDecoders['custom'] = (DataSource source, List<Object> key) {
       return StarBorder(
-        side: ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ?? const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
+        side:
+            ArgumentDecoders.borderSide(source, <Object>[...key, 'side']) ??
+            const BorderSide(width: 2.0, color: Color(0xFFFFFFFF)),
         points: source.v<double>(<Object>[...key, 'points']) ?? 5.0,
       );
     };
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Container(
         margin: [20.0, 10.0, 30.0, 5.0],
@@ -369,11 +442,17 @@ void main() {
           ),
         ),
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     if (!kIsWeb) {
       expect(eventLog, hasLength(1));
-      expect(eventLog.first, startsWith('image-error-event {exception: HTTP request failed, statusCode: 400, x-invalid:'));
+      expect(
+        eventLog.first,
+        startsWith(
+          'image-error-event {exception: HTTP request failed, statusCode: 400, x-invalid:',
+        ),
+      );
       eventLog.clear();
     }
     await expectLater(
@@ -385,16 +464,44 @@ void main() {
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
 
-    final DecorationImage assetImage = (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration as BoxDecoration).image!;
+    final DecorationImage assetImage =
+        (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration
+                as BoxDecoration)
+            .image!;
     expect(assetImage.image, isA<AssetImage>());
     expect((assetImage.image as AssetImage).assetName, 'asset');
     expect(
-        assetImage.colorFilter,
-        const ColorFilter.matrix(<double>[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]));
+      assetImage.colorFilter,
+      const ColorFilter.matrix(<double>[
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+      ]),
+    );
     expect(assetImage.centerSlice, const Rect.fromLTRB(5.0, 8.0, 105.0, 78.0));
     expect(assetImage.filterQuality, FilterQuality.none);
 
-    final DecorationImage networkImage = (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration as BoxDecoration).image!;
+    final DecorationImage networkImage =
+        (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration
+                as BoxDecoration)
+            .image!;
     expect(networkImage.image, isA<NetworkImage>());
     expect((networkImage.image as NetworkImage).url, 'x-invalid://');
     expect(networkImage.colorFilter, const ColorFilter.mode(Color(0xFF8811FF), BlendMode.xor));
@@ -407,10 +514,15 @@ void main() {
       return const MaskFilter.blur(BlurStyle.outer, 0.5);
     };
     ArgumentDecoders.shaderDecoders['custom'] = (DataSource source, List<Object> key) {
-      return ui.Gradient.linear(Offset.zero, const Offset(100.0, 100.0), const <Color>[Color(0xFFFFFF00), Color(0xFF00FFFF)]);
+      return ui.Gradient.linear(Offset.zero, const Offset(100.0, 100.0), const <Color>[
+        Color(0xFFFFFF00),
+        Color(0xFF00FFFF),
+      ]);
     };
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = Column(
         children: [
@@ -463,17 +575,30 @@ void main() {
           ),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
-    expect(tester.firstWidget<Text>(find.byType(Text)).style!.fontFamilyFallback, <String>[ 'a', 'b' ]);
-    expect(tester.widgetList<Text>(find.byType(Text)).map<Locale>((Text widget) => widget.locale!), const <Locale>[Locale('en', 'US'), Locale('en'), Locale.fromSubtags(languageCode: 'en', scriptCode: 'latin', countryCode: 'GB')]);
+    expect(tester.firstWidget<Text>(find.byType(Text)).style!.fontFamilyFallback, <String>[
+      'a',
+      'b',
+    ]);
+    expect(
+      tester.widgetList<Text>(find.byType(Text)).map<Locale>((Text widget) => widget.locale!),
+      const <Locale>[
+        Locale('en', 'US'),
+        Locale('en'),
+        Locale.fromSubtags(languageCode: 'en', scriptCode: 'latin', countryCode: 'GB'),
+      ],
+    );
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.text.png'),
       skip: !runGoldens,
     );
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GridView(
         gridDelegate: { type: 'fixedCrossAxisCount', crossAxisCount: 3 },
@@ -488,7 +613,8 @@ void main() {
           ColoredBox(color: 0xFF992288),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await expectLater(
       find.byType(RemoteWidget),
@@ -496,7 +622,9 @@ void main() {
       skip: !runGoldens,
     );
 
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GridView(
         gridDelegate: { type: 'maxCrossAxisExtent', maxCrossAxisExtent: 50.0 },
@@ -511,7 +639,8 @@ void main() {
           ColoredBox(color: 0xFF992288),
         ],
       );
-    '''));
+    '''),
+    );
     await tester.pump();
     await expectLater(
       find.byType(RemoteWidget),
@@ -524,7 +653,9 @@ void main() {
       sawGridDelegateDecoder += 1;
       return null;
     };
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+    runtime.update(
+      const LibraryName(<String>['test']),
+      parseLibraryFile('''
       import core;
       widget root = GridView(
         gridDelegate: { type: 'custom' },
@@ -539,7 +670,8 @@ void main() {
           ColoredBox(color: 0xFF992288),
         ],
       );
-    '''));
+    '''),
+    );
     expect(sawGridDelegateDecoder, 0);
     await tester.pump();
     expect(sawGridDelegateDecoder, 1);

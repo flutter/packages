@@ -34,9 +34,7 @@ PlatformPurchase convertToPigeonPurchase(PurchaseWrapper purchase) {
     purchaseState: _convertToPigeonPurchaseState(purchase.purchaseState),
     // For some reason quantity is not in PurchaseWrapper.
     quantity: 99,
-    accountIdentifiers:
-        purchase.obfuscatedAccountId != null ||
-            purchase.obfuscatedProfileId != null
+    accountIdentifiers: purchase.obfuscatedAccountId != null || purchase.obfuscatedProfileId != null
         ? PlatformAccountIdentifiers(
             obfuscatedAccountId: purchase.obfuscatedAccountId,
             obfuscatedProfileId: purchase.obfuscatedProfileId,
@@ -46,9 +44,7 @@ PlatformPurchase convertToPigeonPurchase(PurchaseWrapper purchase) {
 }
 
 /// Creates a [PlatformProductDetails] from the corresponding [ProductDetailsWrapper].
-PlatformProductDetails convertToPigeonProductDetails(
-  ProductDetailsWrapper details,
-) {
+PlatformProductDetails convertToPigeonProductDetails(ProductDetailsWrapper details) {
   return PlatformProductDetails(
     description: details.description,
     name: details.name,
@@ -72,9 +68,7 @@ PlatformSubscriptionOfferDetails convertToPigeonSubscriptionOfferDetails(
     offerId: details.offerId,
     offerToken: details.offerIdToken,
     offerTags: details.offerTags,
-    pricingPhases: details.pricingPhases
-        .map(convertToPigeonPricingPhase)
-        .toList(),
+    pricingPhases: details.pricingPhases.map(convertToPigeonPricingPhase).toList(),
   );
 }
 
@@ -89,8 +83,7 @@ PlatformPricingPhase convertToPigeonPricingPhase(PricingPhaseWrapper phase) {
   );
 }
 
-PlatformOneTimePurchaseOfferDetails?
-_convertToPigeonOneTimePurchaseOfferDetails(
+PlatformOneTimePurchaseOfferDetails? _convertToPigeonOneTimePurchaseOfferDetails(
   OneTimePurchaseOfferDetailsWrapper? offer,
 ) {
   if (offer == null) {
@@ -104,9 +97,7 @@ _convertToPigeonOneTimePurchaseOfferDetails(
 }
 
 /// Creates a [PlatformPurchaseState] from the Dart wrapper equivalent.
-PlatformPurchaseState _convertToPigeonPurchaseState(
-  PurchaseStateWrapper state,
-) {
+PlatformPurchaseState _convertToPigeonPurchaseState(PurchaseStateWrapper state) {
   return switch (state) {
     PurchaseStateWrapper.unspecified_state => PlatformPurchaseState.unspecified,
     PurchaseStateWrapper.purchased => PlatformPurchaseState.purchased,
@@ -117,8 +108,7 @@ PlatformPurchaseState _convertToPigeonPurchaseState(
 PlatformRecurrenceMode _convertToPigeonRecurrenceMode(RecurrenceMode mode) {
   return switch (mode) {
     RecurrenceMode.finiteRecurring => PlatformRecurrenceMode.finiteRecurring,
-    RecurrenceMode.infiniteRecurring =>
-      PlatformRecurrenceMode.infiniteRecurring,
+    RecurrenceMode.infiniteRecurring => PlatformRecurrenceMode.infiniteRecurring,
     RecurrenceMode.nonRecurring => PlatformRecurrenceMode.nonRecurring,
   };
 }

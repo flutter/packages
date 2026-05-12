@@ -109,9 +109,7 @@ void main() {
       expect(mock.launchCalled, isTrue);
     });
 
-    testWidgets('pushes to framework for internal route names', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('pushes to framework for internal route names', (WidgetTester tester) async {
       final Uri uri = Uri.parse('/foo/bar');
       FollowLink? followLink;
 

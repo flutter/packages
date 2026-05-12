@@ -14,9 +14,7 @@ void main() {
     testWidgets('supports value equality', (WidgetTester tester) async {
       expect(
         const CameraMetadata(deviceId: 'deviceId', facingMode: 'environment'),
-        equals(
-          const CameraMetadata(deviceId: 'deviceId', facingMode: 'environment'),
-        ),
+        equals(const CameraMetadata(deviceId: 'deviceId', facingMode: 'environment')),
       );
     });
   });

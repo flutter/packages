@@ -17,8 +17,7 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router, title: _appTitle);
+  Widget build(BuildContext context) => MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -26,9 +25,7 @@ class App extends StatelessWidget {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   name: 'Home',
-  routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(path: 'family/:familyId'),
-  ],
+  routes: <TypedGoRoute<GoRouteData>>[TypedGoRoute<FamilyRoute>(path: 'family/:familyId')],
 )
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
@@ -57,10 +54,7 @@ class HomeScreen extends StatelessWidget {
     body: ListView(
       children: <Widget>[
         for (final Family family in familyData)
-          ListTile(
-            title: Text(family.name),
-            onTap: () => FamilyRoute(family.id).go(context),
-          ),
+          ListTile(title: Text(family.name), onTap: () => FamilyRoute(family.id).go(context)),
       ],
     ),
   );
@@ -74,9 +68,7 @@ class FamilyScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(family.name)),
     body: ListView(
-      children: <Widget>[
-        for (final Person p in family.people) ListTile(title: Text(p.name)),
-      ],
+      children: <Widget>[for (final Person p in family.people) ListTile(title: Text(p.name))],
     ),
   );
 }

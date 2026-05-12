@@ -31,15 +31,10 @@ base class PendingRequest extends LinkedListEntry<PendingRequest> {
 /// Class for keeping track of pending lookups and processing incoming
 /// query responses.
 class LookupResolver {
-  final LinkedList<PendingRequest> _pendingRequests =
-      LinkedList<PendingRequest>();
+  final LinkedList<PendingRequest> _pendingRequests = LinkedList<PendingRequest>();
 
   /// Adds a request and returns a [Stream] of [ResourceRecord] responses.
-  Stream<T> addPendingRequest<T extends ResourceRecord>(
-    int type,
-    String name,
-    Duration timeout,
-  ) {
+  Stream<T> addPendingRequest<T extends ResourceRecord>(int type, String name, Duration timeout) {
     final controller = StreamController<T>();
     final request = PendingRequest(type, name, controller);
     final timer = Timer(timeout, () {

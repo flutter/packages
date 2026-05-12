@@ -23,23 +23,14 @@ class ImageResizer {
     double? maxHeight,
     int? imageQuality,
   ) async {
-    if (!imageResizeNeeded(maxWidth, maxHeight, imageQuality) ||
-        file.mimeType == 'image/gif') {
+    if (!imageResizeNeeded(maxWidth, maxHeight, imageQuality) || file.mimeType == 'image/gif') {
       // Implement maxWidth and maxHeight for image/gif
       return file;
     }
     try {
       final web.HTMLImageElement imageElement = await loadImage(file.path);
-      final web.HTMLCanvasElement canvas = resizeImageElement(
-        imageElement,
-        maxWidth,
-        maxHeight,
-      );
-      final XFile resizedImage = await writeCanvasToFile(
-        file,
-        canvas,
-        imageQuality,
-      );
+      final web.HTMLCanvasElement canvas = resizeImageElement(imageElement, maxWidth, maxHeight);
+      final XFile resizedImage = await writeCanvasToFile(file, canvas, imageQuality);
       web.URL.revokeObjectURL(file.path);
       return resizedImage;
     } catch (e) {
@@ -82,13 +73,7 @@ class ImageResizer {
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImage(
-        source,
-        0,
-        0,
-        canvas.width.toDouble(),
-        canvas.height.toDouble(),
-      );
+      context.drawImage(source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
     }
     return canvas;
   }
@@ -101,8 +86,7 @@ class ImageResizer {
     web.HTMLCanvasElement canvas,
     int? imageQuality,
   ) async {
-    final double calculatedImageQuality =
-        (min(imageQuality ?? 100, 100)) / 100.0;
+    final double calculatedImageQuality = (min(imageQuality ?? 100, 100)) / 100.0;
     final completer = Completer<XFile>();
     final web.BlobCallback blobCallback = (web.Blob blob) {
       completer.complete(
@@ -115,11 +99,7 @@ class ImageResizer {
         ),
       );
     }.toJS;
-    canvas.toBlob(
-      blobCallback,
-      originalFile.mimeType ?? '',
-      calculatedImageQuality.toJS,
-    );
+    canvas.toBlob(blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
     return completer.future;
   }
 }

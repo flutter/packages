@@ -30,8 +30,7 @@ void main() {
 
     await client.start(
       mDnsPort: 1234,
-      interfacesFactory: (InternetAddressType type) async =>
-          <NetworkInterface>[],
+      interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[],
     );
 
     expect(lastPort, 1234);
@@ -54,8 +53,7 @@ void main() {
 
     await client.start(
       mDnsPort: 1234,
-      interfacesFactory: (InternetAddressType type) async =>
-          <NetworkInterface>[],
+      interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[],
     );
     expect(datagramSocket.closed, false);
     client.stop();
@@ -80,8 +78,7 @@ void main() {
 
     await client.start(
       mDnsPort: 1234,
-      interfacesFactory: (InternetAddressType type) async =>
-          <NetworkInterface>[],
+      interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[],
     );
     expect(datagramSocket.closed, false);
     client.stop();
@@ -104,10 +101,7 @@ void main() {
           },
     );
 
-    await client.start(
-      interfacesFactory: (InternetAddressType type) async =>
-          <NetworkInterface>[],
-    );
+    await client.start(interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[]);
     await client.start();
     await client.lookup(ResourceRecordQuery.serverPointer('_')).toList();
   });
@@ -209,8 +203,7 @@ void main() {
     final onErrorCalledCompleter = Completer<void>();
     await client.start(
       mDnsPort: 1234,
-      interfacesFactory: (InternetAddressType type) async =>
-          <NetworkInterface>[],
+      interfacesFactory: (InternetAddressType type) async => <NetworkInterface>[],
       onError: (Object e) {
         expect(e, 'Error');
         onErrorCalledCompleter.complete();
@@ -262,8 +255,7 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   }
 }
 
-class FakeRawDatagramSocketThatSendsError extends Fake
-    implements RawDatagramSocket {
+class FakeRawDatagramSocketThatSendsError extends Fake implements RawDatagramSocket {
   @override
   InternetAddress address = InternetAddress.anyIPv4;
 
@@ -274,12 +266,9 @@ class FakeRawDatagramSocketThatSendsError extends Fake
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return Stream<RawSocketEvent>.error('Error').listen(
-      onData,
-      onError: onError,
-      cancelOnError: cancelOnError,
-      onDone: onDone,
-    );
+    return Stream<RawSocketEvent>.error(
+      'Error',
+    ).listen(onData, onError: onError, cancelOnError: cancelOnError, onDone: onDone);
   }
 }
 

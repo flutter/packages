@@ -36,11 +36,7 @@ void main() {
   });
 
   test('map2', () {
-    final List<int> result = map2(
-      <int>[3, 5, 7],
-      <int>[1, 2, 3],
-      (int x, int y) => x * y,
-    ).toList();
+    final List<int> result = map2(<int>[3, 5, 7], <int>[1, 2, 3], (int x, int y) => x * y).toList();
     expect(result[0], 3);
     expect(result[1], 10);
     expect(result[2], 21);
@@ -66,12 +62,7 @@ void main() {
 
   test('map3 unequal', () {
     expect(
-      () => map3(
-        <int>[],
-        <int>[1, 2, 3],
-        <int>[],
-        (int x, int y, int z) => x * y * z,
-      ).toList(),
+      () => map3(<int>[], <int>[1, 2, 3], <int>[], (int x, int y, int z) => x * y * z).toList(),
       throwsArgumentError,
     );
   });

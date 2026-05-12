@@ -8,9 +8,7 @@ import 'package:flutter/services.dart';
 import '../platform_interface/quick_actions_platform.dart';
 import '../types/types.dart';
 
-const MethodChannel _channel = MethodChannel(
-  'plugins.flutter.io/quick_actions',
-);
+const MethodChannel _channel = MethodChannel('plugins.flutter.io/quick_actions');
 
 /// An implementation of [QuickActionsPlatform] that uses method channels.
 class MethodChannelQuickActions extends QuickActionsPlatform {
@@ -24,9 +22,7 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
       assert(call.method == 'launch');
       handler(call.arguments as String);
     });
-    final String? action = await channel.invokeMethod<String?>(
-      'getLaunchAction',
-    );
+    final String? action = await channel.invokeMethod<String?>('getLaunchAction');
     if (action != null) {
       handler(action);
     }
@@ -34,22 +30,18 @@ class MethodChannelQuickActions extends QuickActionsPlatform {
 
   @override
   Future<void> setShortcutItems(List<ShortcutItem> items) async {
-    final List<Map<String, String?>> itemsList = items
-        .map(_serializeItem)
-        .toList();
+    final List<Map<String, String?>> itemsList = items.map(_serializeItem).toList();
     await channel.invokeMethod<void>('setShortcutItems', itemsList);
   }
 
   @override
-  Future<void> clearShortcutItems() =>
-      channel.invokeMethod<void>('clearShortcutItems');
+  Future<void> clearShortcutItems() => channel.invokeMethod<void>('clearShortcutItems');
 
   Map<String, String?> _serializeItem(ShortcutItem item) {
     return <String, String?>{
       'type': item.type,
       'localizedTitle': item.localizedTitle,
-      if (item.localizedSubtitle != null)
-        'localizedSubtitle': item.localizedSubtitle,
+      if (item.localizedSubtitle != null) 'localizedSubtitle': item.localizedSubtitle,
       'icon': item.icon,
     };
   }
