@@ -547,7 +547,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
-
   func testDuplicatePurchaseFails() async throws {
     let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
     let secondPurchaseExpectation = self.expectation(description: "Second purchase should fail")
