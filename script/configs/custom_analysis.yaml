@@ -25,3 +25,6 @@
 - rfw/example
 # Disables docs requirements, as it is test code.
 - web_benchmarks/testing/test_app
+# Use a 100 line width carried over from flutter/flutter.
+- material_ui
+- cupertino_ui
