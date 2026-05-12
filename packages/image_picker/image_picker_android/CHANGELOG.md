@@ -1,3 +1,7 @@
+## 0.8.13+17
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 0.8.13+16
 
 * Bumps androidx.core:core from 1.17.0 to 1.18.0.

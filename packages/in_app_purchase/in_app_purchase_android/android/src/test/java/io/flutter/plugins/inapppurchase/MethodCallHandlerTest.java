@@ -6,13 +6,13 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResponseCode;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResponseCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -22,13 +22,13 @@ import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
+import androidx.annotation.Nullable;
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
@@ -55,26 +55,15 @@ import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugins.inapppurchase.Messages.FlutterError;
-import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
-import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
-import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
-import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,7 +71,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.mockito.stubbing.Answer;
 
 public class MethodCallHandlerTest {
@@ -92,22 +80,21 @@ public class MethodCallHandlerTest {
   @Mock BillingClient mockBillingClient;
   @Mock InAppPurchaseCallbackApi mockCallbackApi;
 
-  @Spy
-  Messages.Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse>
-      platformAlternativeBillingOnlyReportingDetailsResult;
+  TestResult<PlatformAlternativeBillingOnlyReportingDetailsResponse>
+      platformAlternativeBillingOnlyReportingDetailsResult = new TestResult<>();
 
-  @Spy Messages.Result<Messages.PlatformBillingConfigResponse> platformBillingConfigResult;
-  @Spy Messages.Result<PlatformBillingResult> platformBillingResult;
-  @Spy Messages.Result<PlatformProductDetailsResponse> platformProductDetailsResult;
-  @Spy Messages.Result<PlatformPurchaseHistoryResponse> platformPurchaseHistoryResult;
-  @Spy Messages.Result<PlatformPurchasesResponse> platformPurchasesResult;
+  TestResult<PlatformBillingConfigResponse> platformBillingConfigResult = new TestResult<>();
+  TestResult<PlatformBillingResult> platformBillingResult = new TestResult<>();
+  TestResult<PlatformProductDetailsResponse> platformProductDetailsResult = new TestResult<>();
+  TestResult<PlatformPurchaseHistoryResponse> platformPurchaseHistoryResult = new TestResult<>();
+  TestResult<PlatformPurchasesResponse> platformPurchasesResult = new TestResult<>();
 
   @Mock Activity activity;
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
 
-  private final Messages.PlatformPendingPurchasesParams defaultPendingPurchasesParams =
-      new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(false).build();
+  private final PlatformPendingPurchasesParams defaultPendingPurchasesParams =
+      new PlatformPendingPurchasesParams(false);
 
   private final Long DEFAULT_HANDLE = 1L;
 
@@ -132,7 +119,7 @@ public class MethodCallHandlerTest {
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
             eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
-            any(Messages.PlatformPendingPurchasesParams.class)))
+            any(PlatformPendingPurchasesParams.class)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockCallbackApi, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -165,7 +152,7 @@ public class MethodCallHandlerTest {
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception = assertThrows(FlutterError.class, () -> methodChannelHandler.isReady());
-    assertEquals("UNAVAILABLE", exception.code);
+    assertEquals("UNAVAILABLE", exception.getCode());
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
@@ -174,7 +161,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(
             PlatformBillingChoiceMode.PLAY_BILLING_ONLY, defaultPendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
     verify(factory, times(1))
         .createBillingClient(
             context,
@@ -185,11 +172,8 @@ public class MethodCallHandlerTest {
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
-    verify(platformBillingResult, never()).error(any());
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
@@ -197,7 +181,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(
             PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, defaultPendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
     verify(factory, times(1))
         .createBillingClient(
             context,
@@ -208,20 +192,17 @@ public class MethodCallHandlerTest {
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
-    verify(platformBillingResult, never()).error(any());
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
   public void startConnectionPendingPurchasesPrepaidPlans() {
-    Messages.PlatformPendingPurchasesParams pendingPurchasesParams =
-        new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
+    PlatformPendingPurchasesParams pendingPurchasesParams =
+        new PlatformPendingPurchasesParams(true);
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING, pendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
     verify(factory, times(1))
         .createBillingClient(
             context,
@@ -232,9 +213,7 @@ public class MethodCallHandlerTest {
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertTrue(platformBillingResult.called);
   }
 
   @Test
@@ -242,14 +221,14 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(
             PlatformBillingChoiceMode.USER_CHOICE_BILLING, defaultPendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
 
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
             eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
-            any(Messages.PlatformPendingPurchasesParams.class));
+            any(PlatformPendingPurchasesParams.class));
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -258,9 +237,7 @@ public class MethodCallHandlerTest {
             .build();
     captor.getValue().onBillingSetupFinished(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertTrue(platformBillingResult.called);
   }
 
   @Test
@@ -269,7 +246,7 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor1 =
         mockStartConnection(
             PlatformBillingChoiceMode.PLAY_BILLING_ONLY, defaultPendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
     verify(factory, times(1))
         .createBillingClient(
             context,
@@ -284,24 +261,26 @@ public class MethodCallHandlerTest {
             .build();
     final BillingClientStateListener stateListener = captor1.getValue();
     stateListener.onBillingSetupFinished(billingResult1);
-    verify(platformBillingResult, times(1)).success(any());
-    Mockito.reset(platformBillingResult, mockCallbackApi, mockBillingClient);
+    assertTrue(platformBillingResult.called);
+
+    // Reset state
+    platformBillingResult.called = false;
+    platformBillingResult.result = null;
+    Mockito.reset(mockCallbackApi, mockBillingClient);
 
     // Disconnect
     methodChannelHandler.endConnection();
 
-    // Verify that the client is disconnected and that the OnDisconnect callback has
-    // been triggered
     verify(mockBillingClient, times(1)).endConnection();
     stateListener.onBillingServiceDisconnected();
     verify(mockCallbackApi, times(1)).onBillingServiceDisconnected(eq(DEFAULT_HANDLE), any());
-    Mockito.reset(platformBillingResult, mockCallbackApi, mockBillingClient);
+    Mockito.reset(mockCallbackApi, mockBillingClient);
 
     // Second connection.
     ArgumentCaptor<BillingClientStateListener> captor2 =
         mockStartConnection(
             PlatformBillingChoiceMode.USER_CHOICE_BILLING, defaultPendingPurchasesParams);
-    verify(platformBillingResult, never()).success(any());
+    assertFalse(platformBillingResult.called);
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
@@ -316,7 +295,7 @@ public class MethodCallHandlerTest {
             .build();
     captor2.getValue().onBillingSetupFinished(billingResult2);
 
-    verify(platformBillingResult, times(1)).success(any());
+    assertTrue(platformBillingResult.called);
   }
 
   @Test
@@ -329,8 +308,8 @@ public class MethodCallHandlerTest {
         DEFAULT_HANDLE,
         PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
         defaultPendingPurchasesParams,
-        platformBillingResult);
-    verify(platformBillingResult, never()).success(any());
+        platformBillingResult.asCallback());
+    assertFalse(platformBillingResult.called);
     BillingResult billingResult1 = buildBillingResult();
     BillingResult billingResult2 =
         BillingResult.newBuilder()
@@ -347,14 +326,11 @@ public class MethodCallHandlerTest {
     captor.getValue().onBillingSetupFinished(billingResult2);
     captor.getValue().onBillingSetupFinished(billingResult3);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+    assertTrue(platformBillingResult.called);
+    PlatformBillingResult response = platformBillingResult.result.getOrNull();
     assertEquals(
-        resultCaptor.getValue().getResponseCode(),
-        fromBillingResponseCode(billingResult1.getResponseCode()));
-    assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult1.getDebugMessage());
-    verify(platformBillingResult, never()).error(any());
+        response.getResponseCode(), fromBillingResponseCode(billingResult1.getResponseCode()));
+    assertEquals(response.getDebugMessage(), billingResult1.getDebugMessage());
   }
 
   @Test
@@ -373,28 +349,26 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .getBillingConfigAsync(paramsCaptor.capture(), listenerCaptor.capture());
 
-    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult);
+    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult.asCallback());
     listenerCaptor.getValue().onBillingConfigResponse(billingResult, expectedConfig);
 
-    ArgumentCaptor<PlatformBillingConfigResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingConfigResponse.class);
-    verify(platformBillingConfigResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue().getBillingResult(), billingResult);
-    assertEquals(resultCaptor.getValue().getCountryCode(), expectedCountryCode);
-    verify(platformBillingConfigResult, never()).error(any());
+    assertTrue(platformBillingConfigResult.called);
+    PlatformBillingConfigResponse response = platformBillingConfigResult.result.getOrNull();
+    assertResultsMatch(response.getBillingResult(), billingResult);
+    assertEquals(expectedCountryCode, response.getCountryCode());
   }
 
   @Test
   public void getBillingConfig_serviceDisconnected() {
-    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult);
+    methodChannelHandler.getBillingConfigAsync(platformBillingConfigResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformBillingConfigResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformBillingConfigResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformBillingConfigResult.called);
+    Throwable error = platformBillingConfigResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -414,32 +388,28 @@ public class MethodCallHandlerTest {
         .createAlternativeBillingOnlyReportingDetailsAsync(listenerCaptor.capture());
 
     methodChannelHandler.createAlternativeBillingOnlyReportingDetailsAsync(
-        platformAlternativeBillingOnlyReportingDetailsResult);
+        platformAlternativeBillingOnlyReportingDetailsResult.asCallback());
     listenerCaptor.getValue().onAlternativeBillingOnlyTokenResponse(billingResult, expectedDetails);
 
-    verify(platformAlternativeBillingOnlyReportingDetailsResult, never()).error(any());
-    ArgumentCaptor<PlatformAlternativeBillingOnlyReportingDetailsResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformAlternativeBillingOnlyReportingDetailsResponse.class);
-    verify(platformAlternativeBillingOnlyReportingDetailsResult, times(1))
-        .success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue().getBillingResult(), billingResult);
-    assertEquals(
-        resultCaptor.getValue().getExternalTransactionToken(), expectedExternalTransactionToken);
+    assertTrue(platformAlternativeBillingOnlyReportingDetailsResult.called);
+    PlatformAlternativeBillingOnlyReportingDetailsResponse response =
+        platformAlternativeBillingOnlyReportingDetailsResult.result.getOrNull();
+    assertResultsMatch(response.getBillingResult(), billingResult);
+    assertEquals(expectedExternalTransactionToken, response.getExternalTransactionToken());
   }
 
   @Test
   public void createAlternativeBillingOnlyReportingDetails_serviceDisconnected() {
     methodChannelHandler.createAlternativeBillingOnlyReportingDetailsAsync(
-        platformAlternativeBillingOnlyReportingDetailsResult);
+        platformAlternativeBillingOnlyReportingDetailsResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformAlternativeBillingOnlyReportingDetailsResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformAlternativeBillingOnlyReportingDetailsResult, times(1))
-        .error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformAlternativeBillingOnlyReportingDetailsResult.called);
+    Throwable error = platformAlternativeBillingOnlyReportingDetailsResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -453,27 +423,24 @@ public class MethodCallHandlerTest {
         .when(mockBillingClient)
         .isAlternativeBillingOnlyAvailableAsync(listenerCaptor.capture());
 
-    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult);
+    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult.asCallback());
     listenerCaptor.getValue().onAlternativeBillingOnlyAvailabilityResponse(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
-    verify(platformBillingResult, never()).error(any());
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
   public void isAlternativeBillingOnlyAvailable_serviceDisconnected() {
-    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult);
+    methodChannelHandler.isAlternativeBillingOnlyAvailableAsync(platformBillingResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformBillingResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformBillingResult.called);
+    Throwable error = platformBillingResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -487,27 +454,26 @@ public class MethodCallHandlerTest {
             eq(activity), listenerCaptor.capture()))
         .thenReturn(billingResult);
 
-    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
+        platformBillingResult.asCallback());
     listenerCaptor.getValue().onAlternativeBillingOnlyInformationDialogResponse(billingResult);
 
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
-    verify(platformBillingResult, never()).error(any());
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
   public void showAlternativeBillingOnlyInformationDialog_serviceDisconnected() {
-    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
+        platformBillingResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformBillingResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformBillingResult.called);
+    Throwable error = platformBillingResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -515,15 +481,17 @@ public class MethodCallHandlerTest {
     mockStartConnection();
     methodChannelHandler.setActivity(null);
 
-    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(platformBillingResult);
+    methodChannelHandler.showAlternativeBillingOnlyInformationDialog(
+        platformBillingResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformBillingResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformBillingResult, times(1)).error(errorCaptor.capture());
-    assertEquals(ACTIVITY_UNAVAILABLE, errorCaptor.getValue().code);
+    assertTrue(platformBillingResult.called);
+    Throwable error = platformBillingResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals(ACTIVITY_UNAVAILABLE, flutterError.getCode());
     assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage())
+        Objects.requireNonNull(flutterError.getMessage())
             .contains("Not attempting to show dialog"));
   }
 
@@ -534,13 +502,12 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
-    @SuppressWarnings("unchecked")
-    final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
+
     methodChannelHandler.startConnection(
         disconnectCallbackHandle,
         PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
         defaultPendingPurchasesParams,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> Unit.INSTANCE));
     final BillingClientStateListener stateListener = captor.getValue();
 
     // Disconnect the connected client
@@ -552,21 +519,19 @@ public class MethodCallHandlerTest {
     stateListener.onBillingServiceDisconnected();
     ArgumentCaptor<Long> handleCaptor = ArgumentCaptor.forClass(Long.class);
     verify(mockCallbackApi, times(1)).onBillingServiceDisconnected(handleCaptor.capture(), any());
-    assertEquals(handleCaptor.getValue().longValue(), disconnectCallbackHandle);
+    assertEquals(disconnectCallbackHandle, handleCaptor.getValue().longValue());
   }
 
   @Test
   public void queryProductDetailsAsync() {
-    // Connect a billing client and set up the product query listeners
     establishConnectedBillingClient();
     List<String> productsIds = asList("id1", "id2");
     final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
-    // Query for product details
-    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
+    methodChannelHandler.queryProductDetailsAsync(
+        productList, platformProductDetailsResult.asCallback());
 
-    // Assert the arguments were forwarded correctly to BillingClient
     ArgumentCaptor<QueryProductDetailsParams> paramCaptor =
         ArgumentCaptor.forClass(QueryProductDetailsParams.class);
     ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
@@ -574,35 +539,32 @@ public class MethodCallHandlerTest {
     verify(mockBillingClient)
         .queryProductDetailsAsync(paramCaptor.capture(), listenerCaptor.capture());
 
-    // Assert that we handed result BillingClient's response
     List<ProductDetails> productDetailsResponse = singletonList(buildProductDetails("foo"));
     BillingResult billingResult = buildBillingResult();
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
-    ArgumentCaptor<PlatformProductDetailsResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformProductDetailsResponse.class);
-    verify(platformProductDetailsResult).success(resultCaptor.capture());
-    PlatformProductDetailsResponse resultData = resultCaptor.getValue();
+
+    assertTrue(platformProductDetailsResult.called);
+    PlatformProductDetailsResponse resultData = platformProductDetailsResult.result.getOrNull();
     assertResultsMatch(resultData.getBillingResult(), billingResult);
     assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
   }
 
   @Test
   public void queryProductDetailsAsync_clientDisconnected() {
-    // Disconnect the Billing client and prepare a queryProductDetails call
     methodChannelHandler.endConnection();
     List<String> productsIds = asList("id1", "id2");
     final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
-    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
+    methodChannelHandler.queryProductDetailsAsync(
+        productList, platformProductDetailsResult.asCallback());
 
-    // Assert that the async call returns an error result.
-    verify(platformProductDetailsResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformProductDetailsResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformProductDetailsResult.called);
+    Throwable error = platformProductDetailsResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   // Test launchBillingFlow not crash if `accountId` is `null`
@@ -610,21 +572,22 @@ public class MethodCallHandlerTest {
   // since PBL 3.0, the `accountId` variable is not public.
   @Test
   public void launchBillingFlow_null_AccountId_do_not_crash() {
-    // Fetch the product details first and then prepare the launch billing flow call
     String productId = "foo";
     queryForProducts(singletonList(productId));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            null,
+            null,
+            null,
+            null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
@@ -633,28 +596,26 @@ public class MethodCallHandlerTest {
 
   @Test
   public void launchBillingFlow_ok_null_OldProduct() {
-    // Fetch the product details first and then prepare the launch billing flow call
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            null,
+            null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify the response.
     assertResultsMatch(platformResult, billingResult);
   }
 
@@ -662,136 +623,115 @@ public class MethodCallHandlerTest {
   public void launchBillingFlow_ok_null_Activity() {
     methodChannelHandler.setActivity(null);
 
-    // Fetch the product details first and then prepare the launch billing flow call
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            null,
+            null);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("ACTIVITY_UNAVAILABLE", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("ACTIVITY_UNAVAILABLE", exception.getCode());
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("foreground"));
   }
 
   @Test
   public void launchBillingFlow_ok_oldProduct() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String accountId = "account";
     String oldProductId = "oldFoo";
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    queryForProducts(List.of(productId, oldProductId));
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            oldProductId,
+            null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify the response.
     assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
   public void launchBillingFlow_ok_AccountId() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String accountId = "account";
     queryForProducts(singletonList(productId));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            null,
+            null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify the response.
     assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
   public void launchBillingFlow_ok_Proration() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String oldProductId = "oldFoo";
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setPurchaseToken(purchaseToken);
-    paramsBuilder.setReplacementMode(replacementMode);
+    queryForProducts(List.of(productId, oldProductId));
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId, replacementMode, null, accountId, null, oldProductId, purchaseToken);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify the response.
     assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
   public void launchBillingFlow_ok_Proration_with_null_OldProduct() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String accountId = "account";
     String queryOldProductId = "oldFoo";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(null);
-    paramsBuilder.setReplacementMode(replacementMode);
+    queryForProducts(List.of(productId, queryOldProductId));
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId, replacementMode, null, accountId, null, null, null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.getCode());
     assertTrue(
         Objects.requireNonNull(exception.getMessage())
             .contains("launchBillingFlow failed because oldProduct is null"));
@@ -800,28 +740,21 @@ public class MethodCallHandlerTest {
   @Test
   @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Replacement_with_null_OldProduct() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String accountId = "account";
     String queryOldProductId = "oldFoo";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(null);
-    paramsBuilder.setReplacementMode(replacementMode);
+    queryForProducts(List.of(productId, queryOldProductId));
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId, replacementMode, null, accountId, null, null, null);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.getCode());
     assertTrue(
         Objects.requireNonNull(exception.getMessage())
             .contains("launchBillingFlow failed because oldProduct is null"));
@@ -829,98 +762,88 @@ public class MethodCallHandlerTest {
 
   @Test
   public void launchBillingFlow_ok_Full() {
-    // Fetch the product details first and query the method call
     String productId = "foo";
     String oldProductId = "oldFoo";
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
     PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_FULL_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, oldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setPurchaseToken(purchaseToken);
-    paramsBuilder.setReplacementMode(replacementMode);
+    queryForProducts(List.of(productId, oldProductId));
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId, replacementMode, null, accountId, null, oldProductId, purchaseToken);
 
-    // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
     when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-    PlatformBillingResult platformResult =
-        methodChannelHandler.launchBillingFlow(paramsBuilder.build());
+    PlatformBillingResult platformResult = methodChannelHandler.launchBillingFlow(params);
 
-    // Verify we pass the arguments to the billing flow
     ArgumentCaptor<BillingFlowParams> billingFlowParamsCaptor =
         ArgumentCaptor.forClass(BillingFlowParams.class);
     verify(mockBillingClient).launchBillingFlow(any(), billingFlowParamsCaptor.capture());
-
-    // Verify the response.
     assertResultsMatch(platformResult, billingResult);
   }
 
   @Test
   public void launchBillingFlow_clientDisconnected() {
-    // Prepare the launch call after disconnecting the client
     methodChannelHandler.endConnection();
     String productId = "foo";
     String accountId = "account";
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            null,
+            null);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("UNAVAILABLE", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("UNAVAILABLE", exception.getCode());
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains("BillingClient"));
   }
 
   @Test
   public void launchBillingFlow_productNotFound() {
-    // Try to launch the billing flow for a random product ID
     establishConnectedBillingClient();
     String productId = "foo";
     String accountId = "account";
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            null,
+            null);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("NOT_FOUND", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("NOT_FOUND", exception.getCode());
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains(productId));
   }
 
   @Test
   public void launchBillingFlow_oldProductNotFound() {
-    // Try to launch the billing flow for a random product ID
     establishConnectedBillingClient();
     String productId = "foo";
     String accountId = "account";
     String oldProductId = "oldProduct";
     queryForProducts(singletonList(productId));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setReplacementMode(
-        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    PlatformBillingFlowParams params =
+        new PlatformBillingFlowParams(
+            productId,
+            REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+            null,
+            accountId,
+            null,
+            oldProductId,
+            null);
 
-    // Assert that the synchronous call throws an exception.
     FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("IN_APP_PURCHASE_INVALID_OLD_PRODUCT", exception.code);
+        assertThrows(FlutterError.class, () -> methodChannelHandler.launchBillingFlow(params));
+    assertEquals("IN_APP_PURCHASE_INVALID_OLD_PRODUCT", exception.getCode());
     assertTrue(Objects.requireNonNull(exception.getMessage()).contains(oldProductId));
   }
 
@@ -928,15 +851,15 @@ public class MethodCallHandlerTest {
   public void queryPurchases_clientDisconnected() {
     methodChannelHandler.endConnection();
 
-    methodChannelHandler.queryPurchasesAsync(PlatformProductType.INAPP, platformPurchasesResult);
+    methodChannelHandler.queryPurchasesAsync(
+        PlatformProductType.INAPP, platformPurchasesResult.asCallback());
 
-    // Assert that the async call returns an error result.
-    verify(platformPurchasesResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformPurchasesResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformPurchasesResult.called);
+    Throwable error = platformPurchasesResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -961,25 +884,19 @@ public class MethodCallHandlerTest {
         .queryPurchasesAsync(
             any(QueryPurchasesParams.class), purchasesResponseListenerArgumentCaptor.capture());
 
-    methodChannelHandler.queryPurchasesAsync(PlatformProductType.INAPP, platformPurchasesResult);
+    methodChannelHandler.queryPurchasesAsync(
+        PlatformProductType.INAPP, platformPurchasesResult.asCallback());
 
-    verify(platformPurchasesResult, never()).error(any());
-
-    ArgumentCaptor<PlatformPurchasesResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformPurchasesResponse.class);
-    verify(platformPurchasesResult, times(1)).success(resultCaptor.capture());
-
-    PlatformPurchasesResponse purchasesResponse = resultCaptor.getValue();
+    assertTrue(platformPurchasesResult.called);
+    PlatformPurchasesResponse purchasesResponse = platformPurchasesResult.result.getOrNull();
     assertEquals(
-        purchasesResponse.getBillingResult().getResponseCode(),
-        Messages.PlatformBillingResponse.OK);
+        PlatformBillingResponse.OK, purchasesResponse.getBillingResult().getResponseCode());
     assertTrue(purchasesResponse.getPurchases().isEmpty());
   }
 
   @Test
   @SuppressWarnings(value = "deprecation")
   public void queryPurchaseHistoryAsync() {
-    // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient();
     BillingResult billingResult = buildBillingResult();
     final String purchaseToken = "foo";
@@ -989,16 +906,14 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
     methodChannelHandler.queryPurchaseHistoryAsync(
-        PlatformProductType.INAPP, platformPurchaseHistoryResult);
+        PlatformProductType.INAPP, platformPurchaseHistoryResult.asCallback());
 
-    // Verify we pass the data to result
     verify(mockBillingClient)
         .queryPurchaseHistoryAsync(any(QueryPurchaseHistoryParams.class), listenerCaptor.capture());
     listenerCaptor.getValue().onPurchaseHistoryResponse(billingResult, purchasesList);
-    ArgumentCaptor<PlatformPurchaseHistoryResponse> resultCaptor =
-        ArgumentCaptor.forClass(PlatformPurchaseHistoryResponse.class);
-    verify(platformPurchaseHistoryResult).success(resultCaptor.capture());
-    PlatformPurchaseHistoryResponse result = resultCaptor.getValue();
+
+    assertTrue(platformPurchaseHistoryResult.called);
+    PlatformPurchaseHistoryResponse result = platformPurchaseHistoryResult.result.getOrNull();
     assertResultsMatch(result.getBillingResult(), billingResult);
     assertEquals(1, result.getPurchases().size());
     assertEquals(purchaseToken, result.getPurchases().get(0).getPurchaseToken());
@@ -1010,15 +925,15 @@ public class MethodCallHandlerTest {
     methodChannelHandler.endConnection();
 
     methodChannelHandler.queryPurchaseHistoryAsync(
-        PlatformProductType.INAPP, platformPurchaseHistoryResult);
+        PlatformProductType.INAPP, platformPurchaseHistoryResult.asCallback());
 
     // Assert that the async call returns an error result.
-    verify(platformPurchaseHistoryResult, never()).success(any());
-    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
-    verify(platformPurchaseHistoryResult, times(1)).error(errorCaptor.capture());
-    assertEquals("UNAVAILABLE", errorCaptor.getValue().code);
-    assertTrue(
-        Objects.requireNonNull(errorCaptor.getValue().getMessage()).contains("BillingClient"));
+    assertTrue(platformPurchaseHistoryResult.called);
+    Throwable error = platformPurchaseHistoryResult.result.exceptionOrNull();
+    assertTrue(error instanceof FlutterError);
+    FlutterError flutterError = (FlutterError) error;
+    assertEquals("UNAVAILABLE", flutterError.getCode());
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -1047,21 +962,16 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<ConsumeResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(ConsumeResponseListener.class);
 
-    methodChannelHandler.consumeAsync(token, platformBillingResult);
+    methodChannelHandler.consumeAsync(token, platformBillingResult.asCallback());
 
     ConsumeParams params = ConsumeParams.newBuilder().setPurchaseToken(token).build();
 
-    // Verify we pass the data to result
     verify(mockBillingClient).consumeAsync(refEq(params), listenerCaptor.capture());
 
     listenerCaptor.getValue().onConsumeResponse(billingResult, token);
 
-    // Verify we pass the response code to result
-    verify(platformBillingResult, never()).error(any());
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
@@ -1072,22 +982,17 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<AcknowledgePurchaseResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(AcknowledgePurchaseResponseListener.class);
 
-    methodChannelHandler.acknowledgePurchase(purchaseToken, platformBillingResult);
+    methodChannelHandler.acknowledgePurchase(purchaseToken, platformBillingResult.asCallback());
 
     AcknowledgePurchaseParams params =
         AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
 
-    // Verify we pass the data to result
     verify(mockBillingClient).acknowledgePurchase(refEq(params), listenerCaptor.capture());
 
     listenerCaptor.getValue().onAcknowledgePurchaseResponse(billingResult);
 
-    // Verify we pass the response code to result
-    verify(platformBillingResult, never()).error(any());
-    ArgumentCaptor<PlatformBillingResult> resultCaptor =
-        ArgumentCaptor.forClass(PlatformBillingResult.class);
-    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    assertResultsMatch(resultCaptor.getValue(), billingResult);
+    assertTrue(platformBillingResult.called);
+    assertResultsMatch(platformBillingResult.result.getOrNull(), billingResult);
   }
 
   @Test
@@ -1123,8 +1028,8 @@ public class MethodCallHandlerTest {
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.PlatformPendingPurchasesParams, Messages.Result)} with startup params.
+   * Call {@link MethodCallHandlerImpl#startConnection(long, PlatformBillingChoiceMode,
+   * PlatformPendingPurchasesParams, Function1)} with startup params.
    *
    * <p>Defaults to play billing only which is the default.
    */
@@ -1134,29 +1039,30 @@ public class MethodCallHandlerTest {
   }
 
   /**
-   * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.PlatformPendingPurchasesParams, Messages.Result)} with startup params.
+   * Call {@link MethodCallHandlerImpl#startConnection(long, PlatformBillingChoiceMode,
+   * PlatformPendingPurchasesParams, Function1)} with startup params.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
       PlatformBillingChoiceMode billingChoiceMode,
-      Messages.PlatformPendingPurchasesParams pendingPurchasesParams) {
+      PlatformPendingPurchasesParams pendingPurchasesParams) {
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
     methodChannelHandler.startConnection(
-        DEFAULT_HANDLE, billingChoiceMode, pendingPurchasesParams, platformBillingResult);
+        DEFAULT_HANDLE,
+        billingChoiceMode,
+        pendingPurchasesParams,
+        platformBillingResult.asCallback());
     return captor;
   }
 
   private void establishConnectedBillingClient() {
-    @SuppressWarnings("unchecked")
-    final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
     methodChannelHandler.startConnection(
         DEFAULT_HANDLE,
         PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
         defaultPendingPurchasesParams,
-        mockResult);
+        ResultCompat.asCompatCallback(reply -> Unit.INSTANCE));
   }
 
   private void queryForProducts(List<String> productIdList) {
@@ -1167,7 +1073,8 @@ public class MethodCallHandlerTest {
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Call the method.
-    methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
+    methodChannelHandler.queryProductDetailsAsync(
+        productList, platformProductDetailsResult.asCallback());
 
     // Respond to the call with a matching set of product details.
     ArgumentCaptor<ProductDetailsResponseListener> listenerCaptor =
@@ -1184,9 +1091,7 @@ public class MethodCallHandlerTest {
       List<String> productIds, PlatformProductType productType) {
     List<PlatformQueryProduct> productList = new ArrayList<>();
     for (String productId : productIds) {
-      PlatformQueryProduct.Builder builder =
-          new PlatformQueryProduct.Builder().setProductId(productId).setProductType(productType);
-      productList.add(builder.build());
+      productList.add(new PlatformQueryProduct(productId, productType));
     }
     return productList;
   }
@@ -1254,21 +1159,23 @@ public class MethodCallHandlerTest {
         .build();
   }
 
-  private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
+  private void assertResultsMatch(
+      @Nullable PlatformBillingResult pigeonResult, BillingResult nativeResult) {
+    assertNotNull(pigeonResult);
     assertEquals(
         pigeonResult.getResponseCode(), fromBillingResponseCode(nativeResult.getResponseCode()));
     assertEquals(pigeonResult.getDebugMessage(), nativeResult.getDebugMessage());
   }
 
   private void assertDetailListsMatch(
-      List<ProductDetails> expected, List<Messages.PlatformProductDetails> actual) {
+      List<ProductDetails> expected, List<PlatformProductDetails> actual) {
     assertEquals(expected.size(), actual.size());
     for (int i = 0; i < expected.size(); i++) {
       assertDetailsMatch(expected.get(i), actual.get(i));
     }
   }
 
-  private void assertDetailsMatch(ProductDetails expected, Messages.PlatformProductDetails actual) {
+  private void assertDetailsMatch(ProductDetails expected, PlatformProductDetails actual) {
     assertEquals(expected.getDescription(), actual.getDescription());
     assertEquals(expected.getName(), actual.getName());
     assertEquals(expected.getProductId(), actual.getProductId());
@@ -1280,5 +1187,21 @@ public class MethodCallHandlerTest {
     assertEquals(
         expected.getSubscriptionOfferDetails() == null,
         actual.getSubscriptionOfferDetails() == null);
+  }
+
+  private static class TestResult<T> implements Function1<ResultCompat<T>, Unit> {
+    ResultCompat<T> result;
+    boolean called = false;
+
+    @Override
+    public Unit invoke(ResultCompat<T> reply) {
+      this.result = reply;
+      this.called = true;
+      return Unit.INSTANCE;
+    }
+
+    public Function1<? super Result<T>, Unit> asCallback() {
+      return ResultCompat.asCompatCallback(this);
+    }
   }
 }

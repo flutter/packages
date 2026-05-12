@@ -1,3 +1,7 @@
+## 0.6.2+1
+
+* Fixes a bug that prevented non-cloud styles from being applied.
+
 ## 0.6.2
 
 * Adds `colorScheme` support for controlling cloud-based map brightness.

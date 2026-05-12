@@ -26,7 +26,7 @@ void main() {
     textDirection: TextDirection.ltr,
   );
 
-  testWidgets('cloudMapId present => mapId set & styles omitted', (
+  testWidgets('cloud mapId present => mapId set & styles omitted', (
     WidgetTester tester,
   ) async {
     const testMapConfig = MapConfiguration(mapId: 'test-cloud-map-id');
@@ -46,7 +46,7 @@ void main() {
       mapId: 1, // Internal controller ID
       streamController: stream,
       widgetConfiguration: cfg(),
-      mapConfiguration: testMapConfig, // cloudMapId is set here
+      mapConfiguration: testMapConfig, // Cloud mapId is set here
     );
 
     controller.debugSetOverrides(
@@ -70,13 +70,13 @@ void main() {
     expect(
       captured!.styles == null || captured!.styles!.isEmpty,
       isTrue,
-      reason: 'When cloudMapId is set, styles must not be applied.',
+      reason: 'When cloud mapId is set, styles must not be applied.',
     );
 
     controller.dispose();
   });
 
-  testWidgets('no cloudMapId => styles applied', (WidgetTester tester) async {
+  testWidgets('no cloud mapId => styles applied', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );
@@ -113,13 +113,65 @@ void main() {
     expect(
       captured!.mapId,
       anyOf(isNull, isEmpty),
-      reason: 'mapId should be empty/null when no Cloud Map is used.',
+      reason: 'mapId should be empty/null when no cloud mapId is used.',
     );
     expect(captured!.styles, isNotNull);
     expect(
       captured!.styles,
       isNotEmpty,
-      reason: 'When cloudMapId is null, styles should be applied.',
+      reason: 'When cloud mapId is null, styles should be applied.',
+    );
+
+    controller.dispose();
+  });
+
+  testWidgets('empty cloud mapId is treated as no mapId', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
+    );
+
+    final stream = StreamController<MapEvent<Object?>>();
+    addTearDown(() {
+      // Stream is closed by controller.dispose()
+    });
+
+    gmaps.MapOptions? captured;
+    final controller = GoogleMapController(
+      mapId: 2, // Internal controller ID
+      streamController: stream,
+      widgetConfiguration: cfg(),
+      mapConfiguration: const MapConfiguration(mapId: ''),
+    );
+
+    controller.debugSetOverrides(
+      setOptions: (gmaps.MapOptions options) {
+        captured = options;
+      },
+    );
+
+    final styles = <gmaps.MapTypeStyle>[
+      gmaps.MapTypeStyle()
+        ..featureType = 'poi'
+        ..elementType = 'labels',
+    ];
+
+    controller.updateStyles(styles);
+
+    await tester.pump();
+
+    expect(captured, isNotNull);
+    expect(
+      captured!.mapId,
+      anyOf(isNull, isEmpty),
+      reason: 'mapId should be empty/null when no cloud mapId is used.',
+    );
+    expect(captured!.styles, isNotNull);
+    expect(
+      captured!.styles,
+      isNotEmpty,
+      reason: 'When cloud mapId is empty, styles should be applied.',
     );
 
     controller.dispose();
