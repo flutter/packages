@@ -138,7 +138,7 @@ linter:
     - null_check_on_nullable_type_parameter
     - null_closures
     # - omit_local_variable_types # superset of omit_obvious_local_variable_types
-    - omit_obvious_local_variable_types # not yet tested
+    - omit_obvious_local_variable_types
     # - omit_obvious_property_types # conflicts with type_annotate_public_apis
     # - one_member_abstracts # too many false positives
     - only_throw_errors # this does get disabled in a few places where we have legacy code that uses strings et al
@@ -158,7 +158,8 @@ linter:
     # - prefer_constructors_over_static_methods # far too many false positives
     - prefer_contains
     # - prefer_double_quotes # opposite of prefer_single_quotes
-    # - prefer_expression_function_bodies # conflicts with https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md#consider-using--for-short-functions-and-methods    - prefer_final_fields
+    - prefer_final_fields
+    # - prefer_expression_function_bodies # conflicts with https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md#consider-using--for-short-functions-and-methods
     - prefer_final_in_for_each
     - prefer_final_locals
     # - prefer_final_parameters # adds too much verbosity
@@ -205,7 +206,6 @@ linter:
     - type_annotate_public_apis
     - type_init_formals
     - type_literal_in_constant_pattern
-    # - unawaited_futures # too many false positives, especially with the way AnimationController works
     - unintended_html_in_doc_comment # DIFFERENT FROM FLUTTER/FLUTTER: Disabled due to an issue that has been fixed, so just hasn't been adopted there yet.
     - unawaited_futures # DIFFERENT FROM FLUTTER/FLUTTER: It's disabled there for "too many false positives"; that's not an issue here, and missing awaits have caused production issues in plugins.
     - unnecessary_await_in_return
