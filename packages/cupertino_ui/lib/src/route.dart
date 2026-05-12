@@ -1,11 +1,11 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
 ///
-/// @docImport 'package:material_ui/material_ui.dart';
 /// @docImport 'package:flutter/services.dart';
+/// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'app.dart';
 /// @docImport 'button.dart';

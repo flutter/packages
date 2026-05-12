@@ -1,4 +1,28 @@
 include: ../../analysis_options.yaml
 
+analyzer:
+  exclude:
+    - "test_fixes/**"
+    # TODO(justinmc): Remove the following exclusions when cross-imports are
+    # fixed. See https://github.com/flutter/flutter/issues/177028.
+    - "test/action_sheet_test.dart"
+    - "test/adaptive_text_selection_toolbar_test.dart"
+    - "test/bottom_tab_bar_test.dart"
+    - "test/button_test.dart"
+    - "test/checkbox_test.dart"
+    - "test/dialog_test.dart"
+    - "test/menu_anchor_test.dart"
+    - "test/nav_bar_test.dart"
+    - "test/picker_test.dart"
+    - "test/radio_test.dart"
+    - "test/route_test.dart"
+    - "test/scaffold_test.dart"
+    - "test/segmented_control_test.dart"
+    - "test/sliding_segmented_control_test.dart"
+    - "test/switch_test.dart"
+    - "test/tab_scaffold_test.dart"
+    - "test/text_field_test.dart"
+    - "test/text_selection_test.dart"
+
 formatter:
   page_width: 100

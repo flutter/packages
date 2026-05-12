@@ -1,13 +1,13 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
@@ -777,7 +777,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -813,7 +813,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 
@@ -851,7 +851,7 @@ void main() {
       final Finder page2 = find.text('Page 2');
 
       // Transitioning from page 1 to page 2.
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
 

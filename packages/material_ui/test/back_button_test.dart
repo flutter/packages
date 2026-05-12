@@ -1,13 +1,13 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart' show RendererBinding;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('BackButton', () {
@@ -23,7 +23,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
 
@@ -49,7 +49,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
 
@@ -187,7 +187,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -232,7 +232,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       final String? expectedLabel;
@@ -330,7 +330,7 @@ void main() {
         ),
       );
 
-      tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
+      await tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/next');
 
       await tester.pumpAndSettle();
       expect(find.text('Home'), findsNothing); // Start off on the second page.

@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,9 +8,9 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('The Ink widget expands when no dimensions are set', (WidgetTester tester) async {
@@ -208,9 +208,9 @@ void main() {
               paint.color.alpha == expectedAlpha) {
             return true;
           }
-          throw '''
+          throw FlutterError('''
             Expected: center == $expectedCenter, radius == $expectedRadius, alpha == $expectedAlpha
-            Found: center == $center radius == $radius alpha == ${paint.color.alpha}''';
+            Found: center == $center radius == $radius alpha == ${paint.color.alpha}''');
         });
     }
 
@@ -476,9 +476,9 @@ void main() {
               paint.color.alpha == expectedAlpha) {
             return true;
           }
-          throw '''
+          throw FlutterError('''
             Expected: center == $inkWellCenter, radius == $expectedRadius, alpha == $expectedAlpha
-            Found: center == $center radius == $radius alpha == ${paint.color.alpha}''';
+            Found: center == $center radius == $radius alpha == ${paint.color.alpha}''');
         });
     }
 
@@ -592,7 +592,7 @@ void main() {
         if (paint.color.alpha == 0) {
           return true;
         }
-        throw 'Expected: paint.color.alpha == 0, found: ${paint.color.alpha}';
+        throw FlutterError('Expected: paint.color.alpha == 0, found: ${paint.color.alpha}');
       }),
     );
   });

@@ -1,10 +1,10 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Pumps and ensures that the BottomSheet animates non-linearly.
@@ -703,7 +703,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(routes: routes));
 
-      Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
+      await Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
@@ -718,7 +718,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
+      await Navigator.pushNamed(containerKey1.currentContext!, '/sheet');
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));

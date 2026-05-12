@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,9 +8,9 @@
 library;
 
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('$ReorderableListView', () {
@@ -443,7 +443,7 @@ void main() {
 
         // Check initial scroll offset of first list item relative to
         // the offset of the list view.
-        customController.animateTo(
+        await customController.animateTo(
           40.0,
           duration: const Duration(milliseconds: 200),
           curve: Curves.linear,
