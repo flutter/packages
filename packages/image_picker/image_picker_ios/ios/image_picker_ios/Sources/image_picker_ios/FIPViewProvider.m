@@ -19,7 +19,7 @@
   }
   return self;
 }
-
+//changes has been done for checking in git
 - (UIViewController *)viewController {
   return self.registrar.viewController;
 }
