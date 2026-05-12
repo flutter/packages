@@ -173,11 +173,11 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// For convenience, [PurchaseDetails.pendingCompletePurchase] indicates if a
   /// purchase is pending for completion.
   ///
-  /// **Apple Platforms (iOS/macOS) Warning:**
+  /// iOS/macOS Warning:
   /// If you do not call [completePurchase] for a transaction, that transaction
   /// will remain in Apple's unfinished transaction queue. This has two consequences:
   /// 1. The transaction will be repeatedly re-delivered on the [purchaseStream]
-  ///    every time the app is restarted (causing "ghost" transactions).
+  ///    every time the app is restarted.
   /// 2. Any subsequent attempts to buy the same product ID will fail with a purchase
   ///    error indicating a duplicate transaction is pending.
   ///

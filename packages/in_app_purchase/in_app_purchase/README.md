@@ -230,7 +230,7 @@ the end user's payment account.
 
 > **Warning:** Failure to call `InAppPurchase.completePurchase` and
 > get a successful response within 3 days of the purchase will result in a refund on Android. On iOS/macOS (using StoreKit 1 or StoreKit 2), failing to complete purchases causes the transactions to remain in Apple's unfinished transaction queue, which has two major side effects:
-> 1. The transactions will be repeatedly re-delivered on the `purchaseStream` on every app launch (causing "ghost" transactions).
+> 1. The transactions will be repeatedly re-delivered on the `purchaseStream` on every app launch.
 > 2. Any subsequent attempt to purchase the same product ID will immediately fail with an error indicating a duplicate transaction is pending.
 
 ### Upgrading or downgrading an existing in-app subscription

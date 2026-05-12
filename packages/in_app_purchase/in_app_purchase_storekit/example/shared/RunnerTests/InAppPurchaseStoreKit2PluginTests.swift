@@ -575,5 +575,4 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
     await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
   }
->>>>>>> Stashed changes
 }
