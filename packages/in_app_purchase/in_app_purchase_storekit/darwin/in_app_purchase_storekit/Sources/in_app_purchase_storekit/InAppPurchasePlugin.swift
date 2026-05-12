@@ -465,5 +465,3 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     )
   }
 }
-
-
