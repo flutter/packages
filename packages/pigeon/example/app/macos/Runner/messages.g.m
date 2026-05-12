@@ -197,8 +197,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSString *)description {
   return
-      [NSString stringWithFormat:@"PGNMessageData(name: %@, description: %@, code: %@, data: %@)",
-                                 self.name, self.description, @(self.code), self.data];
+      [NSString stringWithFormat:@"PGNMessageData(name: %@, description: %@, code: %ld, data: %@)",
+                                 self.name, self.description, (long)self.code, self.data];
 }
 @end
 

@@ -4138,7 +4138,7 @@ void main() {
     expect(
       code,
       contains(
-        'return [NSString stringWithFormat:@"ABCFoo(bar: %@)", @(self.bar)];',
+        'return [NSString stringWithFormat:@"ABCFoo(bar: %ld)", (long)self.bar];',
       ),
     );
   });

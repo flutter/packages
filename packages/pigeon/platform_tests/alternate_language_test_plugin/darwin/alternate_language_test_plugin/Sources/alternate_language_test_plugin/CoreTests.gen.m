@@ -423,16 +423,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSString *)description {
   return [NSString
       stringWithFormat:
-          @"FLTAllTypes(aBool: %@, anInt: %@, anInt64: %@, aDouble: %@, aByteArray: %@, "
-          @"a4ByteArray: %@, a8ByteArray: %@, aFloatArray: %@, anEnum: %@, anotherEnum: %@, "
+          @"FLTAllTypes(aBool: %@, anInt: %ld, anInt64: %ld, aDouble: %f, aByteArray: %@, "
+          @"a4ByteArray: %@, a8ByteArray: %@, aFloatArray: %@, anEnum: %ld, anotherEnum: %ld, "
           @"aString: %@, anObject: %@, list: %@, stringList: %@, intList: %@, doubleList: %@, "
           @"boolList: %@, enumList: %@, objectList: %@, listList: %@, mapList: %@, map: %@, "
           @"stringMap: %@, intMap: %@, enumMap: %@, objectMap: %@, listMap: %@, mapMap: %@)",
-          @(self.aBool), @(self.anInt), @(self.anInt64), @(self.aDouble), self.aByteArray,
-          self.a4ByteArray, self.a8ByteArray, self.aFloatArray, @(self.anEnum), @(self.anotherEnum),
-          self.aString, self.anObject, self.list, self.stringList, self.intList, self.doubleList,
-          self.boolList, self.enumList, self.objectList, self.listList, self.mapList, self.map,
-          self.stringMap, self.intMap, self.enumMap, self.objectMap, self.listMap, self.mapMap];
+          self.aBool ? @"true" : @"false", (long)self.anInt, (long)self.anInt64, self.aDouble,
+          self.aByteArray, self.a4ByteArray, self.a8ByteArray, self.aFloatArray, (long)self.anEnum,
+          (long)self.anotherEnum, self.aString, self.anObject, self.list, self.stringList,
+          self.intList, self.doubleList, self.boolList, self.enumList, self.objectList,
+          self.listList, self.mapList, self.map, self.stringMap, self.intMap, self.enumMap,
+          self.objectMap, self.listMap, self.mapMap];
 }
 @end
 

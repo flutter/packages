@@ -700,6 +700,19 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
       final Iterable<String> fieldLabels = classDefinition.fields.map((
         NamedType field,
       ) {
+        if (_usesPrimitive(field.type)) {
+          if (field.type.isEnum) {
+            return '${field.name}: %ld';
+          }
+          switch (field.type.baseName) {
+            case 'bool':
+              return '${field.name}: %@';
+            case 'int':
+              return '${field.name}: %ld';
+            case 'double':
+              return '${field.name}: %f';
+          }
+        }
         return '${field.name}: %@';
       });
       final formatString = '$className(${fieldLabels.join(', ')})';
@@ -708,7 +721,17 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
         NamedType field,
       ) {
         if (_usesPrimitive(field.type)) {
-          return '@(self.${field.name})';
+          if (field.type.isEnum) {
+            return '(long)self.${field.name}';
+          }
+          switch (field.type.baseName) {
+            case 'bool':
+              return 'self.${field.name} ? @"true" : @"false"';
+            case 'int':
+              return '(long)self.${field.name}';
+            case 'double':
+              return 'self.${field.name}';
+          }
         }
         return 'self.${field.name}';
       });
