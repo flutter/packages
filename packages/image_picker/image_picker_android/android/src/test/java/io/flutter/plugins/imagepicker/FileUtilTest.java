@@ -217,7 +217,8 @@ public class FileUtilTest {
 
   // Mocks a malicious content provider attempting to use path indirection to modify files outside
   // of the intended directory.
-  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  // See
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
   private static class MockMaliciousContentProvider extends ContentProvider {
     public static String PNG_URI = "content://dummy/a.png";
 

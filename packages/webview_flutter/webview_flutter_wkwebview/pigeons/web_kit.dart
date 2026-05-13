@@ -1100,6 +1100,10 @@ abstract class WKHTTPCookieStore extends NSObject {
   /// storage.
   @async
   void setCookie(HTTPCookie cookie);
+
+  /// Fetches all stored cookies.
+  @async
+  List<HTTPCookie> getAllCookies();
 }
 
 /// The interface for the delegate of a scroll view.
