@@ -7,6 +7,7 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
+  - release-go_router-\d+\.\d+\.\d+
 
 platform_properties:
   linux:
