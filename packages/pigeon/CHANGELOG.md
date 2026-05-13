@@ -1,3 +1,7 @@
+## 26.3.5
+
+* [swift] Adds `CaseIterable` conformance to generated enums.
+
 ## 26.3.4
 
 * [kotlin] Updates generated error class to inherit from `RuntimeException`
