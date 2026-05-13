@@ -100,6 +100,8 @@ class _GoRouteParameters {
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
+///
+/// When [hasOverriddenOnExit] is null, treat it the same as true for backward compatibility.
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
