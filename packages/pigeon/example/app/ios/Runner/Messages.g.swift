@@ -59,9 +59,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(
-    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
-    details: "")
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -79,7 +77,7 @@ private func doubleEqualsMessages(_ lhs: Double, _ rhs: Double) -> Bool {
 
 private func doubleHashMessages(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
-    hasher.combine(0x7FF8_0000_0000_0000)
+    hasher.combine(0x7FF8000000000000)
   } else {
     // Normalize -0.0 to 0.0
     hasher.combine(value == 0 ? 0 : value)
@@ -182,7 +180,8 @@ func deepHashMessages(value: Any?, hasher: inout Hasher) {
   }
 }
 
-enum Code: Int {
+
+enum Code: Int, CaseIterable {
   case one = 0
   case two = 1
 }
@@ -193,6 +192,7 @@ struct MessageData: Hashable {
   var description: String? = nil
   var code: Code
   var data: [String: String]
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
@@ -220,9 +220,7 @@ struct MessageData: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    return deepEqualsMessages(lhs.name, rhs.name)
-      && deepEqualsMessages(lhs.description, rhs.description)
-      && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
+    return deepEqualsMessages(lhs.name, rhs.name) && deepEqualsMessages(lhs.description, rhs.description) && deepEqualsMessages(lhs.code, rhs.code) && deepEqualsMessages(lhs.data, rhs.data)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -279,6 +277,7 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
@@ -290,14 +289,9 @@ protocol ExampleHostApi {
 class ExampleHostApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let getHostLanguageChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
@@ -310,9 +304,7 @@ class ExampleHostApiSetup {
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
-    let addChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -328,9 +320,7 @@ class ExampleHostApiSetup {
     } else {
       addChannel.setMessageHandler(nil)
     }
-    let sendMessageChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -351,8 +341,7 @@ class ExampleHostApiSetup {
 }
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
-  func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void)
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -364,13 +353,9 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
   var codec: MessagesPigeonCodec {
     return MessagesPigeonCodec.shared
   }
-  func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -382,11 +367,7 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(
-          .failure(
-            PigeonError(
-              code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! String
         completion(.success(result))

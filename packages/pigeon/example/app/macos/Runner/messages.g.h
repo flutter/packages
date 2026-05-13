@@ -30,13 +30,13 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(nullable NSString *)name
-                 description:(nullable NSString *)description
-                        code:(PGNCode)code
-                        data:(NSDictionary<NSString *, NSString *> *)data;
-@property(nonatomic, copy, nullable) NSString *name;
-@property(nonatomic, copy, nullable) NSString *description;
+    description:(nullable NSString *)description
+    code:(PGNCode)code
+    data:(NSDictionary<NSString *, NSString *> *)data;
+@property(nonatomic, copy, nullable) NSString * name;
+@property(nonatomic, copy, nullable) NSString * description;
 @property(nonatomic, assign) PGNCode code;
-@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *data;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> * data;
 @end
 
 /// The codec used by all APIs.
@@ -46,26 +46,19 @@ NSObject<FlutterMessageCodec> *PGNGetMessagesCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getHostLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)addNumber:(NSInteger)a
-                        toNumber:(NSInteger)b
-                           error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)sendMessageMessage:(PGNMessageData *)message
-                completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (nullable NSNumber *)addNumber:(NSInteger)a toNumber:(NSInteger)b error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)sendMessageMessage:(PGNMessageData *)message completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                                   NSObject<PGNExampleHostApi> *_Nullable api);
+extern void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PGNExampleHostApi> *_Nullable api);
 
-extern void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
-                                             NSObject<PGNExampleHostApi> *_Nullable api,
-                                             NSString *messageChannelSuffix);
+extern void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PGNExampleHostApi> *_Nullable api, NSString *messageChannelSuffix);
+
 
 @interface PGNMessageFlutterApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
-                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
-- (void)flutterMethodAString:(nullable NSString *)aString
-                  completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+- (void)flutterMethodAString:(nullable NSString *)aString completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END
