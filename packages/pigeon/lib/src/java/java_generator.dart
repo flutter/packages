@@ -426,12 +426,11 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
         }
         return '"$fieldName=" + $fieldName';
       });
-      final String fieldsConcat = fieldStrings.join(' + ", " + ');
-      if (fieldsConcat.isEmpty) {
+      if (fieldStrings.isEmpty) {
         indent.writeln('return "${classDefinition.name}{}";');
       } else {
         indent.writeln(
-          'return "${classDefinition.name}{" + $fieldsConcat + "}";',
+          'return "${classDefinition.name}{" + ${fieldStrings.join(' + ", " + ')} + "}";',
         );
       }
     });

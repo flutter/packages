@@ -535,6 +535,7 @@ void main() {
 
 #include <map>
 #include <optional>
+#include <ostream>
 #include <string>
 '''),
       );
@@ -2726,7 +2727,7 @@ void main() {
     expect(code, contains('bool Foo::operator==(const Foo& other) const {'));
   });
 
-  test('data class ToString', () {
+  test('data class operator<<', () {
     final root = Root(
       apis: <Api>[],
       classes: <Class>[
@@ -2759,9 +2760,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(code, contains('std::string Foo::ToString() const {'));
-    expect(code, contains('ss << "bar: ";'));
-    expect(code, contains('ss << PigeonInternalToString(bar_);'));
+    expect(code, contains('std::ostream& operator<<('));
+    expect(code, contains('os << "bar: ";'));
+    expect(code, contains('os << PigeonInternalToString(obj.bar_);'));
   });
 
   test('data classes implement Hash', () {

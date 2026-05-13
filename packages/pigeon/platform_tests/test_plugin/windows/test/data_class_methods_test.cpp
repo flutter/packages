@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <sstream>
 
 #include "pigeon/core_tests.gen.h"
 
@@ -98,6 +99,62 @@ TEST(EqualityTests, ZeroMapValueEquality) {
   all2.set_map(map2);
 
   EXPECT_EQ(all1, all2);
+}
+
+TEST(SerializationTests, StreamOutputSnapshot) {
+  flutter::EncodableList list;
+  list.push_back(flutter::EncodableValue("hello"));
+  list.push_back(flutter::EncodableValue(42));
+
+  TestMessage msg;
+  msg.set_test_list(list);
+
+  std::stringstream ss;
+  ss << msg;
+
+  EXPECT_EQ(ss.str(), "TestMessage(testList: [\"hello\", 42])");
+}
+
+// On Windows, C++ stream serialization and std::map key traversal are
+// completely deterministic and stable, allowing us to validate the entire
+// output with a single exact string.
+TEST(SerializationTests, StreamOutputFullSnapshot) {
+  AllNullableTypes everything;
+  everything.set_a_nullable_bool(true);
+  everything.set_a_nullable_int(1);
+  everything.set_a_nullable_double(2.0);
+  everything.set_a_nullable_string("123");
+
+  flutter::EncodableList list;
+  list.push_back(flutter::EncodableValue("string"));
+  list.push_back(flutter::EncodableValue(1));
+  everything.set_list(list);
+
+  flutter::EncodableMap map;
+  map[flutter::EncodableValue("hello")] = flutter::EncodableValue("you");
+  everything.set_string_map(map);
+
+  std::stringstream ss;
+  ss << everything;
+
+  EXPECT_EQ(
+      ss.str(),
+      "AllNullableTypes(aNullableBool: true, aNullableInt: 1, aNullableInt64: "
+      "null, "
+      "aNullableDouble: 2, aNullableByteArray: null, aNullable4ByteArray: "
+      "null, "
+      "aNullable8ByteArray: null, aNullableFloatArray: null, aNullableEnum: "
+      "null, "
+      "anotherNullableEnum: null, aNullableString: 123, aNullableObject: null, "
+      "allNullableTypes: null, list: [\"string\", 1], stringList: null, "
+      "intList: null, "
+      "doubleList: null, boolList: null, enumList: null, objectList: null, "
+      "listList: null, "
+      "mapList: null, recursiveClassList: null, map: null, stringMap: "
+      "{\"hello\": \"you\"}, "
+      "intMap: null, enumMap: null, objectMap: null, listMap: null, mapMap: "
+      "null, "
+      "recursiveClassMap: null)");
 }
 
 }  // namespace test

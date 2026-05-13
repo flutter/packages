@@ -408,8 +408,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       final Iterable<String> fieldStrings = fields.map((NamedType field) {
         return '${field.name}: \$${field.name}';
       });
-      final String fieldsConcat = fieldStrings.join(', ');
-      indent.writeln("return '${classDefinition.name}($fieldsConcat)';");
+      indent.writeln(
+        "return '${classDefinition.name}(${fieldStrings.join(', ')})';",
+      );
     });
   }
 

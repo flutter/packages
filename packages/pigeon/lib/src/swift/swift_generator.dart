@@ -733,8 +733,9 @@ if (wrapped == nil) {
         ) {
           return '${field.name}: \\(String(describing: ${field.name}))';
         });
-        final String fieldsConcat = fieldStrings.join(', ');
-        indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
+        indent.writeln(
+          'return "${classDefinition.name}(${fieldStrings.join(', ')})"',
+        );
       },
     );
   }

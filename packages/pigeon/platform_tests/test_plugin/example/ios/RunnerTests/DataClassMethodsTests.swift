@@ -8,7 +8,32 @@ import Testing
 @testable import test_plugin
 
 @MainActor
-struct AllDatatypesTests {
+struct DataClassMethodsTests {
+
+  private let everythingFull = AllNullableTypes(
+    aNullableBool: true,
+    aNullableInt: 1,
+    aNullableDouble: 2.0,
+    aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
+    aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
+    aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
+    aNullableFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
+    aNullableString: "123",
+    list: ["string", 2],
+    stringList: ["string", "another one", nil],
+    intList: [1, 2],
+    doubleList: [1.1, 2.2],
+    boolList: [true, false],
+    objectList: ["string", 2],
+    listList: [[true], [false]],
+    mapList: [["hello": 1234], ["hello": 1234]],
+    map: ["hello": 1234, "null": nil],
+    stringMap: ["hello": "you"],
+    intMap: [1: 0],
+    objectMap: ["hello": 1234],
+    listMap: [1234: ["string", 2]],
+    mapMap: [1234: ["hello": 1234]]
+  )
 
   @Test
   func allNull() async throws {
@@ -31,30 +56,7 @@ struct AllDatatypesTests {
 
   @Test
   func allEquals() async throws {
-    let everything = AllNullableTypes(
-      aNullableBool: true,
-      aNullableInt: 1,
-      aNullableDouble: 2.0,
-      aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
-      aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
-      aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
-      aNullableFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
-      aNullableString: "123",
-      list: ["string", 2],
-      stringList: ["string", "another one", nil],
-      intList: [1, 2],
-      doubleList: [1.1, 2.2],
-      boolList: [true, false],
-      objectList: ["string", 2],
-      listList: [[true], [false]],
-      mapList: [["hello": 1234], ["hello": 1234]],
-      map: ["hello": 1234, "null": nil],
-      stringMap: ["hello": "you"],
-      intMap: [1: 0],
-      objectMap: ["hello": 1234],
-      listMap: [1234: ["string", 2]],
-      mapMap: [1234: ["hello": 1234]]
-    )
+    let everything = everythingFull
 
     let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
@@ -70,6 +72,63 @@ struct AllDatatypesTests {
         }
       }
     }
+  }
+
+  // We validate individual field outputs rather than asserting against a single exact expected string
+  // because `AllNullableTypes` contains Swift `Dictionary` properties. Swift hash maps serialize
+  // key-value pairs in a non-deterministic order across test executions, which would cause
+  // flaky CI failures if compared to a fixed canonical string.
+  @Test
+  func descriptionFullOutput() {
+    let desc = everythingFull.description
+    #expect(desc.hasPrefix("AllNullableTypes("))
+    #expect(desc.hasSuffix(")"))
+
+    let expectedFields = [
+      "aNullableBool:",
+      "aNullableInt:",
+      "aNullableInt64:",
+      "aNullableDouble:",
+      "aNullableByteArray:",
+      "aNullable4ByteArray:",
+      "aNullable8ByteArray:",
+      "aNullableFloatArray:",
+      "aNullableEnum:",
+      "anotherNullableEnum:",
+      "aNullableString:",
+      "aNullableObject:",
+      "allNullableTypes:",
+      "list:",
+      "stringList:",
+      "intList:",
+      "doubleList:",
+      "boolList:",
+      "enumList:",
+      "objectList:",
+      "listList:",
+      "mapList:",
+      "recursiveClassList:",
+      "map:",
+      "stringMap:",
+      "intMap:",
+      "enumMap:",
+      "objectMap:",
+      "listMap:",
+      "mapMap:",
+      "recursiveClassMap:",
+    ]
+
+    for field in expectedFields {
+      #expect(desc.contains(field))
+    }
+
+    #expect(desc.contains("aNullableBool: Optional(true)"))
+    #expect(desc.contains("aNullableInt: Optional(1)"))
+    #expect(desc.contains("aNullableDouble: Optional(2.0)"))
+    #expect(desc.contains("aNullableString: Optional(\"123\")"))
+    #expect(desc.contains("list: Optional(["))
+    #expect(desc.contains("stringList: Optional(["))
+    #expect(desc.contains("stringMap: Optional(["))
   }
 
   private let correctList: [Any?] = ["a", 2, "three"]

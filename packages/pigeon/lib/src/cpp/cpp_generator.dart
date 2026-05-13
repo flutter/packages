@@ -225,6 +225,7 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
       'map',
       'string',
       'optional',
+      'ostream',
     ]);
     indent.newln();
     if (generatorOptions.namespace != null) {
@@ -483,11 +484,11 @@ class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
           returnType: 'size_t',
           isConst: true,
         );
-        _writeFunctionDeclaration(
-          indent,
-          'ToString',
-          returnType: 'std::string',
-          isConst: true,
+        indent.writeln(
+          '/// Stream output operator for formatted string representation.',
+        );
+        indent.writeln(
+          'friend std::ostream& operator<<(std::ostream& os, const ${classDefinition.name}& obj);',
         );
       });
 
@@ -1143,38 +1144,39 @@ class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
 
     _writeFunctionDefinition(
       indent,
-      'ToString',
-      scope: classDefinition.name,
-      returnType: 'std::string',
-      isConst: true,
+      'operator<<',
+      returnType: 'std::ostream&',
+      parameters: <String>[
+        'std::ostream& os',
+        'const ${classDefinition.name}& obj',
+      ],
       body: () {
-        indent.writeln('std::stringstream ss;');
-        indent.writeln('ss << "${classDefinition.name}(";');
+        indent.writeln('os << "${classDefinition.name}(";');
         enumerate(orderedFields, (int index, final NamedType field) {
-          final String name = _makeInstanceVariableName(field);
+          final name = 'obj.${_makeInstanceVariableName(field)}';
           final comma = index == 0 ? '' : ', ';
-          indent.writeln('ss << "$comma${field.name}: ";');
+          indent.writeln('os << "$comma${field.name}: ";');
           if (field.type.isNullable) {
             indent.writeScoped('if ($name.has_value()) {', '}', () {
               if (field.type.isClass) {
-                indent.writeln('ss << $name->ToString();');
+                indent.writeln('os << *$name;');
               } else {
-                indent.writeln('ss << PigeonInternalToString(*$name);');
+                indent.writeln('os << PigeonInternalToString(*$name);');
               }
             });
             indent.writeScoped('else {', '}', () {
-              indent.writeln('ss << "null";');
+              indent.writeln('os << "null";');
             });
           } else {
             if (field.type.isClass) {
-              indent.writeln('ss << $name.ToString();');
+              indent.writeln('os << $name;');
             } else {
-              indent.writeln('ss << PigeonInternalToString($name);');
+              indent.writeln('os << PigeonInternalToString($name);');
             }
           }
         });
-        indent.writeln('ss << ")";');
-        indent.writeln('return ss.str();');
+        indent.writeln('os << ")";');
+        indent.writeln('return os;');
       },
     );
 

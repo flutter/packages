@@ -419,11 +419,12 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         }
         return '$name=\$$name';
       });
-      final String fieldsConcat = fieldStrings.join(', ');
-      if (fieldsConcat.isEmpty) {
+      if (fieldStrings.isEmpty) {
         indent.writeln('return "${classDefinition.name}()"');
       } else {
-        indent.writeln('return "${classDefinition.name}($fieldsConcat)"');
+        indent.writeln(
+          'return "${classDefinition.name}(${fieldStrings.join(', ')})"',
+        );
       }
     });
   }

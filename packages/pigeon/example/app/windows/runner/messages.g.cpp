@@ -426,27 +426,26 @@ size_t MessageData::Hash() const {
   return result;
 }
 
-std::string MessageData::ToString() const {
-  std::stringstream ss;
-  ss << "MessageData(";
-  ss << "name: ";
-  if (name_.has_value()) {
-    ss << PigeonInternalToString(*name_);
+std::ostream& operator<<(std::ostream& os, const MessageData& obj) {
+  os << "MessageData(";
+  os << "name: ";
+  if (obj.name_.has_value()) {
+    os << PigeonInternalToString(*obj.name_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", description: ";
-  if (description_.has_value()) {
-    ss << PigeonInternalToString(*description_);
+  os << ", description: ";
+  if (obj.description_.has_value()) {
+    os << PigeonInternalToString(*obj.description_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", code: ";
-  ss << PigeonInternalToString(code_);
-  ss << ", data: ";
-  ss << PigeonInternalToString(data_);
-  ss << ")";
-  return ss.str();
+  os << ", code: ";
+  os << PigeonInternalToString(obj.code_);
+  os << ", data: ";
+  os << PigeonInternalToString(obj.data_);
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const MessageData& v) { return v.Hash(); }

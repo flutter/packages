@@ -387,17 +387,16 @@ size_t UnusedClass::Hash() const {
   return result;
 }
 
-std::string UnusedClass::ToString() const {
-  std::stringstream ss;
-  ss << "UnusedClass(";
-  ss << "aField: ";
-  if (a_field_.has_value()) {
-    ss << PigeonInternalToString(*a_field_);
+std::ostream& operator<<(std::ostream& os, const UnusedClass& obj) {
+  os << "UnusedClass(";
+  os << "aField: ";
+  if (obj.a_field_.has_value()) {
+    os << PigeonInternalToString(*obj.a_field_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ")";
-  return ss.str();
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const UnusedClass& v) { return v.Hash(); }
@@ -738,67 +737,66 @@ size_t AllTypes::Hash() const {
   return result;
 }
 
-std::string AllTypes::ToString() const {
-  std::stringstream ss;
-  ss << "AllTypes(";
-  ss << "aBool: ";
-  ss << PigeonInternalToString(a_bool_);
-  ss << ", anInt: ";
-  ss << PigeonInternalToString(an_int_);
-  ss << ", anInt64: ";
-  ss << PigeonInternalToString(an_int64_);
-  ss << ", aDouble: ";
-  ss << PigeonInternalToString(a_double_);
-  ss << ", aByteArray: ";
-  ss << PigeonInternalToString(a_byte_array_);
-  ss << ", a4ByteArray: ";
-  ss << PigeonInternalToString(a4_byte_array_);
-  ss << ", a8ByteArray: ";
-  ss << PigeonInternalToString(a8_byte_array_);
-  ss << ", aFloatArray: ";
-  ss << PigeonInternalToString(a_float_array_);
-  ss << ", anEnum: ";
-  ss << PigeonInternalToString(an_enum_);
-  ss << ", anotherEnum: ";
-  ss << PigeonInternalToString(another_enum_);
-  ss << ", aString: ";
-  ss << PigeonInternalToString(a_string_);
-  ss << ", anObject: ";
-  ss << PigeonInternalToString(an_object_);
-  ss << ", list: ";
-  ss << PigeonInternalToString(list_);
-  ss << ", stringList: ";
-  ss << PigeonInternalToString(string_list_);
-  ss << ", intList: ";
-  ss << PigeonInternalToString(int_list_);
-  ss << ", doubleList: ";
-  ss << PigeonInternalToString(double_list_);
-  ss << ", boolList: ";
-  ss << PigeonInternalToString(bool_list_);
-  ss << ", enumList: ";
-  ss << PigeonInternalToString(enum_list_);
-  ss << ", objectList: ";
-  ss << PigeonInternalToString(object_list_);
-  ss << ", listList: ";
-  ss << PigeonInternalToString(list_list_);
-  ss << ", mapList: ";
-  ss << PigeonInternalToString(map_list_);
-  ss << ", map: ";
-  ss << PigeonInternalToString(map_);
-  ss << ", stringMap: ";
-  ss << PigeonInternalToString(string_map_);
-  ss << ", intMap: ";
-  ss << PigeonInternalToString(int_map_);
-  ss << ", enumMap: ";
-  ss << PigeonInternalToString(enum_map_);
-  ss << ", objectMap: ";
-  ss << PigeonInternalToString(object_map_);
-  ss << ", listMap: ";
-  ss << PigeonInternalToString(list_map_);
-  ss << ", mapMap: ";
-  ss << PigeonInternalToString(map_map_);
-  ss << ")";
-  return ss.str();
+std::ostream& operator<<(std::ostream& os, const AllTypes& obj) {
+  os << "AllTypes(";
+  os << "aBool: ";
+  os << PigeonInternalToString(obj.a_bool_);
+  os << ", anInt: ";
+  os << PigeonInternalToString(obj.an_int_);
+  os << ", anInt64: ";
+  os << PigeonInternalToString(obj.an_int64_);
+  os << ", aDouble: ";
+  os << PigeonInternalToString(obj.a_double_);
+  os << ", aByteArray: ";
+  os << PigeonInternalToString(obj.a_byte_array_);
+  os << ", a4ByteArray: ";
+  os << PigeonInternalToString(obj.a4_byte_array_);
+  os << ", a8ByteArray: ";
+  os << PigeonInternalToString(obj.a8_byte_array_);
+  os << ", aFloatArray: ";
+  os << PigeonInternalToString(obj.a_float_array_);
+  os << ", anEnum: ";
+  os << PigeonInternalToString(obj.an_enum_);
+  os << ", anotherEnum: ";
+  os << PigeonInternalToString(obj.another_enum_);
+  os << ", aString: ";
+  os << PigeonInternalToString(obj.a_string_);
+  os << ", anObject: ";
+  os << PigeonInternalToString(obj.an_object_);
+  os << ", list: ";
+  os << PigeonInternalToString(obj.list_);
+  os << ", stringList: ";
+  os << PigeonInternalToString(obj.string_list_);
+  os << ", intList: ";
+  os << PigeonInternalToString(obj.int_list_);
+  os << ", doubleList: ";
+  os << PigeonInternalToString(obj.double_list_);
+  os << ", boolList: ";
+  os << PigeonInternalToString(obj.bool_list_);
+  os << ", enumList: ";
+  os << PigeonInternalToString(obj.enum_list_);
+  os << ", objectList: ";
+  os << PigeonInternalToString(obj.object_list_);
+  os << ", listList: ";
+  os << PigeonInternalToString(obj.list_list_);
+  os << ", mapList: ";
+  os << PigeonInternalToString(obj.map_list_);
+  os << ", map: ";
+  os << PigeonInternalToString(obj.map_);
+  os << ", stringMap: ";
+  os << PigeonInternalToString(obj.string_map_);
+  os << ", intMap: ";
+  os << PigeonInternalToString(obj.int_map_);
+  os << ", enumMap: ";
+  os << PigeonInternalToString(obj.enum_map_);
+  os << ", objectMap: ";
+  os << PigeonInternalToString(obj.object_map_);
+  os << ", listMap: ";
+  os << PigeonInternalToString(obj.list_map_);
+  os << ", mapMap: ";
+  os << PigeonInternalToString(obj.map_map_);
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const AllTypes& v) { return v.Hash(); }
@@ -1738,197 +1736,196 @@ size_t AllNullableTypes::Hash() const {
   return result;
 }
 
-std::string AllNullableTypes::ToString() const {
-  std::stringstream ss;
-  ss << "AllNullableTypes(";
-  ss << "aNullableBool: ";
-  if (a_nullable_bool_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_bool_);
+std::ostream& operator<<(std::ostream& os, const AllNullableTypes& obj) {
+  os << "AllNullableTypes(";
+  os << "aNullableBool: ";
+  if (obj.a_nullable_bool_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_bool_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableInt: ";
-  if (a_nullable_int_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_int_);
+  os << ", aNullableInt: ";
+  if (obj.a_nullable_int_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_int_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableInt64: ";
-  if (a_nullable_int64_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_int64_);
+  os << ", aNullableInt64: ";
+  if (obj.a_nullable_int64_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_int64_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableDouble: ";
-  if (a_nullable_double_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_double_);
+  os << ", aNullableDouble: ";
+  if (obj.a_nullable_double_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_double_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableByteArray: ";
-  if (a_nullable_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_byte_array_);
+  os << ", aNullableByteArray: ";
+  if (obj.a_nullable_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullable4ByteArray: ";
-  if (a_nullable4_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable4_byte_array_);
+  os << ", aNullable4ByteArray: ";
+  if (obj.a_nullable4_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable4_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullable8ByteArray: ";
-  if (a_nullable8_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable8_byte_array_);
+  os << ", aNullable8ByteArray: ";
+  if (obj.a_nullable8_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable8_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableFloatArray: ";
-  if (a_nullable_float_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_float_array_);
+  os << ", aNullableFloatArray: ";
+  if (obj.a_nullable_float_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_float_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableEnum: ";
-  if (a_nullable_enum_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_enum_);
+  os << ", aNullableEnum: ";
+  if (obj.a_nullable_enum_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_enum_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", anotherNullableEnum: ";
-  if (another_nullable_enum_.has_value()) {
-    ss << PigeonInternalToString(*another_nullable_enum_);
+  os << ", anotherNullableEnum: ";
+  if (obj.another_nullable_enum_.has_value()) {
+    os << PigeonInternalToString(*obj.another_nullable_enum_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableString: ";
-  if (a_nullable_string_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_string_);
+  os << ", aNullableString: ";
+  if (obj.a_nullable_string_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_string_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableObject: ";
-  if (a_nullable_object_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_object_);
+  os << ", aNullableObject: ";
+  if (obj.a_nullable_object_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_object_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", allNullableTypes: ";
-  if (all_nullable_types_.has_value()) {
-    ss << all_nullable_types_->ToString();
+  os << ", allNullableTypes: ";
+  if (obj.all_nullable_types_.has_value()) {
+    os << *obj.all_nullable_types_;
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", list: ";
-  if (list_.has_value()) {
-    ss << PigeonInternalToString(*list_);
+  os << ", list: ";
+  if (obj.list_.has_value()) {
+    os << PigeonInternalToString(*obj.list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", stringList: ";
-  if (string_list_.has_value()) {
-    ss << PigeonInternalToString(*string_list_);
+  os << ", stringList: ";
+  if (obj.string_list_.has_value()) {
+    os << PigeonInternalToString(*obj.string_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", intList: ";
-  if (int_list_.has_value()) {
-    ss << PigeonInternalToString(*int_list_);
+  os << ", intList: ";
+  if (obj.int_list_.has_value()) {
+    os << PigeonInternalToString(*obj.int_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", doubleList: ";
-  if (double_list_.has_value()) {
-    ss << PigeonInternalToString(*double_list_);
+  os << ", doubleList: ";
+  if (obj.double_list_.has_value()) {
+    os << PigeonInternalToString(*obj.double_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", boolList: ";
-  if (bool_list_.has_value()) {
-    ss << PigeonInternalToString(*bool_list_);
+  os << ", boolList: ";
+  if (obj.bool_list_.has_value()) {
+    os << PigeonInternalToString(*obj.bool_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", enumList: ";
-  if (enum_list_.has_value()) {
-    ss << PigeonInternalToString(*enum_list_);
+  os << ", enumList: ";
+  if (obj.enum_list_.has_value()) {
+    os << PigeonInternalToString(*obj.enum_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", objectList: ";
-  if (object_list_.has_value()) {
-    ss << PigeonInternalToString(*object_list_);
+  os << ", objectList: ";
+  if (obj.object_list_.has_value()) {
+    os << PigeonInternalToString(*obj.object_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", listList: ";
-  if (list_list_.has_value()) {
-    ss << PigeonInternalToString(*list_list_);
+  os << ", listList: ";
+  if (obj.list_list_.has_value()) {
+    os << PigeonInternalToString(*obj.list_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", mapList: ";
-  if (map_list_.has_value()) {
-    ss << PigeonInternalToString(*map_list_);
+  os << ", mapList: ";
+  if (obj.map_list_.has_value()) {
+    os << PigeonInternalToString(*obj.map_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", recursiveClassList: ";
-  if (recursive_class_list_.has_value()) {
-    ss << PigeonInternalToString(*recursive_class_list_);
+  os << ", recursiveClassList: ";
+  if (obj.recursive_class_list_.has_value()) {
+    os << PigeonInternalToString(*obj.recursive_class_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", map: ";
-  if (map_.has_value()) {
-    ss << PigeonInternalToString(*map_);
+  os << ", map: ";
+  if (obj.map_.has_value()) {
+    os << PigeonInternalToString(*obj.map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", stringMap: ";
-  if (string_map_.has_value()) {
-    ss << PigeonInternalToString(*string_map_);
+  os << ", stringMap: ";
+  if (obj.string_map_.has_value()) {
+    os << PigeonInternalToString(*obj.string_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", intMap: ";
-  if (int_map_.has_value()) {
-    ss << PigeonInternalToString(*int_map_);
+  os << ", intMap: ";
+  if (obj.int_map_.has_value()) {
+    os << PigeonInternalToString(*obj.int_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", enumMap: ";
-  if (enum_map_.has_value()) {
-    ss << PigeonInternalToString(*enum_map_);
+  os << ", enumMap: ";
+  if (obj.enum_map_.has_value()) {
+    os << PigeonInternalToString(*obj.enum_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", objectMap: ";
-  if (object_map_.has_value()) {
-    ss << PigeonInternalToString(*object_map_);
+  os << ", objectMap: ";
+  if (obj.object_map_.has_value()) {
+    os << PigeonInternalToString(*obj.object_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", listMap: ";
-  if (list_map_.has_value()) {
-    ss << PigeonInternalToString(*list_map_);
+  os << ", listMap: ";
+  if (obj.list_map_.has_value()) {
+    os << PigeonInternalToString(*obj.list_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", mapMap: ";
-  if (map_map_.has_value()) {
-    ss << PigeonInternalToString(*map_map_);
+  os << ", mapMap: ";
+  if (obj.map_map_.has_value()) {
+    os << PigeonInternalToString(*obj.map_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", recursiveClassMap: ";
-  if (recursive_class_map_.has_value()) {
-    ss << PigeonInternalToString(*recursive_class_map_);
+  os << ", recursiveClassMap: ";
+  if (obj.recursive_class_map_.has_value()) {
+    os << PigeonInternalToString(*obj.recursive_class_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ")";
-  return ss.str();
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const AllNullableTypes& v) { return v.Hash(); }
@@ -2697,179 +2694,179 @@ size_t AllNullableTypesWithoutRecursion::Hash() const {
   return result;
 }
 
-std::string AllNullableTypesWithoutRecursion::ToString() const {
-  std::stringstream ss;
-  ss << "AllNullableTypesWithoutRecursion(";
-  ss << "aNullableBool: ";
-  if (a_nullable_bool_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_bool_);
+std::ostream& operator<<(std::ostream& os,
+                         const AllNullableTypesWithoutRecursion& obj) {
+  os << "AllNullableTypesWithoutRecursion(";
+  os << "aNullableBool: ";
+  if (obj.a_nullable_bool_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_bool_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableInt: ";
-  if (a_nullable_int_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_int_);
+  os << ", aNullableInt: ";
+  if (obj.a_nullable_int_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_int_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableInt64: ";
-  if (a_nullable_int64_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_int64_);
+  os << ", aNullableInt64: ";
+  if (obj.a_nullable_int64_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_int64_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableDouble: ";
-  if (a_nullable_double_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_double_);
+  os << ", aNullableDouble: ";
+  if (obj.a_nullable_double_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_double_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableByteArray: ";
-  if (a_nullable_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_byte_array_);
+  os << ", aNullableByteArray: ";
+  if (obj.a_nullable_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullable4ByteArray: ";
-  if (a_nullable4_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable4_byte_array_);
+  os << ", aNullable4ByteArray: ";
+  if (obj.a_nullable4_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable4_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullable8ByteArray: ";
-  if (a_nullable8_byte_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable8_byte_array_);
+  os << ", aNullable8ByteArray: ";
+  if (obj.a_nullable8_byte_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable8_byte_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableFloatArray: ";
-  if (a_nullable_float_array_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_float_array_);
+  os << ", aNullableFloatArray: ";
+  if (obj.a_nullable_float_array_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_float_array_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableEnum: ";
-  if (a_nullable_enum_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_enum_);
+  os << ", aNullableEnum: ";
+  if (obj.a_nullable_enum_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_enum_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", anotherNullableEnum: ";
-  if (another_nullable_enum_.has_value()) {
-    ss << PigeonInternalToString(*another_nullable_enum_);
+  os << ", anotherNullableEnum: ";
+  if (obj.another_nullable_enum_.has_value()) {
+    os << PigeonInternalToString(*obj.another_nullable_enum_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableString: ";
-  if (a_nullable_string_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_string_);
+  os << ", aNullableString: ";
+  if (obj.a_nullable_string_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_string_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", aNullableObject: ";
-  if (a_nullable_object_.has_value()) {
-    ss << PigeonInternalToString(*a_nullable_object_);
+  os << ", aNullableObject: ";
+  if (obj.a_nullable_object_.has_value()) {
+    os << PigeonInternalToString(*obj.a_nullable_object_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", list: ";
-  if (list_.has_value()) {
-    ss << PigeonInternalToString(*list_);
+  os << ", list: ";
+  if (obj.list_.has_value()) {
+    os << PigeonInternalToString(*obj.list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", stringList: ";
-  if (string_list_.has_value()) {
-    ss << PigeonInternalToString(*string_list_);
+  os << ", stringList: ";
+  if (obj.string_list_.has_value()) {
+    os << PigeonInternalToString(*obj.string_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", intList: ";
-  if (int_list_.has_value()) {
-    ss << PigeonInternalToString(*int_list_);
+  os << ", intList: ";
+  if (obj.int_list_.has_value()) {
+    os << PigeonInternalToString(*obj.int_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", doubleList: ";
-  if (double_list_.has_value()) {
-    ss << PigeonInternalToString(*double_list_);
+  os << ", doubleList: ";
+  if (obj.double_list_.has_value()) {
+    os << PigeonInternalToString(*obj.double_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", boolList: ";
-  if (bool_list_.has_value()) {
-    ss << PigeonInternalToString(*bool_list_);
+  os << ", boolList: ";
+  if (obj.bool_list_.has_value()) {
+    os << PigeonInternalToString(*obj.bool_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", enumList: ";
-  if (enum_list_.has_value()) {
-    ss << PigeonInternalToString(*enum_list_);
+  os << ", enumList: ";
+  if (obj.enum_list_.has_value()) {
+    os << PigeonInternalToString(*obj.enum_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", objectList: ";
-  if (object_list_.has_value()) {
-    ss << PigeonInternalToString(*object_list_);
+  os << ", objectList: ";
+  if (obj.object_list_.has_value()) {
+    os << PigeonInternalToString(*obj.object_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", listList: ";
-  if (list_list_.has_value()) {
-    ss << PigeonInternalToString(*list_list_);
+  os << ", listList: ";
+  if (obj.list_list_.has_value()) {
+    os << PigeonInternalToString(*obj.list_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", mapList: ";
-  if (map_list_.has_value()) {
-    ss << PigeonInternalToString(*map_list_);
+  os << ", mapList: ";
+  if (obj.map_list_.has_value()) {
+    os << PigeonInternalToString(*obj.map_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", map: ";
-  if (map_.has_value()) {
-    ss << PigeonInternalToString(*map_);
+  os << ", map: ";
+  if (obj.map_.has_value()) {
+    os << PigeonInternalToString(*obj.map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", stringMap: ";
-  if (string_map_.has_value()) {
-    ss << PigeonInternalToString(*string_map_);
+  os << ", stringMap: ";
+  if (obj.string_map_.has_value()) {
+    os << PigeonInternalToString(*obj.string_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", intMap: ";
-  if (int_map_.has_value()) {
-    ss << PigeonInternalToString(*int_map_);
+  os << ", intMap: ";
+  if (obj.int_map_.has_value()) {
+    os << PigeonInternalToString(*obj.int_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", enumMap: ";
-  if (enum_map_.has_value()) {
-    ss << PigeonInternalToString(*enum_map_);
+  os << ", enumMap: ";
+  if (obj.enum_map_.has_value()) {
+    os << PigeonInternalToString(*obj.enum_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", objectMap: ";
-  if (object_map_.has_value()) {
-    ss << PigeonInternalToString(*object_map_);
+  os << ", objectMap: ";
+  if (obj.object_map_.has_value()) {
+    os << PigeonInternalToString(*obj.object_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", listMap: ";
-  if (list_map_.has_value()) {
-    ss << PigeonInternalToString(*list_map_);
+  os << ", listMap: ";
+  if (obj.list_map_.has_value()) {
+    os << PigeonInternalToString(*obj.list_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", mapMap: ";
-  if (map_map_.has_value()) {
-    ss << PigeonInternalToString(*map_map_);
+  os << ", mapMap: ";
+  if (obj.map_map_.has_value()) {
+    os << PigeonInternalToString(*obj.map_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ")";
-  return ss.str();
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const AllNullableTypesWithoutRecursion& v) {
@@ -3114,41 +3111,40 @@ size_t AllClassesWrapper::Hash() const {
   return result;
 }
 
-std::string AllClassesWrapper::ToString() const {
-  std::stringstream ss;
-  ss << "AllClassesWrapper(";
-  ss << "allNullableTypes: ";
-  ss << all_nullable_types_.ToString();
-  ss << ", allNullableTypesWithoutRecursion: ";
-  if (all_nullable_types_without_recursion_.has_value()) {
-    ss << all_nullable_types_without_recursion_->ToString();
+std::ostream& operator<<(std::ostream& os, const AllClassesWrapper& obj) {
+  os << "AllClassesWrapper(";
+  os << "allNullableTypes: ";
+  os << obj.all_nullable_types_;
+  os << ", allNullableTypesWithoutRecursion: ";
+  if (obj.all_nullable_types_without_recursion_.has_value()) {
+    os << *obj.all_nullable_types_without_recursion_;
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", allTypes: ";
-  if (all_types_.has_value()) {
-    ss << all_types_->ToString();
+  os << ", allTypes: ";
+  if (obj.all_types_.has_value()) {
+    os << *obj.all_types_;
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", classList: ";
-  ss << PigeonInternalToString(class_list_);
-  ss << ", nullableClassList: ";
-  if (nullable_class_list_.has_value()) {
-    ss << PigeonInternalToString(*nullable_class_list_);
+  os << ", classList: ";
+  os << PigeonInternalToString(obj.class_list_);
+  os << ", nullableClassList: ";
+  if (obj.nullable_class_list_.has_value()) {
+    os << PigeonInternalToString(*obj.nullable_class_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ", classMap: ";
-  ss << PigeonInternalToString(class_map_);
-  ss << ", nullableClassMap: ";
-  if (nullable_class_map_.has_value()) {
-    ss << PigeonInternalToString(*nullable_class_map_);
+  os << ", classMap: ";
+  os << PigeonInternalToString(obj.class_map_);
+  os << ", nullableClassMap: ";
+  if (obj.nullable_class_map_.has_value()) {
+    os << PigeonInternalToString(*obj.nullable_class_map_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ")";
-  return ss.str();
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const AllClassesWrapper& v) { return v.Hash(); }
@@ -3204,17 +3200,16 @@ size_t TestMessage::Hash() const {
   return result;
 }
 
-std::string TestMessage::ToString() const {
-  std::stringstream ss;
-  ss << "TestMessage(";
-  ss << "testList: ";
-  if (test_list_.has_value()) {
-    ss << PigeonInternalToString(*test_list_);
+std::ostream& operator<<(std::ostream& os, const TestMessage& obj) {
+  os << "TestMessage(";
+  os << "testList: ";
+  if (obj.test_list_.has_value()) {
+    os << PigeonInternalToString(*obj.test_list_);
   } else {
-    ss << "null";
+    os << "null";
   }
-  ss << ")";
-  return ss.str();
+  os << ")";
+  return os;
 }
 
 size_t PigeonInternalDeepHash(const TestMessage& v) { return v.Hash(); }
