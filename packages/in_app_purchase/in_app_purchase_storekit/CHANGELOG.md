@@ -1,4 +1,4 @@
-## 0.4.8+2
+## 0.4.9
 
 * Add support for offer codes in StoreKit 2.
 * Updates minimum supported SDK version to Flutter 3.38.
