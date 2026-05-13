@@ -17,7 +17,11 @@ void main() {
 
     group('openFile', () {
       testWidgets('works', (WidgetTester _) async {
-        final XFile mockFile = createXFile('1001', 'identity.png');
+        final XFile mockFile = createXFile(
+          '1001',
+          'identity.png',
+          mimeType: 'image/png',
+        );
 
         final mockDomHelper = MockDomHelper(
           files: <XFile>[mockFile],
@@ -39,6 +43,7 @@ void main() {
 
         expect(file, isNotNull);
         expect(file!.name, mockFile.name);
+        expect(file.mimeType, 'image/png');
         expect(await file.length(), 4);
         expect(await file.readAsString(), '1001');
         expect(await file.lastModified(), isNotNull);
@@ -137,7 +142,16 @@ class MockDomHelper implements DomHelper {
   }
 }
 
-XFile createXFile(String content, String name) {
+XFile createXFile(
+  String content,
+  String name, {
+  String mimeType = 'text/plain',
+}) {
   final data = Uint8List.fromList(content.codeUnits);
-  return XFile.fromData(data, name: name, lastModified: DateTime.now());
+  return XFile.fromData(
+    data,
+    name: name,
+    lastModified: DateTime.now(),
+    mimeType: mimeType,
+  );
 }
