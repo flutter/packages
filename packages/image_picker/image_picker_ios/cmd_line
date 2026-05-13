@@ -1,0 +1,1 @@
+genhtml coverage/lcov.info --ignore-errors source --ignore-errors unused
