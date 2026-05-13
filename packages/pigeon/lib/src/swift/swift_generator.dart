@@ -238,7 +238,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       _docCommentSpec,
     );
 
-    indent.write('enum ${anEnum.name}: Int ');
+    indent.write('enum ${anEnum.name}: Int, CaseIterable ');
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
