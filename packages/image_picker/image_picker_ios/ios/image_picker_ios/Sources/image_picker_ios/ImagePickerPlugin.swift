@@ -648,7 +648,6 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
 
   internal func sendCallResult(pathList: [String]? = nil, error: Error? = nil) {
     guard let context = callContext else { return }
-
     context.result(pathList, error)
     callContext = nil
   }
