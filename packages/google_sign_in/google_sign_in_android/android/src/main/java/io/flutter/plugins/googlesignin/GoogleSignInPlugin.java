@@ -383,7 +383,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           authorizationRequestBuilder.filterByHostedDomain(params.getHostedDomain());
         }
         if (params.getServerClientIdForForcedRefreshToken() != null) {
-          authorizationRequestBuilder.requestOfflineAccess(params.getServerClientIdForForcedRefreshToken());
+          authorizationRequestBuilder.requestOfflineAccess(
+              params.getServerClientIdForForcedRefreshToken());
           // This requests a new refresh token
           authorizationRequestBuilder.setPrompt(AuthorizationRequest.Prompt.CONSENT);
         }
