@@ -38,6 +38,10 @@ reviewed by someone else.
   - **Web**: @mdebbar
   - **Windows**: @stuartmorgan-g
 
+`flutter_hook_config`:
+  - @bdero
+  - @dcharkes
+
 `flutter_lints`:
   - @chunhtai
 

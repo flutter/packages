@@ -1,0 +1,3 @@
+# The tests use `dart:io` to construct absolute file paths, and build hooks
+# themselves only run on the Dart VM, so there is no need to run on the web.
+test_on: vm

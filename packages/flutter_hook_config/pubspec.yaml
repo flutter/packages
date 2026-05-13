@@ -1,0 +1,21 @@
+name: flutter_hook_config
+description: >-
+  A package:hooks protocol extension that exposes Flutter engine host-tool
+  paths (such as impellerc) to build and link hooks.
+version: 0.1.0
+repository: https://github.com/flutter/packages/tree/main/packages/flutter_hook_config
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20flutter_hook_config%22
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  hooks: ^1.0.0
+
+dev_dependencies:
+  test: ^1.25.0
+
+topics:
+  - hooks
+  - build
+  - native-assets

@@ -38,6 +38,11 @@
     - any-glob-to-any-file:
       - packages/file_selector/**/*
 
+'p: flutter_hook_config':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_hook_config/**/*
+
 'p: flutter_lints':
   - changed-files:
     - any-glob-to-any-file:
