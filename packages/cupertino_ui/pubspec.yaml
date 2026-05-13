@@ -18,7 +18,7 @@ dependencies:
 
 dev_dependencies:
   flutter_goldens:
-    path: ../../script/flutter_goldens
+    sdk: flutter
   flutter_test:
     sdk: flutter
   material_ui:
