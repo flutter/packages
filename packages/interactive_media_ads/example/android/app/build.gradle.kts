@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -21,9 +20,6 @@ android {
     }
     // #enddocregion android_desugaring
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
 
     defaultConfig {
         applicationId = "dev.flutter.packages.interactive_media_ads_example"
@@ -42,6 +38,12 @@ android {
 // #docregion android_desugaring
 }
 // #enddocregion android_desugaring
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+    }
+}
 
 flutter {
     source = "../.."
