@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 mixin $HasOverriddenOnExitRoute {}
-mixin $HasNotOverriddenOnExitRoute {}
 
 @TypedGoRoute<HasOverriddenOnExitRoute>(path: '/has-overridden-on-exit-route')
 class HasOverriddenOnExitRoute extends GoRouteData
@@ -18,7 +17,3 @@ class HasOverriddenOnExitRoute extends GoRouteData
     return true;
   }
 }
-
-@TypedGoRoute<HasNotOverriddenOnExitRoute>(path: '/has-not-overridden-on-exit-route')
-class HasNotOverriddenOnExitRoute extends GoRouteData
-    with $HasNotOverriddenOnExitRoute {}
