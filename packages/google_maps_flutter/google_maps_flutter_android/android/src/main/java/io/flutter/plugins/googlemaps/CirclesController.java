@@ -1,0 +1,92 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.googlemaps;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import kotlin.Result;
+import kotlin.Unit;
+
+class CirclesController {
+  @VisibleForTesting final Map<String, CircleController> circleIdToController;
+  private final Map<String, String> googleMapsCircleIdToDartCircleId;
+  private final @NonNull MapsCallbackApi flutterApi;
+  private final float density;
+  private GoogleMap googleMap;
+
+  CirclesController(@NonNull MapsCallbackApi flutterApi, float density) {
+    this.circleIdToController = new HashMap<>();
+    this.googleMapsCircleIdToDartCircleId = new HashMap<>();
+    this.flutterApi = flutterApi;
+    this.density = density;
+  }
+
+  void setGoogleMap(GoogleMap googleMap) {
+    this.googleMap = googleMap;
+  }
+
+  void addCircles(@NonNull List<PlatformCircle> circlesToAdd) {
+    for (PlatformCircle circleToAdd : circlesToAdd) {
+      addCircle(circleToAdd);
+    }
+  }
+
+  void changeCircles(@NonNull List<PlatformCircle> circlesToChange) {
+    for (PlatformCircle circleToChange : circlesToChange) {
+      changeCircle(circleToChange);
+    }
+  }
+
+  void removeCircles(@NonNull List<String> circleIdsToRemove) {
+    for (String circleId : circleIdsToRemove) {
+      final CircleController circleController = circleIdToController.remove(circleId);
+      if (circleController != null) {
+        circleController.remove();
+        googleMapsCircleIdToDartCircleId.remove(circleController.getGoogleMapsCircleId());
+      }
+    }
+  }
+
+  boolean onCircleTap(String googleCircleId) {
+    String circleId = googleMapsCircleIdToDartCircleId.get(googleCircleId);
+    if (circleId == null) {
+      return false;
+    }
+    flutterApi.onCircleTap(circleId, (Result<Unit> result) -> Unit.INSTANCE);
+    CircleController circleController = circleIdToController.get(circleId);
+    if (circleController != null) {
+      return circleController.consumeTapEvents();
+    }
+    return false;
+  }
+
+  void addCircle(@NonNull PlatformCircle circle) {
+    CircleBuilder circleBuilder = new CircleBuilder(density);
+    String circleId = Convert.interpretCircleOptions(circle, circleBuilder);
+    CircleOptions options = circleBuilder.build();
+    addCircle(circleId, options, circleBuilder.consumeTapEvents());
+  }
+
+  private void addCircle(String circleId, CircleOptions circleOptions, boolean consumeTapEvents) {
+    final Circle circle = googleMap.addCircle(circleOptions);
+    CircleController controller = new CircleController(circle, consumeTapEvents, density);
+    circleIdToController.put(circleId, controller);
+    googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
+  }
+
+  private void changeCircle(@NonNull PlatformCircle circle) {
+    String circleId = circle.getCircleId();
+    CircleController circleController = circleIdToController.get(circleId);
+    if (circleController != null) {
+      Convert.interpretCircleOptions(circle, circleController);
+    }
+  }
+}

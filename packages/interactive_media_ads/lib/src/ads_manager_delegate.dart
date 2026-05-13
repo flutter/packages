@@ -1,0 +1,109 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'ad.dart';
+import 'platform_interface/platform_interface.dart';
+
+/// Delegate for ad events or errors that occur during ad or stream
+/// initialization and playback.
+///
+/// ## Platform-Specific Features
+/// This class contains an underlying implementation provided by the current
+/// platform. Once a platform implementation is imported, the examples below
+/// can be followed to use features provided by a platform's implementation.
+///
+/// {@macro interactive_media_ads.AdsManagerDelegate.fromPlatformCreationParams}
+///
+/// Below is an example of accessing the platform-specific implementation for
+/// iOS and Android:
+///
+/// ```dart
+/// final AdsManagerDelegate delegate = AdsManagerDelegate();
+///
+/// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+///   final IOSAdsManagerDelegate iosDelegate = delegate.platform as IOSAdsManagerDelegate;
+/// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
+///   final AndroidAdsManagerDelegate androidDelegate =
+///       delegate.platform as AndroidAdsManagerDelegate;
+/// }
+/// ```
+class AdsManagerDelegate {
+  /// Constructs an [AdsManagerDelegate].
+  ///
+  /// See [AdsManagerDelegate.fromPlatformCreationParams] for setting parameters for a
+  /// specific platform.
+  AdsManagerDelegate({
+    void Function(AdEvent event)? onAdEvent,
+    void Function(AdErrorEvent event)? onAdErrorEvent,
+  }) : this.fromPlatformCreationParams(
+         PlatformAdsManagerDelegateCreationParams(
+           onAdEvent: (PlatformAdEvent event) =>
+               onAdEvent?.call(AdEvent._fromPlatform(event)),
+           onAdErrorEvent: onAdErrorEvent,
+         ),
+       );
+
+  /// Constructs an [AdsManagerDelegate] from creation params for a specific platform.
+  ///
+  /// {@template interactive_media_ads.AdsManagerDelegate.fromPlatformCreationParams}
+  /// Below is an example of setting platform-specific creation parameters for
+  /// iOS and Android:
+  ///
+  /// ```dart
+  /// PlatformAdsManagerDelegateCreationParams params =
+  ///     const PlatformAdsManagerDelegateCreationParams();
+  ///
+  /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+  ///   params = IOSAdsManagerDelegateCreationParams
+  ///       .fromPlatformAdsManagerDelegateCreationParams(
+  ///     params,
+  ///   );
+  /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
+  ///   params = AndroidAdsManagerDelegateCreationParams
+  ///       .fromPlatformAdsManagerDelegateCreationParams(
+  ///     params,
+  ///   );
+  /// }
+  ///
+  /// final AdsManagerDelegate delegate = AdsManagerDelegate.fromPlatformCreationParams(
+  ///   params,
+  /// );
+  /// ```
+  /// {@endtemplate}
+  AdsManagerDelegate.fromPlatformCreationParams(
+    PlatformAdsManagerDelegateCreationParams params,
+  ) : this.fromPlatform(PlatformAdsManagerDelegate(params));
+
+  /// Constructs a [AdsManagerDelegate] from a specific platform implementation.
+  AdsManagerDelegate.fromPlatform(this.platform);
+
+  /// Implementation of [PlatformAdsManagerDelegate] for the current platform.
+  final PlatformAdsManagerDelegate platform;
+
+  /// Invoked when there is an [AdEvent].
+  void Function(AdEvent event)? get onAdEvent =>
+      (AdEvent event) => platform.params.onAdEvent?.call(event.platform);
+
+  /// Invoked when there was an error playing the ad. Log the error and resume
+  /// playing content.
+  void Function(AdErrorEvent event)? get onAdErrorEvent =>
+      platform.params.onAdErrorEvent;
+}
+
+/// Simple data class used to transport ad playback information.
+class AdEvent {
+  AdEvent._fromPlatform(this.platform);
+
+  /// Implementation of [PlatformAdEvent] for the current platform.
+  final PlatformAdEvent platform;
+
+  /// The type of event that occurred.
+  AdEventType get type => platform.type;
+
+  /// The ad with which this event is associated.
+  Ad? get ad => platform.ad != null ? Ad.fromPlatform(platform.ad!) : null;
+
+  /// A map containing any extra ad data for the event, if needed.
+  Map<String, String> get adData => platform.adData;
+}

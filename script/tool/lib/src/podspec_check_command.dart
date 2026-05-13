@@ -1,0 +1,229 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file/file.dart';
+
+import 'common/core.dart';
+import 'common/output_utils.dart';
+import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
+import 'common/repository_package.dart';
+
+const int _exitUnsupportedPlatform = 2;
+const int _exitPodNotInstalled = 3;
+
+/// Lint the CocoaPod podspecs and run unit tests.
+///
+/// See https://guides.cocoapods.org/terminal/commands.html#pod_lib_lint.
+class PodspecCheckCommand extends PackageLoopingCommand {
+  /// Creates an instance of the linter command.
+  PodspecCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  });
+
+  @override
+  final String name = 'podspec-check';
+
+  @override
+  List<String> get aliases => <String>['podspec', 'podspecs', 'check-podspec'];
+
+  @override
+  final String description =
+      'Runs "pod lib lint --quick" on all iOS and macOS plugin podspecs, as well as '
+      'making sure the podspecs follow repository standards.\n\n'
+      'This command requires "pod" and "flutter" to be in your path. Runs on macOS only.';
+
+  @override
+  Future<void> initializeRun() async {
+    if (!platform.isMacOS) {
+      printError('This command is only supported on macOS');
+      throw ToolExit(_exitUnsupportedPlatform);
+    }
+
+    final ProcessResult result = await processRunner.run(
+      'which',
+      <String>['pod'],
+      workingDir: packagesDir,
+      logOnError: true,
+    );
+    if (result.exitCode != 0) {
+      printError('Unable to find "pod". Make sure it is in your path.');
+      throw ToolExit(_exitPodNotInstalled);
+    }
+  }
+
+  @override
+  Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final errors = <String>[];
+
+    final List<File> podspecs = await _podspecsToLint(package);
+    if (podspecs.isEmpty) {
+      return PackageResult.skip('No podspecs.');
+    }
+
+    for (final podspec in podspecs) {
+      if (!await _lintPodspec(podspec)) {
+        errors.add(podspec.basename);
+      }
+    }
+
+    if (await _hasIOSSwiftCode(package)) {
+      print('iOS Swift code found, checking for search paths settings...');
+      for (final podspec in podspecs) {
+        if (_isPodspecMissingSearchPaths(podspec)) {
+          const workaroundBlock = r'''
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
+''';
+          final String path = getRelativePosixPath(
+            podspec,
+            from: package.directory,
+          );
+          printError(
+            '$path is missing search path configuration. Any iOS '
+            'plugin implementation that contains Swift implementation code '
+            'needs to contain the following:\n\n'
+            '$workaroundBlock\n'
+            'For more details, see https://github.com/flutter/flutter/issues/118418.',
+          );
+          errors.add(podspec.basename);
+        }
+      }
+    }
+
+    if ((pluginSupportsPlatform(platformIOS, package) ||
+            pluginSupportsPlatform(platformMacOS, package)) &&
+        !podspecs.any(_hasPrivacyManifest)) {
+      printError(
+        'No PrivacyInfo.xcprivacy file specified. Please ensure that '
+        'a privacy manifest is included in the build using '
+        '`resource_bundles`',
+      );
+      errors.add('No privacy manifest');
+    }
+
+    return errors.isEmpty
+        ? PackageResult.success()
+        : PackageResult.fail(errors);
+  }
+
+  Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
+    final List<File> podspecs = await getFilesForPackage(package).where((
+      File entity,
+    ) {
+      final String filename = entity.basename;
+      return path.extension(filename) == '.podspec' &&
+          filename != 'Flutter.podspec' &&
+          filename != 'FlutterMacOS.podspec' &&
+          !entity.path.contains('packages/pigeon/platform_tests/');
+    }).toList();
+
+    podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));
+    return podspecs;
+  }
+
+  Future<bool> _lintPodspec(File podspec) async {
+    print('Linting ${podspec.basename}');
+
+    final ProcessResult lintResult = await _runPodLint(podspec.path);
+    print(lintResult.stdout);
+    print(lintResult.stderr);
+
+    return lintResult.exitCode == 0;
+  }
+
+  Future<ProcessResult> _runPodLint(String podspecPath) async {
+    final arguments = <String>['lib', 'lint', podspecPath, '--quick'];
+
+    print('Running "pod ${arguments.join(' ')}"');
+    return processRunner.run(
+      'pod',
+      arguments,
+      workingDir: packagesDir,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+  }
+
+  /// Returns true if there is any iOS plugin implementation code written in
+  /// Swift. Skips files named "Package.swift", which is a Swift Package Manager
+  /// manifest file and does not mean the plugin is written in Swift.
+  Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
+    final String iosSwiftPackageManifestPath = package
+        .platformDirectory(FlutterPlatform.ios)
+        .childDirectory(package.directory.basename)
+        .childFile('Package.swift')
+        .path;
+    final String darwinSwiftPackageManifestPath = package.directory
+        .childDirectory('darwin')
+        .childDirectory(package.directory.basename)
+        .childFile('Package.swift')
+        .path;
+    return getFilesForPackage(package).any((File entity) {
+      final String relativePath = getRelativePosixPath(
+        entity,
+        from: package.directory,
+      );
+      // Ignore example code.
+      if (relativePath.startsWith('example/')) {
+        return false;
+      }
+      // Ignore test code.
+      if (relativePath.contains('/Tests/') ||
+          relativePath.contains('/RunnerTests/') ||
+          relativePath.contains('/RunnerUITests/')) {
+        return false;
+      }
+      final String filePath = entity.path;
+      return filePath != iosSwiftPackageManifestPath &&
+          filePath != darwinSwiftPackageManifestPath &&
+          path.extension(filePath) == '.swift';
+    });
+  }
+
+  /// Returns true if [podspec] could apply to iOS, but does not have the
+  /// workaround for search paths that makes Swift plugins build correctly in
+  /// Objective-C applications. See
+  /// https://github.com/flutter/flutter/issues/118418 for context and details.
+  ///
+  /// This does not check that the plugin has Swift code, and thus whether the
+  /// workaround is needed, only whether or not it is there.
+  bool _isPodspecMissingSearchPaths(File podspec) {
+    final String directory = podspec.parent.basename;
+    // All macOS Flutter apps are Swift, so macOS-only podspecs don't need the
+    // workaround. If it's anywhere other than macos/, err or the side of
+    // assuming it's required.
+    if (directory == 'macos') {
+      return false;
+    }
+
+    // This errs on the side of being too strict, to minimize the chance of
+    // accidental incorrect configuration. If we ever need more flexibility
+    // due to a false negative we can adjust this as necessary.
+    final workaround = RegExp(r'''
+\s*s\.(?:ios\.)?xcconfig = {[^}]*
+\s*'LIBRARY_SEARCH_PATHS' => '\$\(TOOLCHAIN_DIR\)/usr/lib/swift/\$\(PLATFORM_NAME\)/ \$\(SDKROOT\)/usr/lib/swift',
+\s*'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',[^}]*
+\s*}''', dotAll: true);
+    return !workaround.hasMatch(podspec.readAsStringSync());
+  }
+
+  /// Returns true if [podspec] specifies a .xcprivacy file.
+  bool _hasPrivacyManifest(File podspec) {
+    final manifestBundling = RegExp(
+      r'''
+\.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''',
+      dotAll: true,
+    );
+    return manifestBundling.hasMatch(podspec.readAsStringSync());
+  }
+}

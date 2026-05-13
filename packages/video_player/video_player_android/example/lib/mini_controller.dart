@@ -1,0 +1,591 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// TODO(stuartmorgan): Consider extracting this to a shared local (path-based)
+// package for use in all implementation packages.
+
+import 'dart:async';
+import 'dart:io';
+import 'dart:math' as math show max;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+
+VideoPlayerPlatform? _cachedPlatform;
+
+VideoPlayerPlatform get _platform {
+  if (_cachedPlatform == null) {
+    _cachedPlatform = VideoPlayerPlatform.instance;
+    _cachedPlatform!.init();
+  }
+  return _cachedPlatform!;
+}
+
+/// The duration, current position, buffering state, error state and settings
+/// of a [MiniController].
+@immutable
+class VideoPlayerValue {
+  /// Constructs a video with the given values. Only [duration] is required. The
+  /// rest will initialize with default values when unset.
+  const VideoPlayerValue({
+    required this.duration,
+    this.size = Size.zero,
+    this.position = Duration.zero,
+    this.buffered = const <DurationRange>[],
+    this.isInitialized = false,
+    this.isPlaying = false,
+    this.isBuffering = false,
+    this.playbackSpeed = 1.0,
+    this.errorDescription,
+    this.rotationCorrection = 0,
+  });
+
+  /// Returns an instance for a video that hasn't been loaded.
+  const VideoPlayerValue.uninitialized()
+    : this(duration: Duration.zero, isInitialized: false);
+
+  /// Returns an instance with the given [errorDescription].
+  const VideoPlayerValue.erroneous(String errorDescription)
+    : this(
+        duration: Duration.zero,
+        isInitialized: false,
+        errorDescription: errorDescription,
+      );
+
+  /// The total duration of the video.
+  ///
+  /// The duration is [Duration.zero] if the video hasn't been initialized.
+  final Duration duration;
+
+  /// The current playback position.
+  final Duration position;
+
+  /// The currently buffered ranges.
+  final List<DurationRange> buffered;
+
+  /// True if the video is playing. False if it's paused.
+  final bool isPlaying;
+
+  /// True if the video is currently buffering.
+  final bool isBuffering;
+
+  /// The current speed of the playback.
+  final double playbackSpeed;
+
+  /// A description of the error if present.
+  ///
+  /// If [hasError] is false this is `null`.
+  final String? errorDescription;
+
+  /// The [size] of the currently loaded video.
+  final Size size;
+
+  /// Indicates whether or not the video has been loaded and is ready to play.
+  final bool isInitialized;
+
+  /// Degrees to rotate the video (clockwise) so it is displayed correctly.
+  final int rotationCorrection;
+
+  /// Indicates whether or not the video is in an error state. If this is true
+  /// [errorDescription] should have information about the problem.
+  bool get hasError => errorDescription != null;
+
+  /// Returns [size.width] / [size.height].
+  ///
+  /// Will return `1.0` if:
+  /// * [isInitialized] is `false`
+  /// * [size.width], or [size.height] is equal to `0.0`
+  /// * aspect ratio would be less than or equal to `0.0`
+  double get aspectRatio {
+    if (!isInitialized || size.width == 0 || size.height == 0) {
+      return 1.0;
+    }
+    final double aspectRatio = size.width / size.height;
+    if (aspectRatio <= 0) {
+      return 1.0;
+    }
+    return aspectRatio;
+  }
+
+  /// Returns a new instance that has the same values as this current instance,
+  /// except for any overrides passed in as arguments to [copyWidth].
+  VideoPlayerValue copyWith({
+    Duration? duration,
+    Size? size,
+    Duration? position,
+    List<DurationRange>? buffered,
+    bool? isInitialized,
+    bool? isPlaying,
+    bool? isBuffering,
+    double? playbackSpeed,
+    String? errorDescription,
+    int? rotationCorrection,
+  }) {
+    return VideoPlayerValue(
+      duration: duration ?? this.duration,
+      size: size ?? this.size,
+      position: position ?? this.position,
+      buffered: buffered ?? this.buffered,
+      isInitialized: isInitialized ?? this.isInitialized,
+      isPlaying: isPlaying ?? this.isPlaying,
+      isBuffering: isBuffering ?? this.isBuffering,
+      playbackSpeed: playbackSpeed ?? this.playbackSpeed,
+      errorDescription: errorDescription ?? this.errorDescription,
+      rotationCorrection: rotationCorrection ?? this.rotationCorrection,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoPlayerValue &&
+          runtimeType == other.runtimeType &&
+          duration == other.duration &&
+          position == other.position &&
+          listEquals(buffered, other.buffered) &&
+          isPlaying == other.isPlaying &&
+          isBuffering == other.isBuffering &&
+          playbackSpeed == other.playbackSpeed &&
+          errorDescription == other.errorDescription &&
+          size == other.size &&
+          isInitialized == other.isInitialized &&
+          rotationCorrection == other.rotationCorrection;
+
+  @override
+  int get hashCode => Object.hash(
+    duration,
+    position,
+    buffered,
+    isPlaying,
+    isBuffering,
+    playbackSpeed,
+    errorDescription,
+    size,
+    isInitialized,
+    rotationCorrection,
+  );
+}
+
+/// A very minimal version of `VideoPlayerController` for running the example
+/// without relying on `video_player`.
+class MiniController extends ValueNotifier<VideoPlayerValue> {
+  /// Constructs a [MiniController] playing a video from an asset.
+  ///
+  /// The name of the asset is given by the [dataSource] argument and must not be
+  /// null. The [package] argument must be non-null when the asset comes from a
+  /// package and null otherwise.
+  MiniController.asset(
+    this.dataSource, {
+    this.package,
+    this.viewType = VideoViewType.textureView,
+  }) : dataSourceType = DataSourceType.asset,
+       super(const VideoPlayerValue(duration: Duration.zero));
+
+  /// Constructs a [MiniController] playing a video from obtained from
+  /// the network.
+  MiniController.network(
+    this.dataSource, {
+    this.viewType = VideoViewType.textureView,
+  }) : dataSourceType = DataSourceType.network,
+       package = null,
+       super(const VideoPlayerValue(duration: Duration.zero));
+
+  /// Constructs a [MiniController] playing a video from obtained from a file.
+  MiniController.file(File file, {this.viewType = VideoViewType.textureView})
+    : dataSource = Uri.file(file.absolute.path).toString(),
+      dataSourceType = DataSourceType.file,
+      package = null,
+      super(const VideoPlayerValue(duration: Duration.zero));
+
+  /// The URI to the video file. This will be in different formats depending on
+  /// the [DataSourceType] of the original video.
+  final String dataSource;
+
+  /// Describes the type of data source this [MiniController]
+  /// is constructed with.
+  final DataSourceType dataSourceType;
+
+  /// Only set for [asset] videos. The package that the asset was loaded from.
+  final String? package;
+
+  /// The type of view used to display the video.
+  final VideoViewType viewType;
+
+  Timer? _timer;
+  Completer<void>? _creatingCompleter;
+  StreamSubscription<dynamic>? _eventSubscription;
+
+  /// The id of a player that hasn't been initialized.
+  @visibleForTesting
+  static const int kUninitializedPlayerId = -1;
+  int _playerId = kUninitializedPlayerId;
+
+  /// This is just exposed for testing. It shouldn't be used by anyone depending
+  /// on the plugin.
+  @visibleForTesting
+  int get playerId => _playerId;
+
+  /// Attempts to open the given [dataSource] and load metadata about the video.
+  Future<void> initialize() async {
+    _creatingCompleter = Completer<void>();
+
+    late DataSource dataSourceDescription;
+    switch (dataSourceType) {
+      case DataSourceType.asset:
+        dataSourceDescription = DataSource(
+          sourceType: DataSourceType.asset,
+          asset: dataSource,
+          package: package,
+        );
+      case DataSourceType.network:
+        dataSourceDescription = DataSource(
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+        );
+      case DataSourceType.file:
+        dataSourceDescription = DataSource(
+          sourceType: DataSourceType.file,
+          uri: dataSource,
+        );
+      case DataSourceType.contentUri:
+        dataSourceDescription = DataSource(
+          sourceType: DataSourceType.contentUri,
+          uri: dataSource,
+        );
+    }
+
+    final creationOptions = VideoCreationOptions(
+      dataSource: dataSourceDescription,
+      viewType: viewType,
+    );
+
+    _playerId =
+        (await _platform.createWithOptions(creationOptions)) ??
+        kUninitializedPlayerId;
+    _creatingCompleter!.complete(null);
+    final initializingCompleter = Completer<void>();
+
+    void eventListener(VideoEvent event) {
+      switch (event.eventType) {
+        case VideoEventType.initialized:
+          value = value.copyWith(
+            duration: event.duration,
+            rotationCorrection: event.rotationCorrection,
+            size: event.size,
+            isInitialized: event.duration != null,
+          );
+          initializingCompleter.complete(null);
+          _platform.setVolume(_playerId, 1.0);
+          _platform.setLooping(_playerId, true);
+          _applyPlayPause();
+        case VideoEventType.completed:
+          pause().then((void pauseResult) => seekTo(value.duration));
+        case VideoEventType.bufferingUpdate:
+          value = value.copyWith(buffered: event.buffered);
+        case VideoEventType.bufferingStart:
+          value = value.copyWith(isBuffering: true);
+        case VideoEventType.bufferingEnd:
+          value = value.copyWith(isBuffering: false);
+        case VideoEventType.isPlayingStateUpdate:
+          value = value.copyWith(isPlaying: event.isPlaying);
+        case VideoEventType.unknown:
+          break;
+      }
+    }
+
+    void errorListener(Object obj) {
+      final e = obj as PlatformException;
+      value = VideoPlayerValue.erroneous(e.message!);
+      _timer?.cancel();
+      if (!initializingCompleter.isCompleted) {
+        initializingCompleter.completeError(obj);
+      }
+    }
+
+    _eventSubscription = _platform
+        .videoEventsFor(_playerId)
+        .listen(eventListener, onError: errorListener);
+    return initializingCompleter.future;
+  }
+
+  @override
+  Future<void> dispose() async {
+    if (_creatingCompleter != null) {
+      await _creatingCompleter!.future;
+      _timer?.cancel();
+      await _eventSubscription?.cancel();
+      await _platform.dispose(_playerId);
+    }
+    super.dispose();
+  }
+
+  /// Starts playing the video.
+  Future<void> play() async {
+    value = value.copyWith(isPlaying: true);
+    await _applyPlayPause();
+  }
+
+  /// Pauses the video.
+  Future<void> pause() async {
+    value = value.copyWith(isPlaying: false);
+    await _applyPlayPause();
+  }
+
+  Future<void> _applyPlayPause() async {
+    _timer?.cancel();
+    if (value.isPlaying) {
+      await _platform.play(_playerId);
+
+      _timer = Timer.periodic(const Duration(milliseconds: 500), (
+        Timer timer,
+      ) async {
+        final Duration? newPosition = await position;
+        if (newPosition == null) {
+          return;
+        }
+        _updatePosition(newPosition);
+      });
+      await _applyPlaybackSpeed();
+    } else {
+      await _platform.pause(_playerId);
+    }
+  }
+
+  Future<void> _applyPlaybackSpeed() async {
+    if (value.isPlaying) {
+      await _platform.setPlaybackSpeed(_playerId, value.playbackSpeed);
+    }
+  }
+
+  /// The position in the current video.
+  Future<Duration?> get position async {
+    return _platform.getPosition(_playerId);
+  }
+
+  /// Sets the video's current timestamp to be at [position].
+  Future<void> seekTo(Duration position) async {
+    if (position > value.duration) {
+      position = value.duration;
+    } else if (position < Duration.zero) {
+      position = Duration.zero;
+    }
+    await _platform.seekTo(_playerId, position);
+    _updatePosition(position);
+  }
+
+  /// Sets the playback speed.
+  Future<void> setPlaybackSpeed(double speed) async {
+    value = value.copyWith(playbackSpeed: speed);
+    await _applyPlaybackSpeed();
+  }
+
+  void _updatePosition(Duration position) {
+    value = value.copyWith(position: position);
+  }
+}
+
+/// Widget that displays the video controlled by [controller].
+class VideoPlayer extends StatefulWidget {
+  /// Uses the given [controller] for all video rendered in this widget.
+  const VideoPlayer(this.controller, {super.key});
+
+  /// The [MiniController] responsible for the video being rendered in
+  /// this widget.
+  final MiniController controller;
+
+  @override
+  State<VideoPlayer> createState() => _VideoPlayerState();
+}
+
+class _VideoPlayerState extends State<VideoPlayer> {
+  _VideoPlayerState() {
+    _listener = () {
+      final int newPlayerId = widget.controller.playerId;
+      if (newPlayerId != _playerId) {
+        setState(() {
+          _playerId = newPlayerId;
+        });
+      }
+    };
+  }
+
+  late VoidCallback _listener;
+
+  late int _playerId;
+
+  @override
+  void initState() {
+    super.initState();
+    _playerId = widget.controller.playerId;
+    // Need to listen for initialization events since the actual player ID
+    // becomes available after asynchronous initialization finishes.
+    widget.controller.addListener(_listener);
+  }
+
+  @override
+  void didUpdateWidget(VideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    oldWidget.controller.removeListener(_listener);
+    _playerId = widget.controller.playerId;
+    widget.controller.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_listener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _playerId == MiniController.kUninitializedPlayerId
+        ? Container()
+        : _VideoPlayerWithRotation(
+            rotation: widget.controller.value.rotationCorrection,
+            child: _platform.buildViewWithOptions(
+              VideoViewOptions(playerId: _playerId),
+            ),
+          );
+  }
+}
+
+class _VideoPlayerWithRotation extends StatelessWidget {
+  const _VideoPlayerWithRotation({required this.rotation, required this.child});
+
+  final int rotation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (rotation == 0) {
+      return child;
+    }
+    return RotatedBox(quarterTurns: rotation ~/ 90, child: child);
+  }
+}
+
+class _VideoScrubber extends StatefulWidget {
+  const _VideoScrubber({required this.child, required this.controller});
+
+  final Widget child;
+  final MiniController controller;
+
+  @override
+  _VideoScrubberState createState() => _VideoScrubberState();
+}
+
+class _VideoScrubberState extends State<_VideoScrubber> {
+  MiniController get controller => widget.controller;
+
+  @override
+  Widget build(BuildContext context) {
+    void seekToRelativePosition(Offset globalPosition) {
+      final box = context.findRenderObject()! as RenderBox;
+      final Offset tapPos = box.globalToLocal(globalPosition);
+      final double relative = tapPos.dx / box.size.width;
+      final Duration position = controller.value.duration * relative;
+      controller.seekTo(position);
+    }
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: widget.child,
+      onTapDown: (TapDownDetails details) {
+        if (controller.value.isInitialized) {
+          seekToRelativePosition(details.globalPosition);
+        }
+      },
+    );
+  }
+}
+
+/// Displays the play/buffering status of the video controlled by [controller].
+class VideoProgressIndicator extends StatefulWidget {
+  /// Construct an instance that displays the play/buffering status of the video
+  /// controlled by [controller].
+  const VideoProgressIndicator(this.controller, {super.key});
+
+  /// The [MiniController] that actually associates a video with this
+  /// widget.
+  final MiniController controller;
+
+  @override
+  State<VideoProgressIndicator> createState() => _VideoProgressIndicatorState();
+}
+
+class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
+  _VideoProgressIndicatorState() {
+    listener = () {
+      if (mounted) {
+        setState(() {});
+      }
+    };
+  }
+
+  late VoidCallback listener;
+
+  MiniController get controller => widget.controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(listener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(listener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const playedColor = Color.fromRGBO(255, 0, 0, 0.7);
+    const bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
+    const backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
+
+    final Widget progressIndicator;
+    if (controller.value.isInitialized) {
+      final int duration = controller.value.duration.inMilliseconds;
+      final int position = controller.value.position.inMilliseconds;
+
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
+
+      progressIndicator = Stack(
+        fit: StackFit.passthrough,
+        children: <Widget>[
+          LinearProgressIndicator(
+            value: maxBuffering,
+            valueColor: const AlwaysStoppedAnimation<Color>(bufferedColor),
+            backgroundColor: backgroundColor,
+          ),
+          LinearProgressIndicator(
+            value: duration == 0.0 ? 0.0 : position / duration,
+            valueColor: const AlwaysStoppedAnimation<Color>(playedColor),
+            backgroundColor: Colors.transparent,
+          ),
+        ],
+      );
+    } else {
+      progressIndicator = const LinearProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(playedColor),
+        backgroundColor: backgroundColor,
+      );
+    }
+    return _VideoScrubber(
+      controller: controller,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 5.0),
+        child: progressIndicator,
+      ),
+    );
+  }
+}

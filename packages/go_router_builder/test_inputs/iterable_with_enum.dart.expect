@@ -1,0 +1,50 @@
+RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
+      path: '/iterable-with-enum',
+      factory: $IterableWithEnumRoute._fromState,
+    );
+
+mixin $IterableWithEnumRoute on GoRouteData {
+  static IterableWithEnumRoute _fromState(GoRouterState state) =>
+      IterableWithEnumRoute(
+        param: state.uri.queryParametersAll['param']
+            ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName)
+            .cast<EnumOnlyUsedInIterable>(),
+      );
+
+  IterableWithEnumRoute get _self => this as IterableWithEnumRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/iterable-with-enum',
+        queryParams: {
+          if (_self.param != null)
+            'param': _self.param
+                ?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e])
+                .toList(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$EnumOnlyUsedInIterableEnumMap = {
+  EnumOnlyUsedInIterable.a: 'a',
+  EnumOnlyUsedInIterable.b: 'b',
+  EnumOnlyUsedInIterable.c: 'c',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}

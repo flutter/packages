@@ -1,0 +1,21 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.googlemaps;
+
+import com.google.android.gms.maps.GoogleMap;
+
+interface GoogleMapListener
+    extends GoogleMap.OnCameraIdleListener,
+        GoogleMap.OnCameraMoveListener,
+        GoogleMap.OnCameraMoveStartedListener,
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleMap.OnMarkerClickListener,
+        GoogleMap.OnPolygonClickListener,
+        GoogleMap.OnPolylineClickListener,
+        GoogleMap.OnCircleClickListener,
+        GoogleMap.OnMapClickListener,
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerDragListener,
+        GoogleMap.OnGroundOverlayClickListener {}

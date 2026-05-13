@@ -1,0 +1,53 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:metrics_center/src/common.dart';
+import 'package:metrics_center/src/constants.dart';
+import 'package:metrics_center/src/google_benchmark.dart';
+
+import 'common.dart';
+import 'utility.dart';
+
+void main() {
+  test('GoogleBenchmarkParser parses example json.', () async {
+    final List<MetricPoint> points = await GoogleBenchmarkParser.parse(
+      'test/example_google_benchmark.json',
+    );
+    expect(points.length, 9);
+    expectSetMatch(points.map((MetricPoint p) => p.value), <double>[
+      101,
+      101,
+      4460,
+      4460,
+      6548,
+      6548,
+      3.8,
+      3.89,
+      4.89,
+    ]);
+    expectSetMatch(
+      points.map((MetricPoint p) => p.tags[kSubResultKey]),
+      <String>[
+        'cpu_time',
+        'real_time',
+        'cpu_coefficient',
+        'real_coefficient',
+        'rms',
+      ],
+    );
+    expectSetMatch(points.map((MetricPoint p) => p.tags[kNameKey]), <String>[
+      'BM_PaintRecordInit',
+      'SkParagraphFixture/ShortLayout',
+      'SkParagraphFixture/TextBigO_BigO',
+      'ParagraphFixture/TextBigO_BigO',
+      'ParagraphFixture/TextBigO_RMS',
+    ]);
+    for (final p in points) {
+      expect(p.tags.containsKey('host_name'), false);
+      expect(p.tags.containsKey('load_avg'), false);
+      expect(p.tags.containsKey('caches'), false);
+      expect(p.tags.containsKey('executable'), true);
+    }
+  });
+}

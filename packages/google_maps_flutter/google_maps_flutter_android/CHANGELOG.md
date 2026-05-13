@@ -1,0 +1,362 @@
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.19.7
+
+* Fixes warnings in Java code.
+
+## 2.19.6
+
+* Fixes the onTap callback for clustered pin info window taps.
+
+## 2.19.5
+
+* Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
+
+## 2.19.4
+
+* Updates build files from Groovy to Kotlin.
+
+## 2.19.3
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
+## 2.19.2
+
+* Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
+
+## 2.19.1
+
+* Fixes a regression in 2.19.0 that caused crashes when adding markers.
+
+## 2.19.0
+
+* Adds support for advanced markers.
+
+## 2.18.12
+
+* Bumps com.google.maps.android:android-maps-utils from 3.20.1 to 4.0.0.
+
+## 2.18.11
+
+* Bumps com.google.android.gms:play-services-maps from 19.2.0 to 20.0.0.
+
+## 2.18.10
+
+* Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
+
+## 2.18.9
+
+* Updates heatmaps passed between Dart and native to use typed data.
+
+## 2.18.8
+
+* Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
+
+## 2.18.7
+
+* Replaces internal use of deprecated methods.
+
+## 2.18.6
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.18.5
+
+* Updates to Pigeon 26.
+
+## 2.18.4
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.18.3
+
+* Resolves Gradle 9 deprecations.
+
+## 2.18.2
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.18.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.18.0
+
+* Adds support for warming up the Google Maps SDK
+  via `GoogleMapsFlutterAndroid.warmup()`.
+
+## 2.17.0
+
+* Updates `com.google.android.gms:play-services-maps` to 19.2.0.
+* Marks `AndroidMapRenderer.legacy` as deprecated, since it's deprecated in the
+  current version of the Google Maps SDK.
+
+## 2.16.2
+
+* Removes documentation related to the map renderer selection API, as the
+  legacy renderer is no longer available, so requesting it is a no-op.
+
+## 2.16.1
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 2.16.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.15.0
+
+* Adds support for ground overlay.
+
+## 2.14.14
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.14.13
+
+* Updates READMEs and API docs.
+
+## 2.14.12
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
+## 2.14.11
+
+* Updates internal Pigeon API to use newer features.
+
+## 2.14.10
+
+* Adds 'PlatformBitmap' type.
+* Updates type unsafe implementations.
+
+## 2.14.9
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
+## 2.14.8
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
+## 2.14.5
+
+* Converts `JointType` to enum.
+
+## 2.14.4
+
+* Converts 'PlatformTileOverlay' to pigeon.
+
+## 2.14.3
+
+* Converts `PlatformPolygon` and `PlatformPolyline` to pigeon.
+
+## 2.14.2
+
+* Bumps `com.android.tools.build:gradle` from 7.3.1 to 8.5.1.
+
+## 2.14.1
+
+* Converts `PlatformCircle` and `PlatformMarker` to pigeon.
+
+## 2.14.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+
+## 2.13.0
+
+* Adds support for heatmap layers.
+
+## 2.12.2
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.12.1
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.12.0
+
+* Converts Java->Dart calls to Pigeon.
+
+## 2.11.1
+
+* Fixes handling of Circle updates.
+
+## 2.11.0
+
+* Converts additional platform calls to Pigeon.
+
+## 2.10.0
+
+* Converts some platform calls to Pigeon.
+
+## 2.9.1
+
+* Converts inspector interface platform calls to Pigeon.
+
+## 2.9.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
+## 2.8.1
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 2.8.0
+
+* Adds support for marker clustering.
+
+## 2.7.0
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 2.6.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.6.1
+
+* Fixes new lint warnings.
+
+## 2.6.0
+
+* Fixes missing updates in TLHC mode.
+* Switched default display mode to TLHC mode.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.5.3
+
+* Updates `com.google.android.gms:play-services-maps` to 18.2.0.
+
+## 2.5.2
+
+* Updates annotations lib to 1.7.0.
+
+## 2.5.1
+
+* Adds pub topics to package metadata.
+
+## 2.5.0
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based map styling.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.16
+
+* Removes old empty override methods.
+* Fixes unawaited_futures violations.
+
+## 2.4.15
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.4.14
+
+* Updates gradle, AGP and fixes some lint errors.
+
+## 2.4.13
+
+* Fixes compatibility with AGP versions older than 4.2.
+
+## 2.4.12
+
+* Fixes Java warnings.
+
+## 2.4.11
+
+* Adds a namespace for compatibility with AGP 8.0.
+
+## 2.4.10
+
+* Bump RoboElectric dependency to 4.4.1 to support AndroidX.
+
+## 2.4.9
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.4.8
+
+* Fixes compilation warnings.
+
+## 2.4.7
+
+* Updates annotation dependency.
+* Updates compileSdkVersion to 33.
+
+## 2.4.6
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
+## 2.4.5
+
+* Fixes Initial padding not working when map has not been created yet.
+
+## 2.4.4
+
+* Fixes Points losing precision when converting to LatLng.
+* Updates minimum Flutter version to 3.0.
+
+## 2.4.3
+
+* Updates code for stricter lint checks.
+
+## 2.4.2
+
+* Updates code for stricter lint checks.
+
+## 2.4.1
+
+* Update `androidx.test.espresso:espresso-core` to 3.5.1.
+
+## 2.4.0
+
+* Adds the ability to request a specific map renderer.
+* Updates code for new analysis options.
+
+## 2.3.3
+
+* Update android gradle plugin to 7.3.1.
+
+## 2.3.2
+
+* Update `com.google.android.gms:play-services-maps` to 18.1.0.
+
+## 2.3.1
+
+* Updates imports for `prefer_relative_imports`.
+
+## 2.3.0
+
+* Switches the default for `useAndroidViewSurface` to true, and adds
+  information about the current mode behaviors to the README.
+* Updates minimum Flutter version to 2.10.
+
+## 2.2.0
+
+* Updates `useAndroidViewSurface` to require Hybrid Composition, making the
+  selection work again in Flutter 3.0+. Earlier versions of Flutter are
+  no longer supported.
+* Fixes violations of new analysis option use_named_constants.
+* Fixes avoid_redundant_argument_values lint warnings and minor typos.
+
+## 2.1.10
+
+* Splits Android implementation out of `google_maps_flutter` as a federated
+  implementation.

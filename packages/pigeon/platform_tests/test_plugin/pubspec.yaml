@@ -1,0 +1,33 @@
+name: test_plugin
+description: Pigeon test harness for primary plugin languages.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.test_plugin
+        pluginClass: TestPlugin
+      ios:
+        pluginClass: TestPlugin
+        sharedDarwinSource: true
+      linux:
+        pluginClass: TestPlugin
+      macos:
+        pluginClass: TestPlugin
+        sharedDarwinSource: true
+      windows:
+        pluginClass: TestPluginCApi
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

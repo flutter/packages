@@ -1,0 +1,259 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: unnecessary_nullable_for_final_variable_declarations
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_web/src/google_maps_inspector_web.dart';
+import 'package:google_maps_flutter_web/src/marker_clustering.dart';
+import 'package:integration_test/integration_test.dart';
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  GoogleMapsFlutterPlatform.instance.enableDebugInspection();
+  final GoogleMapsFlutterPlatform plugin = GoogleMapsFlutterPlatform.instance;
+  final GoogleMapsInspectorPlatform inspector =
+      GoogleMapsInspectorPlatform.instance!;
+
+  const mapCenter = LatLng(20, 20);
+  const initialCameraPosition = CameraPosition(target: mapCenter);
+
+  group('MarkersController', () {
+    testWidgets('Marker clustering', (WidgetTester tester) async {
+      const testMapId = 33930;
+      const clusterManagerId = ClusterManagerId('cluster 1');
+
+      final clusterManagers = <ClusterManager>{
+        const ClusterManager(clusterManagerId: clusterManagerId),
+      };
+
+      // Create the marker with clusterManagerId.
+      final initialMarkers = <Marker>{
+        const Marker(
+          markerId: MarkerId('1'),
+          position: mapCenter,
+          clusterManagerId: clusterManagerId,
+        ),
+        const Marker(
+          markerId: MarkerId('2'),
+          position: mapCenter,
+          clusterManagerId: clusterManagerId,
+        ),
+      };
+
+      final mapIdCompleter = Completer<int>();
+
+      await _pumpMap(
+        tester,
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) => mapIdCompleter.complete(id),
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
+        ),
+      );
+
+      final int mapId = await mapIdCompleter.future;
+      expect(mapId, equals(testMapId));
+
+      final List<Cluster> clusters =
+          await waitForValueMatchingPredicate<List<Cluster>>(
+            tester,
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
+            (List<Cluster> clusters) => clusters.isNotEmpty,
+          ) ??
+          <Cluster>[];
+
+      expect(clusters.length, 1);
+      expect(clusters[0].markerIds.length, 2);
+
+      // Copy only the first marker with null clusterManagerId.
+      // This means that both markers should be removed from the cluster.
+      final updatedMarkers = <Marker>{
+        _copyMarkerWithClusterManagerId(initialMarkers.first, null),
+      };
+
+      final markerUpdates = MarkerUpdates.from(initialMarkers, updatedMarkers);
+      await plugin.updateMarkers(markerUpdates, mapId: mapId);
+
+      final List<Cluster> updatedClusters =
+          await waitForValueMatchingPredicate<List<Cluster>>(
+            tester,
+            () async => inspector.getClusters(
+              mapId: mapId,
+              clusterManagerId: clusterManagerId,
+            ),
+            (List<Cluster> clusters) => clusters.isNotEmpty,
+          ) ??
+          <Cluster>[];
+
+      expect(updatedClusters.length, 0);
+    });
+
+    testWidgets('clusters render once per batched add', (
+      WidgetTester tester,
+    ) async {
+      const clusterManagerId = ClusterManagerId('cluster 1');
+
+      final clusterManagers = <ClusterManager>{
+        const ClusterManager(clusterManagerId: clusterManagerId),
+      };
+
+      // Create the marker with clusterManagerId.
+      final initialMarkers = <Marker>{
+        for (var i = 0; i < 3; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            position: mapCenter,
+            clusterManagerId: clusterManagerId,
+          ),
+      };
+
+      final markersCluster1 = <Marker>{
+        for (var i = 3; i < 7; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            clusterManagerId: clusterManagerId,
+            position: mapCenter,
+          ),
+      };
+
+      const testMapId = 33931;
+      final events = StreamController<ClusteringEvent>();
+      await _pumpMap(
+        tester,
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) async {
+            final StreamSubscription<ClusteringEvent>? subscription =
+                (inspector as GoogleMapsInspectorWeb)
+                    .getClusteringEvents(
+                      mapId: testMapId,
+                      clusterManagerId: clusterManagerId,
+                    )
+                    ?.listen(events.add);
+
+            await plugin.updateMarkers(
+              MarkerUpdates.from(initialMarkers, markersCluster1),
+              mapId: testMapId,
+            );
+
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await subscription?.cancel();
+            await events.close();
+          },
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
+        ),
+      );
+
+      await expectLater(
+        events.stream,
+        emitsInAnyOrder([
+          // Once per initial markers
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          // Once per new cluster
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          emitsDone,
+        ]),
+      );
+    });
+  });
+}
+
+// Repeatedly checks an asynchronous value against a test condition, waiting
+// one frame between each check, returning the value if it passes the predicate
+// before [maxTries] is reached.
+//
+// Returns null if the predicate is never satisfied.
+//
+// This is useful for cases where the Maps SDK has some internally
+// asynchronous operation that we don't have visibility into (e.g., native UI
+// animations).
+Future<T?> waitForValueMatchingPredicate<T>(
+  WidgetTester tester,
+  Future<T> Function() getValue,
+  bool Function(T) predicate, {
+  int maxTries = 100,
+}) async {
+  for (var i = 0; i < maxTries; i++) {
+    final T value = await getValue();
+    if (predicate(value)) {
+      return value;
+    }
+    await tester.pump();
+  }
+  return null;
+}
+
+Marker _copyMarkerWithClusterManagerId(
+  Marker marker,
+  ClusterManagerId? clusterManagerId,
+) {
+  return Marker(
+    markerId: marker.markerId,
+    alpha: marker.alpha,
+    anchor: marker.anchor,
+    consumeTapEvents: marker.consumeTapEvents,
+    draggable: marker.draggable,
+    flat: marker.flat,
+    icon: marker.icon,
+    infoWindow: marker.infoWindow,
+    position: marker.position,
+    rotation: marker.rotation,
+    visible: marker.visible,
+    // ignore: deprecated_member_use
+    zIndex: marker.zIndex,
+    onTap: marker.onTap,
+    onDragStart: marker.onDragStart,
+    onDrag: marker.onDrag,
+    onDragEnd: marker.onDragEnd,
+    clusterManagerId: clusterManagerId,
+  );
+}
+
+/// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
+Future<void> _pumpMap(
+  WidgetTester tester,
+  Widget map, [
+  Size size = const Size.square(200),
+]) async {
+  await tester.pumpWidget(_wrapMap(map, size));
+  await tester.pumpAndSettle();
+}
+
+/// Wraps a [map] in a bunch of widgets so it renders in all platforms.
+///
+/// An optional [size] can be passed.
+Widget _wrapMap(Widget map, [Size size = const Size.square(200)]) {
+  return MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: SizedBox.fromSize(size: size, child: map),
+      ),
+    ),
+  );
+}

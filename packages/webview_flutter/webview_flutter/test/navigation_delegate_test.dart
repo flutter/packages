@@ -1,0 +1,141 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
+import 'navigation_delegate_test.mocks.dart';
+
+@GenerateMocks(<Type>[
+  WebViewPlatform,
+  PlatformNavigationDelegate,
+  PlatformSslAuthError,
+])
+void main() {
+  group('NavigationDelegate', () {
+    test('onNavigationRequest', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      NavigationDecision onNavigationRequest(NavigationRequest request) {
+        return NavigationDecision.navigate;
+      }
+
+      final delegate = NavigationDelegate(
+        onNavigationRequest: onNavigationRequest,
+      );
+
+      verify(delegate.platform.setOnNavigationRequest(onNavigationRequest));
+    });
+
+    test('onPageStarted', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onPageStarted(String url) {}
+
+      final delegate = NavigationDelegate(onPageStarted: onPageStarted);
+
+      verify(delegate.platform.setOnPageStarted(onPageStarted));
+    });
+
+    test('onPageFinished', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onPageFinished(String url) {}
+
+      final delegate = NavigationDelegate(onPageFinished: onPageFinished);
+
+      verify(delegate.platform.setOnPageFinished(onPageFinished));
+    });
+
+    test('onProgress', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onProgress(int progress) {}
+
+      final delegate = NavigationDelegate(onProgress: onProgress);
+
+      verify(delegate.platform.setOnProgress(onProgress));
+    });
+
+    test('onWebResourceError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onWebResourceError(WebResourceError error) {}
+
+      final delegate = NavigationDelegate(
+        onWebResourceError: onWebResourceError,
+      );
+
+      verify(delegate.platform.setOnWebResourceError(onWebResourceError));
+    });
+
+    test('onUrlChange', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onUrlChange(UrlChange change) {}
+
+      final delegate = NavigationDelegate(onUrlChange: onUrlChange);
+
+      verify(delegate.platform.setOnUrlChange(onUrlChange));
+    });
+
+    test('onHttpAuthRequest', () {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onHttpAuthRequest(HttpAuthRequest request) {}
+
+      final delegate = NavigationDelegate(onHttpAuthRequest: onHttpAuthRequest);
+
+      verify(delegate.platform.setOnHttpAuthRequest(onHttpAuthRequest));
+    });
+
+    test('onHttpError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onHttpError(HttpResponseError error) {}
+
+      final delegate = NavigationDelegate(onHttpError: onHttpError);
+
+      verify(delegate.platform.setOnHttpError(onHttpError));
+    });
+
+    test('onSslAuthError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      final delegate = NavigationDelegate(
+        onSslAuthError: expectAsync1((SslAuthError error) {
+          error.proceed();
+        }),
+      );
+
+      final callback =
+          verify(
+                (delegate.platform as MockPlatformNavigationDelegate)
+                    .setOnSSlAuthError(captureAny),
+              ).captured.single
+              as void Function(PlatformSslAuthError);
+
+      final mockPlatformError = MockPlatformSslAuthError();
+      callback(mockPlatformError);
+
+      verify(mockPlatformError.proceed());
+    });
+  });
+}
+
+class TestWebViewPlatform extends WebViewPlatform {
+  @override
+  PlatformNavigationDelegate createPlatformNavigationDelegate(
+    PlatformNavigationDelegateCreationParams params,
+  ) {
+    return TestMockPlatformNavigationDelegate();
+  }
+}
+
+class TestMockPlatformNavigationDelegate extends MockPlatformNavigationDelegate
+    with MockPlatformInterfaceMixin {}

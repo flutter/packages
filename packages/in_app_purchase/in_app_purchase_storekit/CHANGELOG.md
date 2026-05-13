@@ -1,0 +1,333 @@
+## 0.4.8+1
+
+* Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
+## 0.4.8
+
+* Fixes an issue causing StoreKit2 purchases to be reported as `restored` and left in an
+  unfinished state, due to `pendingCompletePurchase` being false.
+* Fixes Xcode 26.2 analyzer warnings in example app tests.
+
+## 0.4.7
+
+* Adds `SK2Transaction.unfinishedTransactions()` method to query only unfinished transactions.
+* Exposes `appAccountToken` property in `SK2PurchaseDetails` for user identification.
+
+## 0.4.6+2
+
+* Updates to Pigeon 26.
+
+## 0.4.6+1
+
+* Refactors internals for improved testability.
+
+## 0.4.6
+
+* Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
+* Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding
+`SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
+
+## 0.4.5
+
+* Makes `SKError.userInfo` key non-nullable to comply with json serialization requirements.
+
+## 0.4.4+1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+
+## 0.4.3
+
+* Adds **Introductory Offer Eligibility** support for StoreKit2
+
+## 0.4.2
+
+* Add [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
+* Add [jsonRepresentation](https://developer.apple.com/documentation/storekit/transaction/jsonrepresentation) to `SK2PurchaseDetails` as `localVerificationData` for local transaction debugging and verification.
+
+## 0.4.1
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds **Win Back Offers** support for StoreKit2:
+  * Includes new `isWinBackOfferEligible` function for eligibility verification
+* Adds **Promotional Offers** support in StoreKit2 purchases
+* Fixes introductory pricing handling in promotional offers list in StoreKit2
+* Ensures proper `appAccountToken` handling for StoreKit2 purchases
+
+## 0.4.0
+
+* **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
+
+## 0.3.22+1
+
+* Fix a channel thread-safety issue when StoreKit2 is enabled.
+
+## 0.3.22
+
+* Adds `sync()` and `countryCode()`.
+
+## 0.3.21
+
+* Adds Swift Package Manager compatibility.
+
+## 0.3.20+4
+
+* Exposes `jsonRepresentation` field for transactions.
+
+## 0.3.20+3
+
+* Fixes `finishTransaction` not completing.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.3.20+2
+
+* Fixes price not being displayed correctly.
+
+## 0.3.20+1
+
+* Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
+
+## 0.3.20
+
+* Fixes manual invocation of `finishTransaction` causing a fatal crash.
+
+## 0.3.19+1
+
+* Removes unneeded platform availability annotations.
+
+## 0.3.19
+
+* Adds StoreKit2 Transaction expiration date.
+
+## 0.3.18+5
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.18+4
+
+* Adds StoreKit 2 support for restoring purchases.
+
+## 0.3.18+3
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 0.3.18+2
+
+* Adds support for StoreKit2's `purchase` and `transactions`
+
+## 0.3.18+1
+
+* Adds support for StoreKit2's `canMakePayments` and `products`
+
+## 0.3.18
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Changes the `localizedDescription` field of `SKProductMessage` to allow for null values
+
+## 0.3.17+3
+
+* Converts TranslatorTests to swift.
+
+## 0.3.17+2
+
+* Converts FIAPPaymentQueueDeleteTests to swift.
+
+## 0.3.17+1
+
+* Converts main plugin tests to swift.
+
+## 0.3.17
+
+* Removes OCMock from tests.
+
+## 0.3.16
+
+* Converts main plugin class to Swift.
+
+## 0.3.15
+
+* Replaces `getCountryCode` with `countryCode`.
+
+## 0.3.14
+
+* Adds `countryCode` API.
+
+## 0.3.13+1
+
+* Handle translation of errors nested in dictionaries.
+
+## 0.3.13
+
+* Added new native tests for more complete test coverage.
+
+## 0.3.12+1
+
+* Fixes type of error code returned from native code in SKReceiptManager.retrieveReceiptData.
+
+## 0.3.12
+
+* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`,
+`registerPaymentQueueDelegate()`, `removePaymentQueueDelegate()`, `showPriceConsentIfNeeded()` to pigeon.
+
+## 0.3.11
+
+* Fixes SKError.userInfo not being nullable.
+
+## 0.3.10
+
+* Converts `startProductRequest()`, `finishTransaction()`, `restoreTransactions()`, `presentCodeRedemptionSheet()` to pigeon.
+
+## 0.3.9
+
+* Converts `storefront()`, `transactions()`, `addPayment()`, `canMakePayment` to pigeon.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.3.8+1
+
+* Adds privacy manifest.
+
+## 0.3.8
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 0.3.7
+
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class.
+
+## 0.3.6+7
+
+* Updates example code for current versions of Flutter.
+
+## 0.3.6+6
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.6+5
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.3.6+4
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 0.3.6+3
+
+* Adds a null check, to prevent a new diagnostic.
+
+## 0.3.6+2
+
+* Clarifies explanation of endorsement in README.
+* Aligns Dart and Flutter SDK constraints.
+
+## 0.3.6+1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
+## 0.3.6
+
+* Updates minimum Flutter version to 3.3 and iOS 11.
+
+## 0.3.5+2
+
+* Fixes a crash when `appStoreReceiptURL` is nil.
+
+## 0.3.5+1
+
+* Uses the new `sharedDarwinSource` flag when available.
+
+## 0.3.5
+
+* Updates minimum Flutter version to 3.0.
+* Ignores a lint in the example app for backwards compatibility.
+
+## 0.3.4+1
+
+* Updates code for stricter lint checks.
+
+## 0.3.4
+
+* Adds macOS as a supported platform.
+
+## 0.3.3
+
+* Supports adding discount information to AppStorePurchaseParam.
+* Fixes iOS Promotional Offers bug which prevents them from working.
+
+## 0.3.2+2
+
+* Updates imports for `prefer_relative_imports`.
+
+## 0.3.2+1
+
+* Updates minimum Flutter version to 2.10.
+* Replaces deprecated ThemeData.primaryColor.
+
+## 0.3.2
+
+* Adds the `identifier` and `type` fields to the `SKProductDiscountWrapper` to reflect the changes in the [SKProductDiscount](https://developer.apple.com/documentation/storekit/skproductdiscount?language=objc) in iOS 12.2.
+
+## 0.3.1+1
+
+* Fixes avoid_redundant_argument_values lint warnings and minor typos.
+
+## 0.3.1
+
+* Adds ability to purchase more than one of a product.
+
+## 0.3.0+10
+
+* Ignores deprecation warnings for upcoming styleFrom button API changes.
+
+## 0.3.0+9
+
+* Updates references to the obsolete master branch.
+
+## 0.3.0+8
+
+* Fixes a memory leak on iOS.
+
+## 0.3.0+7
+
+* Minor fixes for new analysis options.
+
+## 0.3.0+6
+
+* Removes unnecessary imports.
+* Fixes library_private_types_in_public_api, sort_child_properties_last and use_key_in_widget_constructors
+  lint warnings.
+
+## 0.3.0+5
+
+* Migrates from `ui.hash*` to `Object.hash*`.
+
+## 0.3.0+4
+
+* Ensures that `NSError` instances with an unexpected value for the `userInfo` field don't crash the app, but send an explanatory message instead.
+
+## 0.3.0+3
+
+* Implements transaction caching for StoreKit ensuring transactions are delivered to the Flutter client.
+
+## 0.3.0+2
+
+* Internal code cleanup for stricter analysis options.
+
+## 0.3.0+1
+
+* Removes dependency on `meta`.
+
+## 0.3.0
+
+* **BREAKING CHANGE:** `InAppPurchaseStoreKitPlatform.restorePurchase()` emits an empty instance of `List<ProductDetails>` when there were no transactions to restore, indicating that the restore procedure has finished.
+
+## 0.2.1
+
+* Renames `in_app_purchase_ios` to `in_app_purchase_storekit` to facilitate
+  future macOS support.

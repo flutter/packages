@@ -1,0 +1,27 @@
+name: animations_example
+description: A catalog containing example animations from package:animations.
+
+publish_to: none
+
+version: 0.0.1
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  animations:
+    path: ../../animations
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/avatar_logo.png
+    - assets/placeholder_image.png

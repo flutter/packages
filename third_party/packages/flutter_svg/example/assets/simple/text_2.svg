@@ -1,0 +1,28 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 1000 300"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example text01</desc>
+
+  <text x="100" y="50"
+      font-family="Roboto" font-size="55" font-weight="normal" fill="blue" >
+    Plain text Roboto</text>
+  <text x="100" y="100"
+      font-family="Verdana" font-size="55" font-weight="normal" fill="blue" >
+    Plain text Verdana</text>
+
+  <text x="100" y="150"
+      font-family="Verdana" font-size="55" font-weight="bold" fill="blue" >
+    Bold text Verdana</text>
+
+  <!-- Show outline of canvas using 'rect' element -->
+  <rect x="140" y="165" width="595" height="110"
+      fill="none" stroke="red" stroke-width="2" />
+
+  <text x="150" y="215"
+      font-family="Roboto" font-size="55" fill="green" >
+    <tspan stroke="red" font-weight="900" >Stroked bold line</tspan>
+    <tspan dy="50">Line 3</tspan>
+  </text>
+</svg>

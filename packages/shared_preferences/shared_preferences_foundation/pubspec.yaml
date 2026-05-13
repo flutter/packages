@@ -1,0 +1,37 @@
+name: shared_preferences_foundation
+description: iOS and macOS implementation of the shared_preferences plugin.
+repository: https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences_foundation
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+shared_preferences%22
+version: 2.5.6
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    implements: shared_preferences
+    platforms:
+      ios:
+        pluginClass: SharedPreferencesPlugin
+        dartPluginClass: SharedPreferencesFoundation
+        sharedDarwinSource: true
+      macos:
+        pluginClass: SharedPreferencesPlugin
+        dartPluginClass: SharedPreferencesFoundation
+        sharedDarwinSource: true
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences_platform_interface: ^2.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pigeon: ^26.1.0
+
+topics:
+  - persistence
+  - shared-preferences
+  - storage

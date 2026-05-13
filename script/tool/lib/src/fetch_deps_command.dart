@@ -1,0 +1,347 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'common/core.dart';
+import 'common/flutter_command_utils.dart';
+import 'common/gradle.dart';
+import 'common/output_utils.dart';
+import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
+import 'common/pub_utils.dart';
+import 'common/repository_package.dart';
+
+const int _exitPrecacheFailed = 3;
+const int _exitNothingRequested = 4;
+const int _exitPodUpdateFailed = 5;
+
+/// Download dependencies, both Dart and native.
+///
+/// Specficially each platform runs:
+///   Android: 'gradlew dependencies'.
+///   Dart: 'flutter pub get'.
+///   iOS/macOS: 'pod install'.
+///
+/// See https://docs.gradle.org/6.4/userguide/core_dependency_management.html#sec:dependency-mgmt-in-gradle.
+class FetchDepsCommand extends PackageLoopingCommand {
+  /// Creates an instance of the fetch-deps command.
+  FetchDepsCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
+    argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
+    argParser.addFlag(
+      _supportingTargetPlatformsOnlyFlag,
+      help:
+          'Restricts "pub get" runs to packages that have at least one '
+          'example supporting at least one of the platform flags passed.\n'
+          'If no platform flags are passed, this will exclude all packages.',
+    );
+    argParser.addFlag(
+      platformAndroid,
+      help:
+          'Run "gradlew dependencies" for Android plugins.\n'
+          'Include packages with Android examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformIOS,
+      help:
+          'Run "pod install" for iOS plugins.\n'
+          'Include packages with iOS examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformLinux,
+      help:
+          'Include packages with Linux examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformMacOS,
+      help:
+          'Run "pod install" for macOS plugins.\n'
+          'Include packages with macOS examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformWeb,
+      help:
+          'Include packages with Web examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformWindows,
+      help:
+          'Include packages with Windows examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(_swiftPackageManagerFlag, defaultsTo: null);
+  }
+
+  static const String _dartFlag = 'dart';
+  static const String _swiftPackageManagerFlag = 'swift-package-manager';
+  static const String _supportingTargetPlatformsOnlyFlag =
+      'supporting-target-platforms-only';
+
+  static const Iterable<String> _platforms = <String>[
+    platformAndroid,
+    platformIOS,
+    platformLinux,
+    platformMacOS,
+    platformWeb,
+    platformWindows,
+  ];
+
+  @override
+  final String name = 'fetch-deps';
+
+  @override
+  final String description = 'Fetches dependencies for packages';
+
+  @override
+  Future<void> initializeRun() async {
+    final bool includeIOS = getBoolArg(platformIOS);
+    final bool includeMacOS = getBoolArg(platformMacOS);
+    // TODO(stuartmorgan): Flip the default to true once SwiftPM is on by
+    // default on stable. For now this will have the wrong default on stable,
+    // but that's fine since we are usually providing an explicit flag for now.
+    final bool usesCocoaPods =
+        (includeIOS || includeMacOS) &&
+        !(getNullableBoolArg(_swiftPackageManagerFlag) ?? false);
+    if (usesCocoaPods) {
+      // `pod install` requires having the platform artifacts precached. See
+      // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
+      // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
+      final int precacheExitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'precache',
+          if (includeIOS) '--ios',
+          if (includeMacOS) '--macos',
+        ],
+      );
+      if (precacheExitCode != 0) {
+        throw ToolExit(_exitPrecacheFailed);
+      }
+      final int updateUpdateExitCode = await processRunner.runAndStream(
+        'pod',
+        <String>['repo', 'update'],
+      );
+      if (updateUpdateExitCode != 0) {
+        throw ToolExit(_exitPodUpdateFailed);
+      }
+    }
+  }
+
+  bool? get _swiftPackageManagerFeatureConfig {
+    if (!getBoolArg(platformIOS) && !getBoolArg(platformMacOS)) {
+      return null;
+    }
+    return getNullableBoolArg(_swiftPackageManagerFlag);
+  }
+
+  @override
+  Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    var fetchedDeps = false;
+    final skips = <String>[];
+
+    final bool? swiftPackageManagerOverride = _swiftPackageManagerFeatureConfig;
+    // Rather than changing global config state, enable SwiftPM via a
+    // temporary package-level override. This must be done before running any
+    // Flutter commands, not just `build`, because `flutter pub get` triggers
+    // codepaths that can generate a Podfile, changing the behavior of
+    // `flutter build`.
+    if (swiftPackageManagerOverride != null) {
+      print(
+        'Overriding enable-swift-package-manager to '
+        '$swiftPackageManagerOverride',
+      );
+      setSwiftPackageManagerState(
+        package,
+        enabled: swiftPackageManagerOverride,
+      );
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(
+          example,
+          enabled: swiftPackageManagerOverride,
+        );
+      }
+    }
+
+    if (getBoolArg(_dartFlag)) {
+      final bool filterPlatforms = getBoolArg(
+        _supportingTargetPlatformsOnlyFlag,
+      );
+      if (!filterPlatforms || _hasExampleSupportingRequestedPlatform(package)) {
+        fetchedDeps = true;
+        if (!await _fetchDartPackages(package)) {
+          // If Dart-level depenendencies fail, fail immediately since the
+          // native dependencies won't be useful.
+          return PackageResult.fail(<String>['Failed to "pub get".']);
+        }
+      } else {
+        skips.add(
+          'Skipping Dart dependencies; no examples support requested '
+          'platforms.',
+        );
+      }
+    }
+
+    final errors = <String>[];
+    for (final FlutterPlatform platform in _targetPlatforms) {
+      final PackageResult result;
+      switch (platform) {
+        case FlutterPlatform.android:
+          result = await _fetchAndroidDeps(package);
+        case FlutterPlatform.ios:
+          result = await _fetchDarwinDeps(package, platformIOS);
+        case FlutterPlatform.macos:
+          result = await _fetchDarwinDeps(package, platformMacOS);
+        case FlutterPlatform.linux:
+        case FlutterPlatform.web:
+        case FlutterPlatform.windows:
+          // No native dependency handling yet.
+          result = PackageResult.skip('Nothing to do for $platform.');
+      }
+      switch (result.state) {
+        case RunState.succeeded:
+          fetchedDeps = true;
+        case RunState.skipped:
+          skips.add(result.details.first);
+        case RunState.failed:
+          errors.addAll(result.details);
+        case RunState.excluded:
+          throw StateError('Unreachable');
+      }
+    }
+
+    // If an override was added, remove it.
+    if (swiftPackageManagerOverride != null) {
+      print('Removing enable-swift-package-manager override');
+      setSwiftPackageManagerState(package, enabled: null);
+      for (final RepositoryPackage example in package.getExamples()) {
+        setSwiftPackageManagerState(example, enabled: null);
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      return PackageResult.fail(errors);
+    }
+    if (fetchedDeps) {
+      return PackageResult.success();
+    }
+    if (skips.isNotEmpty) {
+      return PackageResult.skip(<String>['', ...skips].join('\n- '));
+    }
+
+    printError('At least one type of dependency must be requested');
+    throw ToolExit(_exitNothingRequested);
+  }
+
+  Future<PackageResult> _fetchAndroidDeps(RepositoryPackage package) async {
+    if (!pluginSupportsPlatform(
+      platformAndroid,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
+      return PackageResult.skip(
+        'Package does not have native Android dependencies.',
+      );
+    }
+
+    for (final RepositoryPackage example in package.getExamples()) {
+      final gradleProject = GradleProject(
+        example,
+        processRunner: processRunner,
+        platform: platform,
+      );
+
+      if (!gradleProject.isConfigured()) {
+        final bool buildSuccess = await runConfigOnlyBuild(
+          example,
+          processRunner,
+          platform,
+          FlutterPlatform.android,
+        );
+        if (!buildSuccess) {
+          printError('Unable to configure Gradle project.');
+          return PackageResult.fail(<String>['Unable to configure Gradle.']);
+        }
+      }
+
+      final String packageName = package.directory.basename;
+
+      final int exitCode = await gradleProject.runCommand(
+        '$packageName:dependencies',
+      );
+      if (exitCode != 0) {
+        return PackageResult.fail();
+      }
+    }
+
+    return PackageResult.success();
+  }
+
+  Future<PackageResult> _fetchDarwinDeps(
+    RepositoryPackage package,
+    final String platformString,
+  ) async {
+    if (!pluginSupportsPlatform(
+      platformString,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
+      // Convert from the flag (lower case ios/macos) to the actual name.
+      final String displayPlatform = platformString.replaceFirst('os', 'OS');
+      return PackageResult.skip(
+        'Package does not have native $displayPlatform dependencies.',
+      );
+    }
+
+    for (final RepositoryPackage example in package.getExamples()) {
+      // Create the necessary native build files, which will run pub get and pod install if needed.
+      final bool buildSuccess = await runConfigOnlyBuild(
+        example,
+        processRunner,
+        platform,
+        platformString == platformIOS
+            ? FlutterPlatform.ios
+            : FlutterPlatform.macos,
+      );
+      if (!buildSuccess) {
+        printError('Unable to prepare native project files.');
+        return PackageResult.fail(<String>['Unable to configure project.']);
+      }
+    }
+
+    return PackageResult.success();
+  }
+
+  Future<bool> _fetchDartPackages(RepositoryPackage package) async {
+    final packagesToGet = <RepositoryPackage>[
+      package,
+      ...package.getSubpackages(includeExamples: false),
+    ];
+    for (final p in packagesToGet) {
+      if (!await runPubGet(p, processRunner, platform)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _hasExampleSupportingRequestedPlatform(RepositoryPackage package) {
+    return package.getExamples().any((RepositoryPackage example) {
+      return _targetPlatforms.any(
+        (FlutterPlatform platform) => example.appSupportsPlatform(platform),
+      );
+    });
+  }
+
+  Iterable<FlutterPlatform> get _targetPlatforms => _platforms
+      .where((String platform) => getBoolArg(platform))
+      .map((String platformName) => getPlatformByName(platformName));
+}

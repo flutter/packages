@@ -1,0 +1,11 @@
+name: test_coverage
+description: "Internal coverage test logic for package:rfw."
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  lcov_parser: 0.1.1
+  meta: ^1.7.0

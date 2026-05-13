@@ -1,0 +1,168 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+
+import 'test_helpers.dart';
+
+void main() {
+  group('updateShouldNotify', () {
+    test('does not update when goRouter does not change', () {
+      final goRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const Page1()),
+        ],
+      );
+      final bool shouldNotify = setupInheritedGoRouterChange(
+        oldGoRouter: goRouter,
+        newGoRouter: goRouter,
+      );
+      expect(shouldNotify, false);
+    });
+
+    test('does not update even when goRouter changes', () {
+      final oldGoRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const Page1()),
+        ],
+      );
+      final newGoRouter = GoRouter(
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const Page2()),
+        ],
+      );
+      final bool shouldNotify = setupInheritedGoRouterChange(
+        oldGoRouter: oldGoRouter,
+        newGoRouter: newGoRouter,
+      );
+      expect(shouldNotify, false);
+    });
+  });
+
+  test('adds [goRouter] as a diagnostics property', () {
+    final goRouter = GoRouter(
+      routes: <GoRoute>[GoRoute(path: '/', builder: (_, __) => const Page1())],
+    );
+    final inheritedGoRouter = InheritedGoRouter(
+      goRouter: goRouter,
+      child: Container(),
+    );
+    final properties = DiagnosticPropertiesBuilder();
+    inheritedGoRouter.debugFillProperties(properties);
+    expect(properties.properties.length, 1);
+    expect(properties.properties.first, isA<DiagnosticsProperty<GoRouter>>());
+    expect(properties.properties.first.value, goRouter);
+  });
+
+  testWidgets("mediates Widget's access to GoRouter.", (
+    WidgetTester tester,
+  ) async {
+    final router = MockGoRouter();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: InheritedGoRouter(goRouter: router, child: const _MyWidget()),
+      ),
+    );
+    await tester.tap(find.text('My Page'));
+    expect(router.latestPushedName, 'my_page');
+  });
+
+  testWidgets('builder can access GoRouter', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/110512.
+    late final GoRouter buildContextRouter;
+    final router = GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, __) {
+            buildContextRouter = GoRouter.of(context);
+            return const DummyScreen();
+          },
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routeInformationProvider: router.routeInformationProvider,
+        routeInformationParser: router.routeInformationParser,
+        routerDelegate: router.routerDelegate,
+      ),
+    );
+
+    expect(buildContextRouter, isNotNull);
+    expect(buildContextRouter, equals(router));
+  });
+}
+
+bool setupInheritedGoRouterChange({
+  required GoRouter oldGoRouter,
+  required GoRouter newGoRouter,
+}) {
+  final oldInheritedGoRouter = InheritedGoRouter(
+    goRouter: oldGoRouter,
+    child: Container(),
+  );
+  final newInheritedGoRouter = InheritedGoRouter(
+    goRouter: newGoRouter,
+    child: Container(),
+  );
+  return newInheritedGoRouter.updateShouldNotify(oldInheritedGoRouter);
+}
+
+class Page1 extends StatelessWidget {
+  const Page1({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+class Page2 extends StatelessWidget {
+  const Page2({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+class _MyWidget extends StatelessWidget {
+  const _MyWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => context.pushNamed('my_page'),
+      child: const Text('My Page'),
+    );
+  }
+}
+
+class MockGoRouter extends GoRouter {
+  MockGoRouter()
+    : super.routingConfig(
+        routingConfig: const ConstantRoutingConfig(
+          RoutingConfig(routes: <RouteBase>[]),
+        ),
+      );
+
+  late String latestPushedName;
+
+  @override
+  Future<T?> pushNamed<T extends Object?>(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) {
+    latestPushedName = name;
+    return Future<T?>.value();
+  }
+
+  @override
+  BackButtonDispatcher get backButtonDispatcher => RootBackButtonDispatcher();
+}

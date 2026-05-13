@@ -1,0 +1,110 @@
+## 1.0.15
+
+* Fixes dartdoc comments that accidentally used HTML.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.14
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates dependency on `package:googleapis` to `^14.0.0`.
+* Updates dependency on `package:googleapis_auth` to `^2.0.0`.
+* Update dependency `http: ^1.0.0`
+
+## 1.0.13
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates dependency on `package:googleapis` to `^12.0.0`.
+
+## 1.0.12
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.11
+
+* Removes the dependency on `package:equatable`.
+
+## 1.0.10
+
+* Adds retry logic when removing a `GcsLock` file lock in case of failure.
+
+## 1.0.9
+
+* Adds compatibility with `http` 1.0.
+
+## 1.0.8
+
+* Removes obsolete null checks on non-nullable values.
+* Updates minimum Flutter version to 3.3.
+
+## 1.0.7
+
+* Updates code to fix strict-cast violations.
+* Updates minimum SDK version to Flutter 3.0.
+
+## 1.0.6
+
+- Fixes lint warnings.
+
+## 1.0.5
+
+- Fix JSON parsing issue when running in sound null-safety mode.
+
+## 1.0.4
+
+- Fix un-await-ed Future in `SkiaPerfDestination.update`.
+
+## 1.0.3
+
+- Filter out host_name, load_avg and caches keys from context
+  before adding to a MetricPoint object.
+
+## 1.0.2
+
+- Updated the GoogleBenchmark parser to correctly parse new keys added
+  in the JSON schema.
+- Fix `unnecessary_import` lint errors.
+- Update version titles in CHANGELOG.md so plugins tooling understands them.
+  - (Moved from `# X.Y.Z` to `## X.Y.Z`)
+
+## 1.0.1
+
+- `update` now requires taskName to scale metric writes
+
+## 1.0.0
+
+- Null safety support
+
+## 0.1.1
+
+- Update packages to null safe
+
+## 0.1.0
+
+- `update` now requires DateTime when commit was merged
+- Removed `github` dependency
+
+## 0.0.9
+
+- Remove legacy datastore and destination.
+
+## 0.0.8
+
+- Allow tests to override LegacyFlutterDestination GCP project id.
+
+## 0.0.7
+
+- Expose constants that were missing since 0.0.4+1.
+
+## 0.0.6
+
+- Allow `datastoreFromCredentialsJson` to specify project id.
+
+## 0.0.5
+
+- `FlutterDestination` writes into both Skia perf GCS and the legacy datastore.
+- `FlutterDestination.makeFromAccessToken` returns a `Future`.
+
+## 0.0.4+1
+
+- Moved to the `flutter/packages` repository

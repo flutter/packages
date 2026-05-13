@@ -1,0 +1,64 @@
+.DS_Store
+.atom/
+.idea
+.packages
+.pub/
+.dart_tool/
+.vscode/
+*.iml
+
+# Gradle?
+.uuid
+
+pubspec.lock
+
+# iOS and macOS dependencies
+.build/
+Podfile.lock
+Pods/
+.swiftpm/
+.symlinks/
+
+*instrumentscli*.trace
+*.cipd
+
+# Build directories are produced when building using the Flutter CLI.
+build
+
+# This file is produced as a back-up when web_benchmarks fails to parse a
+# Chrome trace.
+chrome-trace.json
+
+# Generated files on example apps
+flutter_export_environment.sh
+.flutter-plugins*
+local.properties
+keystore.properties
+**/Flutter/Generated.xcconfig
+**/Flutter/App.framework/
+**/Flutter/ephemeral/
+**/Flutter/Flutter.podspec
+**/Flutter/Flutter.framework/
+**/Flutter/flutter_assets/
+
+ServiceDefinitions.json
+xcuserdata/
+**/DerivedData/
+
+generated_plugin_registrant.*
+GeneratedPluginRegistrant.*
+# These should be ephemeral, but currently aren't, so ignore them. See:
+# - https://github.com/flutter/flutter/issues/149917
+# - https://github.com/flutter/flutter/issues/76726
+**/generated_plugins.cmake
+
+# Gradle 
+**/gradle-wrapper.jar
+.gradle/
+gradlew
+gradlew.bat
+.cxx/
+
+.project
+.classpath
+.settings

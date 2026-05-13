@@ -1,0 +1,22 @@
+import core.widgets;
+import core.material;
+
+widget Counter = Scaffold(
+  appBar: AppBar(title: Text(text: "Counter Demo")),
+  body: Center(
+    child: Column(
+      mainAxisAlignment: "center",
+      children: [
+        Text(text: 'You have pushed the button this many times:', textAlign: "center"),
+        Text(text: data.counter, style: {
+          fontSize: 36.0,
+        }),
+      ],
+    ),
+  ),
+  floatingActionButton: FloatingActionButton(
+    onPressed: event "increment" { },
+    tooltip: "Increment",
+    child: Icon(icon: 0xE047, fontFamily: "MaterialIcons"),
+  ),
+);

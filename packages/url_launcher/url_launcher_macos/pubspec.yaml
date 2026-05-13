@@ -1,0 +1,35 @@
+name: url_launcher_macos
+description: macOS implementation of the url_launcher plugin.
+repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_macos
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
+version: 3.2.5
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    implements: url_launcher
+    platforms:
+      macos:
+        pluginClass: UrlLauncherPlugin
+        fileName: url_launcher_macos.dart
+        dartPluginClass: UrlLauncherMacOS
+
+dependencies:
+  flutter:
+    sdk: flutter
+  url_launcher_platform_interface: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pigeon: ^26.1.0
+  test: ^1.16.3
+
+topics:
+  - links
+  - os-integration
+  - url-launcher
+  - urls

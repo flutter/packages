@@ -1,0 +1,211 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:async';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:google_maps/google_maps.dart' as gmaps;
+import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
+import 'package:integration_test/integration_test.dart';
+
+/// Test Markers
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  // Since onTap/DragEnd events happen asynchronously, we need to store when the event
+  // is fired. We use a completer so the test can wait for the future to be completed.
+  late Completer<bool> methodCalledCompleter;
+
+  /// This is the future value of the [methodCalledCompleter]. Reinitialized
+  /// in the [setUp] method, and completed (as `true`) by [onTap] and [onDragEnd]
+  /// when those methods are called from the MarkerController.
+  late Future<bool> methodCalled;
+
+  void onTap() {
+    methodCalledCompleter.complete(true);
+  }
+
+  void onDragStart(gmaps.LatLng _) {
+    methodCalledCompleter.complete(true);
+  }
+
+  void onDrag(gmaps.LatLng _) {
+    methodCalledCompleter.complete(true);
+  }
+
+  void onDragEnd(gmaps.LatLng _) {
+    methodCalledCompleter.complete(true);
+  }
+
+  setUp(() {
+    methodCalledCompleter = Completer<bool>();
+    methodCalled = methodCalledCompleter.future;
+  });
+
+  group('MarkerController', () {
+    late gmaps.Marker marker;
+
+    setUp(() {
+      marker = gmaps.Marker();
+    });
+
+    testWidgets('onTap gets called', (WidgetTester tester) async {
+      LegacyMarkerController(marker: marker, onTap: onTap);
+
+      // Trigger a click event...
+      gmaps.event.trigger(marker, 'click', gmaps.MapMouseEvent());
+
+      // The event handling is now truly async. Wait for it...
+      expect(await methodCalled, isTrue);
+    });
+
+    testWidgets('onDragStart gets called', (WidgetTester tester) async {
+      LegacyMarkerController(marker: marker, onDragStart: onDragStart);
+
+      // Trigger a drag end event...
+      gmaps.event.trigger(
+        marker,
+        'dragstart',
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+      );
+
+      expect(await methodCalled, isTrue);
+    });
+
+    testWidgets('onDrag gets called', (WidgetTester tester) async {
+      LegacyMarkerController(marker: marker, onDrag: onDrag);
+
+      // Trigger a drag end event...
+      gmaps.event.trigger(
+        marker,
+        'drag',
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+      );
+
+      expect(await methodCalled, isTrue);
+    });
+
+    testWidgets('onDragEnd gets called', (WidgetTester tester) async {
+      LegacyMarkerController(marker: marker, onDragEnd: onDragEnd);
+
+      // Trigger a drag end event...
+      gmaps.event.trigger(
+        marker,
+        'dragend',
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+      );
+
+      expect(await methodCalled, isTrue);
+    });
+
+    testWidgets('update', (WidgetTester tester) async {
+      final controller = LegacyMarkerController(marker: marker);
+      final options = gmaps.MarkerOptions()
+        ..draggable = true
+        ..position = gmaps.LatLng(42, 54);
+
+      expect(marker.isDraggableDefined(), isFalse);
+
+      controller.update(options);
+
+      expect(marker.draggable, isTrue);
+      expect(marker.position?.lat, equals(42));
+      expect(marker.position?.lng, equals(54));
+    });
+
+    testWidgets('infoWindow null, showInfoWindow.', (
+      WidgetTester tester,
+    ) async {
+      final controller = LegacyMarkerController(marker: marker);
+
+      controller.showInfoWindow();
+
+      expect(controller.infoWindowShown, isFalse);
+    });
+
+    testWidgets('showInfoWindow', (WidgetTester tester) async {
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
+      marker.set('map', map);
+      final controller = LegacyMarkerController(
+        marker: marker,
+        infoWindow: infoWindow,
+      );
+
+      controller.showInfoWindow();
+
+      expect(infoWindow.get('map'), map);
+      expect(controller.infoWindowShown, isTrue);
+    });
+
+    testWidgets('hideInfoWindow', (WidgetTester tester) async {
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
+      marker.set('map', map);
+      final controller = LegacyMarkerController(
+        marker: marker,
+        infoWindow: infoWindow,
+      );
+
+      controller.hideInfoWindow();
+
+      expect(infoWindow.get('map'), isNull);
+      expect(controller.infoWindowShown, isFalse);
+    });
+
+    group('remove', () {
+      late LegacyMarkerController controller;
+
+      setUp(() {
+        final infoWindow = gmaps.InfoWindow();
+        final map = gmaps.Map(createDivElement());
+        marker.set('map', map);
+        controller = LegacyMarkerController(
+          marker: marker,
+          infoWindow: infoWindow,
+        );
+      });
+
+      testWidgets('drops gmaps instance', (WidgetTester tester) async {
+        controller.remove();
+
+        expect(controller.marker, isNull);
+      });
+
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
+        final options = gmaps.MarkerOptions()..draggable = true;
+
+        controller.remove();
+
+        expect(() {
+          controller.update(options);
+        }, throwsAssertionError);
+      });
+
+      testWidgets('cannot call showInfoWindow after remove', (
+        WidgetTester tester,
+      ) async {
+        controller.remove();
+
+        expect(() {
+          controller.showInfoWindow();
+        }, throwsStateError);
+      });
+
+      testWidgets('cannot call hideInfoWindow after remove', (
+        WidgetTester tester,
+      ) async {
+        controller.remove();
+
+        expect(() {
+          controller.hideInfoWindow();
+        }, throwsAssertionError);
+      });
+    });
+  });
+}

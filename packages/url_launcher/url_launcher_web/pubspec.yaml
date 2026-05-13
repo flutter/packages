@@ -1,0 +1,35 @@
+name: url_launcher_web
+description: Web platform implementation of url_launcher
+repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_web
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
+version: 2.4.2
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+flutter:
+  plugin:
+    implements: url_launcher
+    platforms:
+      web:
+        pluginClass: UrlLauncherPlugin
+        fileName: url_launcher_web.dart
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  url_launcher_platform_interface: ^2.2.0
+  web: ">=0.5.1 <2.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - links
+  - os-integration
+  - url-launcher
+  - urls

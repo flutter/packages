@@ -1,0 +1,59 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:typed_data';
+
+import 'package:camera_avfoundation/src/messages.g.dart';
+import 'package:camera_avfoundation/src/type_conversion.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('CameraImageData can be created', () {
+    final CameraImageData cameraImage = cameraImageFromPlatformData(
+      PlatformCameraImageData(
+        formatCode: 1,
+        width: 4,
+        height: 1,
+        lensAperture: 1.8,
+        sensorExposureTimeNanoseconds: 9991324,
+        sensorSensitivity: 92.0,
+        planes: <PlatformCameraImagePlane>[
+          PlatformCameraImagePlane(
+            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+            bytesPerRow: 4,
+            width: 4,
+            height: 1,
+          ),
+        ],
+      ),
+    );
+    expect(cameraImage.height, 1);
+    expect(cameraImage.width, 4);
+    expect(cameraImage.format.group, ImageFormatGroup.unknown);
+    expect(cameraImage.planes.length, 1);
+  });
+
+  test('CameraImageData has ImageFormatGroup.yuv420', () {
+    final CameraImageData cameraImage = cameraImageFromPlatformData(
+      PlatformCameraImageData(
+        formatCode: 875704438,
+        width: 4,
+        height: 1,
+        lensAperture: 1.8,
+        sensorExposureTimeNanoseconds: 9991324,
+        sensorSensitivity: 92.0,
+        planes: <PlatformCameraImagePlane>[
+          PlatformCameraImagePlane(
+            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+            bytesPerRow: 4,
+            width: 4,
+            height: 1,
+          ),
+        ],
+      ),
+    );
+    expect(cameraImage.format.group, ImageFormatGroup.yuv420);
+  });
+}

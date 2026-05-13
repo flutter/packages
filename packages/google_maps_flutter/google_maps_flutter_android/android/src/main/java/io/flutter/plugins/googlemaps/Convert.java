@@ -1,0 +1,1003 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.googlemaps;
+
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_TERRAIN;
+
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.ButtCap;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Cap;
+import com.google.android.gms.maps.model.CustomCap;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.JointType;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.PinConfig;
+import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.gms.maps.model.RuntimeRemoteException;
+import com.google.android.gms.maps.model.SquareCap;
+import com.google.android.gms.maps.model.Tile;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.heatmaps.Gradient;
+import com.google.maps.android.heatmaps.WeightedLatLng;
+import io.flutter.FlutterInjector;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+/** Conversions between JSON-like values and GoogleMaps data types. */
+class Convert {
+  private static BitmapDescriptor toBitmapDescriptor(
+      PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(
+        platformBitmap, assetManager, density, new BitmapDescriptorFactoryWrapper());
+  }
+
+  private static BitmapDescriptor toBitmapDescriptor(
+      PlatformBitmap platformBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    Object bitmap = platformBitmap.getBitmap();
+    if (bitmap instanceof PlatformBitmapDefaultMarker typedBitmap) {
+      if (typedBitmap.getHue() == null) {
+        return BitmapDescriptorFactory.defaultMarker();
+      } else {
+        final float hue = typedBitmap.getHue().floatValue();
+        return BitmapDescriptorFactory.defaultMarker(hue);
+      }
+    }
+    if (bitmap instanceof PlatformBitmapAsset typedBitmap) {
+      final String assetPath = typedBitmap.getName();
+      final String assetPackage = typedBitmap.getPkg();
+      if (assetPackage == null) {
+        return BitmapDescriptorFactory.fromAsset(
+            FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
+      } else {
+        return BitmapDescriptorFactory.fromAsset(
+            FlutterInjector.instance()
+                .flutterLoader()
+                .getLookupKeyForAsset(assetPath, assetPackage));
+      }
+    }
+    if (bitmap instanceof PlatformBitmapAssetImage typedBitmap) {
+      final String assetImagePath = typedBitmap.getName();
+      return BitmapDescriptorFactory.fromAsset(
+          FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
+    }
+    if (bitmap instanceof PlatformBitmapBytes typedBitmap) {
+      return getBitmapFromBytesLegacy(typedBitmap);
+    }
+    if (bitmap instanceof PlatformBitmapAssetMap typedBitmap) {
+      return getBitmapFromAsset(
+          typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
+    }
+    if (bitmap instanceof PlatformBitmapBytesMap typedBitmap) {
+      return getBitmapFromBytes(typedBitmap, density, wrapper);
+    }
+    if (bitmap instanceof PlatformBitmapPinConfig pinConfigBitmap) {
+      return getBitmapFromPinConfigBuilder(pinConfigBitmap, assetManager, density, wrapper);
+    }
+    throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
+  }
+
+  // Used for deprecated fromBytes bitmap descriptor.
+  // Can be removed after support for "fromBytes" bitmap descriptor type is
+  // removed.
+  private static BitmapDescriptor getBitmapFromBytesLegacy(PlatformBitmapBytes bitmapBytes) {
+    try {
+      Bitmap bitmap = toBitmap(bitmapBytes.getByteData());
+      return BitmapDescriptorFactory.fromBitmap(bitmap);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to interpret bytes as a valid image.", e);
+    }
+  }
+
+  /**
+   * Creates a BitmapDescriptor object from bytes data.
+   *
+   * @param bytesMap a [PlatformBitmapBytesMap] containing the byte data from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
+   * @param density the density of the display, used to calculate pixel dimensions.
+   * @param bitmapDescriptorFactory is an instance of the BitmapDescriptorFactoryWrapper.
+   * @return BitmapDescriptor object from bytes data.
+   * @throws IllegalArgumentException if any required keys are missing in `byteData` or if the byte
+   *     data cannot be interpreted as a valid image.
+   */
+  @VisibleForTesting
+  public static BitmapDescriptor getBitmapFromBytes(
+      PlatformBitmapBytesMap bytesMap,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    try {
+      Bitmap bitmap = toBitmap(bytesMap.getByteData());
+      PlatformMapBitmapScaling scalingMode = bytesMap.getBitmapScaling();
+      switch (scalingMode) {
+        case AUTO:
+          final Double width = bytesMap.getWidth();
+          final Double height = bytesMap.getHeight();
+
+          if (width != null || height != null) {
+            int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
+            int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
+
+            if (width != null && height == null) {
+              // If only width is provided, calculate height based on aspect ratio.
+              double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
+              targetHeight = (int) (targetWidth * aspectRatio);
+            } else if (height != null && width == null) {
+              // If only height is provided, calculate width based on aspect ratio.
+              double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
+              targetWidth = (int) (targetHeight * aspectRatio);
+            }
+            return bitmapDescriptorFactory.fromBitmap(
+                toScaledBitmap(bitmap, targetWidth, targetHeight));
+          } else {
+            // Scale image using given scale ratio
+            final float scale = (float) (density / bytesMap.getImagePixelRatio());
+            return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
+          }
+        case NONE:
+          break;
+      }
+      return bitmapDescriptorFactory.fromBitmap(bitmap);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to interpret bytes as a valid image.", e);
+    }
+  }
+
+  public static BitmapDescriptor getBitmapFromPinConfigBuilder(
+      PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    try {
+      final PinConfig pinConfig =
+          getPinConfigFromPlatformPinConfig(
+              pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
+      return bitmapDescriptorFactory.fromPinConfig(pinConfig);
+    } catch (IllegalArgumentException | RuntimeRemoteException e) {
+      throw new IllegalArgumentException("Unable to interpret pin config as a valid image.", e);
+    }
+  }
+
+  @VisibleForTesting
+  public static PinConfig getPinConfigFromPlatformPinConfig(
+      PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final Integer backgroundColor = nullableColor(pinConfigBitmap.getBackgroundColor());
+    final Integer borderColor = nullableColor(pinConfigBitmap.getBorderColor());
+    final PinConfig.Glyph glyph =
+        buildPinGlyph(pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
+
+    final PinConfig.Builder pinConfigBuilder = PinConfig.builder();
+    applyIfNotNull(backgroundColor, pinConfigBuilder::setBackgroundColor);
+    applyIfNotNull(borderColor, pinConfigBuilder::setBorderColor);
+    applyIfNotNull(glyph, pinConfigBuilder::setGlyph);
+
+    return pinConfigBuilder.build();
+  }
+
+  private static @Nullable PinConfig.Glyph buildPinGlyph(
+      PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final String glyphText = pinConfigBitmap.getGlyphText();
+    if (glyphText != null) {
+      final Integer glyphTextColor = nullableColor(pinConfigBitmap.getGlyphTextColor());
+      return glyphTextColor != null
+          ? new PinConfig.Glyph(glyphText, glyphTextColor)
+          : new PinConfig.Glyph(glyphText);
+    }
+
+    final PlatformBitmap glyphBitmap = pinConfigBitmap.getGlyphBitmap();
+    if (glyphBitmap != null) {
+      return new PinConfig.Glyph(
+          toBitmapDescriptor(glyphBitmap, assetManager, density, bitmapDescriptorFactory));
+    }
+
+    final Integer glyphColor = nullableColor(pinConfigBitmap.getGlyphColor());
+    if (glyphColor != null) {
+      return new PinConfig.Glyph(glyphColor);
+    }
+    return null;
+  }
+
+  private static @Nullable Integer nullableColor(@Nullable PlatformColor color) {
+    return color == null ? null : (int) color.getArgbValue();
+  }
+
+  private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {
+    if (value != null) {
+      setter.accept(value);
+    }
+  }
+
+  /**
+   * Creates a BitmapDescriptor object from asset, using given details and density.
+   *
+   * <p>This method processes an asset specified by name and applies scaling based on the provided
+   * parameters. The `assetMap` object provides the asset name, bitmap scaling mode, and image pixel
+   * ratio, and may optionally include 'width' and/or 'height' to explicitly set the dimensions of
+   * the output image.
+   *
+   * @param assetMap a [PlatformBitmapAssetMap] containing the asset name from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
+   * @param assetManager assetManager An instance of Android's AssetManager, which provides access
+   *     to any raw asset files stored in the application's assets directory.
+   * @param density density the density of the display, used to calculate pixel dimensions.
+   * @param bitmapDescriptorFactory is an instance of the BitmapDescriptorFactoryWrapper.
+   * @param flutterInjector An instance of the FlutterInjectorWrapper class.
+   * @return BitmapDescriptor object from asset.
+   * @throws IllegalArgumentException if any required keys are missing in `assetDetails` or if the
+   *     asset cannot be opened or processed as a valid image.
+   */
+  @VisibleForTesting
+  public static BitmapDescriptor getBitmapFromAsset(
+      PlatformBitmapAssetMap assetMap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory,
+      FlutterInjectorWrapper flutterInjector) {
+    final String assetName = assetMap.getAssetName();
+    final String assetKey = flutterInjector.getLookupKeyForAsset(assetName);
+
+    PlatformMapBitmapScaling scalingMode = assetMap.getBitmapScaling();
+    switch (scalingMode) {
+      case AUTO:
+        final Double width = assetMap.getWidth();
+        final Double height = assetMap.getHeight();
+        try (InputStream inputStream = assetManager.open(assetKey)) {
+          Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+          if (width != null || height != null) {
+            int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
+            int targetHeight = height != null ? toInt(height * density) : bitmap.getHeight();
+
+            if (width != null && height == null) {
+              // If only width is provided, calculate height based on aspect ratio.
+              double aspectRatio = (double) bitmap.getHeight() / bitmap.getWidth();
+              targetHeight = (int) (targetWidth * aspectRatio);
+            } else if (height != null && width == null) {
+              // If only height is provided, calculate width based on aspect ratio.
+              double aspectRatio = (double) bitmap.getWidth() / bitmap.getHeight();
+              targetWidth = (int) (targetHeight * aspectRatio);
+            }
+            return bitmapDescriptorFactory.fromBitmap(
+                toScaledBitmap(bitmap, targetWidth, targetHeight));
+          } else {
+            // Scale image using given scale.
+            final float scale = (float) (density / assetMap.getImagePixelRatio());
+            return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
+          }
+        } catch (Exception e) {
+          throw new IllegalArgumentException("'asset' cannot open asset: " + assetName, e);
+        }
+      case NONE:
+        break;
+    }
+
+    return bitmapDescriptorFactory.fromAsset(assetKey);
+  }
+
+  static @NonNull CameraPosition cameraPositionFromPigeon(
+      @NonNull PlatformCameraPosition position) {
+    final CameraPosition.Builder builder = CameraPosition.builder();
+    builder.bearing((float) position.getBearing());
+    builder.target(latLngFromPigeon(position.getTarget()));
+    builder.tilt((float) position.getTilt());
+    builder.zoom((float) position.getZoom());
+    return builder.build();
+  }
+
+  static CameraUpdate cameraUpdateFromPigeon(PlatformCameraUpdate update, float density) {
+    Object cameraUpdate = update.getCameraUpdate();
+    if (cameraUpdate instanceof PlatformCameraUpdateNewCameraPosition newCameraPosition) {
+      return CameraUpdateFactory.newCameraPosition(
+          cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLng newLatLng) {
+      return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngZoom newLatLngZoom) {
+      return CameraUpdateFactory.newLatLngZoom(
+          latLngFromPigeon(newLatLngZoom.getLatLng()), (float) newLatLngZoom.getZoom());
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateNewLatLngBounds newLatLngBounds) {
+      return CameraUpdateFactory.newLatLngBounds(
+          latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
+          (int) (newLatLngBounds.getPadding() * density));
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateScrollBy scrollBy) {
+      return CameraUpdateFactory.scrollBy(
+          (float) scrollBy.getDx() * density, (float) scrollBy.getDy() * density);
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateZoomBy zoomBy) {
+      final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
+      return (focus != null)
+          ? CameraUpdateFactory.zoomBy((float) zoomBy.getAmount(), focus)
+          : CameraUpdateFactory.zoomBy((float) zoomBy.getAmount());
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateZoomTo zoomTo) {
+      return CameraUpdateFactory.zoomTo((float) zoomTo.getZoom());
+    }
+    if (cameraUpdate instanceof PlatformCameraUpdateZoom zoom) {
+      return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
+    }
+    throw new IllegalArgumentException(
+        "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case"
+            + " classes.");
+  }
+
+  private static @Nullable Float nullableDoubleToFloat(@Nullable Double d) {
+    return (d == null) ? null : d.floatValue();
+  }
+
+  private static int toInt(Object o) {
+    return ((Number) o).intValue();
+  }
+
+  static int toMapType(@NonNull PlatformMapType type) {
+    return switch (type) {
+      case NONE -> MAP_TYPE_NONE;
+      case NORMAL -> MAP_TYPE_NORMAL;
+      case SATELLITE -> MAP_TYPE_SATELLITE;
+      case TERRAIN -> MAP_TYPE_TERRAIN;
+      case HYBRID -> MAP_TYPE_HYBRID;
+    };
+  }
+
+  // For now, suppress the deprecation warning for LEGACY; in theory using it
+  // no longer does anything, but since that's a server-side decision that could
+  // potentially change. Once enough time has passed that there's no plausible
+  // chance of the server honoring LEGACY again, that mapping can be removed and
+  // it can just return null, causing anyone still using the deprecated value
+  // in Dart to actually request the platform default (which is what the server
+  // is already doing in practice currently).
+  @SuppressWarnings("deprecation")
+  static @Nullable MapsInitializer.Renderer toMapRendererType(@Nullable PlatformRendererType type) {
+    if (type == null) {
+      return null;
+    }
+    return switch (type) {
+      case LATEST -> MapsInitializer.Renderer.LATEST;
+      case LEGACY -> MapsInitializer.Renderer.LEGACY;
+    };
+  }
+
+  static @NonNull PlatformCameraPosition cameraPositionToPigeon(@NonNull CameraPosition position) {
+    return new PlatformCameraPosition(
+        position.bearing, latLngToPigeon(position.target), position.tilt, position.zoom);
+  }
+
+  static PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
+    return new PlatformLatLngBounds(
+        latLngToPigeon(latLngBounds.northeast), latLngToPigeon(latLngBounds.southwest));
+  }
+
+  static @NonNull LatLngBounds latLngBoundsFromPigeon(@NonNull PlatformLatLngBounds bounds) {
+    return new LatLngBounds(
+        latLngFromPigeon(bounds.getSouthwest()), latLngFromPigeon(bounds.getNortheast()));
+  }
+
+  static PlatformLatLng latLngToPigeon(LatLng latLng) {
+    return new PlatformLatLng(latLng.latitude, latLng.longitude);
+  }
+
+  static LatLng latLngFromPigeon(PlatformLatLng latLng) {
+    return new LatLng(latLng.getLatitude(), latLng.getLongitude());
+  }
+
+  static PlatformCluster clusterToPigeon(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
+    int clusterSize = cluster.getSize();
+    String[] markerIds = new String[clusterSize];
+    MarkerBuilder[] markerBuilders = cluster.getItems().toArray(new MarkerBuilder[clusterSize]);
+
+    LatLngBounds.Builder latLngBoundsBuilder = LatLngBounds.builder();
+    for (int i = 0; i < clusterSize; i++) {
+      MarkerBuilder markerBuilder = markerBuilders[i];
+      latLngBoundsBuilder.include(markerBuilder.getPosition());
+      markerIds[i] = markerBuilder.markerId();
+    }
+
+    return new PlatformCluster(
+        clusterManagerId,
+        latLngToPigeon(cluster.getPosition()),
+        latLngBoundsToPigeon(latLngBoundsBuilder.build()),
+        Arrays.asList(markerIds));
+  }
+
+  /**
+   * Converts a Pigeon weighted lat/lng to a WeightedLatLng.
+   *
+   * @param weightedLatLng The Pigeon weighted lat/lng.
+   * @return The list of WeightedLatLng.
+   */
+  static WeightedLatLng weightedLatLngFromPigeon(PlatformWeightedLatLng weightedLatLng) {
+    return new WeightedLatLng(
+        latLngFromPigeon(weightedLatLng.getPoint()), weightedLatLng.getWeight());
+  }
+
+  static Point pointFromPigeon(PlatformPoint point) {
+    return new Point((int) point.getX(), (int) point.getY());
+  }
+
+  @Nullable
+  static Point pointFromPigeon(@Nullable PlatformDoublePair point, float density) {
+    if (point == null) {
+      return null;
+    }
+    return new Point((int) (point.getX() * density), (int) (point.getY() * density));
+  }
+
+  static PlatformPoint pointToPigeon(Point point) {
+    return new PlatformPoint(point.x, point.y);
+  }
+
+  private static Bitmap toBitmap(byte[] bmpData) {
+    Bitmap bitmap = BitmapFactory.decodeByteArray(bmpData, 0, bmpData.length);
+    if (bitmap == null) {
+      throw new IllegalArgumentException("Unable to decode bytes as a valid bitmap.");
+    } else {
+      return bitmap;
+    }
+  }
+
+  private static Bitmap toScaledBitmap(Bitmap bitmap, float scale) {
+    // Threshold to check if scaling is necessary.
+    final float scalingThreshold = 0.001f;
+
+    if (Math.abs(scale - 1) > scalingThreshold && scale > 0) {
+      final int newWidth = (int) (bitmap.getWidth() * scale);
+      final int newHeight = (int) (bitmap.getHeight() * scale);
+      return toScaledBitmap(bitmap, newWidth, newHeight);
+    }
+    return bitmap;
+  }
+
+  private static Bitmap toScaledBitmap(Bitmap bitmap, int width, int height) {
+    if (width > 0 && height > 0 && (bitmap.getWidth() != width || bitmap.getHeight() != height)) {
+      return Bitmap.createScaledBitmap(bitmap, width, height, true);
+    }
+    return bitmap;
+  }
+
+  static void interpretMapConfiguration(
+      @NonNull PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
+    final PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
+    if (cameraTargetBounds != null) {
+      final @Nullable PlatformLatLngBounds bounds = cameraTargetBounds.getBounds();
+      sink.setCameraTargetBounds(bounds == null ? null : latLngBoundsFromPigeon(bounds));
+    }
+    final Boolean compassEnabled = config.getCompassEnabled();
+    if (compassEnabled != null) {
+      sink.setCompassEnabled(compassEnabled);
+    }
+    final Boolean mapToolbarEnabled = config.getMapToolbarEnabled();
+    if (mapToolbarEnabled != null) {
+      sink.setMapToolbarEnabled(mapToolbarEnabled);
+    }
+    final PlatformMapType mapType = config.getMapType();
+    if (mapType != null) {
+      sink.setMapType(toMapType(mapType));
+    }
+    final PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
+    if (minMaxZoomPreference != null) {
+      sink.setMinMaxZoomPreference(
+          nullableDoubleToFloat(minMaxZoomPreference.getMin()),
+          nullableDoubleToFloat(minMaxZoomPreference.getMax()));
+    }
+    final PlatformEdgeInsets padding = config.getPadding();
+    if (padding != null) {
+      sink.setPadding(
+          (float) padding.getTop(),
+          (float) padding.getLeft(),
+          (float) padding.getBottom(),
+          (float) padding.getRight());
+    }
+    final Boolean rotateGesturesEnabled = config.getRotateGesturesEnabled();
+    if (rotateGesturesEnabled != null) {
+      sink.setRotateGesturesEnabled(rotateGesturesEnabled);
+    }
+    final Boolean scrollGesturesEnabled = config.getScrollGesturesEnabled();
+    if (scrollGesturesEnabled != null) {
+      sink.setScrollGesturesEnabled(scrollGesturesEnabled);
+    }
+    final Boolean tiltGesturesEnabled = config.getTiltGesturesEnabled();
+    if (tiltGesturesEnabled != null) {
+      sink.setTiltGesturesEnabled(tiltGesturesEnabled);
+    }
+    final Boolean trackCameraPosition = config.getTrackCameraPosition();
+    if (trackCameraPosition != null) {
+      sink.setTrackCameraPosition(trackCameraPosition);
+    }
+    final Boolean zoomGesturesEnabled = config.getZoomGesturesEnabled();
+    if (zoomGesturesEnabled != null) {
+      sink.setZoomGesturesEnabled(zoomGesturesEnabled);
+    }
+    final Boolean liteModeEnabled = config.getLiteModeEnabled();
+    if (liteModeEnabled != null) {
+      sink.setLiteModeEnabled(liteModeEnabled);
+    }
+    final Boolean myLocationEnabled = config.getMyLocationEnabled();
+    if (myLocationEnabled != null) {
+      sink.setMyLocationEnabled(myLocationEnabled);
+    }
+    final Boolean zoomControlsEnabled = config.getZoomControlsEnabled();
+    if (zoomControlsEnabled != null) {
+      sink.setZoomControlsEnabled(zoomControlsEnabled);
+    }
+    final Boolean myLocationButtonEnabled = config.getMyLocationButtonEnabled();
+    if (myLocationButtonEnabled != null) {
+      sink.setMyLocationButtonEnabled(myLocationButtonEnabled);
+    }
+    final Boolean indoorEnabled = config.getIndoorViewEnabled();
+    if (indoorEnabled != null) {
+      sink.setIndoorEnabled(indoorEnabled);
+    }
+    final Boolean trafficEnabled = config.getTrafficEnabled();
+    if (trafficEnabled != null) {
+      sink.setTrafficEnabled(trafficEnabled);
+    }
+    final Boolean buildingsEnabled = config.getBuildingsEnabled();
+    if (buildingsEnabled != null) {
+      sink.setBuildingsEnabled(buildingsEnabled);
+    }
+    final String style = config.getStyle();
+    if (style != null) {
+      sink.setMapStyle(style);
+    }
+  }
+
+  /** Set the options in the given object to marker options sink. */
+  static void interpretMarkerOptions(
+      PlatformMarker marker,
+      MarkerOptionsSink sink,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setAlpha((float) marker.getAlpha());
+    sink.setAnchor((float) marker.getAnchor().getX(), (float) marker.getAnchor().getY());
+    sink.setConsumeTapEvents(marker.getConsumeTapEvents());
+    sink.setDraggable(marker.getDraggable());
+    sink.setFlat(marker.getFlat());
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
+    interpretInfoWindowOptions(sink, marker.getInfoWindow());
+    sink.setPosition(latLngFromPigeon(marker.getPosition()));
+    sink.setRotation((float) marker.getRotation());
+    sink.setVisible(marker.getVisible());
+    sink.setZIndex((float) marker.getZIndex());
+    sink.setCollisionBehavior(collisionBehaviorFromPigeon(marker.getCollisionBehavior()));
+  }
+
+  private static void interpretInfoWindowOptions(
+      MarkerOptionsSink sink, PlatformInfoWindow infoWindow) {
+    String title = infoWindow.getTitle();
+    if (title != null) {
+      sink.setInfoWindowText(title, infoWindow.getSnippet());
+    }
+    PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
+    sink.setInfoWindowAnchor((float) infoWindowAnchor.getX(), (float) infoWindowAnchor.getY());
+  }
+
+  static String interpretPolygonOptions(PlatformPolygon polygon, PolygonOptionsSink sink) {
+    sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
+    sink.setGeodesic(polygon.getGeodesic());
+    sink.setVisible(polygon.getVisible());
+    sink.setFillColor((int) polygon.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) polygon.getStrokeColor().getArgbValue());
+    sink.setStrokeWidth(polygon.getStrokeWidth());
+    sink.setZIndex(polygon.getZIndex());
+    sink.setPoints(pointsFromPigeon(polygon.getPoints()));
+    sink.setHoles(toHoles(polygon.getHoles()));
+    return polygon.getPolygonId();
+  }
+
+  static int jointTypeFromPigeon(PlatformJointType jointType) {
+    return switch (jointType) {
+      case MITERED -> JointType.DEFAULT;
+      case BEVEL -> JointType.BEVEL;
+      case ROUND -> JointType.ROUND;
+    };
+  }
+
+  /**
+   * Converts a Pigeon collision behavior enum to the integer constant defined in {@link
+   * AdvancedMarkerOptions.CollisionBehavior}.
+   *
+   * @param collisionBehavior The Pigeon collision behavior enum to convert.
+   * @return The integer constant corresponding to the collision behavior.
+   */
+  static int collisionBehaviorFromPigeon(
+      @NonNull PlatformMarkerCollisionBehavior collisionBehavior) {
+    return switch (collisionBehavior) {
+      case REQUIRED_DISPLAY -> AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
+      case OPTIONAL_AND_HIDES_LOWER_PRIORITY ->
+          AdvancedMarkerOptions.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY;
+      case REQUIRED_AND_HIDES_OPTIONAL ->
+          AdvancedMarkerOptions.CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL;
+    };
+  }
+
+  static String interpretPolylineOptions(
+      PlatformPolyline polyline,
+      PolylineOptionsSink sink,
+      AssetManager assetManager,
+      float density) {
+    sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
+    sink.setColor((int) polyline.getColor().getArgbValue());
+    sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
+    sink.setGeodesic(polyline.getGeodesic());
+    sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
+    sink.setVisible(polyline.getVisible());
+    sink.setWidth(polyline.getWidth());
+    sink.setZIndex(polyline.getZIndex());
+    sink.setPoints(pointsFromPigeon(polyline.getPoints()));
+    sink.setPattern(patternFromPigeon(polyline.getPatterns()));
+    return polyline.getPolylineId();
+  }
+
+  static String interpretCircleOptions(PlatformCircle circle, CircleOptionsSink sink) {
+    sink.setConsumeTapEvents(circle.getConsumeTapEvents());
+    sink.setFillColor((int) circle.getFillColor().getArgbValue());
+    sink.setStrokeColor((int) circle.getStrokeColor().getArgbValue());
+    sink.setStrokeWidth(circle.getStrokeWidth());
+    sink.setZIndex((float) circle.getZIndex());
+    sink.setCenter(latLngFromPigeon(circle.getCenter()));
+    sink.setRadius(circle.getRadius());
+    sink.setVisible(circle.getVisible());
+    return circle.getCircleId();
+  }
+
+  /**
+   * Set the options in the given heatmap object to the given sink.
+   *
+   * @param heatmap the heatmap object to read settings from.
+   * @param sink the HeatmapOptionsSink where the options will be set.
+   * @return the heatmapId.
+   * @throws IllegalArgumentException if heatmapId is null.
+   */
+  static String interpretHeatmapOptions(PlatformHeatmap heatmap, HeatmapOptionsSink sink) {
+    sink.setWeightedData(weightedDataFromPigeon(heatmap.getData()));
+    final PlatformHeatmapGradient gradient = heatmap.getGradient();
+    if (gradient != null) {
+      sink.setGradient(gradientFromPigeon(gradient));
+    }
+    final Double maxIntensity = heatmap.getMaxIntensity();
+    if (maxIntensity != null) {
+      sink.setMaxIntensity(maxIntensity);
+    }
+    sink.setOpacity(heatmap.getOpacity());
+    sink.setRadius((int) heatmap.getRadius());
+    return heatmap.getHeatmapId();
+  }
+
+  static List<LatLng> pointsFromPigeon(List<PlatformLatLng> data) {
+    final List<LatLng> points = new ArrayList<>(data.size());
+
+    for (PlatformLatLng rawPoint : data) {
+      points.add(new LatLng(rawPoint.getLatitude(), rawPoint.getLongitude()));
+    }
+    return points;
+  }
+
+  /**
+   * Converts the given object to a list of WeightedLatLng objects.
+   *
+   * @param data the list of Pigeon weighted lat/lng objects to convert.
+   * @return a list of WeightedLatLng objects.
+   */
+  @VisibleForTesting
+  static List<WeightedLatLng> weightedDataFromPigeon(List<PlatformWeightedLatLng> data) {
+    final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
+
+    for (PlatformWeightedLatLng rawWeightedPoint : data) {
+      weightedData.add(weightedLatLngFromPigeon(rawWeightedPoint));
+    }
+    return weightedData;
+  }
+
+  /**
+   * Converts the given Pigeon gradient to a Gradient object.
+   *
+   * @param gradient the Pigeon gradient to convert.
+   * @return a Gradient object.
+   */
+  @VisibleForTesting
+  static Gradient gradientFromPigeon(PlatformHeatmapGradient gradient) {
+    final List<PlatformColor> colorData = gradient.getColors();
+    final int[] colors = new int[colorData.size()];
+    for (int i = 0; i < colorData.size(); i++) {
+      colors[i] = (int) colorData.get(i).getArgbValue();
+    }
+
+    final List<Double> startPointData = gradient.getStartPoints();
+    final float[] startPoints = new float[startPointData.size()];
+    for (int i = 0; i < startPointData.size(); i++) {
+      startPoints[i] = startPointData.get(i).floatValue();
+    }
+
+    return new Gradient(colors, startPoints, (int) gradient.getColorMapSize());
+  }
+
+  private static List<List<LatLng>> toHoles(List<List<PlatformLatLng>> data) {
+    final List<List<LatLng>> holes = new ArrayList<>(data.size());
+
+    for (List<PlatformLatLng> hole : data) {
+      holes.add(pointsFromPigeon(hole));
+    }
+    return holes;
+  }
+
+  private static List<PatternItem> patternFromPigeon(List<PlatformPatternItem> patternItems) {
+    if (patternItems.isEmpty()) {
+      return null;
+    }
+    final List<PatternItem> pattern = new ArrayList<>();
+    for (PlatformPatternItem patternItem : patternItems) {
+      switch (patternItem.getType()) {
+        case DOT:
+          pattern.add(new Dot());
+          break;
+        case DASH:
+          assert patternItem.getLength() != null;
+          pattern.add(new Dash(patternItem.getLength().floatValue()));
+          break;
+        case GAP:
+          assert patternItem.getLength() != null;
+          pattern.add(new Gap(patternItem.getLength().floatValue()));
+          break;
+      }
+    }
+    return pattern;
+  }
+
+  private static Cap capFromPigeon(PlatformCap cap, AssetManager assetManager, float density) {
+    return switch (cap.getType()) {
+      case BUTT_CAP -> new ButtCap();
+      case ROUND_CAP -> new RoundCap();
+      case SQUARE_CAP -> new SquareCap();
+      case CUSTOM_CAP -> {
+        if (cap.getRefWidth() == null) {
+          throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
+        }
+        yield new CustomCap(
+            toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
+            cap.getRefWidth().floatValue());
+      }
+    };
+  }
+
+  static String interpretTileOverlayOptions(PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
+    sink.setFadeIn(tileOverlay.getFadeIn());
+    sink.setTransparency((float) tileOverlay.getTransparency());
+    sink.setZIndex(tileOverlay.getZIndex());
+    sink.setVisible(tileOverlay.getVisible());
+    return tileOverlay.getTileOverlayId();
+  }
+
+  static Tile tileFromPigeon(PlatformTile tile) {
+    return new Tile((int) tile.getWidth(), (int) tile.getHeight(), tile.getData());
+  }
+
+  /**
+   * Set the options in the given ground overlay object to the given sink.
+   *
+   * @param groundOverlay the object expected to be a PlatformGroundOverlay containing the ground
+   *     overlay options.
+   * @param sink the GroundOverlaySink where the options will be set.
+   * @param assetManager An instance of Android's AssetManager, which provides access to any raw
+   *     asset files stored in the application's assets directory.
+   * @param density the density of the display, used to calculate pixel dimensions.
+   * @param wrapper the BitmapDescriptorFactoryWrapper to create BitmapDescriptor.
+   * @return the identifier of the ground overlay. The identifier is valid as long as the ground
+   *     overlay exists.
+   * @throws IllegalArgumentException if required fields are missing or invalid.
+   */
+  static @NonNull String interpretGroundOverlayOptions(
+      @NonNull PlatformGroundOverlay groundOverlay,
+      @NonNull GroundOverlaySink sink,
+      @NonNull AssetManager assetManager,
+      float density,
+      @NonNull BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setTransparency((float) groundOverlay.getTransparency());
+    sink.setZIndex((float) groundOverlay.getZIndex());
+    sink.setVisible(groundOverlay.getVisible());
+    if (groundOverlay.getAnchor() != null) {
+      sink.setAnchor(
+          (float) groundOverlay.getAnchor().getX(), (float) groundOverlay.getAnchor().getY());
+    }
+    sink.setBearing((float) groundOverlay.getBearing());
+    sink.setClickable(groundOverlay.getClickable());
+    sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
+    if (groundOverlay.getPosition() != null) {
+      if (groundOverlay.getWidth() == null) {
+        throw new FlutterError(
+            "Invalid GroundOverlay",
+            "Width is required when using a ground overlay with a position.",
+            null);
+      }
+      sink.setPosition(
+          latLngFromPigeon(groundOverlay.getPosition()),
+          groundOverlay.getWidth().floatValue(),
+          groundOverlay.getHeight() != null ? groundOverlay.getHeight().floatValue() : null);
+    } else if (groundOverlay.getBounds() != null) {
+      sink.setPositionFromBounds(latLngBoundsFromPigeon(groundOverlay.getBounds()));
+    }
+    return groundOverlay.getGroundOverlayId();
+  }
+
+  /**
+   * Converts a GroundOverlay object to a PlatformGroundOverlay Pigeon object.
+   *
+   * @param groundOverlay the GroundOverlay object to convert.
+   * @param groundOverlayId the identifier of the GroundOverlay.
+   * @param isCreatedWithBounds indicates if the GroundOverlay was created with bounds.
+   * @return the converted PlatformGroundOverlay object.
+   */
+  static @NonNull PlatformGroundOverlay groundOverlayToPigeon(
+      @NonNull GroundOverlay groundOverlay,
+      @NonNull String groundOverlayId,
+      boolean isCreatedWithBounds) {
+
+    // Image is mandatory field on PlatformGroundOverlay (and it should be kept
+    // non-nullable), therefore image must be set for the object. The image is
+    // description either contains set of bytes, or path to asset. This info is
+    // converted to format google maps uses (BitmapDescription), and the original
+    // data is not stored on native code. Therefore placeholder image is used for
+    // the image field.
+    PlatformBitmap dummyImage =
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                new byte[] {0},
+                PlatformMapBitmapScaling.NONE,
+                /* imagePixelRatio */ 1.0, /* width */
+                null, /* height */
+                null));
+
+    PlatformLatLngBounds bounds = null;
+    PlatformLatLng position = null;
+    if (isCreatedWithBounds) {
+      bounds = Convert.latLngBoundsToPigeon(groundOverlay.getBounds());
+    } else {
+      position = Convert.latLngToPigeon(groundOverlay.getPosition());
+    }
+
+    return new PlatformGroundOverlay(
+        groundOverlayId,
+        dummyImage,
+        position,
+        bounds,
+        (double) groundOverlay.getWidth(),
+        (double) groundOverlay.getHeight(),
+        Convert.buildGroundOverlayAnchorForPigeon(groundOverlay),
+        groundOverlay.getTransparency(),
+        groundOverlay.getBearing(),
+        (long) groundOverlay.getZIndex(),
+        groundOverlay.isVisible(),
+        groundOverlay.isClickable());
+  }
+
+  /**
+   * Builds a PlatformDoublePair representing the anchor point for a GroundOverlay.
+   *
+   * @param groundOverlay the GroundOverlay object.
+   * @return the PlatformDoublePair representing the anchor point.
+   */
+  @VisibleForTesting
+  public static @NonNull PlatformDoublePair buildGroundOverlayAnchorForPigeon(
+      @NonNull GroundOverlay groundOverlay) {
+    // Position is overlays anchor point. Calculate normalized anchor point based on position and
+    // bounds.
+    LatLng position = groundOverlay.getPosition();
+    LatLngBounds bounds = groundOverlay.getBounds();
+
+    // Calculate normalized latitude.
+    double height = bounds.northeast.latitude - bounds.southwest.latitude;
+    double normalizedLatitude = 1.0 - ((position.latitude - bounds.southwest.latitude) / height);
+
+    // Constant for full circle degrees.
+    final double FULL_CIRCLE_DEGREES = 360.0;
+
+    // Calculate normalized longitude.
+    // For longitude, if the bounds cross the antimeridian (west > east),
+    // adjust the width accordingly.
+    double west = bounds.southwest.longitude;
+    double east = bounds.northeast.longitude;
+    double width = (west <= east) ? (east - west) : (FULL_CIRCLE_DEGREES - (west - east));
+
+    // Normalize the longitude of the anchor position relative to the western boundary.
+    // Handles cases where the ground overlay crosses the antimeridian.
+    double normalizedLongitude =
+        ((position.longitude < west ? position.longitude + FULL_CIRCLE_DEGREES : position.longitude)
+                - west)
+            / width;
+
+    return new PlatformDoublePair(/* x */ normalizedLongitude, /* y */ normalizedLatitude);
+  }
+
+  static class BitmapDescriptorFactoryWrapper {
+    /**
+     * Creates a BitmapDescriptor from the provided asset key using the {@link
+     * BitmapDescriptorFactory}.
+     *
+     * <p>This method is visible for testing purposes only and should never be used outside Convert
+     * class.
+     *
+     * @param assetKey the key of the asset.
+     * @return a new instance of the {@link BitmapDescriptor}.
+     */
+    @VisibleForTesting
+    public BitmapDescriptor fromAsset(String assetKey) {
+      return BitmapDescriptorFactory.fromAsset(assetKey);
+    }
+
+    /**
+     * Creates a BitmapDescriptor from the provided bitmap using the {@link
+     * BitmapDescriptorFactory}.
+     *
+     * <p>This method is visible for testing purposes only and should never be used outside Convert
+     * class.
+     *
+     * @param bitmap the bitmap to convert.
+     * @return a new instance of the {@link BitmapDescriptor}.
+     */
+    @VisibleForTesting
+    public BitmapDescriptor fromBitmap(Bitmap bitmap) {
+      return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @VisibleForTesting
+    public BitmapDescriptor fromPinConfig(PinConfig pinConfig) {
+      return BitmapDescriptorFactory.fromPinConfig(pinConfig);
+    }
+  }
+
+  @VisibleForTesting
+  static class FlutterInjectorWrapper {
+    /**
+     * Retrieves the lookup key for a given asset name using the {@link FlutterInjector}.
+     *
+     * <p>This method is visible for testing purposes only and should never be used outside Convert
+     * class.
+     *
+     * @param assetName the name of the asset.
+     * @return the lookup key for the asset.
+     */
+    @VisibleForTesting
+    public String getLookupKeyForAsset(@NonNull String assetName) {
+      return FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetName);
+    }
+  }
+}

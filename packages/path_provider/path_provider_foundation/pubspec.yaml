@@ -1,0 +1,35 @@
+name: path_provider_foundation
+description: iOS and macOS implementation of the path_provider plugin
+repository: https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_foundation
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+path_provider%22
+version: 2.6.0
+
+environment:
+  sdk: ^3.10.3
+  flutter: ">=3.38.4"
+
+flutter:
+  plugin:
+    implements: path_provider
+    platforms:
+      ios:
+        dartPluginClass: PathProviderFoundation
+      macos:
+        dartPluginClass: PathProviderFoundation
+
+dependencies:
+  ffi: ^2.1.4
+  flutter:
+    sdk: flutter
+  objective_c: ^9.2.1
+  path_provider_platform_interface: ^2.1.0
+
+dev_dependencies:
+  ffigen: ^20.0.0
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - files
+  - path-provider
+  - paths
