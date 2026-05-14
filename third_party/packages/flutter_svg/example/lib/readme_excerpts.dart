@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // #docregion PrecompiledAsset
 import 'package:vector_graphics/vector_graphics.dart';
+
 // #enddocregion PrecompiledAsset
 
 /// Loads an SVG asset.
@@ -124,6 +125,7 @@ class _MyColorMapper extends ColorMapper {
     return color;
   }
 }
+
 // #enddocregion ColorMapper
 
 /// Demonstrates loading an SVG asset with a color mapping.

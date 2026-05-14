@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 // #docregion imports
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
+
 // #enddocregion imports
 
 // #docregion example_widget
@@ -129,6 +130,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
             setState(() {});
           });
   }
+
   // #enddocregion ad_and_content_players
 
   @override
@@ -197,6 +199,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     _contentProgressTimer = null;
     return _contentVideoController.pause();
   }
+
   // #enddocregion request_ads
 
   // #docregion dispose
@@ -210,6 +213,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     WidgetsBinding.instance.removeObserver(this);
     // #docregion dispose
   }
+
   // #enddocregion dispose
 
   // #docregion example_widget
