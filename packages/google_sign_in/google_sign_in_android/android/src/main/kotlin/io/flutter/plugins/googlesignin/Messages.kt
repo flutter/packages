@@ -331,7 +331,7 @@ data class PlatformGoogleIdTokenCredential(
     val displayName: String? = null,
     val familyName: String? = null,
     val givenName: String? = null,
-    val id: String,
+    val email: String,
     val idToken: String,
     val profilePictureUri: String? = null
 ) {
@@ -340,11 +340,11 @@ data class PlatformGoogleIdTokenCredential(
       val displayName = pigeonVar_list[0] as String?
       val familyName = pigeonVar_list[1] as String?
       val givenName = pigeonVar_list[2] as String?
-      val id = pigeonVar_list[3] as String
+      val email = pigeonVar_list[3] as String
       val idToken = pigeonVar_list[4] as String
       val profilePictureUri = pigeonVar_list[5] as String?
       return PlatformGoogleIdTokenCredential(
-          displayName, familyName, givenName, id, idToken, profilePictureUri)
+          displayName, familyName, givenName, email, idToken, profilePictureUri)
     }
   }
 
@@ -353,7 +353,7 @@ data class PlatformGoogleIdTokenCredential(
         displayName,
         familyName,
         givenName,
-        id,
+        email,
         idToken,
         profilePictureUri,
     )
