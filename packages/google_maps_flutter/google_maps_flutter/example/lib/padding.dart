@@ -9,8 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'page.dart';
 
 class PaddingPage extends GoogleMapExampleAppPage {
-  const PaddingPage({Key? key})
-    : super(const Icon(Icons.map), 'Add padding to the map', key: key);
+  const PaddingPage({super.key})
+    : super(const Icon(Icons.map), 'Add padding to the map');
 
   @override
   Widget build(BuildContext context) {

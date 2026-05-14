@@ -13,11 +13,10 @@ import 'place_advanced_marker.dart';
 /// Page demonstrating how to use AdvancedMarker's collision behavior.
 class AdvancedMarkerCollisionBehaviorPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkerCollisionBehaviorPage({Key? key, required this.mapId})
+  const AdvancedMarkerCollisionBehaviorPage({super.key, required this.mapId})
     : super(
         const Icon(Icons.not_listed_location),
         'Advanced marker collision behavior',
-        key: key,
       );
 
   /// Map ID to use for the GoogleMap.
