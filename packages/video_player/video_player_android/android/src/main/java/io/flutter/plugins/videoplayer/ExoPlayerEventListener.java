@@ -65,6 +65,12 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   protected abstract void sendInitialized();
 
+  /** Cancels pending initialization callbacks when the player is disposed. */
+  public void dispose() {
+    isWaitingForValidDuration = false;
+    mainHandler.removeCallbacks(initializationFallback);
+  }
+
   private boolean hasValidDuration() {
     return exoPlayer.getDuration() != C.TIME_UNSET;
   }
@@ -79,9 +85,10 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     }
 
     if (!hasValidDuration() && shouldWaitForValidDuration()) {
-      isWaitingForValidDuration = true;
-      mainHandler.removeCallbacks(initializationFallback);
-      mainHandler.postDelayed(initializationFallback, DURATION_UNSET_INITIALIZATION_TIMEOUT_MS);
+      if (!isWaitingForValidDuration) {
+        isWaitingForValidDuration = true;
+        mainHandler.postDelayed(initializationFallback, DURATION_UNSET_INITIALIZATION_TIMEOUT_MS);
+      }
       return;
     }
 
