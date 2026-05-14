@@ -245,56 +245,56 @@ TEST(Equality, ToStringSnapshot) {
   ASSERT_NE(str, nullptr);
 
   // Verify structural validation across all 31 serialized fields.
-  // In GObject, nullable bool fields default to false in ternary printing if null.
-  // Using robust structural substring checks ensures test stability and parity
-  // with non-deterministic collection serializers across host languages.
-  const char* expected_fields[] = {
-      "AllNullableTypes(",
-      "a_nullable_bool: false",
-      "a_nullable_int: null",
-      "a_nullable_int64: null",
-      "a_nullable_double: null",
-      "a_nullable_byte_array: null",
-      "a_nullable4_byte_array: null",
-      "a_nullable8_byte_array: null",
-      "a_nullable_float_array: null",
-      "a_nullable_enum: null",
-      "another_nullable_enum: null",
-      "a_nullable_string: null",
-      "a_nullable_object: null",
-      "all_nullable_types: null",
-      "list: null",
-      "string_list: null",
-      "int_list: null",
-      "double_list: null",
-      "bool_list: null",
-      "enum_list: null",
-      "object_list: null",
-      "list_list: null",
-      "map_list: null",
-      "recursive_class_list: null",
-      "map: null",
-      "string_map: null",
-      "int_map: null",
-      "enum_map: null",
-      "object_map: null",
-      "list_map: null",
-      "map_map: null",
-      "recursive_class_map: null"};
+  const char* expected_fields[] = {"AllNullableTypes(",
+                                   "a_nullable_bool: null",
+                                   "a_nullable_int: null",
+                                   "a_nullable_int64: null",
+                                   "a_nullable_double: null",
+                                   "a_nullable_byte_array: null",
+                                   "a_nullable4_byte_array: null",
+                                   "a_nullable8_byte_array: null",
+                                   "a_nullable_float_array: null",
+                                   "a_nullable_enum: null",
+                                   "another_nullable_enum: null",
+                                   "a_nullable_string: null",
+                                   "a_nullable_object: null",
+                                   "all_nullable_types: null",
+                                   "list: null",
+                                   "string_list: null",
+                                   "int_list: null",
+                                   "double_list: null",
+                                   "bool_list: null",
+                                   "enum_list: null",
+                                   "object_list: null",
+                                   "list_list: null",
+                                   "map_list: null",
+                                   "recursive_class_list: null",
+                                   "map: null",
+                                   "string_map: null",
+                                   "int_map: null",
+                                   "enum_map: null",
+                                   "object_map: null",
+                                   "list_map: null",
+                                   "map_map: null",
+                                   "recursive_class_map: null"};
 
   for (const char* field : expected_fields) {
     EXPECT_TRUE(strstr(str, field) != nullptr)
         << "Missing expected serialized field content: " << field;
   }
 
-  // Also verify exact expected canonical string layout for empty initialization.
+  // Also verify exact expected canonical string layout for empty
+  // initialization.
   const char* exact_expected =
-      "AllNullableTypes(a_nullable_bool: false, a_nullable_int: null, "
-      "a_nullable_int64: null, a_nullable_double: null, a_nullable_byte_array: null, "
+      "AllNullableTypes(a_nullable_bool: null, a_nullable_int: null, "
+      "a_nullable_int64: null, a_nullable_double: null, a_nullable_byte_array: "
+      "null, "
       "a_nullable4_byte_array: null, a_nullable8_byte_array: null, "
       "a_nullable_float_array: null, a_nullable_enum: null, "
-      "another_nullable_enum: null, a_nullable_string: null, a_nullable_object: null, "
-      "all_nullable_types: null, list: null, string_list: null, int_list: null, "
+      "another_nullable_enum: null, a_nullable_string: null, "
+      "a_nullable_object: null, "
+      "all_nullable_types: null, list: null, string_list: null, int_list: "
+      "null, "
       "double_list: null, bool_list: null, enum_list: null, object_list: null, "
       "list_list: null, map_list: null, recursive_class_list: null, map: null, "
       "string_map: null, int_map: null, enum_map: null, object_map: null, "
@@ -303,4 +303,3 @@ TEST(Equality, ToStringSnapshot) {
 
   g_free(str);
 }
-

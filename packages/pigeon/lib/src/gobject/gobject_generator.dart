@@ -1370,7 +1370,7 @@ class GObjectSourceGenerator
       enumerate(classDefinition.fields, (int index, final NamedType field) {
         final String fieldName = _getFieldName(field.name);
         final comma = index == 0 ? '' : ', ';
-        indent.writeln('g_string_append(str, "$comma$fieldName: ");');
+        indent.writeln('g_string_append(str, "$comma${field.name}: ");');
 
         if (field.type.isClass) {
           final String fieldMethodPrefix = _getMethodPrefix(
@@ -1442,9 +1442,20 @@ class GObjectSourceGenerator
             indent.writeln('g_string_append(str, "null");');
           });
         } else if (field.type.baseName == 'bool') {
-          indent.writeln(
-            'g_string_append(str, self->$fieldName ? "true" : "false");',
-          );
+          if (field.type.isNullable) {
+            indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {
+              indent.writeln(
+                'g_string_append(str, *self->$fieldName ? "true" : "false");',
+              );
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('g_string_append(str, "null");');
+            });
+          } else {
+            indent.writeln(
+              'g_string_append(str, self->$fieldName ? "true" : "false");',
+            );
+          }
         } else if (field.type.baseName == 'int') {
           if (field.type.isNullable) {
             indent.writeScoped('if (self->$fieldName != nullptr) {', '}', () {

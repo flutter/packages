@@ -304,4 +304,3 @@ internal class DataClassMethodsTest {
         everything.toString())
   }
 }
-
