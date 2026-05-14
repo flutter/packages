@@ -10,7 +10,7 @@ environment:
   flutter: ">=3.35.0"
 
 workspace:
-  - cupertino_ui_examples
+  - example
 
 dependencies:
   flutter:
