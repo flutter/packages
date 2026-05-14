@@ -1,3 +1,11 @@
+## 2.18.2
+
+* Fixes incorrect or swapped custom marker icons on iOS when decoded bitmaps or target sizes
+  are not power-of-two (for example 410×512). Icons are now drawn into a transparent
+  power-of-two bitmap whose pixel size is the next power of two of the requested physical
+  size, which avoids texture-atlas / caching issues in the Google Maps SDK while keeping
+  the visible artwork in the top-left `width`×`height` region.
+
 ## 2.18.1
 
 * Removes conditional header logic that broke add-to-app builds.

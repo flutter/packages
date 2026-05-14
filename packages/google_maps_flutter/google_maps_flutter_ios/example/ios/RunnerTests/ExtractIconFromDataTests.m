@@ -88,13 +88,13 @@
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
 
-  // As image has same aspect ratio as the original image,
-  // only image scale has been changed to match the target size.
-  CGFloat targetScale = testImage.scale * (testImage.size.width / width);
-  const CGFloat accuracy = 0.001;
-  XCTAssertEqualWithAccuracy(resultImage.scale, targetScale, accuracy);
-  XCTAssertEqual(resultImage.size.width, width);
-  XCTAssertEqual(resultImage.size.height, width);
+  // Target physical size 45×45 @3x; padded to 64×64 POT for the Maps SDK texture path.
+  const NSUInteger pot = 64u;
+  XCTAssertEqual((NSUInteger)CGImageGetWidth(resultImage.CGImage), pot);
+  XCTAssertEqual((NSUInteger)CGImageGetHeight(resultImage.CGImage), pot);
+  XCTAssertEqualWithAccuracy(resultImage.scale, screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.width, (CGFloat)pot / screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.height, (CGFloat)pot / screenScale, 0.001);
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithDifferentAspectRatio {
@@ -120,8 +120,11 @@
       FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
-  XCTAssertEqual(resultImage.size.width, width);
-  XCTAssertEqual(resultImage.size.height, height);
+  // Physical 45×135 → POT canvas 64×256.
+  XCTAssertEqual((NSUInteger)CGImageGetWidth(resultImage.CGImage), 64u);
+  XCTAssertEqual((NSUInteger)CGImageGetHeight(resultImage.CGImage), 256u);
+  XCTAssertEqualWithAccuracy(resultImage.size.width, 64.0 / screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.height, 256.0 / screenScale, 0.001);
 }
 
 - (void)testExtractIconFromDataAssetNoScaling {
@@ -220,13 +223,12 @@
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
 
-  // As image has same aspect ratio as the original image,
-  // only image scale has been changed to match the target size.
-  CGFloat targetScale = testImage.scale * (testImage.size.width / width);
-  const CGFloat accuracy = 0.001;
-  XCTAssertEqualWithAccuracy(resultImage.scale, targetScale, accuracy);
-  XCTAssertEqual(resultImage.size.width, width);
-  XCTAssertEqual(resultImage.size.height, height);
+  const NSUInteger pot = 64u;
+  XCTAssertEqual((NSUInteger)CGImageGetWidth(resultImage.CGImage), pot);
+  XCTAssertEqual((NSUInteger)CGImageGetHeight(resultImage.CGImage), pot);
+  XCTAssertEqualWithAccuracy(resultImage.scale, screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.width, (CGFloat)pot / screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.height, (CGFloat)pot / screenScale, 0.001);
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithDifferentAspectRatio {
@@ -250,8 +252,50 @@
                                            [[TestAssetProvider alloc] init], screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
-  XCTAssertEqual(resultImage.size.width, width);
-  XCTAssertEqual(resultImage.size.height, height);
+  XCTAssertEqual((NSUInteger)CGImageGetWidth(resultImage.CGImage), 64u);
+  XCTAssertEqual((NSUInteger)CGImageGetHeight(resultImage.CGImage), 256u);
+  XCTAssertEqualWithAccuracy(resultImage.size.width, 64.0 / screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.height, 256.0 / screenScale, 0.001);
+}
+
+/// Regression for tall NPOT sources (e.g. 410×512): output is a POT texture; artwork stays in the
+/// top-left physical pixel rectangle (transparent padding elsewhere).
+- (void)testExtractIconFromDataBytesTallNpotSourceUsesPaddedPowerOfTwoCanvas {
+  const CGFloat imageWidth = 200.0;
+  const CGFloat imageHeight = 233.0;
+  CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
+  UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+  format.scale = 1.0;
+  format.opaque = YES;
+  UIGraphicsImageRenderer *renderer =
+      [[UIGraphicsImageRenderer alloc] initWithSize:imageSize format:format];
+  UIImage *testImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
+    [[UIColor redColor] setFill];
+    [context fillRect:CGRectMake(0, 0, imageWidth, imageHeight)];
+  }];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
+  XCTAssertNotNil(pngData);
+
+  FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
+  FGMPlatformBitmapBytesMap *bitmap =
+      [FGMPlatformBitmapBytesMap makeWithByteData:typedData
+                                    bitmapScaling:FGMPlatformMapBitmapScalingAuto
+                                  imagePixelRatio:1
+                                            width:@(20.0)
+                                           height:@(23.0)];
+
+  CGFloat screenScale = 1.0;
+
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
+
+  XCTAssertNotNil(resultImage);
+  // Physical 20×23 → next POT 32×32.
+  XCTAssertEqual((NSUInteger)CGImageGetWidth(resultImage.CGImage), 32u);
+  XCTAssertEqual((NSUInteger)CGImageGetHeight(resultImage.CGImage), 32u);
+  XCTAssertEqualWithAccuracy(resultImage.scale, screenScale, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.width, 32.0, 0.001);
+  XCTAssertEqualWithAccuracy(resultImage.size.height, 32.0, 0.001);
 }
 
 - (void)testExtractIconFromDataBytesNoScaling {

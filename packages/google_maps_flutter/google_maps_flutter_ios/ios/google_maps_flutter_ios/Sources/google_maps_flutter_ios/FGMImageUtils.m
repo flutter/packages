@@ -185,45 +185,56 @@ UIImage *scaledImageWithScale(UIImage *image, CGFloat scale) {
   return image;
 }
 
+static NSUInteger FGMNextPowerOfTwo(NSUInteger v) {
+  if (v == 0) return 1;
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+#if defined(__LP64__) && __LP64__
+  v |= v >> 32;
+#endif
+  return v + 1;
+}
+
 UIImage *scaledImageWithSize(UIImage *image, CGSize size) {
-  CGFloat originalPixelWidth = image.size.width * image.scale;
-  CGFloat originalPixelHeight = image.size.height * image.scale;
-
-  // Return original image if either original image size or target size is so small that
-  // image cannot be resized or displayed.
-  if (originalPixelWidth <= 0 || originalPixelHeight <= 0 || size.width <= 0 || size.height <= 0) {
+  if (!image || size.width <= 0 || size.height <= 0) {
     return image;
   }
 
-  // Check if the image's size, accounting for scale, matches the target size.
-  if (fabs(originalPixelWidth - size.width) <= DBL_EPSILON &&
-      fabs(originalPixelHeight - size.height) <= DBL_EPSILON) {
-    // No need for resizing, return the original image
+  NSUInteger physicalW = (NSUInteger)round(size.width);
+  NSUInteger physicalH = (NSUInteger)round(size.height);
+  NSUInteger potW = FGMNextPowerOfTwo(physicalW);
+  NSUInteger potH = FGMNextPowerOfTwo(physicalH);
+
+  CGImageRef existingCGImage = image.CGImage;
+  BOOL alreadyPOT = existingCGImage && (NSUInteger)round(image.size.width * image.scale) == potW &&
+                    (NSUInteger)round(image.size.height * image.scale) == potH;
+  if (alreadyPOT) {
+    return [UIImage imageWithCGImage:existingCGImage
+                               scale:image.scale
+                         orientation:image.imageOrientation];
+  }
+
+  UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+  format.scale = 1.0;
+  format.opaque = NO;
+
+  CGSize potSize = CGSizeMake((CGFloat)potW, (CGFloat)potH);
+  UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:potSize
+                                                                             format:format];
+  UIImage *potImage = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+    [image drawInRect:CGRectMake(0, 0, (CGFloat)physicalW, (CGFloat)physicalH)];
+  }];
+
+  CGImageRef potCGImage = potImage.CGImage;
+  if (!potCGImage) {
     return image;
   }
 
-  // Check if the aspect ratios are approximately equal.
-  CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
-  if (FGMIsScalableWithScaleFactorFromSize(originalPixelSize, size)) {
-    // Scaled image has close to same aspect ratio,
-    // updating image scale instead of resizing image.
-    CGFloat factor = originalPixelWidth / size.width;
-    return scaledImageWithScale(image, image.scale * factor);
-  } else {
-    // Aspect ratios differ significantly, resize the image.
-    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
-    format.scale = 1.0;
-    format.opaque = NO;
-    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size
-                                                                               format:format];
-    UIImage *newImage =
-        [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
-          [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
-        }];
-
-    // Return image with proper scaling.
-    return scaledImageWithScale(newImage, image.scale);
-  }
+  return [UIImage imageWithCGImage:potCGImage scale:image.scale orientation:image.imageOrientation];
 }
 
 UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height,
