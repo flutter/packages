@@ -24,11 +24,30 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   ///
   /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
   /// underlying `WKWebView`.
+  @available(*, deprecated, message: "Use webView(forIdentifier:withPluginRegistrar:) instead.")
   @objc(webViewForIdentifier:withPluginRegistry:)
   public static func webView(
     forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry
   ) -> WKWebView? {
     let plugin = registry.valuePublished(byPlugin: "WebViewFlutterPlugin")
+    guard let webviewPlugin = plugin as? WebViewFlutterPlugin else {
+      return nil
+    }
+
+    let webView: WKWebView? = webviewPlugin.proxyApiRegistrar?.instanceManager.instance(
+      forIdentifier: identifier)
+    return webView
+  }
+
+  /// Retrieves the `WKWebView` that is associated with `identifier` using a FlutterPluginRegistrar
+  ///
+  /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
+  /// underlying `WKWebView`.
+  @objc(webViewForIdentifier:withPluginRegistrar:)
+  public static func webView(
+    forIdentifier identifier: Int64, withPluginRegistrar registrar: FlutterPluginRegistrar
+  ) -> WKWebView? {
+    let plugin = registrar.valuePublished(byPlugin: "WebViewFlutterPlugin")
     guard let webviewPlugin = plugin as? WebViewFlutterPlugin else {
       return nil
     }

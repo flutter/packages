@@ -1,3 +1,7 @@
+## 3.26.0
+
+* Adds new method for accessing a native `WKWebView` from a `FlutterPluginRegistrar`.
+
 ## 3.25.1
 
 * Relands update to prevent message calls when application will terminate.

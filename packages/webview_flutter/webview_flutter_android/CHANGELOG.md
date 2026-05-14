@@ -1,3 +1,7 @@
+## 4.13.0
+
+* Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.
+
 ## 4.12.0
 
 * Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
