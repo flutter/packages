@@ -1,3 +1,8 @@
+## 0.4.11
+
+* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
+  Fixes both `SK2Transaction.purchaseDate` and `SK2Transaction.expirationDate`.
+
 ## 0.4.10
 
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.
