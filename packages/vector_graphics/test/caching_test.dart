@@ -453,6 +453,104 @@ void main() {
       expect(caughtError, isNotNull);
     },
   );
+
+  testWidgets(
+    'precacheVectorGraphic called twice for the same key does not double-count',
+    (WidgetTester tester) async {
+      final testBundle = TestAssetBundle();
+
+      late BuildContext capturedContext;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: Builder(
+              builder: (BuildContext context) {
+                capturedContext = context;
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+
+      // Call precache twice; only one asset load should happen and the picture
+      // should survive an unmount/remount without a second decode.
+      await tester.runAsync(() async {
+        await precacheVectorGraphic(
+          const AssetBytesLoader('foo.svg'),
+          capturedContext,
+        );
+        await precacheVectorGraphic(
+          const AssetBytesLoader('foo.svg'),
+          capturedContext,
+        );
+      });
+
+      expect(testBundle.loadKeys.single, 'foo.svg');
+
+      // Mount then fully unmount.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: VectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(const SizedBox());
+
+      // Remount — double-precache must not have leaked a phantom reference that
+      // keeps the count above what _maybeReleasePicture expects, causing the
+      // picture to be disposed prematurely or kept alive one extra decrement too
+      // many.  A single load across all pumps confirms correct reference balance.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: VectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(testBundle.loadKeys.single, 'foo.svg');
+    },
+  );
+
+  testWidgets(
+    'precacheVectorGraphic rethrows when no onError is provided',
+    (WidgetTester tester) async {
+      late Future<void> precacheFuture;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Builder(
+            builder: (BuildContext context) {
+              precacheFuture = precacheVectorGraphic(
+                const _FailingBytesLoader(),
+                context,
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+
+      await tester.runAsync(() async {
+        await expectLater(precacheFuture, throwsException);
+      });
+    },
+  );
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
