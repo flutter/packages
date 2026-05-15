@@ -370,8 +370,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     }
   }
 
-  Future<_PictureData> _loadPicture(
-    BuildContext context,
+  static Future<_PictureData> _loadPicture(
+    BuildContext? context,
     _PictureKey key,
     BytesLoader loader,
   ) {
@@ -668,6 +668,66 @@ class _RawPictureVectorGraphicWidget extends SingleChildRenderObjectWidget {
       ..pictureInfo = pictureInfo
       ..colorFilter = colorFilter
       ..opacity = opacity;
+  }
+}
+
+/// Warms the [VectorGraphic] picture cache for [loader] using [context] to
+/// resolve [Locale] and [TextDirection], so that a subsequent [VectorGraphic]
+/// widget with the same loader renders synchronously from cache instead of
+/// triggering a decode on the first frame.
+///
+/// This is analogous to [precacheImage] for raster images. Call it in
+/// [State.didChangeDependencies] before navigating to a route that contains a
+/// [VectorGraphic]:
+///
+/// ```dart
+/// @override
+/// void didChangeDependencies() {
+///   super.didChangeDependencies();
+///   precacheVectorGraphic(AssetBytesLoader('assets/icon.vg'), context);
+/// }
+/// ```
+///
+/// The [context] is used to derive the [Locale] and [TextDirection] that
+/// [VectorGraphic] uses as part of its picture cache key. Providing the same
+/// context (or one with identical inherited locale and directionality) avoids
+/// a cache miss when the widget is first built.
+///
+/// The decoded picture is kept alive in the internal picture cache with a
+/// reference count of 1. When a [VectorGraphic] widget mounts with the same
+/// key it increments the count; when it disposes the count is decremented.
+/// The precache reference ensures the picture survives route transitions where
+/// all [VectorGraphic] widgets temporarily unmount (count would otherwise drop
+/// to zero and the picture would be disposed).
+///
+/// If [onError] is provided it is called with the error and stack trace
+/// instead of propagating the exception.
+Future<void> precacheVectorGraphic(
+  BytesLoader loader,
+  BuildContext context, {
+  bool clipViewbox = true,
+  VectorGraphicsErrorListener? onError,
+}) async {
+  final Locale? locale = Localizations.maybeLocaleOf(context);
+  final TextDirection? textDirection = Directionality.maybeOf(context);
+  final Object loaderKey = loader.cacheKey(context);
+  final _PictureKey key = _PictureKey(loaderKey, locale, textDirection, clipViewbox);
+
+  // Already live in the cache; nothing to do.
+  if (_VectorGraphicWidgetState._livePictureCache.containsKey(key)) {
+    return;
+  }
+
+  try {
+    final _PictureData data =
+        await _VectorGraphicWidgetState._loadPicture(context, key, loader);
+    // A widget may have populated the cache while we were awaiting the decode.
+    if (!_VectorGraphicWidgetState._livePictureCache.containsKey(key)) {
+      data.count += 1;
+      _VectorGraphicWidgetState._livePictureCache[key] = data;
+    }
+  } catch (error, stackTrace) {
+    onError?.call(error, stackTrace);
   }
 }
 

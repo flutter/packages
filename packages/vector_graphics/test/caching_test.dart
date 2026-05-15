@@ -313,6 +313,146 @@ void main() {
 
     expect(testBundle.loadKeys, <String>['bar.svg', 'foo.svg', 'foo.svg']);
   });
+
+  testWidgets(
+    'precacheVectorGraphic warms live cache so VectorGraphic renders without reloading',
+    (WidgetTester tester) async {
+      final testBundle = TestAssetBundle();
+
+      // Precache with the same context that VectorGraphic will inherit.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: Builder(
+              builder: (BuildContext context) {
+                precacheVectorGraphic(
+                  const AssetBytesLoader('foo.svg'),
+                  context,
+                );
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(Duration.zero),
+      );
+
+      expect(testBundle.loadKeys.single, 'foo.svg');
+
+      // Now mount a VectorGraphic with the same key -- it should hit the cache.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: VectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The asset was already decoded; no second load should occur.
+      expect(testBundle.loadKeys.single, 'foo.svg');
+    },
+  );
+
+  testWidgets(
+    'precacheVectorGraphic keeps picture alive across widget unmount/remount',
+    (WidgetTester tester) async {
+      final testBundle = TestAssetBundle();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: Builder(
+              builder: (BuildContext context) {
+                precacheVectorGraphic(
+                  const AssetBytesLoader('foo.svg'),
+                  context,
+                );
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(Duration.zero),
+      );
+
+      expect(testBundle.loadKeys.single, 'foo.svg');
+
+      // Mount then unmount -- simulates a route transition.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: VectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(const SizedBox());
+
+      // Remount -- the precache reference should keep the picture alive.
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: DefaultAssetBundle(
+            bundle: testBundle,
+            child: VectorGraphic(
+              loader: const AssetBytesLoader('foo.svg'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Only a single load should have happened across all mounts.
+      expect(testBundle.loadKeys.single, 'foo.svg');
+    },
+  );
+
+  testWidgets(
+    'precacheVectorGraphic calls onError and does not throw on loader failure',
+    (WidgetTester tester) async {
+      Object? caughtError;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Builder(
+            builder: (BuildContext context) {
+              precacheVectorGraphic(
+                const _FailingBytesLoader(),
+                context,
+                onError: (Object error, StackTrace? _) {
+                  caughtError = error;
+                },
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(Duration.zero),
+      );
+
+      expect(caughtError, isNotNull);
+    },
+  );
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
@@ -360,4 +500,16 @@ class TestLocalizationsDelegate
 class TestWidgetsLocalizations extends DefaultWidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
+}
+
+class _FailingBytesLoader extends BytesLoader {
+  const _FailingBytesLoader();
+
+  @override
+  Future<ByteData> loadBytes(BuildContext? context) {
+    return Future<ByteData>.error(Exception('load failed'));
+  }
+
+  @override
+  Object cacheKey(BuildContext? context) => '_FailingBytesLoader';
 }
