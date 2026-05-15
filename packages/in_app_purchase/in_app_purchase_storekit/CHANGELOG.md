@@ -1,3 +1,8 @@
+## 0.4.11
+
+* Fixes StoreKit 2 date format does not match in_app_purchase_platform_interface PurchaseDetails.transactionDate format.
+  Fixes both `SK2Transaction.purchaseDate` and `SK2Transaction.expirationDate`.
+
 ## 0.4.10+1
 
 * Fixes SK2Transaction to expose the real purchased quantity instead of defaulting to 1.
