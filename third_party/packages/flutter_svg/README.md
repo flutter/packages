@@ -62,6 +62,7 @@ class _MyColorMapper extends ColorMapper {
     return color;
   }
 }
+
 // ···
   const svgString = '''
 <svg viewBox="0 0 100 100">
@@ -158,6 +159,7 @@ The output `foo.svg.vec` can be loaded using the default constructor of
 <?code-excerpt "example/lib/readme_excerpts.dart (PrecompiledAsset)"?>
 ```dart
 import 'package:vector_graphics/vector_graphics.dart';
+
 // ···
   const Widget svg = SvgPicture(AssetBytesLoader('assets/foo.svg.vec'));
 ```

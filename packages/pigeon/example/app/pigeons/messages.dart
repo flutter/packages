@@ -54,6 +54,7 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 }
+
 // #enddocregion host-definitions
 
 // #docregion flutter-definitions
