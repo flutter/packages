@@ -244,6 +244,39 @@ void main() {
       );
     });
 
+    test('hsl with modern space-separated syntax', () {
+      expect(
+        parser.parseColor(
+          'hsl(270 100% 76.2745098039%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 134, 255),
+      );
+    });
+
+    test('hsla with modern space-separated syntax and decimal alpha', () {
+      expect(
+        parser.parseColor(
+          'hsla(270 100% 76.2745098039% / 0.5)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(128, 194, 134, 255),
+      );
+    });
+
+    test('hsla with modern space-separated syntax and percentage alpha', () {
+      expect(
+        parser.parseColor(
+          'hsla(270 100% 76.2745098039% / 50%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(128, 194, 134, 255),
+      );
+    });
+
     test('hsla with integer percentages and decimal alpha', () {
       expect(
         parser.parseColor(
@@ -274,6 +307,122 @@ void main() {
           id: null,
         ),
         const Color.fromARGB(128, 194, 134, 255),
+      );
+    });
+
+    test('hsl saturation and lightness clamp to percentages', () {
+      expect(
+        parser.parseColor(
+          'hsl(270, 150%, 76%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, -10%, 76%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 194, 194),
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, 100%, -10%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        Color.opaqueBlack,
+      );
+      expect(
+        parser.parseColor(
+          'hsl(270, 100%, 150%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 255, 255, 255),
+      );
+    });
+
+    test('hsla alpha accepts boundary values', () {
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 0)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(0, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 0%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(0, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 1)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 100%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 50%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(128, 194, 133, 255),
+      );
+    });
+
+    test('hsla alpha clamps to 0', () {
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, -0.5)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(0, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, -10%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(0, 194, 133, 255),
+      );
+    });
+
+    test('hsla alpha clamps to 255', () {
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 2)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
+      );
+      expect(
+        parser.parseColor(
+          'hsla(270, 100%, 76%, 150%)',
+          attributeName: 'fill',
+          id: null,
+        ),
+        const Color.fromARGB(255, 194, 133, 255),
       );
     });
   });

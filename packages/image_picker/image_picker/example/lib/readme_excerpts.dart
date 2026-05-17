@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 // #docregion CameraDelegate
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+
 // #enddocregion CameraDelegate
 
 /// Example of a camera delegate
@@ -27,6 +28,7 @@ class MyCameraDelegate extends ImagePickerCameraDelegate {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
+
 // #enddocregion CameraDelegate
 
 /// Example function for README demonstration of various pick* calls.
@@ -78,6 +80,7 @@ Future<void> getLostData() async {
     _handleError(response.exception);
   }
 }
+
 // #enddocregion LostData
 
 /// Example of camera delegate setup.
@@ -88,6 +91,7 @@ void setUpCameraDelegate() {
     instance.cameraDelegate = MyCameraDelegate();
   }
 }
+
 // #enddocregion CameraDelegate
 
 // Stubs for the getLostData function.

@@ -1,3 +1,7 @@
+## 1.2.1
+
+* Fixes uncaught `StateError` and `NoSuchMethodError` from `useHtmlRenderObject()` on CanvasKit / iOS Safari so SVG widgets fall back to the HTML render object.
+
 ## 1.2.0
 
 * Adds `imageBuilder` property to `VectorGraphic` for wrapping the loaded vector graphic widget.
