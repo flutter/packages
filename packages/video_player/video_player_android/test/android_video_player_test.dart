@@ -1113,6 +1113,57 @@ void main() {
           throwsA(isA<ArgumentError>()),
         );
       });
+
+      test(
+        'concurrent selectVideoTrack calls do not clobber each other',
+        () async {
+          final (
+            AndroidVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi api,
+            StreamController<PlatformVideoEvent> streamController,
+          ) = setUpMockPlayerWithStream(playerId: 1);
+
+          // Make call 1 fail fast so its `finally` runs while call 2 is still
+          // mid-flight. With the pre-fix code, that `finally` nulled the
+          // shared completer/expected-id fields, causing call 2 to also time
+          // out even though its matching event later arrives. With the fix,
+          // call 1's `finally` leaves call 2's state intact.
+          when(
+            api.selectVideoTrack(0, 1),
+          ).thenAnswer((_) async => throw StateError('boom'));
+          when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
+
+          const trackA = VideoTrack(id: '0_1', isSelected: false);
+          const trackB = VideoTrack(id: '0_2', isSelected: false);
+
+          // Start both calls before yielding to the event loop, and attach
+          // the error matcher to call 1 immediately so its StateError is not
+          // reported as an unhandled async error.
+          final Future<void> firstFuture = player.selectVideoTrack(1, trackA);
+          final Future<void> firstAssertion = expectLater(
+            firstFuture,
+            throwsA(isA<StateError>()),
+          );
+          final Future<void> secondFuture = player.selectVideoTrack(1, trackB);
+
+          // Let microtasks (the awaited API calls) settle so call 1's
+          // `finally` runs.
+          await Future<void>.delayed(Duration.zero);
+
+          // Deliver the matching event for call 2.
+          streamController.add(
+            VideoTrackChangedEvent(selectedTrackId: '0_2'),
+          );
+
+          // Call 2 should complete promptly on the matching event.
+          await secondFuture;
+          await firstAssertion;
+
+          verify(api.selectVideoTrack(0, 1));
+          verify(api.selectVideoTrack(0, 2));
+        },
+      );
     });
   });
 }

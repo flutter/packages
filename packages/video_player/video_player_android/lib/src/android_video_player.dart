@@ -438,55 +438,48 @@ class _PlayerInstance {
   }
 
   Future<void> selectVideoTrack(VideoTrack? track) async {
-    // Create a completer to wait for the track selection to complete
-    _videoTrackSelectionCompleter = Completer<void>();
-
-    if (track == null) {
-      // Auto quality - use dedicated method
-      _expectedVideoTrackId = null;
-      try {
-        await _api.enableAutoVideoQuality();
-
-        // Wait for the onTracksChanged event from ExoPlayer with a timeout
-        await _videoTrackSelectionCompleter!.future.timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            // If we timeout, just continue - the track may still have been selected
-          },
-        );
-      } finally {
-        _videoTrackSelectionCompleter = null;
-        _expectedVideoTrackId = null;
-      }
-      return;
-    }
-
-    // Extract groupIndex and trackIndex from the track id
-    final List<String> parts = track.id.split('_');
-    if (parts.length != 2) {
-      throw ArgumentError(
-        'Invalid track id format: "${track.id}". Expected format: "groupIndex_trackIndex"',
-      );
-    }
-
-    final int groupIndex = int.parse(parts[0]);
-    final int trackIndex = int.parse(parts[1]);
-
-    _expectedVideoTrackId = track.id;
+    // Use local variables for the per-call state, then publish them to the
+    // shared fields. The cleanup in `finally` only resets the shared fields if
+    // they still reference *this* call's state — so a newer concurrent
+    // selectVideoTrack call isn't clobbered when an older one returns.
+    final completer = Completer<void>();
+    final String? expectedId = track?.id;
+    _videoTrackSelectionCompleter = completer;
+    _expectedVideoTrackId = expectedId;
 
     try {
-      await _api.selectVideoTrack(groupIndex, trackIndex);
+      if (track == null) {
+        // Auto quality - use dedicated method
+        await _api.enableAutoVideoQuality();
+      } else {
+        // Extract groupIndex and trackIndex from the track id
+        final List<String> parts = track.id.split('_');
+        if (parts.length != 2) {
+          throw ArgumentError(
+            'Invalid track id format: "${track.id}". Expected format: "groupIndex_trackIndex"',
+          );
+        }
+
+        final int groupIndex = int.parse(parts[0]);
+        final int trackIndex = int.parse(parts[1]);
+
+        await _api.selectVideoTrack(groupIndex, trackIndex);
+      }
 
       // Wait for the onTracksChanged event from ExoPlayer with a timeout
-      await _videoTrackSelectionCompleter!.future.timeout(
+      await completer.future.timeout(
         const Duration(seconds: 5),
         onTimeout: () {
           // If we timeout, just continue - the track may still have been selected
         },
       );
     } finally {
-      _videoTrackSelectionCompleter = null;
-      _expectedVideoTrackId = null;
+      if (identical(_videoTrackSelectionCompleter, completer)) {
+        _videoTrackSelectionCompleter = null;
+      }
+      if (_expectedVideoTrackId == expectedId) {
+        _expectedVideoTrackId = null;
+      }
     }
   }
 

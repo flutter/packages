@@ -7,6 +7,8 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -36,6 +38,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @NonNull protected ExoPlayer exoPlayer;
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
+
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private boolean isDisposed = false;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -409,28 +414,29 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
       // between responsiveness and ensuring complete resource cleanup. Shorter delays (e.g.,
       // 50-100ms) were found to still cause glitches on some devices, while longer delays
       // would unnecessarily impact user experience.
-      new android.os.Handler(android.os.Looper.getMainLooper())
-          .postDelayed(
-              () -> {
-                // Guard against player disposal during the delay
-                if (trackSelector == null) {
-                  return;
-                }
+      mainHandler.postDelayed(
+          () -> {
+            // Guard against player disposal during the delay. The isDisposed flag
+            // is the authoritative check; the trackSelector null-check is kept for
+            // safety even though it is set in the constructor.
+            if (isDisposed || trackSelector == null) {
+              return;
+            }
 
-                trackSelector.setParameters(
-                    trackSelector
-                        .buildUponParameters()
-                        .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false)
-                        .setOverrideForType(override)
-                        .build());
+            trackSelector.setParameters(
+                trackSelector
+                    .buildUponParameters()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, false)
+                    .setOverrideForType(override)
+                    .build());
 
-                // Restore playback state
-                exoPlayer.seekTo(currentPosition);
-                if (wasPlaying) {
-                  exoPlayer.play();
-                }
-              },
-              150);
+            // Restore playback state
+            exoPlayer.seekTo(currentPosition);
+            if (wasPlaying) {
+              exoPlayer.play();
+            }
+          },
+          150);
       return;
     }
 
@@ -440,6 +446,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   }
 
   public void dispose() {
+    isDisposed = true;
+    mainHandler.removeCallbacksAndMessages(null);
     if (disposeHandler != null) {
       disposeHandler.onDispose();
     }
