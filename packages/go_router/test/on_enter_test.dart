@@ -908,8 +908,7 @@ void main() {
     testWidgets(
       'Synchronous onEnter Block.then(router.go) redirects from initial route',
       (WidgetTester tester) async {
-        late GoRouter localRouter;
-        localRouter = GoRouter(
+        router = GoRouter(
           initialLocation: '/dashboard',
           // Note: deliberately NOT marked `async`.
           onEnter:
@@ -941,12 +940,11 @@ void main() {
             ),
           ],
         );
-        router = localRouter;
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: localRouter));
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
         await tester.pumpAndSettle();
 
-        expect(localRouter.state.uri.path, equals('/login'));
+        expect(router.state.uri.path, equals('/login'));
         expect(find.text('Login'), findsOneWidget);
         expect(find.text('Dashboard'), findsNothing);
       },
