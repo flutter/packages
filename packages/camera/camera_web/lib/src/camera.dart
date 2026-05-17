@@ -659,7 +659,11 @@ class Camera {
   // TODO(TecHaxter): Introduce FPS in CameraImageStreamOptions of
   //                  package:camera_platform_interface.
   //                  https://github.com/flutter/flutter/issues/176148
-  /// Used for running the camera frame stream at a specified FPS
+  /// The target FPS for the camera frame stream.
+  ///
+  /// Frames are emitted within a tolerance window, so actual delivery may
+  /// slightly exceed or fall below this target depending on browser timing.
+  @visibleForTesting
   final int cameraStreamFPS = 60;
 
   /// Returns a stream of camera frames.

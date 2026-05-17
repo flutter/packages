@@ -1541,6 +1541,13 @@ void main() {
       });
     });
     group('cameraFrameStream', () {
+      testWidgets('Target cameraStreamFPS is 60', (WidgetTester tester) async {
+        final camera = Camera(
+          textureId: textureId,
+          cameraService: cameraService,
+        );
+        expect(camera.cameraStreamFPS, equals(60));
+      });
       testWidgets('CameraImageData bytes is a multiple of 4 '
           'regardless of OffscreenCanvas support', (WidgetTester tester) async {
         final VideoElement videoElement = getVideoElementWithBlankStream(
