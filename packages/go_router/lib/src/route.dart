@@ -367,8 +367,8 @@ class GoRoute extends RouteBase {
   /// segment also matches the regular expression — segments that fail the
   /// pattern fall through to other route candidates. For example,
   /// `/users/:id(\d+)` matches `/users/42` but not `/users/alice`. The
-  /// expression must not introduce its own capturing groups; everything
-  /// between the parentheses is interpreted as a Dart [RegExp] body.
+  /// expression must not contain nested parentheses; everything between the
+  /// outer parentheses is interpreted as a Dart [RegExp] body.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
