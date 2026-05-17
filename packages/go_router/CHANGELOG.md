@@ -1,3 +1,7 @@
+## 17.2.4
+
+- Fixes relative `./` navigation through `push`, `pushReplacement`, and `replace` resolving against the previous non-imperative URI instead of the imperatively-pushed parent. This was the user-facing cause of `TypedRelativeGoRoute` children always resolving to the first parent in the route tree (flutter/flutter#182441).
+
 ## 17.2.3
 
 - Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.

@@ -316,4 +316,126 @@ void main() {
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/182441.
+  // After an imperative push, relative-path navigation (`./...`) must
+  // resolve against the pushed route, not against the underlying
+  // non-imperative base URI that Flutter's Router reports back to
+  // GoRouteInformationProvider after every parse.
+  //
+  // The bug shape from go_router_builder is: a TypedRelativeGoRoute child
+  // shared by multiple parents always resolved to the FIRST parent in the
+  // route tree, because the generated `pushRelative` calls
+  // `context.push('./<child-path>')`, and the provider resolved that against
+  // its stale `_value.uri` (which had been reset to the non-imperative base
+  // by the Router callback).
+  testWidgets(
+    "push('./<child>') resolves against the imperatively-pushed parent, "
+    "not the first sibling parent in the route tree",
+    (WidgetTester tester) async {
+      final router = GoRouter(
+        initialLocation: '/home',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const Scaffold(body: Text('Home')),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'reviews',
+                builder: (_, __) => const Scaffold(body: Text('HomeReviews')),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/products',
+            builder: (_, __) => const Scaffold(body: Text('Products')),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'reviews',
+                builder: (_, __) =>
+                    const Scaffold(body: Text('ProductsReviews')),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/home');
+
+      // Step 1: imperative push to /products (mirrors `ProductsRoute().push(context)`).
+      router.push('/products');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products');
+
+      // Step 2: push the SHARED relative child (mirrors
+      // `ReviewsRoute().pushRelative(context)` which generates `./reviews`).
+      router.push('./reviews');
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.path, '/products/reviews');
+      expect(find.text('ProductsReviews'), findsOneWidget);
+      expect(find.text('HomeReviews'), findsNothing);
+    },
+  );
+
+  // Same scenario, but using `pushReplacement` and `replace` to confirm the
+  // relative-path resolution fix applies to all stack-based imperative APIs.
+  testWidgets(
+    "pushReplacement('./<child>') and replace('./<child>') also resolve "
+    "against the current imperative top",
+    (WidgetTester tester) async {
+      final router = GoRouter(
+        initialLocation: '/home',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const Scaffold(body: Text('Home')),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'reviews',
+                builder: (_, __) => const Scaffold(body: Text('HomeReviews')),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/products',
+            builder: (_, __) => const Scaffold(body: Text('Products')),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'reviews',
+                builder: (_, __) =>
+                    const Scaffold(body: Text('ProductsReviews')),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      router.push('/products');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products');
+
+      router.pushReplacement('./reviews');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products/reviews');
+
+      // Reset the stack and try the same with replace().
+      router.go('/home');
+      await tester.pumpAndSettle();
+      router.push('/products');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products');
+
+      router.replace('./reviews');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.path, '/products/reviews');
+    },
+  );
 }
