@@ -361,6 +361,15 @@ class GoRoute extends RouteBase {
   /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
   /// that are passed into [pageBuilder] and [builder].
   ///
+  /// A path parameter may optionally be constrained to a regular expression
+  /// by appending the expression in parentheses after the parameter name:
+  /// `:paramName(regex)`. The parameter only matches if the corresponding path
+  /// segment also matches the regular expression — segments that fail the
+  /// pattern fall through to other route candidates. For example,
+  /// `/users/:id(\d+)` matches `/users/42` but not `/users/alice`. The
+  /// expression must not introduce its own capturing groups; everything
+  /// between the parentheses is interpreted as a Dart [RegExp] body.
+  ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
   ///
