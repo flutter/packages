@@ -413,9 +413,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   /// When set to true, the route will include an onExit parameter in the
   /// generated GoRoute constructor, allowing you to implement custom logic
   /// when navigating away from this route.
-  ///
-  /// Defaults to false.
-  final bool hasOverriddenOnExit;
+  final bool? hasOverriddenOnExit;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -484,7 +482,7 @@ mixin $_mixinName on $routeDataClassName {
       'path: ${escapeDartString(path)},'
       '${name != null ? 'name: ${escapeDartString(name!)},' : ''}'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${hasOverriddenOnExit ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
+      '${hasOverriddenOnExit != null ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
@@ -513,9 +511,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   /// When set to true, the route will include an onExit parameter in the
   /// generated GoRoute constructor, allowing you to implement custom logic
   /// when navigating away from this route.
-  ///
-  /// Defaults to false.
-  final bool hasOverriddenOnExit;
+  final bool? hasOverriddenOnExit;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -571,7 +567,7 @@ mixin $_mixinName on $routeDataClassName {
   String get routeConstructorParameters =>
       'path: ${escapeDartString(path)},'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
-      '${hasOverriddenOnExit ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
+      '${hasOverriddenOnExit != null ? 'hasOverriddenOnExit: $hasOverriddenOnExit,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
@@ -688,9 +684,15 @@ abstract class RouteBaseConfig {
         }
         final ConstantReader nameValue = reader.read('name');
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
+        final bool hasHasOverriddenOnExitParam =
+            classElement.supertype?.element.methods
+                .firstWhereOrNull((m) => m.name == r'$route')
+                ?.formalParameters
+                .any((p) => p.name == 'hasOverriddenOnExit') ??
+            false;
+        final bool? hasOverriddenOnExit = hasHasOverriddenOnExitParam
+            ? classElement.methods.any((method) => method.name == 'onExit')
+            : null;
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
@@ -719,9 +721,15 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
+        final bool hasHasOverriddenOnExitParam =
+            classElement.supertype?.element.methods
+                .firstWhereOrNull((m) => m.name == r'$route')
+                ?.formalParameters
+                .any((p) => p.name == 'hasOverriddenOnExit') ??
+            false;
+        final bool? hasOverriddenOnExit = hasHasOverriddenOnExitParam
+            ? classElement.methods.any((method) => method.name == 'onExit')
+            : null;
         value = RelativeGoRouteConfig._(
           path: pathValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
