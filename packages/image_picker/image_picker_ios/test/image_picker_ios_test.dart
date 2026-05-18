@@ -30,7 +30,6 @@ void main() {
       final PickedFile? result = await picker.pickImage(
         source: ImageSource.camera,
       );
-
       expect(result?.path, '/foo.png');
       expect(api.passedSelectionType, _SelectionType.image);
       expect(api.passedMaxSize?.width, null);
