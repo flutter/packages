@@ -200,19 +200,24 @@ class CameraService {
 
       // A list of facing mode capabilities as
       // the camera may support multiple facing modes.
-      final List<String> facingModeCapabilities =
-          videoTrackCapabilities.facingModeNullable?.toDart
-              .map((JSString e) => e.toDart)
-              .toList() ??
-          <String>[];
-
-      if (facingModeCapabilities.isNotEmpty) {
-        final String facingModeCapability = facingModeCapabilities.first;
-        return facingModeCapability;
-      } else {
-        // Return null if there are no facing mode capabilities.
+      final JSAny? facingModeCapabilities = jsUtil.getProperty(
+        videoTrackCapabilities,
+        'facingMode'.toJS,
+      );
+      if (facingModeCapabilities == null ||
+          !facingModeCapabilities.isA<JSArray>()) {
         return null;
       }
+
+      final List<JSAny?> facingModes =
+          (facingModeCapabilities as JSArray).toDart;
+
+      if (facingModes.isNotEmpty && facingModes.first.isA<JSString>()) {
+        return (facingModes.first! as JSString).toDart;
+      }
+
+      // Return null if there are no facing mode capabilities.
+      return null;
     }
 
     return facingMode;
