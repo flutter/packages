@@ -115,6 +115,13 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
     XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data!), .png)
   }
 
+  func testConvertImageToData_GifWithQualityWarning() {
+    let image = UIImage(data: ImagePickerTestImages.gifTestData)!
+    let data = ImagePickerMetaDataUtil.convertImage(image, using: .gif, quality: 0.5)
+    // .gif fallback is currently JPEG in convertImage switch default
+    XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data!), .jpeg)
+  }
+
   func testConvertImageToData_DefaultFallback() {
     let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
     let data = ImagePickerMetaDataUtil.convertImage(image, using: .other, quality: 0.8)

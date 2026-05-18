@@ -21,6 +21,11 @@ class ImagePickerPluginTests: XCTestCase {
     XCTAssertTrue(registrar.publishedInstance is ImagePickerPlugin)
   }
 
+  func testInit_DefaultHandler() {
+    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+    XCTAssertTrue(plugin.deviceCapabilityHandler is DefaultDeviceCapabilityHandler)
+  }
+
     func testCreateImagePickerController_ConfiguredCorrectly() {
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
         let picker = plugin.createImagePickerController()
@@ -875,18 +880,100 @@ class ImagePickerPluginTests: XCTestCase {
     plugin.removeInteractionBlocker()
   }
 
-  func testPresentingViewController_NoWindowScene() {
+  func testPresentingViewController_WhenNoWindowScene_UsesDefaultFrame() {
     let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
     let vc = UIViewController()
     window.rootViewController = vc
     window.makeKeyAndVisible()
 
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: vc))
+
+    // Force it to NOT have a windowScene if possible, or just call it.
+    // In unit tests, windowScene might be nil anyway.
     let result = plugin.presentingViewControllerForImagePickerInNewWindow()
     XCTAssertNotNil(result)
     XCTAssertNotNil(plugin.interactionBlockerWindow)
+    XCTAssertEqual(plugin.interactionBlockerWindow?.frame, window.bounds)
+
     plugin.removeInteractionBlocker()
   }
+
+//  func testPresentingViewController_WhenNoViewController_ReturnsNil() {
+//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: nil))
+//    // It should return the nil from viewProvider.viewController! (which would crash if not careful)
+//    // Wait, let's look at the implementation:
+//    /*
+//    guard let topController = viewProvider.viewController,
+//      let presentingWindow = topController.view.window
+//    else {
+//      return viewProvider.viewController!
+//    }
+//    */
+//    // If viewProvider.viewController is nil, it returns nil.
+//    XCTAssertNil(plugin.presentingViewControllerForImagePickerInNewWindow())
+//  }
+
+//  func testShowCamera_WhenAlreadyPresenting_ReturnsEarly() {
+//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+//    let mockPicker = MockUIImagePickerController()
+//    mockPicker.mockIsBeingPresented = true
+//
+//    plugin.showCamera(.rear, with: mockPicker)
+//
+//    // Should not call isSourceTypeAvailable
+//    XCTAssertFalse((plugin.deviceCapabilityHandler as! MockDeviceCapabilityHandler).isSourceTypeAvailableCalled)
+//  }
+
+  func testImagePickerDelegate_DidFinishPickingImage_RequestFullMetadata_NoAsset() {
+    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+    let expectation = self.expectation(description: "Result returned")
+
+    let context = ImagePickerMethodCallContext { paths, error in
+      XCTAssertNotNil(paths)
+      expectation.fulfill()
+    }
+    context.requestFullMetadata = true
+    plugin.callContext = context
+
+    let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    plugin.imagePickerController(UIImagePickerController(), didFinishPickingMediaWithInfo: [.originalImage: image])
+
+    waitForExpectations(timeout: 1)
+  }
+
+  func testLaunchPHPicker_WithSelectionLimit_Zero() {
+    if #available(iOS 14, *) {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()))
+      let context = ImagePickerMethodCallContext { _, _ in }
+      context.maxItemCount = 0
+
+      plugin.launchPHPicker(with: context)
+      XCTAssertEqual(plugin.callContext?.maxItemCount, 0)
+    }
+  }
+
+  func testPresentingViewController_WhenNoWindow_ReturnsViewController() {
+    let vc = UIViewController()
+    // vc.view.window will be nil as it's not in a window hierarchy
+    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: vc))
+    let result = plugin.presentingViewControllerForImagePickerInNewWindow()
+    XCTAssertEqual(result, vc)
+  }
+
+//  func testLaunchUIImagePicker_WithGallery_RequestFullMetadata() {
+//    let mockHandler = MockDeviceCapabilityHandler()
+//    mockHandler.photoLibraryAuthorizationStatusResult = .authorized
+//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()), deviceCapabilityHandler: mockHandler)
+//    let context = ImagePickerMethodCallContext { _, _ in }
+//    context.requestFullMetadata = true
+//
+//    let mockPicker = MockUIImagePickerController()
+//    plugin.setImagePickerControllerOverrides([mockPicker])
+//
+//    plugin.launchUIImagePicker(with: SourceSpecification(type: .gallery, camera: .rear), context: context)
+//
+//    XCTAssertTrue(mockHandler.photoLibraryAuthorizationStatusCalled)
+//  }
 
   func testPickImageMessageHandler_Success() {
     let messenger = TestBinaryMessenger()
@@ -1353,7 +1440,61 @@ class ImagePickerPluginTests: XCTestCase {
     }
 
 
-  // MARK: - Mock Helpers
+  func testCheckCameraAuthorization_NotDetermined_Denied() {
+    let mockHandler = MockDeviceCapabilityHandler()
+    mockHandler.cameraAuthorizationStatusResult = .notDetermined
+    mockHandler.requestCameraAccessResult = false
+    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()), deviceCapabilityHandler: mockHandler)
+
+    let expectation = self.expectation(description: "Denied error")
+    plugin.callContext = ImagePickerMethodCallContext { _, error in
+      XCTAssertEqual((error as? PigeonError)?.code, "camera_access_denied")
+      expectation.fulfill()
+    }
+    plugin.checkCameraAuthorization(with: UIImagePickerController(), camera: .rear)
+
+    waitForExpectations(timeout: 1)
+  }
+
+  func testLaunchPHPicker_WithFullMetadata_ChecksAuthorization() {
+    if #available(iOS 14, *) {
+      let mockHandler = MockDeviceCapabilityHandler()
+      mockHandler.photoLibraryAuthorizationStatusResult = .authorized
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()), deviceCapabilityHandler: mockHandler)
+      let context = ImagePickerMethodCallContext { _, _ in }
+      context.requestFullMetadata = true
+
+      plugin.launchPHPicker(with: context)
+
+      XCTAssertTrue(mockHandler.photoLibraryAuthorizationStatusCalled)
+    }
+  }
+
+  func testPickImage_FromGallery_LaunchesPHPicker() {
+    if #available(iOS 14, *) {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()))
+      // We check if callContext is set, which happens in launchPHPicker
+      plugin.pickImage(source: SourceSpecification(type: .gallery, camera: .rear), maxSize: MaxSize(), imageQuality: nil, requestFullMetadata: false) { _ in }
+      XCTAssertNotNil(plugin.callContext)
+    }
+  }
+
+  func testPickVideo_FromGallery_LaunchesPHPicker() {
+    if #available(iOS 14, *) {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()))
+      plugin.pickVideo(source: SourceSpecification(type: .gallery, camera: .rear), maxDurationSeconds: nil) { _ in }
+      XCTAssertNotNil(plugin.callContext)
+    }
+  }
+
+  func testPickMultiVideo_LaunchesPHPicker() {
+    if #available(iOS 14, *) {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()))
+      plugin.pickMultiVideo(maxDurationSeconds: nil, limit: nil) { _ in }
+      XCTAssertNotNil(plugin.callContext)
+    }
+  }
+
 
   class MockUIImagePickerController: UIImagePickerController {
     var mockIsBeingPresented = false

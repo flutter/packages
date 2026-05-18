@@ -126,9 +126,21 @@ class PigeonTests: XCTestCase {
     // AnyHashable
     XCTAssertTrue(deepEqualsMessages("test" as AnyHashable, "test" as AnyHashable))
     XCTAssertFalse(deepEqualsMessages("test" as AnyHashable, "other" as AnyHashable))
+
+    // Mixed lists
+    XCTAssertFalse(deepEqualsMessages([1.0] as [Double], [1.0] as [Any?]))
+    XCTAssertFalse(deepEqualsMessages([1.0] as [Any?], [1.0] as [Double]))
   }
 
   func testDeepHashMessages() {
+    var hasher1 = Hasher()
+    deepHashMessages(value: ["a": [1, 2, ["b": 3.3]]], hasher: &hasher1)
+
+    var hasher2 = Hasher()
+    deepHashMessages(value: ["a": [1, 2, ["b": 3.3]]], hasher: &hasher2)
+
+    XCTAssertEqual(hasher1.finalize(), hasher2.finalize())
+  }
     var hasher1 = Hasher()
     deepHashMessages(value: ["a": 1], hasher: &hasher1)
 
