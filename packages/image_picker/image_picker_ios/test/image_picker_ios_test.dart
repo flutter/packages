@@ -518,6 +518,50 @@ void main() {
       );
     });
 
+    test('validates maxWidth and maxHeight', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(maxWidth: -1.0),
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(maxHeight: -1.0),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('validates imageQuality', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(imageQuality: -1),
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(imageQuality: 101),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('handles a empty path response gracefully', () async {
       api.returnValue = <String>[];
 
@@ -956,6 +1000,23 @@ void main() {
       expect(a, decoded);
     });
 
+    test('MaxSize identity', () {
+      final MaxSize a = MaxSize(width: 10, height: 20);
+      expect(a, a);
+    });
+
+    test('MaxSize inequality with other types', () {
+      final MaxSize a = MaxSize(width: 10, height: 20);
+      // ignore: ComparisonWithNonFunctionalType
+      expect(a == 'not a MaxSize', isFalse);
+    });
+
+    test('MaxSize hashCode normalizes zero', () {
+      final MaxSize posZero = MaxSize(width: 0.0, height: 0.0);
+      final MaxSize negZero = MaxSize(width: -0.0, height: -0.0);
+      expect(posZero.hashCode, negZero.hashCode);
+    });
+
     test('MediaSelectionOptions equality and hashCode', () {
       final MaxSize size1 = MaxSize(width: 10, height: 20);
       final MaxSize size2 = MaxSize(width: 10, height: 20);
@@ -1029,10 +1090,310 @@ void main() {
 
       expect(a, decoded);
     });
+
+    test('SourceType and SourceCamera cover all values', () {
+      // This helps hit the coverage for enum values
+      expect(SourceType.values.length, 2);
+      expect(SourceType.camera.index, 0);
+      expect(SourceType.gallery.index, 1);
+
+      expect(SourceCamera.values.length, 2);
+      expect(SourceCamera.rear.index, 0);
+      expect(SourceCamera.front.index, 1);
+    });
+  });
+
+  group('Pigeon utility functions', () {
+    test('ImagePickerApi handles reply list length > 1 (Platform Error)', () async {
+      final ImagePickerApi api = ImagePickerApi();
+      const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['error_code', 'error_message', 'error_details'],
+      );
+      expect(
+        () => api.pickImage(
+          SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+          MaxSize(width: 10, height: 10),
+          70,
+          true,
+        ),
+        throwsA(isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'error_code')
+            .having((PlatformException e) => e.message, 'message', 'error_message')),
+      );
+    });
+
+    test('ImagePickerApi handles reply list [null] when isNullValid is false', () async {
+      final ImagePickerApi api = ImagePickerApi();
+      const String multiChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(multiChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[null],
+      );
+      expect(
+        () => api.pickMultiImage(MaxSize(width: 10, height: 10), 70, true, null),
+        throwsA(isA<PlatformException>().having((PlatformException e) => e.code, 'code', 'null-error')),
+      );
+    });
+
+    test('_deepEquals covers various cases', () {
+      final ImagePickerIOS picker = ImagePickerIOS();
+      // We can't access _deepEquals directly as it is private in messages.g.dart.
+      // But we can test it via MaxSize.operator == which uses it.
+
+      final MaxSize size1 = MaxSize(width: 100, height: 200);
+      // ignore: ComparisonWithNonFunctionalType
+      expect(size1 == 'not a size', isFalse);
+
+      final MaxSize size2 = MaxSize(width: 100, height: 200);
+      expect(size1 == size2, isTrue);
+
+      final MaxSize size3 = MaxSize(width: 100.1, height: 200);
+      final MaxSize size4 = MaxSize(width: 100.1, height: 200);
+      expect(size3 == size4, isTrue);
+    });
+  });
+
+  group('ImagePickerApi messages', () {
+    late ImagePickerApi api;
+    const String channelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage';
+
+    setUp(() {
+      api = ImagePickerApi();
+    });
+
+    test('pickImage handles success', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['/foo.png'],
+      );
+      final String? path = await api.pickImage(
+        SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+        MaxSize(width: 10, height: 10),
+        70,
+        true,
+      );
+      expect(path, '/foo.png');
+    });
+
+    test('pickImage handles null response', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[null],
+      );
+      final String? path = await api.pickImage(
+        SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+        MaxSize(width: 10, height: 10),
+        70,
+        true,
+      );
+      expect(path, isNull);
+    });
+
+    test('pickImage handles channel error (null reply)', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => null,
+      );
+      expect(
+        () => api.pickImage(
+          SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+          MaxSize(width: 10, height: 10),
+          70,
+          true,
+        ),
+        throwsA(isA<PlatformException>().having((PlatformException e) => e.code, 'code', 'channel-error')),
+      );
+    });
+
+    test('pickImage handles platform error', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['error_code', 'error_message', 'error_details'],
+      );
+      expect(
+        () => api.pickImage(
+          SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+          MaxSize(width: 10, height: 10),
+          70,
+          true,
+        ),
+        throwsA(isA<PlatformException>()
+            .having((PlatformException e) => e.code, 'code', 'error_code')
+            .having((PlatformException e) => e.message, 'message', 'error_message')
+            .having((PlatformException e) => e.details, 'details', 'error_details')),
+      );
+    });
+
+    test('pickMultiImage handles null return error', () async {
+      const String multiChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(multiChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[null],
+      );
+      expect(
+        () => api.pickMultiImage(MaxSize(width: 10, height: 10), 70, true, null),
+        throwsA(isA<PlatformException>().having((PlatformException e) => e.code, 'code', 'null-error')),
+      );
+    });
+
+    test('ImagePickerApi handles reply list too long', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['error', 'message', 'details', 'extra'],
+      );
+      expect(
+        () => api.pickImage(
+          SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+          MaxSize(width: 10, height: 10),
+          70,
+          true,
+        ),
+        throwsA(isA<PlatformException>()),
+      );
+    });
+
+    test('ImagePickerApi with suffix', () async {
+      final ImagePickerApi apiWithSuffix = ImagePickerApi(messageChannelSuffix: 'suffix');
+      const String channelNameWithSuffix = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage.suffix';
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(channelNameWithSuffix, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['/foo.png'],
+      );
+
+      final String? path = await apiWithSuffix.pickImage(
+        SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+        MaxSize(width: 10, height: 10),
+        70,
+        true,
+      );
+      expect(path, '/foo.png');
+    });
+
+    test('pickMultiImage success', () async {
+      const String multiChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiImage';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(multiChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[<String>['/foo.png', '/bar.png']],
+      );
+      final List<String> paths = await api.pickMultiImage(MaxSize(width: 10, height: 10), 70, true, null);
+      expect(paths, <String>['/foo.png', '/bar.png']);
+    });
+
+    test('pickVideo success', () async {
+      const String videoChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickVideo';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(videoChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>['/foo.mp4'],
+      );
+      final String? path = await api.pickVideo(
+        SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+        60,
+      );
+      expect(path, '/foo.mp4');
+    });
+
+    test('pickMultiVideo success', () async {
+      const String multiVideoChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMultiVideo';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(multiVideoChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[<String>['/foo.mp4', '/bar.mp4']],
+      );
+      final List<String> paths = await api.pickMultiVideo(60, null);
+      expect(paths, <String>['/foo.mp4', '/bar.mp4']);
+    });
+
+    test('pickMedia success', () async {
+      const String mediaChannelName = 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickMedia';
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockDecodedMessageHandler(
+        BasicMessageChannel<Object?>(mediaChannelName, ImagePickerApi.pigeonChannelCodec),
+        (Object? message) async => <Object?>[<String>['/foo.png', '/bar.mp4']],
+      );
+      final List<String> paths = await api.pickMedia(
+        MediaSelectionOptions(
+          maxSize: MaxSize(width: 10, height: 10),
+          imageQuality: 70,
+          requestFullMetadata: true,
+          allowMultiple: true,
+        ),
+      );
+      expect(paths, <String>['/foo.png', '/bar.mp4']);
+    });
+
+    test('ImagePickerApi with custom binary messenger', () async {
+      final _FakeBinaryMessenger messenger = _FakeBinaryMessenger();
+      final ImagePickerApi apiWithMessenger = ImagePickerApi(binaryMessenger: messenger);
+
+      await apiWithMessenger.pickImage(
+        SourceSpecification(type: SourceType.camera, camera: SourceCamera.rear),
+        MaxSize(width: 10, height: 10),
+        70,
+        true,
+      );
+
+      expect(messenger.lastChannel, 'dev.flutter.pigeon.image_picker_ios.ImagePickerApi.pickImage');
+    });
+  });
+
+  group('Pigeon Codec', () {
+    test('codec can handle all types', () {
+      const MessageCodec<Object?> codec = ImagePickerApi.pigeonChannelCodec;
+
+      final ByteData? encodedInt = codec.encodeMessage(123);
+      expect(codec.decodeMessage(encodedInt), 123);
+
+      final ByteData? encodedCamera = codec.encodeMessage(SourceCamera.front);
+      expect(codec.decodeMessage(encodedCamera), SourceCamera.front);
+
+      final ByteData? encodedType = codec.encodeMessage(SourceType.gallery);
+      expect(codec.decodeMessage(encodedType), SourceType.gallery);
+
+      final MaxSize size = MaxSize(width: 1.1, height: 2.2);
+      final ByteData? encodedSize = codec.encodeMessage(size);
+      expect(codec.decodeMessage(encodedSize), size);
+
+      final MediaSelectionOptions options = MediaSelectionOptions(
+        maxSize: size,
+        imageQuality: 70,
+        requestFullMetadata: true,
+        allowMultiple: true,
+        limit: 5,
+      );
+      final ByteData? encodedOptions = codec.encodeMessage(options);
+      expect(codec.decodeMessage(encodedOptions), options);
+
+      final SourceSpecification source = SourceSpecification(
+        type: SourceType.camera,
+        camera: SourceCamera.rear,
+      );
+      final ByteData? encodedSource = codec.encodeMessage(source);
+      expect(codec.decodeMessage(encodedSource), source);
+    });
   });
 }
 
 enum _SelectionType { image, multiImage, media, video, multiVideo }
+
+class _FakeBinaryMessenger extends BinaryMessenger {
+  String? lastChannel;
+  @override
+  Future<ByteData?> send(String channel, ByteData? message) async {
+    lastChannel = channel;
+    return ImagePickerApi.pigeonChannelCodec.encodeMessage(<Object?>['/foo.png']);
+  }
+
+  @override
+  void setMessageHandler(String channel, MessageHandler? handler) {}
+
+  @override
+  Future<void> handlePlatformMessage(
+    String channel,
+    ByteData? data,
+    PlatformMessageResponseCallback? callback,
+  ) async {}
+}
 
 class _FakeImagePickerApi implements ImagePickerApi {
   // The value to return from calls.
