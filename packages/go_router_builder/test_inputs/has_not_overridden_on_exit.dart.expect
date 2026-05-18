@@ -1,5 +1,6 @@
 RouteBase get $hasNotOverriddenOnExitRoute => GoRouteData.$route(
       path: '/has-not-overridden-on-exit-route',
+      hasOverriddenOnExit: false,
       factory: $HasNotOverriddenOnExitRoute._fromState,
     );
 

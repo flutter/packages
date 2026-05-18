@@ -10,8 +10,11 @@ part of 'has_not_overridden_on_exit_example.dart';
 
 List<RouteBase> get $appRoutes => [$homeRoute, $sub1Route, $sub2Route];
 
-RouteBase get $homeRoute =>
-    GoRouteData.$route(path: '/', factory: $HomeRoute._fromState);
+RouteBase get $homeRoute => GoRouteData.$route(
+  path: '/',
+  hasOverriddenOnExit: false,
+  factory: $HomeRoute._fromState,
+);
 
 mixin $HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
@@ -33,8 +36,11 @@ mixin $HomeRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $sub1Route =>
-    GoRouteData.$route(path: '/sub-1-route', factory: $Sub1Route._fromState);
+RouteBase get $sub1Route => GoRouteData.$route(
+  path: '/sub-1-route',
+  hasOverriddenOnExit: false,
+  factory: $Sub1Route._fromState,
+);
 
 mixin $Sub1Route on GoRouteData {
   static Sub1Route _fromState(GoRouterState state) => const Sub1Route();
@@ -56,8 +62,11 @@ mixin $Sub1Route on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $sub2Route =>
-    GoRouteData.$route(path: '/sub-2-route', factory: $Sub2Route._fromState);
+RouteBase get $sub2Route => GoRouteData.$route(
+  path: '/sub-2-route',
+  hasOverriddenOnExit: false,
+  factory: $Sub2Route._fromState,
+);
 
 mixin $Sub2Route on GoRouteData {
   static Sub2Route _fromState(GoRouterState state) => const Sub2Route();
