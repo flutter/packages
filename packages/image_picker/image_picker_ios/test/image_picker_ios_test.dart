@@ -19,6 +19,10 @@ void main() {
     picker = ImagePickerIOS(api: api);
   });
 
+  test('can be instantiated', () {
+    expect(ImagePickerIOS(), isNotNull);
+  });
+
   test('registration', () async {
     ImagePickerIOS.registerWith();
     expect(ImagePickerPlatform.instance, isA<ImagePickerIOS>());
@@ -878,6 +882,39 @@ void main() {
     });
   });
 
+  group('#getMultiVideoWithOptions', () {
+    test('calls the method correctly', () async {
+      api.returnValue = <String>['/foo.mp4', 'bar.mp4'];
+      final List<XFile> result = await picker.getMultiVideoWithOptions();
+
+      expect(result.length, 2);
+      expect(result[0].path, '/foo.mp4');
+      expect(result[1].path, 'bar.mp4');
+      expect(api.passedSelectionType, _SelectionType.multiVideo);
+      expect(api.passedMaxDurationSeconds, null);
+      expect(api.passedLimit, null);
+    });
+
+    test('handles an empty response', () async {
+      api.returnValue = <String>[];
+      final List<XFile> result = await picker.getMultiVideoWithOptions();
+      expect(result, isEmpty);
+    });
+
+    test('passes the arguments correctly', () async {
+      api.returnValue = <String>[];
+      await picker.getMultiVideoWithOptions(
+        options: const MultiVideoPickerOptions(
+          maxDuration: Duration(seconds: 10),
+          limit: 5,
+        ),
+      );
+
+      expect(api.passedMaxDurationSeconds, 10);
+      expect(api.passedLimit, 5);
+    });
+  });
+
   test('converts SourceType correctly', () async {
     // This is implicitly tested in other tests, but let's be explicit
     await picker.pickImage(source: ImageSource.camera);
@@ -893,6 +930,105 @@ void main() {
 
     await picker.pickImage(source: ImageSource.camera);
     expect(api.passedSource?.camera, SourceCamera.rear);
+  });
+
+  group('Pigeon models', () {
+    test('MaxSize equality and hashCode', () {
+      final MaxSize a = MaxSize(width: 10, height: 20);
+      final MaxSize b = MaxSize(width: 10, height: 20);
+      final MaxSize c = MaxSize(width: 11, height: 20);
+      final MaxSize nanSize = MaxSize(width: double.nan, height: 20);
+      final MaxSize nanSize2 = MaxSize(width: double.nan, height: 20);
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+      expect(a, isNot(nanSize));
+      expect(nanSize, nanSize2);
+      expect(nanSize.hashCode, nanSize2.hashCode);
+    });
+
+    test('MaxSize encode and decode', () {
+      final MaxSize a = MaxSize(width: 10, height: 20);
+      final Object encoded = a.encode();
+      final MaxSize decoded = MaxSize.decode(encoded);
+
+      expect(a, decoded);
+    });
+
+    test('MediaSelectionOptions equality and hashCode', () {
+      final MaxSize size1 = MaxSize(width: 10, height: 20);
+      final MaxSize size2 = MaxSize(width: 10, height: 20);
+      final MediaSelectionOptions a = MediaSelectionOptions(
+        maxSize: size1,
+        imageQuality: 70,
+        requestFullMetadata: true,
+        allowMultiple: true,
+        limit: 5,
+      );
+      final MediaSelectionOptions b = MediaSelectionOptions(
+        maxSize: size2,
+        imageQuality: 70,
+        requestFullMetadata: true,
+        allowMultiple: true,
+        limit: 5,
+      );
+      final MediaSelectionOptions c = MediaSelectionOptions(
+        maxSize: size1,
+        imageQuality: 71,
+        requestFullMetadata: true,
+        allowMultiple: true,
+        limit: 5,
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+    });
+
+    test('MediaSelectionOptions encode and decode', () {
+      final MediaSelectionOptions a = MediaSelectionOptions(
+        maxSize: MaxSize(width: 10, height: 20),
+        imageQuality: 70,
+        requestFullMetadata: true,
+        allowMultiple: true,
+        limit: 5,
+      );
+      final Object encoded = a.encode();
+      final MediaSelectionOptions decoded = MediaSelectionOptions.decode(encoded);
+
+      expect(a, decoded);
+    });
+
+    test('SourceSpecification equality and hashCode', () {
+      final SourceSpecification a = SourceSpecification(
+        type: SourceType.camera,
+        camera: SourceCamera.front,
+      );
+      final SourceSpecification b = SourceSpecification(
+        type: SourceType.camera,
+        camera: SourceCamera.front,
+      );
+      final SourceSpecification c = SourceSpecification(
+        type: SourceType.gallery,
+        camera: SourceCamera.front,
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+    });
+
+    test('SourceSpecification encode and decode', () {
+      final SourceSpecification a = SourceSpecification(
+        type: SourceType.camera,
+        camera: SourceCamera.front,
+      );
+      final Object encoded = a.encode();
+      final SourceSpecification decoded = SourceSpecification.decode(encoded);
+
+      expect(a, decoded);
+    });
   });
 }
 
