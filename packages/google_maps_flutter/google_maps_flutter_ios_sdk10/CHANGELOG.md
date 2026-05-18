@@ -1,3 +1,7 @@
+## 2.18.2
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.18.1
 
 * Removes the requirement to use static builds with Swift Package Manager.

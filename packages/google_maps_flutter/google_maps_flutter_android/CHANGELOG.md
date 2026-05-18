@@ -1,3 +1,7 @@
+## 2.19.9
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.19.8
 
 * Updates internal implementation to use Kotlin Pigeon.
