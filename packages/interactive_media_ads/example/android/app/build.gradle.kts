@@ -32,17 +32,11 @@ android {
     // #enddocregion android_desugaring
 
     if (!isBuiltInKotlinEnabled) {
-
         withGroovyBuilder {
-
             "kotlinOptions" {
-
                 setProperty("jvmTarget", JavaVersion.VERSION_17.toString())
-
             }
-
         }
-
     }
 
     defaultConfig {
