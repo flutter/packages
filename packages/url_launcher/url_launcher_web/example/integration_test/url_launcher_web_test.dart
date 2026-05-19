@@ -65,18 +65,18 @@ void main() {
         expect(plugin.canLaunch('https://google.com'), completion(isTrue));
       });
 
-      testWidgets('"mailto" URLs -> true', (WidgetTester _) async {
+      testWidgets('"mailto" URLs -> false', (WidgetTester _) async {
         expect(
           plugin.canLaunch('mailto:name@mydomain.com'),
           completion(isFalse),
         );
       });
 
-      testWidgets('"tel" URLs -> true', (WidgetTester _) async {
+      testWidgets('"tel" URLs -> false', (WidgetTester _) async {
         expect(plugin.canLaunch('tel:5551234567'), completion(isFalse));
       });
 
-      testWidgets('"sms" URLs -> true', (WidgetTester _) async {
+      testWidgets('"sms" URLs -> false', (WidgetTester _) async {
         expect(
           plugin.canLaunch('sms:+19725551212?body=hello%20there'),
           completion(isFalse),
