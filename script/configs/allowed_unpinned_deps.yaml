@@ -33,6 +33,7 @@
 - devtools_extensions
 - fake_async
 - ffi
+- ffigen
 - file
 - file_testing
 - gcloud
@@ -42,6 +43,9 @@
 - intl
 - io
 - js
+- jni
+- jni_flutter
+- jnigen
 - json_serializable
 - leak_tracker
 - leak_tracker_flutter_testing
@@ -51,6 +55,7 @@
 - meta
 - mime
 - mockito
+- objective_c
 - path
 - package_config
 - platform
@@ -72,6 +77,7 @@
 - googleapis
 - googleapis_auth
 - json_annotation
+- protobuf
 - quiver
 - sanitize_html
 - source_helper

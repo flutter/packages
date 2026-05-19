@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,8 +35,19 @@
 /// controller would normally be created. Each call to
 /// createImagePickerController will remove the current first element from
 /// the array.
-@property(strong, nonatomic)
+@property(nonatomic, nullable)
     NSMutableArray<UIImagePickerController *> *imagePickerControllerOverrides;
+
+/// The view provider to use for displaying native view controllers.
+@property(nonatomic, nonnull) NSObject<FIPViewProvider> *viewProvider;
+/// A temporary UIWindow placed above Flutter's window to swallow all user
+/// interactions while UIImagePickerController is dismissing. This prevents
+/// stray taps from leaking to the Flutter view during the dismissal animation.
+@property(strong, nonatomic) UIWindow *interactionBlockerWindow;
+
+/// The previously active key window before the interactionBlockerWindow is
+/// shown. Stored so we can restore the original key window after dismissal.
+@property(weak, nonatomic) UIWindow *previousKeyWindow;
 
 @end
 
@@ -45,8 +56,17 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 @implementation FLTImagePickerPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLTImagePickerPlugin *instance = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *instance = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[FIPDefaultViewProvider alloc] initWithRegistrar:registrar]];
   SetUpFLTImagePickerApi(registrar.messenger, instance);
+}
+
+- (instancetype)initWithViewProvider:(NSObject<FIPViewProvider> *)viewProvider {
+  self = [super init];
+  if (self) {
+    _viewProvider = viewProvider;
+  }
+  return self;
 }
 
 - (UIImagePickerController *)createImagePickerController {
@@ -62,24 +82,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)setImagePickerControllerOverrides:
     (NSArray<UIImagePickerController *> *)imagePickerControllers {
   _imagePickerControllerOverrides = [imagePickerControllers mutableCopy];
-}
-
-- (UIViewController *)viewControllerWithWindow:(UIWindow *)window {
-  UIWindow *windowToUse = window;
-  if (windowToUse == nil) {
-    for (UIWindow *window in [UIApplication sharedApplication].windows) {
-      if (window.isKeyWindow) {
-        windowToUse = window;
-        break;
-      }
-    }
-  }
-
-  UIViewController *topController = windowToUse.rootViewController;
-  while (topController.presentedViewController) {
-    topController = topController.presentedViewController;
-  }
-  return topController;
 }
 
 /// Returns the UIImagePickerControllerCameraDevice to use given [source].
@@ -98,14 +100,16 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     API_AVAILABLE(ios(14)) {
   PHPickerConfiguration *config =
       [[PHPickerConfiguration alloc] initWithPhotoLibrary:PHPhotoLibrary.sharedPhotoLibrary];
-  config.selectionLimit = context.maxImageCount;
-  if (context.includeVideo) {
-    config.filter = [PHPickerFilter anyFilterMatchingSubfilters:@[
-      [PHPickerFilter imagesFilter], [PHPickerFilter videosFilter]
-    ]];
-  } else {
-    config.filter = [PHPickerFilter imagesFilter];
+  config.selectionLimit = context.maxItemCount;
+  config.preferredAssetRepresentationMode = PHPickerConfigurationAssetRepresentationModeCurrent;
+  NSMutableArray<PHPickerFilter *> *filters = [[NSMutableArray alloc] init];
+  if (context.includeImages) {
+    [filters addObject:[PHPickerFilter imagesFilter]];
   }
+  if (context.includeVideo) {
+    [filters addObject:[PHPickerFilter videosFilter]];
+  }
+  config.filter = [PHPickerFilter anyFilterMatchingSubfilters:filters];
 
   PHPickerViewController *pickerViewController =
       [[PHPickerViewController alloc] initWithConfiguration:config];
@@ -121,12 +125,19 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   UIImagePickerController *imagePickerController = [self createImagePickerController];
   imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
   imagePickerController.delegate = self;
-  if (context.includeVideo) {
-    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage, (NSString *)kUTTypeMovie ];
-
-  } else {
-    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
+  NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
+  if (context.includeImages) {
+    [mediaTypes addObject:(NSString *)kUTTypeImage];
   }
+  if (context.includeVideo) {
+    [mediaTypes addObject:(NSString *)kUTTypeMovie];
+    imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+  }
+  imagePickerController.mediaTypes = mediaTypes;
+  if (context.maxDuration != 0.0) {
+    imagePickerController.videoMaximumDuration = context.maxDuration;
+  }
+
   self.callContext = context;
 
   switch (source.type) {
@@ -167,9 +178,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
         }
         completion(paths.firstObject, error);
       }];
+  context.includeImages = YES;
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
-  context.maxImageCount = 1;
+  context.maxItemCount = 1;
   context.requestFullMetadata = fullMetadata;
 
   if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
@@ -192,10 +204,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   [self cancelInProgressCall];
   FLTImagePickerMethodCallContext *context =
       [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.includeImages = YES;
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
   context.requestFullMetadata = fullMetadata;
-  context.maxImageCount = limit.intValue;
+  context.maxItemCount = limit.intValue;
 
   if (@available(iOS 14, *)) {
     [self launchPHPickerWithContext:context];
@@ -216,12 +229,13 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.maxSize = [mediaSelectionOptions maxSize];
   context.imageQuality = [mediaSelectionOptions imageQuality];
   context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
+  context.includeImages = YES;
   context.includeVideo = YES;
   NSNumber *limit = [mediaSelectionOptions limit];
   if (!mediaSelectionOptions.allowMultiple) {
-    context.maxImageCount = 1;
+    context.maxItemCount = 1;
   } else if (limit != nil) {
-    context.maxImageCount = limit.intValue;
+    context.maxItemCount = limit.intValue;
   }
 
   if (@available(iOS 14, *)) {
@@ -248,37 +262,39 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
         }
         completion(paths.firstObject, error);
       }];
-  context.maxImageCount = 1;
+  context.includeVideo = YES;
+  context.maxItemCount = 1;
+  context.maxDuration = maxDurationSeconds.doubleValue;
 
-  UIImagePickerController *imagePickerController = [self createImagePickerController];
-  imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
-  imagePickerController.delegate = self;
-  imagePickerController.mediaTypes = @[
-    (NSString *)kUTTypeMovie, (NSString *)kUTTypeAVIMovie, (NSString *)kUTTypeVideo,
-    (NSString *)kUTTypeMPEG4
-  ];
-  imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
-
-  if (maxDurationSeconds) {
-    NSTimeInterval max = [maxDurationSeconds doubleValue];
-    imagePickerController.videoMaximumDuration = max;
+  if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
+    if (@available(iOS 14, *)) {
+      [self launchPHPickerWithContext:context];
+    } else {
+      [self launchUIImagePickerWithSource:source context:context];
+    }
+  } else {
+    [self launchUIImagePickerWithSource:source context:context];
   }
+}
 
-  self.callContext = context;
+- (void)pickMultiVideoWithMaxDuration:(nullable NSNumber *)maxDurationSeconds
+                                limit:(nullable NSNumber *)limit
+                           completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self cancelInProgressCall];
+  FLTImagePickerMethodCallContext *context =
+      [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.includeVideo = YES;
+  context.maxItemCount = limit.intValue;
+  context.maxDuration = maxDurationSeconds.doubleValue;
 
-  switch (source.type) {
-    case FLTSourceTypeCamera:
-      [self checkCameraAuthorizationWithImagePicker:imagePickerController
-                                             camera:[self cameraDeviceForSource:source]];
-      break;
-    case FLTSourceTypeGallery:
-      [self checkPhotoAuthorizationWithImagePicker:imagePickerController];
-      break;
-    default:
-      [self sendCallResultWithError:[FlutterError errorWithCode:@"invalid_source"
-                                                        message:@"Invalid video source."
-                                                        details:nil]];
-      break;
+  if (@available(iOS 14, *)) {
+    [self launchPHPickerWithContext:context];
+  } else {
+    // Camera is ignored for gallery mode, so the value here is arbitrary.
+    [self launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
   }
 }
 
@@ -309,9 +325,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [UIImagePickerController isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
-    [[self viewControllerWithWindow:nil] presentViewController:imagePickerController
-                                                      animated:YES
-                                                    completion:nil];
+    UIViewController *presentingController =
+        [self presentingViewControllerForImagePickerInNewWindow];
+    [presentingController presentViewController:imagePickerController animated:YES completion:nil];
   } else {
     UIAlertController *cameraErrorAlert = [UIAlertController
         alertControllerWithTitle:NSLocalizedString(@"Error", @"Alert title when camera unavailable")
@@ -324,9 +340,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                            style:UIAlertActionStyleDefault
                                          handler:^(UIAlertAction *action){
                                          }]];
-    [[self viewControllerWithWindow:nil] presentViewController:cameraErrorAlert
-                                                      animated:YES
-                                                    completion:nil];
+    [self.viewProvider.viewController presentViewController:cameraErrorAlert
+                                                   animated:YES
+                                                 completion:nil];
     [self sendCallResultWithSavedPathList:nil];
   }
 }
@@ -424,16 +440,16 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)showPhotoLibraryWithPHPicker:(PHPickerViewController *)pickerViewController
     API_AVAILABLE(ios(14)) {
-  [[self viewControllerWithWindow:nil] presentViewController:pickerViewController
-                                                    animated:YES
-                                                  completion:nil];
+  [self.viewProvider.viewController presentViewController:pickerViewController
+                                                 animated:YES
+                                               completion:nil];
 }
 
 - (void)showPhotoLibraryWithImagePicker:(UIImagePickerController *)imagePickerController {
   imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-  [[self viewControllerWithWindow:nil] presentViewController:imagePickerController
-                                                    animated:YES
-                                                  completion:nil];
+  [self.viewProvider.viewController presentViewController:imagePickerController
+                                                 animated:YES
+                                               completion:nil];
 }
 
 - (NSNumber *)getDesiredImageQuality:(NSNumber *)imageQuality {
@@ -518,7 +534,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   NSURL *videoURL = info[UIImagePickerControllerMediaURL];
-  [picker dismissViewControllerAnimated:YES completion:nil];
+  __weak typeof(self) weakSelf = self;
+  [picker dismissViewControllerAnimated:YES
+                             completion:^{
+                               [weakSelf removeInteractionBlocker];
+                             }];
   // The method dismissViewControllerAnimated does not immediately prevent
   // further didFinishPickingMediaWithInfo invocations. A nil check is necessary
   // to prevent below code to be unwantly executed multiple times and cause a
@@ -604,7 +624,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-  [picker dismissViewControllerAnimated:YES completion:nil];
+  __weak typeof(self) weakSelf = self;
+  [picker dismissViewControllerAnimated:YES
+                             completion:^{
+                               [weakSelf removeInteractionBlocker];
+                             }];
   [self sendCallResultWithSavedPathList:nil];
 }
 
@@ -658,6 +682,68 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.callContext.result(nil, error);
   self.callContext = nil;
+}
+
+/// Why a separate UIWindow for the interaction blocker?
+/// Flutter renders inside a UIWindow owned by FlutterViewController. UIImagePickerController is
+/// presented in that same window and dismisses with an animation; during that brief transition,
+/// taps can “leak” to the Flutter view underneath.
+///
+/// A view-based blocker (added to the host view hierarchy) isn’t reliable because the host view’s
+/// bounds/constraints/rotation/transitions can change during presentation/dismissal, causing the
+/// blocker to move or be removed.
+///
+/// Instead we create a dedicated UIWindow (windowLevel + 1) with its own root VC to swallow all
+/// touches during the dismissal window, then restore the previous key window afterward.
+/// The image picker is presented on this blocker window so it appears above everything.
+///
+/// @return The view controller that should be used to present the image picker.
+- (UIViewController *)presentingViewControllerForImagePickerInNewWindow {
+  if (self.interactionBlockerWindow != nil) {
+    return self.interactionBlockerWindow.rootViewController;
+  }
+  UIViewController *topController = self.viewProvider.viewController;
+  UIWindow *presentingWindow = topController.view.window;
+  if (!presentingWindow) {
+    return topController;
+  }
+  self.previousKeyWindow = presentingWindow;
+  UIWindow *blockerWindow;
+  if (@available(iOS 13.0, *)) {
+    if (presentingWindow.windowScene) {
+      blockerWindow = [[UIWindow alloc] initWithWindowScene:presentingWindow.windowScene];
+    } else {
+      blockerWindow = [[UIWindow alloc] initWithFrame:presentingWindow.bounds];
+    }
+  } else {
+    blockerWindow = [[UIWindow alloc] initWithFrame:presentingWindow.bounds];
+  }
+  blockerWindow.frame = presentingWindow.bounds;
+  blockerWindow.autoresizingMask =
+      UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  blockerWindow.windowLevel = presentingWindow.windowLevel + 1;
+  UIViewController *vc = [[UIViewController alloc] init];
+  vc.view.backgroundColor = [UIColor clearColor];
+  vc.view.userInteractionEnabled = YES;
+  blockerWindow.rootViewController = vc;
+  [blockerWindow makeKeyAndVisible];
+  self.interactionBlockerWindow = blockerWindow;
+  return vc;
+}
+
+/// Removes the temporary interaction-blocking window and restores the previous
+/// key window. This is called after UIImagePickerController has fully dismissed,
+/// once it is safe for Flutter to receive user input again.
+- (void)removeInteractionBlocker {
+  if (!self.interactionBlockerWindow) {
+    return;
+  }
+  self.interactionBlockerWindow.hidden = YES;
+  if (self.previousKeyWindow) {
+    [self.previousKeyWindow makeKeyWindow];
+  }
+  self.interactionBlockerWindow = nil;
+  self.previousKeyWindow = nil;
 }
 
 @end

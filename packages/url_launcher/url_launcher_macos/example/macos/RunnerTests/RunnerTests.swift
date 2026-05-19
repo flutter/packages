@@ -1,9 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import FlutterMacOS
-import XCTest
+import Testing
 
 @testable import url_launcher_macos
 
@@ -14,7 +14,7 @@ private func urlParsingIsStrict() -> Bool {
 }
 
 /// A stub to simulate the system Url handler.
-class StubWorkspace: SystemURLHandler {
+private class StubWorkspace: SystemURLHandler {
 
   var isSuccessful = true
 
@@ -23,66 +23,63 @@ class StubWorkspace: SystemURLHandler {
   }
 
   func urlForApplication(toOpen: URL) -> URL? {
-    return toOpen
+    return isSuccessful ? toOpen : nil
   }
 }
 
-class RunnerTests: XCTestCase {
+struct RunnerTests {
 
-  func testCanLaunchSuccessReturnsTrue() throws {
-    let plugin = UrlLauncherPlugin()
-
-    let result = try plugin.canLaunch(url: "https://flutter.dev")
-    XCTAssertNil(result.error)
-    XCTAssertTrue(result.value)
-  }
-
-  func testCanLaunchNoAppIsAbleToOpenUrlReturnsFalse() throws {
-    let plugin = UrlLauncherPlugin()
-
-    let result = try plugin.canLaunch(url: "example://flutter.dev")
-    XCTAssertNil(result.error)
-    XCTAssertFalse(result.value)
-  }
-
-  func testCanLaunchInvalidUrlReturnsError() throws {
-    let plugin = UrlLauncherPlugin()
-
-    let result = try plugin.canLaunch(url: "invalid url")
-    if urlParsingIsStrict() {
-      XCTAssertEqual(result.error, .invalidUrl)
-    } else {
-      XCTAssertFalse(result.value)
-    }
-  }
-
-  func testLaunchSuccessReturnsTrue() throws {
+  @Test(arguments: [
+    (url: "https://flutter.dev", isSuccessful: true),
+    (url: "example://flutter.dev", isSuccessful: false),
+  ])
+  func canLaunch(url: String, isSuccessful: Bool) throws {
     let workspace = StubWorkspace()
+    workspace.isSuccessful = isSuccessful
     let plugin = UrlLauncherPlugin(workspace)
 
-    let result = try plugin.launch(url: "https://flutter.dev")
-    XCTAssertNil(result.error)
-    XCTAssertTrue(result.value)
+    let result = try plugin.canLaunch(url: url)
+    #expect(result.error == nil)
+    #expect(result.value == isSuccessful)
   }
 
-  func testLaunchNoAppIsAbleToOpenUrlReturnsFalse() throws {
+  @Test func canLaunchInvalidUrlReturnsError() throws {
     let workspace = StubWorkspace()
     workspace.isSuccessful = false
     let plugin = UrlLauncherPlugin(workspace)
 
-    let result = try plugin.launch(url: "schemethatdoesnotexist://flutter.dev")
-    XCTAssertNil(result.error)
-    XCTAssertFalse(result.value)
+    let result = try plugin.canLaunch(url: "invalid url")
+    if urlParsingIsStrict() {
+      #expect(result.error == .invalidUrl)
+    } else {
+      #expect(!result.value)
+    }
   }
 
-  func testLaunchInvalidUrlReturnsError() throws {
-    let plugin = UrlLauncherPlugin()
+  @Test(arguments: [
+    (url: "https://flutter.dev", isSuccessful: true),
+    (url: "schemethatdoesnotexist://flutter.dev", isSuccessful: false),
+  ])
+  func launch(url: String, isSuccessful: Bool) throws {
+    let workspace = StubWorkspace()
+    workspace.isSuccessful = isSuccessful
+    let plugin = UrlLauncherPlugin(workspace)
+
+    let result = try plugin.launch(url: url)
+    #expect(result.error == nil)
+    #expect(result.value == isSuccessful)
+  }
+
+  @Test func launchInvalidUrlReturnsError() throws {
+    let workspace = StubWorkspace()
+    workspace.isSuccessful = false
+    let plugin = UrlLauncherPlugin(workspace)
 
     let result = try plugin.launch(url: "invalid url")
     if urlParsingIsStrict() {
-      XCTAssertEqual(result.error, .invalidUrl)
+      #expect(result.error == .invalidUrl)
     } else {
-      XCTAssertFalse(result.value)
+      #expect(!result.value)
     }
   }
 }

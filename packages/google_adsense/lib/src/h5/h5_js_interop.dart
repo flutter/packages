@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -179,10 +179,7 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
   factory AdBreakPlacement.preroll({
     required H5AdBreakDoneCallback? adBreakDone,
   }) {
-    return AdBreakPlacement(
-      type: BreakType.preroll,
-      adBreakDone: adBreakDone,
-    );
+    return AdBreakPlacement(type: BreakType.preroll, adBreakDone: adBreakDone);
   }
 
   /// Convenience factory to create an interstitial ad configuration.
@@ -202,8 +199,10 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     H5AfterAdCallback? afterAd,
     H5AdBreakDoneCallback? adBreakDone,
   }) {
-    assert(interstitialBreakType.contains(type),
-        '$type is not a valid interstitial placement type.');
+    assert(
+      interstitialBreakType.contains(type),
+      '$type is not a valid interstitial placement type.',
+    );
     return AdBreakPlacement(
       type: type,
       name: name,
@@ -224,15 +223,16 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     JSFunction? adBreakDone,
   }) {
     return <String, Object>{
-      if (type != null) 'type': type,
-      if (name != null) 'name': name,
-      if (beforeAd != null) 'beforeAd': beforeAd,
-      if (afterAd != null) 'afterAd': afterAd,
-      if (beforeReward != null) 'beforeReward': beforeReward,
-      if (adDismissed != null) 'adDismissed': adDismissed,
-      if (adViewed != null) 'adViewed': adViewed,
-      if (adBreakDone != null) 'adBreakDone': adBreakDone,
-    }.jsify()! as AdBreakPlacement;
+          if (type != null) 'type': type,
+          if (name != null) 'name': name,
+          if (beforeAd != null) 'beforeAd': beforeAd,
+          if (afterAd != null) 'afterAd': afterAd,
+          if (beforeReward != null) 'beforeReward': beforeReward,
+          if (adDismissed != null) 'adDismissed': adDismissed,
+          if (adViewed != null) 'adViewed': adViewed,
+          if (adBreakDone != null) 'adBreakDone': adBreakDone,
+        }.jsify()!
+        as AdBreakPlacement;
   }
 }
 
@@ -267,10 +267,11 @@ extension type AdConfigParameters._(JSObject _) implements JSObject {
     JSFunction? onReady,
   }) {
     return <String, Object>{
-      if (sound != null) 'sound': sound,
-      if (preloadAdBreaks != null) 'preloadAdBreaks': preloadAdBreaks,
-      if (onReady != null) 'onReady': onReady,
-    }.jsify()! as AdConfigParameters;
+          if (sound != null) 'sound': sound,
+          if (preloadAdBreaks != null) 'preloadAdBreaks': preloadAdBreaks,
+          if (onReady != null) 'onReady': onReady,
+        }.jsify()!
+        as AdConfigParameters;
   }
 }
 
@@ -320,8 +321,8 @@ typedef H5BeforeAdCallback = void Function();
 typedef H5AfterAdCallback = void Function();
 
 /// The type of the `adBreakDone` callback.
-typedef H5AdBreakDoneCallback = void Function(
-    AdBreakDonePlacementInfo placementInfo);
+typedef H5AdBreakDoneCallback =
+    void Function(AdBreakDonePlacementInfo placementInfo);
 
 /// The type of the `beforeReward` callback.
 typedef H5BeforeRewardCallback = void Function(H5ShowAdFn showAdFn);

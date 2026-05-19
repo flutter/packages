@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,8 @@ export 'package:local_auth_windows/types/auth_messages_windows.dart';
 /// The implementation of [LocalAuthPlatform] for Windows.
 class LocalAuthWindows extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
-  LocalAuthWindows({
-    @visibleForTesting LocalAuthApi? api,
-  }) : _api = api ?? LocalAuthApi();
+  LocalAuthWindows({@visibleForTesting LocalAuthApi? api})
+    : _api = api ?? LocalAuthApi();
 
   final LocalAuthApi _api;
 
@@ -36,10 +35,34 @@ class LocalAuthWindows extends LocalAuthPlatform {
 
     if (options.biometricOnly) {
       throw UnsupportedError(
-          "Windows doesn't support the biometricOnly parameter.");
+        "Windows doesn't support the biometricOnly parameter.",
+      );
     }
 
-    return _api.authenticate(localizedReason);
+    return switch (await _api.authenticate(localizedReason)) {
+      AuthResult.success => true,
+      AuthResult.failure => false,
+      AuthResult.noHardware => throw const LocalAuthException(
+        code: LocalAuthExceptionCode.noBiometricHardware,
+      ),
+      AuthResult.notEnrolled => throw const LocalAuthException(
+        code: LocalAuthExceptionCode.noBiometricsEnrolled,
+      ),
+      AuthResult.deviceBusy => throw const LocalAuthException(
+        code: LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable,
+      ),
+      AuthResult.disabledByPolicy =>
+        // This error is niche enough that it doesn't warrant a specific
+        // mapping, so just use unknownError with a description.
+        throw const LocalAuthException(
+          code: LocalAuthExceptionCode.unknownError,
+          description: 'Group policy has disabled the authentication device.',
+        ),
+      AuthResult.unavailable => throw const LocalAuthException(
+        code: LocalAuthExceptionCode.unknownError,
+        description: 'Authentication failed with an unsupported result code.',
+      ),
+    };
   }
 
   @override

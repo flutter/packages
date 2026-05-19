@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,7 @@ import 'loader.dart';
 
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
-/// The deocded result of a vector graphics asset.
+/// The decoded result of a vector graphics asset.
 class PictureInfo {
   /// Construct a new [PictureInfo].
   PictureInfo._(this.picture, this.size);
@@ -68,19 +68,19 @@ Future<PictureInfo> decodeVectorGraphics(
     // real async work gets scheduled in the root zone so that it will not get
     // blocked by microtasks in the fake async zone, but do not unnecessarily
     // create zones outside of tests.
-    bool useZone = false;
+    var useZone = false;
     assert(() {
       _debugLastTextDirection = textDirection;
       _debugLastLocale = locale;
-      useZone = Zone.current != Zone.root &&
+      useZone =
+          Zone.current != Zone.root &&
           Zone.current.scheduleMicrotask != Zone.root.scheduleMicrotask;
       return true;
     }());
 
     @pragma('vm:prefer-inline')
     Future<PictureInfo> process() {
-      final FlutterVectorGraphicsListener listener =
-          FlutterVectorGraphicsListener(
+      final listener = FlutterVectorGraphicsListener(
         id: loader.hashCode,
         locale: locale,
         textDirection: textDirection,
@@ -115,16 +115,28 @@ Future<PictureInfo> decodeVectorGraphics(
           specification: ZoneSpecification(
             scheduleMicrotask:
                 (Zone self, ZoneDelegate parent, Zone zone, void Function() f) {
-              Zone.root.scheduleMicrotask(f);
-            },
-            createTimer: (Zone self, ZoneDelegate parent, Zone zone,
-                Duration duration, void Function() f) {
-              return Zone.root.createTimer(duration, f);
-            },
-            createPeriodicTimer: (Zone self, ZoneDelegate parent, Zone zone,
-                Duration period, void Function(Timer timer) f) {
-              return Zone.root.createPeriodicTimer(period, f);
-            },
+                  Zone.root.scheduleMicrotask(f);
+                },
+            createTimer:
+                (
+                  Zone self,
+                  ZoneDelegate parent,
+                  Zone zone,
+                  Duration duration,
+                  void Function() f,
+                ) {
+                  return Zone.root.createTimer(duration, f);
+                },
+            createPeriodicTimer:
+                (
+                  Zone self,
+                  ZoneDelegate parent,
+                  Zone zone,
+                  Duration period,
+                  void Function(Timer timer) f,
+                ) {
+                  return Zone.root.createPeriodicTimer(period, f);
+                },
           ),
         )
         .run<Future<PictureInfo>>(process);
@@ -262,17 +274,33 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   double _textPositionY = 0;
   Float64List? _textTransform;
 
+  // Pending text draws within the current SVG anchored chunk. Per the SVG
+  // spec, `text-anchor` applies to the chunk as a whole, so we cannot
+  // commit a paragraph to the canvas until we know the full chunk width.
+  final List<_PendingTextDraw> _pendingChunk = <_PendingTextDraw>[];
+  // The user-space x at which the current chunk begins (i.e. the value of
+  // `_accumulatedTextPositionX` at the time the first paragraph in the
+  // chunk was queued). Null when no chunk is open.
+  double? _chunkOriginX;
+  // The text-anchor multiplier of the first paragraph in the chunk; used
+  // to position the chunk as a whole.
+  double _chunkAnchorMultiplier = 0;
+  // Cumulative pen-advance within the current chunk so far.
+  double _chunkAdvance = 0;
+
   _PatternConfig? _currentPattern;
 
   static final Paint _emptyPaint = Paint();
   static final Paint _grayscaleDstInPaint = Paint()
     ..blendMode = BlendMode.dstIn
-    ..colorFilter = const ColorFilter.matrix(<double>[
-      0, 0, 0, 0, 0, //
-      0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0,
-      0.2126, 0.7152, 0.0722, 0, 0,
-    ]); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
+    ..colorFilter = const ColorFilter.matrix(
+      <double>[
+        0, 0, 0, 0, 0, //
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0.2126, 0.7152, 0.0722, 0, 0,
+      ],
+    ); //convert to grayscale (https://www.w3.org/Graphics/Color/sRGB) and use them as transparency
 
   /// Convert the vector graphics asset this listener decoded into a [Picture].
   ///
@@ -280,6 +308,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   PictureInfo toPicture() {
     assert(!_done);
     _done = true;
+    _flushPendingTextChunk();
     try {
       return PictureInfo._(_recorder.endRecording(), _size);
     } finally {
@@ -311,15 +340,16 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (paintId != null) {
         paint!.shader = _patterns[patternId]!.shader;
       } else {
-        final Paint newPaint = Paint();
+        final newPaint = Paint();
         newPaint.shader = _patterns[patternId]!.shader;
         paint = newPaint;
       }
     }
     if (_currentPattern != null) {
-      _patterns[_currentPattern!._patternId]!
-          .canvas!
-          .drawPath(path, paint ?? _emptyPaint);
+      _patterns[_currentPattern!._patternId]!.canvas!.drawPath(
+        path,
+        paint ?? _emptyPaint,
+      );
     } else {
       _canvas.drawPath(path, paint ?? _emptyPaint);
     }
@@ -327,7 +357,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawVertices(Float32List vertices, Uint16List? indices, int? paintId) {
-    final Vertices vertexData = Vertices.raw(
+    final vertexData = Vertices.raw(
       VertexMode.triangles,
       vertices,
       indices: indices,
@@ -336,11 +366,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     if (paintId != null) {
       paint = _paints[paintId];
     }
-    _canvas.drawVertices(
-      vertexData,
-      BlendMode.srcOver,
-      paint ?? _emptyPaint,
-    );
+    _canvas.drawVertices(vertexData, BlendMode.srcOver, paint ?? _emptyPaint);
     vertexData.dispose();
   }
 
@@ -357,7 +383,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     required int? shaderId,
   }) {
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
-    final Paint paint = Paint()..color = Color(color);
+    final paint = Paint()..color = Color(color);
     if (blendMode != 0) {
       paint.blendMode = BlendMode.values[blendMode];
     }
@@ -392,7 +418,13 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathCubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     _currentPath!.cubicTo(x1, y1, x2, y2, x3, y3);
   }
 
@@ -416,7 +448,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     assert(_currentPath == null);
     assert(_paths.length == id, 'Expected Id to be $id');
 
-    final Path path = Path();
+    final path = Path();
     path.fillType = PathFillType.values[fillType];
     _paths.add(path);
     _currentPath = path;
@@ -426,8 +458,11 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   void onRestoreLayer() {
     if (_currentPattern != null) {
       final int patternId = _currentPattern!._patternId;
-      onPatternFinished(_currentPattern, _patterns[patternId]!.recorder,
-          _patterns[patternId]!.canvas!);
+      onPatternFinished(
+        _currentPattern,
+        _patterns[patternId]!.recorder,
+        _patterns[patternId]!.canvas!,
+      );
     } else {
       _canvas.restore();
     }
@@ -450,8 +485,14 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onPatternStart(int patternId, double x, double y, double width,
-      double height, Float64List transform) {
+  void onPatternStart(
+    int patternId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List transform,
+  ) {
     assert(_currentPattern == null);
     _currentPattern = _PatternConfig(patternId, width, height, transform);
     final PictureRecorder recorder = _pictureFactory.createPictureRecorder();
@@ -463,13 +504,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   /// Creates ImageShader for active pattern.
-  // TODO(stuartmorgan): Fix this violation, which predates enabling the lint
-  //  to catch it.
-  // ignore: library_private_types_in_public_api
-  void onPatternFinished(_PatternConfig? currentPattern,
-      PictureRecorder? patternRecorder, Canvas canvas) {
-    final FlutterVectorGraphicsListener patternListener =
-        FlutterVectorGraphicsListener._(
+  void onPatternFinished(
+    // TODO(stuartmorgan): Fix this violation, which predates enabling the lint
+    //  to catch it.
+    // ignore: library_private_types_in_public_api
+    _PatternConfig? currentPattern,
+    PictureRecorder? patternRecorder,
+    Canvas canvas,
+  ) {
+    final patternListener = FlutterVectorGraphicsListener._(
       0,
       _pictureFactory,
       patternRecorder!,
@@ -479,15 +522,19 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       _clipViewbox,
     );
 
-    patternListener._size =
-        Size(currentPattern!._width, currentPattern._height);
+    patternListener._size = Size(
+      currentPattern!._width,
+      currentPattern._height,
+    );
 
     final PictureInfo pictureInfo = patternListener.toPicture();
     _currentPattern = null;
     final Image image = pictureInfo.picture.toImageSync(
-        currentPattern._width.round(), currentPattern._height.round());
+      currentPattern._width.round(),
+      currentPattern._height.round(),
+    );
 
-    final ImageShader pattern = ImageShader(
+    final pattern = ImageShader(
       image,
       TileMode.repeated,
       TileMode.repeated,
@@ -511,12 +558,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final Offset from = Offset(fromX, fromY);
-    final Offset to = Offset(toX, toY);
-    final List<Color> colorValues = <Color>[
-      for (int i = 0; i < colors.length; i++) Color(colors[i])
+    final from = Offset(fromX, fromY);
+    final to = Offset(toX, toY);
+    final colorValues = <Color>[
+      for (int i = 0; i < colors.length; i++) Color(colors[i]),
     ];
-    final Gradient gradient = Gradient.linear(
+    final gradient = Gradient.linear(
       from,
       to,
       colorValues,
@@ -541,13 +588,13 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final Offset center = Offset(centerX, centerY);
+    final center = Offset(centerX, centerY);
     final Offset? focal = focalX == null ? null : Offset(focalX, focalY!);
-    final List<Color> colorValues = <Color>[
-      for (int i = 0; i < colors.length; i++) Color(colors[i])
+    final colorValues = <Color>[
+      for (int i = 0; i < colors.length; i++) Color(colors[i]),
     ];
     final bool hasFocal = focal != center && focal != null;
-    final Gradient gradient = Gradient.radial(
+    final gradient = Gradient.radial(
       center,
       radius,
       colorValues,
@@ -579,7 +626,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     int decorationColor,
     int id,
   ) {
-    final List<TextDecoration> decorations = <TextDecoration>[];
+    final decorations = <TextDecoration>[];
     if (decoration & kUnderlineMask != 0) {
       decorations.add(TextDecoration.underline);
     }
@@ -590,16 +637,18 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       decorations.add(TextDecoration.lineThrough);
     }
 
-    _textConfig.add(_TextConfig(
-      text,
-      fontFamily,
-      xAnchorMultiplier,
-      FontWeight.values[fontWeight],
-      fontSize,
-      TextDecoration.combine(decorations),
-      TextDecorationStyle.values[decorationStyle],
-      Color(decorationColor),
-    ));
+    _textConfig.add(
+      _TextConfig(
+        text,
+        fontFamily,
+        xAnchorMultiplier,
+        FontWeight.values[fontWeight],
+        fontSize,
+        TextDecoration.combine(decorations),
+        TextDecorationStyle.values[decorationStyle],
+        Color(decorationColor),
+      ),
+    );
   }
 
   @override
@@ -618,6 +667,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onUpdateTextPosition(int textPositionId) {
     final _TextPosition position = _textPositions[textPositionId];
+    // Per the SVG spec, a new anchored chunk begins only when the element
+    // establishes an explicit absolute position (i.e. an `x` or `y` on a
+    // <text> or <tspan>). Relative `dx`/`dy` move the pen but do NOT
+    // start a new chunk; neither does the bare per-tspan TextPosition the
+    // parser emits when the tspan has no x/y of its own. `reset` (set on
+    // <text> elements) likewise starts a fresh chunk.
+    if (position.reset || position.x != null || position.y != null) {
+      _flushPendingTextChunk();
+    }
     if (position.reset) {
       _accumulatedTextPositionX = 0;
       _textPositionY = 0;
@@ -651,59 +709,95 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final _TextConfig textConfig = _textConfig[textId];
     final double dx = _accumulatedTextPositionX ?? 0;
     final double dy = _textPositionY;
-    double paragraphWidth = 0;
 
-    void draw(int paintId) {
+    // A change in text-anchor on a continuing chunk also starts a new
+    // anchored chunk per the SVG spec.
+    if (_pendingChunk.isNotEmpty &&
+        textConfig.xAnchorMultiplier != _chunkAnchorMultiplier) {
+      _flushPendingTextChunk();
+    }
+
+    if (_pendingChunk.isEmpty) {
+      _chunkOriginX = dx;
+      _chunkAnchorMultiplier = textConfig.xAnchorMultiplier;
+      _chunkAdvance = 0;
+    } else {
+      // Continuing the chunk: take the live pen position so any in-chunk
+      // relative `dx="..."` movements applied via onUpdateTextPosition
+      // since the last segment are accounted for in the segment's offset
+      // within the chunk.
+      _chunkAdvance = dx - _chunkOriginX!;
+    }
+    Paragraph buildParagraph(int paintId) {
       final Paint paint = _paints[paintId];
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
       }
-      final ParagraphBuilder builder = ParagraphBuilder(ParagraphStyle(
-        textDirection: _textDirection,
-      ));
-      builder.pushStyle(TextStyle(
-        locale: _locale,
-        foreground: paint,
-        fontWeight: textConfig.fontWeight,
-        fontSize: textConfig.fontSize,
-        fontFamily: textConfig.fontFamily,
-        decoration: textConfig.decoration,
-        decorationStyle: textConfig.decorationStyle,
-        decorationColor: textConfig.decorationColor,
-      ));
-
+      final builder = ParagraphBuilder(
+        ParagraphStyle(textDirection: _textDirection),
+      );
+      builder.pushStyle(
+        TextStyle(
+          locale: _locale,
+          foreground: paint,
+          fontWeight: textConfig.fontWeight,
+          fontSize: textConfig.fontSize,
+          fontFamily: textConfig.fontFamily,
+          decoration: textConfig.decoration,
+          decorationStyle: textConfig.decorationStyle,
+          decorationColor: textConfig.decorationColor,
+        ),
+      );
       builder.addText(textConfig.text);
-
       final Paragraph paragraph = builder.build();
-      paragraph.layout(const ParagraphConstraints(
-        width: double.infinity,
-      ));
-      paragraphWidth = paragraph.maxIntrinsicWidth;
+      paragraph.layout(const ParagraphConstraints(width: double.infinity));
+      return paragraph;
+    }
 
-      if (_textTransform != null) {
+    double paragraphWidth = 0;
+    if (fillId != null) {
+      final Paragraph p = buildParagraph(fillId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
+    }
+    if (strokeId != null) {
+      final Paragraph p = buildParagraph(strokeId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
+    }
+
+    _chunkAdvance += paragraphWidth;
+    _accumulatedTextPositionX = dx + paragraphWidth;
+  }
+
+  void _flushPendingTextChunk() {
+    if (_pendingChunk.isEmpty) {
+      return;
+    }
+    final double originX = _chunkOriginX ?? 0;
+    final double anchorOffset = _chunkAdvance * _chunkAnchorMultiplier;
+    for (final _PendingTextDraw draw in _pendingChunk) {
+      final Paragraph paragraph = draw.paragraph;
+      if (draw.transform != null) {
         _canvas.save();
-        _canvas.transform(_textTransform!);
+        _canvas.transform(draw.transform!);
       }
       _canvas.drawParagraph(
         paragraph,
         Offset(
-          dx - paragraph.maxIntrinsicWidth * textConfig.xAnchorMultiplier,
-          dy - paragraph.alphabeticBaseline,
+          originX + draw.offsetWithinChunk - anchorOffset,
+          draw.dy - paragraph.alphabeticBaseline,
         ),
       );
       paragraph.dispose();
-      if (_textTransform != null) {
+      if (draw.transform != null) {
         _canvas.restore();
       }
     }
-
-    if (fillId != null) {
-      draw(fillId);
-    }
-    if (strokeId != null) {
-      draw(strokeId);
-    }
-    _accumulatedTextPositionX = dx + paragraphWidth;
+    _pendingChunk.clear();
+    _chunkOriginX = null;
+    _chunkAnchorMultiplier = 0;
+    _chunkAdvance = 0;
   }
 
   int _createImageKey(int imageId, int format) {
@@ -717,26 +811,32 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     Uint8List data, {
     VectorGraphicsErrorListener? onError,
   }) {
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
     _pendingImages.add(completer.future);
-    final ImageStreamCompleter? cacheCompleter =
-        imageCache.putIfAbsent(_createImageKey(imageId, format), () {
-      return OneFrameImageStreamCompleter(ImmutableBuffer.fromUint8List(data)
-          .then((ImmutableBuffer buffer) async {
-        try {
-          final ImageDescriptor descriptor =
-              await ImageDescriptor.encoded(buffer);
-          final Codec codec = await descriptor.instantiateCodec();
-          final FrameInfo info = await codec.getNextFrame();
-          final Image image = info.image;
-          descriptor.dispose();
-          codec.dispose();
-          return ImageInfo(image: image);
-        } finally {
-          buffer.dispose();
-        }
-      }));
-    });
+    final ImageStreamCompleter? cacheCompleter = imageCache.putIfAbsent(
+      _createImageKey(imageId, format),
+      () {
+        return OneFrameImageStreamCompleter(
+          ImmutableBuffer.fromUint8List(data).then((
+            ImmutableBuffer buffer,
+          ) async {
+            try {
+              final ImageDescriptor descriptor = await ImageDescriptor.encoded(
+                buffer,
+              );
+              final Codec codec = await descriptor.instantiateCodec();
+              final FrameInfo info = await codec.getNextFrame();
+              final Image image = info.image;
+              descriptor.dispose();
+              codec.dispose();
+              return ImageInfo(image: image);
+            } finally {
+              buffer.dispose();
+            }
+          }),
+        );
+      },
+    );
     // an error occurred.
     if (cacheCompleter == null) {
       completer.completeError('Failed to load image');
@@ -757,13 +857,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
         if (onError != null) {
           onError(exception, stackTrace);
         } else {
-          FlutterError.reportError(FlutterErrorDetails(
-            context: ErrorDescription('Failed to load image'),
-            library: 'image resource service',
-            exception: exception,
-            stack: stackTrace,
-            silent: true,
-          ));
+          FlutterError.reportError(
+            FlutterErrorDetails(
+              context: ErrorDescription('Failed to load image'),
+              library: 'image resource service',
+              exception: exception,
+              stack: stackTrace,
+              silent: true,
+            ),
+          );
         }
       },
     );
@@ -771,9 +873,22 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   }
 
   @override
-  void onDrawImage(int imageId, double x, double y, double width, double height,
-      Float64List? transform) {
-    final Image image = _images[imageId]!;
+  void onDrawImage(
+    int imageId,
+    double x,
+    double y,
+    double width,
+    double height,
+    Float64List? transform,
+  ) {
+    final Image? image = _images[imageId];
+    assert(
+      image != null,
+      'Invalid imageId: $imageId. Image not found in _images.',
+    );
+    if (image == null) {
+      return;
+    }
     if (transform != null) {
       _canvas.save();
       _canvas.transform(transform);
@@ -828,6 +943,20 @@ class _TextConfig {
   final TextDecoration decoration;
   final TextDecorationStyle decorationStyle;
   final Color decorationColor;
+}
+
+class _PendingTextDraw {
+  _PendingTextDraw(
+    this.paragraph,
+    this.offsetWithinChunk,
+    this.dy,
+    this.transform,
+  );
+
+  final Paragraph paragraph;
+  final double offsetWithinChunk;
+  final double dy;
+  final Float64List? transform;
 }
 
 /// An exception thrown if decoding fails.

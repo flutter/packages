@@ -1,5 +1,80 @@
-## NEXT
+## 3.25.1
 
+* Relands update to prevent message calls when application will terminate.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 3.25.0
+
+* Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
+
+## 3.24.5
+
+* Reverts `3.24.4` to prevent missing `FlutterSceneLifeCycleDelegate` build error.
+
+## 3.24.4
+
+* Updates plugin to prevent message calls when application will terminate.
+
+## 3.24.3
+
+* Adds support to get failing url from DNS errors on iOS 26+.
+
+## 3.24.2
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 3.24.1
+
+* Updates platform views on iOS to only have a weak reference to the native view. This is a
+  potential workaround to prevent a crash during the Flutter engine shutdown. See https://github.com/flutter/flutter/issues/168535
+
+## 3.24.0
+
+* Adds support for `WebKitWebViewControllerCreationParams.javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
+  `window.open()` to work without user interaction on iOS and macOS.
+
+## 3.23.8
+
+* Fixes lossy transition from Dart Color to native UIColor when calling `setBackgroundColor`.
+
+## 3.23.7
+
+* Fixes crash when calling setOnConsoleMessage multiple times.
+
+## 3.23.6
+
+* Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.
+
+## 3.23.5
+
+* Removes internal native library Dart proxy.
+
+## 3.23.4
+
+* Replaces use of deprecated Color.value.
+
+## 3.23.3
+
+* Updates to Pigeon 26.
+
+## 3.23.2
+
+* Removes specialization of 'map' to fix a Swift warning.
+
+## 3.23.1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 3.23.0
+
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `WebKitLoadFileParams`, a platform-specific extension of `LoadFileParams` for iOS and macOS that adds support for `readAccessPath`.
+
+## 3.22.1
+
+* Changes the handling of a Flutter method failure from throwing an assertion error to logging the
+  error.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 3.22.0

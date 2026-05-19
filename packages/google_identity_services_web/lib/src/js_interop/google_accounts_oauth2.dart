@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,8 +45,9 @@ extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAllScopes(TokenResponse tokenResponse, List<String> scopes) {
-    return scopes
-        .every((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
+    return scopes.every(
+      (String scope) => _hasGrantedScope(tokenResponse, scope.toJS),
+    );
   }
 
   /// Checks if hte user has granted **all** the specified [scopes].
@@ -56,8 +57,9 @@ extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAnyScopes(TokenResponse tokenResponse, List<String> scopes) {
-    return scopes
-        .any((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
+    return scopes.any(
+      (String scope) => _hasGrantedScope(tokenResponse, scope.toJS),
+    );
   }
 
   /// Revokes all of the scopes that the user granted to the app.
@@ -69,10 +71,7 @@ extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   ///
   /// Method: google.accounts.oauth2.revoke
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.revoke
-  void revoke(
-    String accessToken, [
-    RevokeTokenDoneFn? done,
-  ]) {
+  void revoke(String accessToken, [RevokeTokenDoneFn? done]) {
     if (done == null) {
       return _revoke(accessToken.toJS);
     }
@@ -259,9 +258,7 @@ extension type TokenClientConfig._(JSObject _) implements JSObject {
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClient
 extension type TokenClient._(JSObject _) implements JSObject {
   /// Starts the OAuth 2.0 Code UX flow.
-  void requestAccessToken([
-    OverridableTokenClientConfig? overrideConfig,
-  ]) {
+  void requestAccessToken([OverridableTokenClientConfig? overrideConfig]) {
     if (overrideConfig == null) {
       return _requestAccessToken();
     }
@@ -272,7 +269,8 @@ extension type TokenClient._(JSObject _) implements JSObject {
   external void _requestAccessToken();
   @JS('requestAccessToken')
   external void _requestAccessTokenWithConfig(
-      OverridableTokenClientConfig config);
+    OverridableTokenClientConfig config,
+  );
 }
 
 /// The overridable configuration object for the [TokenClientExtension.requestAccessToken] method.

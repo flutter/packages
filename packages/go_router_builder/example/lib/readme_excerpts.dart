@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,7 @@ import 'shared/data.dart';
 import 'package:go_router/go_router.dart';
 
 part 'readme_excerpts.g.dart';
+
 // #enddocregion import
 
 void otherDoc(BuildContext context) {
@@ -30,11 +31,11 @@ void otherDoc(BuildContext context) {
   // #enddocregion GoWrong
 
   // #docregion GoRouter
-  final GoRouter router = GoRouter(routes: $appRoutes);
+  final router = GoRouter(routes: $appRoutes);
   // #enddocregion GoRouter
 
   // #docregion routerWithErrorBuilder
-  final GoRouter routerWithErrorBuilder = GoRouter(
+  final routerWithErrorBuilder = GoRouter(
     routes: $appRoutes,
     errorBuilder: (BuildContext context, GoRouterState state) {
       return ErrorRoute(error: state.error!).build(context, state);
@@ -55,16 +56,21 @@ void otherDoc(BuildContext context) {
   void tapWithExtra() {
     PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
   }
+
   // #enddocregion tapWithExtra
 
-  final LoginInfo loginInfo = LoginInfo();
+  // #docregion goRelative
+  void onTapRelative() => const DetailsRoute().goRelative(context);
+  // #enddocregion goRelative
 
-  final GoRouter routerWithRedirect = GoRouter(
+  final loginInfo = LoginInfo();
+
+  final routerWithRedirect = GoRouter(
     routes: $appRoutes,
     // #docregion redirect
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
-      final bool loggingIn = state.matchedLocation == LoginRoute().location;
+      final loggingIn = state.matchedLocation == LoginRoute().location;
       if (!loggedIn && !loggingIn) {
         return LoginRoute(from: state.matchedLocation).location;
       }
@@ -81,18 +87,17 @@ void otherDoc(BuildContext context) {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<FamilyRoute>(
-      path: 'family/:fid',
-    ),
+    TypedGoRoute<FamilyRoute>(path: 'family/:fid'),
   ],
 )
 // #docregion HomeRoute
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
+
 // #enddocregion HomeRoute
 
 // #docregion RedirectRoute
@@ -103,11 +108,12 @@ class RedirectRoute extends GoRouteData {
     return const HomeRoute().location;
   }
 }
+
 // #enddocregion RedirectRoute
 
 // #docregion login
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with $LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -116,6 +122,7 @@ class LoginRoute extends GoRouteData {
     return LoginScreen(from: from);
   }
 }
+
 // #enddocregion login
 // #enddocregion TypedGoRouteHomeRoute
 
@@ -125,14 +132,13 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('home'),
-      ),
+      appBar: AppBar(title: const Text('home')),
       body: TextButton(
         onPressed: () async {
           // #docregion awaitPush
-          final bool? result =
-              await const FamilyRoute(fid: 'John').push<bool>(context);
+          final bool? result = await const FamilyRoute(
+            fid: 'John',
+          ).push<bool>(context);
           // #enddocregion awaitPush
           print('result is $result');
         },
@@ -142,7 +148,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class FamilyRoute extends GoRouteData {
+class FamilyRoute extends GoRouteData with $FamilyRoute {
   const FamilyRoute({this.fid});
 
   final String? fid;
@@ -161,9 +167,7 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('family'),
-      ),
+      appBar: AppBar(title: const Text('family')),
       body: TextButton(
         onPressed: () {
           context.pop(true);
@@ -184,6 +188,7 @@ class ErrorRoute extends GoRouteData {
     return ErrorScreen(error: error);
   }
 }
+
 // #enddocregion ErrorRoute
 
 class ErrorScreen extends StatelessWidget {
@@ -194,9 +199,7 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Error'),
-      ),
+      appBar: AppBar(title: const Text('Error')),
       body: Text(error.toString()),
     );
   }
@@ -208,17 +211,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Login')));
   }
 }
 
 // #docregion MyRoute
 @TypedGoRoute<MyRoute>(path: '/my-route')
-class MyRoute extends GoRouteData {
+class MyRoute extends GoRouteData with $MyRoute {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
 
@@ -227,6 +226,7 @@ class MyRoute extends GoRouteData {
     return MyScreen(queryParameter: queryParameter);
   }
 }
+
 // #enddocregion MyRoute
 
 class MyScreen extends StatelessWidget {
@@ -235,17 +235,13 @@ class MyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('MyScreen')));
   }
 }
 
 @TypedGoRoute<PersonRouteWithExtra>(path: '/person')
 // #docregion PersonRouteWithExtra
-class PersonRouteWithExtra extends GoRouteData {
+class PersonRouteWithExtra extends GoRouteData with $PersonRouteWithExtra {
   PersonRouteWithExtra(this.$extra);
   final Person? $extra;
 
@@ -254,6 +250,7 @@ class PersonRouteWithExtra extends GoRouteData {
     return PersonScreen($extra);
   }
 }
+
 // #enddocregion PersonRouteWithExtra
 
 class PersonScreen extends StatelessWidget {
@@ -262,17 +259,14 @@ class PersonScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PersonScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('PersonScreen')));
   }
 }
 
 // #docregion HotdogRouteWithEverything
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
-class HotdogRouteWithEverything extends GoRouteData {
+class HotdogRouteWithEverything extends GoRouteData
+    with $HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -283,6 +277,7 @@ class HotdogRouteWithEverything extends GoRouteData {
     return HotdogScreen(ketchup, mustard, $extra);
   }
 }
+
 // #enddocregion HotdogRouteWithEverything
 
 class Sauce {}
@@ -295,18 +290,15 @@ class HotdogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hotdog'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('Hotdog')));
   }
 }
 
 // #docregion BookKind
 enum BookKind { all, popular, recent }
 
-class BooksRoute extends GoRouteData {
+@TypedGoRoute<BooksRoute>(path: '/books')
+class BooksRoute extends GoRouteData with $BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -315,6 +307,7 @@ class BooksRoute extends GoRouteData {
     return BooksScreen(kind: kind);
   }
 }
+
 // #enddocregion BookKind
 
 class BooksScreen extends StatelessWidget {
@@ -323,25 +316,21 @@ class BooksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BooksScreen'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('BooksScreen')));
   }
 }
 
+@TypedGoRoute<MyMaterialRouteWithKey>(path: '/my-material-route-with-key')
 // #docregion MyMaterialRouteWithKey
-class MyMaterialRouteWithKey extends GoRouteData {
+class MyMaterialRouteWithKey extends GoRouteData with $MyMaterialRouteWithKey {
+  const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
-    return const MaterialPage<void>(
-      key: _key,
-      child: MyPage(),
-    );
+    return const MaterialPage<void>(key: _key, child: MyPage());
   }
 }
+
 // #enddocregion MyMaterialRouteWithKey
 
 class MyPage extends StatelessWidget {
@@ -349,11 +338,7 @@ class MyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyPage'),
-      ),
-    );
+    return Scaffold(appBar: AppBar(title: const Text('MyPage')));
   }
 }
 
@@ -364,36 +349,48 @@ class MyShellRoutePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyShellRoutePage'),
-      ),
+      appBar: AppBar(title: const Text('MyShellRoutePage')),
       body: child,
     );
   }
 }
 
+@TypedGoRoute<FancyRoute>(path: '/fancy')
 // #docregion FancyRoute
-class FancyRoute extends GoRouteData {
+class FancyRoute extends GoRouteData with $FancyRoute {
+  const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
     GoRouterState state,
   ) {
     return CustomTransitionPage<void>(
-        key: state.pageKey,
-        child: const MyPage(),
-        transitionsBuilder: (BuildContext context, Animation<double> animation,
-            Animation<double> secondaryAnimation, Widget child) {
-          return RotationTransition(turns: animation, child: child);
-        });
+      key: state.pageKey,
+      child: const MyPage(),
+      transitionsBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            return RotationTransition(turns: animation, child: child);
+          },
+    );
   }
 }
+
 // #enddocregion FancyRoute
 
 // #docregion MyShellRouteData
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
+@TypedShellRoute<MyShellRouteData>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
+)
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
@@ -406,7 +403,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData {
+class MyGoRouteData extends GoRouteData with $MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
@@ -414,4 +411,26 @@ class MyGoRouteData extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) => const MyPage();
 }
+
 // #enddocregion MyShellRouteData
+
+// #docregion relativeRoute
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
+class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+
+// #enddocregion relativeRoute
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

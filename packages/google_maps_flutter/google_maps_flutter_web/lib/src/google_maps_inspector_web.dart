@@ -1,10 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:js_interop';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -15,12 +16,12 @@ import 'marker_clustering.dart';
 typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
-typedef ClusterManagersControllerProvider = ClusterManagersController? Function(
-    int mapId);
+typedef ClusterManagersControllerProvider =
+    ClusterManagersController<Object?>? Function(int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
-typedef GroundOverlaysControllerProvider = GroundOverlaysController? Function(
-    int mapId);
+typedef GroundOverlaysControllerProvider =
+    GroundOverlaysController? Function(int mapId);
 
 /// This platform implementation allows inspecting the running maps.
 class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
@@ -29,9 +30,9 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     ConfigurationProvider configurationProvider,
     ClusterManagersControllerProvider clusterManagersControllerProvider,
     GroundOverlaysControllerProvider groundOverlaysControllerProvider,
-  )   : _configurationProvider = configurationProvider,
-        _clusterManagersControllerProvider = clusterManagersControllerProvider,
-        _groundOverlaysControllerProvider = groundOverlaysControllerProvider;
+  ) : _configurationProvider = configurationProvider,
+      _clusterManagersControllerProvider = clusterManagersControllerProvider,
+      _groundOverlaysControllerProvider = groundOverlaysControllerProvider;
 
   final ConfigurationProvider _configurationProvider;
   final ClusterManagersControllerProvider _clusterManagersControllerProvider;
@@ -87,11 +88,14 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
   bool supportsGettingGroundOverlayInfo() => true;
 
   @override
-  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
-      {required int mapId}) async {
+  Future<GroundOverlay?> getGroundOverlayInfo(
+    GroundOverlayId groundOverlayId, {
+    required int mapId,
+  }) async {
     final gmaps.GroundOverlay? groundOverlay =
-        _groundOverlaysControllerProvider(mapId)!
-            .getGroundOverlay(groundOverlayId);
+        _groundOverlaysControllerProvider(
+          mapId,
+        )!.getGroundOverlay(groundOverlayId);
 
     if (groundOverlay == null) {
       return null;
@@ -100,15 +104,16 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     final JSAny? clickable = groundOverlay.get('clickable');
 
     return GroundOverlay.fromBounds(
-        groundOverlayId: groundOverlayId,
-        image: BytesMapBitmap(
-          Uint8List.fromList(<int>[0]),
-          bitmapScaling: MapBitmapScaling.none,
-        ),
-        bounds: gmLatLngBoundsTolatLngBounds(groundOverlay.bounds),
-        transparency: 1.0 - groundOverlay.opacity,
-        visible: groundOverlay.map != null,
-        clickable: clickable != null && (clickable as JSBoolean).toDart);
+      groundOverlayId: groundOverlayId,
+      image: BytesMapBitmap(
+        Uint8List.fromList(<int>[0]),
+        bitmapScaling: MapBitmapScaling.none,
+      ),
+      bounds: gmLatLngBoundsToLatLngBounds(groundOverlay.bounds),
+      transparency: 1.0 - groundOverlay.opacity,
+      visible: groundOverlay.map != null,
+      clickable: clickable != null && (clickable as JSBoolean).toDart,
+    );
   }
 
   @override
@@ -141,8 +146,20 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    return _clusterManagersControllerProvider(mapId)
-            ?.getClusters(clusterManagerId) ??
+    return _clusterManagersControllerProvider(
+          mapId,
+        )?.getClusters(clusterManagerId) ??
         <Cluster>[];
+  }
+
+  /// Returns the stream of clustering events for a given [ClusterManager].
+  @visibleForTesting
+  Stream<ClusteringEvent>? getClusteringEvents({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) {
+    return _clusterManagersControllerProvider(
+      mapId,
+    )?.getClustererEvents(clusterManagerId);
   }
 }

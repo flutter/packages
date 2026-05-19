@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@
 extension MaybeEnum<T extends Enum> on List<T> {
   /// Attempts to retrieve an enum of type T by its [name].
   T? maybe(String? name) {
-    for (final T value in this) {
+    for (final value in this) {
       if (value.name == name) {
         return value;
       }

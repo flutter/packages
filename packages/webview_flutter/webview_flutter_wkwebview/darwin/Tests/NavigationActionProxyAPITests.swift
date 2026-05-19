@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,7 +40,7 @@ class NavigationActionProxyAPITests: XCTestCase {
 }
 
 class TestNavigationAction: WKNavigationAction {
-  let internalTargetFrame = TestFrameInfo()
+  let internalTargetFrame = TestFrameInfo.instance
 
   override var request: URLRequest {
     return URLRequest(url: URL(string: "http://google.com")!)

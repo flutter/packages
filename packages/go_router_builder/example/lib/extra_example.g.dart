@@ -9,83 +9,90 @@ part of 'extra_example.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
-      $requiredExtraRoute,
-      $optionalExtraRoute,
-      $splashRoute,
-    ];
+  $requiredExtraRoute,
+  $optionalExtraRoute,
+  $splashRoute,
+];
 
 RouteBase get $requiredExtraRoute => GoRouteData.$route(
-      path: '/requiredExtra',
-      factory: $RequiredExtraRouteExtension._fromState,
-    );
+  path: '/requiredExtra',
+  factory: $RequiredExtraRoute._fromState,
+);
 
-extension $RequiredExtraRouteExtension on RequiredExtraRoute {
+mixin $RequiredExtraRoute on GoRouteData {
   static RequiredExtraRoute _fromState(GoRouterState state) =>
-      RequiredExtraRoute(
-        $extra: state.extra as Extra,
-      );
+      RequiredExtraRoute($extra: state.extra as Extra);
 
-  String get location => GoRouteData.$location(
-        '/requiredExtra',
-      );
+  RequiredExtraRoute get _self => this as RequiredExtraRoute;
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  @override
+  String get location => GoRouteData.$location('/requiredExtra');
 
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
+  @override
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $optionalExtraRoute => GoRouteData.$route(
-      path: '/optionalExtra',
-      factory: $OptionalExtraRouteExtension._fromState,
-    );
+  path: '/optionalExtra',
+  factory: $OptionalExtraRoute._fromState,
+);
 
-extension $OptionalExtraRouteExtension on OptionalExtraRoute {
+mixin $OptionalExtraRoute on GoRouteData {
   static OptionalExtraRoute _fromState(GoRouterState state) =>
-      OptionalExtraRoute(
-        $extra: state.extra as Extra?,
-      );
+      OptionalExtraRoute($extra: state.extra as Extra?);
 
-  String get location => GoRouteData.$location(
-        '/optionalExtra',
-      );
+  OptionalExtraRoute get _self => this as OptionalExtraRoute;
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  @override
+  String get location => GoRouteData.$location('/optionalExtra');
 
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
+  @override
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
-RouteBase get $splashRoute => GoRouteData.$route(
-      path: '/splash',
-      factory: $SplashRouteExtension._fromState,
-    );
+RouteBase get $splashRoute =>
+    GoRouteData.$route(path: '/splash', factory: $SplashRoute._fromState);
 
-extension $SplashRouteExtension on SplashRoute {
+mixin $SplashRoute on GoRouteData {
   static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
 
-  String get location => GoRouteData.$location(
-        '/splash',
-      );
+  @override
+  String get location => GoRouteData.$location('/splash');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

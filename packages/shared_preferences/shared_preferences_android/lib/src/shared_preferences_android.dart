@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,9 +18,8 @@ import 'strings.dart';
 /// This class implements the `package:shared_preferences` functionality for Android.
 class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   /// Creates a new plugin implementation instance.
-  SharedPreferencesAndroid({
-    @visibleForTesting SharedPreferencesApi? api,
-  }) : api = api ?? SharedPreferencesApi();
+  SharedPreferencesAndroid({@visibleForTesting SharedPreferencesApi? api})
+    : api = api ?? SharedPreferencesApi();
 
   /// The pigeon API used to send messages to the platform.
   @visibleForTesting
@@ -53,59 +52,60 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         return api.setDouble(key, value as double);
       case 'StringList':
         return api.setEncodedStringList(
-            key, '$jsonListPrefix${jsonEncode(value)}');
+          key,
+          '$jsonListPrefix${jsonEncode(value)}',
+        );
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$valueType" is not a supported type.');
+      code: 'InvalidOperation',
+      message: '"$valueType" is not a supported type.',
+    );
   }
 
   @override
   Future<bool> clear() async {
     return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
     );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
     return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
+      ClearParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
-    return api.clear(
-      filter.prefix,
-      filter.allowList?.toList(),
-    );
+    return api.clear(filter.prefix, filter.allowList?.toList());
   }
 
   @override
   Future<Map<String, Object>> getAll() async {
     return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: _defaultPrefix)),
     );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
     return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+      GetAllParameters(filter: PreferencesFilter(prefix: prefix)),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
+    GetAllParameters parameters,
+  ) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await api.getAll(filter.prefix, filter.allowList?.toList());
+    final Map<String?, Object?> data = await api.getAll(
+      filter.prefix,
+      filter.allowList?.toList(),
+    );
     data.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&
           (value! as String).startsWith(jsonListPrefix)) {

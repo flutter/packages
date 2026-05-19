@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="io.flutter.plugins.videoplayerexample">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <application
     android:icon="@mipmap/ic_launcher"

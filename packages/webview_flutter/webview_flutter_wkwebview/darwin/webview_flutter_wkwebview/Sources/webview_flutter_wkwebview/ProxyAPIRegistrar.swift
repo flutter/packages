@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -68,22 +68,24 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
       details: nil)
   }
 
-  // Creates an assertion failure when a Flutter method receives an error from Dart.
-  fileprivate func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
-    assertionFailure(
+  // Log when a Flutter method receives an error from Dart.
+  func logFlutterMethodFailure(_ error: PigeonError, methodName: String) {
+    NSLog(
       "\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))"
     )
+    NSLog("%@", Thread.callStackSymbols.joined(separator: "\n"))
   }
 
   /// Handles calling a Flutter method on the main thread.
   func dispatchOnMainThread(
-    execute work: @escaping (
-      _ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void
-    ) -> Void
+    execute work:
+      @escaping (
+        _ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void
+      ) -> Void
   ) {
     DispatchQueue.main.async {
       work { methodName, error in
-        self.assertFlutterMethodFailure(error, methodName: methodName)
+        self.logFlutterMethodFailure(error, methodName: methodName)
       }
     }
   }
@@ -299,5 +301,9 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   {
     return PigeonApiSecCertificate(
       pigeonRegistrar: registrar, delegate: SecCertificateProxyAPIDelegate())
+  }
+
+  func pigeonApiUIColor(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIColor {
+    return PigeonApiUIColor(pigeonRegistrar: registrar, delegate: ColorProxyAPIDelegate())
   }
 }

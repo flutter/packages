@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,7 +36,7 @@ class CameraStateStateErrorProxyApi extends PigeonApiCameraStateStateError {
       case CameraState.ERROR_STREAM_CONFIG:
         return CameraStateErrorCode.STREAM_CONFIG;
       default:
-        return io.flutter.plugins.camerax.CameraStateErrorCode.UNKNOWN;
+        return CameraStateErrorCode.UNKNOWN;
     }
   }
 }

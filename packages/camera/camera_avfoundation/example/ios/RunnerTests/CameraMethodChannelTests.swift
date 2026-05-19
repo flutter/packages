@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,11 +7,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
-#endif
-
 final class CameraMethodChannelTests: XCTestCase {
   private func createCameraPlugin(with session: MockCaptureSession) -> CameraPlugin {
     return CameraPlugin(
@@ -19,7 +14,7 @@ final class CameraMethodChannelTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { session },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -33,18 +28,18 @@ final class CameraMethodChannelTests: XCTestCase {
     let camera = createCameraPlugin(with: avCaptureSessionMock)
     let expectation = self.expectation(description: "Result finished")
 
-    var resultValue: NSNumber?
+    var resultValue: Int64?
     camera.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: FCPPlatformResolutionPreset.medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
-      resultValue = result
+    ) { result in
+      resultValue = self.assertSuccess(result)
       expectation.fulfill()
     }
 
@@ -60,14 +55,14 @@ final class CameraMethodChannelTests: XCTestCase {
 
     camera.createCameraOnSessionQueue(
       withName: "acamera",
-      settings: FCPPlatformMediaSettings.make(
-        with: .medium,
+      settings: PlatformMediaSettings(
+        resolutionPreset: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
         enableAudio: true
       )
-    ) { result, error in
+    ) { result in
       createExpectation.fulfill()
     }
 
@@ -75,7 +70,7 @@ final class CameraMethodChannelTests: XCTestCase {
     XCTAssertNotNil(camera.camera)
 
     let disposeExpectation = self.expectation(description: "dispose's result block must be called")
-    camera.disposeCamera(0) { error in
+    camera.dispose(cameraId: 0) { error in
       disposeExpectation.fulfill()
     }
 

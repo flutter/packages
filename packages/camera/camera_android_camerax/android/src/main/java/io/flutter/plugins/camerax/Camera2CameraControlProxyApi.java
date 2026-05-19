@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -52,10 +52,12 @@ class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
     Futures.addCallback(
         addCaptureRequestOptionsFuture,
         new FutureCallback<>() {
+          @Override
           public void onSuccess(Void voidResult) {
             ResultCompat.success(null, callback);
           }
 
+          @Override
           public void onFailure(@NonNull Throwable t) {
             ResultCompat.failure(t, callback);
           }

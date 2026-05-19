@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ base class InMemorySharedPreferencesAsync
 
   /// Instantiates an in-memory preferences store containing a copy of [data].
   InMemorySharedPreferencesAsync.withData(Map<String, Object> data)
-      : _data = Map<String, Object>.from(data);
+    : _data = Map<String, Object>.from(data);
 
   final Map<String, Object> _data;
 
@@ -41,9 +41,11 @@ base class InMemorySharedPreferencesAsync
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object> preferences = Map<String, Object>.from(_data);
-    preferences.removeWhere((String key, _) =>
-        filter.allowList != null && !filter.allowList!.contains(key));
+    final preferences = Map<String, Object>.from(_data);
+    preferences.removeWhere(
+      (String key, _) =>
+          filter.allowList != null && !filter.allowList!.contains(key),
+    );
     return preferences;
   }
 
@@ -110,10 +112,7 @@ base class InMemorySharedPreferencesAsync
   }
 
   @override
-  Future<bool?> getBool(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<bool?> getBool(String key, SharedPreferencesOptions options) async {
     return _data[key] as bool?;
   }
 
@@ -126,10 +125,7 @@ base class InMemorySharedPreferencesAsync
   }
 
   @override
-  Future<int?> getInt(
-    String key,
-    SharedPreferencesOptions options,
-  ) async {
+  Future<int?> getInt(String key, SharedPreferencesOptions options) async {
     return _data[key] as int?;
   }
 
@@ -138,7 +134,7 @@ base class InMemorySharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    final List<Object>? data = _data[key] as List<Object>?;
+    final data = _data[key] as List<Object>?;
     return data?.cast<String>();
   }
 
@@ -150,7 +146,8 @@ base class InMemorySharedPreferencesAsync
     final Set<String> keys = _data.keys.toSet();
     if (parameters.filter.allowList != null) {
       keys.retainWhere(
-          (String element) => parameters.filter.allowList!.contains(element));
+        (String element) => parameters.filter.allowList!.contains(element),
+      );
     }
 
     return keys;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,12 +54,8 @@ class _ExampleAppState extends State<ExampleApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Pigeon integration tests'),
-        ),
-        body: Center(
-          child: Text(status),
-        ),
+        appBar: AppBar(title: const Text('Pigeon integration tests')),
+        body: Center(child: Text(status)),
       ),
     );
   }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,8 +19,9 @@ abstract class PlatformWebViewWidget extends PlatformInterface {
       '`WebViewPlatform.instance` before use. For unit testing, '
       '`WebViewPlatform.instance` can be set with your own test implementation.',
     );
-    final PlatformWebViewWidget webViewWidgetDelegate =
-        WebViewPlatform.instance!.createPlatformWebViewWidget(params);
+    final PlatformWebViewWidget webViewWidgetDelegate = WebViewPlatform
+        .instance!
+        .createPlatformWebViewWidget(params);
     PlatformInterface.verify(webViewWidgetDelegate, _token);
     return webViewWidgetDelegate;
   }

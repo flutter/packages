@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -182,7 +182,8 @@ class ImageResizer {
     if (saveAsPNG) {
       Log.d(
           "ImageResizer",
-          "image_picker: compressing is not supported for type PNG. Returning the image with original quality");
+          "image_picker: compressing is not supported for type PNG. Returning the image with"
+              + " original quality");
     }
     bitmap.compress(
         saveAsPNG ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,

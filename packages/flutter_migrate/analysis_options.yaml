@@ -1,7 +1,0 @@
-# Specify analysis options.
-
-include: ../../analysis_options.yaml
-
-linter:
-  rules:
-    public_member_api_docs: false # Standalone executable, no public API

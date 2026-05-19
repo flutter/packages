@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,5 +42,5 @@ class TestMapsObject implements MapsObject<TestMapsObject> {
 
 class TestMapsObjectUpdate extends MapsObjectUpdates<TestMapsObject> {
   TestMapsObjectUpdate.from(super.previous, super.current)
-      : super.from(objectName: 'testObject');
+    : super.from(objectName: 'testObject');
 }

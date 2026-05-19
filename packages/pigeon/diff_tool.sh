@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2013 The Flutter Authors. All rights reserved.
+# Copyright 2013 The Flutter Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -21,7 +21,7 @@ gitTool="git -c advice.detachedHead=false"
 generate_everything() {
   local inputPath=$1
   local outputDir=$2
-  pub run pigeon \
+  dart run pigeon \
     --input "$inputPath" \
     --dart_out "$outputDir/dart.dart" \
     --java_out "$outputDir/java.dart" \

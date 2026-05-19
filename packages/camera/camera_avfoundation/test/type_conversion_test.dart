@@ -1,33 +1,34 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:typed_data';
 
+import 'package:camera_avfoundation/src/messages.g.dart';
 import 'package:camera_avfoundation/src/type_conversion.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('CameraImageData can be created', () {
-    final CameraImageData cameraImage =
-        cameraImageFromPlatformData(<dynamic, dynamic>{
-      'format': 1,
-      'height': 1,
-      'width': 4,
-      'lensAperture': 1.8,
-      'sensorExposureTime': 9991324,
-      'sensorSensitivity': 92.0,
-      'planes': <dynamic>[
-        <dynamic, dynamic>{
-          'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-          'bytesPerPixel': 1,
-          'bytesPerRow': 4,
-          'height': 1,
-          'width': 4
-        }
-      ]
-    });
+    final CameraImageData cameraImage = cameraImageFromPlatformData(
+      PlatformCameraImageData(
+        formatCode: 1,
+        width: 4,
+        height: 1,
+        lensAperture: 1.8,
+        sensorExposureTimeNanoseconds: 9991324,
+        sensorSensitivity: 92.0,
+        planes: <PlatformCameraImagePlane>[
+          PlatformCameraImagePlane(
+            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+            bytesPerRow: 4,
+            width: 4,
+            height: 1,
+          ),
+        ],
+      ),
+    );
     expect(cameraImage.height, 1);
     expect(cameraImage.width, 4);
     expect(cameraImage.format.group, ImageFormatGroup.unknown);
@@ -35,24 +36,24 @@ void main() {
   });
 
   test('CameraImageData has ImageFormatGroup.yuv420', () {
-    final CameraImageData cameraImage =
-        cameraImageFromPlatformData(<dynamic, dynamic>{
-      'format': 875704438,
-      'height': 1,
-      'width': 4,
-      'lensAperture': 1.8,
-      'sensorExposureTime': 9991324,
-      'sensorSensitivity': 92.0,
-      'planes': <dynamic>[
-        <dynamic, dynamic>{
-          'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-          'bytesPerPixel': 1,
-          'bytesPerRow': 4,
-          'height': 1,
-          'width': 4
-        }
-      ]
-    });
+    final CameraImageData cameraImage = cameraImageFromPlatformData(
+      PlatformCameraImageData(
+        formatCode: 875704438,
+        width: 4,
+        height: 1,
+        lensAperture: 1.8,
+        sensorExposureTimeNanoseconds: 9991324,
+        sensorSensitivity: 92.0,
+        planes: <PlatformCameraImagePlane>[
+          PlatformCameraImagePlane(
+            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+            bytesPerRow: 4,
+            width: 4,
+            height: 1,
+          ),
+        ],
+      ),
+    );
     expect(cameraImage.format.group, ImageFormatGroup.yuv420);
   });
 }

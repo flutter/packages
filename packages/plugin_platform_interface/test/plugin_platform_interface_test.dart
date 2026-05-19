@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,6 +36,7 @@ abstract class SamplePluginPlatform extends PlatformInterface {
 class SamplePluginDefault extends SamplePluginPlatform {
   // A default real implementation of the platform interface would go here.
 }
+
 // #enddocregion Example
 
 class ImplementsSamplePluginPlatform extends Mock
@@ -51,6 +52,7 @@ class ImplementsSamplePluginPlatformUsingNoSuchMethod
 class SamplePluginPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
+
 // #enddocregion Mock
 
 class SamplePluginPlatformFake extends Fake

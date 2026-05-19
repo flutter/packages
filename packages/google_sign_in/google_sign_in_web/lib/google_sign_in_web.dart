@@ -1,14 +1,12 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:google_identity_services_web/loader.dart' as loader;
@@ -50,10 +48,11 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     @visibleForTesting bool debugOverrideLoader = false,
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
     @visibleForTesting
-    StreamController<GoogleSignInUserData?>? debugOverrideUserDataController,
-  })  : _gisSdkClient = debugOverrideGisSdkClient,
-        _userDataController = debugOverrideUserDataController ??
-            StreamController<GoogleSignInUserData?>.broadcast() {
+    StreamController<AuthenticationEvent>? debugAuthenticationController,
+  }) : _debugOverrideGisSdkClient = debugOverrideGisSdkClient,
+       _authenticationController =
+           debugAuthenticationController ??
+           StreamController<AuthenticationEvent>.broadcast() {
     autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
@@ -69,49 +68,31 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   // A future that completes when the JS loader is done.
   late Future<void> _jsSdkLoadedFuture;
-  // A future that completes when the `init` call is done.
-  Completer<void>? _initCalled;
+
+  /// A completer used to track whether [init] has finished.
+  final Completer<void> _initCalled = Completer<void>();
+
+  /// A boolean flag to track if [init] has been called.
+  ///
+  /// This is used to prevent race conditions when [init] is called multiple
+  /// times without awaiting.
+  bool _isInitCalled = false;
 
   // A StreamController to communicate status changes from the GisSdkClient.
-  final StreamController<GoogleSignInUserData?> _userDataController;
+  final StreamController<AuthenticationEvent> _authenticationController;
 
   // The instance of [GisSdkClient] backing the plugin.
-  GisSdkClient? _gisSdkClient;
+  // Using late final ensures it can only be set once and throws if accessed before initialization.
+  late final GisSdkClient _gisSdkClient;
 
-  // A convenience getter to avoid using ! when accessing _gisSdkClient, and
-  // providing a slightly better error message when it is Null.
-  GisSdkClient get _gisClient {
-    assert(
-      _gisSdkClient != null,
-      'GIS Client not initialized. '
-      'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
-      'must be called before any other method in this plugin.',
-    );
-    return _gisSdkClient!;
-  }
-
-  // This method throws if init or initWithParams hasn't been called at some
-  // point in the past. It is used by the [initialized] getter to ensure that
-  // users can't await on a Future that will never resolve.
-  void _assertIsInitCalled() {
-    if (_initCalled == null) {
-      throw StateError(
-        'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
-        'must be called before any other method in this plugin.',
-      );
-    }
-  }
+  // An optional override for the GisSdkClient, used for testing.
+  final GisSdkClient? _debugOverrideGisSdkClient;
 
   /// A future that resolves when the plugin is fully initialized.
   ///
-  /// This ensures that the SDK has been loaded, and that the `initWithParams`
-  /// method has finished running.
-  @visibleForTesting
-  Future<void> get initialized {
-    _assertIsInitCalled();
-    return Future.wait<void>(
-        <Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
-  }
+  /// This ensures that the SDK has been loaded, and that the `init` method
+  /// has finished running.
+  Future<void> get _initialized => _initCalled.future;
 
   /// Stores the client ID if it was set in a meta-tag of the page.
   @visibleForTesting
@@ -123,68 +104,162 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> init({
-    List<String> scopes = const <String>[],
-    SignInOption signInOption = SignInOption.standard,
-    String? hostedDomain,
-    String? clientId,
-  }) {
-    return initWithParams(SignInInitParameters(
-      scopes: scopes,
-      signInOption: signInOption,
-      hostedDomain: hostedDomain,
-      clientId: clientId,
-    ));
-  }
+  Future<void> init(InitParameters params) async {
+    // Throw if init() is called more than once
+    if (_isInitCalled) {
+      throw StateError(
+        'init() has already been called. Calling init() more than once results in undefined behavior.',
+      );
+    }
+    _isInitCalled = true;
 
-  @override
-  Future<void> initWithParams(SignInInitParameters params) async {
     final String? appClientId = params.clientId ?? autoDetectedClientId;
     assert(
-        appClientId != null,
-        'ClientID not set. Either set it on a '
-        '<meta name="google-signin-client_id" content="CLIENT_ID" /> tag,'
-        ' or pass clientId when initializing GoogleSignIn');
-
-    assert(params.serverClientId == null,
-        'serverClientId is not supported on Web.');
+      appClientId != null,
+      'ClientID not set. Either set it on a '
+      '<meta name="google-signin-client_id" content="CLIENT_ID" /> tag,'
+      ' or pass clientId when initializing GoogleSignIn',
+    );
 
     assert(
-        !params.scopes.any((String scope) => scope.contains(' ')),
-        "OAuth 2.0 Scopes for Google APIs can't contain spaces. "
-        'Check https://developers.google.com/identity/protocols/googlescopes '
-        'for a list of valid OAuth 2.0 scopes.');
-
-    assert(params.forceAccountName == null,
-        'forceAccountName is not supported on Web.');
-
-    _initCalled = Completer<void>();
+      params.serverClientId == null,
+      'serverClientId is not supported on Web.',
+    );
 
     await _jsSdkLoadedFuture;
 
-    _gisSdkClient ??= GisSdkClient(
-      clientId: appClientId!,
-      hostedDomain: params.hostedDomain,
-      initialScopes: List<String>.from(params.scopes),
-      userDataController: _userDataController,
-      loggingEnabled: kDebugMode,
-    );
+    _gisSdkClient =
+        _debugOverrideGisSdkClient ??
+        GisSdkClient(
+          clientId: appClientId!,
+          nonce: params.nonce,
+          hostedDomain: params.hostedDomain,
+          authenticationController: _authenticationController,
+          loggingEnabled: kDebugMode,
+        );
 
-    _initCalled!.complete(); // Signal that `init` is fully done.
+    _initCalled.complete();
   }
+
+  @override
+  Future<AuthenticationResults?>? attemptLightweightAuthentication(
+    AttemptLightweightAuthenticationParameters params,
+  ) {
+    _initialized.then((void value) {
+      _gisSdkClient.requestOneTap();
+    });
+    // One tap does not necessarily return immediately, and may never return,
+    // so clients should not await it. Return null to signal that.
+    return null;
+  }
+
+  @override
+  bool supportsAuthenticate() => false;
+
+  @override
+  bool authorizationRequiresUserInteraction() => true;
+
+  @override
+  Future<AuthenticationResults> authenticate(
+    AuthenticateParameters params,
+  ) async {
+    throw UnimplementedError(
+      'authenticate is not supported on the web. '
+      'Instead, use renderButton to create a sign-in widget.',
+    );
+  }
+
+  @override
+  Future<void> signOut(SignOutParams params) async {
+    await _initialized;
+
+    await _gisSdkClient.signOut();
+  }
+
+  @override
+  Future<void> disconnect(DisconnectParams params) async {
+    await _initialized;
+
+    await _gisSdkClient.disconnect();
+  }
+
+  @override
+  Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
+    await _initialized;
+    _validateScopes(params.request.scopes);
+
+    final String? token = await _gisSdkClient.requestScopes(
+      params.request.scopes,
+      promptIfUnauthorized: params.request.promptIfUnauthorized,
+      userHint: params.request.userId,
+    );
+    return token == null
+        ? null
+        : ClientAuthorizationTokenData(accessToken: token);
+  }
+
+  @override
+  Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
+    await _initialized;
+    _validateScopes(params.request.scopes);
+
+    // There is no way to know whether the flow will prompt in advance, so
+    // always return null if prompting isn't allowed.
+    if (!params.request.promptIfUnauthorized) {
+      return null;
+    }
+
+    final String? code = await _gisSdkClient.requestServerAuthCode(
+      params.request,
+    );
+    return code == null
+        ? null
+        : ServerAuthorizationTokenData(serverAuthCode: code);
+  }
+
+  void _validateScopes(List<String> scopes) {
+    // Scope lists are space-delimited in the underlying implementation, so
+    // scopes must not contain any spaces.
+    // https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#redirecting
+    assert(
+      !scopes.any((String scope) => scope.contains(' ')),
+      "OAuth 2.0 Scopes for Google APIs can't contain spaces. "
+      'Check https://developers.google.com/identity/protocols/googlescopes '
+      'for a list of valid OAuth 2.0 scopes.',
+    );
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokenParams params,
+  ) async {
+    await _initialized;
+    return _gisSdkClient.clearAuthorizationToken(params.accessToken);
+  }
+
+  @override
+  Stream<AuthenticationEvent> get authenticationEvents =>
+      _authenticationController.stream;
+
+  // --------
 
   // Register a factory for the Button HtmlElementView.
   void _registerButtonFactory() {
-    ui_web.platformViewRegistry.registerViewFactory(
-      'gsi_login_button',
-      (int viewId) {
-        final web.Element element = web.document.createElement('div');
-        element.setAttribute('style',
-            'width: 100%; height: 100%; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;');
-        element.id = 'sign_in_button_$viewId';
-        return element;
-      },
-    );
+    ui_web.platformViewRegistry.registerViewFactory('gsi_login_button', (
+      int viewId,
+    ) {
+      final web.Element element = web.document.createElement('div');
+      element.setAttribute(
+        'style',
+        'width: 100%; height: 100%; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;',
+      );
+      element.id = 'sign_in_button_$viewId';
+      return element;
+    });
   }
 
   /// Render the GSI button web experience.
@@ -193,118 +268,18 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         configuration ?? GSIButtonConfiguration();
     return FutureBuilder<void>(
       key: Key(config.hashCode.toString()),
-      future: initialized,
+      future: _initialized,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done) {
           return FlexHtmlElementView(
-              viewType: 'gsi_login_button',
-              onElementCreated: (Object element) {
-                _gisClient.renderButton(element, config);
-              });
+            viewType: 'gsi_login_button',
+            onElementCreated: (Object element) {
+              _gisSdkClient.renderButton(element, config);
+            },
+          );
         }
         return const Text('Getting ready');
       },
     );
-  }
-
-  @override
-  Future<GoogleSignInUserData?> signInSilently() async {
-    await initialized;
-
-    // The new user is being injected from the `userDataEvents` Stream.
-    return _gisClient.signInSilently();
-  }
-
-  @override
-  Future<GoogleSignInUserData?> signIn() async {
-    if (kDebugMode) {
-      web.console.warn(
-          "The `signIn` method is discouraged on the web because it can't reliably provide an `idToken`.\n"
-                  'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
-                  'Read more: https://pub.dev/packages/google_sign_in_web'
-              .toJS);
-    }
-    await initialized;
-
-    // This method mainly does oauth2 authorization, which happens to also do
-    // authentication if needed. However, the authentication information is not
-    // returned anymore.
-    //
-    // This method will synthesize authentication information from the People API
-    // if needed (or use the last identity seen from signInSilently).
-    try {
-      return _gisClient.signIn();
-    } catch (reason) {
-      throw PlatformException(
-        code: reason.toString(),
-        message: 'Exception raised from signIn',
-        details:
-            'https://developers.google.com/identity/oauth2/web/guides/error',
-      );
-    }
-  }
-
-  @override
-  Future<GoogleSignInTokenData> getTokens({
-    required String email,
-    bool? shouldRecoverAuth,
-  }) async {
-    await initialized;
-
-    return _gisClient.getTokens();
-  }
-
-  @override
-  Future<void> signOut() async {
-    await initialized;
-
-    await _gisClient.signOut();
-  }
-
-  @override
-  Future<void> disconnect() async {
-    await initialized;
-
-    await _gisClient.disconnect();
-  }
-
-  @override
-  Future<bool> isSignedIn() async {
-    await initialized;
-
-    return _gisClient.isSignedIn();
-  }
-
-  @override
-  Future<void> clearAuthCache({required String token}) async {
-    await initialized;
-
-    await _gisClient.clearAuthCache();
-  }
-
-  @override
-  Future<bool> requestScopes(List<String> scopes) async {
-    await initialized;
-
-    return _gisClient.requestScopes(scopes);
-  }
-
-  @override
-  Future<bool> canAccessScopes(List<String> scopes,
-      {String? accessToken}) async {
-    await initialized;
-
-    return _gisClient.canAccessScopes(scopes, accessToken);
-  }
-
-  @override
-  Stream<GoogleSignInUserData?>? get userDataEvents =>
-      _userDataController.stream;
-
-  /// Requests server auth code from GIS Client per:
-  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
-  Future<String?> requestServerAuthCode() async {
-    await initialized;
-    return _gisClient.requestServerAuthCode();
   }
 }

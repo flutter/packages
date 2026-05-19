@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,23 +47,21 @@ interface GoogleMapOptionsSink {
 
   void setBuildingsEnabled(boolean buildingsEnabled);
 
-  void setInitialMarkers(@NonNull List<Messages.PlatformMarker> initialMarkers);
+  void setInitialMarkers(@NonNull List<PlatformMarker> initialMarkers);
 
-  void setInitialClusterManagers(
-      @NonNull List<Messages.PlatformClusterManager> initialClusterManagers);
+  void setInitialClusterManagers(@NonNull List<PlatformClusterManager> initialClusterManagers);
 
-  void setInitialPolygons(@NonNull List<Messages.PlatformPolygon> initialPolygons);
+  void setInitialPolygons(@NonNull List<PlatformPolygon> initialPolygons);
 
-  void setInitialPolylines(@NonNull List<Messages.PlatformPolyline> initialPolylines);
+  void setInitialPolylines(@NonNull List<PlatformPolyline> initialPolylines);
 
-  void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles);
+  void setInitialCircles(@NonNull List<PlatformCircle> initialCircles);
 
-  void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps);
+  void setInitialHeatmaps(@NonNull List<PlatformHeatmap> initialHeatmaps);
 
-  void setInitialTileOverlays(@NonNull List<Messages.PlatformTileOverlay> initialTileOverlays);
+  void setInitialTileOverlays(@NonNull List<PlatformTileOverlay> initialTileOverlays);
 
-  void setInitialGroundOverlays(
-      @NonNull List<Messages.PlatformGroundOverlay> initialGroundOverlays);
+  void setInitialGroundOverlays(@NonNull List<PlatformGroundOverlay> initialGroundOverlays);
 
   void setMapStyle(@Nullable String style);
 }

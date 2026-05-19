@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,4 +38,9 @@ class WebViewCookie {
   /// Its value should match "path-value" in RFC6265bis:
   /// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
   final String path;
+
+  @override
+  String toString() {
+    return 'WebViewCookie{name: $name, value: $value, domain: $domain, path: $path}';
+  }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,15 +46,15 @@ class _ExampleState extends State<Example> {
 
   Future<void> _updateWidgets() async {
     final Directory home = await getApplicationSupportDirectory();
-    final File settingsFile = File(path.join(home.path, 'settings.txt'));
-    String nextFile = 'counter_app1.rfw';
+    final settingsFile = File(path.join(home.path, 'settings.txt'));
+    var nextFile = 'counter_app1.rfw';
     if (settingsFile.existsSync()) {
       final String settings = await settingsFile.readAsString();
       if (settings == nextFile) {
         nextFile = 'counter_app2.rfw';
       }
     }
-    final File currentFile = File(path.join(home.path, 'current.rfw'));
+    final currentFile = File(path.join(home.path, 'current.rfw'));
     if (currentFile.existsSync()) {
       try {
         _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await currentFile.readAsBytes()));

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,17 @@ import 'ios_ads_rendering_settings.dart';
 class IOSAdsManager extends PlatformAdsManager {
   /// Constructs an [IOSAdsManager].
   @internal
-  IOSAdsManager(IMAAdsManager manager) : _manager = manager;
+  IOSAdsManager(IMAAdsManager manager)
+    : _manager = manager,
+      super(
+        adCuePoints: List<Duration>.unmodifiable(
+          manager.adCuePoints.map((double seconds) {
+            return Duration(
+              milliseconds: (seconds * Duration.millisecondsPerSecond).round(),
+            );
+          }),
+        ),
+      );
 
   final IMAAdsManager _manager;
 
@@ -47,8 +57,8 @@ class IOSAdsManager extends PlatformAdsManager {
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) {
     final IOSAdsManagerDelegate platformDelegate =
         delegate is IOSAdsManagerDelegate
-            ? delegate
-            : IOSAdsManagerDelegate(delegate.params);
+        ? delegate
+        : IOSAdsManagerDelegate(delegate.params);
     _delegate = platformDelegate;
     return _manager.setDelegate(platformDelegate.delegate);
   }

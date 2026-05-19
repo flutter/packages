@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,15 +27,13 @@ class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAf(
-      FocusMeteringAction pigeonInstance) {
+  public List<MeteringPoint> meteringPointsAf(FocusMeteringAction pigeonInstance) {
     return pigeonInstance.getMeteringPointsAf();
   }
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAwb(
-      FocusMeteringAction pigeonInstance) {
+  public List<MeteringPoint> meteringPointsAwb(FocusMeteringAction pigeonInstance) {
     return pigeonInstance.getMeteringPointsAwb();
   }
 

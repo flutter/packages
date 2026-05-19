@@ -1,14 +1,16 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
@@ -47,6 +49,8 @@ public class DeviceOrientationManager {
    * <p>When orientation information is updated, the callback method of the {@link
    * DeviceOrientationManagerProxyApi} is called with the new orientation.
    */
+  @SuppressLint("UnprotectedReceiver")
+  // orientationIntentFilter only listens to protected broadcast
   public void start() {
     stop();
 
@@ -68,7 +72,7 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        handleUIOrientationChange();
+        handleUiOrientationChange();
       }
     };
   }
@@ -91,8 +95,8 @@ public class DeviceOrientationManager {
    * class.
    */
   @VisibleForTesting
-  void handleUIOrientationChange() {
-    PlatformChannel.DeviceOrientation orientation = getUIOrientation();
+  void handleUiOrientationChange() {
+    PlatformChannel.DeviceOrientation orientation = getUiOrientation();
     handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
@@ -143,7 +147,7 @@ public class DeviceOrientationManager {
   // Configuration.ORIENTATION_SQUARE is deprecated.
   @SuppressWarnings("deprecation")
   @NonNull
-  PlatformChannel.DeviceOrientation getUIOrientation() {
+  PlatformChannel.DeviceOrientation getUiOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
 
@@ -179,7 +183,20 @@ public class DeviceOrientationManager {
    *     Surface.ROTATION_270}
    */
   int getDefaultRotation() {
-    return getDisplay().getRotation();
+    Display display = getDisplay();
+
+    if (display == null) {
+      // The Activity is not available (null or destroyed), which can happen briefly
+      // during configuration changes or due to race conditions. Returning ROTATION_0 ensures safe
+      // fallback and prevents crashes until a valid Activity is attached again.
+      Log.w(
+          "DeviceOrientationManager",
+          "Cannot get display: Activity may be null (destroyed or not yet attached) due to a race"
+              + " condition.");
+      return Surface.ROTATION_0;
+    }
+
+    return display.getRotation();
   }
 
   /**
@@ -191,6 +208,7 @@ public class DeviceOrientationManager {
    * @return An instance of the Android {@link android.view.Display}.
    */
   @VisibleForTesting
+  @Nullable
   Display getDisplay() {
     return api.getPigeonRegistrar().getDisplay();
   }

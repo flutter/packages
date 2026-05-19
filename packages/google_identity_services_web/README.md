@@ -48,8 +48,9 @@ import 'package:google_identity_services_web/loader.dart' as gis;
 void main() async {
   await gis.loadWebSdk(); // Load the GIS SDK
   // The rest of your code...
-// ···
+  // ···
 }
+
 ```
 
 (Note that the above won't compile for mobile apps, so if you're developing a

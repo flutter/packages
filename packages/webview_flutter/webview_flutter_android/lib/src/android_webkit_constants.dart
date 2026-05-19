@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -116,4 +116,15 @@ class WebViewClientConstants {
   ///
   /// See https://developer.android.com/reference/android/webkit/WebViewClient#ERROR_UNSUPPORTED_SCHEME
   static const int errorUnsupportedScheme = -10;
+}
+
+/// Class constants for [WebViewFeature].
+///
+/// Since the Dart [WebViewFeature] is generated, the constants for the class
+/// are added here.
+class WebViewFeatureConstants {
+  /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#PAYMENT_REQUEST.
+  static const String paymentRequest = 'PAYMENT_REQUEST';
 }

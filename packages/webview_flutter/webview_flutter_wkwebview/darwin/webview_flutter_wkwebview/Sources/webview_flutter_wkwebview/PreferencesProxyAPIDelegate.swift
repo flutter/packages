@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,5 +22,11 @@ class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
     } else {
       pigeonInstance.javaScriptEnabled = enabled
     }
+  }
+
+  func setJavaScriptCanOpenWindowsAutomatically(
+    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
+  ) throws {
+    pigeonInstance.javaScriptCanOpenWindowsAutomatically = enabled
   }
 }

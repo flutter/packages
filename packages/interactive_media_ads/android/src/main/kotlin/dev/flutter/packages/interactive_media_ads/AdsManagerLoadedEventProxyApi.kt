@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,7 @@ import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
  */
 class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsManagerLoadedEvent(pigeonRegistrar) {
-  override fun manager(pigeon_instance: AdsManagerLoadedEvent): AdsManager {
+  override fun manager(pigeon_instance: AdsManagerLoadedEvent): AdsManager? {
     return pigeon_instance.adsManager
   }
 }

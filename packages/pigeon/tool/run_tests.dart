@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,7 +28,7 @@ void _validateTestCoverage(List<List<String>> shards) {
 
   if (missing.isNotEmpty) {
     print('The following test suites are not being run on any host:');
-    for (final String suite in missing) {
+    for (final suite in missing) {
       print('  $suite');
     }
     exit(1);
@@ -73,9 +73,7 @@ Future<void> _validateGeneratedFiles(
       GeneratorLanguage.objc,
     };
   } else if (Platform.isMacOS) {
-    languagesToValidate = <GeneratorLanguage>{
-      GeneratorLanguage.swift,
-    };
+    languagesToValidate = <GeneratorLanguage>{GeneratorLanguage.swift};
   } else {
     return;
   }
@@ -103,7 +101,9 @@ Future<void> _validateGeneratedFiles(
 
   print('  Formatting output...');
   final int formatExitCode = await formatAllFiles(
-      repositoryRoot: repositoryRoot, languages: languagesToValidate);
+    repositoryRoot: repositoryRoot,
+    languages: languagesToValidate,
+  );
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
@@ -111,13 +111,17 @@ Future<void> _validateGeneratedFiles(
 
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
-      repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
+    repositoryRoot: repositoryRoot,
+    relativePigeonPath: relativePigeonPath,
+  );
   final Set<String> extensions = languagesToValidate
       .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
       .flattened
       .toSet();
-  final Iterable<String> filteredFiles = modifiedFiles.where((String path) =>
-      extensions.contains(p.extension(path).replaceFirst('.', '')));
+  final Iterable<String> filteredFiles = modifiedFiles.where(
+    (String path) =>
+        extensions.contains(p.extension(path).replaceFirst('.', '')),
+  );
 
   if (filteredFiles.isEmpty) {
     return;
@@ -126,14 +130,15 @@ Future<void> _validateGeneratedFiles(
   print(incorrectFilesMessage);
   filteredFiles.map((String line) => '  $line').forEach(print);
 
-  print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
-      'directory, or apply the diff with the command below.\n');
-
-  final ProcessResult diffResult = await Process.run(
-    'git',
-    <String>['diff', ...filteredFiles],
-    workingDirectory: repositoryRoot,
+  print(
+    '\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
+    'directory, or apply the diff with the command below.\n',
   );
+
+  final ProcessResult diffResult = await Process.run('git', <String>[
+    'diff',
+    ...filteredFiles,
+  ], workingDirectory: repositoryRoot);
   if (diffResult.exitCode != 0) {
     print('Unable to determine diff.');
     exit(1);
@@ -156,14 +161,15 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
   };
 }
 
-Future<List<String>> _modifiedFiles(
-    {required String repositoryRoot,
-    required String relativePigeonPath}) async {
-  final ProcessResult result = await Process.run(
-    'git',
-    <String>['ls-files', '--modified', relativePigeonPath],
-    workingDirectory: repositoryRoot,
-  );
+Future<List<String>> _modifiedFiles({
+  required String repositoryRoot,
+  required String relativePigeonPath,
+}) async {
+  final ProcessResult result = await Process.run('git', <String>[
+    'ls-files',
+    '--modified',
+    relativePigeonPath,
+  ], workingDirectory: repositoryRoot);
   if (result.exitCode != 0) {
     print('Unable to determine changed files.');
     print(result.stdout);
@@ -179,7 +185,7 @@ Future<List<String>> _modifiedFiles(
 
 Future<void> main(List<String> args) async {
   // Run most tests on Linux, since Linux tends to be the easiest and cheapest.
-  const List<String> linuxHostTests = <String>[
+  const linuxHostTests = <String>[
     commandLineTests,
     androidJavaUnitTests,
     androidJavaLint,
@@ -190,7 +196,7 @@ Future<void> main(List<String> args) async {
     linuxUnitTests,
     linuxIntegrationTests,
   ];
-  const List<String> macOSHostTests = <String>[
+  const macOSHostTests = <String>[
     iOSObjCUnitTests,
     // Currently these are testing exactly the same thing as
     // macOS*IntegrationTests, so we don't need to run both by default. This
@@ -204,10 +210,7 @@ Future<void> main(List<String> args) async {
     macOSSwiftIntegrationTests,
   ];
   // Run Windows tests on Windows, since that's the only place they can run.
-  const List<String> windowsHostTests = <String>[
-    windowsUnitTests,
-    windowsIntegrationTests,
-  ];
+  const windowsHostTests = <String>[windowsUnitTests, windowsIntegrationTests];
 
   _validateTestCoverage(<List<String>>[
     linuxHostTests,

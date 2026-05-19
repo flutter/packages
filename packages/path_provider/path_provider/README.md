@@ -9,7 +9,7 @@ Not all methods are supported on all platforms.
 
 |             | Android | iOS   | Linux | macOS  | Windows     |
 |-------------|---------|-------|-------|--------|-------------|
-| **Support** | SDK 21+ | 12.0+ | Any   | 10.14+ | Windows 10+ |
+| **Support** | SDK 24+ | 13.0+ | Any   | 10.15+ | Windows 10+ |
 
 ## Example
 <?code-excerpt "readme_excerpts.dart (Example)"?>

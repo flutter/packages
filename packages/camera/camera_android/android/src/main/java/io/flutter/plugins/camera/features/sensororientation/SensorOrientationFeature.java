@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,7 +58,7 @@ public class SensorOrientationFeature extends CameraFeature<Integer> {
   }
 
   @Override
-  public void setValue(@NonNull Integer value) {
+  public final void setValue(@NonNull Integer value) {
     this.currentSetting = value;
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,8 @@ class CircleController {
     required gmaps.Circle circle,
     bool consumeTapEvents = false,
     VoidCallback? onTap,
-  })  : _circle = circle,
-        _consumeTapEvents = consumeTapEvents {
+  }) : _circle = circle,
+       _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {
       circle.onClick.listen((_) {
         onTap.call();

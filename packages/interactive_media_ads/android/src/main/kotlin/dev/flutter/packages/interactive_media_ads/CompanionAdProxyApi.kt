@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,7 +22,7 @@ class CompanionAdProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.height.toLong()
   }
 
-  override fun resourceValue(pigeon_instance: CompanionAd): String {
+  override fun resourceValue(pigeon_instance: CompanionAd): String? {
     return pigeon_instance.resourceValue
   }
 

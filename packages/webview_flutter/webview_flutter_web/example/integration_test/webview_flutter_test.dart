@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,19 +13,15 @@ import 'wrapped_webview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String fakeUrl = 'about:blank';
+  const fakeUrl = 'about:blank';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    final WebWebViewController controller = WebWebViewController(
+    final controller = WebWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    await controller.loadRequest(
-      LoadRequestParams(uri: Uri.parse(fakeUrl)),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(fakeUrl)));
 
-    await tester.pumpWidget(
-      wrappedWebView(controller),
-    );
+    await tester.pumpWidget(wrappedWebView(controller));
     // Pump 2 frames so the framework injects the platform view into the DOM.
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.
@@ -33,23 +29,21 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final WebWebViewController controller = WebWebViewController(
+    final controller = WebWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
     await controller.loadHtmlString(
       'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
     );
 
-    await tester.pumpWidget(
-      wrappedWebView(controller),
-    );
+    await tester.pumpWidget(wrappedWebView(controller));
     // Pump 2 frames so the framework injects the platform view into the DOM.
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.
@@ -57,7 +51,7 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(

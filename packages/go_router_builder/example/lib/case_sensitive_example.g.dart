@@ -8,54 +8,57 @@ part of 'case_sensitive_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $caseSensitiveRoute,
-      $notCaseSensitiveRoute,
-    ];
+List<RouteBase> get $appRoutes => [$caseSensitiveRoute, $notCaseSensitiveRoute];
 
 RouteBase get $caseSensitiveRoute => GoRouteData.$route(
-      path: '/case-sensitive',
-      factory: $CaseSensitiveRouteExtension._fromState,
-    );
+  path: '/case-sensitive',
+  factory: $CaseSensitiveRoute._fromState,
+);
 
-extension $CaseSensitiveRouteExtension on CaseSensitiveRoute {
+mixin $CaseSensitiveRoute on GoRouteData {
   static CaseSensitiveRoute _fromState(GoRouterState state) =>
       const CaseSensitiveRoute();
 
-  String get location => GoRouteData.$location(
-        '/case-sensitive',
-      );
+  @override
+  String get location => GoRouteData.$location('/case-sensitive');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
-      path: '/not-case-sensitive',
-      caseSensitive: false,
-      factory: $NotCaseSensitiveRouteExtension._fromState,
-    );
+  path: '/not-case-sensitive',
+  caseSensitive: false,
+  factory: $NotCaseSensitiveRoute._fromState,
+);
 
-extension $NotCaseSensitiveRouteExtension on NotCaseSensitiveRoute {
+mixin $NotCaseSensitiveRoute on GoRouteData {
   static NotCaseSensitiveRoute _fromState(GoRouterState state) =>
       const NotCaseSensitiveRoute();
 
-  String get location => GoRouteData.$location(
-        '/not-case-sensitive',
-      );
+  @override
+  String get location => GoRouteData.$location('/not-case-sensitive');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

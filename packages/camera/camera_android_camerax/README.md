@@ -18,26 +18,6 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Limitations
 
-### Concurrent preview display, video recording, image capture, and image streaming
-
-The CameraX plugin only supports the concurrent camera use cases supported by Camerax; see
-[their documentation][6] for more information. To avoid the usage of unsupported concurrent
-use cases, the plugin behaves according to the following:
-
-* If the preview is paused (via `pausePreview`), concurrent video recording and image capture
-  and/or image streaming (via `startVideoCapturing(cameraId, VideoCaptureOptions(streamCallback:...))`)
-  is supported.
-* If the preview is not paused
-  * **and** the camera device is at least supported hardware [`LIMITED`][8], then concurrent
-    image capture and video recording is supported.
-  * **and** the camera device is at least supported hardware [`LEVEL_3`][7], then concurrent
-    video recording and image streaming is supported, but concurrent video recording, image
-    streaming, and image capture is not supported.
-
-### `setDescriptionWhileRecording` is unimplemented [Issue #148013][148013]
-`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented
-due to this not currently being supported by CameraX.
-
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX, and thus,
@@ -73,7 +53,15 @@ in the merged Android manifest of your app, then take the following steps to rem
     tools:node="remove" />
 ```
 
-### Allowing image streaming in the background
+### Notes on video capture
+
+#### Setting description while recording
+To avoid cancelling any active recording when calling `setDescriptionWhileRecording`,
+you must start the recording with `startVideoCapturing` with `enablePersistentRecording` set to `true`.
+
+### Notes on image streaming
+
+#### Allowing image streaming in the background
 
 As of Android 14, to allow for background image streaming, you will need to specify the foreground
 [`TYPE_CAMERA`][12] foreground service permission in your app's manifest. Specifically, in
@@ -85,6 +73,12 @@ As of Android 14, to allow for background image streaming, you will need to spec
   ...
 </manifest>
 ```
+
+#### Configuring NV21 image format
+
+If you initialize a `CameraController` with `ImageFormatGroup.nv21`, then streamed images will
+still have the `ImageFormatGroup.yuv420` format, but their image data will be formatted in NV21.
+See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageAnalysis#OUTPUT_IMAGE_FORMAT_NV21().
 
 ## Contributing
 

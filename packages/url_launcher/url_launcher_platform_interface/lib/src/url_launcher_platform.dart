@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -72,7 +72,8 @@ abstract class UrlLauncherPlatform extends PlatformInterface {
   /// Returns `true` if the given [url] was successfully launched.
   Future<bool> launchUrl(String url, LaunchOptions options) {
     final bool isWebURL = url.startsWith('http:') || url.startsWith('https:');
-    final bool useWebView = options.mode == PreferredLaunchMode.inAppWebView ||
+    final bool useWebView =
+        options.mode == PreferredLaunchMode.inAppWebView ||
         options.mode == PreferredLaunchMode.inAppBrowserView ||
         (isWebURL && options.mode == PreferredLaunchMode.platformDefault);
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,9 @@ void main() {
 
   testWidgets('canLaunch', (WidgetTester _) async {
     expect(
-        await canLaunchUrl(Uri(scheme: 'randomscheme', path: 'a_path')), false);
+      await canLaunchUrl(Uri(scheme: 'randomscheme', path: 'a_path')),
+      false,
+    );
 
     // Generally all devices should have some default browser.
     expect(await canLaunchUrl(Uri(scheme: 'http', host: 'flutter.dev')), true);

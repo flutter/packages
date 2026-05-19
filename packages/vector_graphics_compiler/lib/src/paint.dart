@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,22 +24,24 @@ class Color {
   /// Creates an immutable representation of color from its red, green, blue,
   /// and 0..1 opacity parts.
   const Color.fromRGBO(int r, int g, int b, double opacity)
-      : value = ((((opacity * 0xff ~/ 1) & 0xff) << 24) |
-                ((r & 0xff) << 16) |
-                ((g & 0xff) << 8) |
-                ((b & 0xff) << 0)) &
-            0xFFFFFFFF;
+    : value =
+          ((((opacity * 0xff ~/ 1) & 0xff) << 24) |
+              ((r & 0xff) << 16) |
+              ((g & 0xff) << 8) |
+              ((b & 0xff) << 0)) &
+          0xFFFFFFFF;
 
   /// Creates an immutable representation of color from its alpha, red, green,
   /// and blue parts.
   ///
   /// Each part is represented by an integer from 0..255.
   const Color.fromARGB(int a, int r, int g, int b)
-      : value = (((a & 0xff) << 24) |
-                ((r & 0xff) << 16) |
-                ((g & 0xff) << 8) |
-                ((b & 0xff) << 0)) &
-            0xFFFFFFFF;
+    : value =
+          (((a & 0xff) << 24) |
+              ((r & 0xff) << 16) |
+              ((g & 0xff) << 8) |
+              ((b & 0xff) << 0)) &
+          0xFFFFFFFF;
 
   /// Fully opaque black.
   static const Color opaqueBlack = Color(0xFF000000);
@@ -200,13 +202,14 @@ class LinearGradient extends Gradient {
 
   @override
   int get hashCode => Object.hash(
-      id,
-      from,
-      to,
-      Object.hashAll(colors ?? <Color>[]),
-      Object.hashAll(offsets ?? <double>[]),
-      tileMode,
-      unitMode);
+    id,
+    from,
+    to,
+    Object.hashAll(colors ?? <Color>[]),
+    Object.hashAll(offsets ?? <double>[]),
+    tileMode,
+    unitMode,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -344,15 +347,16 @@ class RadialGradient extends Gradient {
 
   @override
   int get hashCode => Object.hash(
-      id,
-      center,
-      radius,
-      Object.hashAll(colors ?? <Color>[]),
-      Object.hashAll(offsets ?? <double>[]),
-      tileMode,
-      transform,
-      focalPoint,
-      unitMode);
+    id,
+    center,
+    radius,
+    Object.hashAll(colors ?? <Color>[]),
+    Object.hashAll(offsets ?? <double>[]),
+    tileMode,
+    transform,
+    focalPoint,
+    unitMode,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -396,11 +400,8 @@ class Paint {
   /// Creates a new collection of painting attributes.
   ///
   /// See [Paint].
-  const Paint({
-    BlendMode? blendMode,
-    this.stroke,
-    this.fill,
-  }) : blendMode = blendMode ?? BlendMode.srcOver;
+  const Paint({BlendMode? blendMode, this.stroke, this.fill})
+    : blendMode = blendMode ?? BlendMode.srcOver;
 
   /// The Porter-Duff algorithm to use when compositing this painting object
   /// with any objects painted under it.
@@ -444,17 +445,14 @@ class Paint {
     return Paint(
       blendMode: blendMode,
       stroke: stroke,
-      fill: Fill(
-        color: fill!.color,
-        shader: newShader,
-      ),
+      fill: Fill(color: fill!.color, shader: newShader),
     );
   }
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Paint(blendMode: $blendMode');
-    const String leading = ', ';
+    final buffer = StringBuffer('Paint(blendMode: $blendMode');
+    const leading = ', ';
     if (stroke != null) {
       buffer.write('${leading}stroke: $stroke');
     }
@@ -510,7 +508,14 @@ class Stroke {
 
   @override
   int get hashCode => Object.hash(
-      PaintingStyle.stroke, color, shader, cap, join, miterLimit, width);
+    PaintingStyle.stroke,
+    color,
+    shader,
+    cap,
+    join,
+    miterLimit,
+    width,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -525,8 +530,8 @@ class Stroke {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Stroke(color: $color');
-    const String leading = ', ';
+    final buffer = StringBuffer('Stroke(color: $color');
+    const leading = ', ';
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
     }
@@ -553,10 +558,7 @@ class Stroke {
 @immutable
 class Fill {
   /// Creates a new immutable set of drawing attributes for a [Paint].
-  const Fill({
-    Color? color,
-    this.shader,
-  }) : color = color ?? Color.opaqueBlack;
+  const Fill({Color? color, this.shader}) : color = color ?? Color.opaqueBlack;
 
   /// The color to use for this stroke.
   ///
@@ -578,8 +580,8 @@ class Fill {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Fill(color: $color');
-    const String leading = ', ';
+    final buffer = StringBuffer('Fill(color: $color');
+    const leading = ', ';
 
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
@@ -809,7 +811,6 @@ enum BlendMode {
   ///  * [hardLight], which combines [modulate] and [screen] to favor the
   ///    source image.
   screen, // The last coeff mode.
-
   /// Multiply the components of the source and destination images after
   /// adjusting them to favor the destination.
   ///
@@ -944,7 +945,6 @@ enum BlendMode {
   ///
   /// ![](https://flutter.github.io/assets-for-api-docs/assets/dart-ui/blend_mode_multiply.png)
   multiply, // The last separable mode.
-
   /// Take the hue of the source image, and the saturation and luminosity of the
   /// destination image.
   ///
@@ -1290,7 +1290,7 @@ class TextPosition {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.write('TextPosition(reset: $reset');
     if (x != null) {
       buffer.write(', x: $x');
@@ -1356,15 +1356,15 @@ class TextConfig {
 
   @override
   int get hashCode => Object.hash(
-        text,
-        xAnchorMultiplier,
-        fontSize,
-        fontFamily,
-        fontWeight,
-        decoration,
-        decorationStyle,
-        decorationColor,
-      );
+    text,
+    xAnchorMultiplier,
+    fontSize,
+    fontFamily,
+    fontWeight,
+    decoration,
+    decorationStyle,
+    decorationColor,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -1442,7 +1442,7 @@ enum TextDecorationStyle {
   dashed,
 
   /// Draw a sinusoidal line
-  wavy
+  wavy,
 }
 
 /// A linear decoration to draw near the text.
@@ -1454,8 +1454,8 @@ class TextDecoration {
 
   /// Creates a decoration that paints the union of all the given decorations.
   factory TextDecoration.combine(List<TextDecoration> decorations) {
-    int mask = 0;
-    for (final TextDecoration decoration in decorations) {
+    var mask = 0;
+    for (final decoration in decorations) {
       mask |= decoration.mask;
     }
     return TextDecoration._(mask);
@@ -1494,7 +1494,7 @@ class TextDecoration {
     if (mask == 0) {
       return 'TextDecoration.none';
     }
-    final List<String> values = <String>[];
+    final values = <String>[];
     if (mask & underline.mask != 0) {
       values.add('underline');
     }

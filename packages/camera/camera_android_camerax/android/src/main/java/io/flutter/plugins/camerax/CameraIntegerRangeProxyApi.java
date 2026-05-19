@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,12 +24,12 @@ class CameraIntegerRangeProxyApi extends PigeonApiCameraIntegerRange {
   }
 
   @Override
-  public long lower(android.util.Range<?> pigeonInstance) {
+  public long lower(Range<?> pigeonInstance) {
     return (Integer) pigeonInstance.getLower();
   }
 
   @Override
-  public long upper(android.util.Range<?> pigeonInstance) {
+  public long upper(Range<?> pigeonInstance) {
     return (Integer) pigeonInstance.getUpper();
   }
 }

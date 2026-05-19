@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,10 +7,7 @@ import 'product_details.dart';
 /// The parameter object for generating a purchase.
 class PurchaseParam {
   /// Creates a new purchase parameter object with the given data.
-  PurchaseParam({
-    required this.productDetails,
-    this.applicationUserName,
-  });
+  PurchaseParam({required this.productDetails, this.applicationUserName});
 
   /// The product to create payment for.
   ///

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,21 +15,16 @@ import 'types.dart';
 class LostDataResponse {
   /// Creates an instance with the given [file], [exception], and [type]. Any of
   /// the params may be null, but this is never considered to be empty.
-  LostDataResponse({
-    this.file,
-    this.exception,
-    this.type,
-    this.files,
-  });
+  LostDataResponse({this.file, this.exception, this.type, this.files});
 
   /// Initializes an instance with all member params set to null and considered
   /// to be empty.
   LostDataResponse.empty()
-      : file = null,
-        exception = null,
-        type = null,
-        _empty = true,
-        files = null;
+    : file = null,
+      exception = null,
+      type = null,
+      _empty = true,
+      files = null;
 
   /// Whether it is an empty response.
   ///

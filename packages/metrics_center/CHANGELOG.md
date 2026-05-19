@@ -1,6 +1,13 @@
-## NEXT
+## 1.0.15
+
+* Fixes dartdoc comments that accidentally used HTML.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.14
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates dependency on `package:googleapis` to `^14.0.0`.
+* Updates dependency on `package:googleapis_auth` to `^2.0.0`.
 * Update dependency `http: ^1.0.0`
 
 ## 1.0.13

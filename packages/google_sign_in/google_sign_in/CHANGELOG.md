@@ -1,12 +1,44 @@
 ## NEXT
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
+## 7.2.0
+
+* Adds a `clearAuthorizationToken` method to remove an access token from the
+  cache.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 7.1.1
+
+* Adds more documentation about the requirement to call `initialize` exactly
+  once.
+* Adds information about `GoogleSignInException` to the migration guide.
+
+## 7.1.0
+
+* Adds the missing export of `GoogleSignInExceptionCode`, to allow for
+  structured error handling as intended by the API.
+
+## 7.0.0
+
+* **BREAKING CHANGE**: Many APIs have changed or been replaced to reflect the
+  current APIs and best practices of the underlying platform SDKs. For full
+  details, see the README and migration guide, but notable highlights include:
+  * The `GoogleSignIn` instance is now a singleton.
+  * Clients must call and await the new `initialize` method before calling any
+    other methods on the instance.
+  * Authentication and authorization are now separate steps.
+  * Access tokens and server auth codes are obtained via separate calls.
 
 ## 6.3.0
 
 * Adds a sign-in field to allow Android clients to explicitly specify an account name. This
   capability is only available within Android for the underlying libraries.
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 6.2.2
 
@@ -159,7 +191,6 @@ For every platform other than `web`, this version should be identical to `5.4.4`
 ## 5.1.0
 
 * Add reAuthenticate option to signInSilently to allow re-authentication to be requested
-
 * Updated Android lint settings.
 
 ## 5.0.7

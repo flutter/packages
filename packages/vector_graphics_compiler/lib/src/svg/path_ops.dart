@@ -1,10 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 // Copied from flutter/engine repository: https://github.com/flutter/engine/tree/main/tools/path_ops
 // NOTE: For now, this copy and flutter/engine copy should be kept in sync.
 
-import '_path_ops_unsupported.dart' if (dart.library.ffi) '_path_ops_ffi.dart'
+import '_path_ops_unsupported.dart'
+    if (dart.library.ffi) '_path_ops_ffi.dart'
     as impl;
 export '_path_ops_unsupported.dart' if (dart.library.ffi) '_path_ops_ffi.dart';
 
@@ -87,7 +88,13 @@ abstract class PathProxy {
   /// Creates a cubic Bezier curve from the current point to point x3,y3 using
   /// x1,y1 as the first control point and x2,y2 as the second.
   void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3);
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  );
 
   /// Draws a straight line from the current point to the last [moveTo] point.
   void close();
@@ -112,7 +119,13 @@ class SvgPathProxy implements PathProxy {
 
   @override
   void cubicTo(
-      double x1, double y1, double x2, double y2, double x3, double y3) {
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
     _buffer.write('C$x1,$y1 $x2,$y2 $x3,$y3');
   }
 

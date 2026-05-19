@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [PlatformNavigationDelegateCreationParams] to
 /// provide additional platform specific parameters.
 ///
@@ -36,7 +35,6 @@ import 'package:flutter/material.dart';
 ///   final String? filter;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class PlatformNavigationDelegateCreationParams {
   /// Used by the platform implementation to create a new [PlatformNavigationkDelegate].

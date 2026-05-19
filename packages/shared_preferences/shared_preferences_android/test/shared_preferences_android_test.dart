@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ void main() {
   late _FakeSharedPreferencesApi api;
   late SharedPreferencesAndroid plugin;
 
-  const Map<String, Object> flutterTestValues = <String, Object>{
+  const flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
     'flutter.Bool': true,
     'flutter.Int': 42,
@@ -25,7 +25,7 @@ void main() {
     'flutter.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> prefixTestValues = <String, Object>{
+  const prefixTestValues = <String, Object>{
     'prefix.String': 'hello world',
     'prefix.Bool': true,
     'prefix.Int': 42,
@@ -33,7 +33,7 @@ void main() {
     'prefix.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+  const nonPrefixTestValues = <String, Object>{
     'String': 'hello world',
     'Bool': true,
     'Int': 42,
@@ -41,16 +41,17 @@ void main() {
     'StringList': <String>['foo', 'bar'],
   };
 
-  final Map<String, Object> allTestValuesForComparison = <String, Object>{};
+  final allTestValuesForComparison = <String, Object>{};
 
   allTestValuesForComparison.addAll(flutterTestValues);
   allTestValuesForComparison.addAll(prefixTestValues);
   allTestValuesForComparison.addAll(nonPrefixTestValues);
 
-  final Map<String, Object> allTestValuesForAddingDirectlyToCache =
-      <String, Object>{...allTestValuesForComparison};
+  final allTestValuesForAddingDirectlyToCache = <String, Object>{
+    ...allTestValuesForComparison,
+  };
 
-  final String encodedListStringValue =
+  final encodedListStringValue =
       '$jsonListPrefix${jsonEncode(<String>['foo', 'bar'])}';
   allTestValuesForAddingDirectlyToCache['flutter.StringList'] =
       encodedListStringValue;
@@ -65,8 +66,10 @@ void main() {
 
   test('registerWith', () async {
     SharedPreferencesAndroid.registerWith();
-    expect(SharedPreferencesStorePlatform.instance,
-        isA<SharedPreferencesAndroid>());
+    expect(
+      SharedPreferencesStorePlatform.instance,
+      isA<SharedPreferencesAndroid>(),
+    );
   });
 
   test('remove', () async {
@@ -101,22 +104,16 @@ void main() {
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(all.length, 5);
     await plugin.clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     all = await plugin.getAll();
     expect(all.length, 5);
     all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(all.length, 0);
   });
@@ -127,9 +124,7 @@ void main() {
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(all.length, 5);
     await plugin.clearWithParameters(
@@ -143,9 +138,7 @@ void main() {
     all = await plugin.getAll();
     expect(all.length, 5);
     all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(all.length, 4);
   });
@@ -185,9 +178,7 @@ void main() {
       api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: 'prefix.'),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
     );
     expect(all.length, 5);
     expect(all, prefixTestValues);
@@ -219,11 +210,13 @@ void main() {
     expect(await plugin.setValue('String', 'flutter.String', 'hi'), isTrue);
     expect(api.items['flutter.String'], 'hi');
     expect(
-        await plugin
-            .setValue('StringList', 'flutter.StringList', <String>['hi']),
-        isTrue);
-    expect(api.items['flutter.StringList'],
-        '$jsonListPrefix${jsonEncode(<String>['hi'])}');
+      await plugin.setValue('StringList', 'flutter.StringList', <String>['hi']),
+      isTrue,
+    );
+    expect(
+      api.items['flutter.StringList'],
+      '$jsonListPrefix${jsonEncode(<String>['hi'])}',
+    );
   });
 
   test('setValue with unsupported type', () async {
@@ -237,9 +230,7 @@ void main() {
       api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: '')),
     );
     expect(all.length, 15);
     expect(all, allTestValuesForComparison);
@@ -251,20 +242,14 @@ void main() {
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: '')),
     );
     expect(all.length, 15);
     await plugin.clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      ClearParameters(filter: PreferencesFilter(prefix: '')),
     );
     all = await plugin.getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: ''),
-      ),
+      GetAllParameters(filter: PreferencesFilter(prefix: '')),
     );
     expect(all.length, 0);
   });
@@ -282,11 +267,11 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    final Map<String, Object> filteredItems = <String, Object>{
+    final filteredItems = <String, Object>{
       for (final String key in items.keys)
         if (key.startsWith(prefix) &&
             (allowSet == null || allowSet.contains(key)))
-          key: items[key]!
+          key: items[key]!,
     };
     filteredItems.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&

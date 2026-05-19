@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,7 +21,8 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
   static set instance(PointerInterceptorPlatform? instance) {
     if (instance == null) {
       throw AssertionError(
-          'Platform interfaces can only be set to a non-null instance');
+        'Platform interfaces can only be set to a non-null instance',
+      );
     }
 
     PlatformInterface.verify(instance, _token);
@@ -35,11 +36,7 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   /// Platform-specific implementations should override this function their own
   /// implementation of a pointer interceptor widget.
-  Widget buildWidget({
-    required Widget child,
-    bool debug = false,
-    Key? key,
-  }) {
+  Widget buildWidget({required Widget child, bool debug = false, Key? key}) {
     throw UnimplementedError('buildWidget() has not been implemented.');
   }
 }

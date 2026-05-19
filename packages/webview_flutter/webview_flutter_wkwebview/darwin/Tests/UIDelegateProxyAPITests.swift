@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,7 +39,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let origin = SecurityOriginProxyAPITests.testSecurityOrigin
-    let frame = TestFrameInfo()
+    let frame = TestFrameInfo.instance
     let type: WKMediaCaptureType = .camera
 
     var resultDecision: WKPermissionDecision?
@@ -64,7 +64,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let message = "myString"
-    let frame = TestFrameInfo()
+    let frame = TestFrameInfo.instance
 
     instance.webView(webView, runJavaScriptAlertPanelWithMessage: message, initiatedByFrame: frame)
     {
@@ -79,7 +79,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let message = "myString"
-    let frame = TestFrameInfo()
+    let frame = TestFrameInfo.instance
 
     var confirmedResult: Bool?
     let callbackExpectation = expectation(description: "Wait for callback.")
@@ -103,7 +103,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     let webView = WKWebView(frame: .zero)
     let prompt = "myString"
     let defaultText = "myString3"
-    let frame = TestFrameInfo()
+    let frame = TestFrameInfo.instance
 
     var inputResult: String?
     let callbackExpectation = expectation(description: "Wait for callback.")

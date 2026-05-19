@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,6 +15,7 @@ public interface SharedPreferencesListEncoder {
   /** Converts list to String for storing in shared preferences. */
   @NonNull
   String encode(@NonNull List<String> list);
+
   /** Converts stored String representing List<String> to List. */
   @NonNull
   List<String> decode(@NonNull String listString);

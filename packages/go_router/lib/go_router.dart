@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,12 +11,16 @@ export 'src/configuration.dart';
 export 'src/delegate.dart';
 export 'src/information_provider.dart';
 export 'src/match.dart' hide RouteMatchListCodec;
+export 'src/misc/custom_parameter.dart';
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
+export 'src/on_enter.dart'
+    show Allow, Block, OnEnterResult, OnEnterThenCallback;
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
 export 'src/route.dart';
 export 'src/route_data.dart' hide NoOpPage;
-export 'src/router.dart';
+export 'src/router.dart'
+    show GoExceptionHandler, GoRouter, OnEnter, RoutingConfig;
 export 'src/state.dart' hide GoRouterStateRegistry, GoRouterStateRegistryScope;

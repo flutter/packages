@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -77,8 +77,7 @@ class ImagePicker {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
   }) {
-    final ImagePickerOptions imagePickerOptions =
-        ImagePickerOptions.createAndValidate(
+    final imagePickerOptions = ImagePickerOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
@@ -134,7 +133,7 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) {
-    final ImageOptions imageOptions = ImageOptions.createAndValidate(
+    final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
@@ -271,8 +270,8 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the captured video when recording from the camera ([ImageSource.camera]),
+  /// and is ignored for [ImageSource.gallery]. If no [maxDuration] is specified, the maximum duration will be infinite.
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
@@ -295,6 +294,28 @@ class ImagePicker {
       source: source,
       preferredCameraDevice: preferredCameraDevice,
       maxDuration: maxDuration,
+    );
+  }
+
+  /// Returns a [List<XFile>] of the videos that were picked.
+  ///
+  /// The returned [List<XFile>] is intended to be used within a single app
+  /// session. Do not save the file path and use it across sessions.
+  ///
+  /// The videos come from the gallery.
+  ///
+  /// The [maxDuration] argument specifies the maximum duration of the captured
+  /// videos. If no [maxDuration] is specified, the maximum duration will be
+  /// infinite. This value may be ignored by platforms that cannot support it.
+  ///
+  /// The `limit` parameter modifies the maximum number of videos that can be
+  /// selected. This value may be ignored by platforms that cannot support it.
+  ///
+  /// The method can throw a [PlatformException] if the video selection process
+  /// fails.
+  Future<List<XFile>> pickMultiVideo({Duration? maxDuration, int? limit}) {
+    return platform.getMultiVideoWithOptions(
+      options: MultiVideoPickerOptions(maxDuration: maxDuration, limit: limit),
     );
   }
 

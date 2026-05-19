@@ -26,6 +26,10 @@ android {
     namespace = "com.example.all_packages"
     compileSdkVersion flutter.compileSdkVersion
 
+    compileOptions {
+      coreLibraryDesugaringEnabled true
+    }
+
     defaultConfig {
         applicationId "com.example.all_packages"
         minSdkVersion flutter.minSdkVersion
@@ -43,4 +47,8 @@ android {
 
 flutter {
     source '../..'
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }

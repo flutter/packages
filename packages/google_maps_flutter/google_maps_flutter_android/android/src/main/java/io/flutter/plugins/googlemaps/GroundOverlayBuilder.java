@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 class GroundOverlayBuilder implements GroundOverlaySink {
 
-  private final GroundOverlayOptions groundOverlayOptions;
+  private final @NonNull GroundOverlayOptions groundOverlayOptions;
 
   GroundOverlayBuilder() {
     this.groundOverlayOptions = new GroundOverlayOptions();

@@ -1,11 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 // This header is available in the Test module. Import via "@import image_picker_ios_ios.Test;"
 
-#import <image_picker_ios/FLTImagePickerPlugin.h>
-
+#import "FIPViewProvider.h"
+#import "FLTImagePickerPlugin.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -33,13 +33,19 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// If nil, no resampling is done.
 @property(nonatomic, strong, nullable) NSNumber *imageQuality;
 
-/// Maximum number of images to select. 0 indicates no maximum.
-@property(nonatomic, assign) int maxImageCount;
+/// Maximum number of items to select. 0 indicates no maximum.
+@property(nonatomic, assign) int maxItemCount;
 
-/// Whether the image should be picked with full metadata (requires gallery permissions)
+/// Whether the image should be picked with full metadata (requires gallery permissions).
 @property(nonatomic, assign) BOOL requestFullMetadata;
 
-/// Whether the picker should include videos in the list*/
+/// Maximum duration for videos. 0 indicates no maximum.
+@property(nonatomic, assign) NSTimeInterval maxDuration;
+
+/// Whether the picker should include images in the list.
+@property(nonatomic, assign) BOOL includeImages;
+
+/// Whether the picker should include videos in the list.
 @property(nonatomic, assign) BOOL includeVideo;
 
 @end
@@ -56,7 +62,7 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// The context of the Flutter method call that is currently being handled, if any.
 @property(strong, nonatomic, nullable) FLTImagePickerMethodCallContext *callContext;
 
-- (UIViewController *)viewControllerWithWindow:(nullable UIWindow *)window;
+- (instancetype)initWithViewProvider:(NSObject<FIPViewProvider> *)viewProvider;
 
 /// Validates the provided paths list, then sends it via `callContext.result` as the result of the
 /// original platform channel method call, clearing the in-progress call state.

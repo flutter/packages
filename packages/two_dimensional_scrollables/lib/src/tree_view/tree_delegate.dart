@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,11 +19,12 @@ typedef TreeViewRowBuilder<T> = TreeRow Function(TreeViewNode<T> node);
 ///
 /// Used by [TreeView.treeRowBuilder] to build rows on demand for the
 /// tree.
-typedef TreeViewNodeBuilder<T> = Widget Function(
-  BuildContext context,
-  TreeViewNode<T> node,
-  AnimationStyle toggleAnimationStyle,
-);
+typedef TreeViewNodeBuilder<T> =
+    Widget Function(
+      BuildContext context,
+      TreeViewNode<T> node,
+      AnimationStyle toggleAnimationStyle,
+    );
 
 /// The position of a [TreeRow] in a [TreeViewport] in relation
 /// to other children of the viewport.
@@ -35,10 +36,8 @@ typedef TreeViewNodeBuilder<T> = Widget Function(
 class TreeVicinity extends ChildVicinity {
   /// Creates a reference to a [TreeRow] in a [TreeView], with the [xIndex] and
   /// [yIndex] converted to terms of [depth] and [row], respectively.
-  const TreeVicinity({
-    required int depth,
-    required int row,
-  }) : super(xIndex: depth, yIndex: row);
+  const TreeVicinity({required int depth, required int row})
+    : super(xIndex: depth, yIndex: row);
 
   /// The row index of the [TreeRow] in the [TreeView].
   ///
@@ -99,15 +98,15 @@ class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     super.addAutomaticKeepAlives,
     required TwoDimensionalIndexedWidgetBuilder nodeBuilder,
     required TreeVicinityToRowBuilder rowBuilder,
-  })  : assert(rowCount >= 0),
-        _rowBuilder = rowBuilder,
-        super(
-          builder: nodeBuilder,
-          // No maxXIndex, since we do not know the max depth.
-          maxYIndex: rowCount - 1,
-          // repaintBoundaries handled by TreeView
-          addRepaintBoundaries: false,
-        );
+  }) : assert(rowCount >= 0),
+       _rowBuilder = rowBuilder,
+       super(
+         builder: nodeBuilder,
+         // No maxXIndex, since we do not know the max depth.
+         maxYIndex: rowCount - 1,
+         // repaintBoundaries handled by TreeView
+         addRepaintBoundaries: false,
+       );
 
   @override
   int get rowCount => maxYIndex! + 1;

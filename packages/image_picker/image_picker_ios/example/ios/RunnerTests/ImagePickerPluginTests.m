@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,6 +13,12 @@
 
 #import <OCMock/OCMock.h>
 
+@interface FLTImagePickerPlugin (Testing)
+@property(nonatomic, strong) UIWindow *interactionBlockerWindow;
+@property(nonatomic, weak) UIWindow *previousKeyWindow;
+- (void)removeInteractionBlocker;
+@end
+
 @interface MockViewController : UIViewController
 @property(nonatomic, retain) UIViewController *mockPresented;
 @end
@@ -24,6 +30,19 @@
   return mockPresented;
 }
 
+@end
+
+@interface StubViewProvider : NSObject <FIPViewProvider>
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@property(nonatomic, nullable) UIViewController *viewController;
+@end
+
+@implementation StubViewProvider
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+  self = [super init];
+  _viewController = viewController;
+  return self;
+}
 @end
 
 @interface ImagePickerPluginTests : XCTestCase
@@ -50,7 +69,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -83,7 +103,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -116,7 +137,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -148,7 +170,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -171,7 +194,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -195,7 +219,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -216,7 +241,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
@@ -234,7 +260,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
@@ -252,7 +279,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   FLTMediaSelectionOptions *mediaSelectionOptions =
@@ -277,7 +305,8 @@
   if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
     return;
   }
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   plugin.imagePickerControllerOverrides = @[ controller ];
 
@@ -294,10 +323,59 @@
   [plugin imagePickerControllerDidCancel:controller];
 }
 
+- (void)testCameraPickerInteractionBlockerWindowIsAddedAndRemoved {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(YES);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+      .andReturn(YES);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
+  UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [[UIViewController alloc] init];
+  window.rootViewController = rootViewController;
+  if ([rootViewController respondsToSelector:@selector(loadViewIfNeeded)]) {
+    [rootViewController loadViewIfNeeded];
+  } else {
+    [rootViewController view];
+  }
+  [window makeKeyAndVisible];
+
+  StubViewProvider *viewProvider =
+      [[StubViewProvider alloc] initWithViewController:rootViewController];
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] initWithViewProvider:viewProvider];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
+                   }];
+
+  XCTAssertNotNil(plugin.interactionBlockerWindow);
+  XCTAssertEqual(plugin.previousKeyWindow, window);
+  XCTAssertGreaterThan(plugin.interactionBlockerWindow.windowLevel, window.windowLevel);
+  XCTAssertFalse(window.isKeyWindow);
+
+  [plugin removeInteractionBlocker];
+
+  XCTAssertNil(plugin.interactionBlockerWindow);
+  XCTAssertNil(plugin.previousKeyWindow);
+  XCTAssertTrue(window.isKeyWindow);
+}
+
 #pragma mark - Test video duration
 
 - (void)testPickingVideoWithDuration {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -310,20 +388,22 @@
   XCTAssertEqual(controller.videoMaximumDuration, 95);
 }
 
-- (void)testViewController {
-  UIWindow *window = [UIWindow new];
-  MockViewController *vc1 = [MockViewController new];
-  window.rootViewController = vc1;
+- (void)testPickingMultiVideoWithDuration {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
-  UIViewController *vc2 = [UIViewController new];
-  vc1.mockPresented = vc2;
+  [plugin
+      pickMultiVideoWithMaxDuration:@(95)
+                              limit:nil
+                         completion:^(NSArray<NSString *> *result, FlutterError *_Nullable error){
+                         }];
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
-  XCTAssertEqual([plugin viewControllerWithWindow:window], vc2);
+  XCTAssertEqual(plugin.callContext.maxDuration, 95);
 }
 
 - (void)testPluginMultiImagePathHasNullItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -337,7 +417,8 @@
 }
 
 - (void)testPluginMultiImagePathHasItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   NSArray *pathList = @[ @"test" ];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
@@ -353,7 +434,8 @@
 }
 
 - (void)testPluginMediaPathHasNoItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -367,7 +449,8 @@
 }
 
 - (void)testPluginMediaPathConvertsNilToEmptyList {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -381,7 +464,8 @@
 }
 
 - (void)testPluginMediaPathHasItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   NSArray *pathList = @[ @"test" ];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
@@ -409,7 +493,8 @@
   PHPickerResult *failResult2 = OCMClassMock([PHPickerResult class]);
   OCMStub([failResult2 itemProvider]).andReturn(mockItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -446,7 +531,8 @@
   PHPickerResult *tiffResult = OCMClassMock([PHPickerResult class]);
   OCMStub([tiffResult itemProvider]).andReturn(tiffItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -478,7 +564,8 @@
   PHPickerResult *pngResult = OCMClassMock([PHPickerResult class]);
   OCMStub([pngResult itemProvider]).andReturn(pngItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -502,7 +589,8 @@
   OCMReject([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
                                                             camera:FLTSourceCameraFront]
@@ -521,7 +609,8 @@
   OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
@@ -549,7 +638,8 @@
   OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   FLTMediaSelectionOptions *options =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -575,7 +665,8 @@
   OCMStub([mockPhotoLibrary authorizationStatusForMediaType:AVMediaTypeVideo])
       .andReturn(AVAuthorizationStatusNotDetermined);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
                                                                  camera:FLTSourceCameraRear];
@@ -595,7 +686,8 @@
 }
 
 - (void)testPickMultiImageWithLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
                        fullMetadata:NO
@@ -603,11 +695,12 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitAllowsMultiple {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -620,11 +713,12 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitMultipleNotAllowed {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -637,11 +731,12 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 1);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 1);
 }
 
 - (void)testPickMultiImageWithoutLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
                        fullMetadata:NO
@@ -649,11 +744,12 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
 - (void)testPickMediaWithoutLimitAllowsMultiple {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -666,7 +762,53 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
+}
+
+- (void)testPickMultiVideoWithLimit {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:@(2)
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
+}
+
+- (void)testPickMultiVideoWithoutLimit {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:nil
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
+}
+
+- (void)testPickVideoSetsCurrentRepresentationMode API_AVAILABLE(ios(14)) {
+  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
+  OCMStub(ClassMethod([mockPickerViewController alloc])).andReturn(mockPickerViewController);
+  OCMExpect([mockPickerViewController
+                initWithConfiguration:[OCMArg checkWithBlock:^BOOL(PHPickerConfiguration *config) {
+                  return config.preferredAssetRepresentationMode ==
+                         PHPickerConfigurationAssetRepresentationModeCurrent;
+                }]])
+      .andReturn(mockPickerViewController);
+
+  id mockViewController = OCMClassMock([UIViewController class]);
+  StubViewProvider *viewProvider =
+      [[StubViewProvider alloc] initWithViewController:mockViewController];
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] initWithViewProvider:viewProvider];
+
+  [plugin pickVideoWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                  maxDuration:nil
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
+                   }];
+
+  OCMVerifyAll(mockPickerViewController);
 }
 
 @end

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,9 +14,7 @@ export 'adsbygoogle_js_interop.dart';
 
 /// Returns a push implementation that handles calls to `adBreak`.
 AdBreakPlacement? lastAdBreakPlacement;
-PushFn mockAdBreak({
-  AdBreakDonePlacementInfo? adBreakDonePlacementInfo,
-}) {
+PushFn mockAdBreak({AdBreakDonePlacementInfo? adBreakDonePlacementInfo}) {
   lastAdBreakPlacement = null;
   return (JSAny? adBreakPlacement) {
     adBreakPlacement as AdBreakPlacement?;
@@ -25,8 +23,10 @@ PushFn mockAdBreak({
     // Call `adBreakDone` if set, with `adBreakDonePlacementInfo`.
     if (adBreakPlacement?.adBreakDone != null) {
       assert(adBreakDonePlacementInfo != null);
-      adBreakPlacement!.adBreakDone!
-          .callAsFunction(null, adBreakDonePlacementInfo);
+      adBreakPlacement!.adBreakDone!.callAsFunction(
+        null,
+        adBreakDonePlacementInfo,
+      );
     }
   };
 }

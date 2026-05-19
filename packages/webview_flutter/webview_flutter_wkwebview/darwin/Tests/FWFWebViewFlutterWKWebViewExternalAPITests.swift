@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,7 +27,7 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
 
     WebViewFlutterPlugin.register(with: registrar)
 
-    let plugin = registry.registrar.plugin
+    let plugin = registry.registrar.plugin as! WebViewFlutterPlugin?
 
     let webView = WKWebView(frame: .zero)
     let webViewIdentifier = 0
@@ -38,10 +38,28 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
       forIdentifier: Int64(webViewIdentifier), withPluginRegistry: registry)
     XCTAssertEqual(result, webView)
   }
+
+  @MainActor func testWebViewForIdentifierHandlesIncorrectRegistry() {
+    let registry = TestRegistry(publishedValue: false)
+    // Ensure that passing an empty registry, such as the FlutterAppDelegate
+    // in an app that has adopted UIScene, gracefully returns nil.
+    let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
+      forIdentifier: 0, withPluginRegistry: registry)
+    XCTAssertEqual(result, nil)
+  }
 }
 
 class TestRegistry: NSObject, FlutterPluginRegistry {
   let registrar = TestFlutterPluginRegistrar()
+  let publishedValue: Bool
+
+  init(publishedValue: Bool) {
+    self.publishedValue = publishedValue
+  }
+
+  convenience override init() {
+    self.init(publishedValue: true)
+  }
 
   #if os(iOS)
     func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
@@ -58,7 +76,7 @@ class TestRegistry: NSObject, FlutterPluginRegistry {
   }
 
   func valuePublished(byPlugin pluginKey: String) -> NSObject? {
-    if pluginKey == "WebViewFlutterPlugin" {
+    if publishedValue && pluginKey == "WebViewFlutterPlugin" {
       return registrar.plugin
     }
     return nil
@@ -83,6 +101,8 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var plugin: WebViewFlutterPlugin? = nil
 
   #if os(iOS)
+    var viewController: UIViewController?
+
     func messenger() -> FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
@@ -100,8 +120,12 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
       gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
     ) {
     }
+
+    func addSceneDelegate(_ delegate: any FlutterSceneLifeCycleDelegate) {
+    }
   #elseif os(macOS)
     var view: NSView?
+    var viewController: NSViewController?
 
     var messenger: FlutterBinaryMessenger {
       return TestBinaryMessenger()
@@ -133,5 +157,9 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   func lookupKey(forAsset asset: String, fromPackage package: String) -> String {
     return ""
+  }
+
+  func valuePublished(byPlugin: String) -> NSObject? {
+    return nil
   }
 }

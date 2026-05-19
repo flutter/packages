@@ -1,9 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 void main() {
@@ -11,7 +10,7 @@ void main() {
 
   group('$Marker', () {
     test('constructor defaults', () {
-      const Marker marker = Marker(markerId: MarkerId('ABC123'));
+      const marker = Marker(markerId: MarkerId('ABC123'));
 
       expect(marker.alpha, equals(1.0));
       expect(marker.anchor, equals(const Offset(0.5, 1.0)));
@@ -24,6 +23,7 @@ void main() {
       expect(marker.rotation, equals(0.0));
       expect(marker.visible, equals(true));
       expect(marker.zIndex, equals(0.0));
+      expect(marker.zIndexInt, equals(0));
       expect(marker.onTap, equals(null));
       expect(marker.onDrag, equals(null));
       expect(marker.onDragStart, equals(null));
@@ -44,7 +44,7 @@ void main() {
     test('toJson', () {
       final BitmapDescriptor testDescriptor =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
-      final Marker marker = Marker(
+      final marker = Marker(
         markerId: const MarkerId('ABC123'),
         alpha: 0.12345,
         anchor: const Offset(100, 100),
@@ -60,14 +60,14 @@ void main() {
         position: const LatLng(50, 50),
         rotation: 100,
         visible: false,
-        zIndex: 100,
+        zIndexInt: 100,
         onTap: () {},
         onDragStart: (LatLng latLng) {},
         onDrag: (LatLng latLng) {},
         onDragEnd: (LatLng latLng) {},
       );
 
-      final Map<String, Object> json = marker.toJson() as Map<String, Object>;
+      final json = marker.toJson() as Map<String, Object>;
 
       expect(json, <String, Object>{
         'markerId': 'ABC123',
@@ -86,35 +86,35 @@ void main() {
         'rotation': 100.0,
         'visible': false,
         'zIndex': 100.0,
+        'zIndexInt': 100,
       });
     });
     test('clone', () {
-      const Marker marker = Marker(markerId: MarkerId('ABC123'));
+      const marker = Marker(markerId: MarkerId('ABC123'));
       final Marker clone = marker.clone();
 
       expect(identical(clone, marker), isFalse);
       expect(clone, equals(marker));
     });
     test('copyWith', () {
-      const MarkerId markerId = MarkerId('ABC123');
-      const Marker marker = Marker(markerId: markerId);
+      const markerId = MarkerId('ABC123');
+      const marker = Marker(markerId: markerId);
 
       final BitmapDescriptor testDescriptor =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
-      const double testAlphaParam = 0.12345;
-      const Offset testAnchorParam = Offset(100, 100);
+      const testAlphaParam = 0.12345;
+      const testAnchorParam = Offset(100, 100);
       final bool testConsumeTapEventsParam = !marker.consumeTapEvents;
       final bool testDraggableParam = !marker.draggable;
       final bool testFlatParam = !marker.flat;
-      final BitmapDescriptor testIconParam = testDescriptor;
-      const InfoWindow testInfoWindowParam = InfoWindow(title: 'Test');
-      const LatLng testPositionParam = LatLng(100, 100);
+      final testIconParam = testDescriptor;
+      const testInfoWindowParam = InfoWindow(title: 'Test');
+      const testPositionParam = LatLng(100, 100);
       const double testRotationParam = 100;
       final bool testVisibleParam = !marker.visible;
       const double testZIndexParam = 100;
-      const ClusterManagerId testClusterManagerIdParam =
-          ClusterManagerId('DEF123');
-      final List<String> log = <String>[];
+      const testClusterManagerIdParam = ClusterManagerId('DEF123');
+      final log = <String>[];
 
       final Marker copy = marker.copyWith(
         alphaParam: testAlphaParam,
@@ -168,6 +168,45 @@ void main() {
 
       copy.onDragEnd!(const LatLng(0, 1));
       expect(log, contains('onDragEndParam'));
+    });
+
+    test("Assert that both zIndex and zIndex int aren't passed in", () {
+      expect(
+        () => Marker(
+          markerId: const MarkerId('ABC123'),
+          zIndex: 5,
+          zIndexInt: 10,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('zIndex param', () {
+      const marker = Marker(markerId: MarkerId('ABC123'), zIndex: 5.00);
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param', () {
+      const marker = Marker(markerId: MarkerId('ABC123'), zIndexInt: 5);
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param copyWith', () {
+      const marker = Marker(markerId: MarkerId('ABC123'), zIndexInt: 5);
+      final Marker copy = marker.copyWith(zIndexIntParam: 10);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
+
+    test('zIndex param copyWith', () {
+      const marker = Marker(markerId: MarkerId('ABC123'), zIndexInt: 5);
+      final Marker copy = marker.copyWith(zIndexParam: 10.0);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
     });
   });
 }

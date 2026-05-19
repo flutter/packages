@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,11 +7,6 @@ import Flutter
 import XCTest
 
 @testable import camera_avfoundation
-
-// Import Objectice-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
-#endif
 
 private final class MockUIDevice: UIDevice {
   var mockOrientation: UIDeviceOrientation = .unknown
@@ -24,14 +19,14 @@ private final class MockUIDevice: UIDevice {
 final class CameraOrientationTests: XCTestCase {
   private func createCameraPlugin() -> (
     cameraPlugin: CameraPlugin,
-    mockCamera: MockFLTCam,
+    mockCamera: MockCamera,
     mockEventAPI: MockGlobalEventApi,
     mockDevice: MockCaptureDevice,
     mockDeviceDiscoverer: MockCameraDeviceDiscoverer,
     captureSessionQueue: DispatchQueue
   ) {
     let mockDevice = MockCaptureDevice()
-    let mockCamera = MockFLTCam()
+    let mockCamera = MockCamera()
     let mockEventAPI = MockGlobalEventApi()
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
@@ -41,7 +36,7 @@ final class CameraOrientationTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: mockEventAPI,
       deviceDiscoverer: mockDeviceDiscoverer,
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -130,7 +125,7 @@ final class CameraOrientationTests: XCTestCase {
         messenger: MockFlutterBinaryMessenger(),
         globalAPI: mockEventAPI,
         deviceDiscoverer: mockDeviceDiscoverer,
-        permissionManager: MockFLTCameraPermissionManager(),
+        permissionManager: MockCameraPermissionManager(),
         deviceFactory: { _ in weakDevice! },
         captureSessionFactory: { MockCaptureSession() },
         captureDeviceInputFactory: MockCaptureDeviceInputFactory(),

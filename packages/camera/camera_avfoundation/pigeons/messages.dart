@@ -1,22 +1,17 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
-  objcSourceOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FCP',
-    headerIncludePath: './include/camera_avfoundation/messages.g.h',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    swiftOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 // Pigeon version of CameraLensDirection.
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
@@ -29,6 +24,21 @@ enum PlatformCameraLensDirection {
   external,
 }
 
+// Pigeon version of CameraLensDirection.
+enum PlatformCameraLensType {
+  /// A built-in wide-angle camera device type.
+  wide,
+
+  /// A built-in camera device type with a longer focal length than a wide-angle camera.
+  telephoto,
+
+  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
+  ultraWide,
+
+  /// Unknown camera device type.
+  unknown,
+}
+
 // Pigeon version of DeviceOrientation.
 enum PlatformDeviceOrientation {
   portraitUp,
@@ -38,45 +48,28 @@ enum PlatformDeviceOrientation {
 }
 
 // Pigeon version of ExposureMode.
-enum PlatformExposureMode {
-  auto,
-  locked,
-}
+enum PlatformExposureMode { auto, locked }
 
 // Pigeon version of FlashMode.
-enum PlatformFlashMode {
-  off,
-  auto,
-  always,
-  torch,
-}
+enum PlatformFlashMode { off, auto, always, torch }
 
 // Pigeon version of FocusMode.
-enum PlatformFocusMode {
-  auto,
-  locked,
-}
+enum PlatformFocusMode { auto, locked }
 
 /// Pigeon version of ImageFileFormat.
-enum PlatformImageFileFormat {
-  jpeg,
-  heif,
-}
+enum PlatformImageFileFormat { jpeg, heif }
 
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
-enum PlatformImageFormatGroup {
-  bgra8888,
-  yuv420,
-}
+enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 // Pigeon version of ResolutionPreset.
-enum PlatformResolutionPreset {
-  low,
-  medium,
-  high,
-  veryHigh,
-  ultraHigh,
-  max,
+enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
+
+enum PlatformVideoStabilizationMode {
+  off,
+  standard,
+  cinematic,
+  cinematicExtended,
 }
 
 // Pigeon version of CameraDescription.
@@ -84,6 +77,7 @@ class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
     required this.lensDirection,
+    required this.lensType,
   });
 
   /// The name of the camera device.
@@ -91,6 +85,9 @@ class PlatformCameraDescription {
 
   /// The direction the camera is facing.
   final PlatformCameraLensDirection lensDirection;
+
+  /// The type of the camera lens.
+  final PlatformCameraLensType lensType;
 }
 
 // Pigeon version of the data needed for a CameraInitializedEvent.
@@ -117,6 +114,44 @@ class PlatformCameraState {
 
   /// Whether setting focus points is supported.
   final bool focusPointSupported;
+}
+
+// Pigeon version of the data needed for a CameraImageData.
+class PlatformCameraImageData {
+  PlatformCameraImageData({
+    required this.formatCode,
+    required this.width,
+    required this.height,
+    required this.planes,
+    required this.lensAperture,
+    required this.sensorExposureTimeNanoseconds,
+    required this.sensorSensitivity,
+  });
+
+  /// The FourCharCode of the image format.
+  final int formatCode;
+
+  final int width;
+  final int height;
+  final List<PlatformCameraImagePlane> planes;
+  final double lensAperture;
+  final int sensorExposureTimeNanoseconds;
+  final double sensorSensitivity;
+}
+
+// Pigeon version of the data needed for a CameraImagePlane.
+class PlatformCameraImagePlane {
+  const PlatformCameraImagePlane({
+    required this.bytes,
+    required this.bytesPerRow,
+    required this.width,
+    required this.height,
+  });
+
+  final Uint8List bytes;
+  final int bytesPerRow;
+  final int width;
+  final int height;
 }
 
 // Pigeon version of to MediaSettings.
@@ -155,9 +190,6 @@ class PlatformSize {
 @HostApi()
 abstract class CameraApi {
   /// Returns the list of available cameras.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription> getAvailableCameras();
@@ -289,6 +321,16 @@ abstract class CameraApi {
   @ObjCSelector('setZoomLevel:')
   void setZoomLevel(double zoom);
 
+  /// Sets the video stabilization mode.
+  @async
+  @ObjCSelector('setVideoStabilizationMode:')
+  void setVideoStabilizationMode(PlatformVideoStabilizationMode mode);
+
+  /// Gets if the given video stabilization mode is supported.
+  @async
+  @ObjCSelector('isVideoStabilizationModeSupported:')
+  bool isVideoStabilizationModeSupported(PlatformVideoStabilizationMode mode);
+
   /// Pauses streaming of preview frames.
   @async
   void pausePreview();
@@ -307,6 +349,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setImageFileFormat:')
   void setImageFileFormat(PlatformImageFileFormat format);
+}
+
+@EventChannelApi()
+abstract class CameraImageStreamEventApi {
+  PlatformCameraImageData imageDataStream();
 }
 
 /// Handler for native callbacks that are not tied to a specific camera ID.

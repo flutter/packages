@@ -1,3 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="io.flutter.plugins.googlemaps">
+  <application>
+    <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+  </application>
 </manifest>

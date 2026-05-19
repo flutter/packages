@@ -11,7 +11,7 @@ tasks:
     args: ["build-examples", "--apk"]
   - name: lint
     script: .ci/scripts/tool_runner.sh
-    args: ["lint-android"]
+    args: ["analyze", "--android", "--no-dart"]
   # Native unit and native integration are split into two steps to allow for
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine

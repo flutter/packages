@@ -1,3 +1,77 @@
+## 4.3.0
+
+- Adds support for custom types through `TypedQueryParameter` annotation. The `encoder`, `decoder` and `compare` parameters allow specifying custom functions for encoding, decoding and comparing query parameters in `TypedGoRoute` constructors. For example, you can use a `DateTime` parameter with a custom encoder and decoder to convert it to and from a string representation in the URL.
+
+## 4.2.1
+
+* Adds support for analyzer 11 and 12.
+
+## 4.2.0
+
+- Adds supports for `TypedQueryParameter` annotation.
+  Its `name` parameter allows specifying a different name for the query parameter than the field name. The name is escaped to be URL-safe. For example `@TypedQueryParameter(name: 'field with space')` will generate a query parameter named `field+with+space`.
+
+## 4.1.3
+
+* Requires `analyzer` 8.2 or higher, to avoid experimental APIs.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 4.1.2
+
+* Updates supported analyzer versions to 8.x or 9.x.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 4.1.1
+
+- Allow `analyzer: '>=7.4.0 <9.0.0'`.
+- Allow `build: '>=3.0.0 <5.0.0'`.
+- Allow `source_gen: '>=3.1.0 <5.0.0'`.
+
+## 4.1.0
+
+- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261)
+- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+
+## 4.0.1
+
+- Fixes unnecessary whitespace in generated `RelativeGoRouteData`.
+
+## 4.0.0
+
+- Make Route mixins public.
+
+## 3.3.1
+
+- Fixes warnings in generated code of iterable parameters.
+
+## 3.3.0
+
+- Adds support for `TypedRelativeGoRoute`.
+
+## 3.2.1
+
+- Changes generated whitespace for better compatibility with new Dart formatter.
+
+## 3.2.0
+
+- Adds support for`extension type`.
+
+## 3.1.0
+
+- Updates dependencies to use the latest `analyzer`, `build`, and `source_gen`.
+- Updates dev dependencies to use the latest `build_test`.
+- Migrates to the `element2` API.
+- Improves test code formatting consistency.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 3.0.1
+
+- Updates README.md to use the mixin `with _$RouteName`.
+
+## 3.0.0
+
+- Route classes now required to use a mixin `with _$RouteName`.
+
 ## 2.9.1
 
 - Fixes an deprecated warning for using withNullability
@@ -12,7 +86,7 @@
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params 
+- Fixes an issue when navigate to router with invalid params
 
 ## 2.8.0
 

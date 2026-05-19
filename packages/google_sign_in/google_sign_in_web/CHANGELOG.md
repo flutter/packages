@@ -1,5 +1,26 @@
-## NEXT
+## 1.1.3
 
+* Restored previously reverted changes to prevent `_initCalled` from being invoked twice on web.
+* Fixed `renderButton` being stuck on "Getting ready" on web by correcting the `FutureBuilder` state check to use `ConnectionState.done`.
+
+## 1.1.2
+
+* Reverts "Throws a more actionable error when init is called more than once."
+
+## 1.1.1 (withdrawn)
+
+* Throws a more actionable error when init is called more than once.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.1.0
+
+* Adds support for the `clearAuthorizationToken` method.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.12.4+4

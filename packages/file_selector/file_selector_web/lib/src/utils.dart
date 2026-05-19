@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@ String acceptedTypesToString(List<XTypeGroup>? acceptedTypes) {
   if (acceptedTypes == null) {
     return '';
   }
-  final List<String> allTypes = <String>[];
+  final allTypes = <String>[];
   for (final XTypeGroup group in acceptedTypes) {
     // If any group allows everything, no filtering should be done.
     if (group.allowsAny) {
@@ -34,11 +34,13 @@ void _validateTypeGroup(XTypeGroup group) {
   if ((group.extensions?.isEmpty ?? true) &&
       (group.mimeTypes?.isEmpty ?? true) &&
       (group.webWildCards?.isEmpty ?? true)) {
-    throw ArgumentError('Provided type group $group does not allow '
-        'all files, but does not set any of the web-supported filter '
-        'categories. At least one of "extensions", "mimeTypes", or '
-        '"webWildCards" must be non-empty for web if anything is '
-        'non-empty.');
+    throw ArgumentError(
+      'Provided type group $group does not allow '
+      'all files, but does not set any of the web-supported filter '
+      'categories. At least one of "extensions", "mimeTypes", or '
+      '"webWildCards" must be non-empty for web if anything is '
+      'non-empty.',
+    );
   }
 }
 

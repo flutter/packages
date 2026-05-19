@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,21 +25,22 @@ void main() {
       const ProductDetailsWrapper wrapper = dummyOneTimeProductDetails;
       final GooglePlayProductDetails product =
           GooglePlayProductDetails.fromProductDetails(
-                  dummyOneTimeProductDetails)
-              .first;
+            dummyOneTimeProductDetails,
+          ).first;
       expect(product.title, wrapper.title);
       expect(product.description, wrapper.description);
       expect(product.id, wrapper.productId);
       expect(
-          product.price, wrapper.oneTimePurchaseOfferDetails?.formattedPrice);
+        product.price,
+        wrapper.oneTimePurchaseOfferDetails?.formattedPrice,
+      );
       expect(product.productDetails, wrapper);
     });
   });
 
   group('BillingResultWrapper', () {
     test('operator == of ProductDetailsWrapper works fine', () {
-      const ProductDetailsWrapper firstProductDetailsInstance =
-          ProductDetailsWrapper(
+      const firstProductDetailsInstance = ProductDetailsWrapper(
         description: 'description',
         title: 'title',
         productType: ProductType.inapp,
@@ -72,8 +73,7 @@ void main() {
           ),
         ],
       );
-      const ProductDetailsWrapper secondProductDetailsInstance =
-          ProductDetailsWrapper(
+      const secondProductDetailsInstance = ProductDetailsWrapper(
         description: 'description',
         title: 'title',
         productType: ProductType.inapp,
@@ -107,17 +107,17 @@ void main() {
         ],
       );
       expect(
-          firstProductDetailsInstance == secondProductDetailsInstance, isTrue);
+        firstProductDetailsInstance == secondProductDetailsInstance,
+        isTrue,
+      );
     });
 
     test('operator == of BillingResultWrapper works fine', () {
-      const BillingResultWrapper firstBillingResultInstance =
-          BillingResultWrapper(
+      const firstBillingResultInstance = BillingResultWrapper(
         responseCode: BillingResponse.ok,
         debugMessage: 'debugMessage',
       );
-      const BillingResultWrapper secondBillingResultInstance =
-          BillingResultWrapper(
+      const secondBillingResultInstance = BillingResultWrapper(
         responseCode: BillingResponse.ok,
         debugMessage: 'debugMessage',
       );

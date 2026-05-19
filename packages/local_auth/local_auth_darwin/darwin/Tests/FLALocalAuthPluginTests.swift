@@ -1,8 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import LocalAuthentication
+import Testing
 
 @testable import local_auth_darwin
 
@@ -16,88 +17,20 @@ import XCTest
 private let timeout: TimeInterval = 30.0
 
 /// A context factory that returns preset contexts.
-final class StubAuthContextFactory: NSObject, FLADAuthContextFactory {
+final class StubAuthContextFactory: AuthContextFactory {
+  var contexts: [AuthContext]
 
-  var contexts: [FLADAuthContext]
-  init(contexts: [FLADAuthContext]) {
+  init(contexts: [AuthContext]) {
     self.contexts = contexts
   }
 
-  func createAuthContext() -> FLADAuthContext {
-    XCTAssert(self.contexts.count > 0, "Insufficient test contexts provided")
+  func createAuthContext() -> AuthContext {
+    #expect(self.contexts.count > 0, "Insufficient test contexts provided")
     return self.contexts.removeFirst()
   }
 }
 
-final class StubViewProvider: NSObject, FLAViewProvider {
-  #if os(macOS)
-    var view: NSView
-    var window: NSWindow
-    override init() {
-      self.window = NSWindow()
-      self.view = NSView()
-      self.window.contentView = self.view
-    }
-  #endif
-}
-
-#if os(macOS)
-  final class TestAlert: NSObject, FLANSAlert {
-    var messageText: String = ""
-    var buttons: [String] = []
-    var presentingWindow: NSWindow?
-
-    func addButton(withTitle title: String) -> NSButton {
-      buttons.append(title)
-      return NSButton()  // The return value is not used by the plugin.
-    }
-
-    func beginSheetModal(for sheetWindow: NSWindow) async -> NSApplication.ModalResponse {
-      presentingWindow = sheetWindow
-      return NSApplication.ModalResponse.OK
-    }
-  }
-#else
-  final class TestAlertController: NSObject, FLAUIAlertController {
-    var actions: [UIAlertAction] = []
-    var presented = false
-    var presentingViewController: UIViewController?
-
-    func add(_ action: UIAlertAction) {
-      actions.append(action)
-    }
-
-    func present(
-      on presentingViewController: UIViewController, animated flag: Bool,
-      completion: (() -> Void)? = nil
-    ) {
-      presented = true
-      self.presentingViewController = presentingViewController
-    }
-  }
-#endif
-
-final class StubAlertFactory: NSObject, FLADAlertFactory {
-  #if os(macOS)
-    var alert: TestAlert = TestAlert()
-  #else
-    var alertController: TestAlertController = TestAlertController()
-  #endif
-
-  #if os(macOS)
-    func createAlert() -> FLANSAlert {
-      return self.alert
-    }
-  #else
-    func createAlertController(
-      withTitle title: String?, message: String?, preferredStyle: UIAlertController.Style
-    ) -> FLAUIAlertController {
-      return self.alertController
-    }
-  #endif
-}
-
-final class StubAuthContext: NSObject, FLADAuthContext {
+final class StubAuthContext: NSObject, AuthContext, @unchecked Sendable {
   /// Whether calls to this stub are expected to be for biometric authentication.
   ///
   /// While this object could be set up to return different values for different policies, in
@@ -106,34 +39,35 @@ final class StubAuthContext: NSObject, FLADAuthContext {
   var expectBiometrics = false
   /// The error to return from canEvaluatePolicy.
   var canEvaluateError: NSError?
-  /// The value to return from evaluatePolicy:error:.
+  /// The value to return from evaluatePolicy.
   var evaluateResponse = false
-  /// The error to return from evaluatePolicy:error:.
+  /// The error to return from evaluatePolicy.
   var evaluateError: NSError?
 
   // Overridden as read-write to allow stubbing.
   var biometryType: LABiometryType = .none
   var localizedFallbackTitle: String?
 
-  func canEvaluatePolicy(_ policy: LAPolicy) throws {
-    XCTAssertEqual(
-      policy,
-      expectBiometrics
-        ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
-        : LAPolicy.deviceOwnerAuthentication)
+  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+    #expect(
+      policy
+        == (expectBiometrics
+          ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication)
+    )
     if let canEvaluateError = canEvaluateError {
-      throw canEvaluateError
+      error?.pointee = canEvaluateError
     }
+    return canEvaluateError == nil
   }
 
   func evaluatePolicy(
-    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void
+    _ policy: LAPolicy, localizedReason: String, reply: @escaping @Sendable (Bool, Error?) -> Void
   ) {
-    XCTAssertEqual(
-      policy,
-      expectBiometrics
-        ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
-        : LAPolicy.deviceOwnerAuthentication)
+    #expect(
+      policy
+        == (expectBiometrics
+          ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication)
+    )
     // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
     // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
     // a background thread.
@@ -145,437 +79,387 @@ final class StubAuthContext: NSObject, FLADAuthContext {
 
 // MARK: -
 
-class FLALocalAuthPluginTests: XCTestCase {
+@MainActor
+struct LocalAuthPluginTests {
 
-  func testSuccessfullAuthWithBiometrics() throws {
+  @Test
+  func successfullAuthWithBiometrics() async {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    let strings = createAuthStrings()
+    stubAuthContext.expectBiometrics = true
+    stubAuthContext.evaluateResponse = true
+
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: true, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        switch resultDetails {
+        case .success(let successDetails):
+          #expect(successDetails.result == .success)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        continuation.resume()
+      }
+    }
+  }
+
+  @Test
+  func successfulAuthWithoutBiometrics() async {
+    let stubAuthContext = StubAuthContext()
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    let strings = createAuthStrings()
+    stubAuthContext.evaluateResponse = true
+
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: false, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        switch resultDetails {
+        case .success(let successDetails):
+          #expect(successDetails.result == .success)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        continuation.resume()
+      }
+    }
+  }
+
+  @Test(arguments: [
+    (LAError.authenticationFailed.rawValue, AuthResult.authenticationFailed, true),
+    (LAError.appCancel.rawValue, .appCancel, false),
+    (LAError.systemCancel.rawValue, .systemCancel, false),
+    (LAError.userCancel.rawValue, .userCancel, false),
+    (LAError.userFallback.rawValue, .userFallback, false),
+    (99, .unknownError, false),
+    (LAError.authenticationFailed.rawValue, .authenticationFailed, false),
+  ])
+  func failedAuthWithEvaluateError(
+    errorCode: Int,
+    expectedResult: AuthResult,
+    expectBiometrics: Bool
+  ) async {
+    let stubAuthContext = StubAuthContext()
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
+
+    let strings = createAuthStrings()
+    stubAuthContext.expectBiometrics = expectBiometrics
+    stubAuthContext.evaluateError = NSError(
+      domain: (errorCode == 99) ? "error" : "LocalAuthentication",
+      code: errorCode
     )
 
-    let strings = createAuthStrings()
-    stubAuthContext.expectBiometrics = true
-    stubAuthContext.evaluateResponse = true
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: true,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.success)
-      XCTAssertNil(error)
-      expectation.fulfill()
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: expectBiometrics, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        switch resultDetails {
+        case .success(let successDetails):
+          #expect(successDetails.result == expectedResult)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        continuation.resume()
+      }
     }
-    self.waitForExpectations(timeout: timeout)
   }
 
-  func testSuccessfullAuthWithoutBiometrics() {
-    let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
+  #if os(macOS)
+    @available(macOS 11.2, *)
+    @Test
+    func failedAuthWithErrorBiometricDisconnected() async {
+      let stubAuthContext = StubAuthContext()
+      let plugin = LocalAuthPlugin(
+        contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+      let strings = createAuthStrings()
+      stubAuthContext.canEvaluateError = NSError(
+        domain: "LocalAuthentication", code: LAError.biometryDisconnected.rawValue)
 
-    let strings = createAuthStrings()
-    stubAuthContext.evaluateResponse = true
-
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.success)
-      XCTAssertNil(error)
-      expectation.fulfill()
+      await withCheckedContinuation { continuation in
+        plugin.authenticate(
+          options: AuthOptions(biometricOnly: false, sticky: false),
+          strings: strings
+        ) { resultDetails in
+          switch resultDetails {
+          case .success(let successDetails):
+            #expect(successDetails.result == .biometryDisconnected)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
+          continuation.resume()
+        }
+      }
     }
-    self.waitForExpectations(timeout: timeout)
-  }
 
-  func testFailedAuthWithBiometrics() {
-    let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    @available(macOS 11.2, *)
+    @Test
+    func failedAuthWithErrorBiometricNotPaired() async {
+      let stubAuthContext = StubAuthContext()
+      let plugin = LocalAuthPlugin(
+        contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    let strings = createAuthStrings()
-    stubAuthContext.expectBiometrics = true
-    stubAuthContext.evaluateError = NSError(
-      domain: "error", code: LAError.authenticationFailed.rawValue)
+      let strings = createAuthStrings()
+      stubAuthContext.canEvaluateError = NSError(
+        domain: "LocalAuthentication", code: LAError.biometryNotPaired.rawValue)
 
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: true,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
-      // behavior, so is preserved as part of the migration, but a failed
-      // authentication should return failure, not an error that results in a
-      // PlatformException.
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.errorNotAvailable)
-      XCTAssertNil(error)
-      expectation.fulfill()
+      await withCheckedContinuation { continuation in
+        plugin.authenticate(
+          options: AuthOptions(biometricOnly: false, sticky: false),
+          strings: strings
+        ) { resultDetails in
+          switch resultDetails {
+          case .success(let successDetails):
+            #expect(successDetails.result == .biometryNotPaired)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
+          continuation.resume()
+        }
+      }
     }
-    self.waitForExpectations(timeout: timeout)
-  }
 
-  func testFailedWithUnknownErrorCode() {
-    let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    @available(macOS 12.0, *)
+    @Test
+    func failedAuthWithErrorBiometricInvalidDimensions() async {
+      let stubAuthContext = StubAuthContext()
+      let plugin = LocalAuthPlugin(
+        contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    let strings = createAuthStrings()
-    stubAuthContext.evaluateError = NSError(domain: "error", code: 99)
+      let strings = createAuthStrings()
+      stubAuthContext.canEvaluateError = NSError(
+        domain: "LocalAuthentication", code: LAError.invalidDimensions.rawValue)
 
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.errorNotAvailable)
-      XCTAssertNil(error)
-      expectation.fulfill()
+      await withCheckedContinuation { continuation in
+        plugin.authenticate(
+          options: AuthOptions(biometricOnly: false, sticky: false),
+          strings: strings
+        ) { resultDetails in
+          switch resultDetails {
+          case .success(let successDetails):
+            #expect(successDetails.result == .invalidDimensions)
+          case .failure(let error):
+            Issue.record("Unexpected error: \(error)")
+          }
+          continuation.resume()
+        }
+      }
     }
-    self.waitForExpectations(timeout: timeout)
-  }
+  #endif
 
-  func testSystemCancelledWithoutStickyAuth() {
+  @Test(arguments: [
+    (LAError.biometryLockout, AuthResult.biometryLockout),
+    (.biometryNotAvailable, .biometryNotAvailable),
+    (.biometryNotEnrolled, .biometryNotEnrolled),
+    (.invalidContext, .invalidContext),
+    (.notInteractive, .notInteractive),
+    (.passcodeNotSet, .passcodeNotSet),
+  ])
+  func failedAuthWithCanEvaluateError(
+    error: LAError.Code,
+    expectedResult: AuthResult
+  ) async {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
-
-    let strings = createAuthStrings()
-    stubAuthContext.evaluateError = NSError(domain: "error", code: LAError.systemCancel.rawValue)
-
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.failure)
-      XCTAssertNil(error)
-      expectation.fulfill()
-    }
-    self.waitForExpectations(timeout: timeout)
-  }
-
-  func testFailedAuthWithoutBiometrics() {
-    let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
-
-    let strings = createAuthStrings()
-    stubAuthContext.evaluateError = NSError(
-      domain: "error", code: LAError.authenticationFailed.rawValue)
-
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertTrue(Thread.isMainThread)
-      // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
-      // behavior, so is preserved as part of the migration, but a failed
-      // authentication should return failure, not an error that results in a
-      // PlatformException.
-      XCTAssertEqual(resultDetails?.result, FLADAuthResult.errorNotAvailable)
-      XCTAssertNil(error)
-      expectation.fulfill()
-    }
-    self.waitForExpectations(timeout: timeout)
-  }
-
-  func testFailedAuthShowsAlert() {
-    let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     let strings = createAuthStrings()
     stubAuthContext.canEvaluateError = NSError(
-      domain: "error", code: LAError.biometryNotEnrolled.rawValue)
+      domain: "LocalAuthentication", code: error.rawValue)
 
-    #if os(macOS)
-      let expectation = expectation(description: "Result is called")
-    #endif
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: true),
-      strings: strings
-    ) { resultDetails, error in
-      // TODO(stuartmorgan): Add a wrapper around UIAction to allow accessing the handler, so
-      // that the test can trigger the callback on iOS as well, and then unfork this.
-      #if os(macOS)
-        expectation.fulfill()
-      #endif
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: false, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        switch resultDetails {
+        case .success(let successDetails):
+          #expect(successDetails.result == expectedResult)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        continuation.resume()
+      }
     }
-    #if os(macOS)
-      self.waitForExpectations(timeout: timeout)
-      XCTAssertEqual(alertFactory.alert.presentingWindow, viewProvider.view.window)
-    #else
-      XCTAssertTrue(alertFactory.alertController.presented)
-      XCTAssertEqual(alertFactory.alertController.actions.count, 2)
-    #endif
   }
 
-  func testLocalizedFallbackTitle() {
+  @Test
+  func localizedFallbackTitle() async {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    let strings = createAuthStrings()
-    strings.localizedFallbackTitle = "a title"
+    let strings = createAuthStrings(localizedFallbackTitle: "a title")
     stubAuthContext.evaluateResponse = true
 
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertEqual(
-        stubAuthContext.localizedFallbackTitle,
-        strings.localizedFallbackTitle)
-      expectation.fulfill()
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: false, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        #expect(stubAuthContext.localizedFallbackTitle == strings.localizedFallbackTitle)
+        continuation.resume()
+      }
     }
-    self.waitForExpectations(timeout: timeout)
   }
 
-  func testSkippedLocalizedFallbackTitle() {
+  @Test
+  func skippedLocalizedFallbackTitle() async {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    let strings = createAuthStrings()
-    strings.localizedFallbackTitle = nil
+    let strings = createAuthStrings(localizedFallbackTitle: nil)
     stubAuthContext.evaluateResponse = true
 
-    let expectation = expectation(description: "Result is called")
-    plugin.authenticate(
-      with: FLADAuthOptions.make(
-        withBiometricOnly: false,
-        sticky: false,
-        useErrorDialogs: false),
-      strings: strings
-    ) { resultDetails, error in
-      XCTAssertNil(stubAuthContext.localizedFallbackTitle)
-      expectation.fulfill()
+    await withCheckedContinuation { continuation in
+      plugin.authenticate(
+        options: AuthOptions(biometricOnly: false, sticky: false),
+        strings: strings
+      ) { resultDetails in
+        #expect(stubAuthContext.localizedFallbackTitle == nil)
+        continuation.resume()
+      }
     }
-    self.waitForExpectations(timeout: timeout)
   }
 
-  func testDeviceSupportsBiometrics_withEnrolledHardware() {
+  @Test
+  func deviceSupportsBiometricsWithEnrolledHardware() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
 
-    var error: FlutterError?
-    let result = plugin.deviceCanSupportBiometricsWithError(&error)
-    XCTAssertTrue(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.deviceCanSupportBiometrics()
+    #expect(result)
   }
 
-  func testDeviceSupportsBiometrics_withNonEnrolledHardware() {
+  @Test
+  func deviceSupportsBiometricsWithNonEnrolledHardware() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(
       domain: "error", code: LAError.biometryNotEnrolled.rawValue)
 
-    var error: FlutterError?
-    let result = plugin.deviceCanSupportBiometricsWithError(&error)
-    XCTAssertTrue(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.deviceCanSupportBiometrics()
+    #expect(result)
   }
 
-  func testDeviceSupportsBiometrics_withBiometryNotAvailable() {
+  @Test
+  func deviceSupportsBiometricsWithBiometryNotAvailable() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(
       domain: "error", code: LAError.biometryNotAvailable.rawValue)
 
-    var error: FlutterError?
-    let result = plugin.deviceCanSupportBiometricsWithError(&error)
-    XCTAssertFalse(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.deviceCanSupportBiometrics()
+    #expect(!result)
   }
 
-  func testDeviceSupportsBiometrics_withBiometryNotAvailableWhenPermissionsDenied() {
+  @Test
+  func deviceSupportsBiometricsWithBiometryNotAvailableWhenPermissionsDenied() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.biometryType = LABiometryType.touchID
     stubAuthContext.canEvaluateError = NSError(
       domain: "error", code: LAError.biometryNotAvailable.rawValue)
 
-    var error: FlutterError?
-    let result = plugin.deviceCanSupportBiometricsWithError(&error)
-    XCTAssertTrue(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.deviceCanSupportBiometrics()
+    #expect(result)
   }
 
-  func testGetEnrolledBiometricsWithFaceID() {
+  @Test
+  func getEnrolledBiometricsWithFaceID() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
-    if #available(iOS 11, macOS 10.15, *) {
-      stubAuthContext.biometryType = .faceID
+    stubAuthContext.biometryType = .faceID
 
-    }
-
-    var error: FlutterError?
-    let result = plugin.getEnrolledBiometricsWithError(&error)
-    XCTAssertEqual(result!.count, 1)
-    XCTAssertEqual(result![0].value, FLADAuthBiometric.face)
-    XCTAssertNil(error)
+    let result = try plugin.getEnrolledBiometrics()
+    #expect(result.count == 1)
+    let first = try #require(result.first)
+    #expect(first == .face)
   }
 
-  func testGetEnrolledBiometricsWithTouchID() {
+  @Test
+  func getEnrolledBiometricsWithTouchID() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.biometryType = .touchID
 
-    var error: FlutterError?
-    let result = plugin.getEnrolledBiometricsWithError(&error)
-    XCTAssertEqual(result!.count, 1)
-    XCTAssertEqual(result![0].value, FLADAuthBiometric.fingerprint)
-    XCTAssertNil(error)
+    let result = try plugin.getEnrolledBiometrics()
+    #expect(result.count == 1)
+    let first = try #require(result.first)
+    #expect(first == .fingerprint)
   }
 
-  func testGetEnrolledBiometricsWithoutEnrolledHardware() {
+  @Test
+  func getEnrolledBiometricsWithoutEnrolledHardware() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(
       domain: "error", code: LAError.biometryNotEnrolled.rawValue)
 
-    var error: FlutterError?
-    let result = plugin.getEnrolledBiometricsWithError(&error)
-    XCTAssertTrue(result!.isEmpty)
-    XCTAssertNil(error)
+    let result = try plugin.getEnrolledBiometrics()
+    #expect(result.isEmpty)
   }
 
-  func testIsDeviceSupportedHandlesSupported() {
+  @Test
+  func isDeviceSupportedHandlesSupported() throws {
     let stubAuthContext = StubAuthContext()
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    var error: FlutterError?
-    let result = plugin.isDeviceSupportedWithError(&error)
-    XCTAssertTrue(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.isDeviceSupported()
+    #expect(result)
   }
 
-  func testIsDeviceSupportedHandlesUnsupported() {
+  @Test
+  func isDeviceSupportedHandlesUnsupported() throws {
     let stubAuthContext = StubAuthContext()
     // An arbitrary error to cause canEvaluatePolicy to return false.
     stubAuthContext.canEvaluateError = NSError(domain: "error", code: 1)
-    let alertFactory = StubAlertFactory()
-    let viewProvider = StubViewProvider()
-    let plugin = FLALocalAuthPlugin(
-      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+    let plugin = LocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
-    var error: FlutterError?
-    let result = plugin.isDeviceSupportedWithError(&error)
-    XCTAssertFalse(result!.boolValue)
-    XCTAssertNil(error)
+    let result = try plugin.isDeviceSupported()
+    #expect(!result)
   }
 
-  // Creates an FLADAuthStrings with placeholder values.
-  func createAuthStrings() -> FLADAuthStrings {
-    return FLADAuthStrings.make(
-      withReason: "a reason", lockOut: "locked out", goToSettingsButton: "Go To Settings",
-      goToSettingsDescription: "Settings", cancelButton: "Cancel", localizedFallbackTitle: nil)
+  // Creates an AuthStrings with placeholder values.
+  func createAuthStrings(localizedFallbackTitle: String? = nil) -> AuthStrings {
+    return AuthStrings(
+      reason: "a reason",
+      cancelButton: "Cancel",
+      localizedFallbackTitle: localizedFallbackTitle)
   }
 
 }

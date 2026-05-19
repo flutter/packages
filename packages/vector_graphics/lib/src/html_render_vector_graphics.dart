@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -133,8 +133,10 @@ class RenderWebVectorGraphic extends RenderBox {
   void paint(PaintingContext context, ui.Offset offset) {
     assert(size == pictureInfo.size);
     if (kDebugMode && debugSkipRaster) {
-      context.canvas
-          .drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
+      context.canvas.drawRect(
+        offset & size,
+        Paint()..color = const Color(0xFFFF00FF),
+      );
       return;
     }
 
@@ -144,33 +146,28 @@ class RenderWebVectorGraphic extends RenderBox {
 
     // The HTML backend cannot correctly draw saveLayer opacity or color
     // filters. Nor does it support toImageSync.
-    _transformLayer.layer = context.pushTransform(
-      true,
-      offset,
-      _transform,
-      (PaintingContext context, Offset offset) {
-        _opacityHandle.layer = context.pushOpacity(
-          offset,
-          (_opacityValue * 255).round(),
-          (PaintingContext context, Offset offset) {
-            if (colorFilter != null) {
-              _filterLayer.layer = context.pushColorFilter(
-                offset,
-                colorFilter!,
-                (PaintingContext context, Offset offset) {
-                  context.canvas.drawPicture(pictureInfo.picture);
-                },
-                oldLayer: _filterLayer.layer,
-              );
-            } else {
-              _filterLayer.layer = null;
+    _transformLayer.layer = context.pushTransform(true, offset, _transform, (
+      PaintingContext context,
+      Offset offset,
+    ) {
+      _opacityHandle.layer = context.pushOpacity(
+        offset,
+        (_opacityValue * 255).round(),
+        (PaintingContext context, Offset offset) {
+          if (colorFilter != null) {
+            _filterLayer.layer = context.pushColorFilter(offset, colorFilter!, (
+              PaintingContext context,
+              Offset offset,
+            ) {
               context.canvas.drawPicture(pictureInfo.picture);
-            }
-          },
-          oldLayer: _opacityHandle.layer,
-        );
-      },
-      oldLayer: _transformLayer.layer,
-    );
+            }, oldLayer: _filterLayer.layer);
+          } else {
+            _filterLayer.layer = null;
+            context.canvas.drawPicture(pictureInfo.picture);
+          }
+        },
+        oldLayer: _opacityHandle.layer,
+      );
+    }, oldLayer: _transformLayer.layer);
   }
 }

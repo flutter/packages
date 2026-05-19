@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ class SubRipCaptionFile extends ClosedCaptionFile {
   /// the SubRip file format.
   /// * See: https://en.wikipedia.org/wiki/SubRip
   SubRipCaptionFile(this.fileContents)
-      : _captions = _parseCaptionsFromSubRipString(fileContents);
+    : _captions = _parseCaptionsFromSubRipString(fileContents);
 
   /// The entire body of the SubRip file.
   // TODO(cyanglaz): Remove this public member as it doesn't seem need to exist.
@@ -27,19 +27,20 @@ class SubRipCaptionFile extends ClosedCaptionFile {
 }
 
 List<Caption> _parseCaptionsFromSubRipString(String file) {
-  final List<Caption> captions = <Caption>[];
+  final captions = <Caption>[];
   for (final List<String> captionLines in _readSubRipFile(file)) {
     if (captionLines.length < 3) {
       break;
     }
 
     final int captionNumber = int.parse(captionLines[0]);
-    final _CaptionRange captionRange =
-        _CaptionRange.fromSubRipString(captionLines[1]);
+    final _CaptionRange captionRange = _CaptionRange.fromSubRipString(
+      captionLines[1],
+    );
 
     final String text = captionLines.sublist(2).join('\n');
 
-    final Caption newCaption = Caption(
+    final newCaption = Caption(
       number: captionNumber,
       start: captionRange.start,
       end: captionRange.end,
@@ -63,8 +64,7 @@ class _CaptionRange {
   // For example:
   // 00:01:54,724 --> 00:01:56,760
   static _CaptionRange fromSubRipString(String line) {
-    final RegExp format =
-        RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
+    final format = RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
 
     if (!format.hasMatch(line)) {
       return _CaptionRange(Duration.zero, Duration.zero);
@@ -111,10 +111,10 @@ Duration _parseSubRipTimestamp(String timestampString) {
 List<List<String>> _readSubRipFile(String file) {
   final List<String> lines = LineSplitter.split(file).toList();
 
-  final List<List<String>> captionStrings = <List<String>>[];
-  List<String> currentCaption = <String>[];
-  int lineIndex = 0;
-  for (final String line in lines) {
+  final captionStrings = <List<String>>[];
+  var currentCaption = <String>[];
+  var lineIndex = 0;
+  for (final line in lines) {
     final bool isLineBlank = line.trim().isEmpty;
     if (!isLineBlank) {
       currentCaption.add(line);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,7 +38,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   @NonNull
   @Override
   public ImageCapture pigeon_defaultConstructor(
-      @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector,
+      @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
       @Nullable CameraXFlashMode flashMode) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
@@ -85,6 +85,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   @Override
   public void takePicture(
       @NonNull ImageCapture pigeonInstance,
+      @NonNull SystemServicesManager systemServicesManager,
       @NonNull Function1<? super Result<String>, Unit> callback) {
     final File outputDir = getPigeonRegistrar().getContext().getCacheDir();
     File temporaryCaptureFile;
@@ -98,7 +99,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     final ImageCapture.OutputFileOptions outputFileOptions =
         createImageCaptureOutputFileOptions(temporaryCaptureFile);
     final ImageCapture.OnImageSavedCallback onImageSavedCallback =
-        createOnImageSavedCallback(temporaryCaptureFile, callback);
+        createOnImageSavedCallback(temporaryCaptureFile, systemServicesManager, callback);
 
     pigeonInstance.takePicture(
         outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
@@ -121,7 +122,9 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @NonNull
   ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
-      @NonNull File file, @NonNull Function1<? super Result<String>, Unit> callback) {
+      @NonNull File file,
+      @NonNull SystemServicesManager systemServicesManager,
+      @NonNull Function1<? super Result<String>, Unit> callback) {
     return new ImageCapture.OnImageSavedCallback() {
       @Override
       public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
@@ -130,8 +133,35 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
       @Override
       public void onError(@NonNull ImageCaptureException exception) {
+        systemServicesManager.onCameraError(
+            getImageCaptureExceptionDescription(exception.getImageCaptureError()));
         ResultCompat.failure(exception, callback);
       }
     };
+  }
+
+  /**
+   * Returns an error description for each {@link ImageCaptureException} error code.
+   *
+   * <p>See
+   * https://developer.android.com/reference/androidx/camera/core/ImageCaptureException#getImageCaptureError()
+   * for details on each error type.
+   */
+  String getImageCaptureExceptionDescription(int imageCaptureErrorCode) {
+    switch (imageCaptureErrorCode) {
+      case ImageCapture.ERROR_FILE_IO:
+        return "An error occurred while attempting to save the captured image to a file.";
+      case ImageCapture.ERROR_CAPTURE_FAILED:
+        return "The camera framework failed to fulfill the image capture request.";
+      case ImageCapture.ERROR_CAMERA_CLOSED:
+        return "Image capture failed due to the camera being closed.";
+      case ImageCapture.ERROR_INVALID_CAMERA:
+        return "The ImageCapture use case was bound to an invalid camera by the Flutter camera"
+            + " plugin. If you see this error, please file an issue if you cannot find one"
+            + " that already exists: https://github.com/flutter/flutter/issues/.";
+      default:
+        return "An unknown error has occurred while attempting to take a picture. Check the logs"
+            + " for more details.";
+    }
   }
 }

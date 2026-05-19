@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,6 +51,11 @@ class NSErrorUserInfoKey {
   /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
   static const String NSURLErrorFailingURLStringError =
       'NSErrorFailingURLStringKey';
+
+  /// The URL which caused a load to fail.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlerrorkey.
+  static const String NSURLErrorFailingURLErrorKey = 'NSErrorFailingURLKey';
 }
 
 /// The authentication method used by the receiver.

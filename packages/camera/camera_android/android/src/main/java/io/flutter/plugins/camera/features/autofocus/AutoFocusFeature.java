@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,7 +54,8 @@ public class AutoFocusFeature extends CameraFeature<FocusMode> {
     final Float minFocus = cameraProperties.getLensInfoMinimumFocusDistance();
 
     // Check if the focal length of the lens is fixed. If the minimum focus distance == 0, then the
-    // focal length  is fixed. The minimum focus distance can be null on some devices: https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#LENS_INFO_MINIMUM_FOCUS_DISTANCE
+    // focal length  is fixed. The minimum focus distance can be null on some devices:
+    // https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#LENS_INFO_MINIMUM_FOCUS_DISTANCE
     boolean isFixedLength = minFocus == null || minFocus == 0;
 
     return !isFixedLength

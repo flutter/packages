@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,9 +16,7 @@ class HomePage extends StatelessWidget {
       foregroundColor: Colors.white,
     );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('File Selector Demo Home Page'),
-      ),
+      appBar: AppBar(title: const Text('File Selector Demo Home Page')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

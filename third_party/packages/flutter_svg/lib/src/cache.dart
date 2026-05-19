@@ -62,10 +62,7 @@ class Cache {
   /// key is moved to the "most recently used" position.
   ///
   /// The arguments must not be null. The `loader` cannot return null.
-  Future<ByteData> putIfAbsent(
-    Object key,
-    Future<ByteData> Function() loader,
-  ) {
+  Future<ByteData> putIfAbsent(Object key, Future<ByteData> Function() loader) {
     assert(key != null); // ignore: unnecessary_null_comparison
     assert(loader != null); // ignore: unnecessary_null_comparison
     Future<ByteData>? pendingResult = _pending[key];

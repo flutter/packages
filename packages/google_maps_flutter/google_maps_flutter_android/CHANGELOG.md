@@ -1,3 +1,104 @@
+## 2.19.8
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 2.19.7
+
+* Fixes warnings in Java code.
+
+## 2.19.6
+
+* Fixes the onTap callback for clustered pin info window taps.
+
+## 2.19.5
+
+* Fixes a crash when using the legacy map renderer by adding the `org.apache.http.legacy` library.
+
+## 2.19.4
+
+* Updates build files from Groovy to Kotlin.
+
+## 2.19.3
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
+## 2.19.2
+
+* Bump com.google.maps.android:android-maps-utils from 4.0.0 to 4.1.0.
+
+## 2.19.1
+
+* Fixes a regression in 2.19.0 that caused crashes when adding markers.
+
+## 2.19.0
+
+* Adds support for advanced markers.
+
+## 2.18.12
+
+* Bumps com.google.maps.android:android-maps-utils from 3.20.1 to 4.0.0.
+
+## 2.18.11
+
+* Bumps com.google.android.gms:play-services-maps from 19.2.0 to 20.0.0.
+
+## 2.18.10
+
+* Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
+
+## 2.18.9
+
+* Updates heatmaps passed between Dart and native to use typed data.
+
+## 2.18.8
+
+* Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
+
+## 2.18.7
+
+* Replaces internal use of deprecated methods.
+
+## 2.18.6
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.18.5
+
+* Updates to Pigeon 26.
+
+## 2.18.4
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.18.3
+
+* Resolves Gradle 9 deprecations.
+
+## 2.18.2
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.18.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.18.0
+
+* Adds support for warming up the Google Maps SDK
+  via `GoogleMapsFlutterAndroid.warmup()`.
+
+## 2.17.0
+
+* Updates `com.google.android.gms:play-services-maps` to 19.2.0.
+* Marks `AndroidMapRenderer.legacy` as deprecated, since it's deprecated in the
+  current version of the Google Maps SDK.
+
+## 2.16.2
+
+* Removes documentation related to the map renderer selection API, as the
+  legacy renderer is no longer available, so requesting it is a no-op.
+
 ## 2.16.1
 
 * Removes obsolete code related to supporting SDK <21.

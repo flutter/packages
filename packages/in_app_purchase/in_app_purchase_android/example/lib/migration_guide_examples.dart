@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,6 +21,7 @@ void handleOneTimePurchasePrice(ProductDetails productDetails) {
     }
   }
 }
+
 // #enddocregion one-time-purchase-price
 
 // #docregion subscription-free-trial
@@ -39,6 +40,7 @@ void handleFreeTrialPeriod(ProductDetails productDetails) {
     }
   }
 }
+
 // #enddocregion subscription-free-trial
 
 // #docregion subscription-introductory-price
@@ -59,4 +61,5 @@ void handleIntroductoryPricePeriod(ProductDetails productDetails) {
     }
   }
 }
+
 // #enddocregion subscription-introductory-price

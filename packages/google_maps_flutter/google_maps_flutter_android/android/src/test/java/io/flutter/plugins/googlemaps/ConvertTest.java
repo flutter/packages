@@ -1,19 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.googlemaps;
 
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_DATA_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLORS_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_START_POINTS_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_MAX_INTENSITY_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.getPinConfigFromPlatformPinConfig;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,10 +18,12 @@ import static org.mockito.Mockito.when;
 import android.content.res.AssetManager;
 import android.util.Base64;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PinConfig;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.geometry.Point;
 import com.google.maps.android.heatmaps.Gradient;
@@ -39,7 +33,7 @@ import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +45,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ConvertTest {
+
   @Mock private AssetManager assetManager;
 
   @Mock private BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
@@ -80,8 +75,7 @@ public class ConvertTest {
   public void ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    Messages.PlatformLatLng platLng =
-        new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
+    PlatformLatLng platLng = new PlatformLatLng(latitude, longitude);
     List<LatLng> latLngs = Convert.pointsFromPigeon(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
@@ -97,24 +91,24 @@ public class ConvertTest {
 
     StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
-    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
+    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER);
     marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
-    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
+    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER);
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
-    Messages.PlatformCluster result = Convert.clusterToPigeon(clusterManagerId, cluster);
+    PlatformCluster result = Convert.clusterToPigeon(clusterManagerId, cluster);
     Assert.assertEquals(clusterManagerId, result.getClusterManagerId());
 
-    Messages.PlatformLatLng position = result.getPosition();
+    PlatformLatLng position = result.getPosition();
     Assert.assertEquals(clusterPosition.latitude, position.getLatitude(), 1e-15);
     Assert.assertEquals(clusterPosition.longitude, position.getLongitude(), 1e-15);
 
-    Messages.PlatformLatLngBounds bounds = result.getBounds();
-    Messages.PlatformLatLng southwest = bounds.getSouthwest();
-    Messages.PlatformLatLng northeast = bounds.getNortheast();
+    PlatformLatLngBounds bounds = result.getBounds();
+    PlatformLatLng southwest = bounds.getSouthwest();
+    PlatformLatLng northeast = bounds.getNortheast();
     // bounding data should combine data from marker positions markerPosition1 and markerPosition2
     Assert.assertEquals(markerPosition2.latitude, southwest.getLatitude(), 1e-15);
     Assert.assertEquals(markerPosition1.longitude, southwest.getLongitude(), 1e-15);
@@ -137,14 +131,13 @@ public class ConvertTest {
     when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapAssetMap bitmap =
-        new Messages.PlatformBitmapAssetMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .setWidth(15.0)
-            .setHeight(15.0)
-            .setImagePixelRatio(2.0)
-            .setAssetName(fakeAssetName)
-            .build();
+    PlatformBitmapAssetMap bitmap =
+        new PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ 15.0,
+            /* height */ 15.0);
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
@@ -163,13 +156,13 @@ public class ConvertTest {
     when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapAssetMap bitmap =
-        new Messages.PlatformBitmapAssetMap.Builder()
-            .setAssetName(fakeAssetName)
-            .setWidth(15.0)
-            .setImagePixelRatio(2.0)
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .build();
+    PlatformBitmapAssetMap bitmap =
+        new PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ 15.0,
+            /* height */ null);
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
@@ -188,13 +181,13 @@ public class ConvertTest {
     when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapAssetMap bitmap =
-        new Messages.PlatformBitmapAssetMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .setHeight(15.0)
-            .setImagePixelRatio(2.0)
-            .setAssetName(fakeAssetName)
-            .build();
+    PlatformBitmapAssetMap bitmap =
+        new PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ 15.0);
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
@@ -215,12 +208,13 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor);
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
-    Messages.PlatformBitmapAssetMap bitmap =
-        new Messages.PlatformBitmapAssetMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-            .setImagePixelRatio(2.0)
-            .setAssetName(fakeAssetName)
-            .build();
+    PlatformBitmapAssetMap bitmap =
+        new PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.NONE,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ null);
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
@@ -235,12 +229,13 @@ public class ConvertTest {
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
-    Messages.PlatformBitmapBytesMap bitmap =
-        new Messages.PlatformBitmapBytesMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .setImagePixelRatio(2.0)
-            .setByteData(bmpData)
-            .build();
+    PlatformBitmapBytesMap bitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ null);
 
     BitmapDescriptor result =
         Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
@@ -253,13 +248,13 @@ public class ConvertTest {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapBytesMap bitmap =
-        new Messages.PlatformBitmapBytesMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .setImagePixelRatio(2.0)
-            .setByteData(bmpData)
-            .setWidth(15.0)
-            .build();
+    PlatformBitmapBytesMap bitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            /* bitmapScaling */ PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ 15.0,
+            /* height */ null);
 
     BitmapDescriptor result =
         Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
@@ -272,13 +267,13 @@ public class ConvertTest {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapBytesMap bitmap =
-        new Messages.PlatformBitmapBytesMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
-            .setImagePixelRatio(2.0)
-            .setByteData(bmpData)
-            .setHeight(15.0)
-            .build();
+    PlatformBitmapBytesMap bitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            /* bitmapScaling */ PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ 15.0);
 
     BitmapDescriptor result =
         Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
@@ -291,12 +286,13 @@ public class ConvertTest {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
-    Messages.PlatformBitmapBytesMap bitmap =
-        new Messages.PlatformBitmapBytesMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-            .setImagePixelRatio(2.0)
-            .setByteData(bmpData)
-            .build();
+    PlatformBitmapBytesMap bitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            /* bitmapScaling */ PlatformMapBitmapScaling.NONE,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ null);
 
     BitmapDescriptor result =
         Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
@@ -310,17 +306,18 @@ public class ConvertTest {
     byte[] bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT);
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
-    Messages.PlatformBitmapBytesMap bitmap =
-        new Messages.PlatformBitmapBytesMap.Builder()
-            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-            .setImagePixelRatio(2.0)
-            .setByteData(bmpData)
-            .build();
+    PlatformBitmapBytesMap bitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            /* bitmapScaling */ PlatformMapBitmapScaling.NONE,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ null);
 
     try {
       Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
     } catch (IllegalArgumentException e) {
-      Assert.assertEquals(e.getMessage(), "Unable to interpret bytes as a valid image.");
+      Assert.assertEquals("Unable to interpret bytes as a valid image.", e.getMessage());
       throw e; // rethrow the exception
     }
 
@@ -328,138 +325,207 @@ public class ConvertTest {
   }
 
   @Test
+  public void GetPinConfigFromPlatformPinConfig_GlyphColor() {
+    PlatformBitmapPinConfig platformBitmap =
+        new PlatformBitmapPinConfig(
+            /* backgroundColor */ new PlatformColor(0x00FFFFL),
+            /* borderColor */ new PlatformColor(0xFF00FFL),
+            /* glyphColor */ new PlatformColor(0x112233L),
+            /* glyphBitmap */ null,
+            /* glyphText */ null,
+            /* glyphTextColor */ null);
+
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor());
+    Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_Glyph() {
+    PlatformBitmapPinConfig platformBitmap =
+        new PlatformBitmapPinConfig(
+            /* backgroundColor */ null,
+            /* borderColor */ null,
+            /* glyphColor */ null,
+            /* glyphBitmap */ null,
+            /* glyphText */ "Hi",
+            /* glyphTextColor */ new PlatformColor(0xFFFFFFL));
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals("Hi", pinConfig.getGlyph().getText());
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
+    byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
+    PlatformBitmapBytesMap bytesBitmap =
+        new PlatformBitmapBytesMap(
+            bmpData,
+            /* bitmapScaling */ PlatformMapBitmapScaling.AUTO,
+            /* imagePixelRatio */ 2.0,
+            /* width */ null,
+            /* height */ null);
+    PlatformBitmap icon = new PlatformBitmap(bytesBitmap);
+    PlatformBitmapPinConfig platformBitmap =
+        new PlatformBitmapPinConfig(
+            /* backgroundColor */ new PlatformColor(0xFFFFFFL),
+            /* borderColor */ new PlatformColor(0x000000L),
+            /* glyphColor */ null,
+            /* glyphBitmap */ icon,
+            /* glyphText */ null,
+            /* glyphTextColor */ null);
+    when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0x000000L, pinConfig.getBorderColor());
+    Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor());
+  }
+
+  ///  Returns a PlatformMapConfiguration.Builder that sets required parameters.
+  private PlatformMapConfigurationBuilder getMinimalConfigurationBuilder() {
+    return new PlatformMapConfigurationBuilder().setMarkerType(PlatformMarkerType.MARKER);
+  }
+
+  @Test
   public void interpretMapConfiguration_handlesNulls() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().build();
+    final PlatformMapConfiguration config = getMinimalConfigurationBuilder().build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verifyNoInteractions(optionsSink);
   }
 
   @Test
   public void interpretMapConfiguration_handlesCompassEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setCompassEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setCompassEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setCompassEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesMapToolbarEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMapToolbarEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setMapToolbarEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapToolbarEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesRotateGesturesEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setRotateGesturesEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setRotateGesturesEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setRotateGesturesEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesScrollGesturesEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setScrollGesturesEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setScrollGesturesEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setScrollGesturesEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesTiltGesturesEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTiltGesturesEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setTiltGesturesEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTiltGesturesEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesTrackCameraPosition() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTrackCameraPosition(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setTrackCameraPosition(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTrackCameraPosition(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesZoomControlsEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setZoomControlsEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setZoomControlsEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setZoomControlsEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesZoomGesturesEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setZoomGesturesEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setZoomGesturesEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setZoomGesturesEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesMyLocationEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMyLocationEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setMyLocationEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMyLocationEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesMyLocationButtonEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setMyLocationButtonEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setMyLocationButtonEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMyLocationButtonEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesIndoorViewEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setIndoorViewEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setIndoorViewEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setIndoorEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesTrafficEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setTrafficEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setTrafficEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setTrafficEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesBuildingsEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setBuildingsEnabled(false).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setBuildingsEnabled(false).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setBuildingsEnabled(false);
   }
 
   @Test
   public void interpretMapConfiguration_handlesLiteModeEnabled() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setLiteModeEnabled(true).build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setLiteModeEnabled(true).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setLiteModeEnabled(true);
   }
 
   @Test
   public void interpretMapConfiguration_handlesStyle() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder().setStyle("foo").build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setStyle("foo").build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapStyle("foo");
   }
 
   @Test
   public void interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
-            .setCameraTargetBounds(new Messages.PlatformCameraTargetBounds.Builder().build())
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder()
+            .setCameraTargetBounds(new PlatformCameraTargetBounds(null))
             .build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setCameraTargetBounds(null);
@@ -468,24 +534,13 @@ public class ConvertTest {
   @Test
   public void interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
     LatLngBounds bounds = new LatLngBounds(new LatLng(10, 20), new LatLng(30, 40));
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder()
             .setCameraTargetBounds(
-                new Messages.PlatformCameraTargetBounds.Builder()
-                    .setBounds(
-                        new Messages.PlatformLatLngBounds.Builder()
-                            .setSouthwest(
-                                new Messages.PlatformLatLng.Builder()
-                                    .setLatitude(bounds.southwest.latitude)
-                                    .setLongitude(bounds.southwest.longitude)
-                                    .build())
-                            .setNortheast(
-                                new Messages.PlatformLatLng.Builder()
-                                    .setLatitude(bounds.northeast.latitude)
-                                    .setLongitude(bounds.northeast.longitude)
-                                    .build())
-                            .build())
-                    .build())
+                new PlatformCameraTargetBounds(
+                    new PlatformLatLngBounds(
+                        new PlatformLatLng(bounds.northeast.latitude, bounds.northeast.longitude),
+                        new PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
             .build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setCameraTargetBounds(bounds);
@@ -493,10 +548,8 @@ public class ConvertTest {
 
   @Test
   public void interpretMapConfiguration_handlesMapType() {
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
-            .setMapType(Messages.PlatformMapType.HYBRID)
-            .build();
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder().setMapType(PlatformMapType.HYBRID).build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMapType(MAP_TYPE_HYBRID);
   }
@@ -507,15 +560,11 @@ public class ConvertTest {
     final double bottom = 2.0;
     final double left = 3.0;
     final double right = 4.0;
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder()
             .setPadding(
-                new Messages.PlatformEdgeInsets.Builder()
-                    .setTop(top)
-                    .setBottom(bottom)
-                    .setLeft(left)
-                    .setRight(right)
-                    .build())
+                new PlatformEdgeInsets(
+                    /* top= */ top, /* bottom= */ bottom, /* left= */ left, /* right= */ right))
             .build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1))
@@ -526,10 +575,9 @@ public class ConvertTest {
   public void interpretMapConfiguration_handlesMinMaxZoomPreference() {
     final double min = 1.0;
     final double max = 2.0;
-    final Messages.PlatformMapConfiguration config =
-        new Messages.PlatformMapConfiguration.Builder()
-            .setMinMaxZoomPreference(
-                new Messages.PlatformZoomRange.Builder().setMin(min).setMax(max).build())
+    final PlatformMapConfiguration config =
+        getMinimalConfigurationBuilder()
+            .setMinMaxZoomPreference(new PlatformZoomRange(min, max))
             .build();
     Convert.interpretMapConfiguration(config, optionsSink);
     verify(optionsSink, times(1)).setMinMaxZoomPreference((float) min, (float) max);
@@ -540,10 +588,11 @@ public class ConvertTest {
   @Test()
   public void ConvertToWeightedLatLngReturnsCorrectData() {
     final double intensity = 3.3;
-    final Object data = List.of(List.of(1.1, 2.2), intensity);
+    final PlatformWeightedLatLng data =
+        new PlatformWeightedLatLng(new PlatformLatLng(1.1, 2.2), intensity);
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final WeightedLatLng result = Convert.toWeightedLatLng(data);
+    final WeightedLatLng result = Convert.weightedLatLngFromPigeon(data);
 
     Assert.assertEquals(point.x, result.getPoint().x, 0);
     Assert.assertEquals(point.y, result.getPoint().y, 0);
@@ -553,10 +602,11 @@ public class ConvertTest {
   @Test()
   public void ConvertToWeightedDataReturnsCorrectData() {
     final double intensity = 3.3;
-    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final List<PlatformWeightedLatLng> data =
+        List.of(new PlatformWeightedLatLng(new PlatformLatLng(1.1, 2.2), intensity));
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final List<WeightedLatLng> result = Convert.toWeightedData(data);
+    final List<WeightedLatLng> result = Convert.weightedDataFromPigeon(data);
 
     Assert.assertEquals(1, result.size());
     Assert.assertEquals(point.x, result.get(0).getPoint().x, 0);
@@ -566,74 +616,67 @@ public class ConvertTest {
 
   @Test()
   public void ConvertToGradientReturnsCorrectData() {
-    final int color1 = 0;
-    final int color2 = 1;
-    final int color3 = 2;
-    final List<Object> colorData = List.of(color1, color2, color3);
+    final long color1 = 0;
+    final long color2 = 1;
+    final long color3 = 2;
+    final List<PlatformColor> colorData =
+        List.of(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3));
     final double startPoint1 = 0.0;
     final double startPoint2 = 1.0;
     final double startPoint3 = 2.0;
-    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
-    final int colorMapSize = 3;
-    final Map<String, Object> data =
-        Map.of(
-            HEATMAP_GRADIENT_COLORS_KEY, colorData,
-            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
-            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+    List<Double> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final long colorMapSize = 3;
+    final PlatformHeatmapGradient data =
+        new PlatformHeatmapGradient(colorData, startPointData, colorMapSize);
 
-    final Gradient result = Convert.toGradient(data);
+    final Gradient result = Convert.gradientFromPigeon(data);
 
-    Assert.assertEquals(3, result.mColors.length);
-    Assert.assertEquals(color1, result.mColors[0]);
-    Assert.assertEquals(color2, result.mColors[1]);
-    Assert.assertEquals(color3, result.mColors[2]);
-    Assert.assertEquals(3, result.mStartPoints.length);
-    Assert.assertEquals(startPoint1, result.mStartPoints[0], 0);
-    Assert.assertEquals(startPoint2, result.mStartPoints[1], 0);
-    Assert.assertEquals(startPoint3, result.mStartPoints[2], 0);
-    Assert.assertEquals(colorMapSize, result.mColorMapSize);
+    Assert.assertEquals(3, result.getColors().length);
+    Assert.assertEquals(color1, result.getColors()[0]);
+    Assert.assertEquals(color2, result.getColors()[1]);
+    Assert.assertEquals(color3, result.getColors()[2]);
+    Assert.assertEquals(3, result.getStartPoints().length);
+    Assert.assertEquals(startPoint1, result.getStartPoints()[0], 0);
+    Assert.assertEquals(startPoint2, result.getStartPoints()[1], 0);
+    Assert.assertEquals(startPoint3, result.getStartPoints()[2], 0);
+    Assert.assertEquals(colorMapSize, result.getColorMapSize());
   }
 
   @Test()
   public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
     final double intensity = 3.3;
-    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final List<PlatformWeightedLatLng> dataData =
+        List.of(new PlatformWeightedLatLng(new PlatformLatLng(1.1, 2.2), intensity));
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final int color1 = 0;
-    final int color2 = 1;
-    final int color3 = 2;
-    final List<Object> colorData = List.of(color1, color2, color3);
+    final long color1 = 0;
+    final long color2 = 1;
+    final long color3 = 2;
+    final List<PlatformColor> colorData =
+        List.of(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3));
     final double startPoint1 = 0.0;
     final double startPoint2 = 1.0;
     final double startPoint3 = 2.0;
-    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
-    final int colorMapSize = 3;
-    final Map<String, ?> gradientData =
-        Map.of(
-            HEATMAP_GRADIENT_COLORS_KEY, colorData,
-            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
-            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+    List<Double> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final long colorMapSize = 3;
+    final PlatformHeatmapGradient gradientData =
+        new PlatformHeatmapGradient(colorData, startPointData, colorMapSize);
 
-    final double maxIntensity = 4.4;
+    final double maxIntensity = 4.0;
     final double opacity = 5.5;
-    final int radius = 6;
+    final long radius = 6;
     final String idData = "heatmap_1";
 
-    final Map<String, Object> data =
-        Map.of(
-            HEATMAP_DATA_KEY,
+    final PlatformHeatmap data =
+        new PlatformHeatmap(
+            idData,
             dataData,
-            HEATMAP_GRADIENT_KEY,
             gradientData,
-            HEATMAP_MAX_INTENSITY_KEY,
-            maxIntensity,
-            HEATMAP_OPACITY_KEY,
-            opacity,
-            HEATMAP_RADIUS_KEY,
-            radius,
-            HEATMAP_ID_KEY,
-            idData);
+            /* opacity */ opacity,
+            /* radius */ radius,
+            /* maxIntensity */ maxIntensity);
 
     final MockHeatmapBuilder builder = new MockHeatmapBuilder();
     final String id = Convert.interpretHeatmapOptions(data, builder);
@@ -642,19 +685,23 @@ public class ConvertTest {
     Assert.assertEquals(point.x, builder.getWeightedData().get(0).getPoint().x, 0);
     Assert.assertEquals(point.y, builder.getWeightedData().get(0).getPoint().y, 0);
     Assert.assertEquals(intensity, builder.getWeightedData().get(0).getIntensity(), 0);
-    Assert.assertEquals(3, builder.getGradient().mColors.length);
-    Assert.assertEquals(color1, builder.getGradient().mColors[0]);
-    Assert.assertEquals(color2, builder.getGradient().mColors[1]);
-    Assert.assertEquals(color3, builder.getGradient().mColors[2]);
-    Assert.assertEquals(3, builder.getGradient().mStartPoints.length);
-    Assert.assertEquals(startPoint1, builder.getGradient().mStartPoints[0], 0);
-    Assert.assertEquals(startPoint2, builder.getGradient().mStartPoints[1], 0);
-    Assert.assertEquals(startPoint3, builder.getGradient().mStartPoints[2], 0);
-    Assert.assertEquals(colorMapSize, builder.getGradient().mColorMapSize);
+    Assert.assertEquals(3, builder.getGradient().getColors().length);
+    Assert.assertEquals(color1, builder.getGradient().getColors()[0]);
+    Assert.assertEquals(color2, builder.getGradient().getColors()[1]);
+    Assert.assertEquals(color3, builder.getGradient().getColors()[2]);
+    Assert.assertEquals(3, builder.getGradient().getStartPoints().length);
+    Assert.assertEquals(startPoint1, builder.getGradient().getStartPoints()[0], 0);
+    Assert.assertEquals(startPoint2, builder.getGradient().getStartPoints()[1], 0);
+    Assert.assertEquals(startPoint3, builder.getGradient().getStartPoints()[2], 0);
+    Assert.assertEquals(colorMapSize, builder.getGradient().getColorMapSize());
     Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0);
     Assert.assertEquals(opacity, builder.getOpacity(), 0);
     Assert.assertEquals(radius, builder.getRadius());
     Assert.assertEquals(idData, id);
+  }
+
+  private PlatformColor createPlatformColor(long rgba) {
+    return new PlatformColor(rgba);
   }
 
   @Test
@@ -667,7 +714,7 @@ public class ConvertTest {
     when(groundOverlay.getPosition()).thenReturn(position);
     when(groundOverlay.getBounds()).thenReturn(bounds);
 
-    Messages.PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
+    PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
 
     Assert.assertEquals(0.5, anchor.getX(), 1e-15);
     Assert.assertEquals(0.5, anchor.getY(), 1e-15);
@@ -683,14 +730,14 @@ public class ConvertTest {
     when(groundOverlay.getPosition()).thenReturn(position);
     when(groundOverlay.getBounds()).thenReturn(bounds);
 
-    Messages.PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
+    PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
 
     Assert.assertEquals(0.5, anchor.getX(), 1e-15);
     Assert.assertEquals(0.5, anchor.getY(), 1e-15);
   }
 
   private void assertGroundOverlayEquals(
-      Messages.PlatformGroundOverlay result,
+      PlatformGroundOverlay result,
       GroundOverlay expectedOverlay,
       String expectedId,
       LatLng expectedPosition,
@@ -731,10 +778,10 @@ public class ConvertTest {
 
     Assert.assertEquals(expectedOverlay.getBearing(), result.getBearing(), 1e-15);
     Assert.assertEquals(expectedOverlay.getTransparency(), result.getTransparency(), 1e-6);
-    Assert.assertEquals(expectedOverlay.getZIndex(), result.getZIndex().intValue(), 1e-6);
+    Assert.assertEquals(expectedOverlay.getZIndex(), result.getZIndex(), 1e-6);
     Assert.assertEquals(expectedOverlay.isVisible(), result.getVisible());
     Assert.assertEquals(expectedOverlay.isClickable(), result.getClickable());
-    Messages.PlatformDoublePair anchor = result.getAnchor();
+    PlatformDoublePair anchor = result.getAnchor();
     Assert.assertNotNull(anchor);
     Assert.assertEquals(0.5, anchor.getX(), 1e-6);
     Assert.assertEquals(0.5, anchor.getY(), 1e-6);
@@ -758,7 +805,7 @@ public class ConvertTest {
     when(mockGroundOverlay.isClickable()).thenReturn(false);
 
     String overlayId = "overlay_1";
-    Messages.PlatformGroundOverlay result =
+    PlatformGroundOverlay result =
         Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false);
 
     assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, position, null);
@@ -782,10 +829,183 @@ public class ConvertTest {
     when(mockGroundOverlay.isClickable()).thenReturn(false);
 
     String overlayId = "overlay_2";
-    Messages.PlatformGroundOverlay result =
+    PlatformGroundOverlay result =
         Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true);
 
     assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds);
+  }
+
+  // Remove this if builders are added to the Kotlin generator; see discussion in
+  // https://github.com/flutter/flutter/issues/158287
+  private static final class PlatformMapConfigurationBuilder {
+    private @Nullable Boolean compassEnabled;
+    private @Nullable PlatformCameraTargetBounds cameraTargetBounds;
+    private @Nullable PlatformMapType mapType;
+    private @Nullable PlatformZoomRange minMaxZoomPreference;
+    private @Nullable Boolean mapToolbarEnabled;
+    private @Nullable Boolean rotateGesturesEnabled;
+    private @Nullable Boolean scrollGesturesEnabled;
+    private @Nullable Boolean tiltGesturesEnabled;
+    private @Nullable Boolean trackCameraPosition;
+    private @Nullable Boolean zoomControlsEnabled;
+    private @Nullable Boolean zoomGesturesEnabled;
+    private @Nullable Boolean myLocationEnabled;
+    private @Nullable Boolean myLocationButtonEnabled;
+    private @Nullable PlatformEdgeInsets padding;
+    private @Nullable Boolean indoorViewEnabled;
+    private @Nullable Boolean trafficEnabled;
+    private @Nullable Boolean buildingsEnabled;
+    private @Nullable Boolean liteModeEnabled;
+    private @Nullable PlatformMarkerType markerType;
+    private @Nullable String mapId;
+    private @Nullable String style;
+
+    public @NonNull PlatformMapConfigurationBuilder setCompassEnabled(@Nullable Boolean setterArg) {
+      this.compassEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setCameraTargetBounds(
+        @Nullable PlatformCameraTargetBounds setterArg) {
+      this.cameraTargetBounds = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMapType(
+        @Nullable PlatformMapType setterArg) {
+      this.mapType = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMinMaxZoomPreference(
+        @Nullable PlatformZoomRange setterArg) {
+      this.minMaxZoomPreference = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMapToolbarEnabled(
+        @Nullable Boolean setterArg) {
+      this.mapToolbarEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setRotateGesturesEnabled(
+        @Nullable Boolean setterArg) {
+      this.rotateGesturesEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setScrollGesturesEnabled(
+        @Nullable Boolean setterArg) {
+      this.scrollGesturesEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setTiltGesturesEnabled(
+        @Nullable Boolean setterArg) {
+      this.tiltGesturesEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setTrackCameraPosition(
+        @Nullable Boolean setterArg) {
+      this.trackCameraPosition = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setZoomControlsEnabled(
+        @Nullable Boolean setterArg) {
+      this.zoomControlsEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setZoomGesturesEnabled(
+        @Nullable Boolean setterArg) {
+      this.zoomGesturesEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMyLocationEnabled(
+        @Nullable Boolean setterArg) {
+      this.myLocationEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMyLocationButtonEnabled(
+        @Nullable Boolean setterArg) {
+      this.myLocationButtonEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setPadding(
+        @Nullable PlatformEdgeInsets setterArg) {
+      this.padding = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setIndoorViewEnabled(
+        @Nullable Boolean setterArg) {
+      this.indoorViewEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setTrafficEnabled(@Nullable Boolean setterArg) {
+      this.trafficEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setBuildingsEnabled(
+        @Nullable Boolean setterArg) {
+      this.buildingsEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setLiteModeEnabled(
+        @Nullable Boolean setterArg) {
+      this.liteModeEnabled = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMarkerType(
+        @NonNull PlatformMarkerType setterArg) {
+      this.markerType = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setMapId(@Nullable String setterArg) {
+      this.mapId = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfigurationBuilder setStyle(@Nullable String setterArg) {
+      this.style = setterArg;
+      return this;
+    }
+
+    public @NonNull PlatformMapConfiguration build() {
+      return new PlatformMapConfiguration(
+          compassEnabled,
+          cameraTargetBounds,
+          mapType,
+          minMaxZoomPreference,
+          mapToolbarEnabled,
+          rotateGesturesEnabled,
+          scrollGesturesEnabled,
+          tiltGesturesEnabled,
+          trackCameraPosition,
+          zoomControlsEnabled,
+          zoomGesturesEnabled,
+          myLocationEnabled,
+          myLocationButtonEnabled,
+          padding,
+          indoorViewEnabled,
+          trafficEnabled,
+          buildingsEnabled,
+          liteModeEnabled,
+          Objects.requireNonNull(markerType),
+          mapId,
+          style);
+    }
   }
 }
 

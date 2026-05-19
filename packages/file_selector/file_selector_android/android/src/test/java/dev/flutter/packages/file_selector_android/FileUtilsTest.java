@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -41,7 +42,6 @@ import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.ShadowMimeTypeMap;
 
 @RunWith(RobolectricTestRunner.class)
 public class FileUtilsTest {
@@ -51,15 +51,21 @@ public class FileUtilsTest {
   ContentResolver contentResolver;
 
   @Before
+  @SuppressWarnings("deprecation") // shadowOf(MimeTypeMap)
   public void before() {
     context = ApplicationProvider.getApplicationContext();
     contentResolver = spy(context.getContentResolver());
     shadowContentResolver = shadowOf(context.getContentResolver());
-    ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
-    mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
-    mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
-    mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
-    mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      // On S and higher robolectric does not need this setup because all the mappings are
+      // present already.
+      //noinspection deprecation
+      var mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
+      mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
+      mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
+      mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
+      mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    }
   }
 
   @Test
@@ -82,7 +88,8 @@ public class FileUtilsTest {
 
   @Test
   public void getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
-    // Uri that represents Documents/test directory from some external storage volume ("external" for this test):
+    // Uri that represents Documents/test directory from some external storage volume ("external"
+    // for this test):
     Uri uri =
         Uri.parse(
             "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest");
@@ -249,7 +256,8 @@ public class FileUtilsTest {
 
   // Mocks a malicious content provider attempting to use path indirection to modify files outside
   // of the intended directory.
-  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  // See
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
   private static class MockMaliciousContentProvider extends ContentProvider {
     public static String PNG_URI = "content://dummy/a.png";
 

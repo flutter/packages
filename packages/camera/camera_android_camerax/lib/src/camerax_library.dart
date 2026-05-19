@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,14 +9,34 @@ import 'camerax_library.g.dart' as camerax;
 
 export 'camerax_library.g.dart' hide CameraInfo, LiveData, Observer;
 
+/// Provides overrides for the constructors and static members of classes that
+/// extend Dart proxy classes.
+///
+/// Intended to be similar to [camerax.PigeonOverrides].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [GenericsPigeonOverrides.reset] to set all overrides back to null.
+@visibleForTesting
+final class GenericsPigeonOverrides {
+  /// Overrides [Observer.new].
+  static Observer<T> Function<T>({
+    required void Function(Observer<T> pigeonInstance, T value) onChanged,
+  })?
+  observerNew;
+
+  /// Sets all overridden ProxyApi class members to null.
+  static void reset() {
+    observerNew = null;
+  }
+}
+
 /// Handles adding support for generics to the API wrapper.
 ///
 /// APIs wrapped with the pigeon ProxyAPI system doesn't support generics, so
 /// this handles using subclasses to add support.
-void setUpGenerics({
-  BinaryMessenger? pigeonBinaryMessenger,
-  camerax.PigeonInstanceManager? pigeonInstanceManager,
-}) {
+void setUpGenerics({BinaryMessenger? pigeonBinaryMessenger}) {
   camerax.LiveData.pigeon_setUpMessageHandlers(
     pigeon_newInstance: (camerax.LiveDataSupportedType type) {
       switch (type) {
@@ -24,30 +44,30 @@ void setUpGenerics({
           return LiveData<camerax.CameraState>.detached(
             type: type,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
-            pigeon_instanceManager: pigeonInstanceManager,
           );
         case camerax.LiveDataSupportedType.zoomState:
           return LiveData<camerax.ZoomState>.detached(
             type: type,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
-            pigeon_instanceManager: pigeonInstanceManager,
           );
       }
     },
   );
 
   camerax.CameraInfo.pigeon_setUpMessageHandlers(
-    pigeon_newInstance: (
-      int sensorRotationDegrees,
-      camerax.ExposureState exposureState,
-    ) {
-      return CameraInfo.detached(
-        sensorRotationDegrees: sensorRotationDegrees,
-        exposureState: exposureState,
-        pigeon_binaryMessenger: pigeonBinaryMessenger,
-        pigeon_instanceManager: pigeonInstanceManager,
-      );
-    },
+    pigeon_newInstance:
+        (
+          int sensorRotationDegrees,
+          camerax.LensFacing lensFacing,
+          camerax.ExposureState exposureState,
+        ) {
+          return CameraInfo.detached(
+            sensorRotationDegrees: sensorRotationDegrees,
+            lensFacing: lensFacing,
+            exposureState: exposureState,
+            pigeon_binaryMessenger: pigeonBinaryMessenger,
+          );
+        },
   );
 }
 
@@ -86,11 +106,10 @@ class CameraInfo extends camerax.CameraInfo {
   /// create copies for an [PigeonInstanceManager].
   CameraInfo.detached({
     required super.sensorRotationDegrees,
+    required super.lensFacing,
     required super.exposureState,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
   @override
@@ -108,9 +127,9 @@ class CameraInfo extends camerax.CameraInfo {
   CameraInfo pigeon_copy() {
     return CameraInfo.detached(
       sensorRotationDegrees: sensorRotationDegrees,
+      lensFacing: lensFacing,
       exposureState: exposureState,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
@@ -132,8 +151,6 @@ class LiveData<T> extends camerax.LiveData {
     required super.type,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
   @override
@@ -152,7 +169,6 @@ class LiveData<T> extends camerax.LiveData {
     return LiveData<T>.detached(
       type: type,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
@@ -162,14 +178,27 @@ class LiveData<T> extends camerax.LiveData {
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends camerax.Observer {
   /// Constructs an [Observer].
-  Observer({
+  factory Observer({
+    required void Function(Observer<T> instance, T value) onChanged,
+    BinaryMessenger? binaryMessenger,
+  }) {
+    if (GenericsPigeonOverrides.observerNew != null) {
+      return GenericsPigeonOverrides.observerNew!(onChanged: onChanged);
+    }
+    return Observer<T>.pigeonNew(
+      pigeon_binaryMessenger: binaryMessenger,
+      onChanged: onChanged,
+    );
+  }
+
+  /// Constructs an [Observer].
+  @protected
+  Observer.pigeonNew({
     required void Function(Observer<T> instance, T value) onChanged,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : _genericOnChanged = onChanged,
-       super(
+       super.pigeon_new(
          onChanged: (camerax.Observer instance, Object value) {
            onChanged(instance as Observer<T>, value as T);
          },
@@ -183,8 +212,6 @@ class Observer<T> extends camerax.Observer {
     required void Function(Observer<T> instance, T value) onChanged,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : _genericOnChanged = onChanged,
        super.pigeon_detached(
          onChanged: (camerax.Observer instance, Object value) {
@@ -200,7 +227,6 @@ class Observer<T> extends camerax.Observer {
     return Observer<T>.detached(
       onChanged: _genericOnChanged,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }

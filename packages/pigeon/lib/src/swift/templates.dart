@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,7 +34,8 @@ protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
 ''';
 
 /// Template for an object that tracks when an object is deallocated.
-String instanceManagerFinalizerTemplate(InternalSwiftOptions options) => '''
+String instanceManagerFinalizerTemplate(InternalSwiftOptions options) =>
+    '''
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class ${_instanceManagerFinalizerName(options)} {
   internal static let associatedObjectKey = malloc(1)!

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,29 +42,29 @@ class ExampleHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tables & Trees'),
-      ),
+      appBar: AppBar(title: const Text('Tables & Trees')),
       body: Center(
-        child: Column(children: <Widget>[
-          const Spacer(flex: 3),
-          FilledButton(
-            onPressed: () {
-              // Go to table explorer
-              Navigator.of(context).pushNamed('/table');
-            },
-            child: const Text('TableView Explorer'),
-          ),
-          const Spacer(),
-          FilledButton(
-            onPressed: () {
-              // Go to tree explorer
-              Navigator.of(context).pushNamed('/tree');
-            },
-            child: const Text('TreeView Explorer'),
-          ),
-          const Spacer(flex: 3),
-        ]),
+        child: Column(
+          children: <Widget>[
+            const Spacer(flex: 3),
+            FilledButton(
+              onPressed: () {
+                // Go to table explorer
+                Navigator.of(context).pushNamed('/table');
+              },
+              child: const Text('TableView Explorer'),
+            ),
+            const Spacer(),
+            FilledButton(
+              onPressed: () {
+                // Go to tree explorer
+                Navigator.of(context).pushNamed('/tree');
+              },
+              child: const Text('TreeView Explorer'),
+            ),
+            const Spacer(flex: 3),
+          ],
+        ),
       ),
     );
   }

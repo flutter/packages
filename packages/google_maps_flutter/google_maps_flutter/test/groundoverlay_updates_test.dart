@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,7 @@ Widget _mapWithMarkers(Set<GroundOverlay> groundOverlays) {
 }
 
 void main() {
-  final LatLngBounds kGroundOverlayBounds = LatLngBounds(
+  final kGroundOverlayBounds = LatLngBounds(
     southwest: const LatLng(37.77483, -122.41942),
     northeast: const LatLng(37.78183, -122.39105),
   );
@@ -33,7 +33,7 @@ void main() {
   });
 
   testWidgets('Initializing a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -46,7 +46,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -74,12 +74,14 @@ void main() {
     expect(initializedGroundOverlays.first, equals(go1));
     expect(initializedGroundOverlays.last, equals(go2));
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
   });
 
   testWidgets('Adding a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -92,7 +94,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -120,13 +122,15 @@ void main() {
     expect(addedMarker, equals(go2));
 
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
   });
 
   testWidgets('Removing a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -144,15 +148,17 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.length, 1);
-    expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
-        equals(go1.groundOverlayId));
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
+      equals(go1.groundOverlayId),
+    );
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
   testWidgets('Updating a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -172,16 +178,20 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.length, 1);
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange.first,
-        equals(go2));
+    expect(
+      map.groundOverlayUpdates.last.groundOverlaysToChange.first,
+      equals(go2),
+    );
 
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    GroundOverlay go1 = GroundOverlay.fromBounds(
+    var go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -194,7 +204,7 @@ void main() {
       zIndex: 10,
     );
 
-    GroundOverlay go2 = GroundOverlay.fromPosition(
+    var go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -211,10 +221,10 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1, go2};
+    final prev = <GroundOverlay>{go1, go2};
     go1 = go1.copyWith(visibleParam: false);
     go2 = go2.copyWith(clickableParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2};
+    final cur = <GroundOverlay>{go1, go2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -223,12 +233,14 @@ void main() {
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange, cur);
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -241,7 +253,7 @@ void main() {
       zIndex: 10,
     );
 
-    GroundOverlay go2 = GroundOverlay.fromPosition(
+    var go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -258,7 +270,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final GroundOverlay go3 = GroundOverlay.fromPosition(
+    final go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,
@@ -275,11 +287,11 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final Set<GroundOverlay> prev = <GroundOverlay>{go2, go3};
+    final prev = <GroundOverlay>{go2, go3};
 
     // go1 is added, go2 is updated, go3 is removed.
     go2 = go2.copyWith(clickableParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2};
+    final cur = <GroundOverlay>{go1, go2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -290,16 +302,22 @@ void main() {
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.length, 1);
     expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.length, 1);
 
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange.first,
-        equals(go2));
     expect(
-        map.groundOverlayUpdates.last.groundOverlaysToAdd.first, equals(go1));
-    expect(map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
-        equals(go3.groundOverlayId));
+      map.groundOverlayUpdates.last.groundOverlaysToChange.first,
+      equals(go2),
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlaysToAdd.first,
+      equals(go1),
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.first,
+      equals(go3.groundOverlayId),
+    );
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -312,7 +330,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -329,7 +347,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    GroundOverlay go3 = GroundOverlay.fromPosition(
+    var go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,
@@ -345,24 +363,28 @@ void main() {
       zIndex: 10,
       zoomLevel: 14.0,
     );
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1, go2, go3};
+    final prev = <GroundOverlay>{go1, go2, go3};
     go3 = go3.copyWith(visibleParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2, go3};
+    final cur = <GroundOverlay>{go1, go2, go3};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.groundOverlayUpdates.last.groundOverlaysToChange,
-        <GroundOverlay>{go3});
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlaysToChange,
+      <GroundOverlay>{go3},
+    );
+    expect(
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
-    GroundOverlay go1 = GroundOverlay.fromBounds(
+    var go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -374,11 +396,9 @@ void main() {
       bearing: 10,
       zIndex: 10,
     );
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1};
-    go1 = go1.copyWith(
-      onTapParam: () {},
-    );
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1};
+    final prev = <GroundOverlay>{go1};
+    go1 = go1.copyWith(onTapParam: () {});
+    final cur = <GroundOverlay>{go1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -387,14 +407,16 @@ void main() {
 
     expect(map.groundOverlayUpdates.last.groundOverlaysToChange.isEmpty, true);
     expect(
-        map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty, true);
+      map.groundOverlayUpdates.last.groundOverlayIdsToRemove.isEmpty,
+      true,
+    );
     expect(map.groundOverlayUpdates.last.groundOverlaysToAdd.isEmpty, true);
   });
 
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -407,7 +429,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -424,7 +446,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final GroundOverlay go3 = GroundOverlay.fromPosition(
+    final go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,
@@ -453,18 +475,24 @@ void main() {
     expect(map.groundOverlayUpdates.length, 3);
 
     expect(map.groundOverlayUpdates[0].groundOverlaysToChange.isEmpty, true);
-    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd,
-        <GroundOverlay>{go1, go2});
+    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd, <GroundOverlay>{
+      go1,
+      go2,
+    });
     expect(map.groundOverlayUpdates[0].groundOverlayIdsToRemove.isEmpty, true);
 
     expect(map.groundOverlayUpdates[1].groundOverlaysToChange.isEmpty, true);
+    expect(map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{
+      go3,
+    });
     expect(
-        map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{go3});
-    expect(map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
-        <GroundOverlayId>{go2.groundOverlayId});
+      map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
+      <GroundOverlayId>{go2.groundOverlayId},
+    );
 
-    expect(map.groundOverlayUpdates[2].groundOverlaysToChange,
-        <GroundOverlay>{go3updated});
+    expect(map.groundOverlayUpdates[2].groundOverlaysToChange, <GroundOverlay>{
+      go3updated,
+    });
     expect(map.groundOverlayUpdates[2].groundOverlaysToAdd.isEmpty, true);
     expect(map.groundOverlayUpdates[2].groundOverlayIdsToRemove.isEmpty, true);
 

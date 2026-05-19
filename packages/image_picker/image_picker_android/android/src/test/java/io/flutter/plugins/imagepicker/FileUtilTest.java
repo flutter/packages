@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,6 +22,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
@@ -48,14 +49,20 @@ public class FileUtilTest {
   ShadowContentResolver shadowContentResolver;
 
   @Before
+  @SuppressWarnings("deprecation") // shadowOf(MimeTypeMap)
   public void before() {
     context = ApplicationProvider.getApplicationContext();
     shadowContentResolver = shadowOf(context.getContentResolver());
     fileUtils = new FileUtils();
-    ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
-    mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
-    mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
-    mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      // On S and higher robolectric does not need this setup because all the mappings are
+      // present already.
+      //noinspection deprecation
+      ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
+      mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
+      mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
+      mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    }
   }
 
   @Test
@@ -210,7 +217,8 @@ public class FileUtilTest {
 
   // Mocks a malicious content provider attempting to use path indirection to modify files outside
   // of the intended directory.
-  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  // See
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
   private static class MockMaliciousContentProvider extends ContentProvider {
     public static String PNG_URI = "content://dummy/a.png";
 

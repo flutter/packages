@@ -1,3 +1,48 @@
+## 2.17.0
+
+* Adds missing re-exports of classes related to advanced markers.
+
+## 2.16.0
+
+* Adds `colorScheme` support for web cloud-based maps styling brightness.
+
+## 2.15.0
+
+* Adds support for advanced markers, and new example pages showing their usage.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.14.2
+
+* Updates README with discussion of the new `google_maps_flutter_ios_sdk*` packages.
+
+## 2.14.1
+
+* Replaces internal use of deprecated methods.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
+## 2.14.0
+
+* Adds a check that raises a `StateError`
+  when map controller is used after its widget has been disposed.
+
+## 2.13.1
+
+* Fixes exception when dispose is called while asynchronous update from
+  `didUpdateWidget` is executed.
+
+## 2.13.0
+
+* Adds support for camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.12.3
+
+* Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
+
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
@@ -575,7 +620,6 @@ GoogleMapController is now uniformly driven by implementing `DefaultLifecycleObs
 ## 0.5.19
 
 * Adds support for toggling Indoor View on or off.
-
 * Allow BitmapDescriptor scaling override
 
 ## 0.5.18

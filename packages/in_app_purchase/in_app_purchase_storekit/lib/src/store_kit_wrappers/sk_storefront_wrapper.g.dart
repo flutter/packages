@@ -13,8 +13,8 @@ SKStorefrontWrapper _$SKStorefrontWrapperFromJson(Map json) =>
     );
 
 Map<String, dynamic> _$SKStorefrontWrapperToJson(
-        SKStorefrontWrapper instance) =>
-    <String, dynamic>{
-      'countryCode': instance.countryCode,
-      'identifier': instance.identifier,
-    };
+  SKStorefrontWrapper instance,
+) => <String, dynamic>{
+  'countryCode': instance.countryCode,
+  'identifier': instance.identifier,
+};

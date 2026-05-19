@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,7 @@ export 'lost_data_response.dart';
 export 'media_options.dart';
 export 'media_selection_type.dart';
 export 'multi_image_picker_options.dart';
+export 'multi_video_picker_options.dart';
 export 'picked_file/picked_file.dart';
 export 'retrieve_type.dart';
 

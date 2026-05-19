@@ -1,6 +1,20 @@
-## NEXT
+## 2.15.1
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 2.15.0
+
+* Adds support to retrieve WebView cookies. See `PlatformWebViewCookieManager.getCookies`.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.14.0
+
+* Adds `PlatformWebViewController.loadFileWithParams(LoadFileParams)` to support loading local HTML files with platform-specific parameters.
+
+## 2.13.1
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes typo in API docs.
 
 ## 2.13.0
 

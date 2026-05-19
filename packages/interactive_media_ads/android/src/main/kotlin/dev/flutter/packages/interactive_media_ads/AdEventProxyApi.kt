@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
 /**
@@ -49,5 +50,9 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun adData(pigeon_instance: AdEvent): Map<String, String>? {
     return pigeon_instance.adData
+  }
+
+  override fun ad(pigeon_instance: AdEvent): Ad? {
+    return pigeon_instance.ad
   }
 }

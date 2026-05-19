@@ -18,6 +18,11 @@
     - any-glob-to-any-file:
       - third_party/packages/cupertino_icons/**/*
 
+'p: cupertino_ui':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/cupertino_ui/**/*
+
 'p: espresso':
   - changed-files:
     - any-glob-to-any-file:
@@ -37,11 +42,6 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/flutter_lints/**/*
-
-'p: flutter_migrate':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_migrate/**/*
 
 'p: flutter_plugin_android_lifecycle':
   - changed-files:
@@ -72,12 +72,17 @@
 'p: google_adsense':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_adsense/**
+      - packages/google_adsense/**/*
 
 'p: google_identity_services':
   - changed-files:
     - any-glob-to-any-file:
-      - packages/google_indentity_services_web/**
+      - packages/google_identity_services_web/**/*
+
+'p: google_fonts':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_fonts/**/*
 
 'p: google_maps_flutter':
   - changed-files:
@@ -109,6 +114,11 @@
     - any-glob-to-any-file:
       - packages/local_auth/**/*
 
+'p: material_ui':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/material_ui/**/*
+
 'p: metrics_center':
   - changed-files:
     - any-glob-to-any-file:
@@ -118,6 +128,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/multicast_dns/**/*
+
+'p: mustache_template':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/mustache_template/**/*
 
 'p: path_parsing':
   - changed-files:
@@ -163,6 +178,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/standard_message_codec/**/*
+
+'p: two_dimensional_scrollables':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/two_dimensional_scrollables/**/*
 
 'p: url_launcher':
   - changed-files:
@@ -243,3 +263,24 @@
       - packages/*/*_windows/**/*
       - packages/**/windows/**/*
 
+'triage-engine':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/vector_graphics/**/*
+      - packages/vector_graphics_codec/**/*
+      - packages/vector_graphics_compiler/**/*
+      - third_party/packages/flutter_svg/**/*
+      - third_party/packages/flutter_svg_test/**/*
+
+'triage-framework':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/animations/**/*
+      - packages/cupertino_ui/**/*
+      - packages/flutter_lints/**/*
+      - packages/go_router/**/*
+      - packages/go_router_builder/**/*
+      - packages/google_fonts/**/*
+      - packages/material_ui/**/*
+      - packages/two_dimensional_scrollables/**/*
+      - third_party/packages/cupertino_icons/**/*

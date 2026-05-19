@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,6 +59,23 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything) {
     return everything;
+  }
+
+  @Override
+  public @NonNull Boolean areAllNullableTypesEqual(
+      @NonNull AllNullableTypes a, @NonNull AllNullableTypes b) {
+    return a.equals(b);
+  }
+
+  @Override
+  public @NonNull Long getAllNullableTypesHash(@NonNull AllNullableTypes value) {
+    return (long) value.hashCode();
+  }
+
+  @Override
+  public @NonNull Long getAllNullableTypesWithoutRecursionHash(
+      @NonNull AllNullableTypesWithoutRecursion value) {
+    return (long) value.hashCode();
   }
 
   @Override

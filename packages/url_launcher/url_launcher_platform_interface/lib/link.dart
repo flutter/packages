@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,10 +14,8 @@ typedef FollowLink = Future<void> Function();
 
 /// Signature for a builder function passed to the [Link] widget to construct
 /// the widget tree under it.
-typedef LinkWidgetBuilder = Widget Function(
-  BuildContext context,
-  FollowLink? followLink,
-);
+typedef LinkWidgetBuilder =
+    Widget Function(BuildContext context, FollowLink? followLink);
 
 /// Signature for a delegate function to build the [Link] widget.
 typedef LinkDelegate = Widget Function(LinkInfo linkWidget);
@@ -43,8 +41,9 @@ class LinkTarget {
   ///
   /// iOS, on the other hand, defaults to [self] for web URLs, and [blank] for
   /// non-web URLs.
-  static const LinkTarget defaultTarget =
-      LinkTarget._(debugLabel: 'defaultTarget');
+  static const LinkTarget defaultTarget = LinkTarget._(
+    debugLabel: 'defaultTarget',
+  );
 
   /// On the web, this opens the link in the same tab where the flutter app is
   /// running.
@@ -85,7 +84,7 @@ abstract class LinkInfo {
 /// Returns the raw data returned by the framework.
 // TODO(ianh): Remove the first argument.
 Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
-  final Completer<ByteData> completer = Completer<ByteData>();
+  final completer = Completer<ByteData>();
   SystemNavigator.routeInformationUpdated(uri: Uri.parse(routeName));
   ui.channelBuffers.push(
     'flutter/navigation',

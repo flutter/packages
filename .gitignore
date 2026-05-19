@@ -47,6 +47,10 @@ xcuserdata/
 
 generated_plugin_registrant.*
 GeneratedPluginRegistrant.*
+# These should be ephemeral, but currently aren't, so ignore them. See:
+# - https://github.com/flutter/flutter/issues/149917
+# - https://github.com/flutter/flutter/issues/76726
+**/generated_plugins.cmake
 
 # Gradle 
 **/gradle-wrapper.jar
@@ -58,3 +62,7 @@ gradlew.bat
 .project
 .classpath
 .settings
+
+# AI related
+.agents/rules/personal-*
+.agents/skills/personal-*

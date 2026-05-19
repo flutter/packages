@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,25 +16,9 @@ import static org.mockito.Mockito.when;
 
 import android.hardware.camera2.CaptureRequest;
 import io.flutter.plugins.camera.CameraProperties;
-import io.flutter.plugins.camera.SdkCapabilityChecker;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class NoiseReductionFeatureTest {
-  @Before
-  public void before() {
-    // Make sure the SDK_VERSION field returns 23, to allow using all available
-    // noise reduction modes in tests.
-    SdkCapabilityChecker.SDK_VERSION = 23;
-  }
-
-  @After
-  public void after() {
-    // Make sure we reset the SDK_VERSION field to it's original value.
-    SdkCapabilityChecker.SDK_VERSION = 0;
-  }
-
   @Test
   public void getDebugName_shouldReturnTheNameOfTheFeature() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);

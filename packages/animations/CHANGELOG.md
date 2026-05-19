@@ -1,6 +1,23 @@
-## NEXT
+## 2.2.0
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds support for custom `closedShadows` and `openShadows` to `OpenContainer`.
+* Fixes a layout overflow issue in the `_ExampleSingleTile` within the example app.
+
+## 2.1.2
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds an example of using `OpenContainer`
+
+## 2.1.1
+
+* Updated the documentation for `OpenContainer.onClosed` to clarify that it is called at the start of the closing transition, not at the end.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.1.0
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Make `OpenContainerState` public.
 
 ## 2.0.11
 

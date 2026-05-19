@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -86,7 +86,8 @@ public class FocusPointFeature extends CameraFeature<Point> {
   private void buildFocusRectangle() {
     if (this.cameraBoundaries == null) {
       throw new AssertionError(
-          "The cameraBoundaries should be set (using `FocusPointFeature.setCameraBoundaries(Size)`) before updating the focus point.");
+          "The cameraBoundaries should be set (using `FocusPointFeature.setCameraBoundaries(Size)`)"
+              + " before updating the focus point.");
     }
     if (this.focusPoint == null) {
       this.focusRectangle = null;

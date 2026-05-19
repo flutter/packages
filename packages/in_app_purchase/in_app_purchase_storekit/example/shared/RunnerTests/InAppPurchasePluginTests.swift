@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,36 +35,32 @@ final class InAppPurchasePluginTests: XCTestCase {
   }
 
   func testPaymentQueueStorefrontReturnsNil() throws {
-    if #available(iOS 13, macOS 10.15, *) {
-      let storefrontMap = [
-        "countryCode": "USA",
-        "identifier": "unique_identifier",
-      ]
-      let queueStub = PaymentQueueStub()
-      let cache = TransactionCacheStub()
+    let storefrontMap = [
+      "countryCode": "USA",
+      "identifier": "unique_identifier",
+    ]
+    let queueStub = PaymentQueueStub()
+    let cache = TransactionCacheStub()
 
-      queueStub.storefront = SKStorefrontStub(map: storefrontMap)
+    queueStub.storefront = SKStorefrontStub(map: storefrontMap)
 
-      plugin.paymentQueueHandler = FIAPaymentQueueHandler(
-        queue: queueStub,
-        transactionsUpdated: nil,
-        transactionRemoved: nil,
-        restoreTransactionFailed: nil,
-        restoreCompletedTransactionsFinished: nil,
-        shouldAddStorePayment: nil,
-        updatedDownloads: nil,
-        transactionCache: cache)
+    plugin.paymentQueueHandler = FIAPaymentQueueHandler(
+      queue: queueStub,
+      transactionsUpdated: nil,
+      transactionRemoved: nil,
+      restoreTransactionFailed: nil,
+      restoreCompletedTransactionsFinished: nil,
+      shouldAddStorePayment: nil,
+      updatedDownloads: nil,
+      transactionCache: cache)
 
-      var error: FlutterError?
-      let result = plugin.storefrontWithError(&error)
+    var error: FlutterError?
+    let result = plugin.storefrontWithError(&error)
 
-      let unwrappedResult = try XCTUnwrap(result)
-      XCTAssertEqual(unwrappedResult.countryCode, storefrontMap["countryCode"])
-      XCTAssertEqual(unwrappedResult.identifier, storefrontMap["identifier"])
-      XCTAssertNil(error)
-    } else {
-      print("Skip testPaymentQueueStorefront for iOS lower than 13.0 or macOS lower than 10.15.")
-    }
+    let unwrappedResult = try XCTUnwrap(result)
+    XCTAssertEqual(unwrappedResult.countryCode, storefrontMap["countryCode"])
+    XCTAssertEqual(unwrappedResult.identifier, storefrontMap["identifier"])
+    XCTAssertNil(error)
   }
   func testGetProductResponse() {
     let argument = ["123"]
@@ -157,7 +153,7 @@ final class InAppPurchasePluginTests: XCTestCase {
       "transactionTimeStamp": NSDate().timeIntervalSince1970,
     ]
 
-    let paymentTransactionStub = SKPaymentTransactionStub(map: transactionMap)
+    let _ = SKPaymentTransactionStub(map: transactionMap)
 
     let handler = PaymentQueueHandlerStub()
     plugin.paymentQueueHandler = handler
@@ -343,22 +339,17 @@ final class InAppPurchasePluginTests: XCTestCase {
 
     var addPaymentInvokeCount = 0
     handlerStub.addPaymentStub = { payment in
-      if #available(iOS 12.2, *) {
-        guard let discount = payment.paymentDiscount else {
-          XCTFail("Discount should not be nil")
-          return false
-        }
-        XCTAssertEqual(discount.identifier, "test_identifier")
-        XCTAssertEqual(discount.keyIdentifier, "test_key_identifier")
-        XCTAssertEqual(discount.nonce, UUID(uuidString: "4a11a9cc-3bc3-11ec-8d3d-0242ac130003"))
-        XCTAssertEqual(discount.signature, "test_signature")
-        XCTAssertEqual(discount.timestamp, 1_635_847_102)
-        addPaymentInvokeCount += 1
-        return true
-      } else {
-        addPaymentInvokeCount += 1
-        return true
+      guard let discount = payment.paymentDiscount else {
+        XCTFail("Discount should not be nil")
+        return false
       }
+      XCTAssertEqual(discount.identifier, "test_identifier")
+      XCTAssertEqual(discount.keyIdentifier, "test_key_identifier")
+      XCTAssertEqual(discount.nonce, UUID(uuidString: "4a11a9cc-3bc3-11ec-8d3d-0242ac130003"))
+      XCTAssertEqual(discount.signature, "test_signature")
+      XCTAssertEqual(discount.timestamp, 1_635_847_102)
+      addPaymentInvokeCount += 1
+      return true
     }
 
     var error: FlutterError?
@@ -369,46 +360,44 @@ final class InAppPurchasePluginTests: XCTestCase {
   }
 
   func testAddPaymentFailureWithInvalidPaymentDiscount() {
-    if #available(iOS 12.2, *) {
-      let invalidDiscount: [String: Any] = [
-        "productIdentifier": "123",
-        "quantity": 1,
-        "simulatesAskToBuyInSandbox": true,
-        "paymentDiscount": [
-          // This payment discount is missing the field `identifier`, and is thus malformed
-          "keyIdentifier": "test_key_identifier",
-          "nonce": "4a11a9cc-3bc3-11ec-8d3d-0242ac130003",
-          "signature": "test_signature",
-          "timestamp": 1_635_847_102,
-        ],
-      ]
+    let invalidDiscount: [String: Any] = [
+      "productIdentifier": "123",
+      "quantity": 1,
+      "simulatesAskToBuyInSandbox": true,
+      "paymentDiscount": [
+        // This payment discount is missing the field `identifier`, and is thus malformed
+        "keyIdentifier": "test_key_identifier",
+        "nonce": "4a11a9cc-3bc3-11ec-8d3d-0242ac130003",
+        "signature": "test_signature",
+        "timestamp": 1_635_847_102,
+      ],
+    ]
 
-      let handlerStub = PaymentQueueHandlerStub()
+    let handlerStub = PaymentQueueHandlerStub()
 
-      var addPaymentCount = 0
-      handlerStub.addPaymentStub = { payment in
-        addPaymentCount += 1
-        return true
-      }
-
-      plugin.paymentQueueHandler = handlerStub
-      var error: FlutterError?
-
-      plugin.addPaymentPaymentMap(invalidDiscount, error: &error)
-
-      guard let error = error else {
-        XCTFail("Error should not be nil")
-        return
-      }
-
-      XCTAssertEqual(error.code, "storekit_invalid_payment_discount_object")
-      XCTAssertEqual(
-        error.message,
-        "You have requested a payment and specified a payment discount with invalid properties. When specifying a payment discount the 'identifier' field is mandatory."
-      )
-      XCTAssertEqual(error.details as! NSDictionary, invalidDiscount as NSDictionary)
-      XCTAssertEqual(addPaymentCount, 0)
+    var addPaymentCount = 0
+    handlerStub.addPaymentStub = { payment in
+      addPaymentCount += 1
+      return true
     }
+
+    plugin.paymentQueueHandler = handlerStub
+    var error: FlutterError?
+
+    plugin.addPaymentPaymentMap(invalidDiscount, error: &error)
+
+    guard let error = error else {
+      XCTFail("Error should not be nil")
+      return
+    }
+
+    XCTAssertEqual(error.code, "storekit_invalid_payment_discount_object")
+    XCTAssertEqual(
+      error.message,
+      "You have requested a payment and specified a payment discount with invalid properties. When specifying a payment discount the 'identifier' field is mandatory."
+    )
+    XCTAssertEqual(error.details as! NSDictionary, invalidDiscount as NSDictionary)
+    XCTAssertEqual(addPaymentCount, 0)
   }
 
   func testAddPaymentWithNullSandboxArgument() {
@@ -670,61 +659,57 @@ final class InAppPurchasePluginTests: XCTestCase {
       let cacheStub = TransactionCacheStub()
       let queueStub = PaymentQueueStub()
 
-      if #available(iOS 13, *) {
-        plugin.paymentQueueHandler = FIAPaymentQueueHandler(
-          queue: queueStub,
-          transactionsUpdated: nil,
-          transactionRemoved: nil,
-          restoreTransactionFailed: nil,
-          restoreCompletedTransactionsFinished: nil,
-          shouldAddStorePayment: nil,
-          updatedDownloads: nil,
-          transactionCache: cacheStub)
+      plugin.paymentQueueHandler = FIAPaymentQueueHandler(
+        queue: queueStub,
+        transactionsUpdated: nil,
+        transactionRemoved: nil,
+        restoreTransactionFailed: nil,
+        restoreCompletedTransactionsFinished: nil,
+        shouldAddStorePayment: nil,
+        updatedDownloads: nil,
+        transactionCache: cacheStub)
 
-        plugin.registrar = FlutterPluginRegistrarStub()
+      plugin.registrar = FlutterPluginRegistrarStub()
 
-        // Verify the delegate is nil before we register one.
-        XCTAssertNil(plugin.paymentQueueHandler?.delegate)
+      // Verify the delegate is nil before we register one.
+      XCTAssertNil(plugin.paymentQueueHandler?.delegate)
 
-        var error: FlutterError?
-        plugin.registerPaymentQueueDelegateWithError(&error)
+      var error: FlutterError?
+      plugin.registerPaymentQueueDelegateWithError(&error)
 
-        // Verify the delegate is not nil after we registered one.
-        XCTAssertNotNil(plugin.paymentQueueHandler?.delegate)
-      }
+      // Verify the delegate is not nil after we registered one.
+      XCTAssertNotNil(plugin.paymentQueueHandler?.delegate)
     }
 
     func testRemovePaymentQueueDelegate() {
-      if #available(iOS 13, *) {
-        let cacheStub = TransactionCacheStub()
-        let queueStub = PaymentQueueStub()
+      let cacheStub = TransactionCacheStub()
+      let queueStub = PaymentQueueStub()
 
-        plugin.paymentQueueHandler = FIAPaymentQueueHandler(
-          queue: queueStub,
-          transactionsUpdated: nil,
-          transactionRemoved: nil,
-          restoreTransactionFailed: nil,
-          restoreCompletedTransactionsFinished: nil,
-          shouldAddStorePayment: nil,
-          updatedDownloads: nil,
-          transactionCache: cacheStub)
+      plugin.paymentQueueHandler = FIAPaymentQueueHandler(
+        queue: queueStub,
+        transactionsUpdated: nil,
+        transactionRemoved: nil,
+        restoreTransactionFailed: nil,
+        restoreCompletedTransactionsFinished: nil,
+        shouldAddStorePayment: nil,
+        updatedDownloads: nil,
+        transactionCache: cacheStub)
 
-        plugin.registrar = FlutterPluginRegistrarStub()
+      plugin.registrar = FlutterPluginRegistrarStub()
 
-        // Verify the delegate is nil before we register one.
-        XCTAssertNil(plugin.paymentQueueHandler?.delegate)
+      // Verify the delegate is nil before we register one.
+      XCTAssertNil(plugin.paymentQueueHandler?.delegate)
 
-        var error: FlutterError?
-        plugin.registerPaymentQueueDelegateWithError(&error)
+      var error: FlutterError?
+      plugin.registerPaymentQueueDelegateWithError(&error)
 
-        // Verify the delegate is not nil before removing it.
-        XCTAssertNotNil(plugin.paymentQueueHandler?.delegate)
+      // Verify the delegate is not nil before removing it.
+      XCTAssertNotNil(plugin.paymentQueueHandler?.delegate)
 
-        plugin.removePaymentQueueDelegateWithError(&error)
+      plugin.removePaymentQueueDelegateWithError(&error)
 
-        // Verify the delegate is nil after removing it.
-        XCTAssertNil(plugin.paymentQueueHandler?.delegate)
-      }
+      // Verify the delegate is nil after removing it.
+      XCTAssertNil(plugin.paymentQueueHandler?.delegate)
     }
   #endif
 

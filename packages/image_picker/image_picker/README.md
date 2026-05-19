@@ -3,12 +3,11 @@
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
-A Flutter plugin for iOS and Android for picking images from the image library,
-and taking new pictures with the camera.
+A Flutter plugin for picking images from the image library, and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Setup
 
@@ -38,9 +37,6 @@ _Privacy - Microphone Usage Description_ in the visual editor.
 
 ### Android
 
-Starting with version **0.8.1** the Android implementation support to pick
-(multiple) images on Android 4.3 or higher.
-
 No configuration required - the plugin should work out of the box. It is however
 highly recommended to prepare for Android killing the application when low on memory. How to prepare for this is discussed in the
 [Handling MainActivity destruction on Android](#handling-mainactivity-destruction-on-android)
@@ -64,7 +60,7 @@ application. Since the data is never returned to the original call use the
 <?code-excerpt "readme_excerpts.dart (LostData)"?>
 ```dart
 Future<void> getLostData() async {
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;
@@ -76,6 +72,7 @@ Future<void> getLostData() async {
     _handleError(response.exception);
   }
 }
+
 ```
 
 This check should always be run at startup in order to detect and handle this
@@ -121,22 +118,26 @@ implementations allow delegating to a camera handler by setting a
 <?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
 ```dart
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+
 // ···
 class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
-  Future<XFile?> takePhoto(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takePhoto({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
-  Future<XFile?> takeVideo(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takeVideo({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
+
 // ···
 void setUpCameraDelegate() {
   final ImagePickerPlatform instance = ImagePickerPlatform.instance;
@@ -144,6 +145,7 @@ void setUpCameraDelegate() {
     instance.cameraDelegate = MyCameraDelegate();
   }
 }
+
 ```
 
 Once you have set a `cameraDelegate`, `image_picker` calls with
@@ -166,14 +168,15 @@ add a filesystem access
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
 ```dart
-final ImagePicker picker = ImagePicker();
+final picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 // Capture a photo.
 final XFile? photo = await picker.pickImage(source: ImageSource.camera);
 // Pick a video.
-final XFile? galleryVideo =
-    await picker.pickVideo(source: ImageSource.gallery);
+final XFile? galleryVideo = await picker.pickVideo(
+  source: ImageSource.gallery,
+);
 // Capture a video.
 final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
 // Pick multiple images.

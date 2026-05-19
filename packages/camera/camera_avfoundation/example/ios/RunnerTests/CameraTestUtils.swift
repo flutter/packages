@@ -1,33 +1,29 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
 import XCTest
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#else
-  import camera_avfoundation
-#endif
+@testable import camera_avfoundation
 
 /// Utils for creating default class instances used in tests
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
   /// Audio is enabled by default, while other parameters use platform-specific defaults.
-  static func createDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset)
-    -> FCPPlatformMediaSettings
+  static func createDefaultMediaSettings(resolutionPreset: PlatformResolutionPreset)
+    -> PlatformMediaSettings
   {
-    return FCPPlatformMediaSettings.make(
-      with: resolutionPreset,
+    return PlatformMediaSettings(
+      resolutionPreset: resolutionPreset,
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,
       enableAudio: true)
   }
 
-  /// Creates a test `FLTCamConfiguration` with a default mock setup.
-  static func createTestCameraConfiguration() -> FLTCamConfiguration {
+  /// Creates a test `CameraConfiguration` with a default mock setup.
+  static func createTestCameraConfiguration() -> CameraConfiguration {
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
 
     let videoSessionMock = MockCaptureSession()
@@ -39,28 +35,29 @@ enum CameraTestUtils {
     let frameRateRangeMock1 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 30)
 
     let captureDeviceFormatMock1 = MockCaptureDeviceFormat()
-    captureDeviceFormatMock1.videoSupportedFrameRateRanges = [frameRateRangeMock1]
+    captureDeviceFormatMock1.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock1]
 
     let frameRateRangeMock2 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 60)
 
     let captureDeviceFormatMock2 = MockCaptureDeviceFormat()
-    captureDeviceFormatMock2.videoSupportedFrameRateRanges = [frameRateRangeMock2]
+    captureDeviceFormatMock2.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock2]
 
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.formats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
+    captureDeviceMock.flutterFormats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
 
-    var currentFormat: FLTCaptureDeviceFormat = captureDeviceFormatMock1
+    var currentFormat: CaptureDeviceFormat = captureDeviceFormatMock1
 
     captureDeviceMock.activeFormatStub = { currentFormat }
     captureDeviceMock.setActiveFormatStub = { format in
       currentFormat = format
     }
 
-    let configuration = FLTCamConfiguration(
+    let configuration = CameraConfiguration(
       mediaSettings: createDefaultMediaSettings(
-        resolutionPreset: FCPPlatformResolutionPreset.medium),
+        resolutionPreset: PlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
       captureDeviceFactory: { _ in captureDeviceMock },
+      audioCaptureDeviceFactory: { MockCaptureDevice() },
       captureSessionFactory: { videoSessionMock },
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -71,7 +68,7 @@ enum CameraTestUtils {
     configuration.audioCaptureSession = audioSessionMock
     configuration.orientation = .portrait
 
-    configuration.assetWriterFactory = { _, _, _ in MockAssetWriter() }
+    configuration.assetWriterFactory = { _, _ in MockAssetWriter() }
 
     configuration.inputPixelBufferAdaptorFactory = { _, _ in
       MockAssetWriterInputPixelBufferAdaptor()
@@ -80,16 +77,16 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTCam {
-    return FLTCam(configuration: configuration, error: nil)
+  static func createTestCamera(_ configuration: CameraConfiguration) -> DefaultCamera {
+    return (try? DefaultCamera(configuration: configuration))!
   }
 
-  static func createTestCamera() -> FLTCam {
+  static func createTestCamera() -> DefaultCamera {
     return createTestCamera(createTestCameraConfiguration())
   }
 
   static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
-    -> FLTCam
+    -> DefaultCamera
   {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
@@ -98,7 +95,10 @@ enum CameraTestUtils {
 
   /// Creates a test sample buffer.
   /// @return a test sample buffer.
-  static func createTestSampleBuffer() -> CMSampleBuffer {
+  static func createTestSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
     var pixelBuffer: CVPixelBuffer?
     CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
 
@@ -109,9 +109,9 @@ enum CameraTestUtils {
       formatDescriptionOut: &formatDescription)
 
     var timingInfo = CMSampleTimingInfo(
-      duration: CMTimeMake(value: 1, timescale: 44100),
-      presentationTimeStamp: CMTime.zero,
-      decodeTimeStamp: CMTime.invalid)
+      duration: duration,
+      presentationTimeStamp: timestamp,
+      decodeTimeStamp: .invalid)
 
     var sampleBuffer: CMSampleBuffer?
     CMSampleBufferCreateReadyWithImageBuffer(
@@ -126,22 +126,25 @@ enum CameraTestUtils {
 
   /// Creates a test audio sample buffer.
   /// @return a test audio sample buffer.
-  static func createTestAudioSampleBuffer() -> CMSampleBuffer {
+  static func createTestAudioSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,
       memoryBlock: nil,
-      blockLength: 100,
+      blockLength: Int(duration.value),
       blockAllocator: kCFAllocatorDefault,
       customBlockSource: nil,
       offsetToData: 0,
-      dataLength: 100,
+      dataLength: Int(duration.value),
       flags: kCMBlockBufferAssureMemoryNowFlag,
       blockBufferOut: &blockBuffer)
 
     var formatDescription: CMFormatDescription?
     var basicDescription = AudioStreamBasicDescription(
-      mSampleRate: 44100,
+      mSampleRate: Float64(duration.timescale),
       mFormatID: kAudioFormatLinearPCM,
       mFormatFlags: 0,
       mBytesPerPacket: 1,
@@ -166,12 +169,20 @@ enum CameraTestUtils {
       allocator: kCFAllocatorDefault,
       dataBuffer: blockBuffer!,
       formatDescription: formatDescription!,
-      sampleCount: 1,
-      presentationTimeStamp: .zero,
+      sampleCount: CMItemCount(duration.value),
+      presentationTimeStamp: timestamp,
       packetDescriptions: nil,
       sampleBufferOut: &sampleBuffer)
 
     return sampleBuffer!
+  }
+
+  static func createTestAudioOutput() -> AVCaptureOutput {
+    return AVCaptureAudioDataOutput()
+  }
+
+  static func createTestConnection(_ output: AVCaptureOutput) -> AVCaptureConnection {
+    return AVCaptureConnection(inputPorts: [], output: output)
   }
 }
 
@@ -192,5 +203,17 @@ extension XCTestCase {
     }
 
     wait(for: [expectation], timeout: 1)
+  }
+
+  func assertSuccess<T>(
+    _ result: Result<T, any Error>, file: StaticString = #file, line: UInt = #line
+  ) -> T? {
+    switch result {
+    case .success(let value):
+      return value
+    case .failure(let error):
+      XCTFail("Expected success, but got failure: \(error)", file: file, line: line)
+      return nil
+    }
   }
 }

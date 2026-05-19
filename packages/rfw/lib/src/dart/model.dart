@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -248,7 +248,7 @@ bool _listEquals<T>(List<T>? a, List<T>? b) {
   if (a == null || b == null || a.length != b.length) {
     return false;
   }
-  for (int index = 0; index < a.length; index += 1) {
+  for (var index = 0; index < a.length; index += 1) {
     if (a[index] != b[index]) {
       return false;
     }
@@ -290,7 +290,7 @@ class LibraryName implements Comparable<LibraryName> {
 
   @override
   int compareTo(LibraryName other) {
-    for (int index = 0; index < parts.length; index += 1) {
+    for (var index = 0; index < parts.length; index += 1) {
       if (other.parts.length <= index) {
         return 1;
       }

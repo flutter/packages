@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -225,9 +225,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// call [getLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images or videos were picked, the return value is an empty list.
-  Future<List<XFile>> getMedia({
-    required MediaOptions options,
-  }) {
+  Future<List<XFile>> getMedia({required MediaOptions options}) {
     throw UnimplementedError('getMedia() has not been implemented.');
   }
 
@@ -322,6 +320,22 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     return pickedImages ?? <XFile>[];
   }
 
+  /// Returns a [List<XFile>] with the videos that were picked.
+  ///
+  /// The videos come from the [ImageSource.gallery].
+  ///
+  /// The `options` argument controls additional settings that can be used when
+  /// picking a video. See [MultiVideoPickerOptions] for more details.
+  ///
+  /// If no videos were picked, returns an empty list.
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) {
+    throw UnimplementedError(
+      'getMultiVideoWithOptions() has not been implemented.',
+    );
+  }
+
   /// Returns true if the implementation supports [source].
   ///
   /// Defaults to true for the original image sources, `gallery` and `camera`,
@@ -358,13 +372,15 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
       final ImagePickerCameraDelegate? delegate = cameraDelegate;
       if (delegate == null) {
         throw StateError(
-            'This implementation of ImagePickerPlatform requires a '
-            '"cameraDelegate" in order to use ImageSource.camera');
+          'This implementation of ImagePickerPlatform requires a '
+          '"cameraDelegate" in order to use ImageSource.camera',
+        );
       }
       return delegate.takePhoto(
-          options: ImagePickerCameraDelegateOptions(
-        preferredCameraDevice: options.preferredCameraDevice,
-      ));
+        options: ImagePickerCameraDelegateOptions(
+          preferredCameraDevice: options.preferredCameraDevice,
+        ),
+      );
     }
     return super.getImageFromSource(source: source, options: options);
   }
@@ -379,17 +395,21 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
       final ImagePickerCameraDelegate? delegate = cameraDelegate;
       if (delegate == null) {
         throw StateError(
-            'This implementation of ImagePickerPlatform requires a '
-            '"cameraDelegate" in order to use ImageSource.camera');
+          'This implementation of ImagePickerPlatform requires a '
+          '"cameraDelegate" in order to use ImageSource.camera',
+        );
       }
       return delegate.takeVideo(
-          options: ImagePickerCameraDelegateOptions(
-              preferredCameraDevice: preferredCameraDevice,
-              maxVideoDuration: maxDuration));
+        options: ImagePickerCameraDelegateOptions(
+          preferredCameraDevice: preferredCameraDevice,
+          maxVideoDuration: maxDuration,
+        ),
+      );
     }
     return super.getVideo(
-        source: source,
-        preferredCameraDevice: preferredCameraDevice,
-        maxDuration: maxDuration);
+      source: source,
+      preferredCameraDevice: preferredCameraDevice,
+      maxDuration: maxDuration,
+    );
   }
 }

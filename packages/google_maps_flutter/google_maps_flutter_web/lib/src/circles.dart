@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,10 +7,9 @@ part of '../google_maps_flutter_web.dart';
 /// This class manages all the [CircleController]s associated to a [GoogleMapController].
 class CirclesController extends GeometryController {
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
-  CirclesController({
-    required StreamController<MapEvent<Object?>> stream,
-  })  : _streamController = stream,
-        _circleIdToController = <CircleId, CircleController>{};
+  CirclesController({required StreamController<MapEvent<Object?>> stream})
+    : _streamController = stream,
+      _circleIdToController = <CircleId, CircleController>{};
 
   // A cache of [CircleController]s indexed by their [CircleId].
   final Map<CircleId, CircleController> _circleIdToController;
@@ -31,13 +30,14 @@ class CirclesController extends GeometryController {
 
   void _addCircle(Circle circle) {
     final gmaps.CircleOptions circleOptions = _circleOptionsFromCircle(circle);
-    final gmaps.Circle gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
-    final CircleController controller = CircleController(
-        circle: gmCircle,
-        consumeTapEvents: circle.consumeTapEvents,
-        onTap: () {
-          _onCircleTap(circle.circleId);
-        });
+    final gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
+    final controller = CircleController(
+      circle: gmCircle,
+      consumeTapEvents: circle.consumeTapEvents,
+      onTap: () {
+        _onCircleTap(circle.circleId);
+      },
+    );
     _circleIdToController[circle.circleId] = controller;
   }
 

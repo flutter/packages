@@ -82,7 +82,7 @@ enable_testing()
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/release-1.11.0.zip
+  URL https://github.com/google/googletest/archive/v1.15.2.zip
 )
 # Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -100,6 +100,7 @@ add_executable(${TEST_RUNNER}
   test/nullable_returns_test.cc
   test/null_fields_test.cc
   test/primitive_test.cc
+  test/equality_test.cc
   # Test utilities.
   test/utils/fake_host_messenger.cc
   test/utils/fake_host_messenger.h

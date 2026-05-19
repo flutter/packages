@@ -11,7 +11,7 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 21+ | 12.0+ | 10.14+ |
+| **Support** | SDK 24+ | 13.0+ | 10.15+ |
 
 ## Usage
 
@@ -54,6 +54,7 @@ Widget build(BuildContext context) {
     body: WebViewWidget(controller: controller),
   );
 }
+
 ```
 
 See the Dartdocs for [WebViewController](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewController-class.html)
@@ -79,6 +80,7 @@ Next, add the imports of the implementation packages to your app or package:
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 // Import for iOS/macOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
@@ -106,8 +108,7 @@ if (WebViewPlatform.instance is WebKitWebViewPlatform) {
   params = const PlatformWebViewControllerCreationParams();
 }
 
-final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
+final controller = WebViewController.fromPlatformCreationParams(params);
 // ···
 if (controller.platform is AndroidWebViewController) {
   AndroidWebViewController.enableDebugging(true);
@@ -158,10 +159,9 @@ for more details.
 
 ### PlatformView Implementation on Android
 
-The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
-and automatically fallbacks to Hybrid Composition for version 21-23. See section
+The PlatformView implementation for Android uses Texture Layer Hybrid Composition. See section
 `Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
-to manually switch to Hybrid Composition on versions 23+.
+to manually switch to Hybrid Composition.
 
 ### API Changes
 

@@ -1,6 +1,30 @@
-## NEXT
+## 1.2.2
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes `text-anchor` on `<text>` with multiple `<tspan>` children. The
+  anchor now applies to the entire anchored chunk as required by the SVG
+  spec, instead of independently to each tspan.
+
+## 1.2.1
+
+* Fixes uncaught `StateError` and `NoSuchMethodError` from `useHtmlRenderObject()` on CanvasKit / iOS Safari so SVG widgets fall back to the HTML render object.
+
+## 1.2.0
+
+* Adds `imageBuilder` property to `VectorGraphic` for wrapping the loaded vector graphic widget.
+
+## 1.1.21
+
+* Corrected width/height parameter documentation in VectorGraphic widget.
+
+## 1.1.20
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Respect BoxFit parameter when viewbox is specified.
+
+## 1.1.19
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Enhance image handling by adding validity checks and clear error messages for improved robustness and maintainability.
 
 ## 1.1.18
 

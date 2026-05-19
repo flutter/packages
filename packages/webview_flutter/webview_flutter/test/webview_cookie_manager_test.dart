@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,14 +14,13 @@ import 'webview_cookie_manager_test.mocks.dart';
 void main() {
   group('WebViewCookieManager', () {
     test('clearCookies', () async {
-      final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
+      final mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
-      when(mockPlatformWebViewCookieManager.clearCookies()).thenAnswer(
-        (_) => Future<bool>.value(false),
-      );
+      when(
+        mockPlatformWebViewCookieManager.clearCookies(),
+      ).thenAnswer((_) => Future<bool>.value(false));
 
-      final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(
+      final cookieManager = WebViewCookieManager.fromPlatform(
         mockPlatformWebViewCookieManager,
       );
 
@@ -29,15 +28,14 @@ void main() {
     });
 
     test('setCookie', () async {
-      final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
+      final mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
 
-      final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(
+      final cookieManager = WebViewCookieManager.fromPlatform(
         mockPlatformWebViewCookieManager,
       );
 
-      const WebViewCookie cookie = WebViewCookie(
+      const cookie = WebViewCookie(
         name: 'name',
         value: 'value',
         domain: 'domain',
@@ -45,9 +43,11 @@ void main() {
 
       await cookieManager.setCookie(cookie);
 
-      final WebViewCookie capturedCookie = verify(
-        mockPlatformWebViewCookieManager.setCookie(captureAny),
-      ).captured.single as WebViewCookie;
+      final capturedCookie =
+          verify(
+                mockPlatformWebViewCookieManager.setCookie(captureAny),
+              ).captured.single
+              as WebViewCookie;
       expect(capturedCookie, cookie);
     });
   });

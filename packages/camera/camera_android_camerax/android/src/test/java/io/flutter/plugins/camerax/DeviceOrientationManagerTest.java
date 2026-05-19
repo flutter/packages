@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,9 +20,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.FakeActivity;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
@@ -67,13 +69,13 @@ public class DeviceOrientationManagerTest {
   public void start_createsExpectedOrientationEventListener() {
     DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
 
-    doNothing().when(deviceOrientationManagerSpy).handleUIOrientationChange();
+    doNothing().when(deviceOrientationManagerSpy).handleUiOrientationChange();
 
     deviceOrientationManagerSpy.start();
     deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
         /* some device orientation */ 3);
 
-    verify(deviceOrientationManagerSpy).handleUIOrientationChange();
+    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
   }
 
   @Test
@@ -125,50 +127,50 @@ public class DeviceOrientationManagerTest {
   }
 
   @Test
-  public void getUIOrientation() {
+  public void getUiOrientation() {
     // Orientation portrait and rotation of 0 should translate to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_0);
-    DeviceOrientation uiOrientation = deviceOrientationManager.getUIOrientation();
+    DeviceOrientation uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
 
     // Orientation portrait and rotation of 90 should translate to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_90);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
 
     // Orientation portrait and rotation of 180 should translate to "PORTRAIT_DOWN".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_180);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_DOWN, uiOrientation);
 
     // Orientation portrait and rotation of 270 should translate to "PORTRAIT_DOWN".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_270);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_DOWN, uiOrientation);
 
     // Orientation landscape and rotation of 0 should translate to "LANDSCAPE_LEFT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_0);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_LEFT, uiOrientation);
 
     // Orientation landscape and rotation of 90 should translate to "LANDSCAPE_LEFT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_90);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_LEFT, uiOrientation);
 
     // Orientation landscape and rotation of 180 should translate to "LANDSCAPE_RIGHT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_180);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_RIGHT, uiOrientation);
 
     // Orientation landscape and rotation of 270 should translate to "LANDSCAPE_RIGHT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_270);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_RIGHT, uiOrientation);
 
     // Orientation undefined should default to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_UNDEFINED, Surface.ROTATION_0);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
   }
 
@@ -198,5 +200,41 @@ public class DeviceOrientationManagerTest {
     Display display = deviceOrientationManager.getDisplay();
 
     assertEquals(mockDisplay, display);
+  }
+
+  @Test
+  public void getDisplay_shouldReturnNull_whenActivityDestroyed() {
+    final DeviceOrientationManager deviceOrientationManager = createManager(true, false);
+    assertNull(deviceOrientationManager.getDisplay());
+    assertEquals(deviceOrientationManager.getDefaultRotation(), Surface.ROTATION_0);
+  }
+
+  @SuppressWarnings("deprecation")
+  private DeviceOrientationManager createManager(boolean destroyed, boolean finishing) {
+    FakeActivity activity = new FakeActivity();
+    activity.setDestroyed(destroyed);
+    activity.setFinishing(finishing);
+
+    WindowManager windowManager = mock(WindowManager.class);
+    when(windowManager.getDefaultDisplay()).thenReturn(mock(Display.class));
+    activity.setWindowManager(windowManager);
+
+    TestProxyApiRegistrar proxy =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          public Context getContext() {
+            return activity;
+          }
+
+          @Nullable
+          @Override
+          public Activity getActivity() {
+            return activity;
+          }
+        };
+    when(mockApi.getPigeonRegistrar()).thenReturn(proxy);
+
+    return new DeviceOrientationManager(mockApi);
   }
 }

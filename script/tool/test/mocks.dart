@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -109,12 +109,12 @@ MockGitDir createForwardingMockGitDir({
   required Directory packagesDir,
   required ProcessRunner processRunner,
 }) {
-  final MockGitDir gitDir = MockGitDir();
+  final gitDir = MockGitDir();
   when(gitDir.path).thenReturn(packagesDir.parent.path);
-  when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-      .thenAnswer((Invocation invocation) {
-    final List<String> arguments =
-        invocation.positionalArguments[0]! as List<String>;
+  when(
+    gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')),
+  ).thenAnswer((Invocation invocation) {
+    final arguments = invocation.positionalArguments[0]! as List<String>;
     final String gitCommand = arguments.removeAt(0);
     return processRunner.run('git-$gitCommand', arguments);
   });

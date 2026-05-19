@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,8 @@ class CameraStateProxyApi extends PigeonApiCameraState {
         return CameraStateType.CLOSING;
       case CLOSED:
         return CameraStateType.CLOSED;
-      default:
-        return CameraStateType.UNKNOWN;
     }
+    return CameraStateType.UNKNOWN;
   }
 
   @Nullable

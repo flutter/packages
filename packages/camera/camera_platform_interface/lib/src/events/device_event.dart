@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,8 +34,9 @@ class DeviceOrientationChangedEvent extends DeviceEvent {
   /// Converts the supplied [Map] to an instance of the [DeviceOrientationChangedEvent]
   /// class.
   DeviceOrientationChangedEvent.fromJson(Map<String, dynamic> json)
-      : orientation =
-            deserializeDeviceOrientation(json['orientation']! as String);
+    : orientation = deserializeDeviceOrientation(
+        json['orientation']! as String,
+      );
 
   /// The new orientation of the device
   final DeviceOrientation orientation;
@@ -43,8 +44,8 @@ class DeviceOrientationChangedEvent extends DeviceEvent {
   /// Converts the [DeviceOrientationChangedEvent] instance into a [Map] instance that
   /// can be serialized to JSON.
   Map<String, dynamic> toJson() => <String, Object>{
-        'orientation': serializeDeviceOrientation(orientation),
-      };
+    'orientation': serializeDeviceOrientation(orientation),
+  };
 
   @override
   bool operator ==(Object other) =>

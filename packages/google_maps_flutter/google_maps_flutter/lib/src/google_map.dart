@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,10 +41,12 @@ class UnknownMapObjectIdError extends Error {
 
 /// Android specific settings for [GoogleMap].
 @Deprecated(
-    'See https://pub.dev/packages/google_maps_flutter_android#display-mode')
+  'See https://pub.dev/packages/google_maps_flutter_android#display-mode',
+)
 class AndroidGoogleMapsFlutter {
   @Deprecated(
-      'See https://pub.dev/packages/google_maps_flutter_android#display-mode')
+    'See https://pub.dev/packages/google_maps_flutter_android#display-mode',
+  )
   AndroidGoogleMapsFlutter._();
 
   /// Whether to render [GoogleMap] with a [AndroidViewSurface] to build the Google Maps widget.
@@ -55,7 +57,8 @@ class AndroidGoogleMapsFlutter {
   /// https://docs.flutter.dev/platform-integration/android/platform-views#performance for more
   /// information.
   @Deprecated(
-      'See https://pub.dev/packages/google_maps_flutter_android#display-mode')
+    'See https://pub.dev/packages/google_maps_flutter_android#display-mode',
+  )
   static bool get useAndroidViewSurface {
     final GoogleMapsFlutterPlatform platform =
         GoogleMapsFlutterPlatform.instance;
@@ -73,7 +76,8 @@ class AndroidGoogleMapsFlutter {
   /// https://docs.flutter.dev/platform-integration/android/platform-views#performance for more
   /// information.
   @Deprecated(
-      'See https://pub.dev/packages/google_maps_flutter_android#display-mode')
+    'See https://pub.dev/packages/google_maps_flutter_android#display-mode',
+  )
   static set useAndroidViewSurface(bool useAndroidViewSurface) {
     final GoogleMapsFlutterPlatform platform =
         GoogleMapsFlutterPlatform.instance;
@@ -81,6 +85,16 @@ class AndroidGoogleMapsFlutter {
       platform.useAndroidViewSurface = useAndroidViewSurface;
     }
   }
+}
+
+/// Indicates the type of marker that the map should use.
+enum GoogleMapMarkerType {
+  /// Represents the default marker type, [Marker]. This marker type is
+  /// deprecated on the web.
+  marker,
+
+  /// Represents the advanced marker type, [AdvancedMarker].
+  advancedMarker,
 }
 
 /// A widget which displays a map with data obtained from the Google Maps service.
@@ -95,6 +109,8 @@ class GoogleMap extends StatefulWidget {
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.webGestureHandling,
+    this.webCameraControlPosition,
+    this.webCameraControlEnabled = true,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -127,8 +143,16 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.cloudMapId,
-  });
+    this.markerType = GoogleMapMarkerType.marker,
+    this.colorScheme,
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
+  }) : assert(
+         mapId == null || cloudMapId == null,
+         '''A value may be provided for either mapId or cloudMapId, or neither, but not for both.''',
+       ),
+       mapId = mapId ?? cloudMapId;
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -349,11 +373,53 @@ class GoogleMap extends StatefulWidget {
   /// See [WebGestureHandling] for more details.
   final WebGestureHandling? webGestureHandling;
 
+  /// This setting controls how the API handles cameraControl button position on the map. Web only.
+  ///
+  /// If null, the Google Maps API will use its default camera control position.
+  ///
+  /// See [WebCameraControlPosition] for more details.
+  final WebCameraControlPosition? webCameraControlPosition;
+
+  /// Enables or disables the Camera controls. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/controls for more details.
+  final bool webCameraControlEnabled;
+
   /// Identifier that's associated with a specific cloud-based map style.
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? cloudMapId;
+  final String? mapId;
+
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+  String? get cloudMapId => mapId;
+
+  /// Indicates whether map uses [AdvancedMarker]s or [Marker]s.
+  ///
+  /// [AdvancedMarker] and [Marker]s classes might not be related to each other
+  /// in the platform implementation. It's important to set the correct
+  /// [GoogleMapMarkerType] so that the platform implementation can handle the
+  /// markers:
+  /// * If [GoogleMapMarkerType.advancedMarker] is used, all markers must be of
+  ///   type [AdvancedMarker].
+  /// * If [GoogleMapMarkerType.marker] is used, markers cannot be of type
+  ///   [AdvancedMarker].
+  ///
+  /// While some features work with either type, using the incorrect type
+  /// may result in unexpected behavior.
+  final GoogleMapMarkerType markerType;
+
+  /// Color scheme for the cloud-style map. Web only.
+  ///
+  /// The colorScheme option can only be set when the map is initialized;
+  /// setting this option after the map is created will have no effect.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
+  final MapColorScheme? colorScheme;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -383,7 +449,8 @@ class _GoogleMapState extends State<GoogleMap> {
       _mapId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-        textDirection: widget.layoutDirection ??
+        textDirection:
+            widget.layoutDirection ??
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         initialCameraPosition: widget.initialCameraPosition,
@@ -429,72 +496,98 @@ class _GoogleMapState extends State<GoogleMap> {
   @override
   void didUpdateWidget(GoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateOptions();
-    _updateClusterManagers();
-    _updateMarkers();
-    _updatePolygons();
-    _updatePolylines();
-    _updateCircles();
-    _updateHeatmaps();
-    _updateTileOverlays();
-    _updateGroundOverlays();
+
+    _refreshStateFromWidget();
   }
 
-  Future<void> _updateOptions() async {
+  Future<void> _refreshStateFromWidget() async {
+    final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
+
+    _updateOptions(controller);
+    _updateClusterManagers(controller);
+    _updateMarkers(controller);
+    _updatePolygons(controller);
+    _updatePolylines(controller);
+    _updateCircles(controller);
+    _updateHeatmaps(controller);
+    _updateTileOverlays(controller);
+    _updateGroundOverlays(controller);
+  }
+
+  void _updateOptions(GoogleMapController controller) {
     final MapConfiguration newConfig = _configurationFromMapWidget(widget);
     final MapConfiguration updates = newConfig.diffFrom(_mapConfiguration);
     if (updates.isEmpty) {
       return;
     }
-    final GoogleMapController controller = await _controller.future;
     unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
-  Future<void> _updateMarkers() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
+  void _updateMarkers(GoogleMapController controller) {
+    unawaited(
+      controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers),
+      ),
+    );
     _markers = keyByMarkerId(widget.markers);
   }
 
-  Future<void> _updateClusterManagers() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
-        _clusterManagers.values.toSet(), widget.clusterManagers)));
+  void _updateClusterManagers(GoogleMapController controller) {
+    unawaited(
+      controller._updateClusterManagers(
+        ClusterManagerUpdates.from(
+          _clusterManagers.values.toSet(),
+          widget.clusterManagers,
+        ),
+      ),
+    );
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
   }
 
-  Future<void> _updateGroundOverlays() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
-        _groundOverlays.values.toSet(), widget.groundOverlays)));
+  void _updateGroundOverlays(GoogleMapController controller) {
+    unawaited(
+      controller._updateGroundOverlays(
+        GroundOverlayUpdates.from(
+          _groundOverlays.values.toSet(),
+          widget.groundOverlays,
+        ),
+      ),
+    );
     _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
-  Future<void> _updatePolygons() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
+  void _updatePolygons(GoogleMapController controller) {
+    unawaited(
+      controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons),
+      ),
+    );
     _polygons = keyByPolygonId(widget.polygons);
   }
 
-  Future<void> _updatePolylines() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
+  void _updatePolylines(GoogleMapController controller) {
+    unawaited(
+      controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines),
+      ),
+    );
     _polylines = keyByPolylineId(widget.polylines);
   }
 
-  Future<void> _updateCircles() async {
-    final GoogleMapController controller = await _controller.future;
-    unawaited(controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
+  void _updateCircles(GoogleMapController controller) {
+    unawaited(
+      controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles),
+      ),
+    );
     _circles = keyByCircleId(widget.circles);
   }
 
-  Future<void> _updateHeatmaps() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updateHeatmaps(GoogleMapController controller) {
     unawaited(
       controller._updateHeatmaps(
         HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
@@ -503,8 +596,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _heatmaps = keyByHeatmapId(widget.heatmaps);
   }
 
-  Future<void> _updateTileOverlays() async {
-    final GoogleMapController controller = await _controller.future;
+  void _updateTileOverlays(GoogleMapController controller) {
     unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
@@ -515,10 +607,12 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    unawaited(_updateTileOverlays());
-    final MapCreatedCallback? onMapCreated = widget.onMapCreated;
-    if (onMapCreated != null) {
-      onMapCreated(controller);
+    if (mounted) {
+      _updateTileOverlays(controller);
+      final MapCreatedCallback? onMapCreated = widget.onMapCreated;
+      if (onMapCreated != null) {
+        onMapCreated(controller);
+      }
     }
   }
 
@@ -640,7 +734,10 @@ class _GoogleMapState extends State<GoogleMap> {
         _clusterManagers[cluster.clusterManagerId];
     if (clusterManager == null) {
       throw UnknownMapObjectIdError(
-          'clusterManager', cluster.clusterManagerId, 'onClusterTap');
+        'clusterManager',
+        cluster.clusterManagerId,
+        'onClusterTap',
+      );
     }
     final ArgumentCallback<Cluster>? onClusterTap = clusterManager.onClusterTap;
     if (onClusterTap != null) {
@@ -651,7 +748,14 @@ class _GoogleMapState extends State<GoogleMap> {
 
 /// Builds a [MapConfiguration] from the given [map].
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
+  final MarkerType mapConfigurationMarkerType = switch (map.markerType) {
+    GoogleMapMarkerType.marker => MarkerType.marker,
+    GoogleMapMarkerType.advancedMarker => MarkerType.advancedMarker,
+  };
+
   return MapConfiguration(
+    webCameraControlPosition: map.webCameraControlPosition,
+    webCameraControlEnabled: map.webCameraControlEnabled,
     webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,
     mapToolbarEnabled: map.mapToolbarEnabled,
@@ -672,7 +776,11 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    cloudMapId: map.cloudMapId,
+    markerType: mapConfigurationMarkerType,
+    colorScheme: map.colorScheme,
+    // A null mapId in the widget means no map ID, which is expressed as '' in
+    // the configuration to distinguish from no change (null).
+    mapId: map.mapId ?? '',
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',

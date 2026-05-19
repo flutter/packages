@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,5 +11,6 @@ export 'src/vector_graphics.dart'
         RenderingStrategy,
         VectorGraphic,
         VectorGraphicUtilities,
+        VectorGraphicsImageWidget,
         createCompatVectorGraphic,
         vg;

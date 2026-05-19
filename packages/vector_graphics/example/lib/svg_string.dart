@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,8 +47,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final TextEditingController _controller =
-      TextEditingController(text: _flutterLogoString);
+  final TextEditingController _controller = TextEditingController(
+    text: _flutterLogoString,
+  );
   ByteData? _data;
   Timer? _debounce;
   int _svgLength = 0;
@@ -61,32 +62,38 @@ class _MyAppState extends State<MyApp> {
       _debounce?.cancel();
     }
     _debounce = Timer(const Duration(milliseconds: 250), () {
-      compute((String svg) {
-        final Uint8List compiledBytes = encodeSvg(
-          xml: svg,
-          debugName: '<string>',
-          enableClippingOptimizer: false,
-          enableMaskingOptimizer: false,
-          enableOverdrawOptimizer: false,
-        );
-        return compiledBytes.buffer.asByteData();
-      }, text, debugLabel: 'Load Bytes')
-          .then((ByteData data) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          // String is UTF-16.
-          _svgLength = text.length * 2;
-          _gzSvgLength = gzip.encode(utf8.encode(text)).length;
-          _vgLength = data.lengthInBytes;
-          _gzVgLength = gzip.encode(data.buffer.asUint8List()).length;
-          _data = data;
-        });
-      }, onError: (Object error, StackTrace stack) {
-        debugPrint(error.toString());
-        debugPrint(stack.toString());
-      });
+      compute(
+        (String svg) {
+          final Uint8List compiledBytes = encodeSvg(
+            xml: svg,
+            debugName: '<string>',
+            enableClippingOptimizer: false,
+            enableMaskingOptimizer: false,
+            enableOverdrawOptimizer: false,
+          );
+          return compiledBytes.buffer.asByteData();
+        },
+        text,
+        debugLabel: 'Load Bytes',
+      ).then(
+        (ByteData data) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            // String is UTF-16.
+            _svgLength = text.length * 2;
+            _gzSvgLength = gzip.encode(utf8.encode(text)).length;
+            _vgLength = data.lengthInBytes;
+            _gzVgLength = gzip.encode(data.buffer.asUint8List()).length;
+            _data = data;
+          });
+        },
+        onError: (Object error, StackTrace stack) {
+          debugPrint(error.toString());
+          debugPrint(stack.toString());
+        },
+      );
     });
   }
 
@@ -109,9 +116,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vector Graphics Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: Scaffold(
         body: Center(
           child: ListView(
@@ -120,14 +125,12 @@ class _MyAppState extends State<MyApp> {
               if (_data == null)
                 const Placeholder()
               else
-                VectorGraphic(
-                  loader: RawBytesLoader(
-                    _data!,
-                  ),
-                ),
+                VectorGraphic(loader: RawBytesLoader(_data!)),
               const Divider(),
-              Text('SVG size (compressed): $_svgLength ($_gzSvgLength). '
-                  'VG size (compressed): $_vgLength ($_gzVgLength)'),
+              Text(
+                'SVG size (compressed): $_svgLength ($_gzSvgLength). '
+                'VG size (compressed): $_vgLength ($_gzVgLength)',
+              ),
               const Divider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),

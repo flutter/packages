@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ extension WKFrameInfo {
   //
   // See https://github.com/flutter/flutter/issues/163549 and https://developer.apple.com/forums/thread/77888.
   var maybeRequest: URLRequest? {
-    return self.perform(#selector(getter:WKFrameInfo.request))?.takeUnretainedValue()
+    return self.perform(#selector(getter: WKFrameInfo.request))?.takeUnretainedValue()
       as! URLRequest?
   }
 }

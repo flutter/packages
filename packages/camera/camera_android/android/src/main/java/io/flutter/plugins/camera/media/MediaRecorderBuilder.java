@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -97,7 +97,8 @@ public class MediaRecorderBuilder {
     MediaRecorder mediaRecorder = recorderFactory.makeMediaRecorder();
 
     // There's a fixed order that mediaRecorder expects. Only change these functions accordingly.
-    // You can find the specifics here: https://developer.android.com/reference/android/media/MediaRecorder.
+    // You can find the specifics here:
+    // https://developer.android.com/reference/android/media/MediaRecorder.
     if (enableAudio) mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 

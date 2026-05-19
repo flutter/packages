@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -199,6 +199,23 @@
 - (nullable NSNumber *)echoRequiredInt:(NSInteger)anInt
                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return @(anInt);
+}
+
+- (nullable NSNumber *)areAllNullableTypesEqualA:(FLTAllNullableTypes *)a
+                                               b:(FLTAllNullableTypes *)b
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([a isEqual:b]);
+}
+
+- (nullable NSNumber *)getAllNullableTypesHashValue:(FLTAllNullableTypes *)value
+                                              error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([value hash]);
+}
+
+- (nullable NSNumber *)
+    getAllNullableTypesWithoutRecursionHashValue:(FLTAllNullableTypesWithoutRecursion *)value
+                                           error:(FlutterError *_Nullable *_Nonnull)error {
+  return @([value hash]);
 }
 
 - (nullable NSString *)extractNestedNullableStringFrom:(FLTAllClassesWrapper *)wrapper

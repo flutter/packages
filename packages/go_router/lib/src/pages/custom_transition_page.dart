@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,8 +99,13 @@ class CustomTransitionPage<T> extends Page<T> {
   /// primary animation runs from 0.0 to 1.0. When the Navigator pops the
   /// topmost route, e.g. because the use pressed the back button, the primary
   /// animation runs from 1.0 to 0.0.
-  final Widget Function(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) transitionsBuilder;
+  final Widget Function(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  )
+  transitionsBuilder;
 
   @override
   Route<T> createRoute(BuildContext context) =>
@@ -109,7 +114,7 @@ class CustomTransitionPage<T> extends Page<T> {
 
 class _CustomTransitionPageRoute<T> extends PageRoute<T> {
   _CustomTransitionPageRoute(CustomTransitionPage<T> page)
-      : super(settings: page);
+    : super(settings: page);
 
   CustomTransitionPage<T> get _page => settings as CustomTransitionPage<T>;
 
@@ -142,12 +147,11 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-  ) =>
-      Semantics(
-        scopesRoute: true,
-        explicitChildNodes: true,
-        child: _page.child,
-      );
+  ) => Semantics(
+    scopesRoute: true,
+    explicitChildNodes: true,
+    child: _page.child,
+  );
 
   @override
   Widget buildTransitions(
@@ -155,13 +159,7 @@ class _CustomTransitionPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child,
-  ) =>
-      _page.transitionsBuilder(
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      );
+  ) => _page.transitionsBuilder(context, animation, secondaryAnimation, child);
 }
 
 /// Custom transition page with no transition.
@@ -174,15 +172,15 @@ class NoTransitionPage<T> extends CustomTransitionPage<T> {
     super.restorationId,
     super.key,
   }) : super(
-          transitionsBuilder: _transitionsBuilder,
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-        );
+         transitionsBuilder: _transitionsBuilder,
+         transitionDuration: Duration.zero,
+         reverseTransitionDuration: Duration.zero,
+       );
 
   static Widget _transitionsBuilder(
-          BuildContext context,
-          Animation<double> animation,
-          Animation<double> secondaryAnimation,
-          Widget child) =>
-      child;
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) => child;
 }

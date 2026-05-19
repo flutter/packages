@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/google_adsense.dart';
 // #docregion import-h5
 import 'package:google_adsense/h5.dart';
+
 // #enddocregion import-h5
 
 void main() async {
@@ -151,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool adBreakAvailable = _showAdFn != null;
+    final adBreakAvailable = _showAdFn != null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -169,24 +170,23 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Interstitial Ad Status:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Last Status: ${_lastInterstitialInfo?.breakStatus}'),
             const Divider(),
             PaddedCard(
               children: <Widget>[
-                const Text(
-                  '🪙 Available coins:',
-                ),
+                const Text('🪙 Available coins:'),
                 Text(
                   '$_coins',
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 TextButton.icon(
-                  onPressed:
-                      _h5Ready && !adBreakAvailable ? _requestRewardedAd : null,
+                  onPressed: _h5Ready && !adBreakAvailable
+                      ? _requestRewardedAd
+                      : null,
                   label: const Text('Prepare Reward'),
                   icon: const Icon(Icons.download_rounded),
                 ),
@@ -199,9 +199,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               'Rewarded Ad Status:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Text('Requested? $_adBreakRequested'),
             Text('Available? $adBreakAvailable'),
@@ -227,9 +227,7 @@ class PaddedCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-        child: Column(
-          children: children,
-        ),
+        child: Column(children: children),
       ),
     );
   }

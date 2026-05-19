@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,8 +42,15 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
         continue;
       }
 
-      builder.setCaptureRequestOption(
-          (CaptureRequest.Key<Object>) option.getKey(), option.getValue());
+      // Because Pigeon isn't down-casting from Dart num to Java Int,
+      // it needs to be done below.
+      var key = option.getKey();
+      var value = option.getValue();
+      if (CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE == key) {
+        value = ((Long) value).intValue();
+      }
+
+      builder.setCaptureRequestOption((CaptureRequest.Key<Object>) key, value);
     }
 
     return builder.build();

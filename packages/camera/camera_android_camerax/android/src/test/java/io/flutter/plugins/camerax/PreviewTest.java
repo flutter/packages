@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,9 +13,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import android.hardware.camera2.CaptureRequest;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.camera.camera2.interop.Camera2Interop;
 import androidx.camera.core.Preview;
 import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
@@ -26,21 +29,39 @@ import java.util.concurrent.Executor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class PreviewTest {
+  // Due to Java's Type Erasure, we cannot get a class literal (e.g., Extender<T>.class) for a
+  // parameterized type. We must use the raw type (Extender.class) which forces the 'unchecked' and
+  // 'rawtypes' warnings. The runtime logic handles the type safely.
+  @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
   public void pigeon_defaultConstructor_createsPreviewWithCorrectConfiguration() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
-    final Preview instance =
-        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
+    final Range<Integer> targetFpsRange = new Range<>(30, 30);
 
-    assertEquals(instance.getResolutionSelector(), mockResolutionSelector);
-    assertEquals(instance.getTargetRotation(), Surface.ROTATION_0);
+    try (MockedConstruction<Camera2Interop.Extender> mockCamera2InteropExtender =
+        Mockito.mockConstruction(
+            Camera2Interop.Extender.class,
+            (mock, context) -> {
+              when(mock.setCaptureRequestOption(
+                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
+                  .thenReturn(mock);
+            })) {
+      final Preview instance =
+          api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFpsRange);
+
+      assertEquals(mockResolutionSelector, instance.getResolutionSelector());
+      assertEquals(Surface.ROTATION_0, instance.getTargetRotation());
+      assertEquals(1, mockCamera2InteropExtender.constructed().size());
+    }
   }
 
   @Test
@@ -103,7 +124,7 @@ public class PreviewTest {
         ArgumentCaptor.forClass(TextureRegistry.SurfaceProducer.Callback.class);
 
     when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
 
     final Preview.SurfaceProvider previewSurfaceProvider =
         api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
@@ -155,7 +176,7 @@ public class PreviewTest {
 
     when(mockSurfaceRequest.getResolution())
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
     final ArgumentCaptor<Consumer<SurfaceRequest.Result>> consumerCaptor =

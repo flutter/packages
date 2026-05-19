@@ -1,17 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+import AVFoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
+@testable import camera_avfoundation
 
-/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
+/// Mock implementation of `CaptureSession` protocol which allows injecting a custom
 /// implementation.
-final class MockCaptureSession: NSObject, FLTCaptureSession {
+final class MockCaptureSession: NSObject, CaptureSession {
   var setSessionPresetStub: ((AVCaptureSession.Preset) -> Void)?
   var beginConfigurationStub: (() -> Void)?
   var commitConfigurationStub: (() -> Void)?
@@ -22,7 +19,11 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
+
+  private(set) var addedAudioOutputCount: Int = 0
+
   var automaticallyConfiguresApplicationAudioSession = false
+  var isRunning = true
 
   var sessionPreset: AVCaptureSession.Preset {
     get {
@@ -53,21 +54,26 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
     return canSetSessionPresetStub?(preset) ?? true
   }
 
-  func addInputWithNoConnections(_ input: FLTCaptureInput) {}
+  func addInputWithNoConnections(_ input: CaptureInput) {}
 
   func addOutputWithNoConnections(_ output: AVCaptureOutput) {}
 
   func addConnection(_: AVCaptureConnection) {}
 
-  func addInput(_: FLTCaptureInput) {}
+  func addInput(_: CaptureInput) {}
 
-  func addOutput(_: AVCaptureOutput) {}
+  func addOutput(_ output: AVCaptureOutput) {
 
-  func removeInput(_: FLTCaptureInput) {}
+    if output is AVCaptureAudioDataOutput {
+      addedAudioOutputCount += 1
+    }
+  }
+
+  func removeInput(_: CaptureInput) {}
 
   func removeOutput(_: AVCaptureOutput) {}
 
-  func canAddInput(_: FLTCaptureInput) -> Bool {
+  func canAddInput(_: CaptureInput) -> Bool {
     return true
   }
 

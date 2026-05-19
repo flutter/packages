@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,5 +51,10 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
   public void setAcceptThirdPartyCookies(
       @NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
     pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
+  }
+
+  @Override
+  public @NonNull String getCookies(@NonNull CookieManager pigeon_instance, @NonNull String url) {
+    return pigeon_instance.getCookie(url);
   }
 }
