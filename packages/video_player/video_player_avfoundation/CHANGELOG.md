@@ -1,3 +1,7 @@
+## 2.9.7
+
+* Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.
+
 ## 2.9.6
 
 * Adds a Swift version to fix a potential build issue when using CocoaPods.

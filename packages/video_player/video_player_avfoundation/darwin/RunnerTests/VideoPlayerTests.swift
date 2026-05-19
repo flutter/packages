@@ -755,6 +755,28 @@ private let hlsAudioTestURI =
     }
   }
 
+  @Test func videoOutputIsConfiguredWithBT709ColorProperties() throws {
+    let item = StubPlayerItem()
+    let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
+    let stubViewProvider = StubViewProvider()
+    let _ = FVPVideoPlayer(
+      playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
+
+    // BT.709 color properties are required so AVFoundation tone-maps HDR sources
+    // into the Flutter texture. Without them HDR samples arrive unconverted and
+    // render washed out. See flutter/flutter#91241.
+    let settings = try #require(stubAVFactory.lastOutputSettings)
+    let colorProperties = try #require(
+      settings[AVVideoColorPropertiesKey] as? [String: Any])
+    #expect(
+      colorProperties[AVVideoColorPrimariesKey] as? String == AVVideoColorPrimaries_ITU_R_709_2)
+    #expect(
+      colorProperties[AVVideoTransferFunctionKey] as? String
+        == AVVideoTransferFunction_ITU_R_709_2)
+    #expect(
+      colorProperties[AVVideoYCbCrMatrixKey] as? String == AVVideoYCbCrMatrix_ITU_R_709_2)
+  }
+
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,

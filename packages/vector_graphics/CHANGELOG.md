@@ -1,3 +1,9 @@
+## 1.2.2
+
+* Fixes `text-anchor` on `<text>` with multiple `<tspan>` children. The
+  anchor now applies to the entire anchored chunk as required by the SVG
+  spec, instead of independently to each tspan.
+
 ## 1.2.1
 
 * Fixes uncaught `StateError` and `NoSuchMethodError` from `useHtmlRenderObject()` on CanvasKit / iOS Safari so SVG widgets fall back to the HTML render object.
