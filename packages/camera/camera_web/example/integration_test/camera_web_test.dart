@@ -95,6 +95,8 @@ void main() {
         ),
       ).thenAnswer((_) async => videoElement.captureStream());
 
+      when(cameraService.hasPropertyOffScreenCanvas()).thenAnswer((_) => true);
+
       CameraPlatform.instance = CameraPlugin(cameraService: cameraService)
         ..window = window;
     });
@@ -2217,6 +2219,12 @@ void main() {
           camera.getViewType(),
         ),
       );
+    });
+
+    testWidgets('supportsImageStreaming returns true', (
+      WidgetTester tester,
+    ) async {
+      expect(CameraPlatform.instance.supportsImageStreaming(), isTrue);
     });
 
     group('dispose', () {

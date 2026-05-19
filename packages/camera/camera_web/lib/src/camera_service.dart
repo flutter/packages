@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -360,5 +361,118 @@ class CameraService {
       default:
         return DeviceOrientation.portraitUp;
     }
+  }
+
+  /// Used to check if browser has OffscreenCanvas capability
+  bool hasPropertyOffScreenCanvas() {
+    return jsUtil.hasProperty(window, 'OffscreenCanvas'.toJS);
+  }
+
+  /// Returns frame at a specific time using video element
+  CameraImageData takeFrame(web.VideoElement videoElement) {
+    final int width = videoElement.videoWidth;
+    final int height = videoElement.videoHeight;
+    if (width == 0 || height == 0) {
+      throw Exception(
+        'Computed dimensions are zero: width=$width, height=$height',
+      );
+    }
+    final imageDataSettings = WebTweakImageDataSettings(format: 'rgba-unorm8');
+    final web.ImageData imageData;
+    if (hasPropertyOffScreenCanvas()) {
+      imageData = _takeOffscreenCanvasFrame(
+        videoElement,
+        width: width,
+        height: height,
+        settings: imageDataSettings,
+      );
+    } else {
+      imageData = _takeFallbackCanvasFrame(
+        videoElement,
+        width: width,
+        height: height,
+        settings: imageDataSettings,
+      );
+    }
+    final ByteBuffer byteBuffer = imageData.data.toDart.buffer;
+
+    return CameraImageData(
+      format: const CameraImageFormat(
+        // TODO(TecHaxter): Introduce ImageFormatGroup.rgba8888 in
+        //                  package:camera_platform_interface.
+        //                  https://github.com/flutter/flutter/issues/151193
+        ImageFormatGroup.unknown,
+        raw: 'rgba8888',
+      ),
+      planes: <CameraImagePlane>[
+        CameraImagePlane(
+          bytes: byteBuffer.asUint8List(),
+          bytesPerRow: width * 4,
+        ),
+      ],
+      height: height,
+      width: width,
+    );
+  }
+
+  /// Used by [_takeOffscreenCanvasFrame] to cache the offscreen canvas
+  web.OffscreenCanvas? _offscreenCanvas;
+
+  /// Used by [_takeOffscreenCanvasFrame] to cache the offscreen canvas context
+  web.OffscreenCanvasRenderingContext2D? _offscreenCanvasContext;
+
+  /// Takes a video frame using `OffscreenCanvas` for better performance
+  web.ImageData _takeOffscreenCanvasFrame(
+    web.VideoElement videoElement, {
+    required int width,
+    required int height,
+    required WebTweakImageDataSettings settings,
+  }) {
+    _offscreenCanvas ??= web.OffscreenCanvas(width, height);
+    if (_offscreenCanvas!.width != width ||
+        _offscreenCanvas!.height != height) {
+      _offscreenCanvas!
+        ..width = width
+        ..height = height;
+    }
+    _offscreenCanvasContext ??=
+        _offscreenCanvas!.getContext(
+              '2d',
+              <String, Object?>{'willReadFrequently': true}.jsify(),
+            )!
+            as web.OffscreenCanvasRenderingContext2D;
+
+    _offscreenCanvasContext!.drawImage(videoElement, 0, 0);
+    return _offscreenCanvasContext!.getImageData(0, 0, width, height, settings);
+  }
+
+  /// Used by [_takeFallbackCanvasFrame] to cache the canvas element
+  web.CanvasElement? _canvasElement;
+
+  /// Takes a video frame using a regular `CanvasElement`
+  web.ImageData _takeFallbackCanvasFrame(
+    web.VideoElement videoElement, {
+    required int width,
+    required int height,
+    required WebTweakImageDataSettings settings,
+  }) {
+    _canvasElement ??= web.CanvasElement()
+      ..height = height
+      ..width = width;
+    if (_canvasElement!.width != width || _canvasElement!.height != height) {
+      _canvasElement!
+        ..width = width
+        ..height = height;
+    }
+    final web.CanvasRenderingContext2D context = _canvasElement!.context2D;
+
+    context.drawImageScaled(
+      videoElement,
+      0,
+      0,
+      width.toDouble(),
+      height.toDouble(),
+    );
+    return context.getImageData(0, 0, width, height, settings);
   }
 }
