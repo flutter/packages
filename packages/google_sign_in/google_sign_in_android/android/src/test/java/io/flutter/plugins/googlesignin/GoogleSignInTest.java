@@ -187,12 +187,12 @@ public class GoogleSignInTest {
     final String displayName = "Jane User";
     final String givenName = "Jane";
     final String familyName = "User";
-    final String id = "someId";
+    final String email = "someEmail";
     final String idToken = "idToken";
     when(mockGoogleCredential.getDisplayName()).thenReturn(displayName);
     when(mockGoogleCredential.getGivenName()).thenReturn(givenName);
     when(mockGoogleCredential.getFamilyName()).thenReturn(familyName);
-    when(mockGoogleCredential.getId()).thenReturn(id);
+    when(mockGoogleCredential.getEmail()).thenReturn(email);
     when(mockGoogleCredential.getIdToken()).thenReturn(idToken);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -210,7 +210,7 @@ public class GoogleSignInTest {
               assertEquals(displayName, credential.getDisplayName());
               assertEquals(givenName, credential.getGivenName());
               assertEquals(familyName, credential.getFamilyName());
-              assertEquals(id, credential.getId());
+              assertEquals(email, credential.getEmail());
               assertEquals(idToken, credential.getIdToken());
               return null;
             }));
