@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface;
 
+import 'src/adaptive_bitrate_manager.dart';
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
@@ -524,6 +525,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
   _VideoAppLifeCycleObserver? _lifeCycleObserver;
+  AdaptiveBitrateManager? _adaptiveBitrateManager;
 
   /// The id of a player that hasn't been initialized.
   @visibleForTesting
@@ -588,6 +590,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
+
+    // Enable adaptive bitrate management only for network streams
+    // (local files and assets don't use HLS/DASH adaptive streaming).
+    if (dataSourceType == platform_interface.DataSourceType.network) {
+      _adaptiveBitrateManager = AdaptiveBitrateManager(
+        playerId: _playerId,
+        platform: _videoPlayerPlatform,
+      );
+      await _adaptiveBitrateManager!.startAutoAdaptiveQuality();
+    }
+
     final initializingCompleter = Completer<void>();
 
     // Apply the web-specific options
@@ -638,6 +651,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(buffered: event.buffered);
         case platform_interface.VideoEventType.bufferingStart:
           value = value.copyWith(isBuffering: true);
+          _adaptiveBitrateManager?.recordBufferingEvent();
         case platform_interface.VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
         case platform_interface.VideoEventType.isPlayingStateUpdate:
@@ -684,6 +698,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (!_isDisposed) {
         _isDisposed = true;
         _timer?.cancel();
+        _adaptiveBitrateManager?.dispose();
         await _eventSubscription?.cancel();
         await _videoPlayerPlatform.dispose(_playerId);
       }
@@ -848,6 +863,44 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Sets the bandwidth limit for HLS adaptive bitrate streaming.
+  ///
+  /// This method limits the maximum bandwidth used for video playback,
+  /// which affects which HLS variant streams the player can select.
+  ///
+  /// The native player will only select video variants with bitrate
+  /// less than or equal to the specified [maxBandwidthBps].
+  ///
+  /// Platforms:
+  /// - **Android**: Uses ExoPlayer's DefaultTrackSelector.setMaxVideoBitrate()
+  /// - **iOS/macOS**: Uses AVPlayer's preferredPeakBitRate property
+  /// - **Web**: Not supported (no-op)
+  ///
+  /// Parameters:
+  /// - [maxBandwidthBps]: Maximum bandwidth in bits per second.
+  ///   * 0 or negative: No limit (player auto-selects)
+  ///   * Positive value: Player selects variants ≤ this bandwidth
+  ///
+  /// Example:
+  /// ```dart
+  /// // Limit to 720p quality (~1.2 Mbps)
+  /// await controller.setBandwidthLimit(1200000);
+  ///
+  /// // No limit - let player decide
+  /// await controller.setBandwidthLimit(0);
+  /// ```
+  ///
+  /// Note: This is useful for HLS streams where you want to control
+  /// quality selection without reinitializing the player. The player
+  /// will seamlessly switch to appropriate variants as bandwidth
+  /// changes within the limit.
+  Future<void> setBandwidthLimit(int maxBandwidthBps) async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.setBandwidthLimit(_playerId, maxBandwidthBps);
   }
 
   /// Sets the caption offset.

@@ -130,6 +130,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
     return true;
   }
 
+  @override
+  Future<void> setBandwidthLimit(int maxBandwidthBps) async {}
+
   String? selectedAudioTrackId;
 }
 
@@ -1087,6 +1090,34 @@ void main() {
         expect(track.sampleRate, null);
         expect(track.channelCount, null);
         expect(track.codec, null);
+      });
+    });
+
+    group('setBandwidthLimit', () {
+      test('delegates to platform', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        await controller.setBandwidthLimit(5000000);
+
+        expect(fakeVideoPlayerPlatform.calls, contains('setBandwidthLimit'));
+        expect(
+          fakeVideoPlayerPlatform.bandwidthLimits[controller.playerId],
+          5000000,
+        );
+      });
+
+      test('does nothing when not initialized', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+
+        await controller.setBandwidthLimit(5000000);
+
+        expect(
+          fakeVideoPlayerPlatform.calls,
+          isNot(contains('setBandwidthLimit')),
+        );
       });
     });
 
@@ -2275,4 +2306,18 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
+
+  @override
+  Future<void> setBandwidthLimit(int playerId, int maxBandwidthBps) async {
+    calls.add('setBandwidthLimit');
+    bandwidthLimits[playerId] = maxBandwidthBps;
+  }
+
+  @override
+  bool isBandwidthLimitSupportAvailable() {
+    calls.add('isBandwidthLimitSupportAvailable');
+    return true;
+  }
+
+  final Map<int, int> bandwidthLimits = <int, int>{};
 }
