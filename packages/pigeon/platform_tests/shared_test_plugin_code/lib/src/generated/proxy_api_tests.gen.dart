@@ -16,9 +16,9 @@ import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 
 Object? _extractReplyValueOrThrow(
-    List<Object?>? replyList,
-    String channelName, {
-    required bool isNullValid,
+  List<Object?>? replyList,
+  String channelName, {
+  required bool isNullValid,
 }) {
   if (replyList == null) {
     throw PlatformException(
@@ -40,8 +40,11 @@ Object? _extractReplyValueOrThrow(
   return replyList.firstOrNull;
 }
 
-
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -50,6 +53,7 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 /// Provides overrides for the constructors and static members of each
 /// Dart proxy class.
 ///
@@ -70,54 +74,54 @@ class PigeonOverrides {
     required Map<String?, Object?> aMap,
     required ProxyApiTestEnum anEnum,
     required ProxyApiSuperClass aProxyApi,
-    required bool Function(
-      ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    ) flutterEchoBool,
-    required int Function(
-      ProxyApiTestClass pigeon_instance,
-      int anInt,
-    ) flutterEchoInt,
-    required double Function(
-      ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    ) flutterEchoDouble,
-    required String Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoString,
+    required bool Function(ProxyApiTestClass pigeon_instance, bool aBool)
+    flutterEchoBool,
+    required int Function(ProxyApiTestClass pigeon_instance, int anInt)
+    flutterEchoInt,
+    required double Function(ProxyApiTestClass pigeon_instance, double aDouble)
+    flutterEchoDouble,
+    required String Function(ProxyApiTestClass pigeon_instance, String aString)
+    flutterEchoString,
     required Uint8List Function(
       ProxyApiTestClass pigeon_instance,
       Uint8List aList,
-    ) flutterEchoUint8List,
+    )
+    flutterEchoUint8List,
     required List<Object?> Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?> aList,
-    ) flutterEchoList,
+    )
+    flutterEchoList,
     required List<ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       List<ProxyApiTestClass?> aList,
-    ) flutterEchoProxyApiList,
+    )
+    flutterEchoProxyApiList,
     required Map<String?, Object?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?> aMap,
-    ) flutterEchoMap,
+    )
+    flutterEchoMap,
     required Map<String?, ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
-    ) flutterEchoProxyApiMap,
+    )
+    flutterEchoProxyApiMap,
     required ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum anEnum,
-    ) flutterEchoEnum,
+    )
+    flutterEchoEnum,
     required ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass aProxyApi,
-    ) flutterEchoProxyApi,
+    )
+    flutterEchoProxyApi,
     required Future<String> Function(
       ProxyApiTestClass pigeon_instance,
       String aString,
-    ) flutterEchoAsyncString,
+    )
+    flutterEchoAsyncString,
     required bool boolParam,
     required int intParam,
     required double doubleParam,
@@ -140,42 +144,36 @@ class PigeonOverrides {
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
+    bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+    flutterEchoNullableBool,
+    int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+    flutterEchoNullableInt,
+    double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+    flutterEchoNullableDouble,
+    String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+    flutterEchoNullableString,
+    Uint8List? Function(ProxyApiTestClass pigeon_instance, Uint8List? aList)?
+    flutterEchoNullableUint8List,
     List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?>? aList,
-    )? flutterEchoNullableList,
+    )?
+    flutterEchoNullableList,
     Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
+    )?
+    flutterEchoNullableMap,
     ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
+    )?
+    flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
+    )?
+    flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
     bool? nullableBoolParam,
     int? nullableIntParam,
@@ -186,7 +184,8 @@ class PigeonOverrides {
     Map<String?, Object?>? nullableMapParam,
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
-  })? proxyApiTestClass_new;
+  })?
+  proxyApiTestClass_new;
 
   /// Overrides [ProxyApiTestClass.namedConstructor].
   static ProxyApiTestClass Function({
@@ -199,54 +198,54 @@ class PigeonOverrides {
     required Map<String?, Object?> aMap,
     required ProxyApiTestEnum anEnum,
     required ProxyApiSuperClass aProxyApi,
-    required bool Function(
-      ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    ) flutterEchoBool,
-    required int Function(
-      ProxyApiTestClass pigeon_instance,
-      int anInt,
-    ) flutterEchoInt,
-    required double Function(
-      ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    ) flutterEchoDouble,
-    required String Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoString,
+    required bool Function(ProxyApiTestClass pigeon_instance, bool aBool)
+    flutterEchoBool,
+    required int Function(ProxyApiTestClass pigeon_instance, int anInt)
+    flutterEchoInt,
+    required double Function(ProxyApiTestClass pigeon_instance, double aDouble)
+    flutterEchoDouble,
+    required String Function(ProxyApiTestClass pigeon_instance, String aString)
+    flutterEchoString,
     required Uint8List Function(
       ProxyApiTestClass pigeon_instance,
       Uint8List aList,
-    ) flutterEchoUint8List,
+    )
+    flutterEchoUint8List,
     required List<Object?> Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?> aList,
-    ) flutterEchoList,
+    )
+    flutterEchoList,
     required List<ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       List<ProxyApiTestClass?> aList,
-    ) flutterEchoProxyApiList,
+    )
+    flutterEchoProxyApiList,
     required Map<String?, Object?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?> aMap,
-    ) flutterEchoMap,
+    )
+    flutterEchoMap,
     required Map<String?, ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
-    ) flutterEchoProxyApiMap,
+    )
+    flutterEchoProxyApiMap,
     required ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum anEnum,
-    ) flutterEchoEnum,
+    )
+    flutterEchoEnum,
     required ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass aProxyApi,
-    ) flutterEchoProxyApi,
+    )
+    flutterEchoProxyApi,
     required Future<String> Function(
       ProxyApiTestClass pigeon_instance,
       String aString,
-    ) flutterEchoAsyncString,
+    )
+    flutterEchoAsyncString,
     bool? aNullableBool,
     int? aNullableInt,
     double? aNullableDouble,
@@ -260,44 +259,39 @@ class PigeonOverrides {
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
+    bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+    flutterEchoNullableBool,
+    int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+    flutterEchoNullableInt,
+    double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+    flutterEchoNullableDouble,
+    String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+    flutterEchoNullableString,
+    Uint8List? Function(ProxyApiTestClass pigeon_instance, Uint8List? aList)?
+    flutterEchoNullableUint8List,
     List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?>? aList,
-    )? flutterEchoNullableList,
+    )?
+    flutterEchoNullableList,
     Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
+    )?
+    flutterEchoNullableMap,
     ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
+    )?
+    flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
+    )?
+    flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
-  })? proxyApiTestClass_namedConstructor;
+  })?
+  proxyApiTestClass_namedConstructor;
 
   /// Overrides [ProxyApiSuperClass.new].
   static ProxyApiSuperClass Function()? proxyApiSuperClass_new;
@@ -342,7 +336,7 @@ abstract class PigeonInternalProxyApiBaseClass {
     this.pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? PigeonInstanceManager.instance;
+           pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -412,9 +406,10 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
-      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
+  _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
+      <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -427,7 +422,8 @@ class PigeonInstanceManager {
       return PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
     }
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api =
+        _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -435,11 +431,21 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
-    ProxyApiTestClass.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    ProxyApiSuperClass.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    ProxyApiInterface.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    ClassWithApiRequirement.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
+      instanceManager: instanceManager,
+    );
+    ProxyApiTestClass.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
+    ProxyApiSuperClass.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
+    ProxyApiInterface.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
+    ClassWithApiRequirement.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
     return instanceManager;
   }
 
@@ -456,8 +462,9 @@ class PigeonInstanceManager {
 
     final int identifier = _nextUniqueIdentifier();
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(
+      instance,
+    );
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -518,15 +525,21 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
-    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
+    int identifier,
+  ) {
+    final PigeonInternalProxyApiBaseClass? weakInstance =
+        _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance =
+          _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance
+            .pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] =
+            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -548,7 +561,10 @@ class PigeonInstanceManager {
   ///
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
-  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(
+    PigeonInternalProxyApiBaseClass instance,
+    int identifier,
+  ) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
@@ -577,7 +593,7 @@ class PigeonInstanceManager {
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
-      : pigeonVar_binaryMessenger = binaryMessenger;
+    : pigeonVar_binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
@@ -590,9 +606,10 @@ class _PigeonInternalInstanceManagerApi {
   }) {
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -600,14 +617,16 @@ class _PigeonInternalInstanceManagerApi {
           final List<Object?> args = message! as List<Object?>;
           final int arg_identifier = args[0]! as int;
           try {
-            (instanceManager ?? PigeonInstanceManager.instance)
-                .remove(arg_identifier);
+            (instanceManager ?? PigeonInstanceManager.instance).remove(
+              arg_identifier,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -622,8 +641,9 @@ class _PigeonInternalInstanceManagerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[identifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[identifier],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -656,36 +676,32 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
- const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
- final PigeonInstanceManager instanceManager;
- @override
- void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is PigeonInternalProxyApiBaseClass) {
-     buffer.putUint8(128);
-     writeValue(buffer, instanceManager.getIdentifier(value));
-   } else {
-     super.writeValue(buffer, value);
-   }
- }
- @override
- Object? readValueOfType(int type, ReadBuffer buffer) {
-   switch (type) {
-     case 128:
-       return instanceManager
-           .getInstanceWithWeakReference(readValue(buffer)! as int);
-     default:
-       return super.readValueOfType(type, buffer);
-   }
- }
+  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+  final PigeonInstanceManager instanceManager;
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PigeonInternalProxyApiBaseClass) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager.getInstanceWithWeakReference(
+          readValue(buffer)! as int,
+        );
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
 }
 
-
-enum ProxyApiTestEnum {
-  one,
-  two,
-  three,
-}
-
+enum ProxyApiTestEnum { one, two, three }
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -694,7 +710,7 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is ProxyApiTestEnum) {
+    } else if (value is ProxyApiTestEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else {
@@ -713,6 +729,7 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
+
 /// The core ProxyApi test class that each supported host language must
 /// implement in platform_tests integration tests.
 class ProxyApiTestClass extends ProxyApiSuperClass
@@ -742,91 +759,85 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    required bool Function(
-      ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    ) flutterEchoBool,
-    required int Function(
-      ProxyApiTestClass pigeon_instance,
-      int anInt,
-    ) flutterEchoInt,
-    required double Function(
-      ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    ) flutterEchoDouble,
-    required String Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoString,
+    required bool Function(ProxyApiTestClass pigeon_instance, bool aBool)
+    flutterEchoBool,
+    required int Function(ProxyApiTestClass pigeon_instance, int anInt)
+    flutterEchoInt,
+    required double Function(ProxyApiTestClass pigeon_instance, double aDouble)
+    flutterEchoDouble,
+    required String Function(ProxyApiTestClass pigeon_instance, String aString)
+    flutterEchoString,
     required Uint8List Function(
       ProxyApiTestClass pigeon_instance,
       Uint8List aList,
-    ) flutterEchoUint8List,
+    )
+    flutterEchoUint8List,
     required List<Object?> Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?> aList,
-    ) flutterEchoList,
+    )
+    flutterEchoList,
     required List<ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       List<ProxyApiTestClass?> aList,
-    ) flutterEchoProxyApiList,
+    )
+    flutterEchoProxyApiList,
     required Map<String?, Object?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?> aMap,
-    ) flutterEchoMap,
+    )
+    flutterEchoMap,
     required Map<String?, ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
-    ) flutterEchoProxyApiMap,
+    )
+    flutterEchoProxyApiMap,
     required ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum anEnum,
-    ) flutterEchoEnum,
+    )
+    flutterEchoEnum,
     required ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass aProxyApi,
-    ) flutterEchoProxyApi,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
+    )
+    flutterEchoProxyApi,
+    bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+    flutterEchoNullableBool,
+    int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+    flutterEchoNullableInt,
+    double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+    flutterEchoNullableDouble,
+    String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+    flutterEchoNullableString,
+    Uint8List? Function(ProxyApiTestClass pigeon_instance, Uint8List? aList)?
+    flutterEchoNullableUint8List,
     List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?>? aList,
-    )? flutterEchoNullableList,
+    )?
+    flutterEchoNullableList,
     Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
+    )?
+    flutterEchoNullableMap,
     ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
+    )?
+    flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
+    )?
+    flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
     required Future<String> Function(
       ProxyApiTestClass pigeon_instance,
       String aString,
-    ) flutterEchoAsyncString,
+    )
+    flutterEchoAsyncString,
     required bool boolParam,
     required int intParam,
     required double doubleParam,
@@ -1047,8 +1058,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
   }) : super.pigeon_detached() {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1059,46 +1070,46 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-      aBool,
-      anInt,
-      aDouble,
-      aString,
-      aUint8List,
-      aList,
-      aMap,
-      anEnum,
-      aProxyApi,
-      aNullableBool,
-      aNullableInt,
-      aNullableDouble,
-      aNullableString,
-      aNullableUint8List,
-      aNullableList,
-      aNullableMap,
-      aNullableEnum,
-      aNullableProxyApi,
-      boolParam,
-      intParam,
-      doubleParam,
-      stringParam,
-      aUint8ListParam,
-      listParam,
-      mapParam,
-      enumParam,
-      proxyApiParam,
-      nullableBoolParam,
-      nullableIntParam,
-      nullableDoubleParam,
-      nullableStringParam,
-      nullableUint8ListParam,
-      nullableListParam,
-      nullableMapParam,
-      nullableEnumParam,
-      nullableProxyApiParam
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          pigeonVar_instanceIdentifier,
+          aBool,
+          anInt,
+          aDouble,
+          aString,
+          aUint8List,
+          aList,
+          aMap,
+          anEnum,
+          aProxyApi,
+          aNullableBool,
+          aNullableInt,
+          aNullableDouble,
+          aNullableString,
+          aNullableUint8List,
+          aNullableList,
+          aNullableMap,
+          aNullableEnum,
+          aNullableProxyApi,
+          boolParam,
+          intParam,
+          doubleParam,
+          stringParam,
+          aUint8ListParam,
+          listParam,
+          mapParam,
+          enumParam,
+          proxyApiParam,
+          nullableBoolParam,
+          nullableIntParam,
+          nullableDoubleParam,
+          nullableStringParam,
+          nullableUint8ListParam,
+          nullableListParam,
+          nullableMapParam,
+          nullableEnumParam,
+          nullableProxyApiParam,
+        ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -1135,91 +1146,85 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    required bool Function(
-      ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    ) flutterEchoBool,
-    required int Function(
-      ProxyApiTestClass pigeon_instance,
-      int anInt,
-    ) flutterEchoInt,
-    required double Function(
-      ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    ) flutterEchoDouble,
-    required String Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoString,
+    required bool Function(ProxyApiTestClass pigeon_instance, bool aBool)
+    flutterEchoBool,
+    required int Function(ProxyApiTestClass pigeon_instance, int anInt)
+    flutterEchoInt,
+    required double Function(ProxyApiTestClass pigeon_instance, double aDouble)
+    flutterEchoDouble,
+    required String Function(ProxyApiTestClass pigeon_instance, String aString)
+    flutterEchoString,
     required Uint8List Function(
       ProxyApiTestClass pigeon_instance,
       Uint8List aList,
-    ) flutterEchoUint8List,
+    )
+    flutterEchoUint8List,
     required List<Object?> Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?> aList,
-    ) flutterEchoList,
+    )
+    flutterEchoList,
     required List<ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       List<ProxyApiTestClass?> aList,
-    ) flutterEchoProxyApiList,
+    )
+    flutterEchoProxyApiList,
     required Map<String?, Object?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?> aMap,
-    ) flutterEchoMap,
+    )
+    flutterEchoMap,
     required Map<String?, ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
-    ) flutterEchoProxyApiMap,
+    )
+    flutterEchoProxyApiMap,
     required ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum anEnum,
-    ) flutterEchoEnum,
+    )
+    flutterEchoEnum,
     required ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass aProxyApi,
-    ) flutterEchoProxyApi,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
+    )
+    flutterEchoProxyApi,
+    bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+    flutterEchoNullableBool,
+    int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+    flutterEchoNullableInt,
+    double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+    flutterEchoNullableDouble,
+    String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+    flutterEchoNullableString,
+    Uint8List? Function(ProxyApiTestClass pigeon_instance, Uint8List? aList)?
+    flutterEchoNullableUint8List,
     List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?>? aList,
-    )? flutterEchoNullableList,
+    )?
+    flutterEchoNullableList,
     Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
+    )?
+    flutterEchoNullableMap,
     ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
+    )?
+    flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
+    )?
+    flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
     required Future<String> Function(
       ProxyApiTestClass pigeon_instance,
       String aString,
-    ) flutterEchoAsyncString,
+    )
+    flutterEchoAsyncString,
   }) {
     if (PigeonOverrides.proxyApiTestClass_namedConstructor != null) {
       return PigeonOverrides.proxyApiTestClass_namedConstructor!(
@@ -1368,8 +1373,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     this.flutterNoopAsync,
     required this.flutterEchoAsyncString,
   }) : super.pigeon_detached() {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1380,28 +1385,28 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      pigeonVar_instanceIdentifier,
-      aBool,
-      anInt,
-      aDouble,
-      aString,
-      aUint8List,
-      aList,
-      aMap,
-      anEnum,
-      aProxyApi,
-      aNullableBool,
-      aNullableInt,
-      aNullableDouble,
-      aNullableString,
-      aNullableUint8List,
-      aNullableList,
-      aNullableMap,
-      aNullableEnum,
-      aNullableProxyApi
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          pigeonVar_instanceIdentifier,
+          aBool,
+          anInt,
+          aDouble,
+          aString,
+          aUint8List,
+          aList,
+          aMap,
+          anEnum,
+          aProxyApi,
+          aNullableBool,
+          aNullableInt,
+          aNullableDouble,
+          aNullableString,
+          aNullableUint8List,
+          aNullableList,
+          aNullableMap,
+          aNullableEnum,
+          aNullableProxyApi,
+        ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -1468,8 +1473,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecProxyApiTestClass =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecProxyApiTestClass = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   final bool aBool;
 
@@ -1570,7 +1576,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(ProxyApiTestClass pigeon_instance)?
-      flutterThrowErrorFromVoid;
+  flutterThrowErrorFromVoid;
 
   /// Returns the passed boolean, to test serialization and deserialization.
   ///
@@ -1591,10 +1597,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final bool Function(
-    ProxyApiTestClass pigeon_instance,
-    bool aBool,
-  ) flutterEchoBool;
+  final bool Function(ProxyApiTestClass pigeon_instance, bool aBool)
+  flutterEchoBool;
 
   /// Returns the passed int, to test serialization and deserialization.
   ///
@@ -1615,10 +1619,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final int Function(
-    ProxyApiTestClass pigeon_instance,
-    int anInt,
-  ) flutterEchoInt;
+  final int Function(ProxyApiTestClass pigeon_instance, int anInt)
+  flutterEchoInt;
 
   /// Returns the passed double, to test serialization and deserialization.
   ///
@@ -1639,10 +1641,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final double Function(
-    ProxyApiTestClass pigeon_instance,
-    double aDouble,
-  ) flutterEchoDouble;
+  final double Function(ProxyApiTestClass pigeon_instance, double aDouble)
+  flutterEchoDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
   ///
@@ -1663,10 +1663,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final String Function(
-    ProxyApiTestClass pigeon_instance,
-    String aString,
-  ) flutterEchoString;
+  final String Function(ProxyApiTestClass pigeon_instance, String aString)
+  flutterEchoString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
   ///
@@ -1687,10 +1685,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final Uint8List Function(
-    ProxyApiTestClass pigeon_instance,
-    Uint8List aList,
-  ) flutterEchoUint8List;
+  final Uint8List Function(ProxyApiTestClass pigeon_instance, Uint8List aList)
+  flutterEchoUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
   ///
@@ -1714,7 +1710,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final List<Object?> Function(
     ProxyApiTestClass pigeon_instance,
     List<Object?> aList,
-  ) flutterEchoList;
+  )
+  flutterEchoList;
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
@@ -1739,7 +1736,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final List<ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
     List<ProxyApiTestClass?> aList,
-  ) flutterEchoProxyApiList;
+  )
+  flutterEchoProxyApiList;
 
   /// Returns the passed map, to test serialization and deserialization.
   ///
@@ -1763,7 +1761,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final Map<String?, Object?> Function(
     ProxyApiTestClass pigeon_instance,
     Map<String?, Object?> aMap,
-  ) flutterEchoMap;
+  )
+  flutterEchoMap;
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
@@ -1788,7 +1787,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final Map<String?, ProxyApiTestClass?> Function(
     ProxyApiTestClass pigeon_instance,
     Map<String?, ProxyApiTestClass?> aMap,
-  ) flutterEchoProxyApiMap;
+  )
+  flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
   ///
@@ -1812,7 +1812,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final ProxyApiTestEnum Function(
     ProxyApiTestClass pigeon_instance,
     ProxyApiTestEnum anEnum,
-  ) flutterEchoEnum;
+  )
+  flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ///
@@ -1836,7 +1837,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final ProxyApiSuperClass Function(
     ProxyApiTestClass pigeon_instance,
     ProxyApiSuperClass aProxyApi,
-  ) flutterEchoProxyApi;
+  )
+  flutterEchoProxyApi;
 
   /// Returns the passed boolean, to test serialization and deserialization.
   ///
@@ -1857,10 +1859,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final bool? Function(
-    ProxyApiTestClass pigeon_instance,
-    bool? aBool,
-  )? flutterEchoNullableBool;
+  final bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+  flutterEchoNullableBool;
 
   /// Returns the passed int, to test serialization and deserialization.
   ///
@@ -1881,10 +1881,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final int? Function(
-    ProxyApiTestClass pigeon_instance,
-    int? anInt,
-  )? flutterEchoNullableInt;
+  final int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+  flutterEchoNullableInt;
 
   /// Returns the passed double, to test serialization and deserialization.
   ///
@@ -1905,10 +1903,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final double? Function(
-    ProxyApiTestClass pigeon_instance,
-    double? aDouble,
-  )? flutterEchoNullableDouble;
+  final double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+  flutterEchoNullableDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
   ///
@@ -1929,10 +1925,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final String? Function(
-    ProxyApiTestClass pigeon_instance,
-    String? aString,
-  )? flutterEchoNullableString;
+  final String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+  flutterEchoNullableString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
   ///
@@ -1956,7 +1950,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final Uint8List? Function(
     ProxyApiTestClass pigeon_instance,
     Uint8List? aList,
-  )? flutterEchoNullableUint8List;
+  )?
+  flutterEchoNullableUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
   ///
@@ -1980,7 +1975,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final List<Object?>? Function(
     ProxyApiTestClass pigeon_instance,
     List<Object?>? aList,
-  )? flutterEchoNullableList;
+  )?
+  flutterEchoNullableList;
 
   /// Returns the passed map, to test serialization and deserialization.
   ///
@@ -2004,7 +2000,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final Map<String?, Object?>? Function(
     ProxyApiTestClass pigeon_instance,
     Map<String?, Object?>? aMap,
-  )? flutterEchoNullableMap;
+  )?
+  flutterEchoNullableMap;
 
   /// Returns the passed enum to test serialization and deserialization.
   ///
@@ -2028,7 +2025,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final ProxyApiTestEnum? Function(
     ProxyApiTestClass pigeon_instance,
     ProxyApiTestEnum? anEnum,
-  )? flutterEchoNullableEnum;
+  )?
+  flutterEchoNullableEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   ///
@@ -2052,7 +2050,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final ProxyApiSuperClass? Function(
     ProxyApiTestClass pigeon_instance,
     ProxyApiSuperClass? aProxyApi,
-  )? flutterEchoNullableProxyApi;
+  )?
+  flutterEchoNullableProxyApi;
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
@@ -2075,7 +2074,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final Future<void> Function(ProxyApiTestClass pigeon_instance)?
-      flutterNoopAsync;
+  flutterNoopAsync;
 
   /// Returns the passed in generic Object asynchronously.
   ///
@@ -2099,7 +2098,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   final Future<String> Function(
     ProxyApiTestClass pigeon_instance,
     String aString,
-  ) flutterEchoAsyncString;
+  )
+  flutterEchoAsyncString;
 
   @override
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
@@ -2120,101 +2120,90 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    bool Function(
-      ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    )? flutterEchoBool,
-    int Function(
-      ProxyApiTestClass pigeon_instance,
-      int anInt,
-    )? flutterEchoInt,
-    double Function(
-      ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    )? flutterEchoDouble,
-    String Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    )? flutterEchoString,
-    Uint8List Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List aList,
-    )? flutterEchoUint8List,
+    bool Function(ProxyApiTestClass pigeon_instance, bool aBool)?
+    flutterEchoBool,
+    int Function(ProxyApiTestClass pigeon_instance, int anInt)? flutterEchoInt,
+    double Function(ProxyApiTestClass pigeon_instance, double aDouble)?
+    flutterEchoDouble,
+    String Function(ProxyApiTestClass pigeon_instance, String aString)?
+    flutterEchoString,
+    Uint8List Function(ProxyApiTestClass pigeon_instance, Uint8List aList)?
+    flutterEchoUint8List,
     List<Object?> Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?> aList,
-    )? flutterEchoList,
+    )?
+    flutterEchoList,
     List<ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       List<ProxyApiTestClass?> aList,
-    )? flutterEchoProxyApiList,
+    )?
+    flutterEchoProxyApiList,
     Map<String?, Object?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?> aMap,
-    )? flutterEchoMap,
+    )?
+    flutterEchoMap,
     Map<String?, ProxyApiTestClass?> Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, ProxyApiTestClass?> aMap,
-    )? flutterEchoProxyApiMap,
+    )?
+    flutterEchoProxyApiMap,
     ProxyApiTestEnum Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum anEnum,
-    )? flutterEchoEnum,
+    )?
+    flutterEchoEnum,
     ProxyApiSuperClass Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass aProxyApi,
-    )? flutterEchoProxyApi,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
+    )?
+    flutterEchoProxyApi,
+    bool? Function(ProxyApiTestClass pigeon_instance, bool? aBool)?
+    flutterEchoNullableBool,
+    int? Function(ProxyApiTestClass pigeon_instance, int? anInt)?
+    flutterEchoNullableInt,
+    double? Function(ProxyApiTestClass pigeon_instance, double? aDouble)?
+    flutterEchoNullableDouble,
+    String? Function(ProxyApiTestClass pigeon_instance, String? aString)?
+    flutterEchoNullableString,
+    Uint8List? Function(ProxyApiTestClass pigeon_instance, Uint8List? aList)?
+    flutterEchoNullableUint8List,
     List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       List<Object?>? aList,
-    )? flutterEchoNullableList,
+    )?
+    flutterEchoNullableList,
     Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
       Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
+    )?
+    flutterEchoNullableMap,
     ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
+    )?
+    flutterEchoNullableEnum,
     ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
       ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
+    )?
+    flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
-    Future<String> Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    )? flutterEchoAsyncString,
+    Future<String> Function(ProxyApiTestClass pigeon_instance, String aString)?
+    flutterEchoAsyncString,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2223,14 +2212,16 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final ProxyApiTestClass arg_pigeon_instance =
               args[0]! as ProxyApiTestClass;
           try {
-            (flutterNoop ?? arg_pigeon_instance.flutterNoop)
-                ?.call(arg_pigeon_instance);
+            (flutterNoop ?? arg_pigeon_instance.flutterNoop)?.call(
+              arg_pigeon_instance,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2238,9 +2229,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2257,7 +2249,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2265,9 +2258,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2284,7 +2278,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2292,9 +2287,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2305,14 +2301,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final bool arg_aBool = args[1]! as bool;
           try {
             final bool output =
-                (flutterEchoBool ?? arg_pigeon_instance.flutterEchoBool)
-                    .call(arg_pigeon_instance, arg_aBool);
+                (flutterEchoBool ?? arg_pigeon_instance.flutterEchoBool).call(
+                  arg_pigeon_instance,
+                  arg_aBool,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2320,9 +2319,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2333,14 +2333,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final int arg_anInt = args[1]! as int;
           try {
             final int output =
-                (flutterEchoInt ?? arg_pigeon_instance.flutterEchoInt)
-                    .call(arg_pigeon_instance, arg_anInt);
+                (flutterEchoInt ?? arg_pigeon_instance.flutterEchoInt).call(
+                  arg_pigeon_instance,
+                  arg_anInt,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2348,9 +2351,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2368,7 +2372,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2376,9 +2381,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2396,7 +2402,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2404,9 +2411,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2416,15 +2424,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final Uint8List arg_aList = args[1]! as Uint8List;
           try {
-            final Uint8List output = (flutterEchoUint8List ??
-                    arg_pigeon_instance.flutterEchoUint8List)
-                .call(arg_pigeon_instance, arg_aList);
+            final Uint8List output =
+                (flutterEchoUint8List ??
+                        arg_pigeon_instance.flutterEchoUint8List)
+                    .call(arg_pigeon_instance, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2432,9 +2442,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2445,14 +2456,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final List<Object?> arg_aList = args[1]! as List<Object?>;
           try {
             final List<Object?> output =
-                (flutterEchoList ?? arg_pigeon_instance.flutterEchoList)
-                    .call(arg_pigeon_instance, arg_aList);
+                (flutterEchoList ?? arg_pigeon_instance.flutterEchoList).call(
+                  arg_pigeon_instance,
+                  arg_aList,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2460,9 +2474,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2470,18 +2485,20 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final List<Object?> args = message! as List<Object?>;
           final ProxyApiTestClass arg_pigeon_instance =
               args[0]! as ProxyApiTestClass;
-          final List<ProxyApiTestClass?> arg_aList =
-              (args[1]! as List<Object?>).cast<ProxyApiTestClass?>();
+          final List<ProxyApiTestClass?> arg_aList = (args[1]! as List<Object?>)
+              .cast<ProxyApiTestClass?>();
           try {
-            final List<ProxyApiTestClass?> output = (flutterEchoProxyApiList ??
-                    arg_pigeon_instance.flutterEchoProxyApiList)
-                .call(arg_pigeon_instance, arg_aList);
+            final List<ProxyApiTestClass?> output =
+                (flutterEchoProxyApiList ??
+                        arg_pigeon_instance.flutterEchoProxyApiList)
+                    .call(arg_pigeon_instance, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2489,9 +2506,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2503,14 +2521,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[1]! as Map<Object?, Object?>).cast<String?, Object?>();
           try {
             final Map<String?, Object?> output =
-                (flutterEchoMap ?? arg_pigeon_instance.flutterEchoMap)
-                    .call(arg_pigeon_instance, arg_aMap);
+                (flutterEchoMap ?? arg_pigeon_instance.flutterEchoMap).call(
+                  arg_pigeon_instance,
+                  arg_aMap,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2518,9 +2539,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2541,7 +2563,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2549,9 +2572,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2562,14 +2586,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final ProxyApiTestEnum arg_anEnum = args[1]! as ProxyApiTestEnum;
           try {
             final ProxyApiTestEnum output =
-                (flutterEchoEnum ?? arg_pigeon_instance.flutterEchoEnum)
-                    .call(arg_pigeon_instance, arg_anEnum);
+                (flutterEchoEnum ?? arg_pigeon_instance.flutterEchoEnum).call(
+                  arg_pigeon_instance,
+                  arg_anEnum,
+                );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2577,9 +2604,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2598,7 +2626,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2606,9 +2635,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2618,15 +2648,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final bool? arg_aBool = args[1] as bool?;
           try {
-            final bool? output = (flutterEchoNullableBool ??
-                    arg_pigeon_instance.flutterEchoNullableBool)
-                ?.call(arg_pigeon_instance, arg_aBool);
+            final bool? output =
+                (flutterEchoNullableBool ??
+                        arg_pigeon_instance.flutterEchoNullableBool)
+                    ?.call(arg_pigeon_instance, arg_aBool);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2634,9 +2666,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2646,15 +2679,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final int? arg_anInt = args[1] as int?;
           try {
-            final int? output = (flutterEchoNullableInt ??
-                    arg_pigeon_instance.flutterEchoNullableInt)
-                ?.call(arg_pigeon_instance, arg_anInt);
+            final int? output =
+                (flutterEchoNullableInt ??
+                        arg_pigeon_instance.flutterEchoNullableInt)
+                    ?.call(arg_pigeon_instance, arg_anInt);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2662,9 +2697,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2674,15 +2710,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final double? arg_aDouble = args[1] as double?;
           try {
-            final double? output = (flutterEchoNullableDouble ??
-                    arg_pigeon_instance.flutterEchoNullableDouble)
-                ?.call(arg_pigeon_instance, arg_aDouble);
+            final double? output =
+                (flutterEchoNullableDouble ??
+                        arg_pigeon_instance.flutterEchoNullableDouble)
+                    ?.call(arg_pigeon_instance, arg_aDouble);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2690,9 +2728,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2702,15 +2741,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final String? arg_aString = args[1] as String?;
           try {
-            final String? output = (flutterEchoNullableString ??
-                    arg_pigeon_instance.flutterEchoNullableString)
-                ?.call(arg_pigeon_instance, arg_aString);
+            final String? output =
+                (flutterEchoNullableString ??
+                        arg_pigeon_instance.flutterEchoNullableString)
+                    ?.call(arg_pigeon_instance, arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2718,9 +2759,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2730,15 +2772,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final Uint8List? arg_aList = args[1] as Uint8List?;
           try {
-            final Uint8List? output = (flutterEchoNullableUint8List ??
-                    arg_pigeon_instance.flutterEchoNullableUint8List)
-                ?.call(arg_pigeon_instance, arg_aList);
+            final Uint8List? output =
+                (flutterEchoNullableUint8List ??
+                        arg_pigeon_instance.flutterEchoNullableUint8List)
+                    ?.call(arg_pigeon_instance, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2746,9 +2790,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2758,15 +2803,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final List<Object?>? arg_aList = args[1] as List<Object?>?;
           try {
-            final List<Object?>? output = (flutterEchoNullableList ??
-                    arg_pigeon_instance.flutterEchoNullableList)
-                ?.call(arg_pigeon_instance, arg_aList);
+            final List<Object?>? output =
+                (flutterEchoNullableList ??
+                        arg_pigeon_instance.flutterEchoNullableList)
+                    ?.call(arg_pigeon_instance, arg_aList);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2774,9 +2821,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2787,15 +2835,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final Map<String?, Object?>? arg_aMap =
               (args[1] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           try {
-            final Map<String?, Object?>? output = (flutterEchoNullableMap ??
-                    arg_pigeon_instance.flutterEchoNullableMap)
-                ?.call(arg_pigeon_instance, arg_aMap);
+            final Map<String?, Object?>? output =
+                (flutterEchoNullableMap ??
+                        arg_pigeon_instance.flutterEchoNullableMap)
+                    ?.call(arg_pigeon_instance, arg_aMap);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2803,9 +2853,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2815,15 +2866,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final ProxyApiTestEnum? arg_anEnum = args[1] as ProxyApiTestEnum?;
           try {
-            final ProxyApiTestEnum? output = (flutterEchoNullableEnum ??
-                    arg_pigeon_instance.flutterEchoNullableEnum)
-                ?.call(arg_pigeon_instance, arg_anEnum);
+            final ProxyApiTestEnum? output =
+                (flutterEchoNullableEnum ??
+                        arg_pigeon_instance.flutterEchoNullableEnum)
+                    ?.call(arg_pigeon_instance, arg_anEnum);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2831,9 +2884,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2844,15 +2898,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           final ProxyApiSuperClass? arg_aProxyApi =
               args[1] as ProxyApiSuperClass?;
           try {
-            final ProxyApiSuperClass? output = (flutterEchoNullableProxyApi ??
-                    arg_pigeon_instance.flutterEchoNullableProxyApi)
-                ?.call(arg_pigeon_instance, arg_aProxyApi);
+            final ProxyApiSuperClass? output =
+                (flutterEchoNullableProxyApi ??
+                        arg_pigeon_instance.flutterEchoNullableProxyApi)
+                    ?.call(arg_pigeon_instance, arg_aProxyApi);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2860,9 +2916,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2878,7 +2935,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2886,9 +2944,10 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -2898,15 +2957,17 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               args[0]! as ProxyApiTestClass;
           final String arg_aString = args[1]! as String;
           try {
-            final String output = await (flutterEchoAsyncString ??
-                    arg_pigeon_instance.flutterEchoAsyncString)
-                .call(arg_pigeon_instance, arg_aString);
+            final String output =
+                await (flutterEchoAsyncString ??
+                        arg_pigeon_instance.flutterEchoAsyncString)
+                    .call(arg_pigeon_instance, arg_aString);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -2916,14 +2977,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   ProxyApiSuperClass pigeonVar_attachedField() {
     final ProxyApiSuperClass pigeonVar_instance =
         ProxyApiSuperClass.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-    );
+          pigeon_binaryMessenger: pigeon_binaryMessenger,
+          pigeon_instanceManager: pigeon_instanceManager,
+        );
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(pigeonVar_instance);
     () async {
       const pigeonVar_channelName =
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.attachedField';
@@ -2932,8 +2993,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         pigeonChannelCodec,
         binaryMessenger: pigeonVar_binaryMessenger,
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[this, pigeonVar_instanceIdentifier]);
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[this, pigeonVar_instanceIdentifier],
+      );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
       _extractReplyValueOrThrow(
@@ -2962,8 +3024,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         pigeonChannelCodec,
         binaryMessenger: pigeonVar_binaryMessenger,
       );
-      final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
+      final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+        <Object?>[pigeonVar_instanceIdentifier],
+      );
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
       _extractReplyValueOrThrow(
@@ -2988,8 +3051,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -3011,8 +3075,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3035,8 +3100,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -3058,8 +3124,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3082,8 +3149,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3106,8 +3174,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3130,8 +3199,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3154,8 +3224,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3178,8 +3249,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3202,8 +3274,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anObject]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anObject],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3226,8 +3299,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3241,7 +3315,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   Future<List<ProxyApiTestClass>> echoProxyApiList(
-      List<ProxyApiTestClass> aList) async {
+    List<ProxyApiTestClass> aList,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3252,8 +3327,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3276,8 +3352,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3292,7 +3369,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   Future<Map<String, ProxyApiTestClass>> echoProxyApiMap(
-      Map<String, ProxyApiTestClass> aMap) async {
+    Map<String, ProxyApiTestClass> aMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3303,8 +3381,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3328,8 +3407,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3352,8 +3432,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aProxyApi],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3376,8 +3457,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3400,8 +3482,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3424,8 +3507,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3448,8 +3532,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3462,7 +3547,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed in Uint8List.
   Future<Uint8List?> echoNullableUint8List(
-      Uint8List? aNullableUint8List) async {
+    Uint8List? aNullableUint8List,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3473,8 +3559,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3497,8 +3584,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableObject]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableObject],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3521,8 +3609,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3535,7 +3624,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>?> echoNullableMap(
-      Map<String?, Object?>? aNullableMap) async {
+    Map<String?, Object?>? aNullableMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3546,8 +3636,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3560,7 +3651,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<ProxyApiTestEnum?> echoNullableEnum(
-      ProxyApiTestEnum? aNullableEnum) async {
+    ProxyApiTestEnum? aNullableEnum,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3571,8 +3663,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3585,7 +3678,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   Future<ProxyApiSuperClass?> echoNullableProxyApi(
-      ProxyApiSuperClass? aNullableProxyApi) async {
+    ProxyApiSuperClass? aNullableProxyApi,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3596,8 +3690,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aNullableProxyApi]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aNullableProxyApi],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3621,8 +3716,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -3644,8 +3740,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3668,8 +3765,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3692,8 +3790,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3716,8 +3815,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3740,8 +3840,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3764,8 +3865,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anObject]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anObject],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3788,8 +3890,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3812,8 +3915,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3837,8 +3941,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3861,8 +3966,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3885,8 +3991,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -3908,8 +4015,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3932,8 +4040,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3956,8 +4065,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -3980,8 +4090,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4004,8 +4115,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4028,8 +4140,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4052,8 +4165,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anObject]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anObject],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4076,8 +4190,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4090,7 +4205,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>?> echoAsyncNullableMap(
-      Map<String?, Object?>? aMap) async {
+    Map<String?, Object?>? aMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4101,8 +4217,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4116,7 +4233,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   Future<ProxyApiTestEnum?> echoAsyncNullableEnum(
-      ProxyApiTestEnum? anEnum) async {
+    ProxyApiTestEnum? anEnum,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4127,8 +4245,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4148,7 +4267,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticNoop';
@@ -4177,7 +4297,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoStaticString';
@@ -4186,8 +4307,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4207,7 +4329,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAsyncNoop';
@@ -4237,8 +4360,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -4259,8 +4383,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4282,8 +4407,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -4304,8 +4430,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4327,8 +4454,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4350,8 +4478,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4373,8 +4502,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4396,8 +4526,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4419,8 +4550,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4432,7 +4564,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<List<ProxyApiTestClass?>> callFlutterEchoProxyApiList(
-      List<ProxyApiTestClass?> aList) async {
+    List<ProxyApiTestClass?> aList,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4443,8 +4576,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4456,7 +4590,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<Map<String?, Object?>> callFlutterEchoMap(
-      Map<String?, Object?> aMap) async {
+    Map<String?, Object?> aMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4467,8 +4602,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4481,7 +4617,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<Map<String?, ProxyApiTestClass?>> callFlutterEchoProxyApiMap(
-      Map<String?, ProxyApiTestClass?> aMap) async {
+    Map<String?, ProxyApiTestClass?> aMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4492,8 +4629,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4516,8 +4654,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4529,7 +4668,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<ProxyApiSuperClass> callFlutterEchoProxyApi(
-      ProxyApiSuperClass aProxyApi) async {
+    ProxyApiSuperClass aProxyApi,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4540,8 +4680,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aProxyApi],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4563,8 +4704,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aBool],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4586,8 +4728,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anInt],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4609,8 +4752,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aDouble],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4632,8 +4776,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4645,7 +4790,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<Uint8List?> callFlutterEchoNullableUint8List(
-      Uint8List? aUint8List) async {
+    Uint8List? aUint8List,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4656,8 +4802,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aUint8List]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aUint8List],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4669,7 +4816,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<List<Object?>?> callFlutterEchoNullableList(
-      List<Object?>? aList) async {
+    List<Object?>? aList,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4680,8 +4828,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aList]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aList],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4693,7 +4842,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
-      Map<String?, Object?>? aMap) async {
+    Map<String?, Object?>? aMap,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4704,8 +4854,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aMap]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aMap],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4718,7 +4869,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<ProxyApiTestEnum?> callFlutterEchoNullableEnum(
-      ProxyApiTestEnum? anEnum) async {
+    ProxyApiTestEnum? anEnum,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4729,8 +4881,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, anEnum]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, anEnum],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4742,7 +4895,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   Future<ProxyApiSuperClass?> callFlutterEchoNullableProxyApi(
-      ProxyApiSuperClass? aProxyApi) async {
+    ProxyApiSuperClass? aProxyApi,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4753,8 +4907,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aProxyApi],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4776,8 +4931,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -4798,8 +4954,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this, aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this, aString],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
@@ -4883,8 +5040,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiSuperClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4895,8 +5052,9 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
+    );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -4919,8 +5077,9 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecProxyApiSuperClass =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecProxyApiSuperClass = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -4930,13 +5089,15 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -4946,19 +5107,20 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  ProxyApiSuperClass.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier,
-            );
+                  pigeon_newInstance?.call() ??
+                      ProxyApiSuperClass.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -4976,8 +5138,9 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -5039,13 +5202,15 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5055,19 +5220,20 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  ProxyApiInterface.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier,
-            );
+                  pigeon_newInstance?.call() ??
+                      ProxyApiInterface.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -5075,9 +5241,10 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
 
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5086,14 +5253,16 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
           final ProxyApiInterface arg_pigeon_instance =
               args[0]! as ProxyApiInterface;
           try {
-            (anInterfaceMethod ?? arg_pigeon_instance.anInterfaceMethod)
-                ?.call(arg_pigeon_instance);
+            (anInterfaceMethod ?? arg_pigeon_instance.anInterfaceMethod)?.call(
+              arg_pigeon_instance,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -5129,8 +5298,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecClassWithApiRequirement;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -5141,8 +5310,9 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier],
+    );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -5165,8 +5335,9 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecClassWithApiRequirement =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  _pigeonVar_codecClassWithApiRequirement = _PigeonInternalProxyApiBaseCodec(
+    pigeon_instanceManager,
+  );
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -5176,13 +5347,15 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -5192,19 +5365,20 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  ClassWithApiRequirement.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier,
-            );
+                  pigeon_newInstance?.call() ??
+                      ClassWithApiRequirement.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier,
+                );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -5222,8 +5396,9 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[this]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[this],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
     _extractReplyValueOrThrow(
@@ -5241,4 +5416,3 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     );
   }
 }
-
