@@ -631,6 +631,11 @@ ${_argParser.usage}''';
       help:
           'A String to augment class names to avoid cross file collisions in Kotlin.',
     )
+    ..addMultiOption(
+      'kotlin_jni_classpaths',
+      help:
+          'Paths to directories or JAR files containing compiled Kotlin/Java classes. Used for JNIgen to locate class definitions.',
+    )
     ..addOption(
       'cpp_header_out',
       help: 'Path to generated C++ header file (.h).',
@@ -778,6 +783,9 @@ ${_argParser.usage}''';
             results['kotlin_include_error_class'] as bool? ?? true,
         fileSpecificClassNameComponent:
             results['kotlin_file_specific_class_name_component'] as String?,
+        jniClassPaths: results.wasParsed('kotlin_jni_classpaths')
+            ? results['kotlin_jni_classpaths'] as List<String>
+            : null,
       ),
       cppHeaderOut: results['cpp_header_out'] as String?,
       cppSourceOut: results['cpp_source_out'] as String?,

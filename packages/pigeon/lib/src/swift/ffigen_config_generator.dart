@@ -69,12 +69,28 @@ import 'package:swiftgen/swiftgen.dart';
     final String? configuredSdkTriple =
         generatorOptions.swiftOptions.appleSdkTriple;
 
+    final String fullSwiftOut = generatorOptions.basePath != null
+        ? path.posix.join(
+            generatorOptions.basePath!,
+            generatorOptions.swiftOptions.swiftOut,
+          )
+        : generatorOptions.swiftOptions.swiftOut;
+    final String fullDartOut = generatorOptions.basePath != null
+        ? path.posix.join(
+            generatorOptions.basePath!,
+            generatorOptions.dartOut ?? '',
+          )
+        : (generatorOptions.dartOut ?? '');
+
     final String objcDir = path.posix.join(
-      path.posix.dirname(
-        path.posix.dirname(generatorOptions.swiftOptions.swiftOut),
-      ),
-      '${path.posix.basename(path.posix.dirname(generatorOptions.swiftOptions.swiftOut))}_objc_gen',
+      path.posix.dirname(path.posix.dirname(fullSwiftOut)),
+      '${path.posix.basename(path.posix.dirname(fullSwiftOut))}_objc_gen',
     );
+
+    final String moduleName =
+        generatorOptions.swiftOptions.ffiModuleName?.isNotEmpty ?? false
+        ? generatorOptions.swiftOptions.ffiModuleName!
+        : 'Runner';
 
     indent.writeScoped('Future<void> main(List<String> args) async {', '}', () {
       indent.format('''
@@ -139,16 +155,16 @@ import 'package:swiftgen/swiftgen.dart';
       sdk: sdk,
     ),
     inputs: <SwiftGenInput>[ObjCCompatibleSwiftFileInput(files: <Uri>[
-        Uri.file('${path.relative(generatorOptions.swiftOptions.swiftOut, from: generatorOptions.exampleAppDirectory ?? './')}')
+        Uri.file('${path.relative(fullSwiftOut, from: generatorOptions.exampleAppDirectory ?? './')}')
       ])
     ],
     include: (Declaration d) =>
         classes.contains(d.name) || enums.contains(d.name),
     output: Output(
-      module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
+      module: '$moduleName',
       // Path is relative to appDirectory.
-      dartFile: Uri.file('${path.relative(path.withoutExtension(generatorOptions.dartOut ?? ''), from: generatorOptions.exampleAppDirectory ?? './')}.ffi.dart'),
-      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(generatorOptions.swiftOptions.swiftOut)}.m'), from: generatorOptions.exampleAppDirectory ?? './')}'),
+      dartFile: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.exampleAppDirectory ?? './')}.ffi.dart'),
+      objectiveCFile: Uri.file('${path.relative(path.posix.join(objcDir, '${path.posix.basenameWithoutExtension(fullSwiftOut)}.m'), from: generatorOptions.exampleAppDirectory ?? './')}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
@@ -170,10 +186,10 @@ import 'package:swiftgen/swiftgen.dart';
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              return '${generatorOptions.swiftOptions.ffiModuleName ?? ''}';
+              return '$moduleName';
             }
 ''' : ''}
-            return decl.originalName.startsWith('NS') ? null : '${generatorOptions.swiftOptions.ffiModuleName ?? ''}';
+            return decl.originalName.startsWith('NS') ? null : '$moduleName';
           }
         ),
         protocols: fg.Protocols(
@@ -182,10 +198,10 @@ ${hasAsyncFlutterApi ? '''
 ${hasAsyncFlutterApi ? '''
             if (decl.originalName == 'NSURLCredential' ||
                 decl.originalName == 'NSURLSessionAuthChallengeDisposition') {
-              return '${generatorOptions.swiftOptions.ffiModuleName ?? ''}';
+              return '$moduleName';
             }
 ''' : ''}
-            return decl.originalName.startsWith('NS') ? null : '${generatorOptions.swiftOptions.ffiModuleName ?? ''}';
+            return decl.originalName.startsWith('NS') ? null : '$moduleName';
           },
         ),
       ),

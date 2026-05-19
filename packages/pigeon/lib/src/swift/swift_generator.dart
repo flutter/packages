@@ -1583,7 +1583,7 @@ if (wrapped == nil) {
             name: method.name,
             parameters: method.parameters,
             returnType: method.returnType,
-            errorTypeName: generatorOptions.errorClassName ?? 'Error',
+            errorTypeName: _getErrorClassName(generatorOptions),
             ffiBridgeApi: generatorOptions.useFfi,
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,

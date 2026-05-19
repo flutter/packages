@@ -6,11 +6,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/dart/dart_generator.dart';
 import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/kotlin/jnigen_config_generator.dart';
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
-import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:pigeon/src/pigeon_lib.dart';
 import 'package:pigeon/src/pigeon_lib_internal.dart';
+import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
@@ -144,6 +146,19 @@ void main() {
       '--kotlin_use_generated_annotation',
     ]);
     expect(opts.kotlinOptions!.useGeneratedAnnotation, isTrue);
+  });
+
+  test('parse args - kotlin_jni_classpaths', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_jni_classpaths',
+      'foo/bar',
+      '--kotlin_jni_classpaths',
+      'baz.jar',
+    ]);
+    expect(
+      opts.kotlinOptions?.jniClassPaths,
+      equals(<String>['foo/bar', 'baz.jar']),
+    );
   });
 
   test('parse args - cpp_header_out', () {
@@ -2138,5 +2153,40 @@ dev_dependencies:
         }
       },
     );
+
+    test('KotlinOptions serialization/deserialization with jniClassPaths', () {
+      const options = KotlinOptions(
+        jniClassPaths: <String>['foo/bar', 'baz.jar'],
+      );
+      final Map<String, Object> map = options.toMap();
+      expect(map['jniClassPaths'], equals(<String>['foo/bar', 'baz.jar']));
+
+      final KotlinOptions roundTrip = KotlinOptions.fromMap(map);
+      expect(roundTrip.jniClassPaths, equals(<String>['foo/bar', 'baz.jar']));
+    });
+
+    test('JnigenConfigGenerator generates custom classPaths', () {
+      final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(
+          dartOut: 'lib/messages.dart',
+          ignoreLints: false,
+        ),
+        const InternalKotlinOptions(
+          kotlinOut: 'android/Messages.kt',
+          jniClassPaths: <String>['foo/bar', 'baz.jar'],
+        ),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(
+        output,
+        contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"),
+      );
+    });
   });
 }

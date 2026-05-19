@@ -49,6 +49,25 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     indent.writeln("import 'package:jnigen/jnigen.dart';");
     indent.writeln("import 'package:logging/logging.dart';");
 
+    final String fullDartOut = generatorOptions.basePath != null
+        ? path.posix.join(
+            generatorOptions.basePath!,
+            generatorOptions.dartOptions.dartOut ?? '',
+          )
+        : (generatorOptions.dartOptions.dartOut ?? './lib/pigeons/');
+
+    final List<String> jniClassPaths =
+        generatorOptions.kotlinOptions.jniClassPaths ??
+        <String>['build/app/tmp/kotlin-classes/release'];
+    final String classPathContent = jniClassPaths
+        .map((String path) {
+          if (path.endsWith('.jar')) {
+            return "Uri.file('$path')";
+          }
+          return "Uri.directory('$path')";
+        })
+        .join(', ');
+
     indent.writeln('');
     indent.writeScoped('void main() async {', '}', () {
       indent.writeScoped('await generateJniBindings(', ');', () {
@@ -62,11 +81,13 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             outputConfig: OutputConfig(
               dartConfig: DartCodeOutputConfig(
                 // Path is relative to appDirectory.
-                path: Uri.file('${path.relative(path.withoutExtension(generatorOptions.dartOptions.dartOut ?? './lib/pigeons/'), from: generatorOptions.appDirectory ?? './')}.jni.dart'),
+                path: Uri.file('${path.relative(path.withoutExtension(fullDartOut), from: generatorOptions.appDirectory ?? './')}.jni.dart'),
               structure: OutputStructure.singleFile,
             ),
           ),
-          logLevel: Level.ALL,''');
+          logLevel: Level.ALL,
+          classPath: [$classPathContent],
+''');
           indent.writeScoped('classes: [', '],', () {
             final packagePrefix = generatorOptions.kotlinOptions.package != null
                 ? '${generatorOptions.kotlinOptions.package}.'

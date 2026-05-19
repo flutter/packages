@@ -1,3 +1,4 @@
+<?code-excerpt path-base="."?>
 # Pigeon Native Interop (FFI & JNI) Guide
 
 This guide describes Pigeon's Native Interop feature, which allows for direct, high-performance communication between Dart and native code using **FFI (Foreign Function Interface)** for Swift (iOS/macOS) and **JNI (Java Native Interface)** for Kotlin/Java (Android).
@@ -47,15 +48,26 @@ To use Native Interop, your development environment and the corresponding extern
 
 Enable Native Interop for your target platforms by setting the configuration options in your Pigeon file:
 
+<?code-excerpt "example/native_interop_app/pigeons/native_interop_example.dart (config)"?>
 ```dart
 @ConfigurePigeon(
   PigeonOptions(
     dartOptions: DartOptions(),
-    kotlinOptions: KotlinOptions(useJni: true),
+    kotlinOptions: KotlinOptions(
+      useJni: true,
+      // Optional: Paths to search for compiled local classes (primarily needed for standalone Apps)
+      jniClassPaths: <String>['build/app/tmp/kotlin-classes/release'],
+    ),
     swiftOptions: SwiftOptions(useFfi: true, ffiModuleName: 'my_plugin'),
   ),
 )
 ```
+
+#### Kotlin Options for JNI
+* **`useJni`**: Set to `true` to enable Kotlin JNI code generation and automated JNIgen orchestration.
+* **`jniClassPaths`**: (Optional) A list of paths to directories or `.jar` files containing compiled Kotlin/Java classes. This is primarily required for standalone Flutter Applications, as their own local compiled classes are not automatically resolved by JNIgen's default dependency scanner. If omitted, it defaults to the standard Flutter release build output directory (`build/app/tmp/kotlin-classes/release`).
+  - *Note*: If you are building a Flutter Plugin, this option is generally not needed because JNIgen automatically resolves classes defined inside plugin packages via standard Gradle dependency classpaths.
+  - *CLI Equivalent*: `--kotlin_jni_classpaths <path>` (can be specified multiple times).
 
 ### Step 2: Automated Interop Generation
 
@@ -89,16 +101,17 @@ If your plugin uses SPM, note that Swift and Objective-C files cannot reside wit
 2. The main Swift target that depends on the Objective-C target.
 
 Example configuration:
+<?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (spm-targets)"?>
 ```swift
 targets: [
   .target(
-    name: "my_plugin_objc_gen",
+    name: "test_plugin_objc_gen",
     dependencies: [],
     publicHeadersPath: "."
   ),
   .target(
-    name: "my_plugin",
-    dependencies: ["my_plugin_objc_gen"]
+    name: "test_plugin",
+    dependencies: ["test_plugin_objc_gen"]
   ),
 ]
 ```

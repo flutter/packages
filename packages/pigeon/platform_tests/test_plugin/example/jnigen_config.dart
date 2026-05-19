@@ -22,6 +22,8 @@ void main() async {
         ),
       ),
       logLevel: Level.ALL,
+      classPath: [Uri.directory('build/app/tmp/kotlin-classes/release')],
+
       classes: [
         'com.example.test_plugin.NiTestsError',
         'com.example.test_plugin.NIHostIntegrationCoreApi',

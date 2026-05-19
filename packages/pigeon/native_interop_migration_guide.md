@@ -1,3 +1,4 @@
+<?code-excerpt path-base="example/native_interop_app"?>
 # Pigeon Native Interop Migration Guide
 
 This guide provides detailed information on migrating from the `MethodChannel`-based Pigeon model to the direct **Native Interop (FFI & JNI)** model.
@@ -25,6 +26,7 @@ If your existing native implementation uses the callback-based completion-handle
 ### 2.1 Swift Async Methods
 
 #### MethodChannels (Callback Style)
+<?code-excerpt "ios/Runner/NativeInteropExample.swift (callback-style)"?>
 ```swift
 func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) -> Void) {
   completion(.success(value))
@@ -32,6 +34,7 @@ func echoAsync(_ value: String, completion: @escaping (Result<String, Error>) ->
 ```
 
 #### Native Interop (async/await Style)
+<?code-excerpt "ios/Runner/NativeInteropExample.swift (concurrency-style)"?>
 ```swift
 func echoAsync(_ value: String) async throws -> String {
   return value
@@ -41,13 +44,15 @@ func echoAsync(_ value: String) async throws -> String {
 ### 2.2 Kotlin Async Methods
 
 #### MethodChannels (Callback Style)
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (callback-style)"?>
 ```kotlin
-override fun echoAsync(value: String, callback: (Result<String>) -> Unit) {
+fun echoAsync(value: String, callback: (Result<String>) -> Unit) {
   callback(Result.success(value))
 }
 ```
 
 #### Native Interop (suspend Style)
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/NativeInteropExample.kt (concurrency-style)"?>
 ```kotlin
 suspend fun echoAsync(value: String): String {
   return value

@@ -51,6 +51,7 @@ class KotlinOptions {
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
     this.useGeneratedAnnotation = false,
+    this.jniClassPaths,
   });
 
   /// The package where the generated class will live.
@@ -84,6 +85,10 @@ class KotlinOptions {
   /// default.
   final bool useGeneratedAnnotation;
 
+  /// Paths to directories or JAR files containing compiled Kotlin/Java classes.
+  /// Used for JNIgen to locate class definitions during summarization.
+  final List<String>? jniClassPaths;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
@@ -97,6 +102,7 @@ class KotlinOptions {
       fileSpecificClassNameComponent:
           map['fileSpecificClassNameComponent'] as String?,
       useGeneratedAnnotation: map['useGeneratedAnnotation'] as bool? ?? false,
+      jniClassPaths: (map['jniClassPaths'] as List<Object>?)?.cast<String>(),
     );
   }
 
@@ -113,6 +119,7 @@ class KotlinOptions {
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       'useGeneratedAnnotation': useGeneratedAnnotation,
+      if (jniClassPaths != null) 'jniClassPaths': jniClassPaths!,
     };
     return result;
   }
@@ -137,6 +144,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.appDirectory,
     this.fileSpecificClassNameComponent,
     this.useGeneratedAnnotation = false,
+    this.jniClassPaths,
   });
 
   /// Creates InternalKotlinOptions from KotlinOptions.
@@ -152,6 +160,7 @@ class InternalKotlinOptions extends InternalOptions {
        useJni = options.useJni,
        appDirectory = options.appDirectory,
        useGeneratedAnnotation = options.useGeneratedAnnotation,
+       jniClassPaths = options.jniClassPaths,
        fileSpecificClassNameComponent =
            (options.useJni
                ? fileSpecificClassNameComponent ??
@@ -191,6 +200,9 @@ class InternalKotlinOptions extends InternalOptions {
   /// is false by default since that dependency isn't available in plugins by
   /// default.
   final bool useGeneratedAnnotation;
+
+  /// Paths to directories or JAR files containing compiled Kotlin/Java classes.
+  final List<String>? jniClassPaths;
 }
 
 /// Options that control how Kotlin code will be generated for a specific

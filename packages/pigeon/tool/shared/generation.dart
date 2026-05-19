@@ -76,6 +76,13 @@ Future<int> generateExamplePigeons() async {
     basePath: './example/app',
     suppressVersion: true,
   );
+  success += await runPigeon(
+    input: './example/native_interop_app/pigeons/messages.dart',
+    appDirectory: './example/native_interop_app',
+    swiftAppDirectory: './example/native_interop_app',
+    basePath: './example/native_interop_app',
+    suppressVersion: true,
+  );
   return success;
 }
 

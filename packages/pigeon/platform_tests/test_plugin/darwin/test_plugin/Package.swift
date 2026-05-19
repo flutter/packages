@@ -17,6 +17,7 @@ let package = Package(
     .library(name: "test-plugin", targets: ["test_plugin"])
   ],
   dependencies: [],
+  // #docregion spm-targets
   targets: [
     .target(
       name: "test_plugin_objc_gen",
@@ -28,4 +29,5 @@ let package = Package(
       dependencies: ["test_plugin_objc_gen"]
     ),
   ]
+  // #enddocregion spm-targets
 )
