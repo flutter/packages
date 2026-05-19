@@ -10,16 +10,17 @@ package io.flutter.plugins.inapppurchase
 import android.util.Log
 import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun createConnectionError(channelName: String): FlutterError {
-    return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")  }
+    return FlutterError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  }
 
   fun wrapResult(result: Any?): List<Any?> {
     return listOf(result)
@@ -27,19 +28,15 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun doubleEquals(a: Double, b: Double): Boolean {
     // Normalize -0.0 to 0.0 and handle NaN equality.
     return (if (a == 0.0) 0.0 else a) == (if (b == 0.0) 0.0 else b) || (a.isNaN() && b.isNaN())
@@ -183,19 +180,19 @@ private object MessagesPigeonUtils {
       else -> value.hashCode()
     }
   }
-
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : RuntimeException()
 
 /** Pigeon version of Java BillingClient.BillingResponseCode. */
@@ -226,16 +223,16 @@ enum class PlatformInAppMessageResponse(val raw: Int) {
   /**
    * The flow has finished and there is no action needed from developers.
    *
-   * Note: The API callback won't indicate whether message is dismissed by the
-   * user or there is no message available to the user.
+   * Note: The API callback won't indicate whether message is dismissed by the user or there is no
+   * message available to the user.
    */
   NO_ACTION_NEEDED(0),
   /**
    * The subscription status changed.
    *
-   * For example, a subscription has been recovered from a suspended state.
-   * Developers should expect the purchase token to be returned with this
-   * response code and use the purchase token with the Google Play Developer API.
+   * For example, a subscription has been recovered from a suspended state. Developers should expect
+   * the purchase token to be returned with this response code and use the purchase token with the
+   * Google Play Developer API.
    */
   SUBSCRIPTION_STATUS_UPDATED(1);
 
@@ -342,11 +339,7 @@ enum class PlatformRecurrenceMode(val raw: Int) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformQueryProduct (
-  val productId: String,
-  val productType: PlatformProductType
-)
- {
+data class PlatformQueryProduct(val productId: String, val productType: PlatformProductType) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformQueryProduct {
       val productId = pigeonVar_list[0] as String
@@ -354,12 +347,14 @@ data class PlatformQueryProduct (
       return PlatformQueryProduct(productId, productType)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      productId,
-      productType,
+        productId,
+        productType,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -368,7 +363,8 @@ data class PlatformQueryProduct (
       return true
     }
     val other = other as PlatformQueryProduct
-    return MessagesPigeonUtils.deepEquals(this.productId, other.productId) && MessagesPigeonUtils.deepEquals(this.productType, other.productType)
+    return MessagesPigeonUtils.deepEquals(this.productId, other.productId) &&
+        MessagesPigeonUtils.deepEquals(this.productType, other.productType)
   }
 
   override fun hashCode(): Int {
@@ -384,11 +380,10 @@ data class PlatformQueryProduct (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformAccountIdentifiers (
-  val obfuscatedAccountId: String? = null,
-  val obfuscatedProfileId: String? = null
-)
- {
+data class PlatformAccountIdentifiers(
+    val obfuscatedAccountId: String? = null,
+    val obfuscatedProfileId: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformAccountIdentifiers {
       val obfuscatedAccountId = pigeonVar_list[0] as String?
@@ -396,12 +391,14 @@ data class PlatformAccountIdentifiers (
       return PlatformAccountIdentifiers(obfuscatedAccountId, obfuscatedProfileId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      obfuscatedAccountId,
-      obfuscatedProfileId,
+        obfuscatedAccountId,
+        obfuscatedProfileId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -410,7 +407,8 @@ data class PlatformAccountIdentifiers (
       return true
     }
     val other = other as PlatformAccountIdentifiers
-    return MessagesPigeonUtils.deepEquals(this.obfuscatedAccountId, other.obfuscatedAccountId) && MessagesPigeonUtils.deepEquals(this.obfuscatedProfileId, other.obfuscatedProfileId)
+    return MessagesPigeonUtils.deepEquals(this.obfuscatedAccountId, other.obfuscatedAccountId) &&
+        MessagesPigeonUtils.deepEquals(this.obfuscatedProfileId, other.obfuscatedProfileId)
   }
 
   override fun hashCode(): Int {
@@ -426,11 +424,10 @@ data class PlatformAccountIdentifiers (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBillingResult (
-  val responseCode: PlatformBillingResponse,
-  val debugMessage: String
-)
- {
+data class PlatformBillingResult(
+    val responseCode: PlatformBillingResponse,
+    val debugMessage: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBillingResult {
       val responseCode = pigeonVar_list[0] as PlatformBillingResponse
@@ -438,12 +435,14 @@ data class PlatformBillingResult (
       return PlatformBillingResult(responseCode, debugMessage)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      responseCode,
-      debugMessage,
+        responseCode,
+        debugMessage,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -452,7 +451,8 @@ data class PlatformBillingResult (
       return true
     }
     val other = other as PlatformBillingResult
-    return MessagesPigeonUtils.deepEquals(this.responseCode, other.responseCode) && MessagesPigeonUtils.deepEquals(this.debugMessage, other.debugMessage)
+    return MessagesPigeonUtils.deepEquals(this.responseCode, other.responseCode) &&
+        MessagesPigeonUtils.deepEquals(this.debugMessage, other.debugMessage)
   }
 
   override fun hashCode(): Int {
@@ -468,27 +468,29 @@ data class PlatformBillingResult (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformOneTimePurchaseOfferDetails (
-  val priceAmountMicros: Long,
-  val formattedPrice: String,
-  val priceCurrencyCode: String
-)
- {
+data class PlatformOneTimePurchaseOfferDetails(
+    val priceAmountMicros: Long,
+    val formattedPrice: String,
+    val priceCurrencyCode: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformOneTimePurchaseOfferDetails {
       val priceAmountMicros = pigeonVar_list[0] as Long
       val formattedPrice = pigeonVar_list[1] as String
       val priceCurrencyCode = pigeonVar_list[2] as String
-      return PlatformOneTimePurchaseOfferDetails(priceAmountMicros, formattedPrice, priceCurrencyCode)
+      return PlatformOneTimePurchaseOfferDetails(
+          priceAmountMicros, formattedPrice, priceCurrencyCode)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      priceAmountMicros,
-      formattedPrice,
-      priceCurrencyCode,
+        priceAmountMicros,
+        formattedPrice,
+        priceCurrencyCode,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -497,7 +499,9 @@ data class PlatformOneTimePurchaseOfferDetails (
       return true
     }
     val other = other as PlatformOneTimePurchaseOfferDetails
-    return MessagesPigeonUtils.deepEquals(this.priceAmountMicros, other.priceAmountMicros) && MessagesPigeonUtils.deepEquals(this.formattedPrice, other.formattedPrice) && MessagesPigeonUtils.deepEquals(this.priceCurrencyCode, other.priceCurrencyCode)
+    return MessagesPigeonUtils.deepEquals(this.priceAmountMicros, other.priceAmountMicros) &&
+        MessagesPigeonUtils.deepEquals(this.formattedPrice, other.formattedPrice) &&
+        MessagesPigeonUtils.deepEquals(this.priceCurrencyCode, other.priceCurrencyCode)
   }
 
   override fun hashCode(): Int {
@@ -514,16 +518,15 @@ data class PlatformOneTimePurchaseOfferDetails (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformProductDetails (
-  val description: String,
-  val name: String,
-  val productId: String,
-  val productType: PlatformProductType,
-  val title: String,
-  val oneTimePurchaseOfferDetails: PlatformOneTimePurchaseOfferDetails? = null,
-  val subscriptionOfferDetails: List<PlatformSubscriptionOfferDetails>? = null
-)
- {
+data class PlatformProductDetails(
+    val description: String,
+    val name: String,
+    val productId: String,
+    val productType: PlatformProductType,
+    val title: String,
+    val oneTimePurchaseOfferDetails: PlatformOneTimePurchaseOfferDetails? = null,
+    val subscriptionOfferDetails: List<PlatformSubscriptionOfferDetails>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformProductDetails {
       val description = pigeonVar_list[0] as String
@@ -533,20 +536,29 @@ data class PlatformProductDetails (
       val title = pigeonVar_list[4] as String
       val oneTimePurchaseOfferDetails = pigeonVar_list[5] as PlatformOneTimePurchaseOfferDetails?
       val subscriptionOfferDetails = pigeonVar_list[6] as List<PlatformSubscriptionOfferDetails>?
-      return PlatformProductDetails(description, name, productId, productType, title, oneTimePurchaseOfferDetails, subscriptionOfferDetails)
+      return PlatformProductDetails(
+          description,
+          name,
+          productId,
+          productType,
+          title,
+          oneTimePurchaseOfferDetails,
+          subscriptionOfferDetails)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      description,
-      name,
-      productId,
-      productType,
-      title,
-      oneTimePurchaseOfferDetails,
-      subscriptionOfferDetails,
+        description,
+        name,
+        productId,
+        productType,
+        title,
+        oneTimePurchaseOfferDetails,
+        subscriptionOfferDetails,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -555,7 +567,15 @@ data class PlatformProductDetails (
       return true
     }
     val other = other as PlatformProductDetails
-    return MessagesPigeonUtils.deepEquals(this.description, other.description) && MessagesPigeonUtils.deepEquals(this.name, other.name) && MessagesPigeonUtils.deepEquals(this.productId, other.productId) && MessagesPigeonUtils.deepEquals(this.productType, other.productType) && MessagesPigeonUtils.deepEquals(this.title, other.title) && MessagesPigeonUtils.deepEquals(this.oneTimePurchaseOfferDetails, other.oneTimePurchaseOfferDetails) && MessagesPigeonUtils.deepEquals(this.subscriptionOfferDetails, other.subscriptionOfferDetails)
+    return MessagesPigeonUtils.deepEquals(this.description, other.description) &&
+        MessagesPigeonUtils.deepEquals(this.name, other.name) &&
+        MessagesPigeonUtils.deepEquals(this.productId, other.productId) &&
+        MessagesPigeonUtils.deepEquals(this.productType, other.productType) &&
+        MessagesPigeonUtils.deepEquals(this.title, other.title) &&
+        MessagesPigeonUtils.deepEquals(
+            this.oneTimePurchaseOfferDetails, other.oneTimePurchaseOfferDetails) &&
+        MessagesPigeonUtils.deepEquals(
+            this.subscriptionOfferDetails, other.subscriptionOfferDetails)
   }
 
   override fun hashCode(): Int {
@@ -572,16 +592,15 @@ data class PlatformProductDetails (
 }
 
 /**
- * Pigeon version of ProductDetailsResponseWrapper, which contains the
- * components of the Java ProductDetailsResponseListener callback.
+ * Pigeon version of ProductDetailsResponseWrapper, which contains the components of the Java
+ * ProductDetailsResponseListener callback.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformProductDetailsResponse (
-  val billingResult: PlatformBillingResult,
-  val productDetails: List<PlatformProductDetails>
-)
- {
+data class PlatformProductDetailsResponse(
+    val billingResult: PlatformBillingResult,
+    val productDetails: List<PlatformProductDetails>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformProductDetailsResponse {
       val billingResult = pigeonVar_list[0] as PlatformBillingResult
@@ -589,12 +608,14 @@ data class PlatformProductDetailsResponse (
       return PlatformProductDetailsResponse(billingResult, productDetails)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingResult,
-      productDetails,
+        billingResult,
+        productDetails,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -603,7 +624,8 @@ data class PlatformProductDetailsResponse (
       return true
     }
     val other = other as PlatformProductDetailsResponse
-    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) && MessagesPigeonUtils.deepEquals(this.productDetails, other.productDetails)
+    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) &&
+        MessagesPigeonUtils.deepEquals(this.productDetails, other.productDetails)
   }
 
   override fun hashCode(): Int {
@@ -615,30 +637,33 @@ data class PlatformProductDetailsResponse (
 }
 
 /**
- * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
- * contains the components of the Java
- * AlternativeBillingOnlyReportingDetailsListener callback.
+ * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which contains the components of
+ * the Java AlternativeBillingOnlyReportingDetailsListener callback.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformAlternativeBillingOnlyReportingDetailsResponse (
-  val billingResult: PlatformBillingResult,
-  val externalTransactionToken: String
-)
- {
+data class PlatformAlternativeBillingOnlyReportingDetailsResponse(
+    val billingResult: PlatformBillingResult,
+    val externalTransactionToken: String
+) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): PlatformAlternativeBillingOnlyReportingDetailsResponse {
+    fun fromList(
+        pigeonVar_list: List<Any?>
+    ): PlatformAlternativeBillingOnlyReportingDetailsResponse {
       val billingResult = pigeonVar_list[0] as PlatformBillingResult
       val externalTransactionToken = pigeonVar_list[1] as String
-      return PlatformAlternativeBillingOnlyReportingDetailsResponse(billingResult, externalTransactionToken)
+      return PlatformAlternativeBillingOnlyReportingDetailsResponse(
+          billingResult, externalTransactionToken)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingResult,
-      externalTransactionToken,
+        billingResult,
+        externalTransactionToken,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -647,7 +672,9 @@ data class PlatformAlternativeBillingOnlyReportingDetailsResponse (
       return true
     }
     val other = other as PlatformAlternativeBillingOnlyReportingDetailsResponse
-    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) && MessagesPigeonUtils.deepEquals(this.externalTransactionToken, other.externalTransactionToken)
+    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) &&
+        MessagesPigeonUtils.deepEquals(
+            this.externalTransactionToken, other.externalTransactionToken)
   }
 
   override fun hashCode(): Int {
@@ -663,13 +690,12 @@ data class PlatformAlternativeBillingOnlyReportingDetailsResponse (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformInAppMessageResult (
-  /** Returns response code for the in-app messaging API call. */
-  val responseCode: PlatformInAppMessageResponse,
-  /** Returns token that identifies the purchase to be acknowledged, if any. */
-  val purchaseToken: String? = null
-)
- {
+data class PlatformInAppMessageResult(
+    /** Returns response code for the in-app messaging API call. */
+    val responseCode: PlatformInAppMessageResponse,
+    /** Returns token that identifies the purchase to be acknowledged, if any. */
+    val purchaseToken: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformInAppMessageResult {
       val responseCode = pigeonVar_list[0] as PlatformInAppMessageResponse
@@ -677,12 +703,14 @@ data class PlatformInAppMessageResult (
       return PlatformInAppMessageResult(responseCode, purchaseToken)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      responseCode,
-      purchaseToken,
+        responseCode,
+        purchaseToken,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -691,7 +719,8 @@ data class PlatformInAppMessageResult (
       return true
     }
     val other = other as PlatformInAppMessageResult
-    return MessagesPigeonUtils.deepEquals(this.responseCode, other.responseCode) && MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
+    return MessagesPigeonUtils.deepEquals(this.responseCode, other.responseCode) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
   }
 
   override fun hashCode(): Int {
@@ -703,16 +732,15 @@ data class PlatformInAppMessageResult (
 }
 
 /**
- * Pigeon version of BillingConfigWrapper, which contains the components of the
- * Java BillingConfigResponseListener callback.
+ * Pigeon version of BillingConfigWrapper, which contains the components of the Java
+ * BillingConfigResponseListener callback.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBillingConfigResponse (
-  val billingResult: PlatformBillingResult,
-  val countryCode: String
-)
- {
+data class PlatformBillingConfigResponse(
+    val billingResult: PlatformBillingResult,
+    val countryCode: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBillingConfigResponse {
       val billingResult = pigeonVar_list[0] as PlatformBillingResult
@@ -720,12 +748,14 @@ data class PlatformBillingConfigResponse (
       return PlatformBillingConfigResponse(billingResult, countryCode)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingResult,
-      countryCode,
+        billingResult,
+        countryCode,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -734,7 +764,8 @@ data class PlatformBillingConfigResponse (
       return true
     }
     val other = other as PlatformBillingConfigResponse
-    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) && MessagesPigeonUtils.deepEquals(this.countryCode, other.countryCode)
+    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) &&
+        MessagesPigeonUtils.deepEquals(this.countryCode, other.countryCode)
   }
 
   override fun hashCode(): Int {
@@ -750,16 +781,15 @@ data class PlatformBillingConfigResponse (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformBillingFlowParams (
-  val product: String,
-  val replacementMode: PlatformReplacementMode,
-  val offerToken: String? = null,
-  val accountId: String? = null,
-  val obfuscatedProfileId: String? = null,
-  val oldProduct: String? = null,
-  val purchaseToken: String? = null
-)
- {
+data class PlatformBillingFlowParams(
+    val product: String,
+    val replacementMode: PlatformReplacementMode,
+    val offerToken: String? = null,
+    val accountId: String? = null,
+    val obfuscatedProfileId: String? = null,
+    val oldProduct: String? = null,
+    val purchaseToken: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformBillingFlowParams {
       val product = pigeonVar_list[0] as String
@@ -769,20 +799,29 @@ data class PlatformBillingFlowParams (
       val obfuscatedProfileId = pigeonVar_list[4] as String?
       val oldProduct = pigeonVar_list[5] as String?
       val purchaseToken = pigeonVar_list[6] as String?
-      return PlatformBillingFlowParams(product, replacementMode, offerToken, accountId, obfuscatedProfileId, oldProduct, purchaseToken)
+      return PlatformBillingFlowParams(
+          product,
+          replacementMode,
+          offerToken,
+          accountId,
+          obfuscatedProfileId,
+          oldProduct,
+          purchaseToken)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      product,
-      replacementMode,
-      offerToken,
-      accountId,
-      obfuscatedProfileId,
-      oldProduct,
-      purchaseToken,
+        product,
+        replacementMode,
+        offerToken,
+        accountId,
+        obfuscatedProfileId,
+        oldProduct,
+        purchaseToken,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -791,7 +830,13 @@ data class PlatformBillingFlowParams (
       return true
     }
     val other = other as PlatformBillingFlowParams
-    return MessagesPigeonUtils.deepEquals(this.product, other.product) && MessagesPigeonUtils.deepEquals(this.replacementMode, other.replacementMode) && MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) && MessagesPigeonUtils.deepEquals(this.accountId, other.accountId) && MessagesPigeonUtils.deepEquals(this.obfuscatedProfileId, other.obfuscatedProfileId) && MessagesPigeonUtils.deepEquals(this.oldProduct, other.oldProduct) && MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
+    return MessagesPigeonUtils.deepEquals(this.product, other.product) &&
+        MessagesPigeonUtils.deepEquals(this.replacementMode, other.replacementMode) &&
+        MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) &&
+        MessagesPigeonUtils.deepEquals(this.accountId, other.accountId) &&
+        MessagesPigeonUtils.deepEquals(this.obfuscatedProfileId, other.obfuscatedProfileId) &&
+        MessagesPigeonUtils.deepEquals(this.oldProduct, other.oldProduct) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
   }
 
   override fun hashCode(): Int {
@@ -812,15 +857,14 @@ data class PlatformBillingFlowParams (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPricingPhase (
-  val billingCycleCount: Long,
-  val recurrenceMode: PlatformRecurrenceMode,
-  val priceAmountMicros: Long,
-  val billingPeriod: String,
-  val formattedPrice: String,
-  val priceCurrencyCode: String
-)
- {
+data class PlatformPricingPhase(
+    val billingCycleCount: Long,
+    val recurrenceMode: PlatformRecurrenceMode,
+    val priceAmountMicros: Long,
+    val billingPeriod: String,
+    val formattedPrice: String,
+    val priceCurrencyCode: String
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPricingPhase {
       val billingCycleCount = pigeonVar_list[0] as Long
@@ -829,19 +873,27 @@ data class PlatformPricingPhase (
       val billingPeriod = pigeonVar_list[3] as String
       val formattedPrice = pigeonVar_list[4] as String
       val priceCurrencyCode = pigeonVar_list[5] as String
-      return PlatformPricingPhase(billingCycleCount, recurrenceMode, priceAmountMicros, billingPeriod, formattedPrice, priceCurrencyCode)
+      return PlatformPricingPhase(
+          billingCycleCount,
+          recurrenceMode,
+          priceAmountMicros,
+          billingPeriod,
+          formattedPrice,
+          priceCurrencyCode)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingCycleCount,
-      recurrenceMode,
-      priceAmountMicros,
-      billingPeriod,
-      formattedPrice,
-      priceCurrencyCode,
+        billingCycleCount,
+        recurrenceMode,
+        priceAmountMicros,
+        billingPeriod,
+        formattedPrice,
+        priceCurrencyCode,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -850,7 +902,12 @@ data class PlatformPricingPhase (
       return true
     }
     val other = other as PlatformPricingPhase
-    return MessagesPigeonUtils.deepEquals(this.billingCycleCount, other.billingCycleCount) && MessagesPigeonUtils.deepEquals(this.recurrenceMode, other.recurrenceMode) && MessagesPigeonUtils.deepEquals(this.priceAmountMicros, other.priceAmountMicros) && MessagesPigeonUtils.deepEquals(this.billingPeriod, other.billingPeriod) && MessagesPigeonUtils.deepEquals(this.formattedPrice, other.formattedPrice) && MessagesPigeonUtils.deepEquals(this.priceCurrencyCode, other.priceCurrencyCode)
+    return MessagesPigeonUtils.deepEquals(this.billingCycleCount, other.billingCycleCount) &&
+        MessagesPigeonUtils.deepEquals(this.recurrenceMode, other.recurrenceMode) &&
+        MessagesPigeonUtils.deepEquals(this.priceAmountMicros, other.priceAmountMicros) &&
+        MessagesPigeonUtils.deepEquals(this.billingPeriod, other.billingPeriod) &&
+        MessagesPigeonUtils.deepEquals(this.formattedPrice, other.formattedPrice) &&
+        MessagesPigeonUtils.deepEquals(this.priceCurrencyCode, other.priceCurrencyCode)
   }
 
   override fun hashCode(): Int {
@@ -872,23 +929,22 @@ data class PlatformPricingPhase (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPurchase (
-  val orderId: String? = null,
-  val packageName: String,
-  val purchaseTime: Long,
-  val purchaseToken: String,
-  val signature: String,
-  val products: List<String>,
-  val isAutoRenewing: Boolean,
-  val originalJson: String,
-  val developerPayload: String,
-  val isAcknowledged: Boolean,
-  val quantity: Long,
-  val purchaseState: PlatformPurchaseState,
-  val accountIdentifiers: PlatformAccountIdentifiers? = null,
-  val pendingPurchaseUpdate: PlatformPendingPurchaseUpdate? = null
-)
- {
+data class PlatformPurchase(
+    val orderId: String? = null,
+    val packageName: String,
+    val purchaseTime: Long,
+    val purchaseToken: String,
+    val signature: String,
+    val products: List<String>,
+    val isAutoRenewing: Boolean,
+    val originalJson: String,
+    val developerPayload: String,
+    val isAcknowledged: Boolean,
+    val quantity: Long,
+    val purchaseState: PlatformPurchaseState,
+    val accountIdentifiers: PlatformAccountIdentifiers? = null,
+    val pendingPurchaseUpdate: PlatformPendingPurchaseUpdate? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPurchase {
       val orderId = pigeonVar_list[0] as String?
@@ -905,27 +961,43 @@ data class PlatformPurchase (
       val purchaseState = pigeonVar_list[11] as PlatformPurchaseState
       val accountIdentifiers = pigeonVar_list[12] as PlatformAccountIdentifiers?
       val pendingPurchaseUpdate = pigeonVar_list[13] as PlatformPendingPurchaseUpdate?
-      return PlatformPurchase(orderId, packageName, purchaseTime, purchaseToken, signature, products, isAutoRenewing, originalJson, developerPayload, isAcknowledged, quantity, purchaseState, accountIdentifiers, pendingPurchaseUpdate)
+      return PlatformPurchase(
+          orderId,
+          packageName,
+          purchaseTime,
+          purchaseToken,
+          signature,
+          products,
+          isAutoRenewing,
+          originalJson,
+          developerPayload,
+          isAcknowledged,
+          quantity,
+          purchaseState,
+          accountIdentifiers,
+          pendingPurchaseUpdate)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      orderId,
-      packageName,
-      purchaseTime,
-      purchaseToken,
-      signature,
-      products,
-      isAutoRenewing,
-      originalJson,
-      developerPayload,
-      isAcknowledged,
-      quantity,
-      purchaseState,
-      accountIdentifiers,
-      pendingPurchaseUpdate,
+        orderId,
+        packageName,
+        purchaseTime,
+        purchaseToken,
+        signature,
+        products,
+        isAutoRenewing,
+        originalJson,
+        developerPayload,
+        isAcknowledged,
+        quantity,
+        purchaseState,
+        accountIdentifiers,
+        pendingPurchaseUpdate,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -934,7 +1006,20 @@ data class PlatformPurchase (
       return true
     }
     val other = other as PlatformPurchase
-    return MessagesPigeonUtils.deepEquals(this.orderId, other.orderId) && MessagesPigeonUtils.deepEquals(this.packageName, other.packageName) && MessagesPigeonUtils.deepEquals(this.purchaseTime, other.purchaseTime) && MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken) && MessagesPigeonUtils.deepEquals(this.signature, other.signature) && MessagesPigeonUtils.deepEquals(this.products, other.products) && MessagesPigeonUtils.deepEquals(this.isAutoRenewing, other.isAutoRenewing) && MessagesPigeonUtils.deepEquals(this.originalJson, other.originalJson) && MessagesPigeonUtils.deepEquals(this.developerPayload, other.developerPayload) && MessagesPigeonUtils.deepEquals(this.isAcknowledged, other.isAcknowledged) && MessagesPigeonUtils.deepEquals(this.quantity, other.quantity) && MessagesPigeonUtils.deepEquals(this.purchaseState, other.purchaseState) && MessagesPigeonUtils.deepEquals(this.accountIdentifiers, other.accountIdentifiers) && MessagesPigeonUtils.deepEquals(this.pendingPurchaseUpdate, other.pendingPurchaseUpdate)
+    return MessagesPigeonUtils.deepEquals(this.orderId, other.orderId) &&
+        MessagesPigeonUtils.deepEquals(this.packageName, other.packageName) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseTime, other.purchaseTime) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken) &&
+        MessagesPigeonUtils.deepEquals(this.signature, other.signature) &&
+        MessagesPigeonUtils.deepEquals(this.products, other.products) &&
+        MessagesPigeonUtils.deepEquals(this.isAutoRenewing, other.isAutoRenewing) &&
+        MessagesPigeonUtils.deepEquals(this.originalJson, other.originalJson) &&
+        MessagesPigeonUtils.deepEquals(this.developerPayload, other.developerPayload) &&
+        MessagesPigeonUtils.deepEquals(this.isAcknowledged, other.isAcknowledged) &&
+        MessagesPigeonUtils.deepEquals(this.quantity, other.quantity) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseState, other.purchaseState) &&
+        MessagesPigeonUtils.deepEquals(this.accountIdentifiers, other.accountIdentifiers) &&
+        MessagesPigeonUtils.deepEquals(this.pendingPurchaseUpdate, other.pendingPurchaseUpdate)
   }
 
   override fun hashCode(): Int {
@@ -964,11 +1049,7 @@ data class PlatformPurchase (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPendingPurchaseUpdate (
-  val products: List<String>,
-  val purchaseToken: String
-)
- {
+data class PlatformPendingPurchaseUpdate(val products: List<String>, val purchaseToken: String) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPendingPurchaseUpdate {
       val products = pigeonVar_list[0] as List<String>
@@ -976,12 +1057,14 @@ data class PlatformPendingPurchaseUpdate (
       return PlatformPendingPurchaseUpdate(products, purchaseToken)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      products,
-      purchaseToken,
+        products,
+        purchaseToken,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -990,7 +1073,8 @@ data class PlatformPendingPurchaseUpdate (
       return true
     }
     val other = other as PlatformPendingPurchaseUpdate
-    return MessagesPigeonUtils.deepEquals(this.products, other.products) && MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
+    return MessagesPigeonUtils.deepEquals(this.products, other.products) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken)
   }
 
   override fun hashCode(): Int {
@@ -1008,16 +1092,15 @@ data class PlatformPendingPurchaseUpdate (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPurchaseHistoryRecord (
-  val quantity: Long,
-  val purchaseTime: Long,
-  val developerPayload: String? = null,
-  val originalJson: String,
-  val purchaseToken: String,
-  val signature: String,
-  val products: List<String>
-)
- {
+data class PlatformPurchaseHistoryRecord(
+    val quantity: Long,
+    val purchaseTime: Long,
+    val developerPayload: String? = null,
+    val originalJson: String,
+    val purchaseToken: String,
+    val signature: String,
+    val products: List<String>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPurchaseHistoryRecord {
       val quantity = pigeonVar_list[0] as Long
@@ -1027,20 +1110,29 @@ data class PlatformPurchaseHistoryRecord (
       val purchaseToken = pigeonVar_list[4] as String
       val signature = pigeonVar_list[5] as String
       val products = pigeonVar_list[6] as List<String>
-      return PlatformPurchaseHistoryRecord(quantity, purchaseTime, developerPayload, originalJson, purchaseToken, signature, products)
+      return PlatformPurchaseHistoryRecord(
+          quantity,
+          purchaseTime,
+          developerPayload,
+          originalJson,
+          purchaseToken,
+          signature,
+          products)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      quantity,
-      purchaseTime,
-      developerPayload,
-      originalJson,
-      purchaseToken,
-      signature,
-      products,
+        quantity,
+        purchaseTime,
+        developerPayload,
+        originalJson,
+        purchaseToken,
+        signature,
+        products,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1049,7 +1141,13 @@ data class PlatformPurchaseHistoryRecord (
       return true
     }
     val other = other as PlatformPurchaseHistoryRecord
-    return MessagesPigeonUtils.deepEquals(this.quantity, other.quantity) && MessagesPigeonUtils.deepEquals(this.purchaseTime, other.purchaseTime) && MessagesPigeonUtils.deepEquals(this.developerPayload, other.developerPayload) && MessagesPigeonUtils.deepEquals(this.originalJson, other.originalJson) && MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken) && MessagesPigeonUtils.deepEquals(this.signature, other.signature) && MessagesPigeonUtils.deepEquals(this.products, other.products)
+    return MessagesPigeonUtils.deepEquals(this.quantity, other.quantity) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseTime, other.purchaseTime) &&
+        MessagesPigeonUtils.deepEquals(this.developerPayload, other.developerPayload) &&
+        MessagesPigeonUtils.deepEquals(this.originalJson, other.originalJson) &&
+        MessagesPigeonUtils.deepEquals(this.purchaseToken, other.purchaseToken) &&
+        MessagesPigeonUtils.deepEquals(this.signature, other.signature) &&
+        MessagesPigeonUtils.deepEquals(this.products, other.products)
   }
 
   override fun hashCode(): Int {
@@ -1066,16 +1164,15 @@ data class PlatformPurchaseHistoryRecord (
 }
 
 /**
- * Pigeon version of PurchasesHistoryResult, which contains the components of
- * the Java PurchaseHistoryResponseListener callback.
+ * Pigeon version of PurchasesHistoryResult, which contains the components of the Java
+ * PurchaseHistoryResponseListener callback.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPurchaseHistoryResponse (
-  val billingResult: PlatformBillingResult,
-  val purchases: List<PlatformPurchaseHistoryRecord>
-)
- {
+data class PlatformPurchaseHistoryResponse(
+    val billingResult: PlatformBillingResult,
+    val purchases: List<PlatformPurchaseHistoryRecord>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPurchaseHistoryResponse {
       val billingResult = pigeonVar_list[0] as PlatformBillingResult
@@ -1083,12 +1180,14 @@ data class PlatformPurchaseHistoryResponse (
       return PlatformPurchaseHistoryResponse(billingResult, purchases)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingResult,
-      purchases,
+        billingResult,
+        purchases,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1097,7 +1196,8 @@ data class PlatformPurchaseHistoryResponse (
       return true
     }
     val other = other as PlatformPurchaseHistoryResponse
-    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) && MessagesPigeonUtils.deepEquals(this.purchases, other.purchases)
+    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) &&
+        MessagesPigeonUtils.deepEquals(this.purchases, other.purchases)
   }
 
   override fun hashCode(): Int {
@@ -1109,16 +1209,15 @@ data class PlatformPurchaseHistoryResponse (
 }
 
 /**
- * Pigeon version of PurchasesResultWrapper, which contains the components of
- * the Java PurchasesResponseListener callback.
+ * Pigeon version of PurchasesResultWrapper, which contains the components of the Java
+ * PurchasesResponseListener callback.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPurchasesResponse (
-  val billingResult: PlatformBillingResult,
-  val purchases: List<PlatformPurchase>
-)
- {
+data class PlatformPurchasesResponse(
+    val billingResult: PlatformBillingResult,
+    val purchases: List<PlatformPurchase>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPurchasesResponse {
       val billingResult = pigeonVar_list[0] as PlatformBillingResult
@@ -1126,12 +1225,14 @@ data class PlatformPurchasesResponse (
       return PlatformPurchasesResponse(billingResult, purchases)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      billingResult,
-      purchases,
+        billingResult,
+        purchases,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1140,7 +1241,8 @@ data class PlatformPurchasesResponse (
       return true
     }
     val other = other as PlatformPurchasesResponse
-    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) && MessagesPigeonUtils.deepEquals(this.purchases, other.purchases)
+    return MessagesPigeonUtils.deepEquals(this.billingResult, other.billingResult) &&
+        MessagesPigeonUtils.deepEquals(this.purchases, other.purchases)
   }
 
   override fun hashCode(): Int {
@@ -1156,15 +1258,14 @@ data class PlatformPurchasesResponse (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformSubscriptionOfferDetails (
-  val basePlanId: String,
-  val offerId: String? = null,
-  val offerToken: String,
-  val offerTags: List<String>,
-  val pricingPhases: List<PlatformPricingPhase>,
-  val installmentPlanDetails: PlatformInstallmentPlanDetails? = null
-)
- {
+data class PlatformSubscriptionOfferDetails(
+    val basePlanId: String,
+    val offerId: String? = null,
+    val offerToken: String,
+    val offerTags: List<String>,
+    val pricingPhases: List<PlatformPricingPhase>,
+    val installmentPlanDetails: PlatformInstallmentPlanDetails? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformSubscriptionOfferDetails {
       val basePlanId = pigeonVar_list[0] as String
@@ -1173,19 +1274,22 @@ data class PlatformSubscriptionOfferDetails (
       val offerTags = pigeonVar_list[3] as List<String>
       val pricingPhases = pigeonVar_list[4] as List<PlatformPricingPhase>
       val installmentPlanDetails = pigeonVar_list[5] as PlatformInstallmentPlanDetails?
-      return PlatformSubscriptionOfferDetails(basePlanId, offerId, offerToken, offerTags, pricingPhases, installmentPlanDetails)
+      return PlatformSubscriptionOfferDetails(
+          basePlanId, offerId, offerToken, offerTags, pricingPhases, installmentPlanDetails)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      basePlanId,
-      offerId,
-      offerToken,
-      offerTags,
-      pricingPhases,
-      installmentPlanDetails,
+        basePlanId,
+        offerId,
+        offerToken,
+        offerTags,
+        pricingPhases,
+        installmentPlanDetails,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1194,7 +1298,12 @@ data class PlatformSubscriptionOfferDetails (
       return true
     }
     val other = other as PlatformSubscriptionOfferDetails
-    return MessagesPigeonUtils.deepEquals(this.basePlanId, other.basePlanId) && MessagesPigeonUtils.deepEquals(this.offerId, other.offerId) && MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) && MessagesPigeonUtils.deepEquals(this.offerTags, other.offerTags) && MessagesPigeonUtils.deepEquals(this.pricingPhases, other.pricingPhases) && MessagesPigeonUtils.deepEquals(this.installmentPlanDetails, other.installmentPlanDetails)
+    return MessagesPigeonUtils.deepEquals(this.basePlanId, other.basePlanId) &&
+        MessagesPigeonUtils.deepEquals(this.offerId, other.offerId) &&
+        MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) &&
+        MessagesPigeonUtils.deepEquals(this.offerTags, other.offerTags) &&
+        MessagesPigeonUtils.deepEquals(this.pricingPhases, other.pricingPhases) &&
+        MessagesPigeonUtils.deepEquals(this.installmentPlanDetails, other.installmentPlanDetails)
   }
 
   override fun hashCode(): Int {
@@ -1214,27 +1323,29 @@ data class PlatformSubscriptionOfferDetails (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformUserChoiceDetails (
-  val originalExternalTransactionId: String? = null,
-  val externalTransactionToken: String,
-  val products: List<PlatformUserChoiceProduct>
-)
- {
+data class PlatformUserChoiceDetails(
+    val originalExternalTransactionId: String? = null,
+    val externalTransactionToken: String,
+    val products: List<PlatformUserChoiceProduct>
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformUserChoiceDetails {
       val originalExternalTransactionId = pigeonVar_list[0] as String?
       val externalTransactionToken = pigeonVar_list[1] as String
       val products = pigeonVar_list[2] as List<PlatformUserChoiceProduct>
-      return PlatformUserChoiceDetails(originalExternalTransactionId, externalTransactionToken, products)
+      return PlatformUserChoiceDetails(
+          originalExternalTransactionId, externalTransactionToken, products)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      originalExternalTransactionId,
-      externalTransactionToken,
-      products,
+        originalExternalTransactionId,
+        externalTransactionToken,
+        products,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1243,7 +1354,11 @@ data class PlatformUserChoiceDetails (
       return true
     }
     val other = other as PlatformUserChoiceDetails
-    return MessagesPigeonUtils.deepEquals(this.originalExternalTransactionId, other.originalExternalTransactionId) && MessagesPigeonUtils.deepEquals(this.externalTransactionToken, other.externalTransactionToken) && MessagesPigeonUtils.deepEquals(this.products, other.products)
+    return MessagesPigeonUtils.deepEquals(
+        this.originalExternalTransactionId, other.originalExternalTransactionId) &&
+        MessagesPigeonUtils.deepEquals(
+            this.externalTransactionToken, other.externalTransactionToken) &&
+        MessagesPigeonUtils.deepEquals(this.products, other.products)
   }
 
   override fun hashCode(): Int {
@@ -1260,12 +1375,11 @@ data class PlatformUserChoiceDetails (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformUserChoiceProduct (
-  val id: String,
-  val offerToken: String? = null,
-  val type: PlatformProductType
-)
- {
+data class PlatformUserChoiceProduct(
+    val id: String,
+    val offerToken: String? = null,
+    val type: PlatformProductType
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformUserChoiceProduct {
       val id = pigeonVar_list[0] as String
@@ -1274,13 +1388,15 @@ data class PlatformUserChoiceProduct (
       return PlatformUserChoiceProduct(id, offerToken, type)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      id,
-      offerToken,
-      type,
+        id,
+        offerToken,
+        type,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1289,7 +1405,9 @@ data class PlatformUserChoiceProduct (
       return true
     }
     val other = other as PlatformUserChoiceProduct
-    return MessagesPigeonUtils.deepEquals(this.id, other.id) && MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) && MessagesPigeonUtils.deepEquals(this.type, other.type)
+    return MessagesPigeonUtils.deepEquals(this.id, other.id) &&
+        MessagesPigeonUtils.deepEquals(this.offerToken, other.offerToken) &&
+        MessagesPigeonUtils.deepEquals(this.type, other.type)
   }
 
   override fun hashCode(): Int {
@@ -1307,24 +1425,26 @@ data class PlatformUserChoiceProduct (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformInstallmentPlanDetails (
-  val commitmentPaymentsCount: Long,
-  val subsequentCommitmentPaymentsCount: Long
-)
- {
+data class PlatformInstallmentPlanDetails(
+    val commitmentPaymentsCount: Long,
+    val subsequentCommitmentPaymentsCount: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformInstallmentPlanDetails {
       val commitmentPaymentsCount = pigeonVar_list[0] as Long
       val subsequentCommitmentPaymentsCount = pigeonVar_list[1] as Long
-      return PlatformInstallmentPlanDetails(commitmentPaymentsCount, subsequentCommitmentPaymentsCount)
+      return PlatformInstallmentPlanDetails(
+          commitmentPaymentsCount, subsequentCommitmentPaymentsCount)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      commitmentPaymentsCount,
-      subsequentCommitmentPaymentsCount,
+        commitmentPaymentsCount,
+        subsequentCommitmentPaymentsCount,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1333,7 +1453,10 @@ data class PlatformInstallmentPlanDetails (
       return true
     }
     val other = other as PlatformInstallmentPlanDetails
-    return MessagesPigeonUtils.deepEquals(this.commitmentPaymentsCount, other.commitmentPaymentsCount) && MessagesPigeonUtils.deepEquals(this.subsequentCommitmentPaymentsCount, other.subsequentCommitmentPaymentsCount)
+    return MessagesPigeonUtils.deepEquals(
+        this.commitmentPaymentsCount, other.commitmentPaymentsCount) &&
+        MessagesPigeonUtils.deepEquals(
+            this.subsequentCommitmentPaymentsCount, other.subsequentCommitmentPaymentsCount)
   }
 
   override fun hashCode(): Int {
@@ -1349,21 +1472,20 @@ data class PlatformInstallmentPlanDetails (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformPendingPurchasesParams (
-  val enablePrepaidPlans: Boolean
-)
- {
+data class PlatformPendingPurchasesParams(val enablePrepaidPlans: Boolean) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformPendingPurchasesParams {
       val enablePrepaidPlans = pigeonVar_list[0] as Boolean
       return PlatformPendingPurchasesParams(enablePrepaidPlans)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      enablePrepaidPlans,
+        enablePrepaidPlans,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other == null || other.javaClass != javaClass) {
       return false
@@ -1381,63 +1503,42 @@ data class PlatformPendingPurchasesParams (
     return result
   }
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformBillingResponse.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformBillingResponse.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformInAppMessageResponse.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformInAppMessageResponse.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformReplacementMode.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformReplacementMode.ofRaw(it.toInt()) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformProductType.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformProductType.ofRaw(it.toInt()) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformBillingChoiceMode.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformBillingChoiceMode.ofRaw(it.toInt()) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformBillingClientFeature.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformBillingClientFeature.ofRaw(it.toInt()) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformPurchaseState.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformPurchaseState.ofRaw(it.toInt()) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformRecurrenceMode.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformRecurrenceMode.ofRaw(it.toInt()) }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformQueryProduct.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformQueryProduct.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformAccountIdentifiers.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformAccountIdentifiers.fromList(it) }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBillingResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBillingResult.fromList(it) }
       }
       140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1445,9 +1546,7 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       141.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformProductDetails.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformProductDetails.fromList(it) }
       }
       142.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1460,9 +1559,7 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       144.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformInAppMessageResult.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformInAppMessageResult.fromList(it) }
       }
       145.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1470,19 +1567,13 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       146.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformBillingFlowParams.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformBillingFlowParams.fromList(it) }
       }
       147.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPricingPhase.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPricingPhase.fromList(it) }
       }
       148.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPurchase.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPurchase.fromList(it) }
       }
       149.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1500,9 +1591,7 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       152.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformPurchasesResponse.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformPurchasesResponse.fromList(it) }
       }
       153.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1510,14 +1599,10 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       154.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformUserChoiceDetails.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformUserChoiceDetails.fromList(it) }
       }
       155.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformUserChoiceProduct.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlatformUserChoiceProduct.fromList(it) }
       }
       156.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -1532,7 +1617,8 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is PlatformBillingResponse -> {
         stream.write(129)
@@ -1655,58 +1741,98 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
   }
 }
 
-
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface InAppPurchaseApi {
   /** Wraps BillingClient#isReady. */
   fun isReady(): Boolean
   /** Wraps BillingClient#startConnection(BillingClientStateListener). */
-  fun startConnection(callbackHandle: Long, billingMode: PlatformBillingChoiceMode, pendingPurchasesParams: PlatformPendingPurchasesParams, callback: (Result<PlatformBillingResult>) -> Unit)
+  fun startConnection(
+      callbackHandle: Long,
+      billingMode: PlatformBillingChoiceMode,
+      pendingPurchasesParams: PlatformPendingPurchasesParams,
+      callback: (Result<PlatformBillingResult>) -> Unit
+  )
   /** Wraps BillingClient#endConnection(BillingClientStateListener). */
   fun endConnection()
-  /** Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener). */
+  /**
+   * Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams,
+   * BillingConfigResponseListener).
+   */
   fun getBillingConfigAsync(callback: (Result<PlatformBillingConfigResponse>) -> Unit)
   /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
   fun launchBillingFlow(params: PlatformBillingFlowParams): PlatformBillingResult
-  /** Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener). */
+  /**
+   * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
+   * AcknowledgePurchaseResponseListener).
+   */
   fun acknowledgePurchase(purchaseToken: String, callback: (Result<PlatformBillingResult>) -> Unit)
   /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
   fun consumeAsync(purchaseToken: String, callback: (Result<PlatformBillingResult>) -> Unit)
   /** Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener). */
-  fun queryPurchasesAsync(productType: PlatformProductType, callback: (Result<PlatformPurchasesResponse>) -> Unit)
-  /** Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener). */
-  fun queryPurchaseHistoryAsync(productType: PlatformProductType, callback: (Result<PlatformPurchaseHistoryResponse>) -> Unit)
-  /** Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener). */
-  fun queryProductDetailsAsync(products: List<PlatformQueryProduct>, callback: (Result<PlatformProductDetailsResponse>) -> Unit)
+  fun queryPurchasesAsync(
+      productType: PlatformProductType,
+      callback: (Result<PlatformPurchasesResponse>) -> Unit
+  )
+  /**
+   * Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,
+   * PurchaseHistoryResponseListener).
+   */
+  fun queryPurchaseHistoryAsync(
+      productType: PlatformProductType,
+      callback: (Result<PlatformPurchaseHistoryResponse>) -> Unit
+  )
+  /**
+   * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
+   * ProductDetailsResponseListener).
+   */
+  fun queryProductDetailsAsync(
+      products: List<PlatformQueryProduct>,
+      callback: (Result<PlatformProductDetailsResponse>) -> Unit
+  )
   /** Wraps BillingClient#isFeatureSupported(String). */
   fun isFeatureSupported(feature: PlatformBillingClientFeature): Boolean
   /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
   fun isAlternativeBillingOnlyAvailableAsync(callback: (Result<PlatformBillingResult>) -> Unit)
   /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
   fun showAlternativeBillingOnlyInformationDialog(callback: (Result<PlatformBillingResult>) -> Unit)
-  /** Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener). */
-  fun createAlternativeBillingOnlyReportingDetailsAsync(callback: (Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>) -> Unit)
+  /**
+   * Wraps
+   * BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
+   */
+  fun createAlternativeBillingOnlyReportingDetailsAsync(
+      callback: (Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>) -> Unit
+  )
   /** Wraps BillingClient#showInAppMessages(). */
   fun showInAppMessages(callback: (Result<PlatformInAppMessageResult>) -> Unit)
 
   companion object {
     /** The codec used by InAppPurchaseApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: InAppPurchaseApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: InAppPurchaseApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.isReady())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isReady())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1714,14 +1840,19 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val callbackHandleArg = args[0] as Long
             val billingModeArg = args[1] as PlatformBillingChoiceMode
             val pendingPurchasesParamsArg = args[2] as PlatformPendingPurchasesParams
-            api.startConnection(callbackHandleArg, billingModeArg, pendingPurchasesParamsArg) { result: Result<PlatformBillingResult> ->
+            api.startConnection(callbackHandleArg, billingModeArg, pendingPurchasesParamsArg) {
+                result: Result<PlatformBillingResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1736,15 +1867,20 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.endConnection()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.endConnection()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1752,10 +1888,14 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.getBillingConfigAsync{ result: Result<PlatformBillingConfigResponse> ->
+            api.getBillingConfigAsync { result: Result<PlatformBillingConfigResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1770,16 +1910,21 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val paramsArg = args[0] as PlatformBillingFlowParams
-            val wrapped: List<Any?> = try {
-              listOf(api.launchBillingFlow(paramsArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.launchBillingFlow(paramsArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1787,7 +1932,11 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1807,7 +1956,11 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1827,7 +1980,11 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1847,12 +2004,17 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val productTypeArg = args[0] as PlatformProductType
-            api.queryPurchaseHistoryAsync(productTypeArg) { result: Result<PlatformPurchaseHistoryResponse> ->
+            api.queryPurchaseHistoryAsync(productTypeArg) {
+                result: Result<PlatformPurchaseHistoryResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1867,12 +2029,17 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val productsArg = args[0] as List<PlatformQueryProduct>
-            api.queryProductDetailsAsync(productsArg) { result: Result<PlatformProductDetailsResponse> ->
+            api.queryProductDetailsAsync(productsArg) {
+                result: Result<PlatformProductDetailsResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1887,16 +2054,21 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val featureArg = args[0] as PlatformBillingClientFeature
-            val wrapped: List<Any?> = try {
-              listOf(api.isFeatureSupported(featureArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isFeatureSupported(featureArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1904,10 +2076,14 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.isAlternativeBillingOnlyAvailableAsync{ result: Result<PlatformBillingResult> ->
+            api.isAlternativeBillingOnlyAvailableAsync { result: Result<PlatformBillingResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1922,10 +2098,15 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.showAlternativeBillingOnlyInformationDialog{ result: Result<PlatformBillingResult> ->
+            api.showAlternativeBillingOnlyInformationDialog { result: Result<PlatformBillingResult>
+              ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1940,10 +2121,15 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.createAlternativeBillingOnlyReportingDetailsAsync{ result: Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> ->
+            api.createAlternativeBillingOnlyReportingDetailsAsync {
+                result: Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1958,10 +2144,14 @@ interface InAppPurchaseApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showInAppMessages$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.showInAppMessages{ result: Result<PlatformInAppMessageResult> ->
+            api.showInAppMessages { result: Result<PlatformInAppMessageResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(MessagesPigeonUtils.wrapError(error))
@@ -1979,18 +2169,20 @@ interface InAppPurchaseApi {
   }
 }
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
-class InAppPurchaseCallbackApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
+class InAppPurchaseCallbackApi(
+    private val binaryMessenger: BinaryMessenger,
+    private val messageChannelSuffix: String = ""
+) {
   companion object {
     /** The codec used by InAppPurchaseCallbackApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
   /** Called for `BillingClientStateListener#onBillingServiceDisconnected()`. */
-  fun onBillingServiceDisconnected(callbackHandleArg: Long, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected$separatedMessageChannelSuffix"
+  fun onBillingServiceDisconnected(callbackHandleArg: Long, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(callbackHandleArg)) {
       if (it is List<*>) {
@@ -2001,14 +2193,15 @@ class InAppPurchaseCallbackApi(private val binaryMessenger: BinaryMessenger, pri
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called for `PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)`. */
-  fun onPurchasesUpdated(updateArg: PlatformPurchasesResponse, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated$separatedMessageChannelSuffix"
+  fun onPurchasesUpdated(updateArg: PlatformPurchasesResponse, callback: (Result<Unit>) -> Unit) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(updateArg)) {
       if (it is List<*>) {
@@ -2019,14 +2212,18 @@ class InAppPurchaseCallbackApi(private val binaryMessenger: BinaryMessenger, pri
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
   /** Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`. */
-  fun userSelectedalternativeBilling(detailsArg: PlatformUserChoiceDetails, callback: (Result<Unit>) -> Unit)
-{
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling$separatedMessageChannelSuffix"
+  fun userSelectedalternativeBilling(
+      detailsArg: PlatformUserChoiceDetails,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val separatedMessageChannelSuffix =
+        if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    val channelName =
+        "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(detailsArg)) {
       if (it is List<*>) {
@@ -2037,7 +2234,7 @@ class InAppPurchaseCallbackApi(private val binaryMessenger: BinaryMessenger, pri
         }
       } else {
         callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
-      } 
+      }
     }
   }
 }

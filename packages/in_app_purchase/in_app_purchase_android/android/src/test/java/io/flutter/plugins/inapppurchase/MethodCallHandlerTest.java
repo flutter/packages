@@ -518,7 +518,9 @@ public class MethodCallHandlerTest {
     assertEquals(
         platformInAppMessageResult.result.getOrNull().getResponseCode(),
         fromInAppMessageResponseCode(inAppMessageResult.getResponseCode()));
-    assertEquals(platformInAppMessageResult.result.getOrNull().getPurchaseToken(), inAppMessageResult.getPurchaseToken());
+    assertEquals(
+        platformInAppMessageResult.result.getOrNull().getPurchaseToken(),
+        inAppMessageResult.getPurchaseToken());
   }
 
   @Test
@@ -530,8 +532,7 @@ public class MethodCallHandlerTest {
     assertTrue(error instanceof FlutterError);
     FlutterError flutterError = (FlutterError) error;
     assertEquals("UNAVAILABLE", flutterError.getCode());
-    assertTrue(
-        Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
+    assertTrue(Objects.requireNonNull(flutterError.getMessage()).contains("BillingClient"));
   }
 
   @Test
@@ -544,8 +545,7 @@ public class MethodCallHandlerTest {
     assertTrue(exception instanceof FlutterError);
     assertEquals("ACTIVITY_UNAVAILABLE", ((FlutterError) exception).getCode());
     assertTrue(
-        Objects.requireNonNull(exception.getMessage())
-            .contains("Not attempting to show dialog"));
+        Objects.requireNonNull(exception.getMessage()).contains("Not attempting to show dialog"));
   }
 
   @Test

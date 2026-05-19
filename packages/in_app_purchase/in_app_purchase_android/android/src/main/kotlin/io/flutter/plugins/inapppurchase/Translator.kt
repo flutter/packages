@@ -213,8 +213,9 @@ fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
 }
 
 fun fromInAppMessageResult(inAppMessageResult: InAppMessageResult): PlatformInAppMessageResult {
-    return PlatformInAppMessageResult(
-        fromInAppMessageResponseCode(inAppMessageResult.responseCode), inAppMessageResult.purchaseToken)
+  return PlatformInAppMessageResult(
+      fromInAppMessageResponseCode(inAppMessageResult.responseCode),
+      inAppMessageResult.purchaseToken)
 }
 
 fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse =
@@ -242,11 +243,13 @@ fun fromBillingResponseCode(billingResponseCode: Int): PlatformBillingResponse =
 fun fromInAppMessageResponseCode(
     @InAppMessageResult.InAppMessageResponseCode inAppMessageResponseCode: Int
 ): PlatformInAppMessageResponse {
-    when (inAppMessageResponseCode) {
-        InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED -> return PlatformInAppMessageResponse.SUBSCRIPTION_STATUS_UPDATED
-        InAppMessageResult.InAppMessageResponseCode.NO_ACTION_NEEDED -> return PlatformInAppMessageResponse.NO_ACTION_NEEDED
-    }
-    return PlatformInAppMessageResponse.NO_ACTION_NEEDED
+  when (inAppMessageResponseCode) {
+    InAppMessageResult.InAppMessageResponseCode.SUBSCRIPTION_STATUS_UPDATED ->
+        return PlatformInAppMessageResponse.SUBSCRIPTION_STATUS_UPDATED
+    InAppMessageResult.InAppMessageResponseCode.NO_ACTION_NEEDED ->
+        return PlatformInAppMessageResponse.NO_ACTION_NEEDED
+  }
+  return PlatformInAppMessageResponse.NO_ACTION_NEEDED
 }
 
 fun fromUserChoiceDetails(userChoiceDetails: UserChoiceDetails): PlatformUserChoiceDetails {
@@ -272,7 +275,7 @@ fun fromBillingConfig(
     result: BillingResult,
     billingConfig: BillingConfig?
 ): PlatformBillingConfigResponse {
-    return PlatformBillingConfigResponse(fromBillingResult(result), billingConfig?.countryCode ?: "")
+  return PlatformBillingConfigResponse(fromBillingResult(result), billingConfig?.countryCode ?: "")
 }
 
 /** Converter from [BillingResult] and [AlternativeBillingOnlyReportingDetails] to map. */
