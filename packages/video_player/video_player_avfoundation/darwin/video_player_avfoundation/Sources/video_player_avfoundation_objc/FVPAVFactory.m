@@ -84,10 +84,10 @@
 @end
 
 @implementation FVPDefaultAVPlayerItemVideoOutput
-- (instancetype)initWithPixelBufferAttributes:(NSDictionary<NSString *, id> *)attributes {
+- (instancetype)initWithOutputSettings:(NSDictionary<NSString *, id> *)outputSettings {
   self = [super init];
   if (self) {
-    _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+    _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithOutputSettings:outputSettings];
   }
   return self;
 }
@@ -150,9 +150,9 @@
   return [AVPlayer playerWithPlayerItem:((FVPDefaultAVPlayerItem *)playerItem).playerItem];
 }
 
-- (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return [[FVPDefaultAVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+- (NSObject<FVPPixelBufferSource> *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings {
+  return [[FVPDefaultAVPlayerItemVideoOutput alloc] initWithOutputSettings:outputSettings];
 }
 
 #if TARGET_OS_IOS
