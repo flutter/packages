@@ -24,17 +24,11 @@ android {
     }
 
     if (!isBuiltInKotlinEnabled) {
-
         withGroovyBuilder {
-
             "kotlinOptions" {
-
                 setProperty("jvmTarget", JavaVersion.VERSION_17.toString())
-
             }
-
         }
-
     }
 
     defaultConfig {
