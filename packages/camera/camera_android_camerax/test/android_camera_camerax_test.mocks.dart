@@ -540,6 +540,15 @@ class MockCameraInfo extends _i1.Mock implements _i3.CameraInfo {
             ),
           )
           as _i3.CameraInfo);
+
+  @override
+  _i5.Future<bool> hasFlashUnit() =>
+      (super.noSuchMethod(
+            Invocation.method(#hasFlashUnit, []),
+            returnValue: _i5.Future<bool>.value(false),
+            returnValueForMissingStub: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
 }
 
 /// A class which mocks [CameraCharacteristicsKey].

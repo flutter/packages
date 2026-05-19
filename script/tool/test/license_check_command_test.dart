@@ -159,6 +159,78 @@ void main() {
       }
     });
 
+    test('ignores skills in deny list', () async {
+      final File skillFile = root
+          .childDirectory('.agents')
+          .childDirectory('skills')
+          .childDirectory('dart-test-coverage')
+          .childFile('some_file.dart');
+      skillFile.createSync(recursive: true);
+
+      mockGitFilesListWithAllFiles(root);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'license-check',
+      ]);
+
+      expect(
+        output,
+        isNot(
+          contains('Checking .agents/skills/dart-test-coverage/some_file.dart'),
+        ),
+      );
+    });
+
+    test('does not ignore skills not in deny list', () async {
+      final File skillFile = root
+          .childDirectory('.agents')
+          .childDirectory('skills')
+          .childDirectory('allowed-skill')
+          .childFile('some_file.dart');
+      skillFile.createSync(recursive: true);
+      writeLicense(
+        skillFile,
+      ); // Give it a valid license so it passes check if checked
+
+      mockGitFilesListWithAllFiles(root);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'license-check',
+      ]);
+
+      expect(
+        output,
+        contains('Checking .agents/skills/allowed-skill/some_file.dart'),
+      );
+    });
+
+    test('ignores files within skill directory in deny list', () async {
+      final File skillFile = root
+          .childDirectory('.agents')
+          .childDirectory('skills')
+          .childDirectory('dart-test-coverage')
+          .childDirectory('example')
+          .childDirectory('lib')
+          .childDirectory('src')
+          .childFile('calculator.dart');
+      skillFile.createSync(recursive: true);
+
+      mockGitFilesListWithAllFiles(root);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'license-check',
+      ]);
+
+      expect(
+        output,
+        isNot(
+          contains(
+            'Checking .agents/skills/dart-test-coverage/example/lib/src/calculator.dart',
+          ),
+        ),
+      );
+    });
+
     test('ignores submodules', () async {
       const submoduleName = 'a_submodule';
 
