@@ -1,3 +1,19 @@
+## 1.2.3
+
+* Fixes the SVG parser injecting a spurious space between adjacent
+  `<tspan>` elements that have no whitespace between them in the source.
+  Previously `<tspan>A</tspan><tspan>B</tspan>` was emitted as `"A"` +
+  `" B"`, producing a visible gap; it now emits `"A"` + `"B"` to match
+  every browser.
+
+## 1.2.2
+
+* Adds support for modern space-separated HSL and HSLA color syntax.
+
+## 1.2.1
+
+* Fixes HSL/HSLA color parsing for decimal percentage components (e.g. `hsl(270, 100%, 76.27%)`).
+
 ## 1.2.0
 
 * Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).

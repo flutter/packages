@@ -10,6 +10,7 @@ import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
+import 'common/file_utils.dart';
 import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
@@ -347,13 +348,10 @@ ${newOverrideLines.join('\n')}
       );
       // Ignored deleted packages, as they won't be published.
       if (!package.pubspecFile.existsSync()) {
-        final String directoryName = p.posix.joinAll(
-          path.split(
-            path.relative(
-              package.directory.absolute.path,
-              from: packagesDir.parent.path,
-            ),
-          ),
+        final String directoryName = relativePosixPath(
+          package.directory,
+          from: packagesDir.parent,
+          platformContext: path,
         );
         print('  Skipping $directoryName; deleted.');
         continue;

@@ -24,6 +24,11 @@ void main() {
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
 
+    root.childFile('.ci.yaml').writeAsStringSync(r'''
+enabled_branches:
+  - main
+''');
+
     final command = RepoPackageInfoCheckCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
       'dependabot_test',
@@ -634,11 +639,21 @@ ${readmeTableEntry('a_package')}
       return package;
     }
 
-    void writeBatchConfig(RepositoryPackage package) {
+    void writeBatchConfig(
+      RepositoryPackage package, {
+      bool validCiYaml = true,
+    }) {
       package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
+      if (validCiYaml) {
+        root.childFile('.ci.yaml').writeAsStringSync(r'''
+enabled_branches:
+  - main
+  - release-a_package-\d+\.\d+\.\d+
+''');
+      }
     }
 
     void writeWorkflowFiles({
@@ -948,5 +963,69 @@ jobs:
         containsAllInOrder(<Matcher>[contains('No issues found!')]),
       );
     });
+
+    test(
+      'fails if branch pattern is missing in .ci.yaml enabled_branches for batch package',
+      () async {
+        final RepositoryPackage package = setupReleaseStrategyTest();
+        writeBatchConfig(package, validCiYaml: false);
+        writeWorkflowFiles();
+        root.childFile('.ci.yaml').writeAsStringSync('''
+enabled_branches:
+  - main
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['repo-package-info-check'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          contains(
+            contains(
+              r'Missing release branch pattern release-a_package-\d+\.\d+\.\d+ in enabled_branches in .ci.yaml',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'fails if branch pattern is unexpectedly present in .ci.yaml for non-batch package',
+      () async {
+        setupReleaseStrategyTest();
+        writeWorkflowFiles();
+        root.childFile('.ci.yaml').writeAsStringSync(r'''
+enabled_branches:
+  - main
+  - release-a_package-\d+\.\d+\.\d+
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['repo-package-info-check'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          contains(
+            contains(
+              r'Unexpected release branch pattern release-a_package-\d+\.\d+\.\d+ in enabled_branches in .ci.yaml',
+            ),
+          ),
+        );
+      },
+    );
   });
 }

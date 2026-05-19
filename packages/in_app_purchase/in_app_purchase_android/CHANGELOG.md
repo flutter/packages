@@ -3,6 +3,10 @@
 * Adds showInAppMessages support for Android platform. See
   `InAppPurchaseAndroidPlatformAddition.showInAppMessages`.
 
+## 0.4.0+11
+
+* Updates internal implementation to use Kotlin Pigeon.
+
 ## 0.4.0+10
 
 * Fixes dartdoc comments that accidentally used HTML.

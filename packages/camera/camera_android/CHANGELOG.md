@@ -1,3 +1,7 @@
+## 0.10.10+17
+
+* Reset AE and AF triggers to idle after capture to fix camera flash remaining issue #97501.
+
 ## 0.10.10+16
 
 * Updates build files from Groovy to Kotlin.

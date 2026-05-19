@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchasesList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,31 +14,30 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import io.flutter.Log;
 import java.util.List;
+import kotlin.Unit;
 
 class PluginPurchaseListener implements PurchasesUpdatedListener {
-  private final Messages.InAppPurchaseCallbackApi callbackApi;
+  private final InAppPurchaseCallbackApi callbackApi;
 
-  PluginPurchaseListener(Messages.InAppPurchaseCallbackApi callbackApi) {
+  PluginPurchaseListener(InAppPurchaseCallbackApi callbackApi) {
     this.callbackApi = callbackApi;
   }
 
   @Override
   public void onPurchasesUpdated(
       @NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
-    Messages.PlatformPurchasesResponse.Builder builder =
-        new Messages.PlatformPurchasesResponse.Builder()
-            .setBillingResult(fromBillingResult(billingResult))
-            .setPurchases(fromPurchasesList(purchases));
+    PlatformPurchasesResponse response =
+        new PlatformPurchasesResponse(
+            fromBillingResult(billingResult), fromPurchasesList(purchases));
     callbackApi.onPurchasesUpdated(
-        builder.build(),
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
-
-          @Override
-          public void error(@NonNull Throwable error) {
-            Log.e("IN_APP_PURCHASE", "onPurchaseUpdated handler error: " + error);
-          }
-        });
+        response,
+        ResultCompat.asCompatCallback(
+            result -> {
+              Throwable error = result.exceptionOrNull();
+              if (error != null) {
+                Log.e("IN_APP_PURCHASE", "onPurchaseUpdated handler error: " + error);
+              }
+              return Unit.INSTANCE;
+            }));
   }
 }

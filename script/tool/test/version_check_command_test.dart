@@ -5,6 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:flutter_plugin_tools/src/validators/version_and_changelog_validator.dart';
 import 'package:flutter_plugin_tools/src/version_check_command.dart';
 import 'package:git/git.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -371,8 +372,8 @@ void main() {
           output,
           containsAllInOrder(<Matcher>[
             contains(
-              'Allowing breaking change to plugin_platform_interface due '
-              'to --ignore-platform-interface-breaks',
+              'Ignoring breaking change to plugin_platform_interface due '
+              'to command configuration',
             ),
             contains('Ran for 1 package(s) (1 with warnings)'),
           ]),

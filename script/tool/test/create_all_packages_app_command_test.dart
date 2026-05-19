@@ -534,11 +534,10 @@ android {
       expect(
         processRunner.recordedCalls,
         contains(
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['pub', 'get'],
-            testRoot.childDirectory(allPackagesProjectName).path,
-          ),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'pub',
+            'get',
+          ], testRoot.childDirectory(allPackagesProjectName).path),
         ),
       );
     });
