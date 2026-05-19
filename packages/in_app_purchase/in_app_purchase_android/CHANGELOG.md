@@ -1,6 +1,7 @@
-## 0.4.0+11
+## 0.4.1
 
-* Add showInAppMessages support for Android platform.
+* Adds showInAppMessages support for Android platform. See
+  `InAppPurchaseAndroidPlatformAddition.showInAppMessages`.
 
 ## 0.4.0+10
 
