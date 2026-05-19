@@ -44,9 +44,11 @@ if (!isBuiltInKotlinEnabled) {
     apply(plugin = "org.jetbrains.kotlin.android")
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+if (!isBuiltInKotlinEnabled) {
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+        }
     }
 }
 
