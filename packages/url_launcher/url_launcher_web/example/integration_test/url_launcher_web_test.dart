@@ -65,7 +65,7 @@ void main() {
         expect(plugin.canLaunch('https://google.com'), completion(isTrue));
       });
 
-      testWidgets('"mailto" URLs -> true', (WidgetTester _) async {
+      testWidgets('"mailto" URLs -> false', (WidgetTester _) async {
         expect(
           plugin.canLaunch('mailto:name@mydomain.com'),
           completion(isFalse),

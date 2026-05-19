@@ -1,3 +1,7 @@
+## 2.4.4
+
+* Fixes `canLaunchUrl` returning `true` for `mailto`, `tel`, and `sms` schemes on web when no handler exists.
+
 ## 2.4.3
 
 * Removes a LICENSE entry for code that no longer exists in the package.
