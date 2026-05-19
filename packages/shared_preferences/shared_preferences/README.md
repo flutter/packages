@@ -169,7 +169,16 @@ import the migration utility and provide it with the `SharedPreferences` instanc
 was being used previously, as well as the options for the desired new API options.
 
 This can be run on every launch without data loss as long as the `migrationCompletedKey` is not altered or deleted.
+> **Note:** `SharedPreferencesAsync` and `SharedPreferencesWithCache` do not 
+> use the `flutter.` prefix that `SharedPreferences` uses by default. 
+> After migration, keys will be stored without this prefix. If you were 
+> previously accessing keys with the `flutter.` prefix from native code, 
+> you will need to update those references.
 
+> **Note:** After migration, the legacy `flutter.`-prefixed keys are kept 
+> in storage and are not automatically removed. If you wish to remove them 
+> after migration, you will need to delete them manually using the legacy 
+> `SharedPreferences` instance before switching to the new API.
 <?code-excerpt "main.dart (migrate)"?>
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
