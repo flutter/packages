@@ -29,6 +29,195 @@ class _TestOpacityColorMapper implements ColorMapper {
 }
 
 void main() {
+  test('Exponential DAG expansion triggers DoS protection limit', () {
+    final buffer = StringBuffer('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+''');
+    buffer.write('''
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+''');
+    for (var i = 2; i <= 30; i++) {
+      buffer.write('''
+    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
+''');
+    }
+    buffer.write('''
+  </defs>
+  <use href="#lvl30" />
+</svg>''');
+
+    expect(
+      () => parseWithoutOptimizers(buffer.toString()),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Exponential DAG clipPath expansion triggers DoS protection limit', () {
+    final buffer = StringBuffer('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+''');
+    buffer.write('''
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+''');
+    for (var i = 2; i <= 30; i++) {
+      buffer.write('''
+    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
+''');
+    }
+    buffer.write('''
+    <clipPath id="clip1"><use href="#lvl30" /></clipPath>
+''');
+    buffer.write('''
+  </defs>
+  <rect width="100" height="100" clip-path="url(#clip1)" />
+</svg>''');
+
+    expect(
+      () => parseWithoutOptimizers(buffer.toString()),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Circular Mask Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1">
+    <g mask="url(#mask1)">
+      <rect width="100" height="100" fill="white"/>
+    </g>
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular Deferred Node Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <use xlink:href="#groupA" />
+</svg>
+''');
+
+    expect(instructions.paths.isEmpty, true);
+  });
+
+  test('Circular Pattern Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <pattern id="pattern1" width="20" height="20" patternUnits="userSpaceOnUse">
+    <rect width="20" height="20" fill="url(#pattern1)"/>
+  </pattern>
+  <rect width="100" height="100" fill="url(#pattern1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular ClipPath Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <clipPath id="clip1">
+    <use xlink:href="#groupA" />
+  </clipPath>
+  <rect width="100" height="100" fill="blue" clip-path="url(#clip1)"/>
+</svg>
+''');
+    expect(instructions.paths.length, 1);
+    expect(
+      instructions.commands.any((c) => c.type == DrawCommandType.clip),
+      false,
+    );
+  });
+
+  test('Shared DAG Sibling Node (No Loop) resolves successfully', () {
+    // Case 1: Identical positions. The paths are geometrically identical,
+    // so they are deduplicated in the unique paths list, but drawn twice in the command list.
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="shared">
+      <use href="#leaf" />
+    </g>
+    <g id="sibling1">
+      <use href="#shared" />
+    </g>
+    <g id="sibling2">
+      <use href="#shared" />
+    </g>
+  </defs>
+  <use href="#sibling1" />
+  <use href="#sibling2" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+    expect(
+      instructions.commands.where((c) => c.type == DrawCommandType.path).length,
+      2,
+    );
+
+    // Case 2: Distinct positions. The paths are transformed differently,
+    // so they are distinct paths and both exist in the unique paths list.
+    final VectorInstructions distinctInstructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+    <g id="shared">
+      <use href="#leaf" />
+    </g>
+    <g id="sibling1">
+      <use href="#shared" x="10" />
+    </g>
+    <g id="sibling2">
+      <use href="#shared" x="20" />
+    </g>
+  </defs>
+  <use href="#sibling1" />
+  <use href="#sibling2" />
+</svg>
+''');
+
+    expect(distinctInstructions.paths.length, 2);
+    expect(
+      distinctInstructions.commands
+          .where((c) => c.type == DrawCommandType.path)
+          .length,
+      2,
+    );
+  });
+
   test('Reuse ID self-referentially', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <?xml version="1.0" encoding="UTF-8"?>
