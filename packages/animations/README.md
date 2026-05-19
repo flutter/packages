@@ -72,3 +72,31 @@ _Examples of the fade pattern:_
 2.  _A menu_
 3.  _A snackbar_
 4.  _A FAB_
+
+## Usage with Declarative Routers (e.g. go_router)
+
+The `OpenContainer` widget can be integrated with declarative routers like `go_router` to ensure that the browser URL updates when the container opens, while still preserving the container transform animation.
+
+To do this, use the `onOpen` hook to trigger the navigation and `OpenContainerPage` in your route definition. Both must share the same `transitionTag`.
+
+```dart
+// In your list page:
+OpenContainer(
+  transitionTag: 'item-${item.id}',
+  onOpen: () => context.push('/details/${item.id}'),
+  closedBuilder: (context, action) => MyListTile(onTap: action),
+  openBuilder: (context, action) => MyDetailsPage(id: item.id),
+)
+
+// In your router configuration:
+GoRoute(
+  path: '/details/:id',
+  pageBuilder: (context, state) {
+    final String id = state.pathParameters['id']!;
+    return OpenContainerPage(
+      transitionTag: 'item-$id',
+      openBuilder: (context, action) => MyDetailsPage(id: id),
+    );
+  },
+)
+```

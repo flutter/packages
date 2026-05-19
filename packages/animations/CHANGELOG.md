@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Added OpenContainerPage and onOpen hook to OpenContainer for go_router compatibility.
+
 ## 2.2.0
 
 * Adds support for custom `closedShadows` and `openShadows` to `OpenContainer`.
