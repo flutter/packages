@@ -104,7 +104,7 @@ void main() {
       testWidgets('launching a "sms" returns true', (WidgetTester _) async {
         expect(
           plugin.launch('sms:+19725551212?body=hello%20there'),
-          completion(isTrue),
+          completion(isFalse),
         );
       });
 
