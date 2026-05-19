@@ -44,7 +44,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   static final Set<String> _supportedSchemes = <String>{
     'http',
     'https',
-  }.union(_safariTargetTopSchemes);
+  };
 
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith(Registrar registrar) {
