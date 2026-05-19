@@ -124,6 +124,26 @@ final class CameraExposureTests: XCTestCase {
     XCTAssertTrue(setExposureTargetBiasCalled)
   }
 
+  func testSetExposureTargetBias_completionHandlerIsInvoked() {
+    // Regression test: the completion handler must be @Sendable to match
+    // AVCaptureDevice's signature (Swift 6 requirement).
+    // MockCaptureDevice conforms to CaptureDevice, so a compilation failure
+    // here means the protocol and mock have diverged.
+    let (_, mockDevice, _) = createCamera()
+
+    let expectation = expectation(description: "completion handler invoked")
+
+    mockDevice.setExposureTargetBiasStub = { _, handler in
+      handler?(CMTime(value: 1, timescale: 1))
+    }
+
+    mockDevice.setExposureTargetBias(1.0) { _ in
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 1.0)
+  }
+
   func testMaximumExposureOffset_returnsDeviceMaxExposureTargetBias() {
     let (camera, mockDevice, _) = createCamera()
 
