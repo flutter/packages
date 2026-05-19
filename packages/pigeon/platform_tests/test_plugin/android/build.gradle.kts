@@ -38,10 +38,12 @@ if (!isBuiltInKotlinEnabled) {
     apply(plugin = "org.jetbrains.kotlin.android")
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
-        allWarningsAsErrors = true
+if (!isBuiltInKotlinEnabled) {
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
+            allWarningsAsErrors = true
+        }
     }
 }
 
