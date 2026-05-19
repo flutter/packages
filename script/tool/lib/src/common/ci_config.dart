@@ -28,11 +28,7 @@ class CIConfig {
 
     // Any package that hasn't been explicitly exempted is assumed to require
     // excerpts.
-    var requiresExcerpts = true;
-    final Object? exemptFromExcerpts = loaded['exempt_from_excerpts'];
-    if (exemptFromExcerpts is bool) {
-      requiresExcerpts = !exemptFromExcerpts;
-    }
+    final requiresExcerpts = loaded['exempt_from_excerpts'] != true;
 
     return CIConfig._(
       isBatchRelease: isBatchRelease,
