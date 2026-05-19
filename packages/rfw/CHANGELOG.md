@@ -1,3 +1,7 @@
+## 1.1.4
+
+* Fixes `fontWeight` not being applied in release mode for `Text` and `StrutStyle` widgets.
+
 ## 1.1.3
 
 * Fixes dartdoc comments that accidentally used HTML.

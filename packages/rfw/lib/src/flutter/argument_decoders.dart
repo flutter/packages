@@ -632,6 +632,46 @@ class ArgumentDecoders {
     return null;
   }
 
+  /// Returns a [FontWeight] from the specified string or integer.
+  ///
+  /// This does not use [FontWeight.toString], which is not guaranteed to be
+  /// stable in release builds (since [FontWeight] is not a real Dart enum).
+  ///
+  /// Supported string values: `"w100"` through `"w900"`, `"normal"` (mapped to
+  /// [FontWeight.w400]), and `"bold"` (mapped to [FontWeight.w700]).
+  ///
+  /// Supported integer values: `100` through `900` in increments of 100.
+  static FontWeight? fontWeight(DataSource source, List<Object> key) {
+    final int? numeric = source.v<int>(key);
+    if (numeric != null) {
+      switch (numeric) {
+        case 100: return FontWeight.w100;
+        case 200: return FontWeight.w200;
+        case 300: return FontWeight.w300;
+        case 400: return FontWeight.w400;
+        case 500: return FontWeight.w500;
+        case 600: return FontWeight.w600;
+        case 700: return FontWeight.w700;
+        case 800: return FontWeight.w800;
+        case 900: return FontWeight.w900;
+      }
+    }
+    switch (source.v<String>(key)) {
+      case 'w100': return FontWeight.w100;
+      case 'w200': return FontWeight.w200;
+      case 'w300': return FontWeight.w300;
+      case 'w400':
+      case 'normal': return FontWeight.w400;
+      case 'w500': return FontWeight.w500;
+      case 'w600': return FontWeight.w600;
+      case 'w700':
+      case 'bold': return FontWeight.w700;
+      case 'w800': return FontWeight.w800;
+      case 'w900': return FontWeight.w900;
+    }
+    return null;
+  }
+
   /// Returns a [FontFeature] from the specified map.
   ///
   /// The `feature` key is used as the font feature name (defaulting to the
@@ -1276,7 +1316,7 @@ class ArgumentDecoders {
   /// following keys: 'fontFamily` (string), `fontFamilyFallback` ([list] of
   /// [string]), `fontSize` (double), `height` (double), `leadingDistribution`
   /// ([enumValue] of [TextLeadingDistribution]), `leading` (double),
-  /// `fontWeight` ([enumValue] of [FontWeight]), `fontStyle` ([enumValue] of
+  /// `fontWeight` ([fontWeight]), `fontStyle` ([enumValue] of
   /// [FontStyle]), `forceStrutHeight` (boolean).
   static StrutStyle? strutStyle(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
@@ -1289,7 +1329,7 @@ class ArgumentDecoders {
       height: source.v<double>([...key, 'height']),
       leadingDistribution: enumValue<TextLeadingDistribution>(TextLeadingDistribution.values, source, [...key, 'leadingDistribution']),
       leading: source.v<double>([...key, 'leading']),
-      fontWeight: enumValue<FontWeight>(FontWeight.values, source, [...key, 'fontWeight']),
+      fontWeight: fontWeight(source, [...key, 'fontWeight']),
       fontStyle: enumValue<FontStyle>(FontStyle.values, source, [...key, 'fontStyle']),
       forceStrutHeight: source.v<bool>([...key, 'forceStrutHeight']),
     );
@@ -1350,7 +1390,7 @@ class ArgumentDecoders {
   ///
   /// Otherwise (even if it has no keys), the [TextStyle] is created from the
   /// following keys: `color` ([color]), `backgroundColor` ([color]), `fontSize`
-  /// (double), `fontWeight` ([enumValue] of [FontWeight]), `fontStyle`
+  /// (double), `fontWeight` ([fontWeight]), `fontStyle`
   /// ([enumValue] of [FontStyle]), `letterSpacing` (double), `wordSpacing`
   /// (double), `textBaseline` ([enumValue] of [TextBaseline]), `height`
   /// (double), `leadingDistribution` ([enumValue] of
@@ -1369,7 +1409,7 @@ class ArgumentDecoders {
       color: color(source, [...key, 'color']),
       backgroundColor: color(source, [...key, 'backgroundColor']),
       fontSize: source.v<double>([...key, 'fontSize']),
-      fontWeight: enumValue<FontWeight>(FontWeight.values, source, [...key, 'fontWeight']),
+      fontWeight: fontWeight(source, [...key, 'fontWeight']),
       fontStyle: enumValue<FontStyle>(FontStyle.values, source, [...key, 'fontStyle']),
       letterSpacing: source.v<double>([...key, 'letterSpacing']),
       wordSpacing: source.v<double>([...key, 'wordSpacing']),
