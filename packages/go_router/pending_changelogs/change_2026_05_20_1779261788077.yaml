@@ -1,3 +1,0 @@
-changelog: |
-  - Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
-version: skip
