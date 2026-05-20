@@ -94,6 +94,106 @@ void main() {
     );
   });
 
+  test(
+    'Cumulative clipPath reference expansions trigger DoS protection limit',
+    () {
+      final buffer = StringBuffer('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+''');
+      buffer.write('''
+    <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
+''');
+      for (var i = 2; i <= 13; i++) {
+        buffer.write('''
+    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
+''');
+      }
+      buffer.write('''
+    <clipPath id="clip1"><use href="#lvl13" /></clipPath>
+    <clipPath id="clip2"><use href="#lvl13" /></clipPath>
+  </defs>
+  <g clip-path="url(#clip1)">
+    <rect width="100" height="100" clip-path="url(#clip2)" />
+  </g>
+</svg>''');
+
+      expect(
+        () => parseWithoutOptimizers(buffer.toString()),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('SVG contains too many nested reference expansions'),
+          ),
+        ),
+      );
+    },
+  );
+
+  test('Exponential DAG mask expansion triggers DoS protection limit', () {
+    final buffer = StringBuffer('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+''');
+    buffer.write('''
+    <mask id="lvl1"><use href="#leaf" /><use href="#leaf" /></mask>
+''');
+    for (var i = 2; i <= 30; i++) {
+      buffer.write('''
+    <mask id="lvl$i"><g mask="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></mask>
+''');
+    }
+    buffer.write('''
+  </defs>
+  <rect width="100" height="100" mask="url(#lvl30)" />
+</svg>''');
+
+    expect(
+      () => parseWithoutOptimizers(buffer.toString()),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
+  test('Exponential DAG pattern expansion triggers DoS protection limit', () {
+    final buffer = StringBuffer('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <path id="leaf" d="M 0,0 L 10,10" />
+''');
+    buffer.write('''
+    <pattern id="lvl1" width="10" height="10"><use href="#leaf" /><use href="#leaf" /></pattern>
+''');
+    for (var i = 2; i <= 30; i++) {
+      buffer.write('''
+    <pattern id="lvl$i" width="10" height="10"><g fill="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></pattern>
+''');
+    }
+    buffer.write('''
+  </defs>
+  <rect width="100" height="100" fill="url(#lvl30)" />
+</svg>''');
+
+    expect(
+      () => parseWithoutOptimizers(buffer.toString()),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('SVG contains too many nested reference expansions'),
+        ),
+      ),
+    );
+  });
+
   test('Circular Mask Loop Avoidance', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100">
@@ -158,7 +258,6 @@ void main() {
     expect(instructions.paths.isNotEmpty, true);
   });
 
-
   test('Circular Deferred Node Loop Avoidance', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100">
@@ -213,7 +312,6 @@ void main() {
 
     expect(instructions.paths.isEmpty, true);
   });
-
 
   test('Circular Pattern Loop Avoidance', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''

@@ -10,6 +10,7 @@ import '../geometry/vertices.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
 import 'node.dart';
+import 'constants.dart';
 import 'parser.dart';
 import 'visitor.dart';
 
@@ -42,6 +43,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitMaskNode(MaskNode maskNode, AffineMatrix data) {
+    _deferredExpansionCount++;
+    if (_deferredExpansionCount > kMaxReferenceExpansions) {
+      throw StateError(kMaxReferenceExpansionsErrorMessage);
+    }
     if (!_activeMasks.add(maskNode.maskId)) {
       return maskNode.child.accept(this, data);
     }
@@ -316,6 +321,10 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPatternNode(PatternNode patternNode, AffineMatrix data) {
+    _deferredExpansionCount++;
+    if (_deferredExpansionCount > kMaxReferenceExpansions) {
+      throw StateError(kMaxReferenceExpansionsErrorMessage);
+    }
     if (!_activePatterns.add(patternNode.patternId)) {
       return patternNode.child.accept(this, data);
     }

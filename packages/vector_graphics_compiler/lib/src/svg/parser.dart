@@ -21,6 +21,7 @@ import '../vector_instructions.dart';
 import 'clipping_optimizer.dart';
 import 'color_mapper.dart';
 import 'colors.dart';
+import 'constants.dart';
 import 'masking_optimizer.dart';
 import 'node.dart';
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
@@ -32,13 +33,6 @@ import 'resolver.dart';
 import 'tessellator.dart';
 import 'theme.dart';
 import 'visitor.dart';
-
-/// The maximum number of nested reference expansions allowed in an SVG to prevent DoS exploits.
-const int kMaxReferenceExpansions = 10000;
-
-/// The error message thrown when the nested reference expansions limit is exceeded.
-const String kMaxReferenceExpansionsErrorMessage =
-    'SVG contains too many nested reference expansions (possible Denial of Service exploit).';
 
 final Set<String> _unhandledElements = <String>{'title', 'desc'};
 
@@ -1685,6 +1679,7 @@ class _Resolver {
   final Map<String, AttributedNode> _drawables = <String, AttributedNode>{};
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
+  int _deferredExpansionCount = 0;
 
   bool _sealed = false;
 
@@ -1710,7 +1705,6 @@ class _Resolver {
     final pathBuilders = <PathBuilder>[];
     PathBuilder? currentPath;
     final activeDeferred = <String>{};
-    var deferredExpansionCount = 0;
     void extractPathsFromNode(Node? target) {
       if (target is PathNode) {
         final nextPath = PathBuilder.fromPath(target.path);
@@ -1725,8 +1719,8 @@ class _Resolver {
           currentPath!.addPath(nextPath.toPath(reset: false));
         }
       } else if (target is DeferredNode) {
-        deferredExpansionCount++;
-        if (deferredExpansionCount > kMaxReferenceExpansions) {
+        _deferredExpansionCount++;
+        if (_deferredExpansionCount > kMaxReferenceExpansions) {
           throw StateError(kMaxReferenceExpansionsErrorMessage);
         }
         if (!activeDeferred.add(target.refId)) {
