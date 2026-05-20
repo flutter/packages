@@ -4,7 +4,9 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:ffi' show Abi;
 import 'dart:io';
+
 import 'svg/path_ops.dart';
 
 /// Look up the location of the pathops from flutter's artifact cache.
@@ -28,7 +30,7 @@ bool initializePathOpsFromFlutterCache() {
     platform = 'darwin-x64';
     executable = 'libpath_ops.dylib';
   } else if (Platform.isLinux) {
-    platform = 'linux-x64';
+    platform = Abi.current() == Abi.linuxArm64 ? 'linux-arm64' : 'linux-x64';
     executable = 'libpath_ops.so';
   } else {
     print('path_ops not supported on ${Platform.localeName}');

@@ -4,7 +4,9 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:ffi' show Abi;
 import 'dart:io';
+
 import 'svg/tessellator.dart';
 
 /// Look up the location of the tessellator from flutter's artifact cache.
@@ -28,7 +30,7 @@ bool initializeTessellatorFromFlutterCache() {
     platform = 'darwin-x64';
     executable = 'libtessellator.dylib';
   } else if (Platform.isLinux) {
-    platform = 'linux-x64';
+    platform = Abi.current() == Abi.linuxArm64 ? 'linux-arm64' : 'linux-x64';
     executable = 'libtessellator.so';
   } else {
     print('Tesselation not supported on ${Platform.localeName}');
