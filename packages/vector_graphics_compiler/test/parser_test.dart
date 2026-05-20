@@ -29,6 +29,160 @@ class _TestOpacityColorMapper implements ColorMapper {
 }
 
 void main() {
+  test('Circular Mask Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1">
+    <g mask="url(#mask1)">
+      <rect width="100" height="100" fill="white"/>
+    </g>
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Unreferenced Circular Mask Loop resolves successfully', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <mask id="mask1">
+      <g mask="url(#mask2)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask2">
+      <g mask="url(#mask1)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="10" height="10" fill="red" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+  });
+
+  test('Multi-hop Referenced Circular Mask Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <mask id="mask1">
+      <g mask="url(#mask2)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask2">
+      <g mask="url(#mask3)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+    <mask id="mask3">
+      <g mask="url(#mask1)">
+        <rect width="100" height="100" fill="white"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular Deferred Node Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <use xlink:href="#groupA" />
+</svg>
+''');
+
+    expect(instructions.paths.isEmpty, true);
+  });
+
+  test('Unreferenced Circular Use Loop resolves successfully', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <g id="groupA">
+      <use xlink:href="#groupB" />
+    </g>
+    <g id="groupB">
+      <use xlink:href="#groupA" />
+    </g>
+  </defs>
+  <rect width="10" height="10" fill="red" />
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+  });
+
+  test('Multi-hop Referenced Circular Use Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <g id="groupA">
+      <use xlink:href="#groupB" />
+    </g>
+    <g id="groupB">
+      <use xlink:href="#groupC" />
+    </g>
+    <g id="groupC">
+      <use xlink:href="#groupA" />
+    </g>
+  </defs>
+  <use xlink:href="#groupA" />
+</svg>
+''');
+
+    expect(instructions.paths.isEmpty, true);
+  });
+
+  test('Circular Pattern Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <pattern id="pattern1" width="20" height="20" patternUnits="userSpaceOnUse">
+    <rect width="20" height="20" fill="url(#pattern1)"/>
+  </pattern>
+  <rect width="100" height="100" fill="url(#pattern1)"/>
+</svg>
+''');
+
+    expect(instructions.paths.isNotEmpty, true);
+  });
+
+  test('Circular ClipPath Loop Avoidance', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg viewBox="0 0 100 100">
+  <g id="groupA">
+    <use xlink:href="#groupB" />
+  </g>
+  <g id="groupB">
+    <use xlink:href="#groupA" />
+  </g>
+  <clipPath id="clip1">
+    <use xlink:href="#groupA" />
+  </clipPath>
+  <rect width="100" height="100" fill="blue" clip-path="url(#clip1)"/>
+</svg>
+''');
+    expect(instructions.paths.length, 1);
+    expect(
+      instructions.commands.any((c) => c.type == DrawCommandType.clip),
+      false,
+    );
+  });
+
   test('Reuse ID self-referentially', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <?xml version="1.0" encoding="UTF-8"?>
