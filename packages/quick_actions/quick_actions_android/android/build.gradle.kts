@@ -1,88 +1,88 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 group = "io.flutter.plugins.quickactions"
+
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    val kotlinVersion = "2.3.20"
-    repositories {
-        google()
-        mavenCentral()
-    }
+  val kotlinVersion = "2.3.20"
+  repositories {
+    google()
+    mavenCentral()
+  }
 
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.13.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    }
+  dependencies {
+    classpath("com.android.tools.build:gradle:8.13.1")
+    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+  }
 }
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+  repositories {
+    google()
+    mavenCentral()
+  }
 }
 
-plugins {
-    id("com.android.library")
-}
+plugins { id("com.android.library") }
 
-val agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
-    .substringBefore('.')
-    .toInt()
+val agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.substringBefore('.').toInt()
 val builtInKotlinProperty = providers.gradleProperty("android.builtInKotlin").orNull
-val isBuiltInKotlinEnabled = agpMajorVersion >= 9 &&
-    (builtInKotlinProperty == null || builtInKotlinProperty.toBoolean())
+val isBuiltInKotlinEnabled =
+    agpMajorVersion >= 9 && (builtInKotlinProperty == null || builtInKotlinProperty.toBoolean())
 
 if (!isBuiltInKotlinEnabled) {
-    apply(plugin = "org.jetbrains.kotlin.android")
+  apply(plugin = "org.jetbrains.kotlin.android")
 }
 
 if (!isBuiltInKotlinEnabled) {
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
-        }
-    }
+  kotlin { compilerOptions { jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString()) } }
 }
 
 android {
-    namespace = "io.flutter.plugins.quickactions"
-    compileSdk = flutter.compileSdkVersion
+  namespace = "io.flutter.plugins.quickactions"
+  compileSdk = flutter.compileSdkVersion
 
-    defaultConfig {
-        minSdk = 24
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+  defaultConfig {
+    minSdk = 24
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
 
-    lint {
-        checkAllWarnings = true
-        warningsAsErrors = true
-        disable.addAll(setOf("AndroidGradlePluginVersion", "InvalidPackage", "GradleDependency", "NewerVersionAvailable"))
-    }
+  lint {
+    checkAllWarnings = true
+    warningsAsErrors = true
+    disable.addAll(
+        setOf(
+            "AndroidGradlePluginVersion",
+            "InvalidPackage",
+            "GradleDependency",
+            "NewerVersionAvailable",
+        )
+    )
+  }
 
-    dependencies {
-        implementation("androidx.annotation:annotation:1.9.1")
-        testImplementation("junit:junit:4.13.2")
-        testImplementation("org.mockito:mockito-core:5.23.0")
-    }
+  dependencies {
+    implementation("androidx.annotation:annotation:1.9.1")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.23.0")
+  }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-            all {
-                it.outputs.upToDateWhen { false }
-                it.testLogging {
-                    events("passed", "skipped", "failed", "standardOut", "standardError")
-                    showStandardStreams = true
-                }
-            }
+  testOptions {
+    unitTests {
+      isIncludeAndroidResources = true
+      isReturnDefaultValues = true
+      all {
+        it.outputs.upToDateWhen { false }
+        it.testLogging {
+          events("passed", "skipped", "failed", "standardOut", "standardError")
+          showStandardStreams = true
         }
+      }
     }
+  }
 }

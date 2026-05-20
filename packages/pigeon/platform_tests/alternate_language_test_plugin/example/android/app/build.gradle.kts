@@ -1,52 +1,42 @@
 plugins {
-    id("com.android.application")
-    id("dev.flutter.flutter-gradle-plugin")
+  id("com.android.application")
+  id("dev.flutter.flutter-gradle-plugin")
 }
 
-val agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
-    .substringBefore('.')
-    .toInt()
+val agpMajorVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.substringBefore('.').toInt()
 val builtInKotlinProperty = providers.gradleProperty("android.builtInKotlin").orNull
-val isBuiltInKotlinEnabled = agpMajorVersion >= 9 &&
-    (builtInKotlinProperty == null || builtInKotlinProperty.toBoolean())
+val isBuiltInKotlinEnabled =
+    agpMajorVersion >= 9 && (builtInKotlinProperty == null || builtInKotlinProperty.toBoolean())
 
 if (!isBuiltInKotlinEnabled) {
-    apply(plugin = "org.jetbrains.kotlin.android")
+  apply(plugin = "org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.example.alternate_language_test_plugin_example"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+  namespace = "com.example.alternate_language_test_plugin_example"
+  compileSdk = flutter.compileSdkVersion
+  ndkVersion = flutter.ndkVersion
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
 
-    if (!isBuiltInKotlinEnabled) {
-        withGroovyBuilder {
-            "kotlinOptions" {
-                setProperty("jvmTarget", JavaVersion.VERSION_17.toString())
-            }
-        }
+  if (!isBuiltInKotlinEnabled) {
+    withGroovyBuilder {
+      "kotlinOptions" { setProperty("jvmTarget", JavaVersion.VERSION_17.toString()) }
     }
+  }
 
-    defaultConfig {
-        applicationId = "com.example.alternate_language_test_plugin_example"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
-    }
+  defaultConfig {
+    applicationId = "com.example.alternate_language_test_plugin_example"
+    minSdk = flutter.minSdkVersion
+    targetSdk = flutter.targetSdkVersion
+    versionCode = flutter.versionCode
+    versionName = flutter.versionName
+  }
 
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
+  buildTypes { release { signingConfig = signingConfigs.getByName("debug") } }
 }
 
-flutter {
-    source = "../.."
-}
+flutter { source = "../.." }
