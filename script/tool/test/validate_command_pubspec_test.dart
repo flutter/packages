@@ -5,7 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
-import 'package:flutter_plugin_tools/src/pubspec_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -144,6 +144,7 @@ void main() {
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
+    late Directory toolConfigDir;
 
     setUp(() {
       mockPlatform = MockPlatform();
@@ -151,19 +152,47 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final command = PubspecCheckCommand(
+      toolConfigDir = packagesDir.parent.childDirectory('tool_config');
+      toolConfigDir.createSync(recursive: true);
+
+      final command = ValidateCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
         gitDir: gitDir,
+        targetedValidators: {Validator.pubspec},
       );
 
       runner = CommandRunner<void>(
-        'pubspec_check_command',
-        'Test for pubspec_check_command',
+        'validate_pubspec_test',
+        'Test for pubspec validation',
       );
       runner.addCommand(command);
     });
+
+    void setVersionConfig({required String minFlutterVersion}) {
+      toolConfigDir
+          .childFile('min_version.yaml')
+          .writeAsStringSync('min_flutter: "$minFlutterVersion"');
+    }
+
+    void setAllowedDependencies({
+      Iterable<String>? pinned,
+      Iterable<String>? unpinned,
+    }) {
+      if (pinned != null) {
+        toolConfigDir
+            .childFile('allowed_pinned_dependencies.yaml')
+            .writeAsStringSync(pinned.map((String dep) => '- $dep').join('\n'));
+      }
+      if (unpinned != null) {
+        toolConfigDir
+            .childFile('allowed_unpinned_dependencies.yaml')
+            .writeAsStringSync(
+              unpinned.map((String dep) => '- $dep').join('\n'),
+            );
+      }
+    }
 
     test('passes for a plugin following conventions', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir);
@@ -186,7 +215,7 @@ ${_flutterSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -223,7 +252,7 @@ ${_flutterSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -251,7 +280,7 @@ ${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -281,7 +310,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -316,7 +345,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -347,7 +376,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -382,7 +411,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -415,7 +444,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -451,7 +480,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -487,7 +516,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -520,7 +549,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -558,7 +587,7 @@ ${_devDependenciesSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -601,7 +630,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -637,7 +666,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -671,7 +700,7 @@ ${_topicsSection(<String>[])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -707,7 +736,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -745,7 +774,7 @@ ${_topicsSection(<String>['plugin a'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -779,7 +808,7 @@ ${_topicsSection(<String>['plugin--a'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -813,7 +842,7 @@ ${_topicsSection(<String>['1plugin-a'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -847,7 +876,7 @@ ${_topicsSection(<String>['plugin-A'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -881,7 +910,7 @@ ${_topicsSection(<String>['plugin-a', 'plugin-a', 'plugin-a', 'plugin-a', 'plugi
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -917,7 +946,7 @@ ${_topicsSection(<String>['foobarfoobarfoobarfoobarfoobarfoobarfoo'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -953,7 +982,7 @@ ${_topicsSection(<String>['a'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -987,7 +1016,7 @@ ${_topicsSection(<String>['plugin-'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1021,7 +1050,7 @@ ${_topicsSection(<String>['plugin-A', 'Plugin-b'])}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1059,7 +1088,7 @@ ${_environmentSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1094,7 +1123,7 @@ ${_devDependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1129,7 +1158,7 @@ ${_dependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1160,7 +1189,7 @@ ${_dependenciesSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1197,7 +1226,7 @@ ${_topicsSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1235,7 +1264,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1272,7 +1301,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1308,7 +1337,7 @@ ${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -1341,7 +1370,7 @@ ${_topicsSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1381,7 +1410,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1417,7 +1446,7 @@ ${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -1448,7 +1477,7 @@ ${_topicsSection(<String>['plugin-a'])}
 ''');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
+          'validate',
         ]);
 
         expect(
@@ -1481,7 +1510,7 @@ ${_environmentSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1517,7 +1546,7 @@ ${_devDependenciesSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(
@@ -1545,11 +1574,12 @@ ${_environmentSection(flutterConstraint: '>=2.10.0')}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1583,11 +1613,10 @@ ${_environmentSection(flutterConstraint: '>=3.3.0', dartConstraint: '>=2.18.0 <4
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
+          'validate',
         ]);
 
         expect(
@@ -1616,11 +1645,10 @@ ${_environmentSection(flutterConstraint: '>=3.7.0', dartConstraint: '>=2.19.0 <4
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
+          'validate',
         ]);
 
         expect(
@@ -1648,11 +1676,12 @@ ${_environmentSection(dartConstraint: '>=2.14.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check', '--min-min-flutter-version', '3.0.0'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1684,11 +1713,10 @@ ${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.3.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-          '--min-min-flutter-version',
-          '3.3.0',
+          'validate',
         ]);
 
         expect(
@@ -1717,11 +1745,10 @@ ${_environmentSection(dartConstraint: '>=2.18.0 <4.0.0', flutterConstraint: null
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+        setVersionConfig(minFlutterVersion: '3.0.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-          '--min-min-flutter-version',
-          '3.0.0',
+          'validate',
         ]);
 
         expect(
@@ -1747,11 +1774,12 @@ ${_environmentSection()}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
+      setVersionConfig(minFlutterVersion: '2.0.0');
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check', '--min-min-flutter-version', '2.0.0'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1785,7 +1813,7 @@ ${_topicsSection()}
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['pubspec-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1830,7 +1858,7 @@ ${_topicsSection()}
 ''');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
+          'validate',
         ]);
 
         expect(
@@ -1859,7 +1887,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1897,7 +1925,7 @@ ${_topicsSection()}
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['pubspec-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1929,11 +1957,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allowed: ^1.0.0'])}
 ${_topicsSection()}
 ''');
+        setAllowedDependencies(unpinned: <String>['allowed']);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-          '--allow-dependencies',
-          'allowed',
+          'validate',
         ]);
 
         expect(
@@ -1959,11 +1986,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
 ${_topicsSection()}
 ''');
+          setAllowedDependencies(pinned: <String>['allow_pinned']);
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
+            'validate',
           ]);
 
           expect(
@@ -1990,11 +2016,10 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
+          setAllowedDependencies(pinned: <String>['allow_pinned']);
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
+            'validate',
           ]);
 
           expect(
@@ -2019,15 +2044,12 @@ ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: ^1.0.0'])}
 ${_topicsSection()}
 ''');
+        setAllowedDependencies(pinned: <String>['allow_pinned']);
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>[
-            'pubspec-check',
-            '--allow-pinned-dependencies',
-            'allow_pinned',
-          ],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -2080,7 +2102,7 @@ ${_topicsSection()}
             Error? commandError;
             final List<String> output = await runCapturingPrint(
               runner,
-              <String>['pubspec-check'],
+              <String>['validate'],
               errorHandler: (Error e) {
                 commandError = e;
               },
@@ -2119,7 +2141,7 @@ ${_topicsSection()}
 ''');
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'pubspec-check',
+            'validate',
           ]);
 
           expect(
@@ -2145,11 +2167,12 @@ ${_topicsSection()}
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final command = PubspecCheckCommand(
+      final command = ValidateCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
         gitDir: gitDir,
+        targetedValidators: {Validator.pubspec},
       );
 
       runner = CommandRunner<void>(
@@ -2174,7 +2197,7 @@ ${_topicsSection()}
 ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'pubspec-check',
+        'validate',
       ]);
 
       expect(

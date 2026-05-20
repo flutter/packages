@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.19.8
 
 * Updates internal implementation to use Kotlin Pigeon.
