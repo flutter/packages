@@ -41,10 +41,10 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   bool _isSafari = false;
 
   // The set of schemes that can be handled by the plugin.
-  static const Set<String> _supportedSchemes = <String>{
+  static final Set<String> _supportedSchemes = <String>{
     'http',
     'https',
-  };
+  }.union(_safariTargetTopSchemes);
 
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith(Registrar registrar) {
