@@ -8,8 +8,6 @@ import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
-import 'package:webview_flutter_android/src/android_webkit_constants.dart'
-    as _i7;
 import 'package:webview_flutter_android/src/android_webview_controller.dart'
     as _i6;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
@@ -632,7 +630,7 @@ class MockAndroidWebViewController extends _i1.Mock
 
   @override
   _i5.Future<void> setWebAuthenticationSupport(
-    _i7.WebAuthenticationSupport? support,
+    _i6.WebAuthenticationSupport? support,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setWebAuthenticationSupport, [support]),

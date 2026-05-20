@@ -4,17 +4,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
-import 'dart:typed_data' as _i13;
+import 'dart:typed_data' as _i12;
 import 'dart:ui' as _i4;
 
-import 'package:flutter/foundation.dart' as _i10;
-import 'package:flutter/gestures.dart' as _i11;
+import 'package:flutter/foundation.dart' as _i9;
+import 'package:flutter/gestures.dart' as _i10;
 import 'package:flutter/services.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i12;
+import 'package:mockito/src/dummies.dart' as _i11;
 import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
-import 'package:webview_flutter_android/src/android_webkit_constants.dart'
-    as _i9;
 import 'package:webview_flutter_android/src/android_webview_controller.dart'
     as _i7;
 import 'package:webview_flutter_android/src/platform_views_service_proxy.dart'
@@ -856,7 +854,7 @@ class MockAndroidWebViewController extends _i1.Mock
 
   @override
   _i8.Future<void> setWebAuthenticationSupport(
-    _i9.WebAuthenticationSupport? support,
+    _i7.WebAuthenticationSupport? support,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setWebAuthenticationSupport, [support]),
@@ -941,14 +939,14 @@ class MockAndroidWebViewWidgetCreationParams extends _i1.Mock
           as _i4.TextDirection);
 
   @override
-  Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>> get gestureRecognizers =>
+  Set<_i9.Factory<_i10.OneSequenceGestureRecognizer>> get gestureRecognizers =>
       (super.noSuchMethod(
             Invocation.getter(#gestureRecognizers),
-            returnValue: <_i10.Factory<_i11.OneSequenceGestureRecognizer>>{},
+            returnValue: <_i9.Factory<_i10.OneSequenceGestureRecognizer>>{},
             returnValueForMissingStub:
-                <_i10.Factory<_i11.OneSequenceGestureRecognizer>>{},
+                <_i9.Factory<_i10.OneSequenceGestureRecognizer>>{},
           )
-          as Set<_i10.Factory<_i11.OneSequenceGestureRecognizer>>);
+          as Set<_i9.Factory<_i10.OneSequenceGestureRecognizer>>);
 }
 
 /// A class which mocks [ExpensiveAndroidViewController].
@@ -1084,7 +1082,7 @@ class MockExpensiveAndroidViewController extends _i1.Mock
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> dispatchPointerEvent(_i11.PointerEvent? event) =>
+  _i8.Future<void> dispatchPointerEvent(_i10.PointerEvent? event) =>
       (super.noSuchMethod(
             Invocation.method(#dispatchPointerEvent, [event]),
             returnValue: _i8.Future<void>.value(),
@@ -1147,13 +1145,13 @@ class MockFlutterAssetManager extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#getAssetFilePathByName, [name]),
             returnValue: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getAssetFilePathByName, [name]),
               ),
             ),
             returnValueForMissingStub: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getAssetFilePathByName, [name]),
               ),
@@ -1230,11 +1228,11 @@ class MockJavaScriptChannel extends _i1.Mock implements _i2.JavaScriptChannel {
   String get channelName =>
       (super.noSuchMethod(
             Invocation.getter(#channelName),
-            returnValue: _i12.dummyValue<String>(
+            returnValue: _i11.dummyValue<String>(
               this,
               Invocation.getter(#channelName),
             ),
-            returnValueForMissingStub: _i12.dummyValue<String>(
+            returnValueForMissingStub: _i11.dummyValue<String>(
               this,
               Invocation.getter(#channelName),
             ),
@@ -1571,7 +1569,7 @@ class MockSurfaceAndroidViewController extends _i1.Mock
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> dispatchPointerEvent(_i11.PointerEvent? event) =>
+  _i8.Future<void> dispatchPointerEvent(_i10.PointerEvent? event) =>
       (super.noSuchMethod(
             Invocation.method(#dispatchPointerEvent, [event]),
             returnValue: _i8.Future<void>.value(),
@@ -1900,13 +1898,13 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
       (super.noSuchMethod(
             Invocation.method(#getUserAgentString, []),
             returnValue: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getUserAgentString, []),
               ),
             ),
             returnValueForMissingStub: _i8.Future<String>.value(
-              _i12.dummyValue<String>(
+              _i11.dummyValue<String>(
                 this,
                 Invocation.method(#getUserAgentString, []),
               ),
@@ -2028,7 +2026,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> postUrl(String? url, _i13.Uint8List? data) =>
+  _i8.Future<void> postUrl(String? url, _i12.Uint8List? data) =>
       (super.noSuchMethod(
             Invocation.method(#postUrl, [url, data]),
             returnValue: _i8.Future<void>.value(),
