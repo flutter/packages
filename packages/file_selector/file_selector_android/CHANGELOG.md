@@ -1,7 +1,3 @@
-## 0.5.2+6
-
-* Updates internal implementation to use Kotlin Pigeon.
-
 ## 0.5.2+5
 
 * Updates build files from Groovy to Kotlin.

@@ -62,7 +62,6 @@ void handleOneTimePurchasePrice(ProductDetails productDetails) {
     }
   }
 }
-
 ```
 
 ### Use case: free trials
@@ -102,7 +101,6 @@ void handleFreeTrialPeriod(ProductDetails productDetails) {
     }
   }
 }
-
 ```
 
 ### Use case: introductory prices

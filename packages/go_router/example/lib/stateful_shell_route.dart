@@ -170,7 +170,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
       ),
     );
   }
-
   // #enddocregion configuration-custom-shell
 
   /// NOTE: For a slightly more sophisticated branch switching, change the onTap

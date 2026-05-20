@@ -6,7 +6,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 // #docregion Android_Options1
 import 'package:shared_preferences_android/shared_preferences_android.dart';
-
 // #enddocregion Android_Options1
 
 Future<void> readmeSnippets() async {

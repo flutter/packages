@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/quickactions/Messages.kt',
-    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.quickactions'),
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/quickactions/Messages.java',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.quickactions'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

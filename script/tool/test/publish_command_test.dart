@@ -1333,7 +1333,7 @@ void main() {
                 'publish',
                 '--all-changed',
                 '--base-sha=HEAD~',
-                '--batch-release-branch=release-package1-1.0.0',
+                '--batch-release-branch=release-package1',
               ]);
           // Package1 is published in batch realease, pacakge2 is not.
           expect(
@@ -1404,7 +1404,7 @@ void main() {
                 'publish',
                 '--all-changed',
                 '--base-sha=HEAD~',
-                '--batch-release-branch=release-package1-1.0.0',
+                '--batch-release-branch=release-package1',
               ]);
           // Package1 is published in batch realease, pacakge2 is not.
           expect(
@@ -1533,7 +1533,7 @@ void main() {
             'publish',
             '--all-changed',
             '--base-sha=HEAD~',
-            '--batch-release-branch=release-package1-1.0.0',
+            '--batch-release-branch=release-package1',
           ],
           errorHandler: (Error e) {
             commandError = e;

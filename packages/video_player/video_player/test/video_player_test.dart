@@ -582,35 +582,51 @@ void main() {
         expect(uri.endsWith('/a.avi'), true, reason: 'Actual string: $uri');
       }, skip: kIsWeb /* Web does not support file assets. */);
 
-      test('file with special characters', () async {
-        final controller = VideoPlayerController.file(File('A #1 Hit.avi'));
-        await controller.initialize();
+      test(
+        'file with special characters',
+        () async {
+          final controller = VideoPlayerController.file(File('A #1 Hit.avi'));
+          await controller.initialize();
 
-        final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
-        expect(uri.startsWith('file:///'), true, reason: 'Actual string: $uri');
-        expect(
-          uri.endsWith('/A%20%231%20Hit.avi'),
-          true,
-          reason: 'Actual string: $uri',
-        );
-      }, skip: kIsWeb /* Web does not support file assets. */);
+          final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
+          expect(
+            uri.startsWith('file:///'),
+            true,
+            reason: 'Actual string: $uri',
+          );
+          expect(
+            uri.endsWith('/A%20%231%20Hit.avi'),
+            true,
+            reason: 'Actual string: $uri',
+          );
+        },
+        skip: kIsWeb /* Web does not support file assets. */,
+      );
 
-      test('file with headers (m3u8)', () async {
-        final controller = VideoPlayerController.file(
-          File('a.avi'),
-          httpHeaders: <String, String>{'Authorization': 'Bearer token'},
-        );
-        await controller.initialize();
+      test(
+        'file with headers (m3u8)',
+        () async {
+          final controller = VideoPlayerController.file(
+            File('a.avi'),
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          );
+          await controller.initialize();
 
-        final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
-        expect(uri.startsWith('file:///'), true, reason: 'Actual string: $uri');
-        expect(uri.endsWith('/a.avi'), true, reason: 'Actual string: $uri');
+          final String uri = fakeVideoPlayerPlatform.dataSources[0].uri!;
+          expect(
+            uri.startsWith('file:///'),
+            true,
+            reason: 'Actual string: $uri',
+          );
+          expect(uri.endsWith('/a.avi'), true, reason: 'Actual string: $uri');
 
-        expect(
-          fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
-          <String, String>{'Authorization': 'Bearer token'},
-        );
-      }, skip: kIsWeb /* Web does not support file assets. */);
+          expect(
+            fakeVideoPlayerPlatform.dataSources[0].httpHeaders,
+            <String, String>{'Authorization': 'Bearer token'},
+          );
+        },
+        skip: kIsWeb /* Web does not support file assets. */,
+      );
 
       test(
         'successful initialize on controller with error clears error',
@@ -1151,13 +1167,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {

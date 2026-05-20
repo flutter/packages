@@ -66,55 +66,63 @@ void main() {
     expect(prints, equals(<String>[kExpectedErrorMessage, 'Stop!']));
   });
 
-  test('GcsLock integration test: single protectedRun is successful', () async {
-    final AutoRefreshingAuthClient client = await clientViaServiceAccount(
-      ServiceAccountCredentials.fromJson(credentialsJson),
-      Storage.SCOPES,
-    );
-    final lock = GcsLock(StorageApi(client), kTestBucketName);
-    var testValue = 0;
-    await lock.protectedRun('test.lock', () async {
-      testValue = 1;
-    });
-    expect(testValue, 1);
-  }, skip: credentialsJson == null);
+  test(
+    'GcsLock integration test: single protectedRun is successful',
+    () async {
+      final AutoRefreshingAuthClient client = await clientViaServiceAccount(
+        ServiceAccountCredentials.fromJson(credentialsJson),
+        Storage.SCOPES,
+      );
+      final lock = GcsLock(StorageApi(client), kTestBucketName);
+      var testValue = 0;
+      await lock.protectedRun('test.lock', () async {
+        testValue = 1;
+      });
+      expect(testValue, 1);
+    },
+    skip: credentialsJson == null,
+  );
 
-  test('GcsLock integration test: protectedRun is exclusive', () async {
-    final AutoRefreshingAuthClient client = await clientViaServiceAccount(
-      ServiceAccountCredentials.fromJson(credentialsJson),
-      Storage.SCOPES,
-    );
-    final lock1 = GcsLock(StorageApi(client), kTestBucketName);
-    final lock2 = GcsLock(StorageApi(client), kTestBucketName);
+  test(
+    'GcsLock integration test: protectedRun is exclusive',
+    () async {
+      final AutoRefreshingAuthClient client = await clientViaServiceAccount(
+        ServiceAccountCredentials.fromJson(credentialsJson),
+        Storage.SCOPES,
+      );
+      final lock1 = GcsLock(StorageApi(client), kTestBucketName);
+      final lock2 = GcsLock(StorageApi(client), kTestBucketName);
 
-    TestPhase phase = TestPhase.run1;
-    final started1 = Completer<void>();
-    final Future<void> finished1 = lock1.protectedRun('test.lock', () async {
-      started1.complete();
-      while (phase == TestPhase.run1) {
-        await Future<void>.delayed(kDelayStep);
-      }
-    });
+      TestPhase phase = TestPhase.run1;
+      final started1 = Completer<void>();
+      final Future<void> finished1 = lock1.protectedRun('test.lock', () async {
+        started1.complete();
+        while (phase == TestPhase.run1) {
+          await Future<void>.delayed(kDelayStep);
+        }
+      });
 
-    await started1.future;
+      await started1.future;
 
-    final started2 = Completer<void>();
-    final Future<void> finished2 = lock2.protectedRun('test.lock', () async {
-      started2.complete();
-    });
+      final started2 = Completer<void>();
+      final Future<void> finished2 = lock2.protectedRun('test.lock', () async {
+        started2.complete();
+      });
 
-    // started2 should not be set even after a long wait because lock1 is
-    // holding the GCS lock file.
-    await Future<void>.delayed(kDelayStep * 10);
-    expect(started2.isCompleted, false);
+      // started2 should not be set even after a long wait because lock1 is
+      // holding the GCS lock file.
+      await Future<void>.delayed(kDelayStep * 10);
+      expect(started2.isCompleted, false);
 
-    // When phase is switched to run2, lock1 should be released soon and
-    // lock2 should soon be able to proceed its protectedRun.
-    phase = TestPhase.run2;
-    await started2.future;
-    await finished1;
-    await finished2;
-  }, skip: credentialsJson == null);
+      // When phase is switched to run2, lock1 should be released soon and
+      // lock2 should soon be able to proceed its protectedRun.
+      phase = TestPhase.run2;
+      await started2.future;
+      await finished1;
+      await finished2;
+    },
+    skip: credentialsJson == null,
+  );
 
   test('GcsLock attempts to unlock again on a DetailedApiRequestError', () async {
     fakeAsync((FakeAsync fakeAsync) {

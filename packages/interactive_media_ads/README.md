@@ -87,7 +87,6 @@ already be added to your `pubspec.yaml`.
 ```dart
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
-
 ```
 
 ### 3. Create a New Widget
@@ -222,7 +221,6 @@ void initState() {
           setState(() {});
         });
 }
-
 ```
 
 ### 5. Implement the `build` Method
@@ -324,7 +322,6 @@ Future<void> _pauseContent() {
   _contentProgressTimer = null;
   return _contentVideoController.pause();
 }
-
 ```
 
 ### 7. Dispose Resources
@@ -341,7 +338,6 @@ void dispose() {
   _adsManager?.destroy();
   // ···
 }
-
 ```
 
 That's it! You're now requesting and displaying ads with the IMA SDK. To learn about additional SDK

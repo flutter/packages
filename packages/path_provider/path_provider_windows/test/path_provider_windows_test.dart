@@ -61,33 +61,41 @@ void main() {
     expect(path, endsWith(r'flutter_tester'));
   }, skip: !Platform.isWindows);
 
-  test('getApplicationSupportPath with full version info in CP1252', () async {
-    final pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    }, encoding: encodingCP1252);
-    final String? path = await pathProvider.getApplicationSupportPath();
-    expect(path, isNotNull);
-    if (path != null) {
-      expect(path, endsWith(r'AppData\Roaming\A Company\Amazing App'));
-      expect(Directory(path).existsSync(), isTrue);
-    }
-  }, skip: !Platform.isWindows);
+  test(
+    'getApplicationSupportPath with full version info in CP1252',
+    () async {
+      final pathProvider = PathProviderWindows();
+      pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
+        'CompanyName': 'A Company',
+        'ProductName': 'Amazing App',
+      }, encoding: encodingCP1252);
+      final String? path = await pathProvider.getApplicationSupportPath();
+      expect(path, isNotNull);
+      if (path != null) {
+        expect(path, endsWith(r'AppData\Roaming\A Company\Amazing App'));
+        expect(Directory(path).existsSync(), isTrue);
+      }
+    },
+    skip: !Platform.isWindows,
+  );
 
-  test('getApplicationSupportPath with full version info in Unicode', () async {
-    final pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    });
-    final String? path = await pathProvider.getApplicationSupportPath();
-    expect(path, isNotNull);
-    if (path != null) {
-      expect(path, endsWith(r'AppData\Roaming\A Company\Amazing App'));
-      expect(Directory(path).existsSync(), isTrue);
-    }
-  }, skip: !Platform.isWindows);
+  test(
+    'getApplicationSupportPath with full version info in Unicode',
+    () async {
+      final pathProvider = PathProviderWindows();
+      pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
+        'CompanyName': 'A Company',
+        'ProductName': 'Amazing App',
+      });
+      final String? path = await pathProvider.getApplicationSupportPath();
+      expect(path, isNotNull);
+      if (path != null) {
+        expect(path, endsWith(r'AppData\Roaming\A Company\Amazing App'));
+        expect(Directory(path).existsSync(), isTrue);
+      }
+    },
+    skip: !Platform.isWindows,
+  );
 
   test(
     'getApplicationSupportPath with full version info in Unsupported Encoding',
@@ -142,19 +150,23 @@ void main() {
     }
   }, skip: !Platform.isWindows);
 
-  test('getApplicationSupportPath with a completely invalid company', () async {
-    final pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': r'..',
-      'ProductName': r'Amazing App',
-    });
-    final String? path = await pathProvider.getApplicationSupportPath();
-    expect(path, isNotNull);
-    if (path != null) {
-      expect(path, endsWith(r'AppData\Roaming\Amazing App'));
-      expect(Directory(path).existsSync(), isTrue);
-    }
-  }, skip: !Platform.isWindows);
+  test(
+    'getApplicationSupportPath with a completely invalid company',
+    () async {
+      final pathProvider = PathProviderWindows();
+      pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
+        'CompanyName': r'..',
+        'ProductName': r'Amazing App',
+      });
+      final String? path = await pathProvider.getApplicationSupportPath();
+      expect(path, isNotNull);
+      if (path != null) {
+        expect(path, endsWith(r'AppData\Roaming\Amazing App'));
+        expect(Directory(path).existsSync(), isTrue);
+      }
+    },
+    skip: !Platform.isWindows,
+  );
 
   test('getApplicationSupportPath with very long app name', () async {
     final pathProvider = PathProviderWindows();

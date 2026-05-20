@@ -161,7 +161,6 @@ String? encodeQueryParameters(Map<String, String> params) {
       )
       .join('&');
 }
-
 // ···
   final emailLaunchUri = Uri(
     scheme: 'mailto',

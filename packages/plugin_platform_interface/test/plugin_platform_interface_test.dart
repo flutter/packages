@@ -36,7 +36,6 @@ abstract class SamplePluginPlatform extends PlatformInterface {
 class SamplePluginDefault extends SamplePluginPlatform {
   // A default real implementation of the platform interface would go here.
 }
-
 // #enddocregion Example
 
 class ImplementsSamplePluginPlatform extends Mock
@@ -52,7 +51,6 @@ class ImplementsSamplePluginPlatformUsingNoSuchMethod
 class SamplePluginPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
-
 // #enddocregion Mock
 
 class SamplePluginPlatformFake extends Fake

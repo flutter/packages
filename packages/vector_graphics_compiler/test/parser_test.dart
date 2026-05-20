@@ -277,42 +277,6 @@ void main() {
     ]);
   });
 
-  test('adjacent tspans without whitespace are not separated by a space', () {
-    // Regression test: previously the parser unconditionally injected a
-    // space between the text of any two consecutive tspans, even when the
-    // source XML contained no whitespace between </tspan> and <tspan>.
-    // That caused `<tspan>A</tspan><tspan>B</tspan>` to render as "A B"
-    // (a visible gap), instead of "AB" as every browser does.
-    const svg = '''
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
-<text x="100" y="50" text-anchor="middle"><tspan>ABCDEFG</tspan><tspan>HIJKLMN</tspan></text>
-</svg>''';
-
-    final VectorInstructions instructions = parseWithoutOptimizers(svg);
-
-    expect(instructions.text.map((TextConfig t) => t.text), <String>[
-      'ABCDEFG',
-      'HIJKLMN',
-    ]);
-  });
-
-  test('adjacent tspans with whitespace between still get a space', () {
-    // Sibling case to the regression test above: when there *is* source
-    // whitespace between </tspan> and <tspan>, that whitespace must be
-    // preserved as a single space prepended to the second tspan.
-    const svg = '''
-<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50">
-<text x="0" y="40"><tspan>A</tspan> <tspan>B</tspan></text>
-</svg>''';
-
-    final VectorInstructions instructions = parseWithoutOptimizers(svg);
-
-    expect(instructions.text.map((TextConfig t) => t.text), <String>[
-      'A',
-      ' B',
-    ]);
-  });
-
   test('stroke-opacity', () {
     const strokeOpacitySvg = '''
 <svg viewBox="0 0 10 10" fill="none">

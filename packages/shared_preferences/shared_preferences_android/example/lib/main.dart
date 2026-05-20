@@ -20,7 +20,6 @@ const SharedPreferencesAsyncAndroidOptions options =
         fileName: 'the_name_of_a_file',
       ),
     );
-
 // #enddocregion Android_Options
 
 class MyApp extends StatelessWidget {

@@ -2626,13 +2626,14 @@ class IMAAdsRequest extends NSObject {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[
-          pigeonVar_instanceIdentifier,
-          adTagUrl,
-          adDisplayContainer,
-          contentPlayhead,
-        ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[
+        pigeonVar_instanceIdentifier,
+        adTagUrl,
+        adDisplayContainer,
+        contentPlayhead,
+      ],
+    );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -2706,13 +2707,14 @@ class IMAAdsRequest extends NSObject {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[
-          pigeonVar_instanceIdentifier,
-          adsResponse,
-          adDisplayContainer,
-          contentPlayhead,
-        ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[
+        pigeonVar_instanceIdentifier,
+        adsResponse,
+        adDisplayContainer,
+        contentPlayhead,
+      ],
+    );
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {

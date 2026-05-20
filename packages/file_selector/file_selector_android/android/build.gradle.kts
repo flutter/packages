@@ -1,10 +1,7 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 group = "dev.flutter.packages.file_selector_android"
 version = "1.0"
 
 buildscript {
-    val kotlinVersion = "2.3.0"
     repositories {
         google()
         mavenCentral()
@@ -12,7 +9,6 @@ buildscript {
 
     dependencies {
         classpath("com.android.tools.build:gradle:8.13.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 
@@ -25,13 +21,6 @@ allprojects {
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
-    }
 }
 
 android {

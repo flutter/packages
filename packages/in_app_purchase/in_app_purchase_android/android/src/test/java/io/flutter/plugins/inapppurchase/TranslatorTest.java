@@ -7,6 +7,8 @@ package io.flutter.plugins.inapppurchase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.AccountIdentifiers;
@@ -61,7 +63,7 @@ public class TranslatorTest {
     final ProductDetails expected =
         productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    PlatformProductDetails serialized = TranslatorKt.fromProductDetail(expected);
+    Messages.PlatformProductDetails serialized = Translator.fromProductDetail(expected);
 
     assertSerialized(expected, serialized);
   }
@@ -72,7 +74,7 @@ public class TranslatorTest {
     final ProductDetails expected =
         productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON);
 
-    PlatformProductDetails serialized = TranslatorKt.fromProductDetail(expected);
+    Messages.PlatformProductDetails serialized = Translator.fromProductDetail(expected);
 
     assertSerialized(expected, serialized);
   }
@@ -85,7 +87,8 @@ public class TranslatorTest {
             productDetailsConstructor.newInstance(IN_APP_PRODUCT_DETAIL_EXAMPLE_JSON),
             productDetailsConstructor.newInstance(SUBS_PRODUCT_DETAIL_EXAMPLE_JSON));
 
-    final List<PlatformProductDetails> serialized = TranslatorKt.fromProductDetailsList(expected);
+    final List<Messages.PlatformProductDetails> serialized =
+        Translator.fromProductDetailsList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -94,20 +97,20 @@ public class TranslatorTest {
 
   @Test
   public void fromProductDetailsList_null() {
-    assertEquals(Collections.emptyList(), TranslatorKt.fromProductDetailsList(null));
+    assertEquals(Collections.emptyList(), Translator.fromProductDetailsList(null));
   }
 
   @Test
   public void fromPurchase() throws JSONException {
     final Purchase expected = new Purchase(PURCHASE_EXAMPLE_JSON, "signature");
-    assertSerialized(expected, TranslatorKt.fromPurchase(expected));
+    assertSerialized(expected, Translator.fromPurchase(expected));
   }
 
   @Test
   public void fromPurchaseWithoutAccountIds() throws JSONException {
     final Purchase expected =
         new PurchaseWithoutAccountIdentifiers(PURCHASE_EXAMPLE_JSON, "signature");
-    PlatformPurchase serialized = TranslatorKt.fromPurchase(expected);
+    Messages.PlatformPurchase serialized = Translator.fromPurchase(expected);
     assertNotNull(serialized.getOrderId());
     assertNull(serialized.getAccountIdentifiers());
   }
@@ -116,7 +119,7 @@ public class TranslatorTest {
   public void fromPurchaseHistoryRecord() throws JSONException {
     final PurchaseHistoryRecord expected =
         new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, "signature");
-    assertSerialized(expected, TranslatorKt.fromPurchaseHistoryRecord(expected));
+    assertSerialized(expected, Translator.fromPurchaseHistoryRecord(expected));
   }
 
   @Test
@@ -130,8 +133,8 @@ public class TranslatorTest {
             new PurchaseHistoryRecord(PURCHASE_EXAMPLE_JSON, signature),
             new PurchaseHistoryRecord(purchase2Json, signature));
 
-    final List<PlatformPurchaseHistoryRecord> serialized =
-        TranslatorKt.fromPurchaseHistoryRecordList(expected);
+    final List<Messages.PlatformPurchaseHistoryRecord> serialized =
+        Translator.fromPurchaseHistoryRecordList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -140,7 +143,7 @@ public class TranslatorTest {
 
   @Test
   public void fromPurchasesHistoryRecordList_null() {
-    assertEquals(Collections.emptyList(), TranslatorKt.fromPurchaseHistoryRecordList(null));
+    assertEquals(Collections.emptyList(), Translator.fromPurchaseHistoryRecordList(null));
   }
 
   @Test
@@ -153,7 +156,7 @@ public class TranslatorTest {
         Arrays.asList(
             new Purchase(PURCHASE_EXAMPLE_JSON, signature), new Purchase(purchase2Json, signature));
 
-    final List<PlatformPurchase> serialized = TranslatorKt.fromPurchasesList(expected);
+    final List<Messages.PlatformPurchase> serialized = Translator.fromPurchasesList(expected);
 
     assertEquals(expected.size(), serialized.size());
     assertSerialized(expected.get(0), serialized.get(0));
@@ -162,7 +165,7 @@ public class TranslatorTest {
 
   @Test
   public void fromPurchasesList_null() {
-    assertEquals(Collections.emptyList(), TranslatorKt.fromPurchasesList(null));
+    assertEquals(Collections.emptyList(), Translator.fromPurchasesList(null));
   }
 
   @Test
@@ -172,9 +175,9 @@ public class TranslatorTest {
             .setDebugMessage("dummy debug message")
             .setResponseCode(BillingClient.BillingResponseCode.OK)
             .build();
-    PlatformBillingResult platformResult = TranslatorKt.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
+    assertEquals(Messages.PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
@@ -182,13 +185,25 @@ public class TranslatorTest {
   public void fromBillingResult_debugMessageNull() {
     BillingResult newBillingResult =
         BillingResult.newBuilder().setResponseCode(BillingClient.BillingResponseCode.OK).build();
-    PlatformBillingResult platformResult = TranslatorKt.fromBillingResult(newBillingResult);
+    Messages.PlatformBillingResult platformResult = Translator.fromBillingResult(newBillingResult);
 
-    assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
+    assertEquals(Messages.PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
   }
 
-  private void assertSerialized(ProductDetails expected, PlatformProductDetails serialized) {
+  @Test
+  public void currencyCodeFromSymbol() {
+    assertEquals("$", Translator.currencySymbolFromCode("USD"));
+    try {
+      Translator.currencySymbolFromCode("EUROPACOIN");
+      fail("Translator should throw an exception");
+    } catch (Exception e) {
+      assertTrue(e instanceof IllegalArgumentException);
+    }
+  }
+
+  private void assertSerialized(
+      ProductDetails expected, Messages.PlatformProductDetails serialized) {
     assertEquals(expected.getTitle(), serialized.getTitle());
     assertEquals(expected.getName(), serialized.getName());
     assertEquals(expected.getProductId(), serialized.getProductId());
@@ -196,7 +211,7 @@ public class TranslatorTest {
 
     ProductDetails.OneTimePurchaseOfferDetails expectedOneTimePurchaseOfferDetails =
         expected.getOneTimePurchaseOfferDetails();
-    PlatformOneTimePurchaseOfferDetails oneTimePurchaseOfferDetails =
+    Messages.PlatformOneTimePurchaseOfferDetails oneTimePurchaseOfferDetails =
         serialized.getOneTimePurchaseOfferDetails();
     assertEquals(expectedOneTimePurchaseOfferDetails == null, oneTimePurchaseOfferDetails == null);
     if (expectedOneTimePurchaseOfferDetails != null && oneTimePurchaseOfferDetails != null) {
@@ -205,7 +220,7 @@ public class TranslatorTest {
 
     List<ProductDetails.SubscriptionOfferDetails> expectedSubscriptionOfferDetailsList =
         expected.getSubscriptionOfferDetails();
-    List<PlatformSubscriptionOfferDetails> subscriptionOfferDetailsList =
+    List<Messages.PlatformSubscriptionOfferDetails> subscriptionOfferDetailsList =
         serialized.getSubscriptionOfferDetails();
     assertEquals(
         expectedSubscriptionOfferDetailsList == null, subscriptionOfferDetailsList == null);
@@ -216,15 +231,15 @@ public class TranslatorTest {
 
   private void assertSerialized(
       ProductDetails.OneTimePurchaseOfferDetails expected,
-      PlatformOneTimePurchaseOfferDetails serialized) {
-    assertEquals(expected.getPriceAmountMicros(), serialized.getPriceAmountMicros());
+      Messages.PlatformOneTimePurchaseOfferDetails serialized) {
+    assertEquals(expected.getPriceAmountMicros(), serialized.getPriceAmountMicros().longValue());
     assertEquals(expected.getPriceCurrencyCode(), serialized.getPriceCurrencyCode());
     assertEquals(expected.getFormattedPrice(), serialized.getFormattedPrice());
   }
 
   private void assertSerialized(
       List<ProductDetails.SubscriptionOfferDetails> expected,
-      List<PlatformSubscriptionOfferDetails> serialized) {
+      List<Messages.PlatformSubscriptionOfferDetails> serialized) {
     assertEquals(expected.size(), serialized.size());
     for (int i = 0; i < expected.size(); i++) {
       assertSerialized(expected.get(i), serialized.get(i));
@@ -233,7 +248,7 @@ public class TranslatorTest {
 
   private void assertSerialized(
       ProductDetails.SubscriptionOfferDetails expected,
-      PlatformSubscriptionOfferDetails serialized) {
+      Messages.PlatformSubscriptionOfferDetails serialized) {
     assertEquals(expected.getBasePlanId(), serialized.getBasePlanId());
     assertEquals(expected.getOfferId(), serialized.getOfferId());
     assertEquals(expected.getOfferTags(), serialized.getOfferTags());
@@ -242,7 +257,7 @@ public class TranslatorTest {
 
     ProductDetails.InstallmentPlanDetails expectedInstallmentPlanDetails =
         expected.getInstallmentPlanDetails();
-    PlatformInstallmentPlanDetails serializedInstallmentPlanDetails =
+    Messages.PlatformInstallmentPlanDetails serializedInstallmentPlanDetails =
         serialized.getInstallmentPlanDetails();
     assertEquals(expectedInstallmentPlanDetails == null, serializedInstallmentPlanDetails == null);
     if (expectedInstallmentPlanDetails != null && serializedInstallmentPlanDetails != null) {
@@ -251,7 +266,7 @@ public class TranslatorTest {
   }
 
   private void assertSerialized(
-      ProductDetails.PricingPhases expected, List<PlatformPricingPhase> serialized) {
+      ProductDetails.PricingPhases expected, List<Messages.PlatformPricingPhase> serialized) {
     List<ProductDetails.PricingPhase> expectedPhases = expected.getPricingPhaseList();
     assertEquals(expectedPhases.size(), serialized.size());
     for (int i = 0; i < serialized.size(); i++) {
@@ -261,26 +276,26 @@ public class TranslatorTest {
   }
 
   private void assertSerialized(
-      ProductDetails.PricingPhase expected, PlatformPricingPhase serialized) {
+      ProductDetails.PricingPhase expected, Messages.PlatformPricingPhase serialized) {
     assertEquals(expected.getFormattedPrice(), serialized.getFormattedPrice());
     assertEquals(expected.getPriceCurrencyCode(), serialized.getPriceCurrencyCode());
-    assertEquals(expected.getPriceAmountMicros(), serialized.getPriceAmountMicros());
-    assertEquals(expected.getBillingCycleCount(), serialized.getBillingCycleCount());
+    assertEquals(expected.getPriceAmountMicros(), serialized.getPriceAmountMicros().longValue());
+    assertEquals(expected.getBillingCycleCount(), serialized.getBillingCycleCount().intValue());
     assertEquals(expected.getBillingPeriod(), serialized.getBillingPeriod());
     assertEquals(
         expected.getRecurrenceMode(), recurrenceModeFromPlatform(serialized.getRecurrenceMode()));
   }
 
-  private void assertSerialized(Purchase expected, PlatformPurchase serialized) {
+  private void assertSerialized(Purchase expected, Messages.PlatformPurchase serialized) {
     assertEquals(expected.getOrderId(), serialized.getOrderId());
     assertEquals(expected.getPackageName(), serialized.getPackageName());
-    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime());
+    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime().longValue());
     assertEquals(expected.getPurchaseToken(), serialized.getPurchaseToken());
     assertEquals(expected.getSignature(), serialized.getSignature());
     assertEquals(expected.getOriginalJson(), serialized.getOriginalJson());
     assertEquals(expected.getProducts(), serialized.getProducts());
     assertEquals(expected.getDeveloperPayload(), serialized.getDeveloperPayload());
-    assertEquals(expected.isAcknowledged(), serialized.isAcknowledged());
+    assertEquals(expected.isAcknowledged(), serialized.getIsAcknowledged());
     assertEquals(expected.getPurchaseState(), stateFromPlatform(serialized.getPurchaseState()));
     assertNotNull(
         Objects.requireNonNull(expected.getAccountIdentifiers()).getObfuscatedAccountId());
@@ -294,47 +309,59 @@ public class TranslatorTest {
   }
 
   private void assertSerialized(
-      ProductDetails.InstallmentPlanDetails expected, PlatformInstallmentPlanDetails serialized) {
+      ProductDetails.InstallmentPlanDetails expected,
+      Messages.PlatformInstallmentPlanDetails serialized) {
     assertEquals(
         expected.getInstallmentPlanCommitmentPaymentsCount(),
-        serialized.getCommitmentPaymentsCount());
+        serialized.getCommitmentPaymentsCount().intValue());
     assertEquals(
         expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
-        serialized.getSubsequentCommitmentPaymentsCount());
+        serialized.getSubsequentCommitmentPaymentsCount().intValue());
   }
 
-  private String productTypeFromPlatform(PlatformProductType type) {
-    return switch (type) {
-      case INAPP -> BillingClient.ProductType.INAPP;
-      case SUBS -> BillingClient.ProductType.SUBS;
-    };
+  private String productTypeFromPlatform(Messages.PlatformProductType type) {
+    switch (type) {
+      case INAPP:
+        return BillingClient.ProductType.INAPP;
+      case SUBS:
+        return BillingClient.ProductType.SUBS;
+    }
+    throw new IllegalStateException("Unhandled type");
   }
 
-  private int stateFromPlatform(PlatformPurchaseState state) {
-    return switch (state) {
-      case UNSPECIFIED -> Purchase.PurchaseState.UNSPECIFIED_STATE;
-      case PURCHASED -> Purchase.PurchaseState.PURCHASED;
-      case PENDING -> Purchase.PurchaseState.PENDING;
-    };
+  private int stateFromPlatform(Messages.PlatformPurchaseState state) {
+    switch (state) {
+      case UNSPECIFIED:
+        return Purchase.PurchaseState.UNSPECIFIED_STATE;
+      case PURCHASED:
+        return Purchase.PurchaseState.PURCHASED;
+      case PENDING:
+        return Purchase.PurchaseState.PENDING;
+    }
+    throw new IllegalStateException("Unhandled state");
   }
 
-  private int recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
-    return switch (mode) {
-      case FINITE_RECURRING -> ProductDetails.RecurrenceMode.FINITE_RECURRING;
-      case INFINITE_RECURRING -> ProductDetails.RecurrenceMode.INFINITE_RECURRING;
-      case NON_RECURRING -> ProductDetails.RecurrenceMode.NON_RECURRING;
-    };
+  private int recurrenceModeFromPlatform(Messages.PlatformRecurrenceMode mode) {
+    switch (mode) {
+      case FINITE_RECURRING:
+        return ProductDetails.RecurrenceMode.FINITE_RECURRING;
+      case INFINITE_RECURRING:
+        return ProductDetails.RecurrenceMode.INFINITE_RECURRING;
+      case NON_RECURRING:
+        return ProductDetails.RecurrenceMode.NON_RECURRING;
+    }
+    throw new IllegalStateException("Unhandled mode");
   }
 
   private void assertSerialized(
-      PurchaseHistoryRecord expected, PlatformPurchaseHistoryRecord serialized) {
-    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime());
+      PurchaseHistoryRecord expected, Messages.PlatformPurchaseHistoryRecord serialized) {
+    assertEquals(expected.getPurchaseTime(), serialized.getPurchaseTime().longValue());
     assertEquals(expected.getPurchaseToken(), serialized.getPurchaseToken());
     assertEquals(expected.getSignature(), serialized.getSignature());
     assertEquals(expected.getOriginalJson(), serialized.getOriginalJson());
     assertEquals(expected.getProducts(), serialized.getProducts());
     assertEquals(expected.getDeveloperPayload(), serialized.getDeveloperPayload());
-    assertEquals(expected.getQuantity(), serialized.getQuantity());
+    assertEquals(expected.getQuantity(), serialized.getQuantity().intValue());
   }
 }
 

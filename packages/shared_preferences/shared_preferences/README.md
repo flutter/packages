@@ -58,7 +58,6 @@ To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncA
 <?code-excerpt "readme_excerpts.dart (Android_Options1)"?>
 ```dart
 import 'package:shared_preferences_android/shared_preferences_android.dart';
-
 ```
 <?code-excerpt "readme_excerpts.dart (Android_Options2)"?>
 ```dart
@@ -173,7 +172,6 @@ This can be run on every launch without data loss as long as the `migrationCompl
 <?code-excerpt "main.dart (migrate)"?>
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
-
 // ···
     const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();

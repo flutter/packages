@@ -4,9 +4,7 @@
 
 import AVFoundation
 import Testing
-import video_player_avfoundation_objc
-
-@testable import video_player_avfoundation
+import video_player_avfoundation
 
 #if os(iOS)
   import Flutter
@@ -200,7 +198,6 @@ final class StubFVPAVFactory: NSObject, FVPAVFactory {
   let player: AVPlayer
   let playerItem: FVPAVPlayerItem
   let pixelBufferSource: FVPPixelBufferSource?
-  private(set) var lastOutputSettings: [String: Any]?
   #if os(iOS)
     var audioSession: FVPAVAudioSession
   #endif
@@ -234,8 +231,7 @@ final class StubFVPAVFactory: NSObject, FVPAVFactory {
     return self.player
   }
 
-  func videoOutput(outputSettings: [String: Any]) -> FVPPixelBufferSource {
-    lastOutputSettings = outputSettings
+  func videoOutput(pixelBufferAttributes attributes: [String: Any]) -> FVPPixelBufferSource {
     return pixelBufferSource ?? TestPixelBufferSource()
   }
 
@@ -253,7 +249,7 @@ final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
   }
 }
 
-final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
+final class StubFVPDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
   let displayLink = StubFVPDisplayLink()
   var fireDisplayLink: (() -> Void)?
 

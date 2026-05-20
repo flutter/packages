@@ -5,10 +5,10 @@
 import 'dart:async';
 
 import 'package:file/file.dart';
+import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'core.dart';
-import 'file_utils.dart';
 import 'git_version_finder.dart';
 import 'output_utils.dart';
 import 'package_command.dart';
@@ -238,7 +238,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
   String getRelativePosixPath(
     FileSystemEntity entity, {
     required Directory from,
-  }) => relativePosixPath(entity, from: from, platformContext: path);
+  }) =>
+      p.posix.joinAll(path.split(path.relative(entity.path, from: from.path)));
 
   /// The suggested indentation for printed output.
   String get indentation => hasLongOutput ? '' : '  ';

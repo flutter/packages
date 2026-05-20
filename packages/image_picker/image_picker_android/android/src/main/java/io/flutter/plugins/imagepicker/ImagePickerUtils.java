@@ -76,7 +76,7 @@ final class ImagePickerUtils {
     }
   }
 
-  static int getLimitFromOption(GeneralOptions generalOptions) {
+  static int getLimitFromOption(Messages.GeneralOptions generalOptions) {
     Long limit = generalOptions.getLimit();
     int effectiveLimit = getMaxItems();
 

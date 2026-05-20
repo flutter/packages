@@ -17,7 +17,6 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 // Import for iOS/macOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-
 // #enddocregion platform_imports
 
 void main() => runApp(const MaterialApp(home: WebViewExample()));

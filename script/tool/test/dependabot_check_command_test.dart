@@ -68,7 +68,7 @@ $gradleEntries
 ''');
   }
 
-  test('passes with no supported ecosystems', () async {
+  test('skips with no supported ecosystems', () async {
     setDependabotCoverage();
     createFakePackage('a_package', packagesDir);
 
@@ -76,7 +76,12 @@ $gradleEntries
       'dependabot-check',
     ]);
 
-    expect(output, containsAllInOrder(<Matcher>[contains('No issues found!')]));
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('SKIPPING: No supported package ecosystems'),
+      ]),
+    );
   });
 
   test('fails for app missing Gradle coverage', () async {

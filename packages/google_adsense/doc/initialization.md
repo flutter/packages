@@ -30,7 +30,6 @@ void main() async {
 
   runApp(const MyApp());
 }
-
 ```
 
 ## Configure additional AdSense code parameters

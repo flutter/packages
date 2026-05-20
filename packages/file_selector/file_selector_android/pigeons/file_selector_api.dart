@@ -7,10 +7,11 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/file_selector_api.g.dart',
-    kotlinOut:
-        'android/src/main/kotlin/dev/flutter/packages/file_selector_android/GeneratedFileSelectorApi.kt',
-    kotlinOptions: KotlinOptions(
+    javaOut:
+        'android/src/main/java/dev/flutter/packages/file_selector_android/GeneratedFileSelectorApi.java',
+    javaOptions: JavaOptions(
       package: 'dev.flutter.packages.file_selector_android',
+      className: 'GeneratedFileSelectorApi',
     ),
     copyrightHeader: 'pigeons/copyright.txt',
   ),

@@ -7,7 +7,10 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
+<<<<<<< HEAD
   - release-go_router-\d+\.\d+\.\d+
+=======
+>>>>>>> image_picker_code_migration
 
 platform_properties:
   linux:

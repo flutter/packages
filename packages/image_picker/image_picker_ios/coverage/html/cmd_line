@@ -1,0 +1,1 @@
+genhtml coverage/lcov.info --ignore-errors source --exclude lib/**/*.g.dart --exclude lib/**/*.freezed.dart -o coverage/html

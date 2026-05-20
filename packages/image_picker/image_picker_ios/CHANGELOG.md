@@ -1,6 +1,6 @@
-## 0.8.13+6
+## 0.8.14
 
-* Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
+* Migrates the iOS implementation from Objective-C to Swift.
 
 ## 0.8.13+5
 

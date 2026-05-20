@@ -21,7 +21,6 @@ void main() {
   runApp(const MyApp());
   // #docregion DisplayMode
 }
-
 // #enddocregion DisplayMode
 
 class MyApp extends StatefulWidget {

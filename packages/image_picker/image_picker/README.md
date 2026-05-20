@@ -72,7 +72,6 @@ Future<void> getLostData() async {
     _handleError(response.exception);
   }
 }
-
 ```
 
 This check should always be run at startup in order to detect and handle this
@@ -118,7 +117,6 @@ implementations allow delegating to a camera handler by setting a
 <?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
 ```dart
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-
 // ···
 class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
@@ -137,7 +135,6 @@ class MyCameraDelegate extends ImagePickerCameraDelegate {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
-
 // ···
 void setUpCameraDelegate() {
   final ImagePickerPlatform instance = ImagePickerPlatform.instance;
@@ -145,7 +142,6 @@ void setUpCameraDelegate() {
     instance.cameraDelegate = MyCameraDelegate();
   }
 }
-
 ```
 
 Once you have set a `cameraDelegate`, `image_picker` calls with

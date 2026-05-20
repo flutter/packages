@@ -7,7 +7,6 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/gradle_check_command.dart';
-import 'package:flutter_plugin_tools/src/validators/gradle_validator.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -166,7 +165,7 @@ gradle.projectsEvaluated {
     buildGradle.writeAsStringSync('''
 allprojects {
     repositories {
-        ${includeArtifactHub ? GradleValidator.exampleRootGradleArtifactHubString : ''}
+        ${includeArtifactHub ? GradleCheckCommand.exampleRootGradleArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -227,7 +226,7 @@ pluginManagement {
     }
 }
 
-${includeArtifactDocumentation ? '// See ${GradleValidator.artifactHubDocumentationString} for more info.' : ''}
+${includeArtifactDocumentation ? '// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.' : ''}
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.11.1" apply false
@@ -990,8 +989,8 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains(GradleValidator.exampleRootGradleArtifactHubString),
-            contains(GradleValidator.exampleSettingsArtifactHubString),
+            contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
+            contains(GradleCheckCommand.exampleSettingsArtifactHubString),
           ]),
         );
       },
@@ -1026,7 +1025,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(GradleValidator.exampleRootGradleArtifactHubString),
+          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
         ]),
       );
     });
@@ -1060,12 +1059,12 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(GradleValidator.exampleSettingsArtifactHubString),
+          contains(GradleCheckCommand.exampleSettingsArtifactHubString),
         ]),
       );
       expect(
         output,
-        isNot(contains(GradleValidator.exampleRootGradleArtifactHubString)),
+        isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
       );
     });
 
@@ -1102,7 +1101,7 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains(GradleValidator.artifactHubDocumentationString),
+            contains(GradleCheckCommand.artifactHubDocumentationString),
           ]),
         );
       },

@@ -110,7 +110,6 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
       return (newKey, value)
     }
 
-    // Use newest value in case of duplicates
-    return Dictionary(keyValueTuples, uniquingKeysWith: { _, last in last })
+    return Dictionary(uniqueKeysWithValues: keyValueTuples)
   }
 }

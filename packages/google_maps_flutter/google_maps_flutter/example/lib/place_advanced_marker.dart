@@ -247,10 +247,10 @@ class _PlaceAdvancedMarkerBodyState extends State<_PlaceAdvancedMarkerBody> {
 
   Future<void> _changeZIndex(MarkerId markerId) async {
     final AdvancedMarker marker = markers[markerId]!;
-    final int current = marker.zIndexInt;
+    final double current = marker.zIndex;
     setState(() {
       markers[markerId] = marker.copyWith(
-        zIndexIntParam: current == 12 ? 0 : current + 1,
+        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
       );
     });
   }

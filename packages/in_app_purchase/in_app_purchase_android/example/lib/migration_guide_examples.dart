@@ -21,7 +21,6 @@ void handleOneTimePurchasePrice(ProductDetails productDetails) {
     }
   }
 }
-
 // #enddocregion one-time-purchase-price
 
 // #docregion subscription-free-trial
@@ -40,7 +39,6 @@ void handleFreeTrialPeriod(ProductDetails productDetails) {
     }
   }
 }
-
 // #enddocregion subscription-free-trial
 
 // #docregion subscription-introductory-price

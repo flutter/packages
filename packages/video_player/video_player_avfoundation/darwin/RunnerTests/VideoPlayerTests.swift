@@ -4,8 +4,7 @@
 
 import AVFoundation
 import Testing
-@preconcurrency @testable import video_player_avfoundation
-import video_player_avfoundation_objc
+@preconcurrency import video_player_avfoundation
 
 #if os(iOS)
   import Flutter
@@ -42,25 +41,32 @@ private let hlsAudioTestURI =
       view.wantsLayer = true
       let viewProvider = StubViewProvider(view: view)
     #endif
-    let videoPlayerPlugin = try createInitializedPlugin(viewProvider: viewProvider)
+    let videoPlayerPlugin = createInitializedPlugin(viewProvider: viewProvider)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
 
     #expect(player.playerLayer.superlayer == view.layer)
   }
 
-  @Test func playerForPlatformViewDoesNotRegisterTexture() throws {
+  @Test func playerForPlatformViewDoesNotRegisterTexture() {
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
 
-    _ = try videoPlayerPlugin.createPlatformViewPlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    videoPlayerPlugin.createPlatformViewPlayer(
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      error: &error)
+    #expect(error == nil)
 
     #expect(!textureRegistry.registeredTexture)
   }
@@ -70,17 +76,20 @@ private let hlsAudioTestURI =
     let mockVideoOutput = TestPixelBufferSource()
     // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
 
     // Ensure that the video playback is paused before seeking.
-    var error: FlutterError?
     player.pauseWithError(&error)
     #expect(error == nil)
 
@@ -103,12 +112,16 @@ private let hlsAudioTestURI =
   @Test func initStartsDisplayLinkTemporarily() throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
 
     // Init should start the display link temporarily.
     #expect(stubDisplayLinkFactory.displayLink.running)
@@ -126,20 +139,22 @@ private let hlsAudioTestURI =
     #expect(!stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func seekToWhilePlayingDoesNotStopDisplayLink() async throws {
+  @Test func seekToWhilePlayingDoesNotStopDisplayLink() async {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      error: &error)
+    #expect(error == nil)
     let player =
-      videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
+      videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPTextureBasedVideoPlayer
 
     // Ensure that the video is playing before seeking.
-    var error: FlutterError?
     player.playWithError(&error)
     #expect(error == nil)
 
@@ -157,19 +172,21 @@ private let hlsAudioTestURI =
     #expect(stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func pauseWhileWaitingForFrameDoesNotStopDisplayLink() throws {
+  @Test func pauseWhileWaitingForFrameDoesNotStopDisplayLink() {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
-    let videoPlayerPlugin = try createInitializedPlugin(displayLinkFactory: stubDisplayLinkFactory)
+    let videoPlayerPlugin = createInitializedPlugin(displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      error: &error)
+    #expect(error == nil)
     let player =
-      videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
+      videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPTextureBasedVideoPlayer
 
     // Run a play/pause cycle to force the pause codepath to run completely.
-    var error: FlutterError?
     player.playWithError(&error)
     #expect(error == nil)
     player.pauseWithError(&error)
@@ -179,18 +196,20 @@ private let hlsAudioTestURI =
     #expect(stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func disposeWhilePlayingStopsDisplayLink() async throws {
+  @Test func disposeWhilePlayingStopsDisplayLink() async {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
     var error: FlutterError?
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+    let identifiers = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
+      error: &error)
+    #expect(error == nil)
     let player =
-      videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
+      videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPTextureBasedVideoPlayer
 
     player.playWithError(&error)
     #expect(error == nil)
@@ -201,13 +220,16 @@ private let hlsAudioTestURI =
   }
 
   @Test func deregistersFromPlayer() throws {
-    let videoPlayerPlugin = try createInitializedPlugin()
-
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
-    let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
+    let videoPlayerPlugin = createInitializedPlugin()
 
     var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
+
     player.disposeWithError(&error)
     #expect(error == nil)
     #expect(videoPlayerPlugin.playersByIdentifier.count == 0)
@@ -217,11 +239,15 @@ private let hlsAudioTestURI =
     // TODO(stuartmorgan): Rewrite this test to use stubs, instead of running for 10
     // seconds with a real player and hoping to get buffer status updates.
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
-    let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
     let avPlayer = player.player
     avPlayer.play()
 
@@ -429,13 +455,16 @@ private let hlsAudioTestURI =
 
     // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
     try autoreleasepool {
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
       var error: FlutterError?
-      let identifiers = try videoPlayerPlugin.createTexturePlayer(
-        options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+      let identifiers = try #require(
+        videoPlayerPlugin.createTexturePlayer(
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+          error: &error))
+      #expect(error == nil)
 
-      let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
+      let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
       weakPlayer = player
       avPlayer = player.player
 
@@ -471,10 +500,14 @@ private let hlsAudioTestURI =
 
     // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
     try autoreleasepool {
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubFVPAVFactory())
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: StubFVPAVFactory())
 
-      let identifiers = try videoPlayerPlugin.createTexturePlayer(
-        options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+      var error: FlutterError?
+      let identifiers = try #require(
+        videoPlayerPlugin.createTexturePlayer(
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+          error: &error))
+      #expect(error == nil)
 
       let player =
         videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPTextureBasedVideoPlayer
@@ -482,7 +515,8 @@ private let hlsAudioTestURI =
 
       player.onTextureUnregistered(StubTexture())
 
-      try videoPlayerPlugin.initialize()
+      videoPlayerPlugin.initialize(&error)
+      #expect(error == nil)
     }
 
     // Wait for the weak pointer to be invalidated, indicating that the player has been deallocated.
@@ -497,15 +531,16 @@ private let hlsAudioTestURI =
     // No assertions needed. Lack of crash is a success.
   }
 
-  @Test func failedToLoadVideoEventShouldBeAlwaysSent() async throws {
+  @Test func failedToLoadVideoEventShouldBeAlwaysSent() async {
     // Use real objects to test a real failure flow.
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
-    // Provide a URI that is a valid URI, but not a video, to trigger a failure inside AVPlayer.
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: "https://flutter.dev", httpHeaders: [:]))
-    let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
+    var error: FlutterError?
+    let identifiers = videoPlayerPlugin.createTexturePlayer(
+      with: FVPCreationOptions.make(withUri: "", httpHeaders: [:]), error: &error)
+    #expect(error == nil)
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
 
     await withCheckedContinuation { continuation in
       // TODO(stuartmorgan): Update this test to instead use a mock listener, and add separate unit
@@ -545,13 +580,17 @@ private let hlsAudioTestURI =
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = try createInitializedPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
     let playerIdentifier = identifiers.playerId
     let player =
       videoPlayerPlugin.playersByIdentifier[playerIdentifier] as! FVPTextureBasedVideoPlayer
@@ -575,11 +614,15 @@ private let hlsAudioTestURI =
 
   @Test func videoOutputIsAddedWhenAVPlayerIsInitialized() async throws {
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
-    let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
+    var error: FlutterError?
+    let identifiers = try #require(
+      videoPlayerPlugin.createTexturePlayer(
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
+        error: &error))
+    #expect(error == nil)
+    let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
 
     let listener = StubEventListener()
     await withCheckedContinuation { continuation in
@@ -593,29 +636,33 @@ private let hlsAudioTestURI =
   }
 
   #if os(iOS)
-    @Test func videoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker() throws {
+    @Test func videoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker() {
       let stubFactory = StubFVPAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
       audioSession.category = .playAndRecord
       audioSession.categoryOptions = .defaultToSpeaker
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: stubFactory)
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: stubFactory)
 
-      try videoPlayerPlugin.setMixWithOthers(true)
+      var error: FlutterError?
+      videoPlayerPlugin.setMixWithOthers(true, error: &error)
+      #expect(error == nil)
       #expect(audioSession.category == .playAndRecord)
       #expect(audioSession.categoryOptions.contains(.defaultToSpeaker))
       #expect(audioSession.categoryOptions.contains(.mixWithOthers))
     }
 
-    @Test func setMixWithOthersShouldNoOpWhenNoChangesAreRequired() throws {
+    @Test func setMixWithOthersShouldNoOpWhenNoChangesAreRequired() {
       let stubFactory = StubFVPAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
       audioSession.category = .playAndRecord
       audioSession.categoryOptions = [.mixWithOthers, .defaultToSpeaker]
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: stubFactory)
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: stubFactory)
 
-      try videoPlayerPlugin.setMixWithOthers(true)
+      var error: FlutterError?
+      videoPlayerPlugin.setMixWithOthers(true, error: &error)
+      #expect(error == nil)
       #expect(!audioSession.setCategoryCalled)
     }
   #endif
@@ -755,48 +802,28 @@ private let hlsAudioTestURI =
     }
   }
 
-  @Test func videoOutputIsConfiguredWithBT709ColorProperties() throws {
-    let item = StubPlayerItem()
-    let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
-    let stubViewProvider = StubViewProvider()
-    let _ = FVPVideoPlayer(
-      playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
-
-    // BT.709 color properties are required so AVFoundation tone-maps HDR sources
-    // into the Flutter texture. Without them HDR samples arrive unconverted and
-    // render washed out. See flutter/flutter#91241.
-    let settings = try #require(stubAVFactory.lastOutputSettings)
-    let colorProperties = try #require(
-      settings[AVVideoColorPropertiesKey] as? [String: Any])
-    #expect(
-      colorProperties[AVVideoColorPrimariesKey] as? String == AVVideoColorPrimaries_ITU_R_709_2)
-    #expect(
-      colorProperties[AVVideoTransferFunctionKey] as? String
-        == AVVideoTransferFunction_ITU_R_709_2)
-    #expect(
-      colorProperties[AVVideoYCbCrMatrixKey] as? String == AVVideoYCbCrMatrix_ITU_R_709_2)
-  }
-
   // MARK: - Helper Methods
 
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,
   /// then initializes it.
   private func createInitializedPlugin(
     avFactory: FVPAVFactory = StubFVPAVFactory(),
-    displayLinkFactory: DisplayLinkFactory = StubFVPDisplayLinkFactory(),
+    displayLinkFactory: FVPDisplayLinkFactory = StubFVPDisplayLinkFactory(),
     binaryMessenger: FlutterBinaryMessenger = StubBinaryMessenger(),
     textureRegistry: FlutterTextureRegistry = TestTextureRegistry(),
     viewProvider: FVPViewProvider = StubViewProvider(),
     assetProvider: FVPAssetProvider = StubAssetProvider()
-  ) throws -> VideoPlayerPlugin {
-    let plugin = VideoPlayerPlugin(
+  ) -> FVPVideoPlayerPlugin {
+    let plugin = FVPVideoPlayerPlugin(
       avFactory: avFactory,
       displayLinkFactory: displayLinkFactory,
       binaryMessenger: binaryMessenger,
       textureRegistry: textureRegistry,
       viewProvider: viewProvider,
       assetProvider: assetProvider)
-    try plugin.initialize()
+    var error: FlutterError?
+    plugin.initialize(&error)
+    #expect(error == nil)
     return plugin
   }
 

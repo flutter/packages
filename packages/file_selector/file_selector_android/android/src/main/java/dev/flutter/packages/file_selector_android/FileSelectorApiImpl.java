@@ -31,12 +31,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import kotlin.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
 
-public class FileSelectorApiImpl implements FileSelectorApi {
+public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelectorApi {
   private static final String TAG = "FileSelectorApiImpl";
   // Request code for selecting a file.
   private static final int OPEN_FILE = 221;
@@ -95,8 +91,9 @@ public class FileSelectorApiImpl implements FileSelectorApi {
   @Override
   public void openFile(
       @Nullable String initialDirectory,
-      @NonNull FileTypes allowedTypes,
-      @NonNull Function1<? super Result<FileResponse>, Unit> callback) {
+      @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
+      @NonNull
+          GeneratedFileSelectorApi.NullableResult<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -114,37 +111,32 @@ public class FileSelectorApiImpl implements FileSelectorApi {
                 final Uri uri = data.getData();
                 if (uri == null) {
                   // No data retrieved from opening file.
-                  ResultUtilsKt.<FileResponse>completeWithError(
-                      callback, new Exception("Failed to retrieve data from opening file."));
+                  result.error(new Exception("Failed to retrieve data from opening file."));
                   return;
                 }
 
-                final FileResponse file = toFileResponse(uri);
+                final GeneratedFileSelectorApi.FileResponse file = toFileResponse(uri);
                 if (file != null) {
-                  ResultUtilsKt.<FileResponse>completeWithValue(callback, file);
+                  result.success(file);
                 } else {
-                  ResultUtilsKt.completeWithError(
-                      callback, new Exception("Failed to read file: " + uri));
+                  result.error(new Exception("Failed to read file: " + uri));
                 }
               } else {
-                ResultUtilsKt.completeWithValue(callback, null);
+                result.success(null);
               }
             }
           });
     } catch (Exception exception) {
-      ResultUtilsKt.completeWithError(callback, exception);
+      result.error(exception);
     }
   }
 
   @Override
   public void openFiles(
       @Nullable String initialDirectory,
-      @NonNull FileTypes allowedTypes,
+      @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
       @NonNull
-          Function1<
-                  ? super @NotNull Result<? extends @NotNull List<@NotNull FileResponse>>,
-                  @NotNull Unit>
-              callback) {
+          GeneratedFileSelectorApi.Result<List<GeneratedFileSelectorApi.FileResponse>> result) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
     intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -163,46 +155,46 @@ public class FileSelectorApiImpl implements FileSelectorApi {
                 // Only one file was returned.
                 final Uri uri = data.getData();
                 if (uri != null) {
-                  final FileResponse file = toFileResponse(uri);
+                  final GeneratedFileSelectorApi.FileResponse file = toFileResponse(uri);
                   if (file != null) {
-                    ResultUtilsKt.completeWithValue(callback, Collections.singletonList(file));
+                    result.success(Collections.singletonList(file));
                   } else {
-                    ResultUtilsKt.completeWithError(
-                        callback, new Exception("Failed to read file: " + uri));
+                    result.error(new Exception("Failed to read file: " + uri));
                   }
                 }
 
                 // Multiple files were returned.
                 final ClipData clipData = data.getClipData();
                 if (clipData != null) {
-                  final List<FileResponse> files = new ArrayList<>(clipData.getItemCount());
+                  final List<GeneratedFileSelectorApi.FileResponse> files =
+                      new ArrayList<>(clipData.getItemCount());
                   for (int i = 0; i < clipData.getItemCount(); i++) {
                     final ClipData.Item clipItem = clipData.getItemAt(i);
-                    final FileResponse file = toFileResponse(clipItem.getUri());
+                    final GeneratedFileSelectorApi.FileResponse file =
+                        toFileResponse(clipItem.getUri());
                     if (file != null) {
                       files.add(file);
                     } else {
-                      ResultUtilsKt.completeWithError(
-                          callback, new Exception("Failed to read file: " + uri));
+                      result.error(new Exception("Failed to read file: " + uri));
                       return;
                     }
                   }
-                  ResultUtilsKt.completeWithValue(callback, files);
+                  result.success(files);
                 }
               } else {
-                ResultUtilsKt.completeWithValue(callback, new ArrayList<>());
+                result.success(new ArrayList<>());
               }
             }
           });
     } catch (Exception exception) {
-      ResultUtilsKt.completeWithError(callback, exception);
+      result.error(exception);
     }
   }
 
   @Override
   public void getDirectoryPath(
       @Nullable String initialDirectory,
-      @NonNull Function1<? super @NotNull Result<String>, @NotNull Unit> callback) {
+      @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
     trySetInitialDirectory(intent, initialDirectory);
 
@@ -217,8 +209,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
                 final Uri uri = data.getData();
                 if (uri == null) {
                   // No data retrieved from opening directory.
-                  ResultUtilsKt.completeWithError(
-                      callback, new Exception("Failed to retrieve data from opening directory."));
+                  result.error(new Exception("Failed to retrieve data from opening directory."));
                   return;
                 }
 
@@ -228,17 +219,17 @@ public class FileSelectorApiImpl implements FileSelectorApi {
                 try {
                   final String path =
                       FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
-                  ResultUtilsKt.completeWithValue(callback, path);
+                  result.success(path);
                 } catch (UnsupportedOperationException exception) {
-                  ResultUtilsKt.completeWithError(callback, exception);
+                  result.error(exception);
                 }
               } else {
-                ResultUtilsKt.<String>completeWithValue(callback, null);
+                result.success(null);
               }
             }
           });
     } catch (Exception exception) {
-      ResultUtilsKt.completeWithError(callback, exception);
+      result.error(exception);
     }
   }
 
@@ -249,7 +240,8 @@ public class FileSelectorApiImpl implements FileSelectorApi {
   // Setting the mimeType with `setType` is required when opening files. This handles setting the
   // mimeType based on the `mimeTypes` list and converts extensions to mimeTypes.
   // See https://developer.android.com/guide/components/intents-common#OpenFile
-  private void setMimeTypes(@NonNull Intent intent, @NonNull FileTypes allowedTypes) {
+  private void setMimeTypes(
+      @NonNull Intent intent, @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes) {
     final Set<String> allMimetypes = new HashSet<>();
     allMimetypes.addAll(allowedTypes.getMimeTypes());
     allMimetypes.addAll(tryConvertExtensionsToMimetypes(allowedTypes.getExtensions()));
@@ -315,7 +307,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
   }
 
   @Nullable
-  FileResponse toFileResponse(@NonNull Uri uri) {
+  GeneratedFileSelectorApi.FileResponse toFileResponse(@NonNull Uri uri) {
     if (activityPluginBinding == null) {
       Log.d(TAG, "Activity is not available.");
       return null;
@@ -359,7 +351,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
     }
 
     String uriPath;
-    FileSelectorNativeException nativeError = null;
+    GeneratedFileSelectorApi.FileSelectorNativeException nativeError = null;
 
     try {
       uriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
@@ -378,11 +370,20 @@ public class FileSelectorApiImpl implements FileSelectorApi {
     } catch (IllegalArgumentException e) {
       uriPath = FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
       nativeError =
-          new FileSelectorNativeException(
-              FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION,
-              e.getMessage() == null ? "" : e.getMessage());
+          new GeneratedFileSelectorApi.FileSelectorNativeException.Builder()
+              .setMessage(e.getMessage() == null ? "" : e.getMessage())
+              .setFileSelectorExceptionCode(
+                  GeneratedFileSelectorApi.FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION)
+              .build();
     }
 
-    return new FileResponse(uriPath, contentResolver.getType(uri), name, size, bytes, nativeError);
+    return new GeneratedFileSelectorApi.FileResponse.Builder()
+        .setName(name)
+        .setBytes(bytes)
+        .setPath(uriPath)
+        .setMimeType(contentResolver.getType(uri))
+        .setSize(size.longValue())
+        .setFileSelectorNativeException(nativeError)
+        .build();
   }
 }

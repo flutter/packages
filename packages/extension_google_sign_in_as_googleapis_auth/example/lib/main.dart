@@ -12,7 +12,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/people/v1.dart';
 // #docregion CreateAPIClient
 import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
-
 // #enddocregion CreateAPIClient
 
 /// The scopes used by this example.

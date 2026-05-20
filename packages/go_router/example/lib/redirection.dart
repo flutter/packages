@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 // This scenario demonstrates how to use redirect to handle a sign-in flow.
 //
@@ -33,28 +34,6 @@ class LoginInfo extends ChangeNotifier {
   }
 }
 
-/// Provides login information to its descendants.
-class LoginInfoProvider extends InheritedNotifier<LoginInfo> {
-  /// Creates a [LoginInfoProvider].
-  const LoginInfoProvider({
-    super.key,
-    required super.notifier,
-    required super.child,
-  });
-
-  /// Returns the [LoginInfo] from the closest [LoginInfoProvider] ancestor.
-  static LoginInfo of(BuildContext context, {bool listen = true}) {
-    final LoginInfoProvider? result = listen
-        ? context.dependOnInheritedWidgetOfExactType<LoginInfoProvider>()
-        : context
-                  .getElementForInheritedWidgetOfExactType<LoginInfoProvider>()
-                  ?.widget
-              as LoginInfoProvider?;
-    assert(result != null, 'No LoginInfoProvider found in context');
-    return result!.notifier!;
-  }
-}
-
 void main() => runApp(App());
 
 /// The main app.
@@ -69,8 +48,8 @@ class App extends StatelessWidget {
 
   // add the login info into the tree as app state that can change over time
   @override
-  Widget build(BuildContext context) => LoginInfoProvider(
-    notifier: _loginInfo,
+  Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
+    value: _loginInfo,
     child: MaterialApp.router(
       routerConfig: _router,
       title: title,
@@ -128,7 +107,7 @@ class LoginScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           // log a user in, letting all the listeners know
-          LoginInfoProvider.of(context, listen: false).login('test-user');
+          context.read<LoginInfo>().login('test-user');
 
           // router will automatically redirect from /login to / using
           // refreshListenable
@@ -146,7 +125,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginInfo info = LoginInfoProvider.of(context);
+    final LoginInfo info = context.read<LoginInfo>();
 
     return Scaffold(
       appBar: AppBar(

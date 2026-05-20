@@ -14,22 +14,21 @@ import 'package:test/test.dart';
 import 'mocks.dart';
 import 'util.dart';
 
-/// Adds a fake podspec to [plugin]'s [subdirectory] directory.
+/// Adds a fake podspec to [plugin]'s [platform] directory.
 ///
 /// If [includeSwiftWorkaround] is set, the xcconfig additions to make Swift
 /// libraries work in apps that have no Swift will be included. If
 /// [scopeSwiftWorkaround] is set, it will be specific to the iOS configuration.
 void _writeFakePodspec(
   RepositoryPackage plugin,
-  String subdirectory, {
+  String platform, {
   bool includeSwiftWorkaround = false,
   bool scopeSwiftWorkaround = false,
   bool includePrivacyManifest = false,
-  bool includeSwiftVersion = true,
 }) {
   final String pluginName = plugin.directory.basename;
   final File file = plugin.directory
-      .childDirectory(subdirectory)
+      .childDirectory(platform)
       .childFile('$pluginName.podspec');
   final swiftWorkaround = includeSwiftWorkaround
       ? '''
@@ -44,7 +43,6 @@ void _writeFakePodspec(
   s.resource_bundles = {'$pluginName' => ['Resources/PrivacyInfo.xcprivacy']}
 '''
       : '';
-  final swiftVersion = includeSwiftVersion ? "s.swift_version = '5.0'" : '';
   file.createSync(recursive: true);
   file.writeAsStringSync('''
 #
@@ -68,7 +66,7 @@ Wraps NSUserDefaults, providing a persistent store for simple key-value pairs.
   s.osx.deployment_target = '10.11'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   $swiftWorkaround
-  $swiftVersion
+  s.swift_version = '5.0'
   $privacyManifest
 
 end
@@ -454,54 +452,6 @@ void main() {
       },
     );
 
-    test(
-      'ignores Swift files in the build directory when determining whether the plugin uses Swift',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin1',
-          packagesDir,
-          extraFiles: <String>[
-            'ios/Classes/SomeObjC.h',
-            'ios/Classes/SomeObjC.m',
-            'build/SomeSwiftFile.swift',
-            'ios/build/AnotherSwiftFile.swift',
-          ],
-        );
-        _writeFakePodspec(plugin, 'ios');
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'podspec-check',
-        ]);
-
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-        );
-      },
-    );
-
-    test('does not check for search paths in build output', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin1',
-        packagesDir,
-        extraFiles: <String>[
-          'ios/Classes/SomeSwift.swift',
-          'ios/plugin1/Package.swift',
-        ],
-      );
-      _writeFakePodspec(plugin, 'ios', includeSwiftWorkaround: true);
-      _writeFakePodspec(plugin, 'ios/build/some_pod');
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'podspec-check',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
-    });
-
     test('passes if the search paths workaround is present', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin1',
@@ -677,41 +627,6 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-      );
-    });
-
-    test('fails when a Swift plugin is missing a Swift version', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin1',
-        packagesDir,
-        platformSupport: <String, PlatformDetails>{
-          Platform.iOS: const PlatformDetails(PlatformSupport.inline),
-        },
-        extraFiles: <String>['ios/Classes/SomeSwift.swift'],
-      );
-      _writeFakePodspec(
-        plugin,
-        'ios',
-        includeSwiftVersion: false,
-        includeSwiftWorkaround: true,
-        includePrivacyManifest: true,
-      );
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['podspec-check'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('missing Swift version configuration'),
-        ]),
       );
     });
   });

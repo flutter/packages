@@ -107,7 +107,6 @@ packages. For instance, to customize Android and iOS:
 ```dart
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
-
 // ···
     final bool didAuthenticate = await auth.authenticate(
       localizedReason: 'Please authenticate to show account balance',

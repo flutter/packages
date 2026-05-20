@@ -11,6 +11,5 @@ export 'src/vector_graphics.dart'
         RenderingStrategy,
         VectorGraphic,
         VectorGraphicUtilities,
-        VectorGraphicsImageWidget,
         createCompatVectorGraphic,
         vg;

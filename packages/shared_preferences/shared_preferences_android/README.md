@@ -26,7 +26,6 @@ const SharedPreferencesAsyncAndroidOptions options =
         fileName: 'the_name_of_a_file',
       ),
     );
-
 ```
 
 The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.

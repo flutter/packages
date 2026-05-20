@@ -126,7 +126,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       _initializeCameraController(cameraController.description);
     }
   }
-
   // #enddocregion AppLifecycle
 
   @override

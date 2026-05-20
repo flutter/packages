@@ -28,7 +28,6 @@ generated file will always have the name `[source_file].g.dart`.
 import 'package:go_router/go_router.dart';
 
 part 'readme_excerpts.g.dart';
-
 ```
 
 ### Running `build_runner`
@@ -96,7 +95,6 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
-
 ```
 
 ## Route tree
@@ -118,7 +116,6 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-
 class RedirectRoute extends GoRouteData {
   // There is no need to implement [build] when this [redirect] is unconditional.
   @override
@@ -126,7 +123,6 @@ class RedirectRoute extends GoRouteData {
     return const HomeRoute().location;
   }
 }
-
 
 @TypedGoRoute<LoginRoute>(path: '/login')
 class LoginRoute extends GoRouteData with $LoginRoute {
@@ -138,7 +134,6 @@ class LoginRoute extends GoRouteData with $LoginRoute {
     return LoginScreen(from: from);
   }
 }
-
 ```
 
 ## `GoRouter` initialization
@@ -166,7 +161,6 @@ class ErrorRoute extends GoRouteData {
     return ErrorScreen(error: error);
   }
 }
-
 ```
 
 With this in place, you can provide the `errorBuilder` parameter like so:
@@ -228,7 +222,6 @@ class LoginRoute extends GoRouteData with $LoginRoute {
     return LoginScreen(from: from);
   }
 }
-
 ```
 
 ### Default values
@@ -247,7 +240,6 @@ class MyRoute extends GoRouteData with $MyRoute {
     return MyScreen(queryParameter: queryParameter);
   }
 }
-
 ```
 
 A query parameter that equals to its default value is not included in the location.
@@ -269,7 +261,6 @@ class PersonRouteWithExtra extends GoRouteData with $PersonRouteWithExtra {
     return PersonScreen($extra);
   }
 }
-
 ```
 
 Pass the extra param as a typed object:
@@ -279,7 +270,6 @@ Pass the extra param as a typed object:
 void tapWithExtra() {
   PersonRouteWithExtra(Person(id: 1, name: 'Marvin', age: 42)).go(context);
 }
-
 ```
 
 The `$extra` parameter is still passed outside the location, still defeats
@@ -305,7 +295,6 @@ class HotdogRouteWithEverything extends GoRouteData
     return HotdogScreen(ketchup, mustard, $extra);
   }
 }
-
 ```
 
 This seems kinda silly, but it works.
@@ -343,7 +332,6 @@ class RedirectRoute extends GoRouteData {
     return const HomeRoute().location;
   }
 }
-
 ```
 
 ## Type conversions
@@ -365,7 +353,6 @@ class BooksRoute extends GoRouteData with $BooksRoute {
     return BooksScreen(kind: kind);
   }
 }
-
 ```
 
 ## Transitions
@@ -394,7 +381,6 @@ class MyMaterialRouteWithKey extends GoRouteData with $MyMaterialRouteWithKey {
     return const MaterialPage<void>(key: _key, child: MyPage());
   }
 }
-
 ```
 
 ### Custom transitions
@@ -425,7 +411,6 @@ class FancyRoute extends GoRouteData with $FancyRoute {
     );
   }
 }
-
 ```
 
 ## TypedShellRoute and navigator keys
@@ -489,7 +474,6 @@ class DetailsRoute extends RelativeGoRouteData with $DetailsRoute {
   Widget build(BuildContext context, GoRouterState state) =>
       const DetailsScreen();
 }
-
 ```
 
 Navigate using the `goRelative` or `pushRelative` methods provided by the code generator:

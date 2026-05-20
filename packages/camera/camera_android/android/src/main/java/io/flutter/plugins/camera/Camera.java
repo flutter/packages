@@ -15,7 +15,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
@@ -683,37 +682,11 @@ class Camera
 
       // Trigger one capture to start AE sequence.
       captureSession.capture(
-          previewRequestBuilder.build(),
-          createTriggerResetCallback(
-              CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-              CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE),
-          backgroundHandler);
+          previewRequestBuilder.build(), cameraCaptureCallback, backgroundHandler);
 
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }
-  }
-
-  @VisibleForTesting
-  CameraCaptureSession.CaptureCallback createTriggerResetCallback(
-      final CaptureRequest.Key<Integer> triggerKey, final int triggerIdleValue) {
-    return new CameraCaptureSession.CaptureCallback() {
-      @Override
-      public void onCaptureCompleted(
-          @NonNull CameraCaptureSession session,
-          @NonNull CaptureRequest request,
-          @NonNull TotalCaptureResult result) {
-        previewRequestBuilder.set(triggerKey, triggerIdleValue);
-      }
-
-      @Override
-      public void onCaptureFailed(
-          @NonNull CameraCaptureSession session,
-          @NonNull CaptureRequest request,
-          @NonNull CaptureFailure failure) {
-        previewRequestBuilder.set(triggerKey, triggerIdleValue);
-      }
-    };
   }
 
   /**
@@ -822,11 +795,7 @@ class Camera
         CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
 
     try {
-      captureSession.capture(
-          previewRequestBuilder.build(),
-          createTriggerResetCallback(
-              CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_IDLE),
-          backgroundHandler);
+      captureSession.capture(previewRequestBuilder.build(), null, backgroundHandler);
     } catch (CameraAccessException e) {
       String message =
           (e.getMessage() == null)

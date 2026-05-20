@@ -7,13 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut:
-        'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
-    objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
-    objcOptions: ObjcOptions(
-      prefix: 'FLT',
-      headerIncludePath: './include/image_picker_ios/messages.g.h',
-    ),
+    swiftOut: 'ios/image_picker_ios/Sources/image_picker_ios/Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

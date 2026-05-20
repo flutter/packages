@@ -1,7 +1,3 @@
-## 4.12.0
-
-* Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
-
 ## 4.11.0
 
 * Adds support to opt out of Android inset changes. See

@@ -124,15 +124,12 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  // Treat an empty mapId as null, as the app-facing package may pass it either
-  // way.
-  final String? mapId = configuration.mapId == '' ? null : configuration.mapId;
   // If using cloud map, do not set options.styles
-  if (mapId == null) {
+  if (configuration.mapId == null) {
     options.styles = styles;
   }
 
-  options.mapId = mapId;
+  options.mapId = configuration.mapId;
 
   final gmaps.ColorScheme? jsColorScheme = _gmapTypeColorSchemeForPluginColor(
     configuration.colorScheme,

@@ -901,11 +901,11 @@ packages/package_a/CHANGELOG.md
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
-            'build',
-            'apk',
-            '--config-only',
-          ], plugin.getExamples().first.directory.path),
+          ProcessCall(
+            getFlutterCommand(mockPlatform),
+            const <String>['build', 'apk', '--config-only'],
+            plugin.getExamples().first.directory.path,
+          ),
           ProcessCall(androidDir.childFile('gradlew').path, const <String>[
             'plugin1:lintDebug',
           ], androidDir.path),

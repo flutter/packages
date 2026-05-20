@@ -20,6 +20,9 @@ import androidx.test.core.app.ApplicationProvider;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.UserChoiceBillingListener;
 import com.android.billingclient.api.UserChoiceDetails;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
 import java.util.Collections;
 import org.junit.After;
 import org.junit.Before;
@@ -89,16 +92,17 @@ public class BillingClientFactoryImplTest {
         ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
     verify(mockCallbackApi, times(1))
         .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(externalTransactionToken, callbackCaptor.getValue().getExternalTransactionToken());
+    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
     assertEquals(
-        originalTransactionId, callbackCaptor.getValue().getOriginalExternalTransactionId());
+        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
     assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
   @Test
   public void pendingPurchasesForPrepaidPlans() {
     // No logic to verify, just ensure creation works.
-    PlatformPendingPurchasesParams params = new PlatformPendingPurchasesParams(true);
+    Messages.PlatformPendingPurchasesParams params =
+        new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
     BillingClient client =
         factory.createBillingClient(
             context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, params);

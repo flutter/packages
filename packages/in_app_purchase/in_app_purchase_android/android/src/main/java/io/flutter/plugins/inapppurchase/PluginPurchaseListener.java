@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import static io.flutter.plugins.inapppurchase.TranslatorKt.fromBillingResult;
-import static io.flutter.plugins.inapppurchase.TranslatorKt.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
+import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,30 +14,31 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import io.flutter.Log;
 import java.util.List;
-import kotlin.Unit;
 
 class PluginPurchaseListener implements PurchasesUpdatedListener {
-  private final InAppPurchaseCallbackApi callbackApi;
+  private final Messages.InAppPurchaseCallbackApi callbackApi;
 
-  PluginPurchaseListener(InAppPurchaseCallbackApi callbackApi) {
+  PluginPurchaseListener(Messages.InAppPurchaseCallbackApi callbackApi) {
     this.callbackApi = callbackApi;
   }
 
   @Override
   public void onPurchasesUpdated(
       @NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
-    PlatformPurchasesResponse response =
-        new PlatformPurchasesResponse(
-            fromBillingResult(billingResult), fromPurchasesList(purchases));
+    Messages.PlatformPurchasesResponse.Builder builder =
+        new Messages.PlatformPurchasesResponse.Builder()
+            .setBillingResult(fromBillingResult(billingResult))
+            .setPurchases(fromPurchasesList(purchases));
     callbackApi.onPurchasesUpdated(
-        response,
-        ResultCompat.asCompatCallback(
-            result -> {
-              Throwable error = result.exceptionOrNull();
-              if (error != null) {
-                Log.e("IN_APP_PURCHASE", "onPurchaseUpdated handler error: " + error);
-              }
-              return Unit.INSTANCE;
-            }));
+        builder.build(),
+        new Messages.VoidResult() {
+          @Override
+          public void success() {}
+
+          @Override
+          public void error(@NonNull Throwable error) {
+            Log.e("IN_APP_PURCHASE", "onPurchaseUpdated handler error: " + error);
+          }
+        });
   }
 }

@@ -17,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.Manifest;
@@ -28,15 +29,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import androidx.annotation.Nullable;
+import io.flutter.plugins.imagepicker.Messages.FlutterError;
+import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
+import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
+import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import kotlin.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,16 +59,17 @@ public class ImagePickerDelegateTest {
   private static final Long MAX_DURATION = 10L;
   private static final Integer IMAGE_QUALITY = 90;
   private static final ImageSelectionOptions DEFAULT_IMAGE_OPTIONS =
-      new ImageSelectionOptions(null, null, 100);
+      new ImageSelectionOptions.Builder().setQuality((long) 100).build();
   private static final ImageSelectionOptions RESIZE_TRIGGERING_IMAGE_OPTIONS =
-      new ImageSelectionOptions(WIDTH, null, 100);
+      new ImageSelectionOptions.Builder().setQuality((long) 100).setMaxWidth(WIDTH).build();
   private static final VideoSelectionOptions DEFAULT_VIDEO_OPTIONS =
-      new VideoSelectionOptions(null);
+      new VideoSelectionOptions.Builder().build();
   private static final MediaSelectionOptions DEFAULT_MEDIA_OPTIONS =
-      new MediaSelectionOptions(DEFAULT_IMAGE_OPTIONS);
+      new MediaSelectionOptions.Builder().setImageSelectionOptions(DEFAULT_IMAGE_OPTIONS).build();
 
   @Mock Activity mockActivity;
   @Mock ImageResizer mockImageResizer;
+  @Mock Messages.Result<List<String>> mockResult;
   @Mock ImagePickerDelegate.PermissionManager mockPermissionManager;
   @Mock FileUtils mockFileUtils;
   @Mock Intent mockIntent;
@@ -144,77 +147,43 @@ public class ImagePickerDelegateTest {
   @Test
   public void chooseImageFromGallery_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(reply -> null), DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    final Boolean[] callbackCalled = new Boolean[1];
-    delegate.chooseImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS,
-        false,
-        ResultCompat.asCompatCallback(
-            reply -> {
-              callbackCalled[0] = true;
-              assertTrue(reply.isFailure());
-              FlutterError error = (FlutterError) reply.exceptionOrNull();
-              assertIsAlreadyActiveError(error);
-              return null;
-            }));
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
-    assertTrue(callbackCalled[0]);
+    verifyFinishedWithAlreadyActiveError();
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
   public void chooseMultiImageFromGallery_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(reply -> null), DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    final Boolean[] callbackCalled = new Boolean[1];
     delegate.chooseMultiImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS,
-        false,
-        Integer.MAX_VALUE,
-        ResultCompat.asCompatCallback(
-            reply -> {
-              callbackCalled[0] = true;
-              assertTrue(reply.isFailure());
-              FlutterError error = (FlutterError) reply.exceptionOrNull();
-              assertIsAlreadyActiveError(error);
-              return null;
-            }));
+        DEFAULT_IMAGE_OPTIONS, false, Integer.MAX_VALUE, mockResult);
 
-    assertTrue(callbackCalled[0]);
+    verifyFinishedWithAlreadyActiveError();
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
   public void chooseMediaFromGallery_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(reply -> null), DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
     GeneralOptions generalOptions =
-        new GeneralOptions(/* allowMultiple */ true, /* usePhotoPicker */ true, null);
-    final Boolean[] callbackCalled = new Boolean[1];
-    delegate.chooseMediaFromGallery(
-        DEFAULT_MEDIA_OPTIONS,
-        generalOptions,
-        ResultCompat.asCompatCallback(
-            reply -> {
-              callbackCalled[0] = true;
-              assertTrue(reply.isFailure());
-              FlutterError error = (FlutterError) reply.exceptionOrNull();
-              assertIsAlreadyActiveError(error);
-              return null;
-            }));
+        new GeneralOptions.Builder().setAllowMultiple(true).setUsePhotoPicker(true).build();
+    delegate.chooseMediaFromGallery(DEFAULT_MEDIA_OPTIONS, generalOptions, mockResult);
 
-    assertTrue(callbackCalled[0]);
+    verifyFinishedWithAlreadyActiveError();
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
   @Config(sdk = 30)
   public void chooseImageFromGallery_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS, false, ResultCompat.asCompatCallback(reply -> null));
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -225,8 +194,7 @@ public class ImagePickerDelegateTest {
   @Config(minSdk = 33)
   public void chooseImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS, true, ResultCompat.asCompatCallback(reply -> null));
+    delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -238,10 +206,7 @@ public class ImagePickerDelegateTest {
   public void chooseMultiImageFromGallery_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS,
-        true,
-        Integer.MAX_VALUE,
-        ResultCompat.asCompatCallback(reply -> null));
+        DEFAULT_IMAGE_OPTIONS, true, Integer.MAX_VALUE, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -254,10 +219,7 @@ public class ImagePickerDelegateTest {
   public void chooseMultiImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
-        DEFAULT_IMAGE_OPTIONS,
-        false,
-        Integer.MAX_VALUE,
-        ResultCompat.asCompatCallback(reply -> null));
+        DEFAULT_IMAGE_OPTIONS, false, Integer.MAX_VALUE, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -269,8 +231,7 @@ public class ImagePickerDelegateTest {
   @Config(sdk = 30)
   public void chooseVideoFromGallery_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseVideoFromGallery(
-        DEFAULT_VIDEO_OPTIONS, true, ResultCompat.asCompatCallback(reply -> null));
+    delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -281,8 +242,7 @@ public class ImagePickerDelegateTest {
   @Config(minSdk = 33)
   public void chooseVideoFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
     ImagePickerDelegate delegate = createDelegate();
-    delegate.chooseVideoFromGallery(
-        DEFAULT_VIDEO_OPTIONS, true, ResultCompat.asCompatCallback(reply -> null));
+    delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -292,22 +252,12 @@ public class ImagePickerDelegateTest {
   @Test
   public void takeImageWithCamera_whenPendingResultExists_finishesWithAlreadyActiveError() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(reply -> null), DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
-    final Boolean[] callbackCalled = new Boolean[1];
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS,
-        ResultCompat.asCompatCallback(
-            reply -> {
-              callbackCalled[0] = true;
-              assertTrue(reply.isFailure());
-              FlutterError error = (FlutterError) reply.exceptionOrNull();
-              assertIsAlreadyActiveError(error);
-              return null;
-            }));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
-    assertTrue(callbackCalled[0]);
+    verifyFinishedWithAlreadyActiveError();
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -316,8 +266,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockPermissionManager)
         .askForPermission(
@@ -329,8 +278,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.needRequestCameraPermission()).thenReturn(false);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -343,8 +291,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     verify(mockActivity)
         .startActivityForResult(
@@ -359,20 +306,13 @@ public class ImagePickerDelegateTest {
         .when(mockActivity)
         .startActivityForResult(any(Intent.class), anyInt());
     ImagePickerDelegate delegate = createDelegate();
-    final Boolean[] callbackCalled = new Boolean[1];
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS,
-        ResultCompat.asCompatCallback(
-            reply -> {
-              callbackCalled[0] = true;
-              assertTrue(reply.isFailure());
-              FlutterError error = (FlutterError) reply.exceptionOrNull();
-              assertEquals("no_available_camera", error.getCode());
-              assertEquals("No cameras available for taking pictures.", error.getMessage());
-              return null;
-            }));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
-    assertTrue(callbackCalled[0]);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_available_camera", errorCaptor.getValue().code);
+    assertEquals("No cameras available for taking pictures.", errorCaptor.getValue().getMessage());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -380,8 +320,7 @@ public class ImagePickerDelegateTest {
     when(mockPermissionManager.isPermissionGranted(Manifest.permission.CAMERA)).thenReturn(true);
 
     ImagePickerDelegate delegate = createDelegate();
-    delegate.takeImageWithCamera(
-        DEFAULT_IMAGE_OPTIONS, ResultCompat.asCompatCallback(reply -> null));
+    delegate.takeImageWithCamera(DEFAULT_IMAGE_OPTIONS, mockResult);
 
     mockStaticFile.verify(
         () -> File.createTempFile(any(), eq(".jpg"), eq(externalDirectory)), times(1));
@@ -389,34 +328,26 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void onRequestPermissionsResult_whenCameraPermissionDenied_finishesWithError() {
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isFailure());
-                  FlutterError error = (FlutterError) reply.exceptionOrNull();
-                  assertEquals("camera_access_denied", error.getCode());
-                  assertEquals("The user did not allow camera access.", error.getMessage());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onRequestPermissionsResult(
         ImagePickerDelegate.REQUEST_CAMERA_IMAGE_PERMISSION,
         new String[] {Manifest.permission.CAMERA},
         new int[] {PackageManager.PERMISSION_DENIED});
 
-    assertTrue(callbackCalled[0]);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("camera_access_denied", errorCaptor.getValue().code);
+    assertEquals("The user did not allow camera access.", errorCaptor.getValue().getMessage());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
   public void
       onRequestTakeVideoPermissionsResult_whenCameraPermissionGranted_launchesTakeVideoWithCameraIntent() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(null, null, DEFAULT_VIDEO_OPTIONS);
+        createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
     delegate.onRequestPermissionsResult(
         ImagePickerDelegate.REQUEST_CAMERA_VIDEO_PERMISSION,
         new String[] {Manifest.permission.CAMERA},
@@ -431,7 +362,7 @@ public class ImagePickerDelegateTest {
   public void
       onRequestTakeImagePermissionsResult_whenCameraPermissionGranted_launchesTakeWithCameraIntent() {
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(null, DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
     delegate.onRequestPermissionsResult(
         ImagePickerDelegate.REQUEST_CAMERA_IMAGE_PERMISSION,
         new String[] {Manifest.permission.CAMERA},
@@ -451,23 +382,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertTrue(reply.getOrNull().isEmpty());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_CANCELED, null);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals(0, pathListCapture.getValue().size());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -497,23 +422,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("originalPath", reply.getOrNull().get(0));
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -530,23 +449,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("originalPath", reply.getOrNull().get(0));
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -563,23 +476,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("pathFromUri", reply.getOrNull().get(0));
-                  return null;
-                }),
-            null,
-            DEFAULT_VIDEO_OPTIONS);
+        createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -596,25 +503,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isFailure());
-                  FlutterError error = (FlutterError) reply.exceptionOrNull();
-                  assertEquals("no_valid_image_uri", error.getCode());
-                  assertEquals("Cannot find the selected image.", error.getMessage());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_image_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected image.", errorCaptor.getValue().getMessage());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -630,25 +529,18 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isFailure());
-                  FlutterError error = (FlutterError) reply.exceptionOrNull();
-                  assertEquals("no_valid_video_uri", error.getCode());
-                  assertEquals("Cannot find the selected video.", error.getMessage());
-                  return null;
-                }),
-            null,
-            DEFAULT_VIDEO_OPTIONS);
+        createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_video_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected video.", errorCaptor.getValue().getMessage());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -681,23 +573,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("scaledPath", reply.getOrNull().get(0));
-                  return null;
-                }),
-            RESIZE_TRIGGERING_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("scaledPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -710,23 +596,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("pathFromUri", reply.getOrNull().get(0));
-                  return null;
-                }),
-            RESIZE_TRIGGERING_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -738,23 +618,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertTrue(reply.getOrNull().isEmpty());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_CANCELED, null);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals(0, pathListCapture.getValue().size());
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -767,23 +641,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("originalPath", reply.getOrNull().get(0));
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -797,23 +665,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("scaledPath", reply.getOrNull().get(0));
-                  return null;
-                }),
-            RESIZE_TRIGGERING_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("scaledPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -827,23 +689,17 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("pathFromUri", reply.getOrNull().get(0));
-                  return null;
-                }),
-            RESIZE_TRIGGERING_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(RESIZE_TRIGGERING_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -857,23 +713,18 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isSuccess());
-                  assertEquals("pathFromUri", reply.getOrNull().get(0));
-                  return null;
-                }),
-            null,
-            new VideoSelectionOptions(MAX_DURATION));
+        createDelegateWithPendingResultAndOptions(
+            null, new VideoSelectionOptions.Builder().setMaxDurationSeconds(MAX_DURATION).build());
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("pathFromUri", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
   }
 
   @Test
@@ -975,25 +826,16 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isFailure());
-                  FlutterError error = (FlutterError) reply.exceptionOrNull();
-                  assertEquals("no_valid_media_uri", error.getCode());
-                  assertEquals("Cannot find the selected media.", error.getMessage());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
   }
 
   @Test
@@ -1009,25 +851,16 @@ public class ImagePickerDelegateTest {
             })
         .when(mockExecutor)
         .execute(any(Runnable.class));
-    final Boolean[] callbackCalled = new Boolean[1];
     ImagePickerDelegate delegate =
-        createDelegateWithPendingCallbackAndOptions(
-            ResultCompat.asCompatCallback(
-                reply -> {
-                  callbackCalled[0] = true;
-                  assertTrue(reply.isFailure());
-                  FlutterError error = (FlutterError) reply.exceptionOrNull();
-                  assertEquals("no_valid_media_uri", error.getCode());
-                  assertEquals("Cannot find the selected media.", error.getMessage());
-                  return null;
-                }),
-            DEFAULT_IMAGE_OPTIONS,
-            null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    assertTrue(callbackCalled[0]);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
   }
 
   private ImagePickerDelegate createDelegate() {
@@ -1044,19 +877,14 @@ public class ImagePickerDelegateTest {
         mockExecutor);
   }
 
-  private ImagePickerDelegate createDelegateWithPendingCallbackAndOptions(
-      @Nullable
-          Function1<
-                  ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull Unit>
-              callback,
-      @Nullable ImageSelectionOptions imageOptions,
-      @Nullable VideoSelectionOptions videoOptions) {
+  private ImagePickerDelegate createDelegateWithPendingResultAndOptions(
+      @Nullable ImageSelectionOptions imageOptions, @Nullable VideoSelectionOptions videoOptions) {
     return new ImagePickerDelegate(
         mockActivity,
         mockImageResizer,
         imageOptions,
         videoOptions,
-        callback,
+        mockResult,
         cache,
         mockPermissionManager,
         mockFileUriResolver,
@@ -1064,9 +892,11 @@ public class ImagePickerDelegateTest {
         mockExecutor);
   }
 
-  private void assertIsAlreadyActiveError(FlutterError error) {
-    assertEquals("already_active", error.getCode());
-    assertEquals("Image picker is already active", error.getMessage());
+  private void verifyFinishedWithAlreadyActiveError() {
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("already_active", errorCaptor.getValue().code);
+    assertEquals("Image picker is already active", errorCaptor.getValue().getMessage());
   }
 
   private void setupMockClipData() {

@@ -92,7 +92,6 @@ ThemeData _buildTheme(Brightness brightness) {
     textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
   );
 }
-
 // #enddocregion AppThemeSimple
 
 /// Multi-font app theme example.

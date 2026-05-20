@@ -233,7 +233,7 @@ class PublishCommand extends PackageLoopingCommand {
           // the opt-in flag and that the package name matches the branch suffix.
           // Example: branch "release-go_router" matches package "go_router".
           if (!isBatchReleasePackage ||
-              !batchReleaseBranchName.startsWith('release-$packageName-')) {
+              batchReleaseBranchName != 'release-$packageName') {
             continue;
           }
         }

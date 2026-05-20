@@ -17,7 +17,6 @@ import 'package:local_auth/local_auth.dart';
 // #docregion CustomMessages
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
-
 // #enddocregion CustomMessages
 
 void main() {

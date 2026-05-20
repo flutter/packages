@@ -527,37 +527,45 @@ Future<void> main() async {
   // `SkiaPerfGcsAdaptor.computeObjectName` uses `GithubHelper` which requires
   // network connections. Hence we put them as integration tests instead of unit
   // tests.
-  test('SkiaPerfGcsAdaptor integration test for name computations', () async {
-    expect(
-      await SkiaPerfGcsAdaptor.computeObjectName(
-        kFlutterFrameworkRepo,
-        kFrameworkRevision1,
-        DateTime.utc(2019, 12, 04, 23),
-        'test',
-      ),
-      equals(
-        'flutter-flutter/2019/12/04/23/$kFrameworkRevision1/test_values.json',
-      ),
-    );
-    expect(
-      await SkiaPerfGcsAdaptor.computeObjectName(
-        kFlutterEngineRepo,
-        kEngineRevision1,
-        DateTime.utc(2019, 12, 03, 20),
-        'test',
-      ),
-      equals('flutter-engine/2019/12/03/20/$kEngineRevision1/test_values.json'),
-    );
-    expect(
-      await SkiaPerfGcsAdaptor.computeObjectName(
-        kFlutterEngineRepo,
-        kEngineRevision2,
-        DateTime.utc(2020, 01, 03, 15),
-        'test',
-      ),
-      equals('flutter-engine/2020/01/03/15/$kEngineRevision2/test_values.json'),
-    );
-  }, skip: testBucket == null);
+  test(
+    'SkiaPerfGcsAdaptor integration test for name computations',
+    () async {
+      expect(
+        await SkiaPerfGcsAdaptor.computeObjectName(
+          kFlutterFrameworkRepo,
+          kFrameworkRevision1,
+          DateTime.utc(2019, 12, 04, 23),
+          'test',
+        ),
+        equals(
+          'flutter-flutter/2019/12/04/23/$kFrameworkRevision1/test_values.json',
+        ),
+      );
+      expect(
+        await SkiaPerfGcsAdaptor.computeObjectName(
+          kFlutterEngineRepo,
+          kEngineRevision1,
+          DateTime.utc(2019, 12, 03, 20),
+          'test',
+        ),
+        equals(
+          'flutter-engine/2019/12/03/20/$kEngineRevision1/test_values.json',
+        ),
+      );
+      expect(
+        await SkiaPerfGcsAdaptor.computeObjectName(
+          kFlutterEngineRepo,
+          kEngineRevision2,
+          DateTime.utc(2020, 01, 03, 15),
+          'test',
+        ),
+        equals(
+          'flutter-engine/2020/01/03/15/$kEngineRevision2/test_values.json',
+        ),
+      );
+    },
+    skip: testBucket == null,
+  );
 
   test('SkiaPerfDestination.update awaits locks', () async {
     var updateCompleted = false;

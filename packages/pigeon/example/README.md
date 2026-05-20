@@ -79,7 +79,6 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 }
-
 ```
 
 ### Dart
@@ -116,7 +115,6 @@ Future<bool> sendMessage(String messageText) {
     return Future<bool>(() => true);
   }
 }
-
 ```
 
 ### Swift
@@ -270,7 +268,6 @@ class _ExampleFlutterApi implements MessageFlutterApi {
     return aString ?? '';
   }
 }
-
 // ···
   MessageFlutterApi.setUp(_ExampleFlutterApi());
 ```
@@ -400,7 +397,6 @@ Stream<String> getEventStream() async* {
     }
   }
 }
-
 ```
 
 ### Swift
