@@ -1,3 +1,12 @@
+## 1.0.0
+
+* Re-launches the published version of the tool for use in
+  `flutter/core-packages`. This is no longer intended to be used in
+  `non-flutter/*` repositories.
+* **Breaking Changes**: Too numerous to list. Previous use cases are no longer
+  supported. Any `flutter/*` repositories adopting this tool should start from
+  scratch.
+
 ## 0.13.4+4
 
 * Allows code excerpts in `example/README.md`.
