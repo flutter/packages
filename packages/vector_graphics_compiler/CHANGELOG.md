@@ -1,6 +1,6 @@
 ## 1.2.4
 
-* Fix compile-time Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
+* Fix Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
 * Prevent CPU/Memory Denial of Service (DoS) resource exhaustion from exponential DAG reference expansions (Billion Laughs SVG exploits) by enforcing a strict, cumulative reference expansion safety limit of 10,000.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
