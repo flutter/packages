@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 0.5.2
 
 * Fixes a crash in `TreeView` when it collapses to 0 rows or the last node is collapsed.

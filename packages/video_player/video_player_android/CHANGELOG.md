@@ -1,3 +1,7 @@
+## 2.9.6
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 2.9.5
 
 * Updates build files from Groovy to Kotlin.

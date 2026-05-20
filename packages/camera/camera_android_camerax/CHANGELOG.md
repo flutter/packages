@@ -1,3 +1,7 @@
+## 0.7.2+1
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 0.7.2
 
 * Bumps camerax_version from 1.5.3 to 1.6.0.

@@ -1,3 +1,7 @@
+## 0.3.0+15
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 0.3.0+14
 
 * Updates README to use Kotlin gradle rather than Groovy.

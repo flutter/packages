@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 8.1.0
 
 - Adds the ability to supply a custom HTTP client to `GoogleFonts.config`.

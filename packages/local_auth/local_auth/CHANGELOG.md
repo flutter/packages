@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 3.0.1
 
 * Replaces platform-specific setup instructions with links to the relevant

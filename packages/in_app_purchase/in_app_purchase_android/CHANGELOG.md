@@ -1,3 +1,7 @@
+## 0.4.0+12
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 0.4.0+11
 
 * Updates internal implementation to use Kotlin Pigeon.
