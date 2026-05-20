@@ -380,11 +380,7 @@ class LicenseCheckCommand extends PackageCommand {
   }
 
   String _repoRelativePath(File file) {
-    return relativePosixPath(
-      file,
-      from: rootDir,
-      platformContext: path,
-    );
+    return relativePosixPath(file, from: rootDir, platformContext: path);
   }
 }
 
