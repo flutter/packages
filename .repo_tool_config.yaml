@@ -9,7 +9,7 @@ repo_name: flutter/packages
 #
 # The major and minor version here should match the lowest version analyzed
 # in legacy version analysis (.ci.yaml analyze_legacy).
-min_flutter: '3.35.0'
+min_flutter: '3.38.0'
 
 # The list of external packages that are allowed as dependencies.
 # All entries here must have an explanation for why they are here. See
