@@ -1,7 +1,6 @@
 ## 0.3.5+3
 
-* Clarifies that `XFile.mimeType` is not inferred from the file path or contents.
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.3.5+2
 

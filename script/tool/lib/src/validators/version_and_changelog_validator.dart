@@ -120,7 +120,15 @@ class VersionAndChangelogValidator {
     required bool checkForMissingChanges,
     required bool ignorePlatformInterfaceBreaks,
   }) async {
-    final Pubspec pubspec = package.parsePubspec();
+    final Pubspec? pubspec = _tryParsePubspec(package);
+    if (pubspec == null) {
+      // No remaining checks make sense, so fail immediately.
+      return <String>['Invalid pubspec.yaml.'];
+    }
+
+    if (pubspec.publishTo == 'none') {
+      return <String>[];
+    }
 
     final Version? currentPubspecVersion = pubspec.version;
     if (currentPubspecVersion == null) {
@@ -579,7 +587,7 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     if (missingVersionChange && missingChangelogChange) {
       printError(
         'If this PR is not exempt, you can update version and '
-        'CHANGELOG with the "update-release-info" command.\\\n'
+        'CHANGELOG with the "update-release-info" command.\n'
         'See here for an example: '
         'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
         'For more details on versioning, check the contributing guide.',
@@ -655,6 +663,16 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       from: _repoRoot,
       platformContext: _path,
     );
+  }
+
+  Pubspec? _tryParsePubspec(RepositoryPackage package) {
+    try {
+      final Pubspec pubspec = package.parsePubspec();
+      return pubspec;
+    } on Exception catch (exception) {
+      printError('${_indentation}Failed to parse `pubspec.yaml`: $exception}');
+      return null;
+    }
   }
 }
 
