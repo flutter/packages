@@ -29,7 +29,7 @@ private func doubleEqualsEventChannelMessages(_ lhs: Double, _ rhs: Double) -> B
 
 private func doubleHashEventChannelMessages(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
-    hasher.combine(0x7FF8000000000000)
+    hasher.combine(0x7FF8_0000_0000_0000)
   } else {
     // Normalize -0.0 to 0.0
     hasher.combine(value == 0 ? 0 : value)
@@ -132,7 +132,6 @@ func deepHashEventChannelMessages(value: Any?, hasher: inout Hasher) {
   }
 }
 
-
 /// Generated class from Pigeon that represents data sent in messages.
 /// This protocol should not be extended by any user class outside of the generated file.
 protocol PlatformEvent {
@@ -142,7 +141,6 @@ protocol PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct IntEvent: PlatformEvent {
   var data: Int64
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
@@ -173,7 +171,6 @@ struct IntEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct StringEvent: PlatformEvent {
   var data: String
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
@@ -239,11 +236,12 @@ private class EventChannelMessagesPigeonCodecReaderWriter: FlutterStandardReader
 }
 
 class EventChannelMessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = EventChannelMessagesPigeonCodec(readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
+  static let shared = EventChannelMessagesPigeonCodec(
+    readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
 }
 
-var eventChannelMessagesPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: EventChannelMessagesPigeonCodecReaderWriter());
-
+var eventChannelMessagesPigeonMethodCodec = FlutterStandardMethodCodec(
+  readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
 
 private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -295,16 +293,18 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  static func register(with messenger: FlutterBinaryMessenger,
-                      instanceName: String = "",
-                      streamHandler: StreamEventsStreamHandler) {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamEventsStreamHandler
+  ) {
     var channelName = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-      

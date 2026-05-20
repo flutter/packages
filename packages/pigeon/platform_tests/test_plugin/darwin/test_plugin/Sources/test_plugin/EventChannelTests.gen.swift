@@ -48,7 +48,7 @@ private func doubleEqualsEventChannelTests(_ lhs: Double, _ rhs: Double) -> Bool
 
 private func doubleHashEventChannelTests(_ value: Double, _ hasher: inout Hasher) {
   if value.isNaN {
-    hasher.combine(0x7FF8000000000000)
+    hasher.combine(0x7FF8_0000_0000_0000)
   } else {
     // Normalize -0.0 to 0.0
     hasher.combine(value == 0 ? 0 : value)
@@ -150,7 +150,6 @@ func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
     hasher.combine(0)
   }
 }
-
 
 enum EventEnum: Int, CaseIterable {
   case one = 0
@@ -265,7 +264,6 @@ class EventAllNullableTypes: Hashable {
   var mapMap: [Int64?: [AnyHashable?: Any?]?]?
   var recursiveClassMap: [Int64?: EventAllNullableTypes?]?
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EventAllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -373,10 +371,40 @@ class EventAllNullableTypes: Hashable {
     if Swift.type(of: lhs) != Swift.type(of: rhs) {
       return false
     }
-    if (lhs === rhs) {
+    if lhs === rhs {
       return true
     }
-    return deepEqualsEventChannelTests(lhs.aNullableBool, rhs.aNullableBool) && deepEqualsEventChannelTests(lhs.aNullableInt, rhs.aNullableInt) && deepEqualsEventChannelTests(lhs.aNullableInt64, rhs.aNullableInt64) && deepEqualsEventChannelTests(lhs.aNullableDouble, rhs.aNullableDouble) && deepEqualsEventChannelTests(lhs.aNullableByteArray, rhs.aNullableByteArray) && deepEqualsEventChannelTests(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray) && deepEqualsEventChannelTests(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray) && deepEqualsEventChannelTests(lhs.aNullableFloatArray, rhs.aNullableFloatArray) && deepEqualsEventChannelTests(lhs.aNullableEnum, rhs.aNullableEnum) && deepEqualsEventChannelTests(lhs.anotherNullableEnum, rhs.anotherNullableEnum) && deepEqualsEventChannelTests(lhs.aNullableString, rhs.aNullableString) && deepEqualsEventChannelTests(lhs.aNullableObject, rhs.aNullableObject) && deepEqualsEventChannelTests(lhs.allNullableTypes, rhs.allNullableTypes) && deepEqualsEventChannelTests(lhs.list, rhs.list) && deepEqualsEventChannelTests(lhs.stringList, rhs.stringList) && deepEqualsEventChannelTests(lhs.intList, rhs.intList) && deepEqualsEventChannelTests(lhs.doubleList, rhs.doubleList) && deepEqualsEventChannelTests(lhs.boolList, rhs.boolList) && deepEqualsEventChannelTests(lhs.enumList, rhs.enumList) && deepEqualsEventChannelTests(lhs.objectList, rhs.objectList) && deepEqualsEventChannelTests(lhs.listList, rhs.listList) && deepEqualsEventChannelTests(lhs.mapList, rhs.mapList) && deepEqualsEventChannelTests(lhs.recursiveClassList, rhs.recursiveClassList) && deepEqualsEventChannelTests(lhs.map, rhs.map) && deepEqualsEventChannelTests(lhs.stringMap, rhs.stringMap) && deepEqualsEventChannelTests(lhs.intMap, rhs.intMap) && deepEqualsEventChannelTests(lhs.enumMap, rhs.enumMap) && deepEqualsEventChannelTests(lhs.objectMap, rhs.objectMap) && deepEqualsEventChannelTests(lhs.listMap, rhs.listMap) && deepEqualsEventChannelTests(lhs.mapMap, rhs.mapMap) && deepEqualsEventChannelTests(lhs.recursiveClassMap, rhs.recursiveClassMap)
+    return deepEqualsEventChannelTests(lhs.aNullableBool, rhs.aNullableBool)
+      && deepEqualsEventChannelTests(lhs.aNullableInt, rhs.aNullableInt)
+      && deepEqualsEventChannelTests(lhs.aNullableInt64, rhs.aNullableInt64)
+      && deepEqualsEventChannelTests(lhs.aNullableDouble, rhs.aNullableDouble)
+      && deepEqualsEventChannelTests(lhs.aNullableByteArray, rhs.aNullableByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullable4ByteArray, rhs.aNullable4ByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullable8ByteArray, rhs.aNullable8ByteArray)
+      && deepEqualsEventChannelTests(lhs.aNullableFloatArray, rhs.aNullableFloatArray)
+      && deepEqualsEventChannelTests(lhs.aNullableEnum, rhs.aNullableEnum)
+      && deepEqualsEventChannelTests(lhs.anotherNullableEnum, rhs.anotherNullableEnum)
+      && deepEqualsEventChannelTests(lhs.aNullableString, rhs.aNullableString)
+      && deepEqualsEventChannelTests(lhs.aNullableObject, rhs.aNullableObject)
+      && deepEqualsEventChannelTests(lhs.allNullableTypes, rhs.allNullableTypes)
+      && deepEqualsEventChannelTests(lhs.list, rhs.list)
+      && deepEqualsEventChannelTests(lhs.stringList, rhs.stringList)
+      && deepEqualsEventChannelTests(lhs.intList, rhs.intList)
+      && deepEqualsEventChannelTests(lhs.doubleList, rhs.doubleList)
+      && deepEqualsEventChannelTests(lhs.boolList, rhs.boolList)
+      && deepEqualsEventChannelTests(lhs.enumList, rhs.enumList)
+      && deepEqualsEventChannelTests(lhs.objectList, rhs.objectList)
+      && deepEqualsEventChannelTests(lhs.listList, rhs.listList)
+      && deepEqualsEventChannelTests(lhs.mapList, rhs.mapList)
+      && deepEqualsEventChannelTests(lhs.recursiveClassList, rhs.recursiveClassList)
+      && deepEqualsEventChannelTests(lhs.map, rhs.map)
+      && deepEqualsEventChannelTests(lhs.stringMap, rhs.stringMap)
+      && deepEqualsEventChannelTests(lhs.intMap, rhs.intMap)
+      && deepEqualsEventChannelTests(lhs.enumMap, rhs.enumMap)
+      && deepEqualsEventChannelTests(lhs.objectMap, rhs.objectMap)
+      && deepEqualsEventChannelTests(lhs.listMap, rhs.listMap)
+      && deepEqualsEventChannelTests(lhs.mapMap, rhs.mapMap)
+      && deepEqualsEventChannelTests(lhs.recursiveClassMap, rhs.recursiveClassMap)
   }
 
   func hash(into hasher: inout Hasher) {
@@ -425,7 +453,6 @@ protocol PlatformEvent {
 struct IntEvent: PlatformEvent {
   var value: Int64
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
     let value = pigeonVar_list[0] as! Int64
@@ -455,7 +482,6 @@ struct IntEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct StringEvent: PlatformEvent {
   var value: String
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
@@ -487,7 +513,6 @@ struct StringEvent: PlatformEvent {
 struct BoolEvent: PlatformEvent {
   var value: Bool
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> BoolEvent? {
     let value = pigeonVar_list[0] as! Bool
@@ -517,7 +542,6 @@ struct BoolEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct DoubleEvent: PlatformEvent {
   var value: Double
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> DoubleEvent? {
@@ -549,7 +573,6 @@ struct DoubleEvent: PlatformEvent {
 struct ObjectsEvent: PlatformEvent {
   var value: Any
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ObjectsEvent? {
     let value = pigeonVar_list[0]!
@@ -580,7 +603,6 @@ struct ObjectsEvent: PlatformEvent {
 struct EnumEvent: PlatformEvent {
   var value: EventEnum
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EnumEvent? {
     let value = pigeonVar_list[0] as! EventEnum
@@ -610,7 +632,6 @@ struct EnumEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct ClassEvent: PlatformEvent {
   var value: EventAllNullableTypes
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ClassEvent? {
@@ -724,11 +745,12 @@ private class EventChannelTestsPigeonCodecReaderWriter: FlutterStandardReaderWri
 }
 
 class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = EventChannelTestsPigeonCodec(readerWriter: EventChannelTestsPigeonCodecReaderWriter())
+  static let shared = EventChannelTestsPigeonCodec(
+    readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 }
 
-var eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: EventChannelTestsPigeonCodecReaderWriter());
-
+var eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
+  readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 
 private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -780,44 +802,53 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
-  static func register(with messenger: FlutterBinaryMessenger,
-                      instanceName: String = "",
-                      streamHandler: StreamIntsStreamHandler) {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamIntsStreamHandler
+  ) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-      
+
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  static func register(with messenger: FlutterBinaryMessenger,
-                      instanceName: String = "",
-                      streamHandler: StreamEventsStreamHandler) {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamEventsStreamHandler
+  ) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-      
+
 class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
-  static func register(with messenger: FlutterBinaryMessenger,
-                      instanceName: String = "",
-                      streamHandler: StreamConsistentNumbersStreamHandler) {
-    var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamConsistentNumbersStreamHandler
+  ) {
+    var channelName =
+      "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-      
