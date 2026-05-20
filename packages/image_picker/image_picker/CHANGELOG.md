@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 1.2.2
 
 * Clarifies that `maxDuration` only applies to video recording and not gallery selection.
