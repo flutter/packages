@@ -330,7 +330,7 @@ class PlatformGoogleIdTokenCredential {
     this.displayName,
     this.familyName,
     this.givenName,
-    required this.id,
+    required this.email,
     required this.idToken,
     this.profilePictureUri,
   });
@@ -341,7 +341,7 @@ class PlatformGoogleIdTokenCredential {
 
   String? givenName;
 
-  String id;
+  String email;
 
   String idToken;
 
@@ -352,7 +352,7 @@ class PlatformGoogleIdTokenCredential {
       displayName,
       familyName,
       givenName,
-      id,
+      email,
       idToken,
       profilePictureUri,
     ];
@@ -368,7 +368,7 @@ class PlatformGoogleIdTokenCredential {
       displayName: result[0] as String?,
       familyName: result[1] as String?,
       givenName: result[2] as String?,
-      id: result[3]! as String,
+      email: result[3]! as String,
       idToken: result[4]! as String,
       profilePictureUri: result[5] as String?,
     );

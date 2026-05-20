@@ -153,3 +153,7 @@ Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
   }
   return logsDirectory;
 }
+
+/// The directory that contains repo-specific configuration for this tooling.
+Directory toolConfigDirectory(Directory repoRoot) =>
+    repoRoot.childDirectory('tool_config');
