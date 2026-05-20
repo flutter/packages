@@ -182,7 +182,7 @@ class FormatCommand extends PackageLoopingCommand {
         packagesDir.path,
         thirdPartyPackagesDir.path,
       ],
-      workingDir: packagesDir.parent,
+      workingDir: rootDir,
       logOnError: true,
     );
     if (modifiedFiles.exitCode != 0) {
@@ -210,7 +210,7 @@ class FormatCommand extends PackageLoopingCommand {
     final io.ProcessResult diff = await processRunner.run(
       'git',
       <String>['diff', packagesDir.path, thirdPartyPackagesDir.path],
-      workingDir: packagesDir.parent,
+      workingDir: rootDir,
       logOnError: true,
     );
     if (diff.exitCode != 0) {
