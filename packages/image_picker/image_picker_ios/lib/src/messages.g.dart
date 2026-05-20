@@ -260,6 +260,52 @@ class SourceSpecification {
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
 }
 
+/// A model used to test deep equality and hashing of collections.
+class CoverageModel {
+  CoverageModel({
+    this.list,
+    this.map,
+  });
+
+  List<Object?>? list;
+
+  Map<Object?, Object?>? map;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      list,
+      map,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static CoverageModel decode(Object result) {
+    result as List<Object?>;
+    return CoverageModel(
+      list: result[0] as List<Object?>?,
+      map: result[1] as Map<Object?, Object?>?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! CoverageModel || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(list, other.list) && _deepEquals(map, other.map);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+}
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -283,6 +329,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is SourceSpecification) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
+    }    else if (value is CoverageModel) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -303,6 +352,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return MediaSelectionOptions.decode(readValue(buffer)!);
       case 133:
         return SourceSpecification.decode(readValue(buffer)!);
+      case 134:
+        return CoverageModel.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

@@ -75,3 +75,10 @@ abstract class ImagePickerApi {
   @ObjCSelector('pickMediaWithMediaSelectionOptions:')
   List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }
+
+/// A model used to test deep equality and hashing of collections.
+class CoverageModel {
+  CoverageModel(this.list, this.map);
+  List<Object?>? list;
+  Map<Object?, Object?>? map;
+}

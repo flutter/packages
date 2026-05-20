@@ -1101,6 +1101,49 @@ void main() {
       expect(SourceCamera.rear.index, 0);
       expect(SourceCamera.front.index, 1);
     });
+
+    test('CoverageModel equality and hashCode', () {
+      final CoverageModel a = CoverageModel(
+        list: <Object?>['a', 1, <Object?>[2]],
+        map: <Object?, Object?>{'k': 'v', 'k2': <Object?, Object?>{'nk': 'nv'}},
+      );
+      final CoverageModel b = CoverageModel(
+        list: <Object?>['a', 1, <Object?>[2]],
+        map: <Object?, Object?>{'k': 'v', 'k2': <Object?, Object?>{'nk': 'nv'}},
+      );
+      final CoverageModel c = CoverageModel(
+        list: <Object?>['a', 1, <Object?>[3]],
+        map: <Object?, Object?>{'k': 'v', 'k2': <Object?, Object?>{'nk': 'nv'}},
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+      expect(a, isNot(c));
+    });
+
+    test('CoverageModel encode and decode', () {
+      final CoverageModel a = CoverageModel(
+        list: <Object?>['a', 1],
+        map: <Object?, Object?>{'k': 'v'},
+      );
+      final Object encoded = a.encode();
+      final CoverageModel decoded = CoverageModel.decode(encoded);
+
+      expect(a, decoded);
+    });
+
+    test('_deepEquals Map specific cases', () {
+      final CoverageModel m1 = CoverageModel(list: null, map: <Object?, Object?>{'a': 1, 'b': 2});
+      final CoverageModel m2 = CoverageModel(list: null, map: <Object?, Object?>{'a': 1, 'b': 2});
+      final CoverageModel m3 = CoverageModel(list: null, map: <Object?, Object?>{'a': 1, 'b': 3}); // different value
+      final CoverageModel m4 = CoverageModel(list: null, map: <Object?, Object?>{'a': 1}); // different length
+      final CoverageModel m5 = CoverageModel(list: null, map: <Object?, Object?>{'a': 1, 'c': 2}); // different key
+
+      expect(m1 == m2, isTrue);
+      expect(m1 == m3, isFalse);
+      expect(m1 == m4, isFalse);
+      expect(m1 == m5, isFalse);
+    });
   });
 
   group('Pigeon utility functions', () {
@@ -1344,6 +1387,12 @@ void main() {
       final ByteData? encodedInt = codec.encodeMessage(123);
       expect(codec.decodeMessage(encodedInt), 123);
 
+      final ByteData? encodedString = codec.encodeMessage('test');
+      expect(codec.decodeMessage(encodedString), 'test');
+
+      final ByteData? encodedList = codec.encodeMessage(<Object?>[1, '2']);
+      expect(codec.decodeMessage(encodedList), <Object?>[1, '2']);
+
       final ByteData? encodedCamera = codec.encodeMessage(SourceCamera.front);
       expect(codec.decodeMessage(encodedCamera), SourceCamera.front);
 
@@ -1353,6 +1402,10 @@ void main() {
       final MaxSize size = MaxSize(width: 1.1, height: 2.2);
       final ByteData? encodedSize = codec.encodeMessage(size);
       expect(codec.decodeMessage(encodedSize), size);
+
+      final CoverageModel coverage = CoverageModel(list: <Object?>[1], map: <Object?, Object?>{'a': 1});
+      final ByteData? encodedCoverage = codec.encodeMessage(coverage);
+      expect(codec.decodeMessage(encodedCoverage), coverage);
 
       final MediaSelectionOptions options = MediaSelectionOptions(
         maxSize: size,

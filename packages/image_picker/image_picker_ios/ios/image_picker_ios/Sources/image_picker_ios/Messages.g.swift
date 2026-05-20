@@ -310,6 +310,44 @@ struct SourceSpecification: Hashable {
   }
 }
 
+/// A model used to test deep equality and hashing of collections.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct CoverageModel: Hashable {
+  var list: [Any?]? = nil
+  var map: [AnyHashable?: Any?]? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> CoverageModel? {
+    let list: [Any?]? = nilOrValue(pigeonVar_list[0])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[1])
+
+    return CoverageModel(
+      list: list,
+      map: map
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      list,
+      map,
+    ]
+  }
+  static func == (lhs: CoverageModel, rhs: CoverageModel) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return deepEqualsMessages(lhs.list, rhs.list) && deepEqualsMessages(lhs.map, rhs.map)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("CoverageModel")
+    deepHashMessages(value: list, hasher: &hasher)
+    deepHashMessages(value: map, hasher: &hasher)
+  }
+}
+
 private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -331,6 +369,8 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       return MediaSelectionOptions.fromList(self.readValue() as! [Any?])
     case 133:
       return SourceSpecification.fromList(self.readValue() as! [Any?])
+    case 134:
+      return CoverageModel.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -353,6 +393,9 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? SourceSpecification {
       super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? CoverageModel {
+      super.writeByte(134)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
