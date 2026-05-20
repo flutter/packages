@@ -583,6 +583,9 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   @override
   // ignore: non_constant_identifier_names
   String get pigeonVar_messageChannelSuffix => '';
+
+  @override
+  Future<void> presentOfferCodeRedeemSheet() async {}
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

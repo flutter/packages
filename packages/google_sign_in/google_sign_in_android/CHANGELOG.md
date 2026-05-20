@@ -1,6 +1,9 @@
 ## 7.2.11
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Bumps AndroidX Credentials to v1.6.0
+* Bumps Play Services Auth to v21.5.1
+* Bumps Android Identity GoogleID to v1.2.0
 
 ## 7.2.10
 
