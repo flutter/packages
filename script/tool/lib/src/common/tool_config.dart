@@ -30,7 +30,12 @@ YamlMap _getToolConfig(Directory repoRoot) {
       );
       throw ToolExit(exitInvalidArguments);
     }
-    _toolConfig = loadYaml(configFile.readAsStringSync()) as YamlMap;
+    final Object yaml = loadYamlNode(configFile.readAsStringSync());
+    if (yaml is! YamlMap) {
+      printError('Configuration file $configFilename is must be a map.');
+      throw ToolExit(exitInvalidArguments);
+    }
+    _toolConfig = yaml;
   }
   return _toolConfig!;
 }
@@ -47,7 +52,15 @@ String getRepositoryName(Directory repoRoot) {
 
 /// Returns the minimum Flutter version allowed.
 String? getMinFlutterVersion(Directory repoRoot) {
-  return _getToolConfig(repoRoot)['min_flutter'] as String?;
+  final Object? yaml = _getToolConfig(repoRoot)['min_flutter'];
+  if (yaml == null) {
+    return null;
+  }
+  if (yaml is! String) {
+    printError('min_flutter must be a full version string (e.g., "3.44.0").');
+    throw ToolExit(exitInvalidArguments);
+  }
+  return yaml;
 }
 
 /// Returns the allowed dependencies, grouped by 'pinned' and 'unpinned'.
