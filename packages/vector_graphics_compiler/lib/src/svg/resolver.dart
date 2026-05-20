@@ -9,8 +9,8 @@ import '../geometry/path.dart';
 import '../geometry/vertices.dart';
 import '../image/image_info.dart';
 import '../paint.dart';
-import 'node.dart';
 import 'constants.dart';
+import 'node.dart';
 import 'parser.dart';
 import 'visitor.dart';
 
