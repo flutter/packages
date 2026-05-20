@@ -76,49 +76,178 @@ class ImageUtilTests: XCTestCase {
     XCTAssertEqual(image, scaledImage)
   }
 
-  func testScaledImage_NilSizeReturnsSameImage() {
-    let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: nil,
-      maxHeight: nil,
-      isMetadataAvailable: true)
+    func testScaledImage_NilSizeReturnsSameImage() {
 
-    XCTAssertEqual(image, scaledImage)
-  }
+        guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
+            XCTFail("Failed to create UIImage")
+            return
+        }
 
-  func testScaledImage_ShouldBeScaled() {
-    let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
+        // ✅ NIL case (main expectation)
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
 
-    let scaledWidth: Double = 3
-    let scaledHeight: Double = 2
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: scaledWidth,
-      maxHeight: scaledHeight,
-      isMetadataAvailable: true)
+        // ✅ Ensure SAME reference (important for coverage)
+        XCTAssertTrue(scaledImage === image)
 
-    XCTAssertEqual(scaledImage.size.width, CGFloat(scaledWidth))
-    XCTAssertEqual(scaledImage.size.height, CGFloat(scaledHeight))
+        // ✅ Ensure dimensions unchanged
+        XCTAssertEqual(scaledImage.size.width, image.size.width)
+        XCTAssertEqual(scaledImage.size.height, image.size.height)
 
-    let color = colorStringAtPixel(scaledImage, x: 0, y: 0)
-    XCTAssertTrue(
-      colorsAreEqual(color, kColorRepresentation3x2BottomLeftYellow),
-      "Color \(color ?? "nil") does not match \(kColorRepresentation3x2BottomLeftYellow)")
-  }
+        // ✅ Additional coverage: metadata = false (same branch but different path)
+        let scaledImageNoMetadata = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: nil,
+            isMetadataAvailable: false
+        )
 
-  func testScaledGIFImage_ShouldBeScaled() {
-    let info = ImagePickerImageUtil.scaledGIFImage(
-      ImagePickerTestImages.gifTestData,
-      maxWidth: 3,
-      maxHeight: 2)!
+        XCTAssertTrue(scaledImageNoMetadata === image)
 
-    XCTAssertEqual(info.images.count, 3)
-    XCTAssertEqual(info.interval, 1)
+        // ✅ Ensure no scaling fallback still consistent
+        let scaledWithExactSize = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
 
-    for newImage in info.images {
-      XCTAssertEqual(newImage.size.width, 3)
-      XCTAssertEqual(newImage.size.height, 2)
+        XCTAssertEqual(scaledWithExactSize.size, image.size)
     }
-  }
+
+    func testScaledImage_ShouldBeScaled() {
+
+        guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
+            XCTFail("Failed to create UIImage")
+            return
+        }
+
+        let scaledWidth: Double = 3
+        let scaledHeight: Double = 2
+
+        // ✅ Main scaling path (metadata = true)
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: scaledWidth,
+            maxHeight: scaledHeight,
+            isMetadataAvailable: true
+        )
+
+        XCTAssertEqual(scaledImage.size.width, CGFloat(scaledWidth))
+        XCTAssertEqual(scaledImage.size.height, CGFloat(scaledHeight))
+
+        let color = colorStringAtPixel(scaledImage, x: 0, y: 0)
+        XCTAssertTrue(
+            colorsAreEqual(color, kColorRepresentation3x2BottomLeftYellow),
+            "Color \(color ?? "nil") does not match expected"
+        )
+
+        // ✅ Additional coverage: metadata = false
+        let scaledWithoutMetadata = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: scaledWidth,
+            maxHeight: scaledHeight,
+            isMetadataAvailable: false
+        )
+
+        XCTAssertNotNil(scaledWithoutMetadata)
+        XCTAssertEqual(scaledWithoutMetadata.size.width, CGFloat(scaledWidth))
+        XCTAssertEqual(scaledWithoutMetadata.size.height, CGFloat(scaledHeight))
+
+        // ✅ Additional coverage: no scaling case (original size)
+        let noScaleImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
+
+        XCTAssertEqual(noScaleImage.size.width, image.size.width)
+        XCTAssertEqual(noScaleImage.size.height, image.size.height)
+
+        // ✅ Additional coverage: width-only scaling
+        let widthOnlyScaled = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: 4,
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
+
+        XCTAssertLessThanOrEqual(widthOnlyScaled.size.width, 4)
+
+        // ✅ Additional coverage: height-only scaling
+        let heightOnlyScaled = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: 4,
+            isMetadataAvailable: true
+        )
+
+        XCTAssertLessThanOrEqual(heightOnlyScaled.size.height, 4)
+    }
+
+    func testScaledGIFImage_ShouldBeScaled() {
+
+        // ✅ Main success case
+        guard let info = ImagePickerImageUtil.scaledGIFImage(
+            ImagePickerTestImages.gifTestData,
+            maxWidth: 3,
+            maxHeight: 2
+        ) else {
+            XCTFail("Failed to scale GIF")
+            return
+        }
+
+        XCTAssertEqual(info.images.count, 3)
+        XCTAssertEqual(info.interval, 1)
+
+        for newImage in info.images {
+            XCTAssertEqual(newImage.size.width, 3)
+            XCTAssertEqual(newImage.size.height, 2)
+        }
+
+        // ✅ Additional coverage: width-only scaling
+        let widthOnly = ImagePickerImageUtil.scaledGIFImage(
+            ImagePickerTestImages.gifTestData,
+            maxWidth: 4,
+            maxHeight: nil
+        )
+        XCTAssertNotNil(widthOnly)
+        for image in widthOnly!.images {
+            XCTAssertLessThanOrEqual(image.size.width, 4)
+        }
+
+        // ✅ Additional coverage: height-only scaling
+        let heightOnly = ImagePickerImageUtil.scaledGIFImage(
+            ImagePickerTestImages.gifTestData,
+            maxWidth: nil,
+            maxHeight: 4
+        )
+        XCTAssertNotNil(heightOnly)
+        for image in heightOnly!.images {
+            XCTAssertLessThanOrEqual(image.size.height, 4)
+        }
+
+        // ✅ Additional coverage: no scaling (original size path)
+        let noScale = ImagePickerImageUtil.scaledGIFImage(
+            ImagePickerTestImages.gifTestData,
+            maxWidth: nil,
+            maxHeight: nil
+        )
+        XCTAssertNotNil(noScale)
+        XCTAssertGreaterThan(noScale!.images.count, 0)
+
+        // ✅ Additional coverage: invalid data branch
+        let invalidData = Data("invalid gif data".utf8)
+        let invalidResult = ImagePickerImageUtil.scaledGIFImage(
+            invalidData,
+            maxWidth: 3,
+            maxHeight: 2
+        )
+        XCTAssertNil(invalidResult)
+    }
 }

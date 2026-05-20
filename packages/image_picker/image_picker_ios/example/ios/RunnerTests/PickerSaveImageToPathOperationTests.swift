@@ -49,83 +49,146 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     }
   }
 
-  @MainActor func testSaveJPGImage_Success() {
-    if #available(iOS 14, *) {
-      let data = ImagePickerTestImages.jpgTestData
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = [UTType.jpeg.identifier, UTType.image.identifier]
-      mockProvider.mockData = data
+    @MainActor
+    func testSaveJPGImage_Success() async {
+        if #available(iOS 14, *) {
 
-      let pathExpectation = expectation(description: "Path was created")
+            let data = ImagePickerTestImages.jpgTestData
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNotNil(savedPath)
-        XCTAssertNil(error)
-        pathExpectation.fulfill()
-      }
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [
+                UTType.jpeg.identifier,
+                UTType.image.identifier
+            ]
+            mockProvider.mockData = data
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let pathExpectation = expectation(description: "Path was created")
+
+            var outputPath: String?
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNotNil(savedPath)
+                XCTAssertNil(error)
+
+                outputPath = savedPath
+                pathExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [pathExpectation], timeout: 3)
+
+            // ✅ Ensure operation lifecycle covered
+            XCTAssertTrue(operation.isFinished)
+
+            // ✅ Extra coverage: confirm file actually exists
+            if let path = outputPath {
+                XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+            }
+        }
     }
-  }
 
-  @MainActor func testSaveImage_WithScaling_Success() {
-    if #available(iOS 14, *) {
-      let data = ImagePickerTestImages.jpgTestData
-      let mockProvider = MockItemProvider()
-      mockProvider.mockData = data
+    @MainActor
+    func testSaveImage_WithScaling_Success() async {
+        if #available(iOS 14, *) {
 
-      let pathExpectation = expectation(description: "Scaled image saved")
+            let data = ImagePickerTestImages.jpgTestData
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: 5,
-        maxWidth: 5,
-        desiredImageQuality: 0.5,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNotNil(savedPath)
-        let savedImage = UIImage(contentsOfFile: savedPath!)
-        XCTAssertNotNil(savedImage)
-        XCTAssertLessThanOrEqual(savedImage!.size.width, 5.1)
-        pathExpectation.fulfill()
-      }
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [
+                UTType.jpeg.identifier,
+                UTType.image.identifier
+            ]
+            mockProvider.mockData = data
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let pathExpectation = expectation(description: "Scaled image saved")
+
+            var outputPath: String?
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: 5,
+                maxWidth: 5,
+                desiredImageQuality: 0.5,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNotNil(savedPath)
+                XCTAssertNil(error)
+
+                outputPath = savedPath
+
+                if let path = savedPath,
+                   let savedImage = UIImage(contentsOfFile: path) {
+
+                    // ✅ Ensure scaling branch executed
+                    XCTAssertLessThanOrEqual(savedImage.size.width, 5.1)
+                    XCTAssertLessThanOrEqual(savedImage.size.height, 5.1)
+                } else {
+                    XCTFail("Saved image not found")
+                }
+
+                pathExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [pathExpectation], timeout: 3)
+
+            // ✅ Cover operation lifecycle
+            XCTAssertTrue(operation.isFinished)
+
+            // ✅ Extra coverage: verify file exists
+            if let path = outputPath {
+                XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+            }
+        }
     }
-  }
 
-  @MainActor func testSaveImage_DataLoadingFailure_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.shouldSucceed = false
 
-      let errorExpectation = expectation(description: "Error received")
+    @MainActor
+    func testSaveImage_DataLoadingFailure_ReturnsError() async {
+        if #available(iOS 14, *) {
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "invalid_image")
-        XCTAssertEqual((error as? PigeonError)?.message, "Loading failed")
-        errorExpectation.fulfill()
-      }
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [
+                UTType.jpeg.identifier,
+                UTType.image.identifier
+            ]
+            mockProvider.shouldSucceed = false
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let errorExpectation = expectation(description: "Error received")
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+
+                let pigeonError = error as? PigeonError
+                XCTAssertEqual(pigeonError?.code, "invalid_image")
+                XCTAssertEqual(pigeonError?.message, "Loading failed")
+
+                errorExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [errorExpectation], timeout: 3)
+
+            // ✅ Ensure lifecycle coverage
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
+
 
   @MainActor func testSaveVideo_Success() {
     if #available(iOS 14, *) {
@@ -180,48 +243,77 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     }
   }
 
-  @MainActor func testUnsupportedType_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = ["public.plain-text"]
+    @MainActor
+    func testUnsupportedType_ReturnsError() async {
+        if #available(iOS 14, *) {
 
-      let errorExpectation = expectation(description: "Error received for unsupported type")
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = ["public.plain-text"]
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "invalid_source")
-        errorExpectation.fulfill()
-      }
+            let errorExpectation = expectation(description: "Error received for unsupported type")
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+                XCTAssertEqual((error as? PigeonError)?.code, "invalid_source")
+                errorExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [errorExpectation], timeout: 2)
+
+            // ✅ Ensures operation lifecycle is also covered
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
 
-  @MainActor func testOperationCancelled_StopsExecution() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { _, _ in
-        XCTFail("Should not be called if cancelled")
-      }
+    @MainActor func testOperationCancelled_StopsExecution() async {
+        if #available(iOS 14, *) {
 
-      operation.cancel()
-      operation.start()
-      XCTAssertTrue(operation.isFinished)
+            let expectation = expectation(description: "Operation finished")
+
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [
+                UTType.jpeg.identifier,
+                UTType.image.identifier
+            ]
+
+            var completionCalled = false
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { _, _ in
+                completionCalled = true
+            }
+
+            operation.completionBlock = {
+                expectation.fulfill()
+            }
+
+            // ✅ Cancel BEFORE start → forces cancel path
+            operation.cancel()
+            operation.start()
+
+            await fulfillment(of: [expectation], timeout: 2)
+
+            // ✅ Validate cancel branch behavior
+            XCTAssertTrue(operation.isCancelled)
+            XCTAssertTrue(operation.isFinished)
+
+            // ✅ Ensure work was NOT executed
+            XCTAssertFalse(completionCalled)
+        }
     }
-  }
 
   @MainActor func testSaveImage_InvalidDataDecoding_ReturnsError() {
     if #available(iOS 14, *) {
@@ -247,94 +339,146 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     }
   }
 
-  @MainActor func testProcessVideo_NoTypeIdentifiers_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = []
+    @MainActor
+    func testProcessVideo_NoTypeIdentifiers_ReturnsError() async {
+        if #available(iOS 14, *) {
 
-      let errorExpectation = expectation(description: "No type identifiers error")
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = []  // ✅ No types at all
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "invalid_source")
-        errorExpectation.fulfill()
-      }
+            let errorExpectation = expectation(description: "No type identifiers error")
 
-      // Manually call processVideo if we can, or just start it with no conforming types.
-      // start() will hit "invalid_source" if no image or movie conforming type.
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+
+                let pigeonError = error as? PigeonError
+                XCTAssertEqual(pigeonError?.code, "invalid_source")
+
+                errorExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [errorExpectation], timeout: 2)
+
+            // ✅ Ensure lifecycle is covered
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
 
-  @MainActor func testSaveVideo_LoadingFailure_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = [UTType.movie.identifier]
-      mockProvider.shouldSucceed = false
+    @MainActor
+    func testSaveVideo_LoadingFailure_ReturnsError() async {
+        if #available(iOS 14, *) {
 
-      let errorExpectation = expectation(description: "Video loading failure")
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [UTType.movie.identifier]
+            mockProvider.shouldSucceed = false
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertNotNil(error)
-        errorExpectation.fulfill()
-      }
+            let errorExpectation = expectation(description: "Video loading failure")
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+                XCTAssertNotNil(error)
+
+                // ✅ FIX: Do NOT force PigeonError
+                // Because operation returns NSError here
+                if let pigeonError = error as? PigeonError {
+                    XCTAssertEqual(pigeonError.code, "invalid_video")
+                } else {
+                    XCTAssertTrue(error != nil)
+                }
+
+                errorExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [errorExpectation], timeout: 3)
+
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
 
-  @MainActor func testSaveVideo_SaveFailure_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = [UTType.movie.identifier]
-      mockProvider.mockURL = URL(fileURLWithPath: "/non/existent/video.mp4")
+    @MainActor
+    func testSaveVideo_SaveFailure_ReturnsError() async {
+        if #available(iOS 14, *) {
 
-      let errorExpectation = expectation(description: "Save failure error")
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [UTType.movie.identifier]
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "flutter_image_picker_copy_video_error")
-        errorExpectation.fulfill()
-      }
+            // ✅ Provide invalid file path → copy will fail
+            mockProvider.mockURL = URL(fileURLWithPath: "/non/existent/video.mp4")
+            mockProvider.shouldSucceed = true
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            let errorExpectation = expectation(description: "Save failure error")
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+
+                let pigeonError = error as? PigeonError
+                XCTAssertEqual(pigeonError?.code, "flutter_image_picker_copy_video_error")
+
+                errorExpectation.fulfill()
+            }
+
+            operation.start()
+
+            await fulfillment(of: [errorExpectation], timeout: 3)
+
+            // ✅ Ensure operation lifecycle covered
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
 
-  @MainActor func testOperationProperties() {
-    if #available(iOS 14, *) {
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: NSItemProvider(),
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { _, _ in }
-      XCTAssertTrue(operation.isAsynchronous)
-      XCTAssertFalse(operation.isExecuting)
-      XCTAssertFalse(operation.isFinished)
+
+    @MainActor
+    func testOperationProperties() async {
+        if #available(iOS 14, *) {
+
+            let expectation = expectation(description: "Operation completes")
+
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: NSItemProvider(),
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { _, _ in }
+
+            // ✅ Initial state checks
+            XCTAssertTrue(operation.isAsynchronous)
+            XCTAssertFalse(operation.isExecuting)
+            XCTAssertFalse(operation.isFinished)
+
+            operation.completionBlock = {
+                expectation.fulfill()
+            }
+
+            // ✅ Trigger execution
+            operation.start()
+
+            await fulfillment(of: [expectation], timeout: 2)
+
+            // ✅ Post-execution state
+            XCTAssertTrue(operation.isFinished)
+        }
     }
-  }
 }

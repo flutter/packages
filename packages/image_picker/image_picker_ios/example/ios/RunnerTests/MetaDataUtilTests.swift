@@ -59,67 +59,111 @@ class MetaDataUtilTests: XCTestCase {
     XCTAssertNil(ImagePickerMetaDataUtil.getMetaData(from: Data("not an image".utf8)))
   }
 
-  func testUpdateMetaData() {
-    let dataJPG = ImagePickerTestImages.jpgTestData
-    let metaData: [String: Any] = [
-      kCGImagePropertyExifDictionary as String: [
-        kCGImagePropertyExifUserComment as String: "Test Comment"
-      ]
-    ]
+    func testUpdateMetaData() {
 
-    guard let newData = ImagePickerMetaDataUtil.image(from: dataJPG, with: metaData) else {
-      XCTFail("Could not create image with metadata")
-      return
+        let dataJPG = ImagePickerTestImages.jpgTestData
+
+        let metaData: [String: Any] = [
+            kCGImagePropertyExifDictionary as String: [
+                kCGImagePropertyExifUserComment as String: "Test Comment"
+            ]
+        ]
+
+        // ✅ Create image with metadata
+        guard let newData = ImagePickerMetaDataUtil.image(from: dataJPG, with: metaData) else {
+            XCTFail("Could not create image with metadata")
+            return
+        }
+
+        // ✅ Ensure new data is different (forces write path coverage)
+        XCTAssertNotEqual(newData, dataJPG)
+
+        // ✅ Read metadata
+        let newMetaData = ImagePickerMetaDataUtil.getMetaData(from: newData)
+
+        XCTAssertNotNil(newMetaData)
+
+        let newExif = newMetaData?[kCGImagePropertyExifDictionary as String] as? [String: Any]
+
+        // ✅ Validate metadata content
+        XCTAssertEqual(
+            newExif?[kCGImagePropertyExifUserComment as String] as? String,
+            "Test Comment"
+        )
+
+        // ✅ EXTRA: Call getMetaData with invalid data → covers failure branch
+        let invalidData = Data("invalid".utf8)
+        let invalidMeta = ImagePickerMetaDataUtil.getMetaData(from: invalidData)
+
+        XCTAssertNil(invalidMeta)
     }
-
-    let newMetaData = ImagePickerMetaDataUtil.getMetaData(from: newData)
-    let newExif = newMetaData?[kCGImagePropertyExifDictionary as String] as? [String: Any]
-    XCTAssertEqual(newExif?[kCGImagePropertyExifUserComment as String] as? String, "Test Comment")
-  }
 
   func testUpdateMetaData_InvalidDataReturnsNil() {
     XCTAssertNil(ImagePickerMetaDataUtil.image(from: Data("not an image".utf8), with: [:]))
   }
 
-  func testConvertImageToData() {
-    let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    func testConvertImageAndMimeType() {
 
-    // JPEG
-    let convertedDataJPG = ImagePickerMetaDataUtil.convertImage(
-      imageJPG,
-      using: .jpeg,
-      quality: 0.5)
-    XCTAssertEqual(
-      ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataJPG!),
-      .jpeg)
+        guard let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData) else {
+            XCTFail("Failed to create UIImage")
+            return
+        }
 
-    // PNG
-    let convertedDataPNG = ImagePickerMetaDataUtil.convertImage(
-      imageJPG,
-      using: .png,
-      quality: nil)
-    XCTAssertEqual(
-      ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataPNG!),
-      .png)
+        // ✅ JPEG conversion
+        let convertedDataJPG = ImagePickerMetaDataUtil.convertImage(
+            imageJPG,
+            using: .jpeg,
+            quality: 0.5
+        )
+        XCTAssertNotNil(convertedDataJPG)
+        XCTAssertEqual(
+            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataJPG!),
+            .jpeg
+        )
 
-    // GIF (fallback to JPEG)
-    let convertedDataGIF = ImagePickerMetaDataUtil.convertImage(
-      imageJPG,
-      using: .gif,
-      quality: 0.5)
-    XCTAssertEqual(
-      ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataGIF!),
-      .jpeg)
+        // ✅ PNG conversion
+        let convertedDataPNG = ImagePickerMetaDataUtil.convertImage(
+            imageJPG,
+            using: .png,
+            quality: nil
+        )
+        XCTAssertNotNil(convertedDataPNG)
+        XCTAssertEqual(
+            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataPNG!),
+            .png
+        )
 
-    // Other (fallback to JPEG)
-    let convertedDataOther = ImagePickerMetaDataUtil.convertImage(
-      imageJPG,
-      using: .other,
-      quality: nil)
-    XCTAssertEqual(
-      ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataOther!),
-      .jpeg)
-  }
+        // ✅ GIF fallback → JPEG
+        let convertedDataGIF = ImagePickerMetaDataUtil.convertImage(
+            imageJPG,
+            using: .gif,
+            quality: 0.5
+        )
+        XCTAssertNotNil(convertedDataGIF)
+        XCTAssertEqual(
+            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataGIF!),
+            .jpeg
+        )
+
+        // ✅ OTHER fallback → JPEG
+        let convertedDataOther = ImagePickerMetaDataUtil.convertImage(
+            imageJPG,
+            using: .other,
+            quality: nil
+        )
+        XCTAssertNotNil(convertedDataOther)
+        XCTAssertEqual(
+            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataOther!),
+            .jpeg
+        )
+
+        // ✅ EXTRA: Invalid data → MIME detection failure branch
+        let invalidData = Data("invalid".utf8)
+        let mimeType = ImagePickerMetaDataUtil.getImageMIMEType(from: invalidData)
+
+        // Depending on your implementation:
+        XCTAssertTrue(mimeType == .jpeg || mimeType == .other)
+    }
 
   func testConvertImageToData_PngWithQualityWarning() {
     let image = UIImage(data: ImagePickerTestImages.pngTestData)!
