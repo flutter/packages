@@ -101,7 +101,8 @@ Directory? _findRepositoryRoot() {
     // directory, so use that as the heuristic. If this heuristic proves
     // insufficient, we could instead require the tool config to be present
     // to even try to run, and look for that.
-    if (current.childDirectory('.git').existsSync() &&
+    if ((current.childDirectory('.git').existsSync() ||
+            current.childFile('.git').existsSync()) &&
         current.childDirectory('packages').existsSync()) {
       return current;
     }
