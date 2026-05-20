@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 2.11.1
 
 * Optimizes caption retrieval with binary search.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 26.3.4
 
 * [kotlin] Updates generated error class to inherit from `RuntimeException`

@@ -1,3 +1,7 @@
+## 4.12.1
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 4.12.0
 
 * Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.

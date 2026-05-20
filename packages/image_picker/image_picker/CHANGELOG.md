@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 1.2.2
 
 * Clarifies that `maxDuration` only applies to video recording and not gallery selection.

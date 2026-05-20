@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 1.1.3
 
 * Fixes dartdoc comments that accidentally used HTML.

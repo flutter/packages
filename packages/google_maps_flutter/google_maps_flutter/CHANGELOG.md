@@ -1,3 +1,7 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+
 ## 2.17.0
 
 * Adds missing re-exports of classes related to advanced markers.
