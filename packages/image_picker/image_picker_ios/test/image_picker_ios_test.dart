@@ -391,9 +391,9 @@ void main() {
 
     test('passes the width and height arguments correctly', () async {
       await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
-          imageOptions: ImageOptions.createAndValidate(
+          imageOptions: ImageOptions(
             maxWidth: 10.0,
             maxHeight: 20.0,
           ),
@@ -406,9 +406,9 @@ void main() {
 
     test('passes the image quality argument correctly', () async {
       await picker.getMedia(
-        options: MediaOptions(
+        options: const MediaOptions(
           allowMultiple: true,
-          imageOptions: ImageOptions.createAndValidate(imageQuality: 70),
+          imageOptions: ImageOptions(imageQuality: 70),
         ),
       );
 
@@ -435,9 +435,9 @@ void main() {
     test('does not accept a negative width or height argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions.createAndValidate(maxWidth: -1.0),
+            imageOptions: ImageOptions(maxWidth: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -445,9 +445,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions.createAndValidate(maxHeight: -1.0),
+            imageOptions: ImageOptions(maxHeight: -1.0),
           ),
         ),
         throwsArgumentError,
@@ -457,9 +457,9 @@ void main() {
     test('does not accept an invalid imageQuality argument', () {
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions.createAndValidate(imageQuality: -1),
+            imageOptions: ImageOptions(imageQuality: -1),
           ),
         ),
         throwsArgumentError,
@@ -467,9 +467,9 @@ void main() {
 
       expect(
         () => picker.getMedia(
-          options: MediaOptions(
+          options: const MediaOptions(
             allowMultiple: true,
-            imageOptions: ImageOptions.createAndValidate(imageQuality: 101),
+            imageOptions: ImageOptions(imageQuality: 101),
           ),
         ),
         throwsArgumentError,
