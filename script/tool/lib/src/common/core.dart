@@ -144,6 +144,15 @@ const int exitCommandFoundErrors = 1;
 /// A exit code for [ToolExit] for a failure to run due to invalid arguments.
 const int exitInvalidArguments = 2;
 
+/// The directory for any cached files downloaded or created by the tool.
+Directory toolCacheDirectory(Directory repoRoot) {
+  final Directory cacheDir = repoRoot.childDirectory('.repo_tool_cache');
+  if (!cacheDir.existsSync()) {
+    cacheDir.createSync(recursive: true);
+  }
+  return cacheDir;
+}
+
 /// The directory to which to write logs and other artifacts, if set in CI.
 Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
   final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
