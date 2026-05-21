@@ -969,9 +969,7 @@ void main() {
         contains('These files are not formatted correctly'),
         contains(changedFilePath),
         // Ensure the error message links to instructions.
-        contains(
-          'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code',
-        ),
+        contains('$toolDocsUrl#format-code'),
         contains('patch -p1 <<DONE'),
       ]),
     );
