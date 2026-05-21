@@ -47,6 +47,11 @@ enum RenderingStrategy {
 typedef VectorGraphicsErrorWidget =
     Widget Function(BuildContext context, Object error, StackTrace stackTrace);
 
+/// The signature that [VectorGraphic.imageBuilder] uses to wrap the
+/// successfully loaded vector graphic widget.
+typedef VectorGraphicsImageWidget =
+    Widget Function(BuildContext context, Widget child);
+
 /// A vector graphic/flutter_svg compatibility shim.
 VectorGraphic createCompatVectorGraphic({
   Key? key,
@@ -61,6 +66,7 @@ VectorGraphic createCompatVectorGraphic({
   Duration? transitionDuration,
   WidgetBuilder? placeholderBuilder,
   VectorGraphicsErrorWidget? errorBuilder,
+  VectorGraphicsImageWidget? imageBuilder,
   ColorFilter? colorFilter,
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
@@ -80,6 +86,7 @@ VectorGraphic createCompatVectorGraphic({
     transitionDuration: transitionDuration,
     placeholderBuilder: placeholderBuilder,
     errorBuilder: errorBuilder,
+    imageBuilder: imageBuilder,
     colorFilter: colorFilter,
     opacity: opacity,
     strategy: strategy,
@@ -120,6 +127,7 @@ class VectorGraphic extends StatefulWidget {
     this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
+    this.imageBuilder,
     this.colorFilter,
     this.opacity,
     this.clipViewbox = true,
@@ -140,6 +148,7 @@ class VectorGraphic extends StatefulWidget {
     this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
+    this.imageBuilder,
     this.colorFilter,
     this.opacity,
     this.strategy = RenderingStrategy.picture,
@@ -155,11 +164,11 @@ class VectorGraphic extends StatefulWidget {
   final BytesLoader loader;
 
   /// If specified, the width to use for the vector graphic. If unspecified,
-  /// the vector graphic will take the width of its parent.
+  /// the vector graphic will take the width of the graphic.
   final double? width;
 
   /// If specified, the height to use for the vector graphic. If unspecified,
-  /// the vector graphic will take the height of its parent.
+  /// the vector graphic will take the height of the graphic.
   final double? height;
 
   /// How to inscribe the picture into the space allocated during layout.
@@ -218,6 +227,13 @@ class VectorGraphic extends StatefulWidget {
 
   /// A callback that fires if some exception happens during data acquisition or decoding.
   final VectorGraphicsErrorWidget? errorBuilder;
+
+  /// A builder that wraps the successfully loaded vector graphic widget.
+  ///
+  /// This builder is only called when the vector graphic has been successfully
+  /// loaded and is ready to be painted. It can be used to apply decorations
+  /// such as borders or shadows only when the image is available.
+  final VectorGraphicsImageWidget? imageBuilder;
 
   /// Set transition duration while switching from placeholder to url image
   final Duration? transitionDuration;
@@ -309,7 +325,7 @@ class _PictureKey {
 }
 
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
-  _PictureData? _pictureInfo;
+  _PictureData? _pictureData;
   Object? _error;
   StackTrace? _stackTrace;
   Locale? locale;
@@ -338,8 +354,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   void dispose() {
-    _maybeReleasePicture(_pictureInfo);
-    _pictureInfo = null;
+    _maybeReleasePicture(_pictureData);
+    _pictureData = null;
     super.dispose();
   }
 
@@ -407,8 +423,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     if (data != null) {
       data.count += 1;
       setState(() {
-        _maybeReleasePicture(_pictureInfo);
-        _pictureInfo = data;
+        _maybeReleasePicture(_pictureData);
+        _pictureData = data;
       });
       return;
     }
@@ -431,8 +447,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       }
 
       setState(() {
-        _maybeReleasePicture(_pictureInfo);
-        _pictureInfo = data;
+        _maybeReleasePicture(_pictureData);
+        _pictureData = data;
       });
     } catch (error, stackTrace) {
       _handleError(error, stackTrace);
@@ -443,7 +459,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   Widget build(BuildContext context) {
-    final PictureInfo? pictureInfo = _pictureInfo?.pictureInfo;
+    final PictureInfo? pictureInfo = _pictureData?.pictureInfo;
 
     Widget child;
     if (pictureInfo != null) {
@@ -454,34 +470,31 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       double? width = widget.width;
       double? height = widget.height;
 
-      if (width == null && height == null) {
-        width = pictureInfo.size.width;
-        height = pictureInfo.size.height;
-      } else if (height != null && !pictureInfo.size.isEmpty) {
+      if (height != null && !pictureInfo.size.isEmpty) {
         width = height / pictureInfo.size.height * pictureInfo.size.width;
       } else if (width != null && !pictureInfo.size.isEmpty) {
         height = width / pictureInfo.size.width * pictureInfo.size.height;
       }
 
-      assert(width != null && height != null);
-
       var scale = 1.0;
-      scale = math.min(
-        pictureInfo.size.width / width!,
-        pictureInfo.size.height / height!,
-      );
+      if (width != null && height != null) {
+        scale = math.min(
+          pictureInfo.size.width / width,
+          pictureInfo.size.height / height,
+        );
+      }
 
       if (_webRenderObject) {
         child = _RawWebVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
       } else if (widget.strategy == RenderingStrategy.raster) {
         child = _RawVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
           scale: scale,
@@ -489,7 +502,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       } else {
         child = _RawPictureVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: _pictureInfo!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
@@ -507,16 +520,20 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         }
       }
 
-      child = SizedBox(
-        width: width,
-        height: height,
-        child: FittedBox(
-          fit: widget.fit,
-          alignment: widget.alignment,
-          clipBehavior: widget.clipBehavior,
-          child: SizedBox.fromSize(size: pictureInfo.size, child: child),
-        ),
+      child = FittedBox(
+        fit: widget.fit,
+        alignment: widget.alignment,
+        clipBehavior: widget.clipBehavior,
+        child: SizedBox.fromSize(size: pictureInfo.size, child: child),
       );
+
+      if (width != null && height != null) {
+        child = SizedBox(width: width, height: height, child: child);
+      }
+
+      if (widget.imageBuilder != null) {
+        child = widget.imageBuilder!(context, child);
+      }
     } else if (_error != null && widget.errorBuilder != null) {
       child = widget.errorBuilder!(
         context,

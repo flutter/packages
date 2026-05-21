@@ -128,6 +128,8 @@ class _OpenContainerTransformDemoState
       body: ListView(
         padding: const EdgeInsets.all(8.0),
         children: <Widget>[
+          _CustomShadowExampleCard(transitionType: _transitionType),
+          const SizedBox(height: 16.0),
           _OpenContainerWrapper(
             transitionType: _transitionType,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
@@ -388,7 +390,7 @@ class _ExampleSingleTile extends StatelessWidget {
 
     return _InkWellOverlay(
       openContainer: openContainer,
-      height: height,
+      constraints: const BoxConstraints(minHeight: height),
       child: Row(
         children: <Widget>[
           Container(
@@ -423,17 +425,69 @@ class _ExampleSingleTile extends StatelessWidget {
 }
 
 class _InkWellOverlay extends StatelessWidget {
-  const _InkWellOverlay({this.openContainer, this.height, this.child});
+  const _InkWellOverlay({
+    this.openContainer,
+    this.height,
+    this.constraints,
+    this.child,
+  });
 
   final VoidCallback? openContainer;
   final double? height;
+  final BoxConstraints? constraints;
   final Widget? child;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: height,
+      constraints: constraints,
       child: InkWell(onTap: openContainer, child: child),
+    );
+  }
+}
+
+class _CustomShadowExampleCard extends StatelessWidget {
+  const _CustomShadowExampleCard({required this.transitionType});
+
+  final ContainerTransitionType transitionType;
+
+  @override
+  Widget build(BuildContext context) {
+    return OpenContainer(
+      transitionType: transitionType,
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return const _DetailsPage();
+      },
+      closedElevation: 0.0,
+      closedShadows: const <BoxShadow>[
+        BoxShadow(
+          color: Colors.blue,
+          blurRadius: 15.0,
+          offset: Offset(0.0, 5.0),
+        ),
+      ],
+      openShadows: const <BoxShadow>[
+        BoxShadow(
+          color: Colors.red,
+          blurRadius: 40.0,
+          spreadRadius: 10.0,
+          offset: Offset(0.0, 10.0),
+        ),
+      ],
+      closedBuilder: (BuildContext context, VoidCallback openContainer) {
+        return _InkWellOverlay(
+          openContainer: openContainer,
+          height: 100,
+          child: const Center(
+            child: Text(
+              'Custom shadows',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        );
+      },
     );
   }
 }

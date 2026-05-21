@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    javaOptions: JavaOptions(package: 'io.flutter.plugins.inapppurchase'),
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/inapppurchase/Messages.java',
+    kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.inapppurchase'),
+    kotlinOut:
+        'android/src/main/kotlin/io/flutter/plugins/inapppurchase/Messages.kt',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -455,12 +455,12 @@ abstract class InAppPurchaseApi {
 
 @FlutterApi()
 abstract class InAppPurchaseCallbackApi {
-  /// Called for BillingClientStateListener#onBillingServiceDisconnected().
+  /// Called for `BillingClientStateListener#onBillingServiceDisconnected()`.
   void onBillingServiceDisconnected(int callbackHandle);
 
-  /// Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>).
+  /// Called for `PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)`.
   void onPurchasesUpdated(PlatformPurchasesResponse update);
 
-  /// Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails).
+  /// Called for `UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails)`.
   void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 }

@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 6.3.30
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 6.3.29
+
+* Updates build files from Groovy to Kotlin.
+
 ## 6.3.28
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

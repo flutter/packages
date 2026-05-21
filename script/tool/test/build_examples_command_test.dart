@@ -240,7 +240,10 @@ void main() {
         contains('enable-swift-package-manager: false'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -300,7 +303,10 @@ void main() {
         contains('enable-swift-package-manager: true'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -314,6 +320,53 @@ void main() {
         ]),
       );
     });
+
+    test(
+      'building non-plugin package for iOS with Swift Package Manager',
+      () async {
+        mockPlatform.isMacOS = true;
+
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+        );
+
+        final RepositoryPackage example = package.getExamples().first;
+        example.directory.childDirectory('ios').createSync(recursive: true);
+        final String originalPubspecContents = example.pubspecFile
+            .readAsStringSync();
+        String? buildTimePubspecContents;
+        processRunner.mockProcessesForExecutable[getFlutterCommand(
+          mockPlatform,
+        )] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['build'], () {
+            buildTimePubspecContents = example.pubspecFile.readAsStringSync();
+          }),
+        ];
+
+        await runCapturingPrint(runner, <String>[
+          'build-examples',
+          '--ios',
+          '--swift-package-manager',
+        ]);
+
+        // Ensure that SwiftPM was enabled for the package.
+        expect(
+          originalPubspecContents,
+          isNot(contains('enable-swift-package-manager: true')),
+        );
+        expect(
+          buildTimePubspecContents,
+          contains('enable-swift-package-manager: true'),
+        );
+        // And that it was undone after.
+        expect(
+          example.pubspecFile.readAsStringSync().trim(),
+          originalPubspecContents.trim(),
+        );
+      },
+    );
 
     test(
       'building for Linux when plugin is not set up for Linux results in no-op',
@@ -472,7 +525,10 @@ void main() {
         contains('enable-swift-package-manager: false'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -529,7 +585,10 @@ void main() {
         contains('enable-swift-package-manager: true'),
       );
       // And that it was undone after.
-      expect(example.pubspecFile.readAsStringSync(), originalPubspecContents);
+      expect(
+        example.pubspecFile.readAsStringSync().trim(),
+        originalPubspecContents.trim(),
+      );
 
       expect(
         processRunner.recordedCalls,
@@ -1074,7 +1133,7 @@ packages/package_a/$file
                 MockProcess(
                   stdout: '''
 README.md
-CODEOWNERS
+SUGGESTED_REVIEWERS.md
 packages/package_a/CHANGELOG.md
 ''',
                 ),

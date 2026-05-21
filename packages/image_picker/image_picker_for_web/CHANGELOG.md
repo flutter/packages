@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 3.1.1
 
 * Uses `CanvasRenderingContext2D.drawImage` instead of the deprecated `drawImageScaled`.

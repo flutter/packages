@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 4.3.0
+
+- Adds support for custom types through `TypedQueryParameter` annotation. The `encoder`, `decoder` and `compare` parameters allow specifying custom functions for encoding, decoding and comparing query parameters in `TypedGoRoute` constructors. For example, you can use a `DateTime` parameter with a custom encoder and decoder to convert it to and from a string representation in the URL.
+
+## 4.2.1
+
+* Adds support for analyzer 11 and 12.
+
+## 4.2.0
+
+- Adds supports for `TypedQueryParameter` annotation.
+  Its `name` parameter allows specifying a different name for the query parameter than the field name. The name is escaped to be URL-safe. For example `@TypedQueryParameter(name: 'field with space')` will generate a query parameter named `field+with+space`.
+
 ## 4.1.3
 
 * Requires `analyzer` 8.2 or higher, to avoid experimental APIs.

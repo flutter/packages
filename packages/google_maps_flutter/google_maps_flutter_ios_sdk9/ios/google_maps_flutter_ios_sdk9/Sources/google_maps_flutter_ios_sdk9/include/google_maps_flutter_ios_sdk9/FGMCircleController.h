@@ -1,0 +1,29 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+@import GoogleMaps;
+
+#import "FGMMapEventDelegate.h"
+#import "google_maps_flutter_pigeon_messages.g.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+// Defines circle controllable by Flutter.
+@interface FGMCircleController : NSObject
+- (instancetype)initCircleWithPlatformCircle:(FGMPlatformCircle *)circle
+                                     mapView:(GMSMapView *)mapView;
+- (void)removeCircle;
+@end
+
+@interface FGMCirclesController : NSObject
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate;
+- (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd;
+- (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange;
+- (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers;
+- (void)didTapCircleWithIdentifier:(NSString *)identifier;
+- (bool)hasCircleWithIdentifier:(NSString *)identifier;
+@end
+
+NS_ASSUME_NONNULL_END

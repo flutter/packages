@@ -127,6 +127,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       _initializeCameraController(cameraController.description);
     }
   }
+
   // #enddocregion AppLifecycle
 
   @override
@@ -888,7 +889,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      return cameraController.stopVideoRecording();
+      return await cameraController.stopVideoRecording();
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;

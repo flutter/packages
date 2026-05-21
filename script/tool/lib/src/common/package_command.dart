@@ -10,9 +10,9 @@ import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
-import 'package:yaml/yaml.dart';
 
 import 'core.dart';
+import 'file_utils.dart';
 import 'git_version_finder.dart';
 import 'output_utils.dart';
 import 'process_runner.dart';
@@ -43,7 +43,7 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
-    thirdPartyPackagesDir = packagesDir.parent
+    thirdPartyPackagesDir = rootDir
         .childDirectory('third_party')
         .childDirectory('packages');
 
@@ -187,6 +187,9 @@ abstract class PackageCommand extends Command<void> {
   /// The directory containing packages wrapping third-party code.
   late Directory thirdPartyPackagesDir;
 
+  /// The root directory of the repository containing the packages.
+  late final Directory rootDir = packagesDir.parent;
+
   /// The process runner.
   ///
   /// This can be overridden for testing.
@@ -253,27 +256,27 @@ abstract class PackageCommand extends Command<void> {
     return gitDir;
   }
 
-  /// Convenience accessor for boolean arguments.
+  /// Convenience accessor for `bool` arguments.
   bool getBoolArg(String key) {
     return (argResults![key] as bool?) ?? false;
   }
 
-  /// Convenience accessor for boolean arguments.
+  /// Convenience accessor for nullable `bool` arguments.
   bool? getNullableBoolArg(String key) {
     return argResults![key] as bool?;
   }
 
-  /// Convenience accessor for String arguments.
+  /// Convenience accessor for `String` arguments.
   String getStringArg(String key) {
     return (argResults![key] as String?) ?? '';
   }
 
-  /// Convenience accessor for String arguments.
+  /// Convenience accessor for nullable `String` arguments.
   String? getNullableStringArg(String key) {
     return argResults![key] as String?;
   }
 
-  /// Convenience accessor for List<String> arguments.
+  /// Convenience accessor for `List<String>` arguments.
   List<String> getStringListArg(String key) {
     // Clone the list so that if a caller modifies the result it won't change
     // the actual arguments list for future queries.
@@ -286,11 +289,11 @@ abstract class PackageCommand extends Command<void> {
     return getStringListArg(key).expand<String>((String item) {
       if (item.endsWith('.yaml')) {
         final File file = packagesDir.fileSystem.file(item);
-        final Object? yaml = loadYaml(file.readAsStringSync());
-        if (yaml == null) {
+        final List<String>? list = loadYamlList(file);
+        if (list == null) {
           return const <String>[];
         }
-        return (yaml as YamlList).toList().cast<String>();
+        return list;
       }
       return <String>[item];
     }).toSet();

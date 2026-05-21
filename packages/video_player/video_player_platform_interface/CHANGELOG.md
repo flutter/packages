@@ -1,6 +1,11 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 6.7.0
+
+* Adds `VideoTrack` class and `getVideoTracks()`, `selectVideoTrack()`, `isVideoTrackSupportAvailable()` methods for video track (quality) selection.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.6.0
 

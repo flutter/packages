@@ -2130,6 +2130,35 @@ void main() {
           ),
         );
       });
+
+      testWidgets('Binary search correctly finds first/last non-pinned cells', (
+        WidgetTester tester,
+      ) async {
+        Future<void> runScrollTest(Widget tableView) async {
+          await tester.pumpWidget(MaterialApp(home: tableView));
+          await tester.pumpAndSettle();
+          expect(verticalController.position.pixels, 0.0);
+          expect(horizontalController.position.pixels, 0.0);
+          expect(find.text('R0:C0'), findsOneWidget);
+          expect(find.text('R4:C5'), findsOneWidget);
+          // No columns laid out beyond column 5.
+          expect(find.text('R0:C6'), findsNothing);
+          // Change the vertical scroll offset, validate more rows were
+          verticalController.jumpTo(1000000.0);
+          await tester.pump();
+          expect(find.text('R5000:C0'), findsOneWidget);
+          expect(find.text('R5004:C0'), findsOneWidget);
+          expect(find.text('R4990:C0'), findsNothing); // Not laid out
+          expect(find.text('R5007:C0'), findsNothing); // Not laid out
+          await tester.pumpWidget(Container());
+        }
+
+        // infinite rows & columns
+        await runScrollTest(getTableView());
+
+        // finite rows & columns
+        await runScrollTest(getTableView(rowCount: 10000, columnCount: 200));
+      });
     });
   });
 
@@ -3601,7 +3630,73 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         SystemMouseCursors.basic,
       );
+      await gesture.removePointer();
     });
+
+    testWidgets(
+      'Calling setState within onEnter does not cause a loop of onExit/onEnter',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/147614
+        var enterCounter = 0;
+        var exitCounter = 0;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TableView.builder(
+                    columnCount: 1,
+                    rowCount: 1,
+                    columnBuilder: (int index) =>
+                        const TableSpan(extent: FixedTableSpanExtent(100)),
+                    rowBuilder: (int index) => TableSpan(
+                      extent: const FixedTableSpanExtent(100),
+                      onEnter: (_) {
+                        enterCounter++;
+                        setState(() {});
+                      },
+                      onExit: (_) {
+                        exitCounter++;
+                      },
+                    ),
+                    cellBuilder:
+                        (BuildContext context, TableVicinity vicinity) {
+                          return const TableViewCell(
+                            child: SizedBox.square(dimension: 100),
+                          );
+                        },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+
+        // Initial state
+        expect(enterCounter, 0);
+        expect(exitCounter, 0);
+
+        // Move mouse to the center of the first row (0,0)
+        final TestGesture gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.addPointer(location: const Offset(50, 50));
+        await tester.pump();
+
+        // Should have entered once
+        expect(enterCounter, 1);
+        expect(exitCounter, 0);
+
+        // Pump again to see if it triggers again
+        await tester.pump();
+
+        expect(exitCounter, 0, reason: 'Should not have exited');
+        expect(enterCounter, 1, reason: 'Should not have re-entered');
+
+        await gesture.removePointer();
+      },
+    );
 
     group('Merged pinned cells layout', () {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
@@ -4146,6 +4241,396 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    'Merged cells should not unmerge when the first cell is overlaid by a pinned column',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/174862
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                horizontalDetails: ScrollableDetails.horizontal(
+                  controller: horizontalController,
+                ),
+                pinnedColumnCount: 1,
+                columnCount: 10,
+                rowCount: 10,
+                columnBuilder: (int index) => TableSpan(
+                  extent: FixedTableSpanExtent(index == 0 ? 100 : 50),
+                ),
+                rowBuilder: (int index) =>
+                    const TableSpan(extent: FixedTableSpanExtent(50)),
+                cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                  final isColumn1 = vicinity.column == 1;
+                  return TableViewCell(
+                    columnMergeStart: isColumn1 ? 1 : null,
+                    columnMergeSpan: isColumn1 ? 3 : null,
+                    child: Center(
+                      child: Text('Cell ${vicinity.column},${vicinity.row}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Initially, column 1 is visible next to pinned column 0.
+      expect(find.text('Cell 1,0'), findsOneWidget);
+      // Column 2 and 3 should be part of the merge, so they are not built.
+      expect(find.text('Cell 2,0'), findsNothing);
+      expect(find.text('Cell 3,0'), findsNothing);
+
+      // Scroll horizontally so that column 1 is entirely behind pinned column 0.
+      // Pinned column 0 is 0 to 100.
+      // Unpinned content starts at 100 (Column 1).
+      // Scroll 100 pixels.
+      // Content at 0 (start of column 1) moves to absolute 100 - 100 = 0.
+      // Content at 50 (end of column 1) moves to absolute 100 + (50 - 100) = 50.
+      // So column 1 (0 to 50) is entirely covered by pinned column 0.
+      // Column 2 (50 to 100) is also covered.
+      // Column 3 (100 to 150) is the first visible in unpinned area.
+      horizontalController.jumpTo(100);
+      await tester.pump();
+
+      // With the fix, column 1 is still built because it is under the pinned area.
+      // Since column 1 is built, its merge info is found and applied to columns 2 and 3.
+      expect(find.text('Cell 1,0'), findsOneWidget);
+      expect(find.text('Cell 2,0'), findsNothing);
+      expect(find.text('Cell 3,0'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Merged cells should not unmerge when the first cell is overlaid by a pinned row',
+    (WidgetTester tester) async {
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                verticalDetails: ScrollableDetails.vertical(
+                  controller: verticalController,
+                ),
+                pinnedRowCount: 1,
+                columnCount: 10,
+                rowCount: 10,
+                columnBuilder: (int index) =>
+                    const TableSpan(extent: FixedTableSpanExtent(50)),
+                rowBuilder: (int index) => TableSpan(
+                  extent: FixedTableSpanExtent(index == 0 ? 100 : 50),
+                ),
+                cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                  // Merged cell spanning rows 1, 2, and 3.
+                  final isRow1 = vicinity.row == 1;
+                  return TableViewCell(
+                    rowMergeStart: isRow1 ? 1 : null,
+                    rowMergeSpan: isRow1 ? 3 : null,
+                    child: Center(
+                      child: Text('Cell ${vicinity.column},${vicinity.row}'),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Initially, row 1 is visible below pinned row 0.
+      expect(find.text('Cell 0,1'), findsOneWidget);
+      expect(find.text('Cell 0,2'), findsNothing);
+      expect(find.text('Cell 0,3'), findsNothing);
+
+      // Scroll vertically so that row 1 is entirely behind pinned row 0.
+      verticalController.jumpTo(100);
+      await tester.pump();
+
+      // Row 1 should still be built, maintaining the merge.
+      expect(find.text('Cell 0,1'), findsOneWidget);
+      expect(find.text('Cell 0,2'), findsNothing);
+      expect(find.text('Cell 0,3'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Table does not crash when focusing outside of the table while focused text field is not in the view',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/137112
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                const TextField(key: Key('outside_textfield')),
+                Expanded(
+                  child: TableView.builder(
+                    verticalDetails: ScrollableDetails.vertical(
+                      controller: verticalController,
+                    ),
+                    horizontalDetails: ScrollableDetails.horizontal(
+                      controller: horizontalController,
+                    ),
+                    cellBuilder:
+                        (BuildContext context, TableVicinity vicinity) {
+                          return TableViewCell(
+                            child: Center(
+                              child: TextField(
+                                key: Key(
+                                  'cell_${vicinity.row}_${vicinity.column}',
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                    columnCount: 20,
+                    columnBuilder: (int index) {
+                      return const TableSpan(
+                        foregroundDecoration: TableSpanDecoration(
+                          border: TableSpanBorder(trailing: BorderSide()),
+                        ),
+                        extent: FixedTableSpanExtent(100),
+                      );
+                    },
+                    rowCount: 40,
+                    rowBuilder: (int index) {
+                      return TableSpan(
+                        backgroundDecoration: TableSpanDecoration(
+                          color: index.isEven ? Colors.purple[100] : null,
+                          border: const TableSpanBorder(
+                            trailing: BorderSide(width: 3),
+                          ),
+                        ),
+                        extent: const FixedTableSpanExtent(50),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // 1. Select a TextField in the table.
+      // Use the vicinity from the original crash report.
+      const vicinity = TableVicinity(row: 5, column: 6);
+      final Finder cellTextField = find.byKey(
+        Key('cell_${vicinity.row}_${vicinity.column}'),
+      );
+      // Bring it into view.
+      verticalController.jumpTo(250);
+      horizontalController.jumpTo(600);
+      await tester.pumpAndSettle();
+
+      await tester.tap(cellTextField);
+      await tester.pumpAndSettle();
+      expect(FocusManager.instance.primaryFocus, isNotNull);
+
+      // 2. Scroll until it disappears from the view, without unfocusing it.
+      verticalController.jumpTo(verticalController.offset + 1000);
+      await tester.pumpAndSettle();
+
+      // 3. Select another TextField outside of the table.
+      final Finder outsideTextField = find.byKey(
+        const Key('outside_textfield'),
+      );
+      await tester.tap(outsideTextField);
+      await tester.pumpAndSettle();
+
+      // 4. Scroll back and ensure the table does not crash.
+      verticalController.jumpTo(verticalController.offset - 1000);
+      await tester.pumpAndSettle();
+      expect(cellTextField, findsOneWidget);
+    },
+  );
+
+  testWidgets('Trailing pinned columns and rows - smoke test', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    final verticalController = ScrollController();
+
+    Widget getTableView({
+      int? columnCount = 10,
+      int? rowCount = 10,
+      int pinnedColumnCount = 0,
+      int pinnedRowCount = 0,
+      int trailingPinnedColumnCount = 0,
+      int trailingPinnedRowCount = 0,
+    }) {
+      return TableView.builder(
+        cacheExtent: 0.0,
+        columnCount: columnCount,
+        rowCount: rowCount,
+        pinnedColumnCount: pinnedColumnCount,
+        pinnedRowCount: pinnedRowCount,
+        trailingPinnedColumnCount: trailingPinnedColumnCount,
+        trailingPinnedRowCount: trailingPinnedRowCount,
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
+        cellBuilder: (BuildContext context, TableVicinity vicinity) {
+          return TableViewCell(
+            child: Text('R${vicinity.row} C${vicinity.column}'),
+          );
+        },
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: getTableView(
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Initial view: 0-2 rows/cols are visible (100 each), plus trailing pinned (Row 9, Column 9)
+    expect(find.text('R0 C0'), findsOneWidget);
+    expect(find.text('R9 C9'), findsOneWidget);
+    expect(find.text('R0 C9'), findsOneWidget);
+    expect(find.text('R9 C0'), findsOneWidget);
+
+    expect(tester.getRect(find.text('R0 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C0')).top, 300);
+
+    // Scroll
+    horizontalController.jumpTo(50);
+    verticalController.jumpTo(50);
+    await tester.pump();
+
+    expect(tester.getRect(find.text('R0 C0')).left, -50);
+    expect(tester.getRect(find.text('R0 C0')).top, -50);
+    expect(tester.getRect(find.text('R0 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C0')).top, 300);
+    expect(tester.getRect(find.text('R9 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C9')).top, 300);
+  });
+
+  testWidgets('Intersections of leading and trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    const span = TableSpan(extent: FixedTableSpanExtent(100));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 10,
+              rowCount: 10,
+              pinnedColumnCount: 1,
+              pinnedRowCount: 1,
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+              columnBuilder: (int index) => span,
+              rowBuilder: (int index) => span,
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(
+                  child: Text('R${vicinity.row} C${vicinity.column}'),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Leading-Leading intersection
+    expect(tester.getRect(find.text('R0 C0')).topLeft, Offset.zero);
+    // Leading-Trailing intersection (Row 0, Col 9)
+    expect(tester.getRect(find.text('R0 C9')).topLeft, const Offset(300, 0));
+    // Trailing-Leading intersection (Row 9, Col 0)
+    expect(tester.getRect(find.text('R9 C0')).topLeft, const Offset(0, 300));
+    // Trailing-Trailing intersection (Row 9, Col 9)
+    expect(tester.getRect(find.text('R9 C9')).topLeft, const Offset(300, 300));
+
+    // Non-pinned middle
+    expect(tester.getRect(find.text('R1 C1')).topLeft, const Offset(100, 100));
+  });
+
+  testWidgets('Trailing pinned - merged cells validation', (
+    WidgetTester tester,
+  ) async {
+    // Merged cell in trailing pinned row
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              cacheExtent: 0.0,
+              columnCount: 10,
+              rowCount: 10,
+              trailingPinnedRowCount: 2,
+              columnBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                if (vicinity.row >= 8 && vicinity.column == 0) {
+                  return const TableViewCell(
+                    rowMergeStart: 8,
+                    rowMergeSpan: 2,
+                    child: Text('Merged R8-9 C0'),
+                  );
+                }
+                return TableViewCell(
+                  child: Text('R${vicinity.row} C${vicinity.column}'),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Merged cell should be at [0, 100] horizontally, and [200, 400] vertically
+    // because Row 8 & 9 are trailing pinned (bottom 200 pixels).
+    expect(find.text('Merged R8-9 C0'), findsOneWidget);
+    final Rect mergedRect = tester.getRect(find.text('Merged R8-9 C0'));
+    expect(mergedRect.top, 200);
+    expect(mergedRect.bottom, 400);
+  });
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

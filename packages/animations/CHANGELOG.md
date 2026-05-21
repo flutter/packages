@@ -1,3 +1,17 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.2.0
+
+* Adds support for custom `closedShadows` and `openShadows` to `OpenContainer`.
+* Fixes a layout overflow issue in the `_ExampleSingleTile` within the example app.
+
+## 2.1.2
+
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds an example of using `OpenContainer`
+
 ## 2.1.1
 
 * Updated the documentation for `OpenContainer.onClosed` to clarify that it is called at the start of the closing transition, not at the end.

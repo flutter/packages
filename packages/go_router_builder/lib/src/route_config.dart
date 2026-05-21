@@ -318,15 +318,12 @@ mixin _GoRouteMixin on RouteBaseConfig {
 
     for (final FormalParameterElement param in _ctorQueryParams) {
       final String parameterName = param.displayName;
-
       final conditions = <String>[];
       if (param.hasDefaultValue) {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add(
-          compareField(param, parameterName, param.defaultValueCode!),
-        );
+        conditions.add(compareField(param));
       } else if (param.type.isNullableType) {
         conditions.add('$selfFieldName.$parameterName != null');
       }
@@ -335,7 +332,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
         line = 'if (${conditions.join(' && ')}) ';
       }
       line +=
-          '${escapeDartString(parameterName.kebab)}: '
+          '${param.uriName}: '
           '${_encodeFor(parameterName)},';
 
       buffer.writeln(line);

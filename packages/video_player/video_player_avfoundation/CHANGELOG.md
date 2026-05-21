@@ -1,3 +1,36 @@
+## 2.9.7
+
+* Forces tone-mapping to SDR on iOS to prevent washed-out HDR video playback.
+
+## 2.9.6
+
+* Adds a Swift version to fix a potential build issue when using CocoaPods.
+
+## 2.9.5
+
+* Converts portions of the native code to Swift for improved maintainability.
+
+## 2.9.4
+
+* Ensures that the display link does not continue requesting frames after a player is disposed.
+
+## 2.9.3
+
+* Fixes a regression where HTTP headers were ignored.
+
+## 2.9.2
+
+* Refactors for improved testability.
+
+## 2.9.1
+
+* Refactors native code for improved testability.
+
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.8.10
 
 * Improves compatibility with `UIScene`.

@@ -2378,6 +2378,31 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
+  test('only uses new-style module imports', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: InternalObjcOptions(
+        headerIncludePath: 'foo.h',
+        prefix: 'ABC',
+        copyrightHeader: makeIterable('hello world'),
+        objcHeaderOut: '',
+        objcSourceOut: '',
+      ),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('@import'));
+    expect(code, isNot(contains('#import <')));
+  });
+
   test('field generics', () {
     final classDefinition = Class(
       name: 'Foobar',
@@ -4014,5 +4039,64 @@ void main() {
     final code = sink.toString();
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
+  });
+
+  test('data class equality', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+              name: 'bar',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    {
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalObjcOptions(
+          prefix: 'ABC',
+          objcHeaderOut: '',
+          objcSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+    }
+    {
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalObjcOptions(
+          prefix: 'ABC',
+          objcHeaderOut: '',
+          objcSourceOut: '',
+          headerIncludePath: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains('- (BOOL)isEqual:(id)object {'));
+      expect(code, contains('- (NSUInteger)hash {'));
+    }
   });
 }

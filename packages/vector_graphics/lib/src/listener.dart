@@ -20,7 +20,7 @@ import 'loader.dart';
 
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
-/// The deocded result of a vector graphics asset.
+/// The decoded result of a vector graphics asset.
 class PictureInfo {
   /// Construct a new [PictureInfo].
   PictureInfo._(this.picture, this.size);
@@ -274,6 +274,20 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   double _textPositionY = 0;
   Float64List? _textTransform;
 
+  // Pending text draws within the current SVG anchored chunk. Per the SVG
+  // spec, `text-anchor` applies to the chunk as a whole, so we cannot
+  // commit a paragraph to the canvas until we know the full chunk width.
+  final List<_PendingTextDraw> _pendingChunk = <_PendingTextDraw>[];
+  // The user-space x at which the current chunk begins (i.e. the value of
+  // `_accumulatedTextPositionX` at the time the first paragraph in the
+  // chunk was queued). Null when no chunk is open.
+  double? _chunkOriginX;
+  // The text-anchor multiplier of the first paragraph in the chunk; used
+  // to position the chunk as a whole.
+  double _chunkAnchorMultiplier = 0;
+  // Cumulative pen-advance within the current chunk so far.
+  double _chunkAdvance = 0;
+
   _PatternConfig? _currentPattern;
 
   static final Paint _emptyPaint = Paint();
@@ -294,6 +308,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   PictureInfo toPicture() {
     assert(!_done);
     _done = true;
+    _flushPendingTextChunk();
     try {
       return PictureInfo._(_recorder.endRecording(), _size);
     } finally {
@@ -652,6 +667,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onUpdateTextPosition(int textPositionId) {
     final _TextPosition position = _textPositions[textPositionId];
+    // Per the SVG spec, a new anchored chunk begins only when the element
+    // establishes an explicit absolute position (i.e. an `x` or `y` on a
+    // <text> or <tspan>). Relative `dx`/`dy` move the pen but do NOT
+    // start a new chunk; neither does the bare per-tspan TextPosition the
+    // parser emits when the tspan has no x/y of its own. `reset` (set on
+    // <text> elements) likewise starts a fresh chunk.
+    if (position.reset || position.x != null || position.y != null) {
+      _flushPendingTextChunk();
+    }
     if (position.reset) {
       _accumulatedTextPositionX = 0;
       _textPositionY = 0;
@@ -685,9 +709,26 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     final _TextConfig textConfig = _textConfig[textId];
     final double dx = _accumulatedTextPositionX ?? 0;
     final double dy = _textPositionY;
-    double paragraphWidth = 0;
 
-    void draw(int paintId) {
+    // A change in text-anchor on a continuing chunk also starts a new
+    // anchored chunk per the SVG spec.
+    if (_pendingChunk.isNotEmpty &&
+        textConfig.xAnchorMultiplier != _chunkAnchorMultiplier) {
+      _flushPendingTextChunk();
+    }
+
+    if (_pendingChunk.isEmpty) {
+      _chunkOriginX = dx;
+      _chunkAnchorMultiplier = textConfig.xAnchorMultiplier;
+      _chunkAdvance = 0;
+    } else {
+      // Continuing the chunk: take the live pen position so any in-chunk
+      // relative `dx="..."` movements applied via onUpdateTextPosition
+      // since the last segment are accounted for in the segment's offset
+      // within the chunk.
+      _chunkAdvance = dx - _chunkOriginX!;
+    }
+    Paragraph buildParagraph(int paintId) {
       final Paint paint = _paints[paintId];
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
@@ -707,37 +748,56 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
           decorationColor: textConfig.decorationColor,
         ),
       );
-
       builder.addText(textConfig.text);
-
       final Paragraph paragraph = builder.build();
       paragraph.layout(const ParagraphConstraints(width: double.infinity));
-      paragraphWidth = paragraph.maxIntrinsicWidth;
+      return paragraph;
+    }
 
-      if (_textTransform != null) {
+    double paragraphWidth = 0;
+    if (fillId != null) {
+      final Paragraph p = buildParagraph(fillId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
+    }
+    if (strokeId != null) {
+      final Paragraph p = buildParagraph(strokeId);
+      paragraphWidth = p.maxIntrinsicWidth;
+      _pendingChunk.add(_PendingTextDraw(p, _chunkAdvance, dy, _textTransform));
+    }
+
+    _chunkAdvance += paragraphWidth;
+    _accumulatedTextPositionX = dx + paragraphWidth;
+  }
+
+  void _flushPendingTextChunk() {
+    if (_pendingChunk.isEmpty) {
+      return;
+    }
+    final double originX = _chunkOriginX ?? 0;
+    final double anchorOffset = _chunkAdvance * _chunkAnchorMultiplier;
+    for (final _PendingTextDraw draw in _pendingChunk) {
+      final Paragraph paragraph = draw.paragraph;
+      if (draw.transform != null) {
         _canvas.save();
-        _canvas.transform(_textTransform!);
+        _canvas.transform(draw.transform!);
       }
       _canvas.drawParagraph(
         paragraph,
         Offset(
-          dx - paragraph.maxIntrinsicWidth * textConfig.xAnchorMultiplier,
-          dy - paragraph.alphabeticBaseline,
+          originX + draw.offsetWithinChunk - anchorOffset,
+          draw.dy - paragraph.alphabeticBaseline,
         ),
       );
       paragraph.dispose();
-      if (_textTransform != null) {
+      if (draw.transform != null) {
         _canvas.restore();
       }
     }
-
-    if (fillId != null) {
-      draw(fillId);
-    }
-    if (strokeId != null) {
-      draw(strokeId);
-    }
-    _accumulatedTextPositionX = dx + paragraphWidth;
+    _pendingChunk.clear();
+    _chunkOriginX = null;
+    _chunkAnchorMultiplier = 0;
+    _chunkAdvance = 0;
   }
 
   int _createImageKey(int imageId, int format) {
@@ -883,6 +943,20 @@ class _TextConfig {
   final TextDecoration decoration;
   final TextDecorationStyle decorationStyle;
   final Color decorationColor;
+}
+
+class _PendingTextDraw {
+  _PendingTextDraw(
+    this.paragraph,
+    this.offsetWithinChunk,
+    this.dy,
+    this.transform,
+  );
+
+  final Paragraph paragraph;
+  final double offsetWithinChunk;
+  final double dy;
+  final Float64List? transform;
 }
 
 /// An exception thrown if decoding fails.

@@ -1,3 +1,21 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 7.2.11
+
+* Bumps AndroidX Credentials to v1.6.0
+* Bumps Play Services Auth to v21.5.1
+* Bumps Android Identity GoogleID to v1.2.0
+
+## 7.2.10
+
+* Updates build files from Groovy to Kotlin.
+
+## 7.2.9
+
+* Simplifies internal code for Kotlin/Java interoperability.
+
 ## 7.2.8
 
 * Bumps kotlin_version to 2.3.0.

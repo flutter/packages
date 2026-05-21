@@ -6,11 +6,6 @@ import AVFoundation
 import CoreMedia
 import UIKit
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
 /// Factory block returning an FLTCaptureDevice.
 /// Used in tests to inject a video capture device into DefaultCamera.
 typealias VideoCaptureDeviceFactory = (_ cameraName: String) -> CaptureDevice
@@ -28,7 +23,7 @@ typealias InputPixelBufferAdaptorFactory = (
 
 /// A configuration object that centralizes dependencies for `DefaultCamera`.
 class CameraConfiguration {
-  var mediaSettings: FCPPlatformMediaSettings
+  var mediaSettings: PlatformMediaSettings
   var mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper
   var captureSessionQueue: DispatchQueue
   var videoCaptureSession: CaptureSession
@@ -44,7 +39,7 @@ class CameraConfiguration {
   var orientation: UIDeviceOrientation
 
   init(
-    mediaSettings: FCPPlatformMediaSettings,
+    mediaSettings: PlatformMediaSettings,
     mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper,
     captureDeviceFactory: @escaping VideoCaptureDeviceFactory,
     audioCaptureDeviceFactory: @escaping AudioCaptureDeviceFactory,

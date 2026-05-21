@@ -3,12 +3,14 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import test_plugin
 
-class ProxyApiTests: XCTestCase {
-  func testCallsToDartFailIfTheInstanceIsNotInTheInstanceManager() {
+@MainActor
+struct ProxyApiTests {
+  @Test
+  func callsToDartFailIfTheInstanceIsNotInTheInstanceManager() async {
     let testObject = ProxyApiTestClass()
 
     let binaryMessenger = MockBinaryMessenger<Any>(
@@ -22,16 +24,16 @@ class ProxyApiTests: XCTestCase {
     let api = PigeonApiProxyApiTestClass(
       pigeonRegistrar: registrar, delegate: ProxyApiTestClassDelegate())
 
-    var error: String? = nil
-    api.flutterNoop(pigeonInstance: testObject) { response in
-      if case .failure(let response) = response {
-        error = response.message
+    await confirmation { confirmed in
+      api.flutterNoop(pigeonInstance: testObject) { response in
+        if case .failure(let error) = response {
+          #expect(
+            error.message
+              == "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager."
+          )
+          confirmed()
+        }
       }
     }
-
-    XCTAssertEqual(
-      error,
-      "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager."
-    )
   }
 }

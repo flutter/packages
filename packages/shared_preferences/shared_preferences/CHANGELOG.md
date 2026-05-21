@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.5.5
+
+* Fixes dartdoc comments that accidentally used HTML.
+
 ## 2.5.4
 
 * Updates dependencies for the `shared_preferences_tool` DevTools extension and fixes related deprecations.

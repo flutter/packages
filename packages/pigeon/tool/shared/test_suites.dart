@@ -359,8 +359,8 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
 
   const deviceName = 'Pigeon-Test-iPhone';
   const deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
-  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-2';
-  const deviceOS = '18.2';
+  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-26-2';
+  const deviceOS = '26.2';
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
@@ -409,6 +409,15 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
     return compileCode;
   }
 
+  // Depending on the Flutter version, the build output path may be different.
+  // To handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/114349
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts.
+  // TODO(gustl22): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/114349, and just construct the
+  // version of the path with the current architecture.
   const buildDirBase = '$examplePath/build/linux';
   const buildRelativeBinaryPath = 'debug/plugins/test_plugin/test_plugin_test';
   const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';

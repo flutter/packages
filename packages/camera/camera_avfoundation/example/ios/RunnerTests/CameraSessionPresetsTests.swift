@@ -7,12 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// Includes test cases related to resolution presets setting operations for FLTCam class.
+/// Includes test cases related to resolution presets setting operations for Camera class.
 final class CameraSessionPresetsTests: XCTestCase {
   func testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset() {
     let expectedPreset = AVCaptureSession.Preset.inputPriority
@@ -21,6 +16,7 @@ final class CameraSessionPresetsTests: XCTestCase {
       description: "Expected lockForConfiguration called")
 
     let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
     videoSessionMock.setSessionPresetStub = { preset in
       if preset == expectedPreset {
         presetExpectation.fulfill()
@@ -29,19 +25,22 @@ final class CameraSessionPresetsTests: XCTestCase {
     let captureFormatMock = MockCaptureDeviceFormat()
     let captureDeviceMock = MockCaptureDevice()
     captureDeviceMock.flutterFormats = [captureFormatMock]
-    captureDeviceMock.flutterActiveFormat = captureFormatMock
+    var currentFormat: CaptureDeviceFormat = captureFormatMock
+    captureDeviceMock.activeFormatStub = {
+      return currentFormat
+    }
     captureDeviceMock.lockForConfigurationStub = {
       lockForConfigurationExpectation.fulfill()
     }
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
-    configuration.videoDimensionsConverter = { format in
-      return CMVideoDimensions(width: 1, height: 1)
+    configuration.videoDimensionsConverter = { _ in
+      return CMVideoDimensions(width: 4, height: 3)
     }
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.max)
+      resolutionPreset: PlatformResolutionPreset.max)
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 
@@ -64,7 +63,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.max)
+      resolutionPreset: PlatformResolutionPreset.max)
     configuration.videoCaptureDeviceFactory = { _ in MockCaptureDevice() }
 
     let _ = CameraTestUtils.createTestCamera(configuration)
@@ -89,7 +88,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
-      resolutionPreset: FCPPlatformResolutionPreset.ultraHigh)
+      resolutionPreset: PlatformResolutionPreset.ultraHigh)
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 

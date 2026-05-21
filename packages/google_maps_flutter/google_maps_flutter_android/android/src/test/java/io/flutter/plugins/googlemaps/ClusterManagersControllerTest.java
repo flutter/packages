@@ -6,6 +6,7 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -21,10 +22,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import io.flutter.plugins.googlemaps.ClusterManagersController.AdvancedMarkerClusterRenderer;
+import io.flutter.plugins.googlemaps.ClusterManagersController.MarkerClusterRenderer;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,8 +63,8 @@ public class ClusterManagersControllerTest {
     mocksClosable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
-    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
-    controller = spy(new ClusterManagersController(flutterApi, context));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class), ""));
+    controller = spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     controller.init(googleMap, markerManager);
@@ -91,19 +94,18 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    Messages.PlatformClusterManager initialClusterManager =
-        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
-    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
+    PlatformClusterManager initialClusterManager = new PlatformClusterManager(clusterManagerId);
+    List<PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
-    MarkerBuilder markerBuilder1 = new MarkerBuilder(markerId1, clusterManagerId);
-    MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
+    MarkerBuilder markerBuilder1 =
+        new MarkerBuilder(markerId1, clusterManagerId, PlatformMarkerType.MARKER);
+    MarkerBuilder markerBuilder2 =
+        new MarkerBuilder(markerId2, clusterManagerId, PlatformMarkerType.MARKER);
 
-    final Messages.PlatformMarker markerData1 =
-        createPlatformMarker(markerId1, location1, clusterManagerId);
-    final Messages.PlatformMarker markerData2 =
-        createPlatformMarker(markerId2, location2, clusterManagerId);
+    final PlatformMarker markerData1 = createPlatformMarker(markerId1, location1, clusterManagerId);
+    final PlatformMarker markerData2 = createPlatformMarker(markerId2, location2, clusterManagerId);
 
     Convert.interpretMarkerOptions(
         markerData1, markerBuilder1, assetManager, density, bitmapFactory);
@@ -129,6 +131,57 @@ public class ClusterManagersControllerTest {
   }
 
   @Test
+  public void SelectClusterRenderer() {
+    final String defaultClusterManagerId = "cm_default";
+    final String advancedClusterManagerId = "cm_advanced";
+    final String defaultMarkerId = "mid_default";
+    final String advancedMarkerId = "mid_advanced";
+
+    when(googleMap.getCameraPosition())
+        .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
+
+    ClusterManagersController defaultController =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
+    defaultController.init(googleMap, markerManager);
+    ClusterManagersController advancedController =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.ADVANCED_MARKER));
+    advancedController.init(googleMap, markerManager);
+
+    PlatformClusterManager initialClusterManager1 =
+        new PlatformClusterManager(defaultClusterManagerId);
+    List<PlatformClusterManager> clusterManagersToAdd1 = new ArrayList<>();
+    clusterManagersToAdd1.add(initialClusterManager1);
+    defaultController.addClusterManagers(clusterManagersToAdd1);
+
+    PlatformClusterManager initialClusterManager2 =
+        new PlatformClusterManager(advancedClusterManagerId);
+    List<PlatformClusterManager> clusterManagersToAdd2 = new ArrayList<>();
+    clusterManagersToAdd2.add(initialClusterManager2);
+    advancedController.addClusterManagers(clusterManagersToAdd2);
+
+    MarkerBuilder defaultMarkerBuilder =
+        new MarkerBuilder(defaultMarkerId, defaultClusterManagerId, PlatformMarkerType.MARKER);
+    defaultMarkerBuilder.setPosition(new LatLng(10.0, 20.0));
+    defaultController.addItem(defaultMarkerBuilder);
+
+    MarkerBuilder advancedMarkerBuilder =
+        new MarkerBuilder(
+            advancedMarkerId, advancedClusterManagerId, PlatformMarkerType.ADVANCED_MARKER);
+    advancedMarkerBuilder.setPosition(new LatLng(20.0, 10.0));
+    advancedController.addItem(advancedMarkerBuilder);
+
+    ClusterManager<?> clusterManager1 =
+        defaultController.clusterManagerIdToManager.get(defaultClusterManagerId);
+    assertNotNull(clusterManager1);
+    assertSame(clusterManager1.getRenderer().getClass(), MarkerClusterRenderer.class);
+
+    ClusterManager<?> clusterManager2 =
+        advancedController.clusterManagerIdToManager.get(advancedClusterManagerId);
+    assertNotNull(clusterManager2);
+    assertSame(clusterManager2.getRenderer().getClass(), AdvancedMarkerClusterRenderer.class);
+  }
+
+  @Test
   public void OnClusterClickCallsMethodChannel() {
     String clusterManagerId = "cm_1";
     LatLng clusterPosition = new LatLng(43.00, -87.90);
@@ -137,11 +190,11 @@ public class ClusterManagersControllerTest {
 
     StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
-    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
+    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER);
     marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
-    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
+    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER);
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
@@ -157,9 +210,8 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    Messages.PlatformClusterManager initialClusterManager =
-        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
-    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
+    PlatformClusterManager initialClusterManager = new PlatformClusterManager(clusterManagerId);
+    List<PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
@@ -169,45 +221,35 @@ public class ClusterManagersControllerTest {
     controller.removeClusterManagers(Collections.singletonList(clusterManagerId));
     // Verify that fetching the cluster data fails and therefore ClusterManager is removed.
     assertThrows(
-        Messages.FlutterError.class,
-        () -> controller.getClustersWithClusterManagerId(clusterManagerId));
+        FlutterError.class, () -> controller.getClustersWithClusterManagerId(clusterManagerId));
   }
 
-  private Messages.PlatformMarker createPlatformMarker(
+  private PlatformMarker createPlatformMarker(
       String markerId, List<Double> location, String clusterManagerId) {
     Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
     byte[] byteArray = byteArrayOutputStream.toByteArray();
-    Messages.PlatformBitmap icon =
-        new Messages.PlatformBitmap.Builder()
-            .setBitmap(
-                new Messages.PlatformBitmapBytesMap.Builder()
-                    .setByteData(byteArray)
-                    .setImagePixelRatio(1.0)
-                    .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
-                    .build())
-            .build();
-    Messages.PlatformDoublePair anchor =
-        new Messages.PlatformDoublePair.Builder().setX(0.0).setY(0.0).build();
-    return new Messages.PlatformMarker.Builder()
-        .setMarkerId(markerId)
-        .setConsumeTapEvents(false)
-        .setIcon(icon)
-        .setAlpha(1.0)
-        .setDraggable(false)
-        .setFlat(false)
-        .setVisible(true)
-        .setRotation(0.0)
-        .setZIndex(0.0)
-        .setPosition(
-            new Messages.PlatformLatLng.Builder()
-                .setLatitude(location.get(0))
-                .setLongitude(location.get(1))
-                .build())
-        .setClusterManagerId(clusterManagerId)
-        .setAnchor(anchor)
-        .setInfoWindow(new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build())
-        .build();
+    PlatformBitmap icon =
+        new PlatformBitmap(
+            new PlatformBitmapBytesMap(
+                byteArray, PlatformMapBitmapScaling.NONE, /* imagePixelRatio */ 1.0, null, null));
+    PlatformDoublePair anchor = new PlatformDoublePair(0.0, 0.0);
+    return new PlatformMarker(
+        /* alpha */ 1.0,
+        anchor,
+        /* consumeTapEvents */ false,
+        /* draggable */ false,
+        /* flat */ false,
+        icon,
+        new PlatformInfoWindow(/* title */ null, /* snippet */ null, anchor),
+        /* position */
+        new PlatformLatLng(location.get(0), location.get(1)),
+        /* rotation */ 0.0,
+        /* visible */ true,
+        /* zIndex */ 0.0,
+        markerId,
+        clusterManagerId,
+        PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY);
   }
 }

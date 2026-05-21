@@ -15,21 +15,21 @@ import io.flutter.plugin.common.BinaryMessenger;
 import java.util.List;
 
 class GoogleMapBuilder implements GoogleMapOptionsSink {
-  private final GoogleMapOptions options = new GoogleMapOptions();
+  private final @NonNull GoogleMapOptions options = new GoogleMapOptions();
   private boolean trackCameraPosition = false;
   private boolean myLocationEnabled = false;
   private boolean myLocationButtonEnabled = false;
   private boolean indoorEnabled = true;
   private boolean trafficEnabled = false;
   private boolean buildingsEnabled = true;
-  private List<Messages.PlatformMarker> initialMarkers;
-  private List<Messages.PlatformClusterManager> initialClusterManagers;
-  private List<Messages.PlatformPolygon> initialPolygons;
-  private List<Messages.PlatformPolyline> initialPolylines;
-  private List<Messages.PlatformCircle> initialCircles;
-  private List<Messages.PlatformHeatmap> initialHeatmaps;
-  private List<Messages.PlatformTileOverlay> initialTileOverlays;
-  private List<Messages.PlatformGroundOverlay> initialGroundOverlays;
+  private List<PlatformMarker> initialMarkers;
+  private List<PlatformClusterManager> initialClusterManagers;
+  private List<PlatformPolygon> initialPolygons;
+  private List<PlatformPolyline> initialPolylines;
+  private List<PlatformCircle> initialCircles;
+  private List<PlatformHeatmap> initialHeatmaps;
+  private List<PlatformTileOverlay> initialTileOverlays;
+  private List<PlatformGroundOverlay> initialGroundOverlays;
   private Rect padding = new Rect(0, 0, 0, 0);
   private @Nullable String style;
 
@@ -37,9 +37,11 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
       int id,
       Context context,
       BinaryMessenger binaryMessenger,
-      LifecycleProvider lifecycleProvider) {
+      LifecycleProvider lifecycleProvider,
+      @NonNull PlatformMarkerType markerType) {
     final GoogleMapController controller =
-        new GoogleMapController(id, context, binaryMessenger, lifecycleProvider, options);
+        new GoogleMapController(
+            id, context, binaryMessenger, lifecycleProvider, options, markerType);
     controller.init();
     controller.setMyLocationEnabled(myLocationEnabled);
     controller.setMyLocationButtonEnabled(myLocationButtonEnabled);
@@ -164,44 +166,42 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
   }
 
   @Override
-  public void setInitialMarkers(@NonNull List<Messages.PlatformMarker> initialMarkers) {
+  public void setInitialMarkers(@NonNull List<PlatformMarker> initialMarkers) {
     this.initialMarkers = initialMarkers;
   }
 
   @Override
   public void setInitialClusterManagers(
-      @NonNull List<Messages.PlatformClusterManager> initialClusterManagers) {
+      @NonNull List<PlatformClusterManager> initialClusterManagers) {
     this.initialClusterManagers = initialClusterManagers;
   }
 
   @Override
-  public void setInitialPolygons(@NonNull List<Messages.PlatformPolygon> initialPolygons) {
+  public void setInitialPolygons(@NonNull List<PlatformPolygon> initialPolygons) {
     this.initialPolygons = initialPolygons;
   }
 
   @Override
-  public void setInitialPolylines(@NonNull List<Messages.PlatformPolyline> initialPolylines) {
+  public void setInitialPolylines(@NonNull List<PlatformPolyline> initialPolylines) {
     this.initialPolylines = initialPolylines;
   }
 
   @Override
-  public void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles) {
+  public void setInitialCircles(@NonNull List<PlatformCircle> initialCircles) {
     this.initialCircles = initialCircles;
   }
 
   @Override
-  public void setInitialHeatmaps(@NonNull List<Messages.PlatformHeatmap> initialHeatmaps) {
+  public void setInitialHeatmaps(@NonNull List<PlatformHeatmap> initialHeatmaps) {
     this.initialHeatmaps = initialHeatmaps;
   }
 
-  public void setInitialTileOverlays(
-      @NonNull List<Messages.PlatformTileOverlay> initialTileOverlays) {
+  public void setInitialTileOverlays(@NonNull List<PlatformTileOverlay> initialTileOverlays) {
     this.initialTileOverlays = initialTileOverlays;
   }
 
   @Override
-  public void setInitialGroundOverlays(
-      @NonNull List<Messages.PlatformGroundOverlay> initialGroundOverlays) {
+  public void setInitialGroundOverlays(@NonNull List<PlatformGroundOverlay> initialGroundOverlays) {
     this.initialGroundOverlays = initialGroundOverlays;
   }
 

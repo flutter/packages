@@ -124,19 +124,11 @@ abstract class TestHostApi {
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
               Object? message,
             ) async {
-              assert(
-                message != null,
-                'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null.',
-              );
-              final List<Object?> args = (message as List<Object?>?)!;
-              final MessageSearchRequest? arg_request =
-                  (args[0] as MessageSearchRequest?);
-              assert(
-                arg_request != null,
-                'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null, expected non-null MessageSearchRequest.',
-              );
+              final List<Object?> args = message! as List<Object?>;
+              final MessageSearchRequest arg_request =
+                  args[0]! as MessageSearchRequest;
               try {
-                final MessageSearchReply output = api.search(arg_request!);
+                final MessageSearchReply output = api.search(arg_request);
                 return <Object?>[output];
               } on PlatformException catch (e) {
                 return wrapResponse(error: e);
@@ -187,18 +179,10 @@ abstract class TestNestedApi {
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (
               Object? message,
             ) async {
-              assert(
-                message != null,
-                'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null.',
-              );
-              final List<Object?> args = (message as List<Object?>?)!;
-              final MessageNested? arg_nested = (args[0] as MessageNested?);
-              assert(
-                arg_nested != null,
-                'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null, expected non-null MessageNested.',
-              );
+              final List<Object?> args = message! as List<Object?>;
+              final MessageNested arg_nested = args[0]! as MessageNested;
               try {
-                final MessageSearchReply output = api.search(arg_nested!);
+                final MessageSearchReply output = api.search(arg_nested);
                 return <Object?>[output];
               } on PlatformException catch (e) {
                 return wrapResponse(error: e);

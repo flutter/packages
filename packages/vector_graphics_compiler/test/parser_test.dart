@@ -277,6 +277,42 @@ void main() {
     ]);
   });
 
+  test('adjacent tspans without whitespace are not separated by a space', () {
+    // Regression test: previously the parser unconditionally injected a
+    // space between the text of any two consecutive tspans, even when the
+    // source XML contained no whitespace between </tspan> and <tspan>.
+    // That caused `<tspan>A</tspan><tspan>B</tspan>` to render as "A B"
+    // (a visible gap), instead of "AB" as every browser does.
+    const svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+<text x="100" y="50" text-anchor="middle"><tspan>ABCDEFG</tspan><tspan>HIJKLMN</tspan></text>
+</svg>''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+
+    expect(instructions.text.map((TextConfig t) => t.text), <String>[
+      'ABCDEFG',
+      'HIJKLMN',
+    ]);
+  });
+
+  test('adjacent tspans with whitespace between still get a space', () {
+    // Sibling case to the regression test above: when there *is* source
+    // whitespace between </tspan> and <tspan>, that whitespace must be
+    // preserved as a single space prepended to the second tspan.
+    const svg = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50">
+<text x="0" y="40"><tspan>A</tspan> <tspan>B</tspan></text>
+</svg>''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+
+    expect(instructions.text.map((TextConfig t) => t.text), <String>[
+      'A',
+      ' B',
+    ]);
+  });
+
   test('stroke-opacity', () {
     const strokeOpacitySvg = '''
 <svg viewBox="0 0 10 10" fill="none">
@@ -3154,6 +3190,73 @@ void main() {
     ''';
 
     expect(parseWithoutOptimizers(svgStr), isA<VectorInstructions>());
+  });
+
+  test('Parse rect with percentage width and height', () {
+    // This SVG uses percentage values for rect dimensions, like placeholder images
+    const svgStr = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+  <rect width="100%" height="100%" fill="#c73c3c" />
+  <rect x="25%" y="25%" width="50%" height="50%" fill="#22e8a6" />
+</svg>
+    ''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svgStr);
+
+    // Expect 2 rect paths
+    expect(instructions.paths.length, 2);
+
+    // First rect should be full size (100% = 600x400)
+    expect(instructions.paths[0].commands, const <PathCommand>[
+      MoveToCommand(0.0, 0.0),
+      LineToCommand(600.0, 0.0),
+      LineToCommand(600.0, 400.0),
+      LineToCommand(0.0, 400.0),
+      CloseCommand(),
+    ]);
+
+    // Second rect should be at 25%,25% (150,100) with 50% size (300x200)
+    expect(instructions.paths[1].commands, const <PathCommand>[
+      MoveToCommand(150.0, 100.0),
+      LineToCommand(450.0, 100.0),
+      LineToCommand(450.0, 300.0),
+      LineToCommand(150.0, 300.0),
+      CloseCommand(),
+    ]);
+  });
+
+  test('Parse circle with percentage cx, cy', () {
+    const svgStr = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <circle cx="50%" cy="50%" r="40" fill="blue" />
+</svg>
+    ''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svgStr);
+
+    // Expect 1 circle path centered at 50%,50% = 100,100
+    expect(instructions.paths.length, 1);
+    // Circle paths are represented as ovals, check they're centered correctly
+    final List<PathCommand> commands = instructions.paths[0].commands.toList();
+    expect(commands.isNotEmpty, true);
+    // The first command should move to the top of the circle (100, 100-40 = 60)
+    expect(commands[0], const MoveToCommand(100.0, 60.0));
+  });
+
+  test('Parse line with percentage coordinates', () {
+    const svgStr = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+  <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="black" />
+</svg>
+    ''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svgStr);
+
+    expect(instructions.paths.length, 1);
+    expect(instructions.paths[0].commands, const <PathCommand>[
+      MoveToCommand(0.0, 0.0),
+      LineToCommand(100.0, 100.0),
+    ]);
   });
 }
 

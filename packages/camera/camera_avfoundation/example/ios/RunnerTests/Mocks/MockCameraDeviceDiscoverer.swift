@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// Mock implementation of `FLTCameraDeviceDiscoverer` protocol which allows injecting a custom
+/// Mock implementation of `CameraDeviceDiscoverer` protocol which allows injecting a custom
 /// implementation for session discovery.
 final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
   var discoverySessionStub:

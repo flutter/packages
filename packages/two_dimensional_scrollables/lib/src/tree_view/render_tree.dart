@@ -38,9 +38,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
+    AlignmentGeometry alignment = Alignment.topLeft,
+    TextDirection? textDirection,
   }) : _activeAnimations = activeAnimations,
        _rowDepths = rowDepths,
        _indentation = indentation,
+       _alignment = alignment,
+       _textDirection = textDirection,
        assert(indentation >= 0),
        assert(
          verticalAxisDirection == AxisDirection.down &&
@@ -55,6 +59,30 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   set delegate(TreeRowDelegateMixin value) {
     super.delegate = value;
   }
+
+  /// The alignment of the tree within the viewport when there is extra space.
+  AlignmentGeometry get alignment => _alignment;
+  AlignmentGeometry _alignment;
+  set alignment(AlignmentGeometry value) {
+    if (_alignment == value) {
+      return;
+    }
+    _alignment = value;
+    markNeedsLayout();
+  }
+
+  /// The text direction with which to resolve [alignment].
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
+    if (_textDirection == value) {
+      return;
+    }
+    _textDirection = value;
+    markNeedsLayout();
+  }
+
+  double _vAlignmentOffset = 0.0;
 
   /// The currently active [TreeViewNode] animations.
   ///
@@ -311,29 +339,33 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
   }
 
-  void _updateScrollBounds() {
+  void _updateVerticalScrollBounds() {
+    final double maxVerticalExtent = _rowMetrics.isEmpty
+        ? 0.0
+        : math.max(
+            0.0,
+            _rowMetrics[_rowMetrics.length - 1]!.trailingOffset -
+                viewportDimension.height,
+          );
+    _verticalOverflows = maxVerticalExtent > 0.0;
+    final bool acceptedDimension = verticalOffset.applyContentDimensions(
+      0.0,
+      maxVerticalExtent,
+    );
+    if (!acceptedDimension) {
+      // If the scroll offset was corrected (e.g., clamped), we must
+      // re-calculate which rows are now visible.
+      _updateFirstAndLastVisibleRow();
+    }
+  }
+
+  void _updateHorizontalScrollBounds() {
     final double maxHorizontalExtent = math.max(
       0.0,
       _furthestHorizontalExtent - viewportDimension.width,
     );
     _horizontalOverflows = maxHorizontalExtent > 0.0;
-
-    final double verticalLeadingExtent = verticalOffset.pixels;
-    final double verticalTrailingExtent =
-        _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height;
-    final double maxVerticalExtent = math.max(
-      0.0,
-      math.max(verticalLeadingExtent, verticalTrailingExtent),
-    );
-    _verticalOverflows = maxVerticalExtent > 0.0;
-
-    final bool acceptedDimension =
-        horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent) &&
-        verticalOffset.applyContentDimensions(0.0, maxVerticalExtent);
-
-    if (!acceptedDimension) {
-      _updateFirstAndLastVisibleRow();
-    }
+    horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent);
   }
 
   @override
@@ -348,15 +380,46 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _updateFirstAndLastVisibleRow();
     }
 
+    final Alignment resolvedAlignment = alignment.resolve(textDirection);
+    _vAlignmentOffset = 0.0;
+    if (_rowMetrics.isNotEmpty) {
+      final double totalHeight =
+          _rowMetrics[_rowMetrics.length - 1]!.trailingOffset;
+      if (totalHeight < viewportDimension.height) {
+        _vAlignmentOffset =
+            (viewportDimension.height - totalHeight) *
+            (resolvedAlignment.y + 1.0) /
+            2.0;
+      }
+    }
+
+    // Ensure vertical scroll bounds are updated before layout. This allows
+    // any scroll corrections (e.g., clamping when the tree shrinks) to
+    // be applied immediately, ensuring the layout loop builds the rows
+    // that will actually be visible at the corrected offset.
+    _updateVerticalScrollBounds();
+
     if (_firstRow == null) {
-      assert(_lastRow == null);
+      // If no rows are visible, we must still update horizontal bounds
+      // before returning to ensure the horizontal scroll controller
+      // has the latest information.
+      _updateHorizontalScrollBounds();
+      // To satisfy older framework versions that require at least one vicinity
+      // to be laid out (even if no child is built).
+      // See also: https://github.com/flutter/flutter/pull/180563
+      buildOrObtainChildFor(const TreeVicinity(depth: 0, row: 0));
+      // Return early to avoid a framework crash in RenderTwoDimensionalViewport
+      // where it expects at least one child to be laid out if the layout
+      // pass completes.
       return;
     }
-    assert(_firstRow != null && _lastRow != null);
 
+    assert(_lastRow != null);
     _Span rowSpan;
     double rowOffset =
-        -verticalOffset.pixels + _rowMetrics[_firstRow!]!.leadingOffset;
+        -verticalOffset.pixels +
+        _rowMetrics[_firstRow!]!.leadingOffset +
+        _vAlignmentOffset;
     for (int row = _firstRow!; row <= _lastRow!; row++) {
       rowSpan = _rowMetrics[row]!;
       final double rowHeight = rowSpan.extent;
@@ -380,11 +443,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       );
       rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
       _furthestHorizontalExtent = math.max(
-        parentData.layoutOffset!.dx + child.size.width,
+        parentData.layoutOffset!.dx +
+            horizontalOffset.pixels +
+            child.size.width,
         _furthestHorizontalExtent,
       );
     }
-    _updateScrollBounds();
+    _updateHorizontalScrollBounds();
   }
 
   // Maps the UniqueKey associated with animating node segments with the clip
@@ -489,11 +554,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final double trailingOffset =
           _rowMetrics[segment.trailingIndex]!.trailingOffset;
       final rect = Rect.fromPoints(
-        Offset(0.0, leadingOffset - verticalOffset.pixels),
+        Offset(0.0, leadingOffset - verticalOffset.pixels + _vAlignmentOffset),
         Offset(
           viewportDimension.width,
           math.min(
-            trailingOffset - verticalOffset.pixels,
+            trailingOffset - verticalOffset.pixels + _vAlignmentOffset,
             viewportDimension.height,
           ),
         ),
@@ -545,12 +610,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           );
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
-          return Rect.fromPoints(
-            Offset(0.0, parentData.layoutOffset!.dy),
-            Offset(
-              viewportDimension.width,
-              rowSpan.trailingOffset - verticalOffset.pixels,
-            ),
+          return Rect.fromLTRB(
+            0.0,
+            parentData.paintOffset!.dy -
+                (consumePadding ? rowSpan.configuration.padding.leading : 0.0),
+            viewportDimension.width,
+            parentData.paintOffset!.dy +
+                child.size.height +
+                (consumePadding ? rowSpan.configuration.padding.trailing : 0.0),
           );
         }
 
@@ -577,6 +644,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });
@@ -598,6 +666,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         canvas: context.canvas,
         rect: rect,
         axisDirection: horizontalAxisDirection,
+        crossAxisDirection: verticalAxisDirection,
       );
       decoration.paint(paintingDetails);
     });

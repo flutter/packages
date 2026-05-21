@@ -2,14 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
+/// Mock implementation of `CaptureSession` protocol which allows injecting a custom
 /// implementation.
 final class MockCaptureSession: NSObject, CaptureSession {
   var setSessionPresetStub: ((AVCaptureSession.Preset) -> Void)?
@@ -26,6 +23,7 @@ final class MockCaptureSession: NSObject, CaptureSession {
   private(set) var addedAudioOutputCount: Int = 0
 
   var automaticallyConfiguresApplicationAudioSession = false
+  var isRunning = true
 
   var sessionPreset: AVCaptureSession.Preset {
     get {

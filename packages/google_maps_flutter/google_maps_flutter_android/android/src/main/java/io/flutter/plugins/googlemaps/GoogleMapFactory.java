@@ -21,7 +21,7 @@ public class GoogleMapFactory extends PlatformViewFactory {
 
   GoogleMapFactory(
       BinaryMessenger binaryMessenger, Context context, LifecycleProvider lifecycleProvider) {
-    super(Messages.MapsApi.getCodec());
+    super(MapsApi.Companion.getCodec());
 
     this.binaryMessenger = binaryMessenger;
     this.lifecycleProvider = lifecycleProvider;
@@ -31,11 +31,11 @@ public class GoogleMapFactory extends PlatformViewFactory {
   @Override
   @NonNull
   public PlatformView create(@NonNull Context context, int id, @Nullable Object args) {
-    final Messages.PlatformMapViewCreationParams params =
-        Objects.requireNonNull((Messages.PlatformMapViewCreationParams) args);
+    final PlatformMapViewCreationParams params =
+        Objects.requireNonNull((PlatformMapViewCreationParams) args);
     final GoogleMapBuilder builder = new GoogleMapBuilder();
 
-    final Messages.PlatformMapConfiguration mapConfig = params.getMapConfiguration();
+    final PlatformMapConfiguration mapConfig = params.getMapConfiguration();
     Convert.interpretMapConfiguration(mapConfig, builder);
     CameraPosition position = Convert.cameraPositionFromPigeon(params.getInitialCameraPosition());
     builder.setInitialCameraPosition(position);
@@ -48,11 +48,12 @@ public class GoogleMapFactory extends PlatformViewFactory {
     builder.setInitialTileOverlays(params.getInitialTileOverlays());
     builder.setInitialGroundOverlays(params.getInitialGroundOverlays());
 
-    final String cloudMapId = mapConfig.getMapId();
-    if (cloudMapId != null) {
-      builder.setMapId(cloudMapId);
+    final String mapId = mapConfig.getMapId();
+    if (mapId != null && !mapId.isEmpty()) {
+      builder.setMapId(mapId);
     }
 
-    return builder.build(id, context, binaryMessenger, lifecycleProvider);
+    return builder.build(
+        id, context, binaryMessenger, lifecycleProvider, mapConfig.getMarkerType());
   }
 }

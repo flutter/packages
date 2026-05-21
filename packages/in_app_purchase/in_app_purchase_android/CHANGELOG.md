@@ -7,6 +7,20 @@
 * Adds support for `oneTimePurchaseOfferDetailsList` in `ProductDetailsWrapper`.
 * Adds support for `unfetchedProductList` in `ProductDetailsResponseWrapper` to handle product IDs that could not be fetched.
 
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.4.0+11
+
+* Updates internal implementation to use Kotlin Pigeon.
+
+## 0.4.0+10
+
+* Fixes dartdoc comments that accidentally used HTML.
+
+## 0.4.0+9
+
+* Updates build files from Groovy to Kotlin.
+
 ## 0.4.0+8
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
