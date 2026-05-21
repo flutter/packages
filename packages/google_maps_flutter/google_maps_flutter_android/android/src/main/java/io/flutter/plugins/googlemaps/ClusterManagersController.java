@@ -199,6 +199,36 @@ class ClusterManagersController
     }
   }
 
+  /**
+   * Reindexes a single item in the ClusterManager's spatial index.
+   *
+   * <p>When a clustered marker's position changes in-place, the algorithm's QuadTree retains the
+   * stale coordinates. This method forces a remove + add cycle so the QuadTree stores the updated
+   * position, then re-clusters.
+   */
+  public void reindexItem(@NonNull String clusterManagerId, @NonNull MarkerBuilder item) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.removeItem(item);
+      clusterManager.addItem(item);
+      clusterManager.cluster();
+    }
+  }
+
+  /**
+   * Batch-reindexes multiple items in the ClusterManager's spatial index. Only calls {@code
+   * cluster()} once at the end for efficiency.
+   */
+  public void reindexItems(
+      @NonNull String clusterManagerId, @NonNull List<MarkerBuilder> items) {
+    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
+    if (clusterManager != null) {
+      clusterManager.removeItems(items);
+      clusterManager.addItems(items);
+      clusterManager.cluster();
+    }
+  }
+
   /** Called when ClusterRenderer has rendered new visible marker to the map. */
   void onClusterItemRendered(@NonNull MarkerBuilder item, @NonNull Marker marker) {
     // If map is being disposed, clusterItemRenderedListener might have been cleared and
