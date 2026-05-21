@@ -332,6 +332,43 @@ targets:
       target_file: android_build_all_packages.yaml
       channel: stable
 
+  ### AGP compatibility tasks ###
+  # These tasks verify that all packages build correctly with both AGP >= 9
+  # and AGP < 9, ensuring compatibility across AGP major versions.
+  - name: Linux_android android_build_all_packages_agp_current master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: android_build_all_packages_agp_current.yaml
+      channel: master
+
+  - name: Linux_android android_build_all_packages_agp_current stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      version_file: flutter_stable.version
+      target_file: android_build_all_packages_agp_current.yaml
+      channel: stable
+
+  - name: Linux_android android_build_all_packages_agp_legacy master
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      version_file: flutter_master.version
+      target_file: android_build_all_packages_agp_legacy.yaml
+      channel: master
+
+  - name: Linux_android android_build_all_packages_agp_legacy stable
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      version_file: flutter_stable.version
+      target_file: android_build_all_packages_agp_legacy.yaml
+      channel: stable
+
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
