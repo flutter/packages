@@ -120,6 +120,13 @@ void main() {
 
       expect(api.passedSource?.camera, SourceCamera.front);
     });
+
+    test('works without options', () async {
+      api.returnValue = <String>['/foo.png'];
+      // ignore: deprecated_member_use
+      final PickedFile? result = await picker.pickImage(source: ImageSource.camera);
+      expect(result?.path, '/foo.png');
+    });
   });
 
   group('#pickMultiImage', () {
@@ -167,6 +174,14 @@ void main() {
       api.returnValue = <String>[];
 
       expect(await picker.pickMultiImage(), isNull);
+    });
+
+    test('works with quality 0 and 100', () async {
+      await picker.pickMultiImage(imageQuality: 0);
+      expect(api.passedImageQuality, 0);
+
+      await picker.pickMultiImage(imageQuality: 100);
+      expect(api.passedImageQuality, 100);
     });
   });
 
@@ -1143,6 +1158,17 @@ void main() {
       expect(m1 == m3, isFalse);
       expect(m1 == m4, isFalse);
       expect(m1 == m5, isFalse);
+    });
+
+    test('CoverageModel identity', () {
+      final CoverageModel a = CoverageModel(list: null, map: null);
+      expect(a == a, isTrue);
+    });
+
+    test('CoverageModel hashCode with empty collections', () {
+      final CoverageModel a = CoverageModel(list: <Object?>[], map: <Object?, Object?>{});
+      final CoverageModel b = CoverageModel(list: <Object?>[], map: <Object?, Object?>{});
+      expect(a.hashCode, b.hashCode);
     });
   });
 
