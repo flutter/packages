@@ -39,14 +39,7 @@ public interface WebViewFlutterAndroidExternalApi {
     final WebViewFlutterPlugin webViewPlugin =
         (WebViewFlutterPlugin) binding.getPlugin(WebViewFlutterPlugin.class);
 
-    if (webViewPlugin != null && webViewPlugin.getInstanceManager() != null) {
-      final Object instance = webViewPlugin.getInstanceManager().getInstance(identifier);
-      if (instance instanceof WebView) {
-        return (WebView) instance;
-      }
-    }
-
-    return null;
+    return getWebViewFromPlugin(webViewPlugin, identifier);
   }
 
   /**
@@ -69,6 +62,10 @@ public interface WebViewFlutterAndroidExternalApi {
     final WebViewFlutterPlugin webViewPlugin =
         (WebViewFlutterPlugin) engine.getPlugins().get(WebViewFlutterPlugin.class);
 
+    return getWebViewFromPlugin(webViewPlugin, identifier);
+  }
+
+  private static WebView getWebViewFromPlugin(WebViewFlutterPlugin webViewPlugin, long identifier) {
     if (webViewPlugin != null && webViewPlugin.getInstanceManager() != null) {
       final Object instance = webViewPlugin.getInstanceManager().getInstance(identifier);
       if (instance instanceof WebView) {

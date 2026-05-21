@@ -34,9 +34,7 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
       return nil
     }
 
-    let webView: WKWebView? = webviewPlugin.proxyApiRegistrar?.instanceManager.instance(
-      forIdentifier: identifier)
-    return webView
+    return webview(forIdentifier: identifier, withPlugin: webviewPlugin)
   }
 
   /// Retrieves the `WKWebView` that is associated with `identifier` using a FlutterPluginRegistrar
@@ -52,7 +50,13 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
       return nil
     }
 
-    let webView: WKWebView? = webviewPlugin.proxyApiRegistrar?.instanceManager.instance(
+    return webview(forIdentifier: identifier, withPlugin: webviewPlugin)
+  }
+
+  private static func webview(forIdentifier identifier: Int64, withPlugin: WebViewFlutterPlugin)
+    -> WKWebView?
+  {
+    let webView: WKWebView? = withPlugin.proxyApiRegistrar?.instanceManager.instance(
       forIdentifier: identifier)
     return webView
   }
