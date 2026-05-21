@@ -43,7 +43,7 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
-    thirdPartyPackagesDir = packagesDir.parent
+    thirdPartyPackagesDir = rootDir
         .childDirectory('third_party')
         .childDirectory('packages');
 
@@ -186,6 +186,9 @@ abstract class PackageCommand extends Command<void> {
 
   /// The directory containing packages wrapping third-party code.
   late Directory thirdPartyPackagesDir;
+
+  /// The root directory of the repository containing the packages.
+  late final Directory rootDir = packagesDir.parent;
 
   /// The process runner.
   ///

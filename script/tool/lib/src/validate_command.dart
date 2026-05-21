@@ -218,7 +218,7 @@ class ValidateCommand extends PackageLoopingCommand {
       indentation: indentation,
       warningLogger: printWarning,
       allowedPackages: _allowedPackages,
-      repoRoot: packagesDir.parent,
+      repoRoot: rootDir,
       minMinFlutterVersion: _minMinFlutterVersion,
     );
     return validator.validatePubspec(package);
