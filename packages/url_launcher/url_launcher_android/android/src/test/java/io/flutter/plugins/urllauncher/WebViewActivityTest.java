@@ -26,16 +26,17 @@ public class WebViewActivityTest {
   public void onCreate_webviewIsNotNull() {
     WebViewActivity activity =
         Robolectric.buildActivity(
-                WebViewActivity.class,
-                WebViewActivity.createIntent(
-                    ApplicationProvider.getApplicationContext(),
-                    "https://flutter.dev",
-                    false,
-                    false,
-                    new Bundle()))
+            WebViewActivity.class,
+            WebViewActivity.createIntent(
+                ApplicationProvider.getApplicationContext(),
+                "https://flutter.dev",
+                false,
+                false,
+                new Bundle()))
             .create()
             .get();
 
     assertNotNull(activity.webview);
   }
 }
+
