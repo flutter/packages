@@ -1,13 +1,12 @@
 ## 0.5.0
 
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates Google Play Billing Library from 7.1.1 to 8.0.0.
 * **BREAKING CHANGES**:
   * Removes `queryPurchaseHistory` and its wrapper `queryPurchaseHistoryAsync`. Use `queryPurchases` instead.
 * Adds support for `subResponseCode` in `BillingResultWrapper`.
 * Adds support for `oneTimePurchaseOfferDetailsList` in `ProductDetailsWrapper`.
 * Adds support for `unfetchedProductList` in `ProductDetailsResponseWrapper` to handle product IDs that could not be fetched.
-
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.4.0+11
 
