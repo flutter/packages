@@ -90,7 +90,7 @@ class MarkersController {
   void changeMarkers(@NonNull List<PlatformMarker> markersToChange) {
     Map<String, List<MarkerBuilder>> markersToAddByCluster = new HashMap<>();
     Map<String, List<MarkerBuilder>> markersToRemoveByCluster = new HashMap<>();
-    Map<String, List<MarkerBuilder>> markersToReindexByCluster = new HashMap<>();
+    Map<String, List<MarkerBuilder>> markersToReaddByCluster = new HashMap<>();
 
     for (PlatformMarker markerToChange : markersToChange) {
       String markerId = markerToChange.getMarkerId();
@@ -134,7 +134,12 @@ class MarkersController {
           }
         }
       } else {
-        LatLng oldPosition = markerBuilder.getPosition();
+        // Remove from spatial index BEFORE mutating position — the QuadTree
+        // locates entries by getPosition(), so removal must happen while
+        // the builder still holds the old coordinates.
+        if (clusterManagerId != null) {
+          clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+        }
 
         Convert.interpretMarkerOptions(
             markerToChange, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
@@ -148,8 +153,8 @@ class MarkersController {
               bitmapDescriptorFactoryWrapper);
         }
 
-        if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
-          markersToReindexByCluster
+        if (clusterManagerId != null) {
+          markersToReaddByCluster
               .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
               .add(markerBuilder);
         }
@@ -164,8 +169,8 @@ class MarkersController {
       clusterManagersController.addItems(entry.getKey(), entry.getValue());
     }
 
-    for (Map.Entry<String, List<MarkerBuilder>> entry : markersToReindexByCluster.entrySet()) {
-      clusterManagersController.reindexItems(entry.getKey(), entry.getValue());
+    for (Map.Entry<String, List<MarkerBuilder>> entry : markersToReaddByCluster.entrySet()) {
+      clusterManagersController.addItems(entry.getKey(), entry.getValue());
     }
   }
 
@@ -391,7 +396,10 @@ class MarkersController {
       return;
     }
 
-    LatLng oldPosition = markerBuilder.getPosition();
+    // Remove from spatial index BEFORE mutating position (see changeMarkers).
+    if (clusterManagerId != null) {
+      clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+    }
 
     Convert.interpretMarkerOptions(
         marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
@@ -402,8 +410,8 @@ class MarkersController {
           marker, markerController, assetManager, density, bitmapDescriptorFactoryWrapper);
     }
 
-    if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
-      clusterManagersController.reindexItem(clusterManagerId, markerBuilder);
+    if (clusterManagerId != null) {
+      clusterManagersController.addItem(markerBuilder);
     }
   }
 }

@@ -200,32 +200,19 @@ class ClusterManagersController
   }
 
   /**
-   * Reindexes a single item in the ClusterManager's spatial index.
+   * Removes an item from the ClusterManager's spatial index without triggering a recluster.
    *
-   * <p>When a clustered marker's position changes in-place, the algorithm's QuadTree retains the
-   * stale coordinates. This method forces a remove + add cycle so the QuadTree stores the updated
-   * position, then re-clusters.
+   * <p>This MUST be called BEFORE the item's position is mutated. The underlying {@code QuadTree}
+   * locates entries by their current {@code getPosition()}, so removing after mutation would search
+   * at the new coordinates and miss the stale entry at the old coordinates.
+   *
+   * <p>Callers are expected to re-add the item (via {@link #addItem} or {@link #addItems}) after
+   * mutating its position, which will also trigger {@code cluster()}.
    */
-  public void reindexItem(@NonNull String clusterManagerId, @NonNull MarkerBuilder item) {
+  public void removeItemSilently(@NonNull String clusterManagerId, @NonNull MarkerBuilder item) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager != null) {
       clusterManager.removeItem(item);
-      clusterManager.addItem(item);
-      clusterManager.cluster();
-    }
-  }
-
-  /**
-   * Batch-reindexes multiple items in the ClusterManager's spatial index. Only calls {@code
-   * cluster()} once at the end for efficiency.
-   */
-  public void reindexItems(
-      @NonNull String clusterManagerId, @NonNull List<MarkerBuilder> items) {
-    ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
-    if (clusterManager != null) {
-      clusterManager.removeItems(items);
-      clusterManager.addItems(items);
-      clusterManager.cluster();
     }
   }
 
