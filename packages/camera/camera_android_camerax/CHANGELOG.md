@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.7.2
 
 * Bumps camerax_version from 1.5.3 to 1.6.0.
