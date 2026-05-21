@@ -134,12 +134,7 @@ class MarkersController {
           }
         }
       } else {
-        // Remove from spatial index BEFORE mutating position — the QuadTree
-        // locates entries by getPosition(), so removal must happen while
-        // the builder still holds the old coordinates.
-        if (clusterManagerId != null) {
-          clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
-        }
+        LatLng oldPosition = markerBuilder.getPosition();
 
         Convert.interpretMarkerOptions(
             markerToChange, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
@@ -153,7 +148,13 @@ class MarkersController {
               bitmapDescriptorFactoryWrapper);
         }
 
-        if (clusterManagerId != null) {
+        if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
+          LatLng newPosition = markerBuilder.getPosition();
+          // Temporarily restore old position so QuadTree removal finds the
+          // stale entry at the original coordinates.
+          markerBuilder.setPosition(oldPosition);
+          clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+          markerBuilder.setPosition(newPosition);
           markersToReaddByCluster
               .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
               .add(markerBuilder);
@@ -396,10 +397,7 @@ class MarkersController {
       return;
     }
 
-    // Remove from spatial index BEFORE mutating position (see changeMarkers).
-    if (clusterManagerId != null) {
-      clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
-    }
+    LatLng oldPosition = markerBuilder.getPosition();
 
     Convert.interpretMarkerOptions(
         marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
@@ -410,7 +408,11 @@ class MarkersController {
           marker, markerController, assetManager, density, bitmapDescriptorFactoryWrapper);
     }
 
-    if (clusterManagerId != null) {
+    if (clusterManagerId != null && !markerBuilder.getPosition().equals(oldPosition)) {
+      LatLng newPosition = markerBuilder.getPosition();
+      markerBuilder.setPosition(oldPosition);
+      clusterManagersController.removeItemSilently(clusterManagerId, markerBuilder);
+      markerBuilder.setPosition(newPosition);
       clusterManagersController.addItem(markerBuilder);
     }
   }
