@@ -1,3 +1,7 @@
+## 2.9.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/176575) where some videos report an incorrect duration when initialized without a video duration.
+
 ## 2.9.5
 
 * Updates build files from Groovy to Kotlin.
