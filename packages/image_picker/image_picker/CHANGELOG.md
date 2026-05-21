@@ -1,6 +1,7 @@
 ## NEXT
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 1.2.2
 
@@ -10,7 +11,6 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
-
 
 ## 1.2.1
 
@@ -34,7 +34,7 @@
 ## 1.1.0
 
 * Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` which limits
-  the number of media that can be selected. 
+  the number of media that can be selected.
     * Currently supported only on iOS and Android.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
@@ -417,7 +417,6 @@ is not included selected photos and image is scaled.
 
 * Update package:e2e reference to use the local version in the flutter/plugins
   repository.
-
 
 ## 0.6.7+4
 

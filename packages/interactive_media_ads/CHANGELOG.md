@@ -1,3 +1,8 @@
+## NEXT
+
+* Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 0.3.0+15
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
@@ -270,7 +275,7 @@
 
 * Adds support for pausing and resuming Ad playback. See `AdsManager.pause` and `AdsManager.resume`.
 * Adds support to skip an Ad. See `AdsManager.skip` and `AdsManager.discardAdBreak`.
-* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad 
+* **Breaking Change** To keep platform consistency, Android no longer continues playing an Ad
   whenever it returns from an Ad click. Call `AdsManager.resume` to resume Ad playback.
 
 ## 0.1.2+6

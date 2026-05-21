@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 4.3.0
 
 - Adds support for custom types through `TypedQueryParameter` annotation. The `encoder`, `decoder` and `compare` parameters allow specifying custom functions for encoding, decoding and comparing query parameters in `TypedGoRoute` constructors. For example, you can use a `DateTime` parameter with a custom encoder and decoder to convert it to and from a string representation in the URL.
@@ -211,6 +215,7 @@
 ## 2.0.1
 
 * Supports name parameter for `TypedGoRoute`.
+
 ## 2.0.0
 
 * Updates the documentation to go_router v7.0.0.

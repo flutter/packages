@@ -7,8 +7,8 @@ version: 0.3.0+15 # This must match the version in
   # `ios/interactive_media_ads/Sources/interactive_media_ads/AdsRequestProxyAPIDelegate.swift`
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.35.0"
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
 
 flutter:
   plugin:

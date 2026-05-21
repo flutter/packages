@@ -1,6 +1,7 @@
-## 0.8.13+18
+## NEXT
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.8.13+17
 

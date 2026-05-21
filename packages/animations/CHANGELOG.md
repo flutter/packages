@@ -1,6 +1,7 @@
 ## NEXT
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.2.0
 
@@ -93,11 +94,9 @@ and tappable when it is supposed to be hidden.
 * Add `OpenContainer.onClosed`, which is called with a returned value when the container was popped and has returned to the closed state.
 * Fixes a bug with OpenContainer where a crash occurs when the container is dismissed after the container widget itself is removed.
 
-
 ## 1.0.0+5
 
 * Fix override analyzer ignore placement.
-
 
 ## 1.0.0+4
 
@@ -108,21 +107,17 @@ and tappable when it is supposed to be hidden.
   until Flutter's stable branch contains
   https://github.com/flutter/flutter/pull/48274.
 
-
 ## 1.0.0+3
 
 * Update README.md to better describe Material motion
-
 
 ## 1.0.0+2
 
 * Fixes to pubspec.yaml
 
-
 ## 1.0.0+1
 
 * Fixes to pubspec.yaml
-
 
 ## 1.0.0
 

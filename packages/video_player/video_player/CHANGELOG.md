@@ -1,6 +1,7 @@
 ## NEXT
 
 * Supports AGP 9.0+ built-in Kotlin by conditionally applying the kotlin-android plugin.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1
 
@@ -44,7 +45,7 @@
 ## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Throws a more descriptive `StateError` in the case where 
+* Throws a more descriptive `StateError` in the case where
   `VideoPlayerController.initialize` receives more than one `initialized` event.
 
 ## 2.9.1
@@ -112,6 +113,7 @@
 receives an`Uri` instead of a `String` url.
 * Deprecates `VideoPlayerController.network` factory method.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
 ## 2.6.1
 
 * Synchronizes `VideoPlayerValue.isPlaying` with underlying video player.
@@ -484,7 +486,6 @@ receives an`Uri` instead of a `String` url.
 * Added support for cleaning up the plugin if used for add-to-app (Flutter
   v1.15.3 is required for that feature).
 
-
 ## 0.10.7
 
 * `VideoPlayerController` support for reading closed caption files.
@@ -614,7 +615,6 @@ DefaultHttpDataSourceFactory by default.
 
 * iOS: Fix an issue where the player sends initialization message incorrectly.
 * Fix a few other IDE warnings.
-
 
 ## 0.10.0+7
 
