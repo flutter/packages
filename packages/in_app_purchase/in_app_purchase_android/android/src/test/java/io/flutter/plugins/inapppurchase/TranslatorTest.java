@@ -187,8 +187,8 @@ public class TranslatorTest {
     assertEquals(PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
     assertEquals(
-        (long) newBillingResult.getOnPurchasesUpdatedSubResponseCode(),
-        (long) platformResult.getSubResponseCode());
+        newBillingResult.getOnPurchasesUpdatedSubResponseCode(),
+        platformResult.getSubResponseCode());
   }
 
   private void assertSerialized(ProductDetails expected, PlatformProductDetails serialized) {
@@ -208,7 +208,7 @@ public class TranslatorTest {
 
     List<ProductDetails.OneTimePurchaseOfferDetails> expectedOfferList =
         expected.getOneTimePurchaseOfferDetailsList();
-    List<Messages.PlatformOneTimePurchaseOfferDetails> serializedOfferList =
+    List<PlatformOneTimePurchaseOfferDetails> serializedOfferList =
         serialized.getOneTimePurchaseOfferDetailsList();
 
     if (expectedOfferList == null) {
