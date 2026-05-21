@@ -39,9 +39,11 @@ const int _exitKotlinFormatFailed = 9;
 const int _exitSwiftLintFoundIssues = 10;
 const int _exitDartLanguageVersionIssue = 11;
 
+// TODO(stuartmorgan): Update this once we require Java 21+. See
+// https://github.com/google/google-java-format/releases/tag/v1.29.0.
 final Uri _javaFormatterUrl = Uri.https(
   'github.com',
-  '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar',
+  'google/google-java-format/releases/download/v1.28.0/google-java-format-1.28.0-all-deps.jar',
 );
 final Uri _kotlinFormatterUrl = Uri.https(
   'maven.org',
@@ -473,7 +475,7 @@ class FormatCommand extends PackageLoopingCommand {
   Future<String> _getJavaFormatterPath() async {
     final String javaFormatterPath = path.join(
       path.dirname(path.fromUri(platform.script)),
-      'google-java-format-1.3-all-deps.jar',
+      'google-java-format-1.28.0-all-deps.jar',
     );
     final File javaFormatterFile = packagesDir.fileSystem.file(
       javaFormatterPath,

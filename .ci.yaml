@@ -7,6 +7,7 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
+  - release-go_router-\d+\.\d+\.\d+
 
 platform_properties:
   linux:
@@ -95,12 +96,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-15.5|Mac-15.7
+      os: Mac-15.7
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "16c5032a"
+          "sdk_version": "17c52"
         }
   mac_x64:
     properties:
@@ -108,12 +109,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-15.5|Mac-15.7
+      os: Mac-15.7
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "16c5032a"
+          "sdk_version": "17c52"
         }
 
 targets:
@@ -261,14 +262,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.38.10"
+      channel: "3.41.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.35.7"
+      channel: "3.38.10"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages

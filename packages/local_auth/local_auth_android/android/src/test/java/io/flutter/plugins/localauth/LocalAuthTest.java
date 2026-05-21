@@ -14,7 +14,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
@@ -29,12 +28,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
-import io.flutter.plugins.localauth.Messages.AuthClassification;
-import io.flutter.plugins.localauth.Messages.AuthOptions;
-import io.flutter.plugins.localauth.Messages.AuthResult;
-import io.flutter.plugins.localauth.Messages.AuthResultCode;
-import io.flutter.plugins.localauth.Messages.AuthStrings;
-import io.flutter.plugins.localauth.Messages.Result;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,67 +38,79 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 public class LocalAuthTest {
   static final AuthStrings dummyStrings =
-      new AuthStrings.Builder()
-          .setReason("a reason")
-          .setSignInHint("a hint")
-          .setCancelButton("cancel")
-          .setSignInTitle("sign in")
-          .build();
+      new AuthStrings("a reason", "a hint", "cancel", "sign in");
 
   static final AuthOptions defaultOptions =
-      new AuthOptions.Builder()
-          .setBiometricOnly(false)
-          .setSensitiveTransaction(false)
-          .setSticky(false)
-          .build();
+      new AuthOptions(
+          /* biometricOnly */ false, /* sensitiveTransaction */ false, /* sticky */ false);
 
   @Test
   public void authenticate_returnsErrorWhenAuthInProgress() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     plugin.authInProgress.set(true);
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
-    ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
-    verify(mockResult).success(captor.capture());
-    assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, captor.getValue().getCode());
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply.getOrNull().getCode());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
   public void authenticate_returnsErrorWithNoForegroundActivity() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
+    final Boolean[] callbackCalled = new Boolean[1];
 
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
-    ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
-    verify(mockResult).success(captor.capture());
-    assertEquals(AuthResultCode.NO_ACTIVITY, captor.getValue().getCode());
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(AuthResultCode.NO_ACTIVITY, reply.getOrNull().getCode());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
   public void authenticate_returnsErrorWhenActivityNotFragmentActivity() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(NativeActivity.class)));
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
-    ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
-    verify(mockResult).success(captor.capture());
-    assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, captor.getValue().getCode());
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, reply.getOrNull().getCode());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
   public void authenticate_returnsErrorWhenDeviceNotSupported() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(FragmentActivity.class)));
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
+    final Boolean[] callbackCalled = new Boolean[1];
 
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
-    ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
-    verify(mockResult).success(captor.capture());
-    assertEquals(AuthResultCode.NO_CREDENTIALS, captor.getValue().getCode());
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(AuthResultCode.NO_CREDENTIALS, reply.getOrNull().getCode());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
@@ -129,16 +134,17 @@ public class LocalAuthTest {
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
             any(AuthCompletionHandler.class));
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
-
     final AuthOptions options =
-        new AuthOptions.Builder()
-            .setBiometricOnly(true)
-            .setSensitiveTransaction(false)
-            .setSticky(false)
-            .build();
-    plugin.authenticate(options, dummyStrings, mockResult);
+        new AuthOptions(
+            /* biometricOnly */ true, /* sensitiveTransaction */ false, /* sticky */ false);
+    ;
+    plugin.authenticate(
+        options,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
     assertFalse(allowCredentialsCaptor.getValue());
   }
 
@@ -162,10 +168,13 @@ public class LocalAuthTest {
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
             any(AuthCompletionHandler.class));
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
-
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
     assertTrue(allowCredentialsCaptor.getValue());
   }
 
@@ -191,10 +200,13 @@ public class LocalAuthTest {
             any(AuthStrings.class),
             allowCredentialsCaptor.capture(),
             any(AuthCompletionHandler.class));
-    @SuppressWarnings("unchecked")
-    final Result<AuthResult> mockResult = mock(Result.class);
-
-    plugin.authenticate(defaultOptions, dummyStrings, mockResult);
+    plugin.authenticate(
+        defaultOptions,
+        dummyStrings,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
     assertTrue(allowCredentialsCaptor.getValue());
   }
 

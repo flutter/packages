@@ -758,16 +758,23 @@ class SvgParser {
     final textHasNonWhitespace = text.trim() != '';
 
     // Not from the spec, but seems like how Chrome behaves.
-    // - If `x` is specified, don't prepend whitespace.
-    // - If the last element was a tspan and we're dealing with some
-    //   non-whitespace data, prepend a space.
-    // - If the last text wasn't whitespace and ended with whitespace, prepend
-    //   a space.
+    // - If `x` is specified on the current element, don't prepend whitespace.
+    // - Otherwise prepend a space if either:
+    //     * the previous text emission ended on a space character, or
+    //     * we are following a `</tspan>` and the source actually contains
+    //       whitespace at the boundary (either as a leading-whitespace prefix
+    //       on this text or as an earlier whitespace-only text event that
+    //       was trimmed).
+    //   The "tspan" gate is what prevents `<tspan>A</tspan><tspan>B</tspan>`
+    //   from rendering as "A B" — without it the parser would always inject
+    //   a space between adjacent tspans even when no whitespace exists in
+    //   the source.
+    final bool textHasLeadingWhitespace =
+        text.isNotEmpty && _whitespacePattern.matchAsPrefix(text) != null;
+    final followsTspan = _lastEndElementEvent?.localName == 'tspan';
     final bool prependSpace =
         _currentAttributes.x == null &&
-            (_lastEndElementEvent?.localName == 'tspan' &&
-                textHasNonWhitespace) ||
-        _lastTextEndedWithSpace;
+        (_lastTextEndedWithSpace || (followsTspan && textHasLeadingWhitespace));
 
     _lastTextEndedWithSpace =
         textHasNonWhitespace &&
@@ -785,6 +792,12 @@ class SvgParser {
         .replaceAll(_contiguousSpaceMatcher, ' ');
 
     if (text.isEmpty) {
+      // A pure-whitespace text event sitting between two sibling tspans
+      // still needs to flag that whitespace existed, so the next
+      // non-empty text can prepend a space.
+      if (textHasLeadingWhitespace && followsTspan) {
+        _lastTextEndedWithSpace = true;
+      }
       return;
     }
 
@@ -1432,71 +1445,10 @@ class SvgParser {
       return parseRgbFunction(colorString);
     }
 
-    // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
+    // handle hsla() colors e.g. hsl(270, 100%, 76%) and hsla(270, 100%, 76%, 1.0)
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/hsl
     if (colorString.toLowerCase().startsWith('hsl')) {
-      final List<int> values = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
-          .map((String rawColor) {
-            rawColor = rawColor.trim();
-
-            if (rawColor.endsWith('%')) {
-              rawColor = rawColor.substring(0, rawColor.length - 1);
-            }
-
-            if (rawColor.contains('.')) {
-              return (parseDouble(rawColor)! * 2.55).round();
-            }
-
-            return int.parse(rawColor);
-          })
-          .toList();
-      final double hue = values[0] / 360 % 1;
-      final double saturation = values[1] / 100;
-      final double luminance = values[2] / 100;
-      final int alpha = values.length > 3 ? values[3] : 255;
-      var rgb = <double>[0, 0, 0];
-
-      if (hue < 1 / 6) {
-        rgb[0] = 1;
-        rgb[1] = hue * 6;
-      } else if (hue < 2 / 6) {
-        rgb[0] = 2 - hue * 6;
-        rgb[1] = 1;
-      } else if (hue < 3 / 6) {
-        rgb[1] = 1;
-        rgb[2] = hue * 6 - 2;
-      } else if (hue < 4 / 6) {
-        rgb[1] = 4 - hue * 6;
-        rgb[2] = 1;
-      } else if (hue < 5 / 6) {
-        rgb[0] = hue * 6 - 4;
-        rgb[2] = 1;
-      } else {
-        rgb[0] = 1;
-        rgb[2] = 6 - hue * 6;
-      }
-
-      rgb = rgb
-          .map((double val) => val + (1 - saturation) * (0.5 - val))
-          .toList();
-
-      if (luminance < 0.5) {
-        rgb = rgb.map((double val) => luminance * 2 * val).toList();
-      } else {
-        rgb = rgb
-            .map((double val) => luminance * 2 * (1 - val) + 2 * val - 1)
-            .toList();
-      }
-
-      rgb = rgb.map((double val) => val * 255).toList();
-
-      return Color.fromARGB(
-        alpha,
-        rgb[0].round(),
-        rgb[1].round(),
-        rgb[2].round(),
-      );
+      return parseHslFunction(colorString);
     }
 
     // handle named colors ('red', 'green', etc.).

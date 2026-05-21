@@ -3630,7 +3630,73 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         SystemMouseCursors.basic,
       );
+      await gesture.removePointer();
     });
+
+    testWidgets(
+      'Calling setState within onEnter does not cause a loop of onExit/onEnter',
+      (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/147614
+        var enterCounter = 0;
+        var exitCounter = 0;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+                  return TableView.builder(
+                    columnCount: 1,
+                    rowCount: 1,
+                    columnBuilder: (int index) =>
+                        const TableSpan(extent: FixedTableSpanExtent(100)),
+                    rowBuilder: (int index) => TableSpan(
+                      extent: const FixedTableSpanExtent(100),
+                      onEnter: (_) {
+                        enterCounter++;
+                        setState(() {});
+                      },
+                      onExit: (_) {
+                        exitCounter++;
+                      },
+                    ),
+                    cellBuilder:
+                        (BuildContext context, TableVicinity vicinity) {
+                          return const TableViewCell(
+                            child: SizedBox.square(dimension: 100),
+                          );
+                        },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+
+        // Initial state
+        expect(enterCounter, 0);
+        expect(exitCounter, 0);
+
+        // Move mouse to the center of the first row (0,0)
+        final TestGesture gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.addPointer(location: const Offset(50, 50));
+        await tester.pump();
+
+        // Should have entered once
+        expect(enterCounter, 1);
+        expect(exitCounter, 0);
+
+        // Pump again to see if it triggers again
+        await tester.pump();
+
+        expect(exitCounter, 0, reason: 'Should not have exited');
+        expect(enterCounter, 1, reason: 'Should not have re-entered');
+
+        await gesture.removePointer();
+      },
+    );
 
     group('Merged pinned cells layout', () {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
@@ -4400,6 +4466,171 @@ void main() {
       expect(cellTextField, findsOneWidget);
     },
   );
+
+  testWidgets('Trailing pinned columns and rows - smoke test', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    final verticalController = ScrollController();
+
+    Widget getTableView({
+      int? columnCount = 10,
+      int? rowCount = 10,
+      int pinnedColumnCount = 0,
+      int pinnedRowCount = 0,
+      int trailingPinnedColumnCount = 0,
+      int trailingPinnedRowCount = 0,
+    }) {
+      return TableView.builder(
+        cacheExtent: 0.0,
+        columnCount: columnCount,
+        rowCount: rowCount,
+        pinnedColumnCount: pinnedColumnCount,
+        pinnedRowCount: pinnedRowCount,
+        trailingPinnedColumnCount: trailingPinnedColumnCount,
+        trailingPinnedRowCount: trailingPinnedRowCount,
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
+        cellBuilder: (BuildContext context, TableVicinity vicinity) {
+          return TableViewCell(
+            child: Text('R${vicinity.row} C${vicinity.column}'),
+          );
+        },
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: getTableView(
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Initial view: 0-2 rows/cols are visible (100 each), plus trailing pinned (Row 9, Column 9)
+    expect(find.text('R0 C0'), findsOneWidget);
+    expect(find.text('R9 C9'), findsOneWidget);
+    expect(find.text('R0 C9'), findsOneWidget);
+    expect(find.text('R9 C0'), findsOneWidget);
+
+    expect(tester.getRect(find.text('R0 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C0')).top, 300);
+
+    // Scroll
+    horizontalController.jumpTo(50);
+    verticalController.jumpTo(50);
+    await tester.pump();
+
+    expect(tester.getRect(find.text('R0 C0')).left, -50);
+    expect(tester.getRect(find.text('R0 C0')).top, -50);
+    expect(tester.getRect(find.text('R0 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C0')).top, 300);
+    expect(tester.getRect(find.text('R9 C9')).left, 300);
+    expect(tester.getRect(find.text('R9 C9')).top, 300);
+  });
+
+  testWidgets('Intersections of leading and trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    const span = TableSpan(extent: FixedTableSpanExtent(100));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 10,
+              rowCount: 10,
+              pinnedColumnCount: 1,
+              pinnedRowCount: 1,
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+              columnBuilder: (int index) => span,
+              rowBuilder: (int index) => span,
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(
+                  child: Text('R${vicinity.row} C${vicinity.column}'),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Leading-Leading intersection
+    expect(tester.getRect(find.text('R0 C0')).topLeft, Offset.zero);
+    // Leading-Trailing intersection (Row 0, Col 9)
+    expect(tester.getRect(find.text('R0 C9')).topLeft, const Offset(300, 0));
+    // Trailing-Leading intersection (Row 9, Col 0)
+    expect(tester.getRect(find.text('R9 C0')).topLeft, const Offset(0, 300));
+    // Trailing-Trailing intersection (Row 9, Col 9)
+    expect(tester.getRect(find.text('R9 C9')).topLeft, const Offset(300, 300));
+
+    // Non-pinned middle
+    expect(tester.getRect(find.text('R1 C1')).topLeft, const Offset(100, 100));
+  });
+
+  testWidgets('Trailing pinned - merged cells validation', (
+    WidgetTester tester,
+  ) async {
+    // Merged cell in trailing pinned row
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              cacheExtent: 0.0,
+              columnCount: 10,
+              rowCount: 10,
+              trailingPinnedRowCount: 2,
+              columnBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) =>
+                  const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                if (vicinity.row >= 8 && vicinity.column == 0) {
+                  return const TableViewCell(
+                    rowMergeStart: 8,
+                    rowMergeSpan: 2,
+                    child: Text('Merged R8-9 C0'),
+                  );
+                }
+                return TableViewCell(
+                  child: Text('R${vicinity.row} C${vicinity.column}'),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Merged cell should be at [0, 100] horizontally, and [200, 400] vertically
+    // because Row 8 & 9 are trailing pinned (bottom 200 pixels).
+    expect(find.text('Merged R8-9 C0'), findsOneWidget);
+    final Rect mergedRect = tester.getRect(find.text('Merged R8-9 C0'));
+    expect(mergedRect.top, 200);
+    expect(mergedRect.bottom, 400);
+  });
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

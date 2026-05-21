@@ -62,3 +62,7 @@ gradlew.bat
 .project
 .classpath
 .settings
+
+# AI related
+.agents/rules/personal-*
+.agents/skills/personal-*

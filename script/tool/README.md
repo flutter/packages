@@ -49,7 +49,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_nam
 
 The `flutter/packages` repository uses clang version `15.0.0` . Newer versions of clang may format code differently.
 
-### Run the Static Analysis
+### Run Static Analysis
 
 To analyze only Dart code:
 
@@ -67,6 +67,18 @@ dart run script/tool/bin/flutter_plugin_tools.dart analyze --ios --macos --packa
 ```
 
 Dart analysis can be excluded with `--no-dart`.
+
+### Run General Validation
+
+To check that changes follow team standards and best practices, run:
+
+```sh
+dart run script/tool/bin/flutter_plugin_tools.dart validate --check-for-missing-changes --packages package_name
+```
+
+If you are making changes that fall under a CHANGELOG and/or version change
+exemption you can omit the `--check-for-missing-changes` flag to skip those
+checks.
 
 ### Run Dart Unit Tests
 
