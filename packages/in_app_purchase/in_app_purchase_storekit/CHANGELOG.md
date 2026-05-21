@@ -1,3 +1,8 @@
+## 0.4.9
+
+* Add support for offer codes in StoreKit 2.
+* Updates minimum supported SDK version to Flutter 3.38.
+
 ## 0.4.8+1
 
 * Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.

@@ -2,6 +2,10 @@
 
 * Adds new method for accessing a native `WebView` from a `FlutterPluginBinding`.
 
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 4.12.0
 
 * Adds support for retrieving cookies with `PlatformWebViewCookieManager.getCookies`.
