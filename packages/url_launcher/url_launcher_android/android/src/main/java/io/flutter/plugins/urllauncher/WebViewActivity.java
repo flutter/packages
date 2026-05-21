@@ -93,6 +93,8 @@ public class WebViewActivity extends Activity {
     super.onCreate(savedInstanceState);
     webview = new WebView(this);
     setContentView(webview);
+    // Apply system window insets as padding to prevent WebView content
+// from being obscured by system bars (e.g. navigation bar) on Android 15+.
     ViewCompat.setOnApplyWindowInsetsListener(
         webview,
         (v, insets) -> {
