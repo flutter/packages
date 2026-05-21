@@ -82,10 +82,10 @@ public class MethodCallHandlerTest {
   TestResult<PlatformAlternativeBillingOnlyReportingDetailsResponse>
       platformAlternativeBillingOnlyReportingDetailsResult = new TestResult<>();
 
-    TestResult<PlatformBillingConfigResponse> platformBillingConfigResult = new TestResult<>();
-    TestResult<PlatformBillingResult> platformBillingResult = new TestResult<>();
-    TestResult<PlatformProductDetailsResponse> platformProductDetailsResult = new TestResult<>();
-    TestResult<PlatformPurchasesResponse> platformPurchasesResult = new TestResult<>();
+  TestResult<PlatformBillingConfigResponse> platformBillingConfigResult = new TestResult<>();
+  TestResult<PlatformBillingResult> platformBillingResult = new TestResult<>();
+  TestResult<PlatformProductDetailsResponse> platformProductDetailsResult = new TestResult<>();
+  TestResult<PlatformPurchasesResponse> platformPurchasesResult = new TestResult<>();
 
   @Mock Activity activity;
   @Mock Context context;
@@ -539,18 +539,18 @@ public class MethodCallHandlerTest {
 
     List<ProductDetails> productDetailsResponse = singletonList(buildProductDetails("foo"));
     BillingResult billingResult = buildBillingResult();
-      QueryProductDetailsResult mockProductDetailsResult = mock(QueryProductDetailsResult.class);
-      when(mockProductDetailsResult.getProductDetailsList()).thenReturn(productDetailsResponse);
-      when(mockProductDetailsResult.getUnfetchedProductList())
-              .thenReturn(java.util.Collections.emptyList());
+    QueryProductDetailsResult mockProductDetailsResult = mock(QueryProductDetailsResult.class);
+    when(mockProductDetailsResult.getProductDetailsList()).thenReturn(productDetailsResponse);
+    when(mockProductDetailsResult.getUnfetchedProductList())
+        .thenReturn(java.util.Collections.emptyList());
 
-      listenerCaptor.getValue().onProductDetailsResponse(billingResult, mockProductDetailsResult);
+    listenerCaptor.getValue().onProductDetailsResponse(billingResult, mockProductDetailsResult);
 
-      assertTrue(platformProductDetailsResult.called);
-      PlatformProductDetailsResponse resultData = platformProductDetailsResult.result.getOrNull();
-      assertResultsMatch(resultData.getBillingResult(), billingResult);
-      assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
-      assertTrue(resultData.getUnfetchedProductList().isEmpty());
+    assertTrue(platformProductDetailsResult.called);
+    PlatformProductDetailsResponse resultData = platformProductDetailsResult.result.getOrNull();
+    assertResultsMatch(resultData.getBillingResult(), billingResult);
+    assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
+    assertTrue(resultData.getUnfetchedProductList().isEmpty());
     assertResultsMatch(resultData.getBillingResult(), billingResult);
     assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
     assertTrue(resultData.getUnfetchedProductList().isEmpty());

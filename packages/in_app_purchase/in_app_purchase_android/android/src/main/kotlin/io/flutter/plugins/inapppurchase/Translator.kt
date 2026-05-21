@@ -27,7 +27,8 @@ fun fromProductDetail(detail: ProductDetails): PlatformProductDetails {
       title = detail.title,
       oneTimePurchaseOfferDetails =
           fromOneTimePurchaseOfferDetails(detail.oneTimePurchaseOfferDetails),
-      oneTimePurchaseOfferDetailsList = fromOneTimePurchaseOfferDetailsList(detail.oneTimePurchaseOfferDetailsList),
+      oneTimePurchaseOfferDetailsList =
+          fromOneTimePurchaseOfferDetailsList(detail.oneTimePurchaseOfferDetailsList),
       subscriptionOfferDetails = fromSubscriptionOfferDetailsList(detail.subscriptionOfferDetails))
 }
 
@@ -81,8 +82,8 @@ fun fromOneTimePurchaseOfferDetails(
 fun fromOneTimePurchaseOfferDetailsList(
     oneTimePurchaseOfferDetailsList: List<ProductDetails.OneTimePurchaseOfferDetails>?
 ): List<PlatformOneTimePurchaseOfferDetails>? {
-    // Using mapNotNull ensures the resulting list doesn't contain nulls
-    return oneTimePurchaseOfferDetailsList?.mapNotNull { fromOneTimePurchaseOfferDetails(it) }
+  // Using mapNotNull ensures the resulting list doesn't contain nulls
+  return oneTimePurchaseOfferDetailsList?.mapNotNull { fromOneTimePurchaseOfferDetails(it) }
 }
 
 fun fromSubscriptionOfferDetailsList(
@@ -216,15 +217,14 @@ fun fromPurchaseHistoryRecordList(
 }
 
 fun fromUnfetchedProductList(
-        unfetchedProductList: List<UnfetchedProduct>?
-    ): List<PlatformUnfetchedProduct> {
-      return unfetchedProductList?.map { fromUnfetchedProduct(it) } ?: emptyList()
-    }
+    unfetchedProductList: List<UnfetchedProduct>?
+): List<PlatformUnfetchedProduct> {
+  return unfetchedProductList?.map { fromUnfetchedProduct(it) } ?: emptyList()
+}
 
 fun fromUnfetchedProduct(unfetchedProduct: UnfetchedProduct): PlatformUnfetchedProduct {
-      return PlatformUnfetchedProduct(productId = unfetchedProduct.productId)
-    }
-
+  return PlatformUnfetchedProduct(productId = unfetchedProduct.productId)
+}
 
 fun fromBillingResult(billingResult: BillingResult): PlatformBillingResult {
   return PlatformBillingResult(

@@ -224,15 +224,15 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
           QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
       billingClient.queryProductDetailsAsync(
           params,
-              (billingResult, productDetailsResult) -> {
-                  updateCachedProducts(productDetailsResult.getProductDetailsList());
-                  PlatformProductDetailsResponse response =
-                          new PlatformProductDetailsResponse(
-                                  fromBillingResult(billingResult),
-                                  fromProductDetailsList(productDetailsResult.getProductDetailsList()),
-                                  fromUnfetchedProductList(productDetailsResult.getUnfetchedProductList()));
-                  ResultCompat.success(response, callback);
-              });
+          (billingResult, productDetailsResult) -> {
+            updateCachedProducts(productDetailsResult.getProductDetailsList());
+            PlatformProductDetailsResponse response =
+                new PlatformProductDetailsResponse(
+                    fromBillingResult(billingResult),
+                    fromProductDetailsList(productDetailsResult.getProductDetailsList()),
+                    fromUnfetchedProductList(productDetailsResult.getUnfetchedProductList()));
+            ResultCompat.success(response, callback);
+          });
     } catch (RuntimeException e) {
       ResultUtilsKt.completeWithError(
           callback, new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
