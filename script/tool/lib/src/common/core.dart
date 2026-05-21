@@ -98,6 +98,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 38, 4): Version(3, 10, 3),
   Version(3, 38, 10): Version(3, 10, 9),
   Version(3, 41, 0): Version(3, 11, 0),
+  Version(3, 41, 9): Version(3, 11, 5),
+  Version(3, 44, 0): Version(3, 12, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -141,6 +143,15 @@ const int exitCommandFoundErrors = 1;
 
 /// A exit code for [ToolExit] for a failure to run due to invalid arguments.
 const int exitInvalidArguments = 2;
+
+/// The directory for any cached files downloaded or created by the tool.
+Directory toolCacheDirectory(Directory repoRoot) {
+  final Directory cacheDir = repoRoot.childDirectory('.repo_tool_cache');
+  if (!cacheDir.existsSync()) {
+    cacheDir.createSync(recursive: true);
+  }
+  return cacheDir;
+}
 
 /// The directory to which to write logs and other artifacts, if set in CI.
 Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {

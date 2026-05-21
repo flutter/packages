@@ -36,16 +36,11 @@ import 'update_release_info_command.dart';
 import 'validate_command.dart';
 
 void main(List<String> args) {
-  const FileSystem fileSystem = LocalFileSystem();
-  final Directory scriptDir = fileSystem
-      .file(io.Platform.script.toFilePath())
-      .parent;
-  // Support running either via directly invoking main.dart, or the wrapper in
-  // bin/.
-  final Directory toolsDir = scriptDir.basename == 'bin'
-      ? scriptDir.parent
-      : scriptDir.parent.parent;
-  final Directory root = toolsDir.parent.parent;
+  final Directory? root = _findRepositoryRoot();
+  if (root == null) {
+    print('Error: Cannot find repository root');
+    io.exit(1);
+  }
   final Directory packagesDir = root.childDirectory('packages');
 
   if (!packagesDir.existsSync()) {
@@ -95,4 +90,23 @@ void main(List<String> args) {
     }
     io.exit(exitCode);
   }, test: (Object e) => e is ToolExit);
+}
+
+/// Locates the root directory of the repository, assuming that the script is
+/// being run from within the repository.
+Directory? _findRepositoryRoot() {
+  Directory current = const LocalFileSystem().currentDirectory;
+  while (current != current.parent) {
+    // The repository should contain both a .git directory and a packages/
+    // directory, so use that as the heuristic. If this heuristic proves
+    // insufficient, we could instead require the tool config to be present
+    // to even try to run, and look for that.
+    if ((current.childDirectory('.git').existsSync() ||
+            current.childFile('.git').existsSync()) &&
+        current.childDirectory('packages').existsSync()) {
+      return current;
+    }
+    current = current.parent;
+  }
+  return null;
 }
