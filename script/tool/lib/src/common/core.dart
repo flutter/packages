@@ -98,6 +98,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 38, 4): Version(3, 10, 3),
   Version(3, 38, 10): Version(3, 10, 9),
   Version(3, 41, 0): Version(3, 11, 0),
+  Version(3, 41, 9): Version(3, 11, 5),
+  Version(3, 44, 0): Version(3, 12, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -151,3 +153,7 @@ Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
   }
   return logsDirectory;
 }
+
+/// The directory that contains repo-specific configuration for this tooling.
+Directory toolConfigDirectory(Directory repoRoot) =>
+    repoRoot.childDirectory('tool_config');
