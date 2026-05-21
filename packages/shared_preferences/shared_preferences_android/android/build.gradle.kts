@@ -42,9 +42,7 @@ val isBuiltInKotlinEnabled = agpMajorVersion >= 9 &&
 
 if (!isBuiltInKotlinEnabled) {
     apply(plugin = "org.jetbrains.kotlin.android")
-}
 
-if (!isBuiltInKotlinEnabled) {
     kotlin {
         compilerOptions {
             jvmTarget = JvmTarget.fromTarget(JavaVersion.VERSION_17.toString())
