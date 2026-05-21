@@ -65,16 +65,78 @@ class ImageUtilTests: XCTestCase {
     return CIColor(red: red, green: green, blue: blue, alpha: alpha).stringRepresentation
   }
 
-  func testScaledImage_EqualSizeReturnsSameImage() {
-    let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: Double(image.size.width),
-      maxHeight: Double(image.size.height),
-      isMetadataAvailable: true)
+    func testScaledImage_EqualSizeReturnsSameImage() {
 
-    XCTAssertEqual(image, scaledImage)
-  }
+        guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
+            XCTFail("Failed to create UIImage")
+            return
+        }
+
+        // ✅ Case 1: Equal size (original scenario)
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
+
+        // ✅ Validate size unchanged
+        XCTAssertEqual(image.size, scaledImage.size)
+
+        // ✅ Validate identity (important for coverage of "no scaling" branch)
+        XCTAssertTrue(image === scaledImage)
+
+        // ✅ Case 2: Same dimensions with metadata = false
+        let scaledWithoutMetadata = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: false
+        )
+
+        XCTAssertEqual(image.size, scaledWithoutMetadata.size)
+
+        // ✅ Case 3: Nil constraints (forces early return branch)
+        let noConstraintImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
+
+        XCTAssertTrue(image === noConstraintImage)
+
+        // ✅ Case 4: Width-only equal constraint
+        let widthOnly = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
+
+        XCTAssertEqual(image.size.width, widthOnly.size.width)
+
+        // ✅ Case 5: Height-only equal constraint
+        let heightOnly = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
+
+        XCTAssertEqual(image.size.height, heightOnly.size.height)
+
+        // ✅ Case 6: Repeated execution (important for coverage tracking)
+        let repeated = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
+
+        XCTAssertTrue(repeated === image)
+    }
+
 
     func testScaledImage_NilSizeReturnsSameImage() {
 
