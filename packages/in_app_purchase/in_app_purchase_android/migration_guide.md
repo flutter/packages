@@ -1,7 +1,7 @@
 <?code-excerpt path-base="example/lib"?>
 # Migration Guide from 0.4.x to 0.5.0
 
-Version 0.5.0 updates the Android embedding to use Google Play Billing Library 8.0.0. This update includes breaking changes unrelated to the Dart API surface, but specific methods in `BillingClientWrapper` have been removed to align with the native library.
+Version 0.5.0 updates to use Google Play Billing Library 8.0.0. This update includes breaking changes unrelated to the Dart API surface, but specific methods in `BillingClientWrapper` have been removed to align with the native library.
 
 ## Removal of `queryPurchaseHistory`
 
