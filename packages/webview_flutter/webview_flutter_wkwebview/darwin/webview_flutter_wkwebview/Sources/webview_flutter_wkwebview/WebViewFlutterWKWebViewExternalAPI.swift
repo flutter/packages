@@ -24,7 +24,11 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   ///
   /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
   /// underlying `WKWebView`.
-  @available(*, deprecated, message: "Use webView(forIdentifier:withPluginRegistrar:) instead.")
+  #if os(iOS)
+    // Only deprecate this method on iOS until FlutterPluginRegistrar.valuePublished(byPlugin:) is
+    // available on macOS. See https://github.com/flutter/flutter/issues/186911.
+    @available(*, deprecated, message: "Use webView(forIdentifier:withPluginRegistrar:) instead.")
+  #endif
   @objc(webViewForIdentifier:withPluginRegistry:)
   public static func webView(
     forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry
@@ -37,21 +41,25 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
     return webview(forIdentifier: identifier, withPlugin: webviewPlugin)
   }
 
-  /// Retrieves the `WKWebView` that is associated with `identifier` using a FlutterPluginRegistrar
-  ///
-  /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
-  /// underlying `WKWebView`.
-  @objc(webViewForIdentifier:withPluginRegistrar:)
-  public static func webView(
-    forIdentifier identifier: Int64, withPluginRegistrar registrar: FlutterPluginRegistrar
-  ) -> WKWebView? {
-    let plugin = registrar.valuePublished(byPlugin: "WebViewFlutterPlugin")
-    guard let webviewPlugin = plugin as? WebViewFlutterPlugin else {
-      return nil
-    }
+  // This method is only available on iOS until FlutterPluginRegistrar.valuePublished(byPlugin:) is
+  // available on macOS. See https://github.com/flutter/flutter/issues/186911.
+  #if os(iOS)
+    /// Retrieves the `WKWebView` that is associated with `identifier` using a FlutterPluginRegistrar
+    ///
+    /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
+    /// underlying `WKWebView`.
+    @objc(webViewForIdentifier:withPluginRegistrar:)
+    public static func webView(
+      forIdentifier identifier: Int64, withPluginRegistrar registrar: FlutterPluginRegistrar
+    ) -> WKWebView? {
+      let plugin = registrar.valuePublished(byPlugin: "WebViewFlutterPlugin")
+      guard let webviewPlugin = plugin as? WebViewFlutterPlugin else {
+        return nil
+      }
 
-    return webview(forIdentifier: identifier, withPlugin: webviewPlugin)
-  }
+      return webview(forIdentifier: identifier, withPlugin: webviewPlugin)
+    }
+  #endif
 
   private static func webview(forIdentifier identifier: Int64, withPlugin: WebViewFlutterPlugin)
     -> WKWebView?
