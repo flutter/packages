@@ -2,11 +2,9 @@ SF:lib/image_picker_ios.dart
 DA:12,1
 DA:14,1
 DA:16,1
-DA:25,0
 DA:29,1
 DA:31,1
 DA:33,1
-DA:42,0
 DA:48,1
 DA:49,1
 DA:54,1
@@ -114,7 +112,7 @@ DA:346,2
 DA:347,2
 DA:348,1
 DA:349,4
-LF:115
+LF:113
 LH:113
 end_of_record
 SF:lib/src/messages.g.dart

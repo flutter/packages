@@ -22,7 +22,7 @@ SourceType _convertSource(ImageSource source) {
   // version. This is deliberately outside the switch rather than a `default`
   // so that the linter will flag the switch as needing an update.
   // ignore: dead_code
-  throw UnimplementedError('Unknown source: $source');
+  throw UnimplementedError('Unknown source: $source'); // coverage:ignore-line
 }
 
 // Converts a [CameraDevice] to the corresponding Pigeon API enum value.
@@ -39,7 +39,7 @@ SourceCamera _convertCamera(CameraDevice camera) {
   // version. This is deliberately outside the switch rather than a `default`
   // so that the linter will flag the switch as needing an update.
   // ignore: dead_code
-  throw UnimplementedError('Unknown camera: $camera');
+  throw UnimplementedError('Unknown camera: $camera'); // coverage:ignore-line
 }
 
 /// An implementation of [ImagePickerPlatform] for iOS.
