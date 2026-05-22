@@ -1,4 +1,4 @@
-## NEXT
+## 1.4.1
 
 * Fixes broken dartdoc references in `completePurchase` to point to
   `InAppPurchaseException` and `InAppPurchaseException.code` instead of the
