@@ -1,4 +1,4 @@
-## 0.7.3
+## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Support video encoding bitrate
