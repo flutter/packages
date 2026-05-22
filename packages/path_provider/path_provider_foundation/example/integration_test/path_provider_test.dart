@@ -342,35 +342,33 @@ void main() {
       );
     });
 
-    testWidgets(
-      'getApplicationCachePath creates the directory if necessary',
-      (_) async {
-        final mockFfiLib = MockFoundationFFI();
-        final pathProvider = PathProviderFoundation(
-          ffiLib: mockFfiLib,
-          platform: platformVariants.currentValue,
-        );
+    testWidgets('getApplicationCachePath creates the directory if necessary', (
+      _,
+    ) async {
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
+        ffiLib: mockFfiLib,
+        platform: platformVariants.currentValue,
+      );
 
-        final String applicationCachePath = p.join(
-          testRoot.path,
-          'application',
-          'cache',
-          'path',
-        );
-        when(
-          mockFfiLib.NSSearchPathForDirectoriesInDomains(
-            NSSearchPathDirectory.NSCachesDirectory,
-            NSSearchPathDomainMask.NSUserDomainMask,
-            true,
-          ),
-        ).thenReturn(_arrayWithString(applicationCachePath));
+      final String applicationCachePath = p.join(
+        testRoot.path,
+        'application',
+        'cache',
+        'path',
+      );
+      when(
+        mockFfiLib.NSSearchPathForDirectoriesInDomains(
+          NSSearchPathDirectory.NSCachesDirectory,
+          NSSearchPathDomainMask.NSUserDomainMask,
+          true,
+        ),
+      ).thenReturn(_arrayWithString(applicationCachePath));
 
-        final String? path = await pathProvider.getApplicationCachePath();
+      final String? path = await pathProvider.getApplicationCachePath();
 
-        expect(Directory(path!).existsSync(), isTrue);
-      },
-      variant: platformVariants,
-    );
+      expect(Directory(path!).existsSync(), isTrue);
+    }, variant: platformVariants);
 
     testWidgets('getDownloadsPath', (_) async {
       final mockFfiLib = MockFoundationFFI();

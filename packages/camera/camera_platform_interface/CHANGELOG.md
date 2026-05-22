@@ -1,6 +1,7 @@
 ## 2.14.0
 
 * Adds `rgba8888` to `ImageFormatGroup` enum.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.13.0
 

@@ -19,7 +19,17 @@ void main() {
   });
 
   group('present code redemption sheet', () {
-    test('null', () async {
+    test('in storekit 1', () async {
+      await InAppPurchaseStoreKitPlatform.enableStoreKit1();
+      expect(
+        InAppPurchaseStoreKitPlatformAddition().presentCodeRedemptionSheet(),
+        completes,
+      );
+    });
+  });
+
+  group('present code redemption sheet', () {
+    test('in storekit 2', () async {
       expect(
         InAppPurchaseStoreKitPlatformAddition().presentCodeRedemptionSheet(),
         completes,
