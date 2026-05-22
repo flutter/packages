@@ -10,7 +10,8 @@ import UniformTypeIdentifiers
 
 class PickerSaveImageToPathOperationTests: XCTestCase {
 
-  class MockItemProvider: NSItemProvider {
+    @available(iOS 14.0, *)
+    class MockItemProvider: NSItemProvider {
     var mockData: Data?
     var mockURL: URL?
     var shouldSucceed = true

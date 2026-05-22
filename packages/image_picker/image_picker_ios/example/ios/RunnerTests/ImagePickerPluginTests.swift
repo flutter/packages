@@ -371,7 +371,11 @@ class ImagePickerPluginTests: XCTestCase {
     plugin.checkPhotoAuthorization(with: UIViewController())
 
     // Test Limited
-    mockHandler.photoLibraryAuthorizationStatusResult = .limited
+      if #available(iOS 14, *) {
+          mockHandler.photoLibraryAuthorizationStatusResult = .limited
+      } else {
+          // Fallback on earlier versions
+      }
     plugin.checkPhotoAuthorization(with: UIViewController())
     // Success - picker would be presented
 
@@ -462,7 +466,11 @@ class ImagePickerPluginTests: XCTestCase {
         context: context
       )
 
-      XCTAssertTrue(mockPicker.mediaTypes.contains(UTType.image.identifier))
+        if #available(iOS 14.0, *) {
+            XCTAssertTrue(mockPicker.mediaTypes.contains(UTType.image.identifier))
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
   func testShowCamera_WhenSourceTypeUnavailable_ShowsError() {
@@ -1539,7 +1547,11 @@ class ImagePickerPluginTests: XCTestCase {
         context: context
       )
 
-      XCTAssertTrue(mockPicker.mediaTypes.contains(UTType.image.identifier))
+        if #available(iOS 14.0, *) {
+            XCTAssertTrue(mockPicker.mediaTypes.contains(UTType.image.identifier))
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     func testHandlePickerResults_WithNilContext_DoesNothing() {

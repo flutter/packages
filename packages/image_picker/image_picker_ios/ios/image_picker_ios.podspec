@@ -16,7 +16,7 @@ Downloaded by pub (not CocoaPods).
   s.documentation_url = 'https://pub.dev/packages/image_picker_ios'
   s.source_files = 'image_picker_ios/Sources/image_picker_ios/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '15.0'
+  s.platform = :ios, '13.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'image_picker_ios_privacy' => ['image_picker_ios/Sources/image_picker_ios/Resources/PrivacyInfo.xcprivacy']}
   s.swift_version = '5.0'

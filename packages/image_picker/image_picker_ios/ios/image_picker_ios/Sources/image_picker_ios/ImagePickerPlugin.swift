@@ -406,11 +406,15 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     case .notDetermined:
       deviceCapabilityHandler.requestPhotoLibraryAuthorization { [weak self] status in
         DispatchQueue.main.async {
-          if status == .authorized || status == .limited {
-            self?.showPhotoLibrary(with: pickerViewController)
-          } else {
-            self?.errorNoPhotoAccess(status)
-          }
+            if #available(iOS 14, *) {
+                if status == .authorized || status == .limited {
+                    self?.showPhotoLibrary(with: pickerViewController)
+                } else {
+                    self?.errorNoPhotoAccess(status)
+                }
+            } else {
+                // Fallback on earlier versions
+            }
         }
       }
     case .authorized, .limited:
