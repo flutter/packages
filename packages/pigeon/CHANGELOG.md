@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 26.3.4
 
 * [kotlin] Updates generated error class to inherit from `RuntimeException`

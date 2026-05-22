@@ -100,6 +100,7 @@ ThemeData _buildTheme(Brightness brightness) {
     textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
   );
 }
+
 ```
 
 Or, if you want a `TextTheme` where a couple of styles should use a different font:
