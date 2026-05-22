@@ -14,7 +14,7 @@ For example (no pun intended!), to run the first example from the
 `AboutListTile` class in Chrome, you would run it like so from the [api](.)
 directory:
 
-```
+```sh
 % flutter run -d chrome lib/about/about_list_tile.0.dart
 ```
 
@@ -32,7 +32,7 @@ system overlay style doesn't make sense on the web (it only changes the
 notification area background color on Android), so you can run the example for
 that on an Android device like so:
 
-```
+```sh
 % flutter run -d MyAndroidDevice lib/services/system_chrome/system_chrome.set_system_u_i_overlay_style.1.dart
 ```
 -->
