@@ -14,7 +14,6 @@ import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 
-/// Test Shapes (Circle, Polygon, Polyline)
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -125,7 +124,6 @@ void main() {
 
       expect(controller.heatmaps.length, 3);
 
-      // Remove some polylines...
       final heatmapIdsToRemove = <HeatmapId>{
         const HeatmapId('1'),
         const HeatmapId('3'),
