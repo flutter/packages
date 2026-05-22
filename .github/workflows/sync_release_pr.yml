@@ -4,7 +4,7 @@ on:
   push:
     branches:
       # As packages opt into batched releases, they need to be added here
-      - 'release-go_router'
+      - 'release-go_router-*'
 
 jobs:
   create_sync_pr:
@@ -35,10 +35,14 @@ jobs:
             exit 0
           fi
 
-          # 3. Create the PR directly
+          # 3. Extract release name without version for label
+          BRANCH_NAME="${{ github.ref_name }}"
+          RELEASE_NAME="${BRANCH_NAME%-*}"
+
+          # 4. Create the PR directly
           gh pr create \
             --base "main" \
             --head "${{ github.ref_name }}" \
             --title "Sync ${{ github.ref_name }} to main" \
             --body "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch." \
-            --label "override: post-${{ github.ref_name }}"
+            --label "override: post-${RELEASE_NAME}"

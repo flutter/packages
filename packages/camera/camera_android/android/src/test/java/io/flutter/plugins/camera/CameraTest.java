@@ -977,6 +977,66 @@ public class CameraTest {
   }
 
   @Test
+  public void createTriggerResetCallback_shouldResetTriggerOnCaptureCompleted() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AF_TRIGGER;
+    int idleValue = CameraMetadata.CONTROL_AF_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureCompleted(
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetTriggerOnCaptureFailed() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AF_TRIGGER;
+    int idleValue = CameraMetadata.CONTROL_AF_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureFailed(
+        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(CaptureFailure.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetAEPrecaptureTriggerOnCaptureCompleted() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER;
+    int idleValue = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureCompleted(
+        mock(CameraCaptureSession.class),
+        mock(CaptureRequest.class),
+        mock(TotalCaptureResult.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
+  public void createTriggerResetCallback_shouldResetAEPrecaptureTriggerOnCaptureFailed() {
+    CaptureRequest.Key<Integer> triggerKey = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER;
+    int idleValue = CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_IDLE;
+
+    CameraCaptureSession.CaptureCallback callback =
+        camera.createTriggerResetCallback(triggerKey, idleValue);
+
+    callback.onCaptureFailed(
+        mock(CameraCaptureSession.class), mock(CaptureRequest.class), mock(CaptureFailure.class));
+
+    verify(mockPreviewRequestBuilder, times(1)).set(triggerKey, idleValue);
+  }
+
+  @Test
   public void setFocusMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
@@ -1219,11 +1279,11 @@ public class CameraTest {
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = true;
 
-    //region These parameters should be set in android MediaRecorder.
+    // region These parameters should be set in android MediaRecorder.
     final int fps = 15;
     final int videoBitrate = 200000;
     final int audioBitrate = 32000;
-    //endregion
+    // endregion
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
 
@@ -1303,7 +1363,7 @@ public class CameraTest {
 
       camera.startVideoRecording(null);
 
-      //region Check that FPS parameter affects AE range at which the camera captures frames.
+      // region Check that FPS parameter affects AE range at which the camera captures frames.
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getUpper(), Integer.valueOf(fps));
 
@@ -1312,15 +1372,15 @@ public class CameraTest {
               eq(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE),
               argThat(
                   (Range<Integer> range) -> range.getLower() == fps && range.getUpper() == fps));
-      //endregion
+      // endregion
 
       final MediaRecorder recorder = camera.mediaRecorder;
 
-      //region Check that parameters affects movies, written by MediaRecorder.
+      // region Check that parameters affects movies, written by MediaRecorder.
       verify(recorder).setVideoFrameRate(fps);
       verify(recorder).setAudioEncodingBitRate(audioBitrate);
       verify(recorder).setVideoEncodingBitRate(videoBitrate);
-      //endregion
+      // endregion
     }
   }
 
