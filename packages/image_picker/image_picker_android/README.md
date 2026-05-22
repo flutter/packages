@@ -15,9 +15,12 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Photo Picker
 
-On Android 13 and above this packages uses the Android Photo Picker.
+On Android 16 (API level 36) and above, gallery image, video, and mixed-media
+picks always use the Android Photo Picker.
+cannot be set to false to use the legacy ACTION_GET_CONTENT flow on those
+versions. See [flutter/flutter#182071][5].
 
-On Android 12 and below this package has optional Android Photo Picker functionality.
+On Android 15 and below this package has optional Android Photo Picker functionality.
 
 To use this feature, add the following code to your app before calling any `image_picker` APIs:
 
@@ -38,3 +41,5 @@ In addition, `ImagePickerAndroid.useAndroidPhotoPicker` must be set to `true` to
 [1]: https://pub.dev/packages/image_picker
 [2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://developer.android.google.cn/reference/kotlin/androidx/activity/result/contract/ActivityResultContracts.PickMultipleVisualMedia
+[4]: https://pub.dev/documentation/image_picker_android/latest/image_picker_android/ImagePickerAndroid/useAndroidPhotoPicker.htmlAdd a comment on  line R52Add diff commentMarkdown input:  edit mode selected.WritePreviewHeadingBoldItalicQuoteCodeLinkUnordered listNumbered listTask listMentionReferenceMore Formatting tools items 0Saved repliesAdd FilesPaste, drop, or click to add filesCancelCommentStart a review
+[5]: https://github.com/flutter/flutter/issues/182071
