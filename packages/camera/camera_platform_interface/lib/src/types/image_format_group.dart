@@ -37,6 +37,15 @@ enum ImageFormatGroup {
   /// On Android, this is `android.graphics.ImageFormat.NV21`. See
   /// https://developer.android.com/reference/android/graphics/ImageFormat#NV21
   nv21,
+
+  /// 32-bit RGBA.
+  ///
+  /// On Android, this is `android.graphics.PixelFormat.RGBA_8888`. See
+  /// https://developer.android.com/reference/android/graphics/PixelFormat#RGBA_8888
+  ///
+  /// On iOS, this is `kCVPixelFormatType_32RGBA`. See
+  /// https://developer.apple.com/documentation/corevideo/kcvpixelformattype_32rgba
+  rgba8888,
 }
 
 /// Extension on [ImageFormatGroup] to stringify the enum
@@ -54,6 +63,8 @@ extension ImageFormatGroupName on ImageFormatGroup {
         return 'jpeg';
       case ImageFormatGroup.nv21:
         return 'nv21';
+      case ImageFormatGroup.rgba8888:
+        return 'rgba8888';
       case ImageFormatGroup.unknown:
         return 'unknown';
     }
