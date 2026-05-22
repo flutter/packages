@@ -1384,6 +1384,36 @@ class ImagePickerPluginTests: XCTestCase {
     waitForExpectations(timeout: 1)
   }
 
+  func testPickImage_InvalidResult_Error() {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+      let expectation = self.expectation(description: "Invalid result error")
+
+      plugin.pickImage(source: SourceSpecification(type: .gallery, camera: .rear), maxSize: MaxSize(), imageQuality: nil, requestFullMetadata: false) { result in
+          if case .failure(let error) = result {
+              XCTAssertEqual((error as? PigeonError)?.code, "invalid_result")
+              expectation.fulfill()
+          }
+      }
+
+      plugin.sendCallResult(pathList: ["p1", "path2"])
+      waitForExpectations(timeout: 1)
+  }
+
+  func testPickVideo_InvalidResult_Error() {
+      let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+      let expectation = self.expectation(description: "Invalid result error video")
+
+      plugin.pickVideo(source: SourceSpecification(type: .gallery, camera: .rear), maxDurationSeconds: nil) { result in
+          if case .failure(let error) = result {
+              XCTAssertEqual((error as? PigeonError)?.code, "invalid_result")
+              expectation.fulfill()
+          }
+      }
+
+      plugin.sendCallResult(pathList: ["v1", "v2"])
+      waitForExpectations(timeout: 1)
+  }
+
     func testDeviceCapabilityHandler_RequestAccess() {
         let handler = MockDeviceCapabilityHandler()
 
@@ -1627,7 +1657,27 @@ class ImagePickerPluginTests: XCTestCase {
 
       XCTAssertEqual(image.size, scaled.size)
     }
-    
+
+    func testDefaultDeviceCapabilityHandler() {
+        let handler = DefaultDeviceCapabilityHandler()
+        // These will call real system APIs, so we just ensure they don't crash on simulators
+        _ = handler.isSourceTypeAvailable(.photoLibrary)
+        _ = handler.isCameraDeviceAvailable(.rear)
+        _ = handler.cameraAuthorizationStatus()
+        _ = handler.photoLibraryAuthorizationStatus()
+    }
+
+    func testPresentationControllerDidDismiss() {
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+        let expectation = self.expectation(description: "Dismiss sends nil")
+        plugin.callContext = ImagePickerMethodCallContext { paths, error in
+            XCTAssertNil(paths)
+            expectation.fulfill()
+        }
+        plugin.presentationControllerDidDismiss(UIPresentationController(presentedViewController: UIViewController(), presenting: nil))
+        waitForExpectations(timeout: 1)
+    }
+
   func testCheckCameraAuthorization_NotDetermined_Denied() {
     let mockHandler = MockDeviceCapabilityHandler()
     mockHandler.cameraAuthorizationStatusResult = .notDetermined
@@ -1858,6 +1908,57 @@ class ImagePickerPluginTests: XCTestCase {
     }
 
 
+
+    func testCheckCameraAuthorization_UnknownDefault() {
+        let mockHandler = MockDeviceCapabilityHandler()
+        // Force unknown default by casting an invalid Int to AVAuthorizationStatus
+        mockHandler.cameraAuthorizationStatusResult = AVAuthorizationStatus(rawValue: 99)!
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(), deviceCapabilityHandler: mockHandler)
+        let expectation = self.expectation(description: "Unknown status error")
+        plugin.callContext = ImagePickerMethodCallContext { _, error in
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+        plugin.checkCameraAuthorization(with: UIImagePickerController(), camera: .rear)
+        waitForExpectations(timeout: 1)
+    }
+
+    func testCheckPhotoAuthorization_UnknownDefault() {
+        let mockHandler = MockDeviceCapabilityHandler()
+        mockHandler.photoLibraryAuthorizationStatusResult = PHAuthorizationStatus(rawValue: 99)!
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(), deviceCapabilityHandler: mockHandler)
+        let expectation = self.expectation(description: "Unknown status error photo")
+        plugin.callContext = ImagePickerMethodCallContext { _, error in
+            XCTAssertNotNil(error)
+            expectation.fulfill()
+        }
+        plugin.checkPhotoAuthorization(with: UIViewController())
+        waitForExpectations(timeout: 1)
+    }
+
+    func testRemoveInteractionBlocker_KeyWindowLogic() {
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+        let blocker = UIWindow()
+        let previous = UIWindow()
+        plugin.interactionBlockerWindow = blocker
+        plugin.previousKeyWindow = previous
+
+        plugin.removeInteractionBlocker()
+
+        XCTAssertNil(plugin.interactionBlockerWindow)
+        XCTAssertNil(plugin.previousKeyWindow)
+    }
+
+    func testPresentationControllerDidDismiss_Full() {
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+        let expectation = self.expectation(description: "dismissed")
+        plugin.callContext = ImagePickerMethodCallContext { paths, error in
+            XCTAssertNil(paths)
+            expectation.fulfill()
+        }
+        plugin.presentationControllerDidDismiss(UIPresentationController(presentedViewController: UIViewController(), presenting: nil))
+        waitForExpectations(timeout: 1)
+    }
 
   class MockUIImagePickerController: UIImagePickerController {
     var mockIsBeingPresented = false

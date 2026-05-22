@@ -307,6 +307,10 @@ class PigeonTests: XCTestCase {
     // Test Nil Enums
     let nilCamera: SourceCamera? = nil
     XCTAssertNil(codec.decode(codec.encode(nilCamera as Any)))
+
+    // Test CoverageModel
+    let coverage = CoverageModel(list: ["a", 1], map: ["k": "v"])
+    XCTAssertEqual(coverage, codec.decode(codec.encode(coverage)) as? CoverageModel)
   }
 
   func testModelsFromList() {
@@ -336,5 +340,67 @@ class PigeonTests: XCTestCase {
       let source = SourceSpecification(type: .gallery, camera: .front)
       let list: [Any?] = [SourceType.gallery.rawValue, SourceCamera.front.rawValue]
       XCTAssertEqual(SourceSpecification.fromList(list), source)
+  }
+
+  func testDeepEquals_Void() {
+      XCTAssertTrue(deepEqualsMessages((), ()))
+  }
+
+  func testDeepEquals_DoubleArray() {
+      let d1: [Double] = [1.0, 2.0]
+      let d2: [Double] = [1.0, 2.0]
+      let d3: [Double] = [1.0, 3.0]
+      XCTAssertTrue(deepEqualsMessages(d1, d2))
+      XCTAssertFalse(deepEqualsMessages(d1, d3))
+      XCTAssertFalse(deepEqualsMessages(d1, [1.0]))
+  }
+
+  func testDeepHash_DoubleArray() {
+      var hasher1 = Hasher()
+      deepHashMessages(value: [1.0, 2.0] as [Double], hasher: &hasher1)
+      var hasher2 = Hasher()
+      deepHashMessages(value: [1.0, 2.0] as [Double], hasher: &hasher2)
+      XCTAssertEqual(hasher1.finalize(), hasher2.finalize())
+  }
+
+  func testPigeonCodec_UnknownType() {
+      let reader = MessagesPigeonCodec.shared.makeReader(for: Data([200])) // 200 is an unknown type
+      XCTAssertNil(reader.readValue())
+  }
+
+  func testDeepHash_ComplexDictionary() {
+      var hasher1 = Hasher()
+      deepHashMessages(value: ["a": 1, 2: "b"], hasher: &hasher1)
+      var hasher2 = Hasher()
+      deepHashMessages(value: [2: "b", "a": 1], hasher: &hasher2)
+      XCTAssertEqual(hasher1.finalize(), hasher2.finalize())
+  }
+
+  func testPigeonError_LocalizedDescription_Full() {
+    let error = PigeonError(code: "C", message: "M", details: "D")
+    XCTAssertEqual(error.localizedDescription, "PigeonError(code: C, message: M, details: D")
+  }
+
+  func testModels_toList() {
+      let size = MaxSize(width: 1.0, height: 2.0)
+      XCTAssertEqual(size.toList()[0] as? Double, 1.0)
+      XCTAssertEqual(size.toList()[1] as? Double, 2.0)
+
+      let source = SourceSpecification(type: .camera, camera: .front)
+      XCTAssertEqual(source.toList()[0] as? Int, SourceType.camera.rawValue)
+      XCTAssertEqual(source.toList()[1] as? Int, SourceCamera.front.rawValue)
+
+      let options = MediaSelectionOptions(maxSize: size, imageQuality: 50, requestFullMetadata: true, allowMultiple: false, limit: 1)
+      let list = options.toList()
+      XCTAssertEqual(list.count, 5)
+  }
+
+  func testCoverageModel_DeepEquals() {
+      let m1 = CoverageModel(list: [1], map: ["a": 1])
+      let m2 = CoverageModel(list: [1], map: ["a": 1])
+      XCTAssertEqual(m1, m2)
+
+      let m3 = CoverageModel(list: [2], map: ["a": 1])
+      XCTAssertNotEqual(m1, m3)
   }
 }
