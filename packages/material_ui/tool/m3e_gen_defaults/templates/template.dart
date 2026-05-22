@@ -43,7 +43,7 @@ abstract class TokenTemplate {
       if (verbose) {
         stdout.writeln('File does not exist, creating it.');
       }
-      file.createSync();
+      file.createSync(recursive: true);
     }
 
     final parentName = '$name.dart';
@@ -68,10 +68,11 @@ abstract class TokenTemplate {
   }
 
   String get materialLib {
-    const repoPath = 'packages/material_ui/lib/src/generated';
-    if (Directory(repoPath).existsSync()) {
-      return repoPath;
+    const packagePath = 'packages/material_ui';
+    const relativeOutputPath = 'lib/src/m3e/generated';
+    if (Directory(packagePath).existsSync()) {
+      return '$packagePath/$relativeOutputPath';
     }
-    return 'lib/src/generated';
+    return relativeOutputPath;
   }
 }
