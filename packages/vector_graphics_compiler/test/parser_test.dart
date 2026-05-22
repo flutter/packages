@@ -30,26 +30,21 @@ class _TestOpacityColorMapper implements ColorMapper {
 
 void main() {
   test('Exponential DAG expansion triggers DoS protection limit', () {
-    final buffer = StringBuffer('''
+    final svg = '''
 <svg viewBox="0 0 100 100">
   <defs>
     <path id="leaf" d="M 0,0 L 10,10" />
-''');
-    buffer.write('''
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
-''');
-    for (var i = 2; i <= 30; i++) {
-      buffer.write('''
-    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
-''');
-    }
-    buffer.write('''
+${[
+  for (var i = 2; i <= 30; i++)
+    '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'
+].join('\n')}
   </defs>
   <use href="#lvl30" />
-</svg>''');
+</svg>''';
 
     expect(
-      () => parseWithoutOptimizers(buffer.toString()),
+      () => parseWithoutOptimizers(svg),
       throwsA(
         isA<StateError>().having(
           (e) => e.message,
@@ -61,29 +56,22 @@ void main() {
   });
 
   test('Exponential DAG clipPath expansion triggers DoS protection limit', () {
-    final buffer = StringBuffer('''
+    final svg = '''
 <svg viewBox="0 0 100 100">
   <defs>
     <path id="leaf" d="M 0,0 L 10,10" />
-''');
-    buffer.write('''
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
-''');
-    for (var i = 2; i <= 30; i++) {
-      buffer.write('''
-    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
-''');
-    }
-    buffer.write('''
+${[
+  for (var i = 2; i <= 30; i++)
+    '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'
+].join('\n')}
     <clipPath id="clip1"><use href="#lvl30" /></clipPath>
-''');
-    buffer.write('''
   </defs>
   <rect width="100" height="100" clip-path="url(#clip1)" />
-</svg>''');
+</svg>''';
 
     expect(
-      () => parseWithoutOptimizers(buffer.toString()),
+      () => parseWithoutOptimizers(svg),
       throwsA(
         isA<StateError>().having(
           (e) => e.message,
@@ -97,30 +85,25 @@ void main() {
   test(
     'Cumulative clipPath reference expansions trigger DoS protection limit',
     () {
-      final buffer = StringBuffer('''
+      final svg = '''
 <svg viewBox="0 0 100 100">
   <defs>
     <path id="leaf" d="M 0,0 L 10,10" />
-''');
-      buffer.write('''
     <g id="lvl1"><use href="#leaf" /><use href="#leaf" /></g>
-''');
-      for (var i = 2; i <= 13; i++) {
-        buffer.write('''
-    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>
-''');
-      }
-      buffer.write('''
-    <clipPath id="clip1"><use href="#lvl13" /></clipPath>
-    <clipPath id="clip2"><use href="#lvl13" /></clipPath>
+${[
+  for (var i = 2; i <= 8; i++)
+    '    <g id="lvl$i"><use href="#lvl${i - 1}" /><use href="#lvl${i - 1}" /></g>'
+].join('\n')}
+    <clipPath id="clip1"><use href="#lvl8" /></clipPath>
+    <clipPath id="clip2"><use href="#lvl8" /></clipPath>
   </defs>
   <g clip-path="url(#clip1)">
     <rect width="100" height="100" clip-path="url(#clip2)" />
   </g>
-</svg>''');
+</svg>''';
 
       expect(
-        () => parseWithoutOptimizers(buffer.toString()),
+        () => parseWithoutOptimizers(svg),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
@@ -133,26 +116,21 @@ void main() {
   );
 
   test('Exponential DAG mask expansion triggers DoS protection limit', () {
-    final buffer = StringBuffer('''
+    final svg = '''
 <svg viewBox="0 0 100 100">
   <defs>
     <path id="leaf" d="M 0,0 L 10,10" />
-''');
-    buffer.write('''
     <mask id="lvl1"><use href="#leaf" /><use href="#leaf" /></mask>
-''');
-    for (var i = 2; i <= 30; i++) {
-      buffer.write('''
-    <mask id="lvl$i"><g mask="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></mask>
-''');
-    }
-    buffer.write('''
+${[
+  for (var i = 2; i <= 30; i++)
+    '    <mask id="lvl$i"><g mask="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></mask>'
+].join('\n')}
   </defs>
   <rect width="100" height="100" mask="url(#lvl30)" />
-</svg>''');
+</svg>''';
 
     expect(
-      () => parseWithoutOptimizers(buffer.toString()),
+      () => parseWithoutOptimizers(svg),
       throwsA(
         isA<StateError>().having(
           (e) => e.message,
@@ -164,26 +142,21 @@ void main() {
   });
 
   test('Exponential DAG pattern expansion triggers DoS protection limit', () {
-    final buffer = StringBuffer('''
+    final svg = '''
 <svg viewBox="0 0 100 100">
   <defs>
     <path id="leaf" d="M 0,0 L 10,10" />
-''');
-    buffer.write('''
     <pattern id="lvl1" width="10" height="10"><use href="#leaf" /><use href="#leaf" /></pattern>
-''');
-    for (var i = 2; i <= 30; i++) {
-      buffer.write('''
-    <pattern id="lvl$i" width="10" height="10"><g fill="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></pattern>
-''');
-    }
-    buffer.write('''
+${[
+  for (var i = 2; i <= 30; i++)
+    '    <pattern id="lvl$i" width="10" height="10"><g fill="url(#lvl${i - 1})"><use href="#lvl${i - 1}" /></g></pattern>'
+].join('\n')}
   </defs>
   <rect width="100" height="100" fill="url(#lvl30)" />
-</svg>''');
+</svg>''';
 
     expect(
-      () => parseWithoutOptimizers(buffer.toString()),
+      () => parseWithoutOptimizers(svg),
       throwsA(
         isA<StateError>().having(
           (e) => e.message,

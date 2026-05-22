@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// The maximum number of nested reference expansions allowed in an SVG to prevent DoS exploits.
-const int kMaxReferenceExpansions = 10000;
+const int kMaxReferenceExpansions = 1000;
 
 /// The error message thrown when the nested reference expansions limit is exceeded.
 const String kMaxReferenceExpansionsErrorMessage =
