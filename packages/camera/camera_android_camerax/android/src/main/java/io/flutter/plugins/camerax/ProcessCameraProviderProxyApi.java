@@ -84,10 +84,12 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   public void unbind(
       ProcessCameraProvider pigeonInstance, @NonNull List<? extends UseCase> useCases) {
     pigeonInstance.unbind(useCases.toArray(new UseCase[0]));
+    FocusLockChannel.setActiveCameraControl(null);
   }
 
   @Override
   public void unbindAll(ProcessCameraProvider pigeonInstance) {
     pigeonInstance.unbindAll();
+    FocusLockChannel.setActiveCameraControl(null);
   }
 }

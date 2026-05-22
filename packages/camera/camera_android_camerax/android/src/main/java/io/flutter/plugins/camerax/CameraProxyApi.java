@@ -22,7 +22,9 @@ class CameraProxyApi extends PigeonApiCamera {
   @NonNull
   @Override
   public CameraControl cameraControl(Camera pigeonInstance) {
-    return pigeonInstance.getCameraControl();
+    final CameraControl control = pigeonInstance.getCameraControl();
+    FocusLockChannel.setActiveCameraControl(control);
+    return control;
   }
 
   @NonNull

@@ -25,6 +25,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
 
   /// An internal camera object that manages camera's state and performs camera operations.
   var camera: Camera?
+  private var focusLockChannel: FocusLockChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = CameraPlugin(
@@ -44,6 +45,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     )
 
     SetUpFCPCameraApi(registrar.messenger(), instance)
+    instance.focusLockChannel = FocusLockChannel(
+      messenger: registrar.messenger(),
+      cameraPlugin: instance,
+      captureSessionQueue: instance.captureSessionQueue)
   }
 
   init(
@@ -84,6 +89,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
     UIDevice.current.endGeneratingDeviceOrientationNotifications()
+    focusLockChannel?.tearDown()
+    focusLockChannel = nil
   }
 
   private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {

@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private FlutterPluginBinding pluginBinding;
   @VisibleForTesting @Nullable ProxyApiRegistrar proxyApiRegistrar;
+  @Nullable private FocusLockChannel focusLockChannel;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -33,6 +34,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
             binding.getApplicationContext(),
             binding.getTextureRegistry());
     proxyApiRegistrar.setUp();
+    focusLockChannel = new FocusLockChannel(binding.getBinaryMessenger());
   }
 
   @Override
@@ -42,6 +44,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
       proxyApiRegistrar.tearDown();
       proxyApiRegistrar.getInstanceManager().stopFinalizationListener();
       proxyApiRegistrar = null;
+    }
+    if (focusLockChannel != null) {
+      focusLockChannel.tearDown();
+      focusLockChannel = null;
     }
   }
 
