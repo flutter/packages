@@ -44,7 +44,7 @@ enum ImageFormatGroup {
   /// https://developer.android.com/reference/android/graphics/PixelFormat#RGBA_8888
   ///
   /// On iOS, this is `kCVPixelFormatType_32RGBA`. See
-  /// https://developer.apple.com/documentation/corevideo/kcvpixelformattype_32rgba
+  /// https://developer.apple.com/documentation/corevideo/1563591-pixel_format_identifiers/kcvpixelformattype_32rgba?language=objc
   rgba8888,
 }
 
