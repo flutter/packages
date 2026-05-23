@@ -1278,6 +1278,19 @@ class Camera
         throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
       }
     }
+
+    try {
+      prepareMediaRecorder(captureFile.getAbsolutePath());
+    } catch (IOException e) {
+      recordingVideo = false;
+      captureFile = null;
+      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
+    }
+    // Re-create autofocus feature so it's using video focus mode now.
+    cameraFeatures.setAutoFocus(
+        cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
+    // Update camera features with the desired fps range
+    setFpsCameraFeatureForRecording(cameraProperties);
   }
 
   private void validateOutputPath(String path) {
@@ -1300,18 +1313,6 @@ class Camera
       throw new Messages.FlutterError(
           "IOError", "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm", null);
     }
-    try {
-      prepareMediaRecorder(captureFile.getAbsolutePath());
-    } catch (IOException e) {
-      recordingVideo = false;
-      captureFile = null;
-      throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
-    }
-    // Re-create autofocus feature so it's using video focus mode now.
-    cameraFeatures.setAutoFocus(
-        cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
-    // Update camera features with the desired fps range
-    setFpsCameraFeatureForRecording(cameraProperties);
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {

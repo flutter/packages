@@ -714,7 +714,8 @@ public class CameraTest {
 
   @Test
   public void startVideoRecording_usesCustomPath() throws IOException, CameraAccessException {
-    final String customPath = "/custom/path.mp4";
+    final String customPath =
+        new File(System.getProperty("java.io.tmpdir"), "custom_video.mp4").getAbsolutePath();
     final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
 
     try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
@@ -735,6 +736,7 @@ public class CameraTest {
     }
   }
 
+  @SuppressWarnings("try")
   @Test
   public void startVideoRecording_errorsOnInvalidPath() throws IOException, CameraAccessException {
     final String invalidPath = "/non/existent/path.mp4";

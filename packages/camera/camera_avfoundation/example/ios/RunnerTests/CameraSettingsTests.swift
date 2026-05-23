@@ -355,7 +355,7 @@ final class CameraSettingsTests: XCTestCase {
   }
 
   func test_startVideoRecording_usesCustomPath() {
-    let customPath = "/custom/path.mp4"
+    let customPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("path.mp4")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
 
     var capturedOutputURL: URL?
@@ -429,7 +429,8 @@ final class CameraSettingsTests: XCTestCase {
   }
 
   func test_startVideoRecording_errorsOnInvalidExtension() {
-    let invalidExtensionPath = "file.txt"
+    let invalidExtensionPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(
+      "file.txt")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     let camera = CameraTestUtils.createTestCamera(configuration)
 

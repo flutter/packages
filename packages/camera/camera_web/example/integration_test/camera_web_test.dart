@@ -1350,7 +1350,7 @@ void main() {
         ).thenAnswer((_) async {});
 
         await CameraPlatform.instance.startVideoCapturing(
-          VideoCaptureOptions(cameraId, videoOutputPath: customPath),
+          const VideoCaptureOptions(cameraId, videoOutputPath: customPath),
         );
 
         verify(
