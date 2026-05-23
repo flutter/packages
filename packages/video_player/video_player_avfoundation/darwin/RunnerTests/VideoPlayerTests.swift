@@ -922,16 +922,10 @@ private let hlsAudioTestURI =
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let testURL = try #require(URL(string: mp4TestURI))
-    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
-    let create = FVPCreationOptions.make(
-      withUri: mp4TestURI,
-      httpHeaders: [:])
-    var error: FlutterError?
-    let identifiers = try #require(
-      videoPlayerPlugin.createTexturePlayer(with: create, error: &error))
-    #expect(error == nil)
+    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
 
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
     #expect(player != nil)
@@ -957,16 +951,12 @@ private let hlsAudioTestURI =
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     var error: FlutterError?
     // Use HLS stream which supports adaptive bitrate
-    let create = FVPCreationOptions.make(
-      withUri: hlsTestURI,
-      httpHeaders: [:])
-    let identifiers = try #require(
-      videoPlayerPlugin.createTexturePlayer(with: create, error: &error))
-    #expect(error == nil)
+    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
 
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
     #expect(player != nil)
