@@ -452,16 +452,7 @@ class _PlayerInstance {
         // Auto quality - use dedicated method
         await _api.enableAutoVideoQuality();
       } else {
-        // Extract groupIndex and trackIndex from the track id
-        final List<String> parts = track.id.split('_');
-        if (parts.length != 2) {
-          throw ArgumentError(
-            'Invalid track id format: "${track.id}". Expected format: "groupIndex_trackIndex"',
-          );
-        }
-
-        final int groupIndex = int.parse(parts[0]);
-        final int trackIndex = int.parse(parts[1]);
+        final (int groupIndex, int trackIndex) = _parseAndroidTrackId(track.id);
 
         await _api.selectVideoTrack(groupIndex, trackIndex);
       }
@@ -470,7 +461,13 @@ class _PlayerInstance {
       await completer.future.timeout(
         const Duration(seconds: 5),
         onTimeout: () {
-          // If we timeout, just continue - the track may still have been selected
+          final selectionDescription = expectedId == null
+              ? 'auto quality selection'
+              : 'track "$expectedId"';
+          debugPrint(
+            'Timed out waiting for video track selection event for '
+            '$selectionDescription.',
+          );
         },
       );
     } finally {
@@ -481,6 +478,31 @@ class _PlayerInstance {
         _expectedVideoTrackId = null;
       }
     }
+  }
+
+  // Keep this parser in sync with the Android ID emitters in
+  // ExoPlayerEventListener.findSelectedVideoTrackId and
+  // ExoPlayerEventListener.findSelectedAudioTrackId. Android track IDs use
+  // the "{groupIndex}_{trackIndex}" format.
+  (int, int) _parseAndroidTrackId(String trackId) {
+    final List<String> parts = trackId.split('_');
+    if (parts.length != 2) {
+      throw ArgumentError(
+        'Invalid track id format: "$trackId". Expected format: '
+        '"groupIndex_trackIndex"',
+      );
+    }
+
+    final int? groupIndex = int.tryParse(parts[0]);
+    final int? trackIndex = int.tryParse(parts[1]);
+    if (groupIndex == null || trackIndex == null) {
+      throw ArgumentError(
+        'Invalid track id format: "$trackId". Expected numeric groupIndex '
+        'and trackIndex in "groupIndex_trackIndex".',
+      );
+    }
+
+    return (groupIndex, trackIndex);
   }
 
   Future<void> dispose() async {

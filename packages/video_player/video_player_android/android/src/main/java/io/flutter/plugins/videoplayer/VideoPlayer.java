@@ -364,8 +364,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     Format currentFormat = exoPlayer.getVideoFormat();
     Format newFormat = trackGroup.getFormat((int) trackIndex);
     boolean dimensionsChanged =
-        currentFormat != null
-            && (currentFormat.width != newFormat.width || currentFormat.height != newFormat.height);
+        currentFormat == null
+            || currentFormat.width != newFormat.width
+            || currentFormat.height != newFormat.height;
 
     // When video dimensions change, we need to force a complete renderer reset to avoid
     // surface rendering issues. We do this by temporarily disabling the video track type,
@@ -385,7 +386,8 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     // - ExoPlayer TrackSelection documentation:
     //   https://developer.android.com/media/media3/exoplayer/track-selection
     // - DefaultTrackSelector.setParameters() for track type disabling:
-    //   https://developer.android.com/reference/androidx/media3/exoplayer/trackselection/DefaultTrackSelector.Parameters.Builder#setTrackTypeDisabled(int,boolean)
+    //
+    // https://developer.android.com/reference/androidx/media3/exoplayer/trackselection/DefaultTrackSelector.Parameters.Builder#setTrackTypeDisabled(int,boolean)
     // - This approach is necessary because ExoPlayer doesn't provide a direct API to force
     //   a renderer reset when dimensions change. Disabling and re-enabling the track type
     //   is the recommended way to ensure proper resource cleanup and reinitialization.

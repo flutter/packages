@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show DebugPrintCallback, debugPrint;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -1114,6 +1115,60 @@ void main() {
         );
       });
 
+      test('selectVideoTrack throws on non-numeric track id parts', () async {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        const track = VideoTrack(id: 'zero_2', isSelected: false);
+        expect(
+          () => player.selectVideoTrack(1, track),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      testWidgets('selectVideoTrack logs when track change event times out', (
+        WidgetTester tester,
+      ) async {
+        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+            setUpMockPlayer(playerId: 1);
+        when(api.selectVideoTrack(0, 2)).thenAnswer((_) async {});
+
+        const track = VideoTrack(id: '0_2', isSelected: false);
+        final logMessages = <String>[];
+        final DebugPrintCallback oldDebugPrint = debugPrint;
+        var completed = false;
+
+        try {
+          debugPrint = (String? message, {int? wrapWidth}) {
+            if (message != null) {
+              logMessages.add(message);
+            }
+          };
+
+          unawaited(
+            player.selectVideoTrack(1, track).then((_) {
+              completed = true;
+            }),
+          );
+
+          await tester.pump();
+          expect(logMessages, isEmpty);
+
+          await tester.pump(const Duration(seconds: 5));
+          await tester.pump();
+
+          expect(completed, isTrue);
+          expect(
+            logMessages,
+            contains(
+              'Timed out waiting for video track selection event for track '
+              '"0_2".',
+            ),
+          );
+        } finally {
+          debugPrint = oldDebugPrint;
+        }
+      });
+
       test(
         'concurrent selectVideoTrack calls do not clobber each other',
         () async {
@@ -1122,7 +1177,9 @@ void main() {
             _,
             MockVideoPlayerInstanceApi api,
             StreamController<PlatformVideoEvent> streamController,
-          ) = setUpMockPlayerWithStream(playerId: 1);
+          ) = setUpMockPlayerWithStream(
+            playerId: 1,
+          );
 
           // Make call 1 fail fast so its `finally` runs while call 2 is still
           // mid-flight. With the pre-fix code, that `finally` nulled the
@@ -1152,9 +1209,7 @@ void main() {
           await Future<void>.delayed(Duration.zero);
 
           // Deliver the matching event for call 2.
-          streamController.add(
-            VideoTrackChangedEvent(selectedTrackId: '0_2'),
-          );
+          streamController.add(VideoTrackChangedEvent(selectedTrackId: '0_2'));
 
           // Call 2 should complete promptly on the matching event.
           await secondFuture;
