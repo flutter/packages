@@ -1724,6 +1724,7 @@ class _Resolver {
           throw StateError(kMaxReferenceExpansionsErrorMessage);
         }
         if (!activeDeferred.add(target.refId)) {
+          // Recursive loop detected.
           return;
         }
         try {
