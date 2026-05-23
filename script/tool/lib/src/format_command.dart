@@ -115,8 +115,9 @@ class FormatCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    final String javaFormatterPath = await _getJavaFormatterPath();
-    final String kotlinFormatterPath = await _getKotlinFormatterPath();
+    final String javaFormatterPath = await _downloadJavaFormatterIfNecessary();
+    final String kotlinFormatterPath =
+        await _downloadKotlinFormatterIfNecessary();
 
     // All but Dart is formatted here rather than in runForPackage because
     // running the formatters separately for each package is an order of
@@ -182,7 +183,7 @@ class FormatCommand extends PackageLoopingCommand {
         packagesDir.path,
         thirdPartyPackagesDir.path,
       ],
-      workingDir: packagesDir.parent,
+      workingDir: rootDir,
       logOnError: true,
     );
     if (modifiedFiles.exitCode != 0) {
@@ -203,14 +204,14 @@ class FormatCommand extends PackageLoopingCommand {
 
     print(
       '\nTo fix run the repository tooling `format` command: '
-      'https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code\n'
+      '$toolDocsUrl#format-code\n'
       'or copy-paste this command into your terminal:',
     );
 
     final io.ProcessResult diff = await processRunner.run(
       'git',
       <String>['diff', packagesDir.path, thirdPartyPackagesDir.path],
-      workingDir: packagesDir.parent,
+      workingDir: rootDir,
       logOnError: true,
     );
     if (diff.exitCode != 0) {
@@ -472,40 +473,44 @@ class FormatCommand extends PackageLoopingCommand {
     );
   }
 
-  Future<String> _getJavaFormatterPath() async {
-    final String javaFormatterPath = path.join(
-      path.dirname(path.fromUri(platform.script)),
-      'google-java-format-1.28.0-all-deps.jar',
-    );
-    final File javaFormatterFile = packagesDir.fileSystem.file(
-      javaFormatterPath,
-    );
-
-    if (!javaFormatterFile.existsSync()) {
+  /// Downloads the Google Java Format JAR file if it is not already cached,
+  /// and returns the path to the cached file.
+  Future<String> _downloadJavaFormatterIfNecessary() async {
+    final File file = javaFormatterFile;
+    if (!file.existsSync()) {
       print('Downloading Google Java Format...');
       final http.Response response = await http.get(_javaFormatterUrl);
-      javaFormatterFile.writeAsBytesSync(response.bodyBytes);
+      file.writeAsBytesSync(response.bodyBytes);
     }
-
-    return javaFormatterPath;
+    return file.path;
   }
 
-  Future<String> _getKotlinFormatterPath() async {
-    final String kotlinFormatterPath = path.join(
-      path.dirname(path.fromUri(platform.script)),
-      'ktfmt-0.46-jar-with-dependencies.jar',
-    );
-    final File kotlinFormatterFile = packagesDir.fileSystem.file(
-      kotlinFormatterPath,
-    );
-
-    if (!kotlinFormatterFile.existsSync()) {
+  /// Downloads the ktfmt JAR file if it is not already cached,
+  /// and returns the path to the cached file.
+  Future<String> _downloadKotlinFormatterIfNecessary() async {
+    final File file = kotlinFormatterFile;
+    if (!file.existsSync()) {
       print('Downloading ktfmt...');
       final http.Response response = await http.get(_kotlinFormatterUrl);
-      kotlinFormatterFile.writeAsBytesSync(response.bodyBytes);
+      file.writeAsBytesSync(response.bodyBytes);
     }
+    return file.path;
+  }
 
-    return kotlinFormatterPath;
+  /// The file path where the Google Java Format JAR file should be cached.
+  @visibleForTesting
+  File get javaFormatterFile {
+    return toolCacheDirectory(
+      rootDir,
+    ).childFile('google-java-format-1.28.0-all-deps.jar');
+  }
+
+  /// The file path where the ktfmt JAR file should be cached.
+  @visibleForTesting
+  File get kotlinFormatterFile {
+    return toolCacheDirectory(
+      rootDir,
+    ).childFile('ktfmt-0.46-jar-with-dependencies.jar');
   }
 
   /// Returns true if [command] can be run successfully.

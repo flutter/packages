@@ -13,6 +13,7 @@ import '../common/file_utils.dart';
 import '../common/output_utils.dart';
 import '../common/plugin_utils.dart';
 import '../common/repository_package.dart';
+import '../common/tool_config.dart';
 
 // Section order for plugins. Because the 'flutter' section is critical
 // information for plugins, and usually small, it goes near the top unlike in
@@ -229,6 +230,7 @@ class PubspecValidator {
     if (pubspec.repository == null) {
       errorMessages.add('Missing "repository"');
     } else {
+      final String repoName = getRepositoryName(_repoRoot);
       final String relativePackagePath = relativePosixPath(
         package.directory,
         from: _repoRoot,
@@ -241,11 +243,11 @@ class PubspecValidator {
       }
 
       if (!pubspec.repository!.toString().startsWith(
-        'https://github.com/flutter/packages/tree/main',
+        'https://github.com/$repoName/tree/main',
       )) {
         errorMessages.add(
           'The "repository" link should start with the repository\'s '
-          'main tree: "https://github.com/flutter/packages/tree/main".',
+          'main tree: "https://github.com/$repoName/tree/main".',
         );
       }
     }
