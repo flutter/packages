@@ -48,6 +48,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       throw StateError(kMaxReferenceExpansionsErrorMessage);
     }
     if (!_activeMasks.add(maskNode.maskId)) {
+      // Recursive loop detected.
       return maskNode.child.accept(this, data);
     }
     try {
@@ -202,6 +203,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       throw StateError(kMaxReferenceExpansionsErrorMessage);
     }
     if (!_activeDeferred.add(deferredNode.refId)) {
+      // Recursive loop detected.
       return Node.empty;
     }
     try {
@@ -326,6 +328,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       throw StateError(kMaxReferenceExpansionsErrorMessage);
     }
     if (!_activePatterns.add(patternNode.patternId)) {
+      // Recursive loop detected.
       return patternNode.child.accept(this, data);
     }
     try {
