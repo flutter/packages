@@ -207,6 +207,14 @@ public class CameraTest {
 
     camera.captureSession = mockCaptureSession;
     camera.previewRequestBuilder = mockPreviewRequestBuilder;
+
+    final SensorOrientationFeature mockSensorOrientationFeature =
+        mockCameraFeatureFactory.createSensorOrientationFeature(
+            mockCameraProperties, mockActivity, mockDartMessenger);
+    final DeviceOrientationManager mockDeviceOrientationManager =
+        mock(DeviceOrientationManager.class);
+    when(mockSensorOrientationFeature.getDeviceOrientationManager())
+        .thenReturn(mockDeviceOrientationManager);
   }
 
   @After
@@ -717,6 +725,27 @@ public class CameraTest {
     final String customPath =
         new File(System.getProperty("java.io.tmpdir"), "custom_video.mp4").getAbsolutePath();
     final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+
+    final ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    CaptureRequest.Builder mockRequestBuilder = mock(CaptureRequest.Builder.class);
+    mockRequestBuilders.add(mockRequestBuilder);
+    final SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
+    final Size mockSize = mock(Size.class);
+    final ImageReader mockPictureImageReader = mock(ImageReader.class);
+    camera.pictureImageReader = mockPictureImageReader;
+    final CameraDeviceWrapper fakeCamera =
+        new FakeCameraDeviceWrapper(mockRequestBuilders, mockCaptureSession);
+
+    camera.cameraDevice = fakeCamera;
+
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
+
+    assertNotNull(cameraFlutterTexture);
+    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
+
+    assertNotNull(resolutionFeature);
+    when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
     try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
         Mockito.mockConstruction(
