@@ -20,7 +20,12 @@ class GioUtils {
   /// Creates a default instance that uses the real libgio.
   GioUtils() {
     try {
-      _gio = DynamicLibrary.open('libgio-2.0.so');
+      // Use the versioned soname (libgio-2.0.so.0) rather than the unversioned
+      // linker name (libgio-2.0.so). The linker name is only present when the
+      // development package (libglib2.0-dev) is installed, whereas the soname
+      // ships with the standard runtime package (libglib2.0-0) on all major
+      // Linux distributions.
+      _gio = DynamicLibrary.open('libgio-2.0.so.0');
     } on ArgumentError {
       _gio = null;
     }

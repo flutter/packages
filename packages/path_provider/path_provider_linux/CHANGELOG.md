@@ -1,6 +1,9 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes `libgio` loading on production Linux systems by using the versioned
+  soname (`libgio-2.0.so.0`) instead of the unversioned linker name
+  (`libgio-2.0.so`), which requires the `libglib2.0-dev` development package.
 
 ## 2.2.1
 
@@ -97,7 +100,7 @@
 ## 0.1.0 - NOT PUBLISHED
 
 * This release updates getApplicationSupportPath to use the application ID instead of the executable name.
-  * No migration is provided, so any older apps that were using this path will now have a different directory.
+  * No migration is required, so any older apps that were using this path will now have a different directory.
 
 ## 0.0.1+2
 
