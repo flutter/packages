@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 
+import 'video_recording_example.dart';
+
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
   /// Default Constructor
@@ -127,6 +129,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       _initializeCameraController(cameraController.description);
     }
   }
+
   // #enddocregion AppLifecycle
 
   @override
@@ -1054,13 +1057,17 @@ class CameraApp extends StatelessWidget {
 List<CameraDescription> get cameras => _cameras;
 List<CameraDescription> _cameras = <CameraDescription>[];
 
-Future<void> main() async {
-  // Fetch the available cameras before initializing the app.
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    _cameras = await availableCameras();
-  } on CameraException catch (e) {
-    _logError(e.code, e.description);
-  }
-  runApp(const CameraApp());
+// Future<void> main() async {
+//   // Fetch the available cameras before initializing the app.
+//   try {
+//     WidgetsFlutterBinding.ensureInitialized();
+//     _cameras = await availableCameras();
+//   } on CameraException catch (e) {
+//     _logError(e.code, e.description);
+//   }
+//   runApp(const CameraApp());
+// }
+
+void main() {
+  runApp(const VideoRecordingExampleApp());
 }
