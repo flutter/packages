@@ -342,9 +342,14 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Throws a [CameraException] if the capture fails.
   Future<void> startVideoRecording({
     void Function(CameraImageData image)? streamCallback,
+    String? videoOutputPath,
   }) async {
     await CameraPlatform.instance.startVideoCapturing(
-      VideoCaptureOptions(_cameraId, streamCallback: streamCallback),
+      VideoCaptureOptions(
+        _cameraId,
+        streamCallback: streamCallback,
+        videoOutputPath: videoOutputPath,
+      ),
     );
     value = value.copyWith(
       isRecordingVideo: true,
