@@ -20,7 +20,8 @@ class VideoRecordingExampleApp extends StatefulWidget {
   const VideoRecordingExampleApp({super.key});
 
   @override
-  State<VideoRecordingExampleApp> createState() => _VideoRecordingExampleAppState();
+  State<VideoRecordingExampleApp> createState() =>
+      _VideoRecordingExampleAppState();
 }
 
 class _VideoRecordingExampleAppState extends State<VideoRecordingExampleApp> {
@@ -28,7 +29,9 @@ class _VideoRecordingExampleAppState extends State<VideoRecordingExampleApp> {
 
   void _toggleTheme() {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+      _themeMode = _themeMode == ThemeMode.dark
+          ? ThemeMode.light
+          : ThemeMode.dark;
     });
   }
 
@@ -58,7 +61,10 @@ class _VideoRecordingExampleAppState extends State<VideoRecordingExampleApp> {
         ),
         useMaterial3: true,
       ),
-      home: VideoRecordingHome(themeMode: _themeMode, onThemeToggle: _toggleTheme),
+      home: VideoRecordingHome(
+        themeMode: _themeMode,
+        onThemeToggle: _toggleTheme,
+      ),
     );
   }
 }
@@ -66,7 +72,11 @@ class _VideoRecordingExampleAppState extends State<VideoRecordingExampleApp> {
 /// Home widget hosting the video recording demo.
 class VideoRecordingHome extends StatefulWidget {
   /// Default Constructor.
-  const VideoRecordingHome({super.key, required this.themeMode, required this.onThemeToggle});
+  const VideoRecordingHome({
+    super.key,
+    required this.themeMode,
+    required this.onThemeToggle,
+  });
 
   /// The active theme mode.
   final ThemeMode themeMode;
@@ -78,7 +88,8 @@ class VideoRecordingHome extends StatefulWidget {
   State<VideoRecordingHome> createState() => _VideoRecordingHomeState();
 }
 
-class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTickerProviderStateMixin {
+class _VideoRecordingHomeState extends State<VideoRecordingHome>
+    with SingleTickerProviderStateMixin {
   List<CameraDescription> _cameras = <CameraDescription>[];
   CameraController? _controller;
   XFile? _recordedVideo;
@@ -139,7 +150,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
     }
   }
 
-  Future<void> _initializeCameraController(CameraDescription description) async {
+  Future<void> _initializeCameraController(
+    CameraDescription description,
+  ) async {
     final controller = CameraController(
       description,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.high,
@@ -162,16 +175,11 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
   /// Calculates the target custom output path where the video will be saved.
   Future<String> _getDestinationPath() async {
     if (kIsWeb) {
+      // On web, videoOutputPath represents the suggested file download name.
       return _customFileName;
     }
 
-    // Se o usuário digitou uma URI nativa (content://) ou um caminho absoluto (/storage/...)
-    // nós retornamos diretamente para testar os recursos avançados de gravação direta.
-    if (_customFileName.startsWith('/') ||
-        _customFileName.startsWith('content://') ||
-        _customFileName.startsWith('file://')) {
-      return _customFileName;
-    }
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
     // 1. Desktop (macOS, Windows, Linux)
     if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
@@ -181,27 +189,40 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
           return '${downloadsDir.path}/$_customFileName';
         }
       } catch (e) {
-        // Fallback para desktop se falhar
+        // Fallback for desktop platforms if getDownloadsDirectory fails.
       }
     }
 
-    // 2. Android (Salvar na pasta pública de Downloads)
+    // 2. Android (Save directly to the public Downloads folder)
     if (Platform.isAndroid) {
-      // Isso aponta para a pasta segura e privada do seu app no Android (não precisa de permissão)
-      final Directory? tempDir = await getExternalStorageDirectory(); // Retorna /storage/emulated/0/Android/data/...
-      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-      final String uniqueName = _customFileName.replaceFirst('.mp4', '_$timestamp.mp4');
-
-      return '${tempDir!.path}/$uniqueName';
+      final String uniqueName = _customFileName.replaceFirst(
+        '.mp4',
+        '_$timestamp.mp4',
+      );
+      return '/storage/emulated/0/Download/$uniqueName';
     }
 
-    if (Platform.isIOS || Platform.isLinux) {
-      // 3. iOS e Fallback geral (Salva nos Documentos do App)
+    // 3. iOS (Save to "On My iPhone" visible app folder)
+    // Note: Ensure 'LSSupportsOpeningDocumentsInPlace' and 'UISupportsDocumentBrowser'
+    // are set to true in your ios/Runner/Info.plist to make this folder visible in the Files app.
+    if (Platform.isIOS) {
       final Directory appDocDir = await getApplicationDocumentsDirectory();
-      return '${appDocDir.path}/$_customFileName';
+
+      // Setup the custom directory structure within the app's documents container
+      final customDirPath = '${appDocDir.path}/Movies/flutter_test';
+      final destinationDir = Directory(customDirPath);
+
+      if (!destinationDir.existsSync()) {
+        destinationDir.createSync(recursive: true);
+      }
+
+      final filePath = '${destinationDir.path}/video_$timestamp.mp4';
+      return filePath;
     }
 
-    return 'unknown';
+    // Default fallback general path
+    final Directory fallbackDir = await getApplicationDocumentsDirectory();
+    return '${fallbackDir.path}/video_$timestamp.mp4';
   }
 
   Future<void> _startRecording() async {
@@ -232,10 +253,15 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
       await controller.startVideoRecording(videoOutputPath: outputPath);
 
       _showNotification(
-        _useCustomPath ? 'Recording started with custom output path!' : 'Recording started using auto-generated path.',
+        _useCustomPath
+            ? 'Recording started with custom output path!'
+            : 'Recording started using auto-generated path.',
       );
     } on CameraException catch (e) {
-      _showNotification('Failed to start recording: ${e.description}', isError: true);
+      _showNotification(
+        'Failed to start recording: ${e.description}',
+        isError: true,
+      );
     } catch (e) {
       _showNotification('Unexpected error: $e', isError: true);
     } finally {
@@ -267,9 +293,15 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
 
       await _playRecordedVideo(file);
     } on CameraException catch (e) {
-      _showNotification('Failed to stop recording: ${e.description}', isError: true);
+      _showNotification(
+        'Failed to stop recording: ${e.description}',
+        isError: true,
+      );
     } catch (e) {
-      _showNotification('Unexpected error stopping recording: $e', isError: true);
+      _showNotification(
+        'Unexpected error stopping recording: $e',
+        isError: true,
+      );
     } finally {
       if (mounted) {
         setState(() {});
@@ -332,7 +364,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
       await playerController.setLooping(true);
       await playerController.play();
     } catch (e) {
-      _showNotification('Failed to load recorded video in player: $e', isError: true);
+      _showNotification(
+        'Failed to load recorded video in player: $e',
+        isError: true,
+      );
     }
 
     if (mounted) {
@@ -356,7 +391,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
     return Scaffold(
       body: SafeArea(
         child: _isInitializing
-            ? const Center(child: CircularProgressIndicator(color: Color(0xFF6C63FF)))
+            ? const Center(
+                child: CircularProgressIndicator(color: Color(0xFF6C63FF)),
+              )
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -392,7 +429,12 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             children: <Widget>[
               Text(
                 'VIVID VIDEO RECORDER',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: textPrimary),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: textPrimary,
+                ),
               ),
               const SizedBox(height: 4),
               const Text(
@@ -433,7 +475,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: isRecording
-                ? (isPaused ? Colors.amber.withOpacity(0.15) : const Color(0xFFFF1744).withOpacity(0.15))
+                ? (isPaused
+                      ? Colors.amber.withOpacity(0.15)
+                      : const Color(0xFFFF1744).withOpacity(0.15))
                 : Colors.transparent,
             blurRadius: 16,
             spreadRadius: 4,
@@ -448,7 +492,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             CameraPreview(controller)
           else
             const Center(
-              child: Text('Camera pipeline is uninitialized.', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'Camera pipeline is uninitialized.',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
           // Recording Status Overlay
           if (isRecording)
@@ -456,11 +503,18 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
               top: 16,
               left: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: (isDark ? const Color(0xFF1E1E30) : Colors.white).withOpacity(0.85),
+                  color: (isDark ? const Color(0xFF1E1E30) : Colors.white)
+                      .withOpacity(0.85),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: isPaused ? Colors.amber : const Color(0xFFFF1744), width: 1.5),
+                  border: Border.all(
+                    color: isPaused ? Colors.amber : const Color(0xFFFF1744),
+                    width: 1.5,
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -469,7 +523,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: isPaused ? Colors.amber : const Color(0xFFFF1744),
+                        color: isPaused
+                            ? Colors.amber
+                            : const Color(0xFFFF1744),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -479,7 +535,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: isPaused ? Colors.amber : const Color(0xFFFF1744),
+                        color: isPaused
+                            ? Colors.amber
+                            : const Color(0xFFFF1744),
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -494,9 +552,15 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
 
   Widget _buildPathSettingsCard(bool isDark, Color textPrimary) {
     final Color cardBgColor = isDark ? const Color(0xFF161626) : Colors.white;
-    final borderBgColor = isDark ? const Color(0xFF2C2C40) : const Color(0xFFE2E2EC);
-    final subBgColor = isDark ? const Color(0xFF0F0F1A) : const Color(0xFFF5F5FA);
-    final textSecondary = isDark ? const Color(0xFF8F8FA0) : const Color(0xFF6E6E7E);
+    final borderBgColor = isDark
+        ? const Color(0xFF2C2C40)
+        : const Color(0xFFE2E2EC);
+    final subBgColor = isDark
+        ? const Color(0xFF0F0F1A)
+        : const Color(0xFFF5F5FA);
+    final textSecondary = isDark
+        ? const Color(0xFF8F8FA0)
+        : const Color(0xFF6E6E7E);
 
     return Container(
       decoration: BoxDecoration(
@@ -505,7 +569,13 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
         border: Border.all(color: borderBgColor),
         boxShadow: isDark
             ? const <BoxShadow>[]
-            : <BoxShadow>[BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+            : <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -516,11 +586,19 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  const Icon(Icons.folder_open, color: Color(0xFF6C63FF), size: 20),
+                  const Icon(
+                    Icons.folder_open,
+                    color: Color(0xFF6C63FF),
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'Custom Output Path',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textPrimary),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: textPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -540,10 +618,16 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             TextField(
               style: TextStyle(color: textPrimary),
               decoration: InputDecoration(
-                labelText: kIsWeb ? 'Suggested Download Filename' : 'Filename, absolute path, or content:// URI',
+                labelText: kIsWeb
+                    ? 'Suggested Download Filename'
+                    : 'Filename, absolute path, or content:// URI',
                 labelStyle: TextStyle(color: textSecondary, fontSize: 13),
                 hintText: 'my_video.mp4 or content://...',
-                prefixIcon: Icon(Icons.description, size: 18, color: textSecondary),
+                prefixIcon: Icon(
+                  Icons.description,
+                  size: 18,
+                  color: textSecondary,
+                ),
                 filled: true,
                 fillColor: subBgColor,
                 enabledBorder: OutlineInputBorder(
@@ -552,7 +636,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1.5),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF6C63FF),
+                    width: 1.5,
+                  ),
                 ),
               ),
               controller: TextEditingController(text: _customFileName),
@@ -563,7 +650,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: subBgColor, borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(
+                color: subBgColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -577,9 +667,18 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
                     ),
                   ),
                   const SizedBox(height: 6),
-                  _buildValidationBullet('Must end with supported extension (.mp4, .mov, .3gp, .m4v, .webm)', isDark),
-                  _buildValidationBullet('Cannot be an existing directory', isDark),
-                  _buildValidationBullet('Parent folder must exist on device storage', isDark),
+                  _buildValidationBullet(
+                    'Must end with supported extension (.mp4, .mov, .3gp, .m4v, .webm)',
+                    isDark,
+                  ),
+                  _buildValidationBullet(
+                    'Cannot be an existing directory',
+                    isDark,
+                  ),
+                  _buildValidationBullet(
+                    'Parent folder must exist on device storage',
+                    isDark,
+                  ),
                 ],
               ),
             ),
@@ -590,7 +689,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
   }
 
   Widget _buildValidationBullet(String text, bool isDark) {
-    final textSecondary = isDark ? const Color(0xFFB0B0C0) : const Color(0xFF5A5A6A);
+    final textSecondary = isDark
+        ? const Color(0xFFB0B0C0)
+        : const Color(0xFF5A5A6A);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4.0),
       child: Row(
@@ -599,7 +700,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
           const Icon(Icons.check_circle, size: 12, color: Color(0xFF00E676)),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(text, style: TextStyle(fontSize: 11, color: textSecondary)),
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 11, color: textSecondary),
+            ),
           ),
         ],
       ),
@@ -610,7 +714,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
     final CameraController? controller = _controller;
     final bool isRecording = controller?.value.isRecordingVideo ?? false;
     final bool isPaused = controller?.value.isRecordingPaused ?? false;
-    final Color controlBgColor = isDark ? const Color(0xFF1E1E30) : Colors.white;
+    final Color controlBgColor = isDark
+        ? const Color(0xFF1E1E30)
+        : Colors.white;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -620,9 +726,13 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
           icon: Icon(_audioEnabled ? Icons.mic : Icons.mic_off),
           style: IconButton.styleFrom(
             backgroundColor: controlBgColor,
-            foregroundColor: _audioEnabled ? const Color(0xFF00E676) : Colors.grey,
+            foregroundColor: _audioEnabled
+                ? const Color(0xFF00E676)
+                : Colors.grey,
             padding: const EdgeInsets.all(14),
-            side: isDark ? BorderSide.none : const BorderSide(color: Color(0xFFE2E2EC)),
+            side: isDark
+                ? BorderSide.none
+                : const BorderSide(color: Color(0xFFE2E2EC)),
           ),
           onPressed: isRecording
               ? null
@@ -643,17 +753,27 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             height: 76,
             width: 76,
             decoration: BoxDecoration(
-              color: isRecording ? const Color(0xFFFF1744) : const Color(0xFF6C63FF),
+              color: isRecording
+                  ? const Color(0xFFFF1744)
+                  : const Color(0xFF6C63FF),
               shape: BoxShape.circle,
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: (isRecording ? const Color(0xFFFF1744) : const Color(0xFF6C63FF)).withOpacity(0.3),
+                  color:
+                      (isRecording
+                              ? const Color(0xFFFF1744)
+                              : const Color(0xFF6C63FF))
+                          .withOpacity(0.3),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
               ],
             ),
-            child: Icon(isRecording ? Icons.stop : Icons.videocam, size: 32, color: Colors.white),
+            child: Icon(
+              isRecording ? Icons.stop : Icons.videocam,
+              size: 32,
+              color: Colors.white,
+            ),
           ),
         ),
 
@@ -664,18 +784,28 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
             backgroundColor: controlBgColor,
             foregroundColor: const Color(0xFF6C63FF),
             padding: const EdgeInsets.all(14),
-            side: isDark ? BorderSide.none : const BorderSide(color: Color(0xFFE2E2EC)),
+            side: isDark
+                ? BorderSide.none
+                : const BorderSide(color: Color(0xFFE2E2EC)),
           ),
-          onPressed: isRecording ? (isPaused ? _resumeRecording : _pauseRecording) : null,
+          onPressed: isRecording
+              ? (isPaused ? _resumeRecording : _pauseRecording)
+              : null,
         ),
       ],
     );
   }
 
-  Widget _buildVideoPlayerCard(double screenWidth, bool isDark, Color textPrimary) {
+  Widget _buildVideoPlayerCard(
+    double screenWidth,
+    bool isDark,
+    Color textPrimary,
+  ) {
     final VideoPlayerController? playerController = _videoPlayerController;
     final Color cardBgColor = isDark ? const Color(0xFF161626) : Colors.white;
-    final borderBgColor = isDark ? const Color(0xFF2C2C40) : const Color(0xFFE2E2EC);
+    final borderBgColor = isDark
+        ? const Color(0xFF2C2C40)
+        : const Color(0xFFE2E2EC);
 
     return Container(
       decoration: BoxDecoration(
@@ -684,7 +814,13 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
         border: Border.all(color: borderBgColor),
         boxShadow: isDark
             ? const <BoxShadow>[]
-            : <BoxShadow>[BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+            : <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -692,11 +828,19 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
         children: <Widget>[
           Row(
             children: <Widget>[
-              const Icon(Icons.video_library, color: Color(0xFF00E676), size: 20),
+              const Icon(
+                Icons.video_library,
+                color: Color(0xFF00E676),
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Recorded Video Output',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: textPrimary),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: textPrimary,
+                ),
               ),
             ],
           ),
@@ -704,7 +848,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
           if (playerController != null && playerController.value.isInitialized)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: AspectRatio(aspectRatio: playerController.value.aspectRatio, child: VideoPlayer(playerController)),
+              child: AspectRatio(
+                aspectRatio: playerController.value.aspectRatio,
+                child: VideoPlayer(playerController),
+              ),
             )
           else
             const Center(
@@ -716,23 +863,39 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome> with SingleTick
           const SizedBox(height: 12),
           Text(
             'Saved Location Path:',
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
           ),
           const SizedBox(height: 4),
           SelectableText(
             _recordedVideo?.path ?? 'Unknown',
-            style: const TextStyle(fontSize: 11, fontFamily: 'Courier', color: Color(0xFF00E676)),
+            style: const TextStyle(
+              fontSize: 11,
+              fontFamily: 'Courier',
+              color: Color(0xFF00E676),
+            ),
           ),
           if (_resolvedCustomPath != null) ...<Widget>[
             const SizedBox(height: 10),
             Text(
               'Requested Custom Path:',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
             ),
             const SizedBox(height: 4),
             SelectableText(
               _resolvedCustomPath!,
-              style: const TextStyle(fontSize: 11, fontFamily: 'Courier', color: Color(0xFF6C63FF)),
+              style: const TextStyle(
+                fontSize: 11,
+                fontFamily: 'Courier',
+                color: Color(0xFF6C63FF),
+              ),
             ),
           ],
         ],
