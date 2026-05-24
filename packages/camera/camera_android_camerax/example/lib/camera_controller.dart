@@ -502,6 +502,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> startVideoRecording({
     onLatestImageAvailable? onAvailable,
     bool enablePersistentRecording = true,
+    String? videoOutputPath,
   }) async {
     _throwIfNotInitialized('startVideoRecording');
     if (value.isRecordingVideo) {
@@ -524,6 +525,7 @@ class CameraController extends ValueNotifier<CameraValue> {
           _cameraId,
           streamCallback: streamCallback,
           enablePersistentRecording: enablePersistentRecording,
+          videoOutputPath: videoOutputPath,
         ),
       );
       value = value.copyWith(
