@@ -199,9 +199,12 @@ class CameraWindows extends CameraPlatform {
   Future<void> startVideoRecording(
     int cameraId, {
     Duration? maxVideoDuration,
+    String? videoOutputPath,
   }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(
+      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
+    );
   }
 
   @override

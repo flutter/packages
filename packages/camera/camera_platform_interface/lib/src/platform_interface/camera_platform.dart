@@ -150,6 +150,7 @@ abstract class CameraPlatform extends PlatformInterface {
       'This parameter is unused, and will be ignored on all platforms',
     )
     Duration? maxVideoDuration,
+    String? videoOutputPath,
   }) {
     throw UnimplementedError('startVideoRecording() is not implemented.');
   }
@@ -159,7 +160,10 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Please see [VideoCaptureOptions] for documentation on the
   /// configuration options.
   Future<void> startVideoCapturing(VideoCaptureOptions options) {
-    return startVideoRecording(options.cameraId);
+    return startVideoRecording(
+      options.cameraId,
+      videoOutputPath: options.videoOutputPath,
+    );
   }
 
   /// Stops the video recording and returns the file where it was saved.

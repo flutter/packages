@@ -12,6 +12,7 @@ import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+
 import 'camerax_library.dart';
 import 'rotated_preview_delegate.dart';
 
@@ -1148,9 +1149,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> startVideoRecording(
     int cameraId, {
     Duration? maxVideoDuration,
+    String? videoOutputPath,
   }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(
+      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
+    );
   }
 
   /// Starts a video recording and/or streaming session.

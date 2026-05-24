@@ -254,9 +254,14 @@ class MethodChannelCamera extends CameraPlatform {
   Future<void> startVideoRecording(
     int cameraId, {
     Duration? maxVideoDuration,
+    String? videoOutputPath,
   }) async {
     return startVideoCapturing(
-      VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration),
+      VideoCaptureOptions(
+        cameraId,
+        maxDuration: maxVideoDuration,
+        videoOutputPath: videoOutputPath,
+      ),
     );
   }
 
