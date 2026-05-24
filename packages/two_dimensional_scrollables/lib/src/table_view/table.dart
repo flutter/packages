@@ -581,7 +581,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         continue;
       }
       final Rect cellRect = cellParentData.paintOffset! & cell.size;
-      if (cellRect.contains(position)) {
+      // Intersect with the section clip rect for this cell to prevent
+      // scrollable cells from stealing hits inside the trailing pinned area.
+      // This mirrors the pushClipRect applied to each section during painting.
+      final Rect clippedCellRect = cellRect.intersect(
+        _sectionClipRectFor(cellParentData.tableVicinity),
+      );
+      if (clippedCellRect.contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
@@ -617,6 +623,79 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       cell = childAfter(cell);
     }
     return false;
+  }
+
+  // Returns the viewport-space clip rect that painting applies to the section
+  // a cell belongs to (leading-pinned, non-pinned, or trailing-pinned for each
+  // axis). Intersecting the raw cell rect with this rect in hitTestChildren
+  // prevents scrollable cells from capturing taps inside pinned areas.
+  Rect _sectionClipRectFor(TableVicinity vicinity) {
+    final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
+    final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+
+    final double colLeft, colRight;
+    if (vicinity.column < delegate.pinnedColumnCount) {
+      // Leading pinned column — visually on the right when axis is reversed.
+      if (reversedH) {
+        colLeft = viewportDimension.width - _leadingPinnedColumnsExtent;
+        colRight = viewportDimension.width;
+      } else {
+        colLeft = 0.0;
+        colRight = _leadingPinnedColumnsExtent;
+      }
+    } else if (_firstTrailingPinnedColumn != null &&
+        vicinity.column >= _firstTrailingPinnedColumn!) {
+      // Trailing pinned column — visually on the left when axis is reversed.
+      if (reversedH) {
+        colLeft = 0.0;
+        colRight = _trailingPinnedColumnsExtent;
+      } else {
+        colLeft = viewportDimension.width - _trailingPinnedColumnsExtent;
+        colRight = viewportDimension.width;
+      }
+    } else {
+      // Non-pinned column.
+      if (reversedH) {
+        colLeft = _trailingPinnedColumnsExtent;
+        colRight = viewportDimension.width - _leadingPinnedColumnsExtent;
+      } else {
+        colLeft = _leadingPinnedColumnsExtent;
+        colRight = viewportDimension.width - _trailingPinnedColumnsExtent;
+      }
+    }
+
+    final double rowTop, rowBottom;
+    if (vicinity.row < delegate.pinnedRowCount) {
+      // Leading pinned row — visually on the bottom when axis is reversed.
+      if (reversedV) {
+        rowTop = viewportDimension.height - _leadingPinnedRowsExtent;
+        rowBottom = viewportDimension.height;
+      } else {
+        rowTop = 0.0;
+        rowBottom = _leadingPinnedRowsExtent;
+      }
+    } else if (_firstTrailingPinnedRow != null &&
+        vicinity.row >= _firstTrailingPinnedRow!) {
+      // Trailing pinned row — visually on the top when axis is reversed.
+      if (reversedV) {
+        rowTop = 0.0;
+        rowBottom = _trailingPinnedRowsExtent;
+      } else {
+        rowTop = viewportDimension.height - _trailingPinnedRowsExtent;
+        rowBottom = viewportDimension.height;
+      }
+    } else {
+      // Non-pinned row.
+      if (reversedV) {
+        rowTop = _trailingPinnedRowsExtent;
+        rowBottom = viewportDimension.height - _leadingPinnedRowsExtent;
+      } else {
+        rowTop = _leadingPinnedRowsExtent;
+        rowBottom = viewportDimension.height - _trailingPinnedRowsExtent;
+      }
+    }
+
+    return Rect.fromLTRB(colLeft, rowTop, colRight, rowBottom);
   }
 
   // Updates the cached column metrics for the table.
