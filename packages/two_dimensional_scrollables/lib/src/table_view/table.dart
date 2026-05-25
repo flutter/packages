@@ -584,10 +584,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Intersect with the section clip rect for this cell to prevent
       // scrollable cells from stealing hits inside the trailing pinned area.
       // This mirrors the pushClipRect applied to each section during painting.
-      final Rect clippedCellRect = cellRect.intersect(
-        _sectionClipRectFor(cellParentData.tableVicinity),
-      );
-      if (clippedCellRect.contains(position)) {
+      if (cellRect.contains(position) &&
+          _sectionClipRectFor(cellParentData.tableVicinity).contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
@@ -632,13 +630,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   Rect _sectionClipRectFor(TableVicinity vicinity) {
     final bool reversedH = axisDirectionIsReversed(horizontalAxisDirection);
     final bool reversedV = axisDirectionIsReversed(verticalAxisDirection);
+    final Size viewportSize = viewportDimension;
 
     final double colLeft, colRight;
     if (vicinity.column < delegate.pinnedColumnCount) {
       // Leading pinned column — visually on the right when axis is reversed.
       if (reversedH) {
-        colLeft = viewportDimension.width - _leadingPinnedColumnsExtent;
-        colRight = viewportDimension.width;
+        colLeft = viewportSize.width - _leadingPinnedColumnsExtent;
+        colRight = viewportSize.width;
       } else {
         colLeft = 0.0;
         colRight = _leadingPinnedColumnsExtent;
@@ -650,17 +649,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         colLeft = 0.0;
         colRight = _trailingPinnedColumnsExtent;
       } else {
-        colLeft = viewportDimension.width - _trailingPinnedColumnsExtent;
-        colRight = viewportDimension.width;
+        colLeft = viewportSize.width - _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width;
       }
     } else {
       // Non-pinned column.
       if (reversedH) {
         colLeft = _trailingPinnedColumnsExtent;
-        colRight = viewportDimension.width - _leadingPinnedColumnsExtent;
+        colRight = viewportSize.width - _leadingPinnedColumnsExtent;
       } else {
         colLeft = _leadingPinnedColumnsExtent;
-        colRight = viewportDimension.width - _trailingPinnedColumnsExtent;
+        colRight = viewportSize.width - _trailingPinnedColumnsExtent;
       }
     }
 
@@ -668,8 +667,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     if (vicinity.row < delegate.pinnedRowCount) {
       // Leading pinned row — visually on the bottom when axis is reversed.
       if (reversedV) {
-        rowTop = viewportDimension.height - _leadingPinnedRowsExtent;
-        rowBottom = viewportDimension.height;
+        rowTop = viewportSize.height - _leadingPinnedRowsExtent;
+        rowBottom = viewportSize.height;
       } else {
         rowTop = 0.0;
         rowBottom = _leadingPinnedRowsExtent;
@@ -681,17 +680,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         rowTop = 0.0;
         rowBottom = _trailingPinnedRowsExtent;
       } else {
-        rowTop = viewportDimension.height - _trailingPinnedRowsExtent;
-        rowBottom = viewportDimension.height;
+        rowTop = viewportSize.height - _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height;
       }
     } else {
       // Non-pinned row.
       if (reversedV) {
         rowTop = _trailingPinnedRowsExtent;
-        rowBottom = viewportDimension.height - _leadingPinnedRowsExtent;
+        rowBottom = viewportSize.height - _leadingPinnedRowsExtent;
       } else {
         rowTop = _leadingPinnedRowsExtent;
-        rowBottom = viewportDimension.height - _trailingPinnedRowsExtent;
+        rowBottom = viewportSize.height - _trailingPinnedRowsExtent;
       }
     }
 
