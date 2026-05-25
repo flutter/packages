@@ -105,6 +105,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
   // SnackBar / Error messaging helper
   void _showNotification(String message, {bool isError = false}) {
+    if (!mounted) {
+      return;
+    }
     final isDark = widget.themeMode == ThemeMode.dark;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
