@@ -595,7 +595,7 @@ final class DefaultCamera: NSObject, Camera {
       throw PigeonError(code: "IOError", message: "Path is a directory: \(path)", details: nil)
     }
     let parentPath = (path as NSString).deletingLastPathComponent
-    if !FileManager.default.fileExists(atPath: parentPath) {
+    if !parentPath.isEmpty && !FileManager.default.fileExists(atPath: parentPath) {
       throw PigeonError(
         code: "IOError", message: "Parent directory does not exist: \(parentPath)", details: nil)
     }
