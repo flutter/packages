@@ -1,7 +1,6 @@
 // Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
 import 'dart:async';
 import 'dart:io';
 
@@ -10,8 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
+void main() {
+  runApp(const VideoRecordingExampleApp());
+}
+
 /// A premium, highly interactive standalone example demonstrating the
-/// Video Recording feature with custom output paths (`videoOutputPath`).
+/// Video Recording feature with custom output paths (`videoOutputPath`)
 class VideoRecordingExampleApp extends StatefulWidget {
   /// Default Constructor.
   const VideoRecordingExampleApp({super.key});
@@ -98,6 +101,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
   // Custom path options
   String _customFileName = 'custom_video_recording.mp4';
+  late TextEditingController _customFileNameController;
   String? _resolvedCustomPath;
 
   // SnackBar / Error messaging helper
@@ -125,6 +129,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
   @override
   void initState() {
     super.initState();
+    _customFileNameController = TextEditingController(text: _customFileName);
     _bootstrapCameras();
   }
 
@@ -173,19 +178,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
   Future<String> _getDestinationPath() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
-    // 1. Desktop (macOS, Windows, Linux)
-    if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-      try {
-        final Directory? downloadsDir = await getDownloadsDirectory();
-        if (downloadsDir != null) {
-          return '${downloadsDir.path}/$_customFileName';
-        }
-      } catch (e) {
-        // Fallback for desktop platforms if getDownloadsDirectory fails.
-      }
-    }
-
-    // 2. Android
+    // 1. Android
     // Although it is possible to use an absolute path like '/storage/emulated/0/Download/',
     // this is a fragile practice and may fail on many devices or Android versions due to
     // Scoped Storage restrictions. It is recommended to use path_provider to get a valid
@@ -369,6 +362,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
   @override
   void dispose() {
+    _customFileNameController.dispose();
     _controller?.dispose();
     _videoPlayerController?.dispose();
     super.dispose();
@@ -632,7 +626,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
                   ),
                 ),
               ),
-              controller: TextEditingController(text: _customFileName),
+              controller: _customFileNameController,
               onChanged: (String val) {
                 _customFileName = val;
               },

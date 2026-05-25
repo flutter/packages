@@ -12,10 +12,10 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 ## Features
 
-- Display live camera preview in a widget.
-- Snapshots can be captured and saved to a file.
-- Record video.
-- Add access to the image stream from Dart.
+* Display live camera preview in a widget.
+* Snapshots can be captured and saved to a file.
+* Record video.
+* Add access to the image stream from Dart.
 
 ## Setup
 
@@ -23,8 +23,8 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 Add two rows to the `ios/Runner/Info.plist`:
 
-- one with the key `Privacy - Camera Usage Description` and a usage description.
-- and one with the key `Privacy - Microphone Usage Description` and a usage description.
+* one with the key `Privacy - Camera Usage Description` and a usage description.
+* and one with the key `Privacy - Microphone Usage Description` and a usage description.
 
 If editing `Info.plist` as text, add:
 
@@ -55,7 +55,6 @@ For web integration details, see the
 As of version [0.5.0](https://github.com/flutter/packages/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
 
 <?code-excerpt "main.dart (AppLifecycle)"?>
-
 ```dart
 @override
 void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -72,6 +71,7 @@ void didChangeAppLifecycleState(AppLifecycleState state) {
     _initializeCameraController(cameraController.description);
   }
 }
+
 ```
 
 ### Handling camera access permissions
@@ -140,12 +140,15 @@ By default, files saved within the application sandbox are private. If you want 
 
 Similar to Android, ensure you use the `path_provider` package to resolve a valid system path (such as `getApplicationDocumentsDirectory()` or `getApplicationSupportDirectory()`). This helps avoid OS permission issues (`Access Denied`) when writing files directly to protected directories like the root drive.
 
+### Video Recording Example
+
+For a complete, interactive demonstration of video recording with custom file output paths, error handling, and playback, please see the [Video Recording Example](https://github.com/flutter/packages/blob/main/packages/camera/camera/example/lib/video_recording_example.dart) in our example app.
+
 ### Example
 
 Here is a small example flutter app displaying a full screen camera preview.
 
 <?code-excerpt "readme_full_example.dart (FullAppExample)"?>
-
 ```dart
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
