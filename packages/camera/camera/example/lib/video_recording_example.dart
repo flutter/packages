@@ -652,7 +652,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
                   const SizedBox(height: 6),
                   _buildValidationBullet(
                     'Must end with supported extension (.mp4, .mov, .3gp, .m4v, .webm)',
-                    isDark,
+                    'Must end with supported extension (.mp4)',
                   ),
                   _buildValidationBullet(
                     'Cannot be an existing directory',
