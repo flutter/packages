@@ -525,7 +525,8 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
     }
 
     size_t last_dot = file_path.find_last_of(".");
-    if (last_dot == std::string::npos) {
+    if (last_dot == std::string::npos ||
+        (last_slash != std::string::npos && last_dot < last_slash)) {
       return OnRecordStarted(CameraResult::kError,
                              "The output path has no extension.");
     }
