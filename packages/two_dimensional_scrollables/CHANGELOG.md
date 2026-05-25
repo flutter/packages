@@ -1,6 +1,7 @@
-## NEXT
+## 0.5.3
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes an issue where pinned cells were losing hit tests to underlying non-pinned cells.
 
 ## 0.5.2
 
