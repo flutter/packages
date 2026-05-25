@@ -349,6 +349,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
     try {
       await playerController.initialize();
+      if (!mounted) {
+        await playerController.dispose();
+        return;
+      }
       await playerController.setLooping(true);
       await playerController.play();
     } catch (e) {
