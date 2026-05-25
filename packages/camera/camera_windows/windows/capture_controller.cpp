@@ -531,10 +531,10 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
     }
     std::string ext = file_path.substr(last_dot);
     for (auto& c : ext) c = (char)tolower(c);
-    if (ext != ".mp4" && ext != ".mov" && ext != ".wmv" && ext != ".avi") {
+    if (ext != ".mp4") {
       return OnRecordStarted(
           CameraResult::kError,
-          "Invalid video extension. Supported: .mp4, .mov, .wmv, .avi");
+          "Invalid video extension. Supported: .mp4");
     }
   }
 

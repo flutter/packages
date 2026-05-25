@@ -601,7 +601,7 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     let lowerPath = path.lowercased()
-    let validExtensions = [".mp4", ".mov", ".m4v", ".3gp"]
+    let validExtensions = [".mp4"]
     if !validExtensions.contains(where: { lowerPath.hasSuffix($0) }) {
       throw PigeonError(
         code: "IOError",

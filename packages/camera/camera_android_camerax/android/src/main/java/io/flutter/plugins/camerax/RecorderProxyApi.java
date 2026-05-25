@@ -84,13 +84,9 @@ class RecorderProxyApi extends PigeonApiRecorder {
     }
 
     String lowerPath = path.toLowerCase(Locale.ROOT);
-    if (!lowerPath.endsWith(".mp4")
-        && !lowerPath.endsWith(".mov")
-        && !lowerPath.endsWith(".3gp")
-        && !lowerPath.endsWith(".m4v")
-        && !lowerPath.endsWith(".webm")) {
+    if (!lowerPath.endsWith(".mp4")) {
       throw new GeneratedCameraXLibrary.FlutterError(
-          "IOError", "Invalid video extension. Supported: .mp4, .mov, .3gp, .m4v, .webm", null);
+          "IOError", "Invalid video extension. Supported: .mp4", null);
     }
   }
 

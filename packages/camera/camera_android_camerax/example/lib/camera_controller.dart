@@ -512,6 +512,16 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     }
 
+    if (videoOutputPath != null) {
+      final String lowerPath = videoOutputPath.toLowerCase();
+      if (!lowerPath.endsWith('.mp4')) {
+        throw CameraException(
+          'InvalidFilePath',
+          'Invalid video extension. Supported: .mp4',
+        );
+      }
+    }
+
     void Function(CameraImageData image)? streamCallback;
     if (onAvailable != null) {
       streamCallback = (CameraImageData imageData) {
