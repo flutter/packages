@@ -6,16 +6,16 @@
 
 A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
-|                | Android | iOS       | Web                    |
-|----------------|---------|-----------|------------------------|
-| **Support**    | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
+|             | Android | iOS       | Web                    |
+| ----------- | ------- | --------- | ---------------------- |
+| **Support** | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
 
 ## Features
 
-* Display live camera preview in a widget.
-* Snapshots can be captured and saved to a file.
-* Record video.
-* Add access to the image stream from Dart.
+- Display live camera preview in a widget.
+- Snapshots can be captured and saved to a file.
+- Record video.
+- Add access to the image stream from Dart.
 
 ## Setup
 
@@ -23,8 +23,8 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 Add two rows to the `ios/Runner/Info.plist`:
 
-* one with the key `Privacy - Camera Usage Description` and a usage description.
-* and one with the key `Privacy - Microphone Usage Description` and a usage description.
+- one with the key `Privacy - Camera Usage Description` and a usage description.
+- and one with the key `Privacy - Microphone Usage Description` and a usage description.
 
 If editing `Info.plist` as text, add:
 
@@ -55,6 +55,7 @@ For web integration details, see the
 As of version [0.5.0](https://github.com/flutter/packages/blob/main/packages/camera/CHANGELOG.md#050) of the camera plugin, lifecycle changes are no longer handled by the plugin. This means developers are now responsible to control camera resources when the lifecycle state is updated. Failure to do so might lead to unexpected behavior (for example as described in issue [#39109](https://github.com/flutter/flutter/issues/39109)). Handling lifecycle changes can be done by overriding the `didChangeAppLifecycleState` method like so:
 
 <?code-excerpt "main.dart (AppLifecycle)"?>
+
 ```dart
 @override
 void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -91,11 +92,60 @@ Here is a list of all permission error codes that can be thrown:
 
 - `AudioAccessRestricted`: iOS only for now. Thrown when audio access is restricted and users cannot grant permission (parental control).
 
+### Custom Video Recording Path
+
+You can optionally specify a `videoOutputPath` when calling `startVideoRecording()` to save the recorded video directly to a custom absolute file path on the device.
+
+```dart
+// Always ensure the path ends with the .mp4 extension
+await controller.startVideoRecording(
+  videoOutputPath: '/path/to/your/custom_video.mp4',
+);
+```
+
+#### Platform-Specific Considerations
+
+**Android**
+
+Although it is possible to use an absolute path like `/storage/emulated/0/Download/video.mp4`, this is a fragile practice and may fail on many devices or Android versions due to **Scoped Storage** restrictions.
+
+- **Best Practice:** Always use the [path_provider](https://pub.dev/packages/path_provider) package to fetch a safe, writable directory.
+- **Recommended Directory:** Use `getTemporaryDirectory()` or `getApplicationDocumentsDirectory()`.
+
+```dart
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+final directory = await getTemporaryDirectory();
+final videoPath = p.join(directory.path, 'my_video.mp4');
+
+await controller.startVideoRecording(videoOutputPath: videoPath);
+```
+
+**iOS**
+
+By default, files saved within the application sandbox are private. If you want the recorded videos to be visible and manageable by the user inside the native iOS **Files app**:
+
+1. Open your `ios/Runner/Info.plist` file.
+2. Add the following keys set to `true`:
+
+```xml
+<key>LSSupportsOpeningDocumentsInPlace</key>
+<true/>
+<key>UISupportsDocumentBrowser</key>
+<true/>
+```
+
+**Windows**
+
+Similar to Android, ensure you use the `path_provider` package to resolve a valid system path (such as `getApplicationDocumentsDirectory()` or `getApplicationSupportDirectory()`). This helps avoid OS permission issues (`Access Denied`) when writing files directly to protected directories like the root drive.
+
 ### Example
 
 Here is a small example flutter app displaying a full screen camera preview.
 
 <?code-excerpt "readme_full_example.dart (FullAppExample)"?>
+
 ```dart
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';

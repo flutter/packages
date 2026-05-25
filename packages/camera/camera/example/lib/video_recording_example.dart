@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
-import 'file_saver_helper.dart';
-
 /// A premium, highly interactive standalone example demonstrating the
 /// Video Recording feature with custom output paths (`videoOutputPath`).
 class VideoRecordingExampleApp extends StatefulWidget {
@@ -155,7 +153,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
   ) async {
     final controller = CameraController(
       description,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.high,
+      ResolutionPreset.high,
       enableAudio: _audioEnabled,
     );
 
@@ -174,11 +172,6 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
   /// Calculates the target custom output path where the video will be saved.
   Future<String> _getDestinationPath() async {
-    if (kIsWeb) {
-      // On web, videoOutputPath represents the suggested file download name.
-      return _customFileName;
-    }
-
     final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
 
     // 1. Desktop (macOS, Windows, Linux)
@@ -193,13 +186,24 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
       }
     }
 
-    // 2. Android (Save directly to the public Downloads folder)
+    // 2. Android
+    // Although it is possible to use an absolute path like '/storage/emulated/0/Download/',
+    // this is a fragile practice and may fail on many devices or Android versions due to
+    // Scoped Storage restrictions. It is recommended to use path_provider to get a valid
+    // and writable directory.
     if (Platform.isAndroid) {
       final String uniqueName = _customFileName.replaceFirst(
         '.mp4',
         '_$timestamp.mp4',
       );
-      return '/storage/emulated/0/Download/$uniqueName';
+
+      final Directory? externalDir = await getExternalStorageDirectory();
+      if (externalDir != null) {
+        return '${externalDir.path}/$uniqueName';
+      }
+
+      final Directory fallbackDir = await getApplicationDocumentsDirectory();
+      return '${fallbackDir.path}/$uniqueName';
     }
 
     // 3. iOS (Save to "On My iPhone" visible app folder)
@@ -283,13 +287,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
         _recordedVideo = file;
       });
 
-      if (kIsWeb && _useCustomPath) {
-        // On Web, trigger a custom download using our AnchorElement helper.
-        downloadFile(file.path, _customFileName);
-        _showNotification('Video download initiated as $_customFileName');
-      } else {
-        _showNotification('Recording finished successfully!');
-      }
+      _showNotification('Recording finished successfully!');
 
       await _playRecordedVideo(file);
     } on CameraException catch (e) {
@@ -350,12 +348,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
       await _videoPlayerController!.dispose();
     }
 
-    VideoPlayerController playerController;
-    if (kIsWeb) {
-      playerController = VideoPlayerController.networkUrl(Uri.parse(file.path));
-    } else {
-      playerController = VideoPlayerController.file(File(file.path));
-    }
+    VideoPlayerController playerController = VideoPlayerController.file(
+      File(file.path),
+    );
 
     _videoPlayerController = playerController;
 
@@ -618,11 +613,9 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
             TextField(
               style: TextStyle(color: textPrimary),
               decoration: InputDecoration(
-                labelText: kIsWeb
-                    ? 'Suggested Download Filename'
-                    : 'Filename, absolute path, or content:// URI',
+                labelText: 'Filename or absolute path',
                 labelStyle: TextStyle(color: textSecondary, fontSize: 13),
-                hintText: 'my_video.mp4 or content://...',
+                hintText: 'my_video.mp4 or /storage/...',
                 prefixIcon: Icon(
                   Icons.description,
                   size: 18,
