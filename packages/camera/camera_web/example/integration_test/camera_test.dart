@@ -1198,57 +1198,6 @@ void main() {
           expect(videoParts, equals(capturedVideoParts));
         });
 
-        testWidgets('stops a video recording and '
-            'returns the captured file '
-            'with the specified videoOutputPath', (WidgetTester tester) async {
-          final camera = Camera(textureId: 1, cameraService: cameraService)
-            ..mediaRecorder = mediaRecorder
-            ..isVideoTypeSupported = isVideoTypeSupported;
-
-          await camera.initialize();
-          await camera.play();
-
-          late EventListener videoDataAvailableListener;
-          late EventListener videoRecordingStoppedListener;
-
-          mockMediaRecorder.addEventListener =
-              (String type, EventListener? callback, [JSAny? options]) {
-                if (type == 'dataavailable') {
-                  videoDataAvailableListener = callback!;
-                } else if (type == 'stop') {
-                  videoRecordingStoppedListener = callback!;
-                }
-              }.toJS;
-
-          Blob? finalVideo;
-          camera.blobBuilder = (List<Blob> blobs, String videoType) {
-            finalVideo = Blob(blobs.toJS, BlobPropertyBag(type: videoType));
-            return finalVideo!;
-          };
-
-          const customPath = 'custom_video_path.mp4';
-          await camera.startVideoRecording(videoOutputPath: customPath);
-
-          mockMediaRecorder.stop = () {}.toJS;
-
-          final Future<XFile> videoFileFuture = camera.stopVideoRecording();
-
-          final capturedVideoPartOne = Blob(<JSAny>[].toJS);
-
-          videoDataAvailableListener.callAsFunction(
-            null,
-            createJSInteropWrapper(FakeBlobEvent(capturedVideoPartOne))
-                as BlobEvent,
-          );
-
-          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
-
-          final XFile videoFile = await videoFileFuture;
-
-          expect(videoFile, isNotNull);
-          expect(videoFile.name, equals(customPath));
-        });
-
         testWidgets('throws a CameraWebException '
             'with videoRecordingNotStarted error '
             'if the video recording was not started', (

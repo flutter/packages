@@ -467,9 +467,7 @@ class CameraPlugin extends CameraPlatform {
     String? videoOutputPath,
   }) {
     // Ignore maxVideoDuration, as it is deprecated.
-    return startVideoCapturing(
-      VideoCaptureOptions(cameraId, videoOutputPath: videoOutputPath),
-    );
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   @override
@@ -496,9 +494,7 @@ class CameraPlugin extends CameraPlatform {
         );
       });
 
-      return camera.startVideoRecording(
-        videoOutputPath: options.videoOutputPath,
-      );
+      return camera.startVideoRecording();
     } on web.DOMException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
     } on CameraWebException catch (e) {

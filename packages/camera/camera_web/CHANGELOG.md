@@ -1,7 +1,6 @@
-## 0.3.5+4
+## NEXT
 
-* Adds support for custom video output path in video recording.
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.3.5+3
 
