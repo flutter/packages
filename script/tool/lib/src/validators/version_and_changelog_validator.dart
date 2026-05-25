@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 
+import '../common/core.dart';
 import '../common/file_utils.dart';
 import '../common/git_version_finder.dart';
 import '../common/output_utils.dart';
@@ -589,7 +590,7 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         'If this PR is not exempt, you can update version and '
         'CHANGELOG with the "update-release-info" command.\n'
         'See here for an example: '
-        'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
+        '$toolDocsUrl#update-changelog-and-version\\\n'
         'For more details on versioning, check the contributing guide.',
       );
     }

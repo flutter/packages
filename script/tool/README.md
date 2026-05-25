@@ -228,3 +228,25 @@ _everything_, including untracked or uncommitted files in version control.
 `publish` will first check the status of the local
 directory and refuse to publish if there are any mismatched files with version
 control present.
+
+## Configuration
+
+The `.repo_tool_config.yaml` file at the root of the repository contains
+configuration for this tool, to support using the same script in multiple
+repositories.
+
+The following sections are supported:
+
+- `repo_name` (**required**): The name of the repository
+  (e.g., `flutter/packages`).
+- `min_flutter` or `min_dart`: The minimum SDK version
+  that packages in the repository are allowed to support.
+- `allowed_dependencies`, containing one or both of:
+  - `pinned`: A list of package names that are allowed as `pubspec.yaml`
+    dependencies as long as they are pinned to an exact version.
+  - `unpinned`: A list of package names that are allowed as `pubspec.yaml`
+    dependencies without a specific version constraint (or with a broad
+    constraint).
+- `package_labels`: A map from a package name to the label to use for that
+  package's issue link query. This is only needed for packages that use a
+  label other than `p: <package_name>`.
