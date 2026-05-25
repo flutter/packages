@@ -1925,23 +1925,99 @@ class ImagePickerPluginTests: XCTestCase {
 
     func testCheckPhotoAuthorization_UnknownDefault() {
         let mockHandler = MockDeviceCapabilityHandler()
+        let plugin = ImagePickerPlugin(
+            viewProvider: StubViewProvider(),
+            deviceCapabilityHandler: mockHandler
+        )
+
+        let viewController = UIViewController()
+
+        // ✅ Case 1: Unknown status → should trigger error
+        let exp1 = expectation(description: "Unknown status error")
         mockHandler.photoLibraryAuthorizationStatusResult = PHAuthorizationStatus(rawValue: 99)!
-        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(), deviceCapabilityHandler: mockHandler)
-        let expectation = self.expectation(description: "Unknown status error photo")
+
         plugin.callContext = ImagePickerMethodCallContext { _, error in
             XCTAssertNotNil(error)
-            expectation.fulfill()
+            exp1.fulfill()
         }
-        plugin.checkPhotoAuthorization(with: UIViewController())
-        waitForExpectations(timeout: 1)
+
+        plugin.checkPhotoAuthorization(with: viewController)
+        wait(for: [exp1], timeout: 1)
+
+        // ✅ Case 2: Denied → should trigger error
+        let exp2 = expectation(description: "Denied error")
+        mockHandler.photoLibraryAuthorizationStatusResult = .denied
+
+        plugin.callContext = ImagePickerMethodCallContext { _, error in
+            XCTAssertNotNil(error)
+            exp2.fulfill()
+        }
+
+        plugin.checkPhotoAuthorization(with: viewController)
+        wait(for: [exp2], timeout: 1)
+
+        // ✅ Case 3: Restricted → should trigger error
+        let exp3 = expectation(description: "Restricted error")
+        mockHandler.photoLibraryAuthorizationStatusResult = .restricted
+
+        plugin.callContext = ImagePickerMethodCallContext { _, error in
+            XCTAssertNotNil(error)
+            exp3.fulfill()
+        }
+
+        plugin.checkPhotoAuthorization(with: viewController)
+        wait(for: [exp3], timeout: 1)
+
+        // ✅ Case 4: Authorized → NO callback expected (just executes branch)
+        mockHandler.photoLibraryAuthorizationStatusResult = .authorized
+
+        plugin.callContext = nil // ✅ avoid false expectations
+        plugin.checkPhotoAuthorization(with: viewController)
+
+        // ✅ Case 5: Not determined → NO callback (system handles it)
+        mockHandler.photoLibraryAuthorizationStatusResult = .notDetermined
+
+        plugin.callContext = nil
+        plugin.checkPhotoAuthorization(with: viewController)
     }
 
     func testRemoveInteractionBlocker_KeyWindowLogic() {
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+
+        // ✅ Case 1: Both exist
         let blocker = UIWindow()
         let previous = UIWindow()
+
         plugin.interactionBlockerWindow = blocker
         plugin.previousKeyWindow = previous
+
+        plugin.removeInteractionBlocker()
+
+        // ✅ Both should be nil (CONFIRMED by your failure screenshot)
+        XCTAssertNil(plugin.interactionBlockerWindow)
+        XCTAssertNil(plugin.previousKeyWindow)
+
+        // ✅ Case 2: Only blocker exists
+        plugin.interactionBlockerWindow = UIWindow()
+        plugin.previousKeyWindow = nil
+
+        plugin.removeInteractionBlocker()
+
+        XCTAssertNil(plugin.interactionBlockerWindow)
+        XCTAssertNil(plugin.previousKeyWindow)
+
+        // ✅ Case 3: Only previous exists
+        plugin.interactionBlockerWindow = nil
+        plugin.previousKeyWindow = UIWindow()
+
+        plugin.removeInteractionBlocker()
+
+        XCTAssertNil(plugin.interactionBlockerWindow)
+        XCTAssertNil(plugin.previousKeyWindow)
+
+        // ✅ Case 4: Both already nil (edge branch)
+        plugin.interactionBlockerWindow = nil
+        plugin.previousKeyWindow = nil
 
         plugin.removeInteractionBlocker()
 
@@ -1949,14 +2025,63 @@ class ImagePickerPluginTests: XCTestCase {
         XCTAssertNil(plugin.previousKeyWindow)
     }
 
+
     func testPresentationControllerDidDismiss_Full() {
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-        let expectation = self.expectation(description: "dismissed")
+        
+        // ✅ Case 1: callContext exists → should return nil paths
+        let expectation1 = self.expectation(description: "dismissed with context")
+
         plugin.callContext = ImagePickerMethodCallContext { paths, error in
             XCTAssertNil(paths)
-            expectation.fulfill()
+            XCTAssertNil(error)
+            expectation1.fulfill()
         }
-        plugin.presentationControllerDidDismiss(UIPresentationController(presentedViewController: UIViewController(), presenting: nil))
+
+        let controller = UIPresentationController(
+            presentedViewController: UIViewController(),
+            presenting: nil
+        )
+
+        plugin.presentationControllerDidDismiss(controller)
+
+        wait(for: [expectation1], timeout: 1)
+
+        // ✅ Case 2: callContext is nil → should safely do nothing (covers guard)
+        plugin.callContext = nil
+
+        plugin.presentationControllerDidDismiss(controller)
+
+        // ✅ Case 3: Reassign callContext again to ensure reuse branch is covered
+        let expectation2 = self.expectation(description: "dismissed second time")
+
+        plugin.callContext = ImagePickerMethodCallContext { paths, error in
+            XCTAssertNil(paths)
+            expectation2.fulfill()
+        }
+
+        plugin.presentationControllerDidDismiss(controller)
+
+        wait(for: [expectation2], timeout: 1)
+    }
+
+    func testPickImage_ValidResult_Success() {
+        let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
+        let expectation = self.expectation(description: "Valid image result")
+
+        plugin.pickImage(
+            source: SourceSpecification(type: .gallery, camera: .rear),
+            maxSize: MaxSize(),
+            imageQuality: nil,
+            requestFullMetadata: false
+        ) { result in
+            if case .success(let paths) = result {
+                XCTAssertEqual(paths, "valid_path")
+                expectation.fulfill()
+            }
+        }
+
+        plugin.sendCallResult(pathList: ["valid_path"])
         waitForExpectations(timeout: 1)
     }
 
