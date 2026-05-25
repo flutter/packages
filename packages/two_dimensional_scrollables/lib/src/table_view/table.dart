@@ -585,7 +585,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // scrollable cells from stealing hits inside the trailing pinned area.
       // This mirrors the pushClipRect applied to each section during painting.
       if (cellRect.contains(position) &&
-          _sectionClipRectFor(cellParentData.tableVicinity).contains(position)) {
+          _sectionClipRectFor(
+            cellParentData.tableVicinity,
+          ).contains(position)) {
         result.addWithPaintOffset(
           offset: cellParentData.paintOffset,
           position: position,
