@@ -532,9 +532,8 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
     std::string ext = file_path.substr(last_dot);
     for (auto& c : ext) c = (char)tolower(c);
     if (ext != ".mp4") {
-      return OnRecordStarted(
-          CameraResult::kError,
-          "Invalid video extension. Supported: .mp4");
+      return OnRecordStarted(CameraResult::kError,
+                             "Invalid video extension. Supported: .mp4");
     }
   }
 
