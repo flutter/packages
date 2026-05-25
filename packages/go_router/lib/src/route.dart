@@ -160,6 +160,7 @@ typedef ExitCallback =
 abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     this.redirect,
+    this.metadata,
     required this.routes,
     required this.parentNavigatorKey,
   });
@@ -230,6 +231,11 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  /// Metadata associated with the current route.
+  ///
+  /// Metadata is inherited from parent routes and overridden by child routes.
+  final Map<String, dynamic>? metadata;
+
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
@@ -279,6 +285,7 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     super.redirect,
+    super.metadata,
     this.onExit,
     this.caseSensitive = true,
     super.routes = const <RouteBase>[],
@@ -498,6 +505,7 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    super.metadata,
     this.notifyRootObserver = true,
   }) : super._();
 
@@ -715,6 +723,7 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     super.notifyRootObserver,
     this.observers,
+    super.metadata,
     required super.routes,
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -900,6 +909,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
+    super.metadata,
     this.restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : assert(branches.isNotEmpty),

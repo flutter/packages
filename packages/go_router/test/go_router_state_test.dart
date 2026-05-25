@@ -351,5 +351,76 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('B'), findsOneWidget);
     });
+
+    testWidgets('metadata inherits, overrides, and defaults to empty map', (
+      WidgetTester tester,
+    ) async {
+      GoRouterState? inheritedState;
+      GoRouterState? overriddenState;
+      GoRouterState? emptyState;
+
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          metadata: const <String, dynamic>{
+            'fromParent': 'yes',
+            'shared': 'parent',
+          },
+          builder: (_, __) => const SizedBox.shrink(),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'inherit',
+              builder: (BuildContext context, GoRouterState state) {
+                inheritedState = state;
+                return const Text('inherit');
+              },
+            ),
+            GoRoute(
+              path: 'override',
+              metadata: const <String, dynamic>{
+                'shared': 'child',
+                'childOnly': true,
+              },
+              builder: (BuildContext context, GoRouterState state) {
+                overriddenState = state;
+                return const Text('override');
+              },
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/empty',
+          builder: (BuildContext context, GoRouterState state) {
+            emptyState = state;
+            return const Text('empty');
+          },
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      router.go('/inherit');
+      await tester.pumpAndSettle();
+      expect(inheritedState, isNotNull);
+      expect(inheritedState!.metadata, const <String, dynamic>{
+        'fromParent': 'yes',
+        'shared': 'parent',
+      });
+
+      router.go('/override');
+      await tester.pumpAndSettle();
+      expect(overriddenState, isNotNull);
+      expect(overriddenState!.metadata, const <String, dynamic>{
+        'fromParent': 'yes',
+        'shared': 'child',
+        'childOnly': true,
+      });
+
+      router.go('/empty');
+      await tester.pumpAndSettle();
+      expect(emptyState, isNotNull);
+      expect(emptyState!.metadata, isEmpty);
+      expect(emptyState!.metadata, isNotNull);
+    });
   });
 }

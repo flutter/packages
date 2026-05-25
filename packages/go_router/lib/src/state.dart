@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -27,6 +28,7 @@ class GoRouterState {
     this.error,
     required this.pageKey,
     this.topRoute,
+    this.metadata = const <String, dynamic>{},
   });
   final RouteConfiguration _configuration;
 
@@ -82,6 +84,12 @@ class GoRouterState {
   /// matched location associated with the [ShellRoute]. This allows the [ShellRoute]'s
   /// associated GoRouterState to be uniquely identified using [GoRoute.name]
   final GoRoute? topRoute;
+
+  /// Metadata associated with the current route.
+  ///
+  /// Metadata is inherited from parent routes and overridden by child routes.
+  /// This map is never null.
+  final Map<String, dynamic> metadata;
 
   /// Gets the [GoRouterState] from context.
   ///
@@ -182,7 +190,8 @@ class GoRouterState {
         other.pathParameters == pathParameters &&
         other.extra == extra &&
         other.error == error &&
-        other.pageKey == pageKey;
+        other.pageKey == pageKey &&
+        const MapEquality<String, dynamic>().equals(other.metadata, metadata);
   }
 
   @override
@@ -196,6 +205,12 @@ class GoRouterState {
     extra,
     error,
     pageKey,
+    Object.hashAllUnordered(
+      metadata.entries.map<int>(
+        (MapEntry<String, dynamic> entry) =>
+            Object.hash(entry.key, entry.value),
+      ),
+    ),
   );
 }
 

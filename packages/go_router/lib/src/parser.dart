@@ -595,6 +595,7 @@ class _OnEnterHandler {
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
       error: matchList.error,
+      metadata: matchList.topRouteMetadata,
     );
   }
 
