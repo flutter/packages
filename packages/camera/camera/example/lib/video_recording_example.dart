@@ -13,7 +13,6 @@ void main() {
   runApp(const VideoRecordingExampleApp());
 }
 
-/// A premium, highly interactive standalone example demonstrating the
 /// Video Recording feature with custom output paths (`videoOutputPath`)
 class VideoRecordingExampleApp extends StatefulWidget {
   /// Default Constructor.
