@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -348,9 +347,7 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
       await _videoPlayerController!.dispose();
     }
 
-    VideoPlayerController playerController = VideoPlayerController.file(
-      File(file.path),
-    );
+    final playerController = VideoPlayerController.file(File(file.path));
 
     _videoPlayerController = playerController;
 
