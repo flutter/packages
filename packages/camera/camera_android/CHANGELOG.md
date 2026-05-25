@@ -1,6 +1,11 @@
 ## 0.10.10+17
 
 * Adds support for custom video output path in video recording.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.10.10+17
+
+* Reset AE and AF triggers to idle after capture to fix camera flash remaining issue #97501.
 
 ## 0.10.10+16
 

@@ -21,6 +21,7 @@ String? encodeQueryParameters(Map<String, String> params) {
       )
       .join('&');
 }
+
 // #enddocregion encode-query-parameters
 
 void main() => runApp(

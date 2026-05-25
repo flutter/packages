@@ -339,29 +339,33 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
   }
 
-  void _updateScrollBounds() {
+  void _updateVerticalScrollBounds() {
+    final double maxVerticalExtent = _rowMetrics.isEmpty
+        ? 0.0
+        : math.max(
+            0.0,
+            _rowMetrics[_rowMetrics.length - 1]!.trailingOffset -
+                viewportDimension.height,
+          );
+    _verticalOverflows = maxVerticalExtent > 0.0;
+    final bool acceptedDimension = verticalOffset.applyContentDimensions(
+      0.0,
+      maxVerticalExtent,
+    );
+    if (!acceptedDimension) {
+      // If the scroll offset was corrected (e.g., clamped), we must
+      // re-calculate which rows are now visible.
+      _updateFirstAndLastVisibleRow();
+    }
+  }
+
+  void _updateHorizontalScrollBounds() {
     final double maxHorizontalExtent = math.max(
       0.0,
       _furthestHorizontalExtent - viewportDimension.width,
     );
     _horizontalOverflows = maxHorizontalExtent > 0.0;
-
-    final double verticalLeadingExtent = verticalOffset.pixels;
-    final double verticalTrailingExtent =
-        _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height;
-    final double maxVerticalExtent = math.max(
-      0.0,
-      math.max(verticalLeadingExtent, verticalTrailingExtent),
-    );
-    _verticalOverflows = maxVerticalExtent > 0.0;
-
-    final bool acceptedDimension =
-        horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent) &&
-        verticalOffset.applyContentDimensions(0.0, maxVerticalExtent);
-
-    if (!acceptedDimension) {
-      _updateFirstAndLastVisibleRow();
-    }
+    horizontalOffset.applyContentDimensions(0.0, maxHorizontalExtent);
   }
 
   @override
@@ -389,12 +393,28 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
     }
 
+    // Ensure vertical scroll bounds are updated before layout. This allows
+    // any scroll corrections (e.g., clamping when the tree shrinks) to
+    // be applied immediately, ensuring the layout loop builds the rows
+    // that will actually be visible at the corrected offset.
+    _updateVerticalScrollBounds();
+
     if (_firstRow == null) {
-      assert(_lastRow == null);
+      // If no rows are visible, we must still update horizontal bounds
+      // before returning to ensure the horizontal scroll controller
+      // has the latest information.
+      _updateHorizontalScrollBounds();
+      // To satisfy older framework versions that require at least one vicinity
+      // to be laid out (even if no child is built).
+      // See also: https://github.com/flutter/flutter/pull/180563
+      buildOrObtainChildFor(const TreeVicinity(depth: 0, row: 0));
+      // Return early to avoid a framework crash in RenderTwoDimensionalViewport
+      // where it expects at least one child to be laid out if the layout
+      // pass completes.
       return;
     }
-    assert(_firstRow != null && _lastRow != null);
 
+    assert(_lastRow != null);
     _Span rowSpan;
     double rowOffset =
         -verticalOffset.pixels +
@@ -423,11 +443,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       );
       rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
       _furthestHorizontalExtent = math.max(
-        parentData.layoutOffset!.dx + child.size.width,
+        parentData.layoutOffset!.dx +
+            horizontalOffset.pixels +
+            child.size.width,
         _furthestHorizontalExtent,
       );
     }
-    _updateScrollBounds();
+    _updateHorizontalScrollBounds();
   }
 
   // Maps the UniqueKey associated with animating node segments with the clip
