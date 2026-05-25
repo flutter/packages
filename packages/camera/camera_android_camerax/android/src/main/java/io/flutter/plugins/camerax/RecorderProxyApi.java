@@ -83,7 +83,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
           "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
     }
 
-    String lowerPath = path.toLowerCase();
+    String lowerPath = path.toLowerCase(Locale.ROOT);
     if (!lowerPath.endsWith(".mp4")
         && !lowerPath.endsWith(".mov")
         && !lowerPath.endsWith(".3gp")
