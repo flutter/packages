@@ -164,6 +164,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
 
     try {
       await controller.initialize();
+      if (!mounted) {
+        await controller.dispose();
+        return;
+      }
     } on CameraException catch (e) {
       _showNotification('Camera error: ${e.description}', isError: true);
     }
