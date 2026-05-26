@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
+
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
@@ -154,7 +156,7 @@ void main() {
       repoRoot = packagesDir.parent;
       // Set an basic config with just the required elements so that tests
       // that don't need test-specific settings still pass.
-      setToolConfig(repoRoot);
+      setToolConfig(repoRoot, minDartVersion: '1.0.0');
 
       final command = ValidateCommand(
         packagesDir,
@@ -490,7 +492,11 @@ ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
-      setToolConfig(repoRoot, repoName: 'flutter/core-packages');
+      setToolConfig(
+        repoRoot,
+        repoName: 'flutter/core-packages',
+        minDartVersion: '3.0.0',
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'validate',
@@ -1668,6 +1674,106 @@ ${_topicsSection()}
       },
     );
 
+    test('fails when a non-Flutter package has a too-low minimum Dart version '
+        'for the min Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
+
+      package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+      setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
+        ]),
+      );
+    });
+
+    test(
+      'passes when a non-Flutter package requires exactly the minimum Dart version '
+      'for the min Flutter version',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+        );
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+        setToolConfig(repoRoot, minFlutterVersion: '3.32.0');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'validate',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      },
+    );
+
+    test(
+      'passes when a non-Flutter package requires a higher minimum Dart version '
+      'for the min Flutter version',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          isFlutter: true,
+          examples: <String>[],
+        );
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+        setToolConfig(repoRoot, minFlutterVersion: '3.22.0');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'validate',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      },
+    );
+
     test(
       'fails when a non-Flutter package has a too-low minimum Dart version',
       () async {
@@ -1683,7 +1789,7 @@ ${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
+        setToolConfig(repoRoot, minDartVersion: '3.10.0');
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
@@ -1720,7 +1826,7 @@ ${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setToolConfig(repoRoot, minFlutterVersion: '3.32.0');
+        setToolConfig(repoRoot, minDartVersion: '3.8.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1752,7 +1858,7 @@ ${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setToolConfig(repoRoot, minFlutterVersion: '3.22.0');
+        setToolConfig(repoRoot, minDartVersion: '3.6.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1967,6 +2073,7 @@ ${_topicsSection()}
         setToolConfig(
           packagesDir.parent,
           unpinnedDependencies: <String>['allowed'],
+          minDartVersion: '1.0.0',
         );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1999,6 +2106,7 @@ ${_topicsSection()}
           setToolConfig(
             packagesDir.parent,
             pinnedDependencies: <String>['allow_pinned'],
+            minDartVersion: '1.0.0',
           );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -2032,6 +2140,7 @@ ${_topicsSection()}
           setToolConfig(
             packagesDir.parent,
             pinnedDependencies: <String>['allow_pinned'],
+            minDartVersion: '1.0.0',
           );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -2063,6 +2172,7 @@ ${_topicsSection()}
         setToolConfig(
           packagesDir.parent,
           pinnedDependencies: <String>['allow_pinned'],
+          minDartVersion: '1.0.0',
         );
 
         Error? commandError;
