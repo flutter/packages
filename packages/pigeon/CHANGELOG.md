@@ -1,4 +1,4 @@
-## NEXT
+## 26.4.0
 
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * [swift] Adds `CaseIterable` conformance to generated enums.
