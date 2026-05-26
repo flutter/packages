@@ -11,6 +11,7 @@ environment:
 
 workspace:
   - example
+  - tool/gen_defaults
 
 dependencies:
   collection: ^1.19.1
