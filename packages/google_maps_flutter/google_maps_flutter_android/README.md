@@ -56,7 +56,7 @@ This mode is more performant than Hybrid Composition and we recommend that you u
 
 #### Hybrid Composition
 
-This mode is available for backwards compatability and corresponds to `useAndroidViewSurface = true`.
+This mode is available for backwards compatibility and corresponds to `useAndroidViewSurface = true`.
 We do not recommend its use as it is less performant than Texture Layer Hybrid Composition and
 certain flutter rendering effects are not supported.
 
