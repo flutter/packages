@@ -1,10 +1,7 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
-
 ## 4.13.0
 
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 4.12.0
 
