@@ -30,6 +30,8 @@ import 'src/third_party/to_screen_location/to_screen_location.dart';
 import 'src/types.dart';
 import 'src/utils.dart';
 
+export 'src/dom_window_extension.dart';
+
 part 'src/circle.dart';
 part 'src/circles.dart';
 part 'src/convert.dart';

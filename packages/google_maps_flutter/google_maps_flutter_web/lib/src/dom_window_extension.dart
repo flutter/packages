@@ -9,6 +9,7 @@
 library;
 
 import 'dart:js_interop';
+import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 
 /// This extension gives [web.Window] a nullable getter to the `trustedTypes`
@@ -43,4 +44,62 @@ extension CreateHTMLNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createHTML` with only the `input` argument.
   @JS('createHTML')
   external web.TrustedHTML createHTMLNoArgs(String input);
+}
+
+/// This extension gives [web.Window] a nullable getter to the `google`
+/// property, which is used to check if the Google Maps SDK is loaded.
+@visibleForTesting
+extension NullableGoogleGetter on web.Window {
+  /// (Nullable) Bindings to window.google.
+  @JS('google')
+  external JSObject? get nullableGoogle;
+}
+
+/// Nullable bindings to get `maps` from a JSObject.
+@visibleForTesting
+extension NullableMapsGetter on JSObject {
+  /// (Nullable) Bindings to google.maps.
+  @JS('maps')
+  external JSObject? get nullableMaps;
+}
+
+/// Nullable bindings to get `visualization` from a JSObject.
+@visibleForTesting
+extension NullableVisualizationGetter on JSObject {
+  /// (Nullable) Bindings to google.maps.visualization.
+  @JS('visualization')
+  external JSObject? get nullableVisualization;
+
+  /// Bindings to set google.maps.visualization (for testing).
+  @JS('visualization')
+  external set nullableVisualization(JSObject? value);
+}
+
+/// Nullable bindings to get `HeatmapLayer` from a JSObject.
+@visibleForTesting
+extension NullableHeatmapLayerGetter on JSObject {
+  /// (Nullable) Bindings to google.maps.visualization.HeatmapLayer.
+  @JS('HeatmapLayer')
+  external JSObject? get nullableHeatmapLayer;
+
+  /// Bindings to set HeatmapLayer (for testing).
+  @JS('HeatmapLayer')
+  external set nullableHeatmapLayer(JSObject? value);
+}
+
+/// Returns whether the Heatmap Layer is supported by the loaded Google Maps JS SDK.
+bool isHeatmapSupported() {
+  final JSObject? google = web.window.nullableGoogle;
+  if (google == null) {
+    return false;
+  }
+  final JSObject? maps = google.nullableMaps;
+  if (maps == null) {
+    return false;
+  }
+  final JSObject? visualization = maps.nullableVisualization;
+  if (visualization == null) {
+    return false;
+  }
+  return visualization.nullableHeatmapLayer != null;
 }

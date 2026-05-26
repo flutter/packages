@@ -582,6 +582,7 @@ class GoogleMapController {
       _heatmapsController != null,
       'Cannot update heatmaps after dispose().',
     );
+    _heatmapsController?.flushPendingHeatmaps();
     _heatmapsController?.addHeatmaps(updates.heatmapsToAdd);
     _heatmapsController?.changeHeatmaps(updates.heatmapsToChange);
     _heatmapsController?.removeHeatmaps(updates.heatmapIdsToRemove);

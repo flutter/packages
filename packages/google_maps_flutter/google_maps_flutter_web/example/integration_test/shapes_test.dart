@@ -12,9 +12,10 @@ import 'package:google_maps/google_maps_geometry.dart' as geometry;
 import 'package:google_maps/google_maps_visualization.dart' as visualization;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
-// ignore: implementation_imports
-import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart' as web;
+
+import 'shared_mocks.dart';
 
 // This value is used when comparing the results of
 // converting from a byte value to a double between 0 and 1.
@@ -32,7 +33,7 @@ void main() {
   late gmaps.Map map;
 
   setUp(() {
-    map = gmaps.Map(createDivElement());
+    map = gmaps.Map(web.document.createElement('div') as web.HTMLDivElement);
   });
 
   group('CirclesController', () {
@@ -460,8 +461,6 @@ void main() {
   });
 
   group('HeatmapsController', () {
-    late HeatmapsController controller;
-
     const heatmapPoints = <WeightedLatLng>[
       WeightedLatLng(LatLng(37.782, -122.447)),
       WeightedLatLng(LatLng(37.782, -122.445)),
@@ -479,123 +478,200 @@ void main() {
       WeightedLatLng(LatLng(37.785, -122.435)),
     ];
 
-    setUp(() {
-      controller = HeatmapsController();
-      controller.bindToMap(123, map);
+    group('Heatmaps on Google Maps JS SDK v3.64 (Supported)', () {
+      late HeatmapsController controller;
+
+      setUp(() {
+        injectMockHeatmapLayer();
+        mockVisualizationLibrary();
+
+        controller = HeatmapsController();
+        controller.bindToMap(123, map);
+      });
+
+      tearDown(() {
+        restoreVisualizationLibrary();
+      });
+
+      testWidgets('addHeatmaps', (WidgetTester tester) async {
+        final heatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('2'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+
+        controller.addHeatmaps(heatmaps);
+
+        expect(controller.heatmaps.length, 2);
+        expect(controller.heatmaps, contains(const HeatmapId('1')));
+        expect(controller.heatmaps, contains(const HeatmapId('2')));
+        expect(controller.heatmaps, isNot(contains(const HeatmapId('66'))));
+      });
+
+      testWidgets('changeHeatmaps', (WidgetTester tester) async {
+        final heatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: <WeightedLatLng>[],
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+        controller.addHeatmaps(heatmaps);
+
+        expect(
+          controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
+          hasLength(0),
+        );
+
+        final updatedHeatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: <WeightedLatLng>[WeightedLatLng(LatLng(0, 0))],
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+        controller.changeHeatmaps(updatedHeatmaps);
+
+        expect(controller.heatmaps.length, 1);
+        expect(
+          controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
+          hasLength(1),
+        );
+      });
+
+      testWidgets('removeHeatmaps', (WidgetTester tester) async {
+        final heatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('2'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('3'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+
+        controller.addHeatmaps(heatmaps);
+
+        expect(controller.heatmaps.length, 3);
+
+        // Remove some heatmaps...
+        final heatmapIdsToRemove = <HeatmapId>{
+          const HeatmapId('1'),
+          const HeatmapId('3'),
+        };
+
+        controller.removeHeatmaps(heatmapIdsToRemove);
+
+        expect(controller.heatmaps.length, 1);
+        expect(controller.heatmaps, isNot(contains(const HeatmapId('1'))));
+        expect(controller.heatmaps, contains(const HeatmapId('2')));
+        expect(controller.heatmaps, isNot(contains(const HeatmapId('3'))));
+      });
+
+      testWidgets('Converts colors to CSS', (WidgetTester tester) async {
+        final heatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: heatmapPoints,
+            gradient: HeatmapGradient(<HeatmapGradientColor>[
+              HeatmapGradientColor(Color(0xFFFABADA), 0),
+            ]),
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+
+        controller.addHeatmaps(heatmaps);
+
+        final visualization.HeatmapLayer heatmap =
+            controller.heatmaps.values.first.heatmap!;
+
+        expect(
+          (heatmap.get('gradient')! as JSArray<JSString>).toDart.map(
+            (JSString? value) => value!.toDart,
+          ),
+          <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
+        );
+      });
     });
 
-    testWidgets('addHeatmaps', (WidgetTester tester) async {
-      final heatmaps = <Heatmap>{
-        const Heatmap(
-          heatmapId: HeatmapId('1'),
-          data: heatmapPoints,
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-        const Heatmap(
-          heatmapId: HeatmapId('2'),
-          data: heatmapPoints,
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-      };
+    group('Heatmaps on Google Maps JS SDK v3.65 (Unsupported)', () {
+      late HeatmapsController controller;
 
-      controller.addHeatmaps(heatmaps);
+      setUp(() {
+        controller = HeatmapsController();
+        controller.bindToMap(123, map);
+      });
 
-      expect(controller.heatmaps.length, 2);
-      expect(controller.heatmaps, contains(const HeatmapId('1')));
-      expect(controller.heatmaps, contains(const HeatmapId('2')));
-      expect(controller.heatmaps, isNot(contains(const HeatmapId('66'))));
-    });
+      testWidgets(
+        'addHeatmaps gracefully bypasses and queues heatmaps without crashing',
+        (WidgetTester tester) async {
+          final heatmaps = <Heatmap>{
+            const Heatmap(
+              heatmapId: HeatmapId('1'),
+              data: heatmapPoints,
+              radius: HeatmapRadius.fromPixels(20),
+            ),
+          };
 
-    testWidgets('changeHeatmaps', (WidgetTester tester) async {
-      final heatmaps = <Heatmap>{
-        const Heatmap(
-          heatmapId: HeatmapId('1'),
-          data: <WeightedLatLng>[],
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-      };
-      controller.addHeatmaps(heatmaps);
+          controller.addHeatmaps(heatmaps);
 
-      expect(
-        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
-        hasLength(0),
+          expect(controller.heatmaps.isEmpty, isTrue);
+          expect(
+            controller.pendingHeatmaps,
+            contains(
+              const Heatmap(
+                heatmapId: HeatmapId('1'),
+                data: heatmapPoints,
+                radius: HeatmapRadius.fromPixels(20),
+              ),
+            ),
+          );
+        },
       );
 
-      final updatedHeatmaps = <Heatmap>{
-        const Heatmap(
-          heatmapId: HeatmapId('1'),
-          data: <WeightedLatLng>[WeightedLatLng(LatLng(0, 0))],
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-      };
-      controller.changeHeatmaps(updatedHeatmaps);
+      testWidgets(
+        'recovers and flushes pending queue when support becomes active later',
+        (WidgetTester tester) async {
+          final heatmaps = <Heatmap>{
+            const Heatmap(
+              heatmapId: HeatmapId('1'),
+              data: heatmapPoints,
+              radius: HeatmapRadius.fromPixels(20),
+            ),
+          };
 
-      expect(controller.heatmaps.length, 1);
-      expect(
-        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
-        hasLength(1),
-      );
-    });
+          controller.addHeatmaps(heatmaps);
 
-    testWidgets('removeHeatmaps', (WidgetTester tester) async {
-      final heatmaps = <Heatmap>{
-        const Heatmap(
-          heatmapId: HeatmapId('1'),
-          data: heatmapPoints,
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-        const Heatmap(
-          heatmapId: HeatmapId('2'),
-          data: heatmapPoints,
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-        const Heatmap(
-          heatmapId: HeatmapId('3'),
-          data: heatmapPoints,
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-      };
+          expect(controller.heatmaps.isEmpty, isTrue);
+          expect(controller.pendingHeatmaps.length, 1);
 
-      controller.addHeatmaps(heatmaps);
+          injectMockHeatmapLayer();
+          mockVisualizationLibrary();
+          try {
+            controller.flushPendingHeatmaps();
 
-      expect(controller.heatmaps.length, 3);
-
-      // Remove some polylines...
-      final heatmapIdsToRemove = <HeatmapId>{
-        const HeatmapId('1'),
-        const HeatmapId('3'),
-      };
-
-      controller.removeHeatmaps(heatmapIdsToRemove);
-
-      expect(controller.heatmaps.length, 1);
-      expect(controller.heatmaps, isNot(contains(const HeatmapId('1'))));
-      expect(controller.heatmaps, contains(const HeatmapId('2')));
-      expect(controller.heatmaps, isNot(contains(const HeatmapId('3'))));
-    });
-
-    testWidgets('Converts colors to CSS', (WidgetTester tester) async {
-      final heatmaps = <Heatmap>{
-        const Heatmap(
-          heatmapId: HeatmapId('1'),
-          data: heatmapPoints,
-          gradient: HeatmapGradient(<HeatmapGradientColor>[
-            HeatmapGradientColor(Color(0xFFFABADA), 0),
-          ]),
-          radius: HeatmapRadius.fromPixels(20),
-        ),
-      };
-
-      controller.addHeatmaps(heatmaps);
-
-      final visualization.HeatmapLayer heatmap =
-          controller.heatmaps.values.first.heatmap!;
-
-      expect(
-        (heatmap.get('gradient')! as JSArray<JSString>).toDart.map(
-          (JSString? value) => value!.toDart,
-        ),
-        <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
+            expect(controller.heatmaps.length, 1);
+            expect(controller.heatmaps, contains(const HeatmapId('1')));
+            expect(controller.pendingHeatmaps.isEmpty, isTrue);
+          } finally {
+            restoreVisualizationLibrary();
+          }
+        },
       );
     });
   });

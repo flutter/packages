@@ -1,5 +1,6 @@
 ## NEXT
 
+* Gracefully bypasses `HeatmapLayer` instantiation and operations when unsupported by the loaded Google Maps JavaScript API (version 3.65+), preventing runtime web crashes.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.6.2+1

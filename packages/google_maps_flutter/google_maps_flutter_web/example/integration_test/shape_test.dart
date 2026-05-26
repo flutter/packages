@@ -8,8 +8,12 @@ import 'dart:js_interop';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps/google_maps_visualization.dart' as visualization;
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart' as web;
+
+import 'shared_mocks.dart';
 
 /// Test Shapes (Circle, Polygon, Polyline)
 void main() {
@@ -203,47 +207,82 @@ void main() {
   });
 
   group('HeatmapController', () {
-    late visualization.HeatmapLayer heatmap;
-
-    setUp(() {
-      heatmap = visualization.HeatmapLayer();
-    });
-
-    testWidgets('update', (WidgetTester tester) async {
-      final controller = HeatmapController(heatmap: heatmap);
-      final options = visualization.HeatmapLayerOptions()
-        ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
-
-      expect(heatmap.data.array.toDart, hasLength(0));
-
-      controller.update(options);
-
-      expect(heatmap.data.array.toDart, hasLength(1));
-    });
-
-    group('remove', () {
-      late HeatmapController controller;
+    group('Heatmap on Google Maps JS SDK v3.64 (Supported)', () {
+      late visualization.HeatmapLayer heatmap;
 
       setUp(() {
-        controller = HeatmapController(heatmap: heatmap);
+        injectMockHeatmapLayer();
+        mockVisualizationLibrary();
+
+        heatmap = visualization.HeatmapLayer();
       });
 
-      testWidgets('drops gmaps instance', (WidgetTester tester) async {
-        controller.remove();
-
-        expect(controller.heatmap, isNull);
+      tearDown(() {
+        restoreVisualizationLibrary();
       });
 
-      testWidgets('cannot call update after remove', (
+      testWidgets('update', (WidgetTester tester) async {
+        final controller = HeatmapController(heatmap: heatmap);
+        final options = visualization.HeatmapLayerOptions()
+          ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
+
+        expect(heatmap.data.array.toDart, hasLength(0));
+
+        controller.update(options);
+
+        expect(heatmap.data.array.toDart, hasLength(1));
+      });
+
+      group('remove', () {
+        late HeatmapController controller;
+
+        setUp(() {
+          controller = HeatmapController(heatmap: heatmap);
+        });
+
+        testWidgets('drops gmaps instance', (WidgetTester tester) async {
+          controller.remove();
+
+          expect(controller.heatmap, isNull);
+        });
+
+        testWidgets('cannot call update after remove', (
+          WidgetTester tester,
+        ) async {
+          final options = visualization.HeatmapLayerOptions()
+            ..dissipating = true;
+
+          controller.remove();
+
+          expect(() {
+            controller.update(options);
+          }, throwsAssertionError);
+        });
+      });
+    });
+
+    group('Heatmap on Google Maps JS SDK v3.65 (Unsupported)', () {
+      testWidgets('gracefully bypasses and logs warning exactly once', (
         WidgetTester tester,
       ) async {
-        final options = visualization.HeatmapLayerOptions()..dissipating = true;
+        final controller = HeatmapsController();
+        final map = gmaps.Map(
+          web.document.createElement('div') as web.HTMLDivElement,
+        );
+        controller.bindToMap(123, map);
 
-        controller.remove();
+        final heatmaps = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('1'),
+            data: <WeightedLatLng>[],
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
 
-        expect(() {
-          controller.update(options);
-        }, throwsAssertionError);
+        controller.addHeatmaps(heatmaps);
+
+        expect(controller.heatmaps.isEmpty, isTrue);
+        expect(controller.pendingHeatmaps.length, 1);
       });
     });
   });
