@@ -243,7 +243,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
-          "The operation couldn’t be completed. (NSURLErrorDomain error -1009.)")
+          "The operation couldn’t be completed. (in_app_purchase_storekit.PigeonError error 1.)")
         expectation.fulfill()
       }
     }
@@ -574,4 +574,20 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
     await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
   }
+  @available(iOS 16.0, macOS 15.0, *)
+  func testRedeemCodeSheetFailsGracefullyWhenNoWindow() {
+    let expectation = self.expectation(
+      description: "Should fail gracefully when without key window")
+
+    plugin.registrar = nil
+
+    plugin.presentOfferCodeRedeemSheet { result in
+      if case .failure = result {
+        expectation.fulfill()
+      }
+    }
+
+    waitForExpectations(timeout: 1.0)
+  }
+
 }

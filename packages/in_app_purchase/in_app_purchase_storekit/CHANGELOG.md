@@ -1,7 +1,12 @@
-## 0.4.8+2
+## 0.4.10
 
 * Clarifies `completePurchase` usage and the consequences of unfinished transactions in the README and API docstrings.
 * Prevents duplicate purchase attempts in StoreKit 2 by throwing a `storekit_duplicate_product_object` error when a product already has an unfinished transaction.
+
+## 0.4.9
+
+* Add support for offer codes in StoreKit 2.
+* Updates minimum supported SDK version to Flutter 3.38.
 
 ## 0.4.8+1
 

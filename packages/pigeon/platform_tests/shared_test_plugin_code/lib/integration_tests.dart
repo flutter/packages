@@ -3265,87 +3265,75 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     TargetGenerator.swift,
   ];
 
-  testWidgets(
-    'event channel sends continuous ints',
-    (_) async {
-      final Stream<int> events = streamInts();
-      final List<int> listEvents = await events.toList();
-      for (final value in listEvents) {
-        expect(listEvents[value], value);
+  testWidgets('event channel sends continuous ints', (_) async {
+    final Stream<int> events = streamInts();
+    final List<int> listEvents = await events.toList();
+    for (final value in listEvents) {
+      expect(listEvents[value], value);
+    }
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channel handles extended sealed classes', (_) async {
+    final completer = Completer<void>();
+    var count = 0;
+    final Stream<PlatformEvent> events = streamEvents();
+    events.listen((PlatformEvent event) {
+      switch (event) {
+        case IntEvent():
+          expect(event.value, 1);
+          expect(count, 0);
+          count++;
+        case StringEvent():
+          expect(event.value, 'string');
+          expect(count, 1);
+          count++;
+        case BoolEvent():
+          expect(event.value, false);
+          expect(count, 2);
+          count++;
+        case DoubleEvent():
+          expect(event.value, 3.14);
+          expect(count, 3);
+          count++;
+        case ObjectsEvent():
+          expect(event.value, true);
+          expect(count, 4);
+          count++;
+        case EnumEvent():
+          expect(event.value, EventEnum.fortyTwo);
+          expect(count, 5);
+          count++;
+        case ClassEvent():
+          expect(event.value.aNullableInt, 0);
+          expect(count, 6);
+          count++;
+          completer.complete();
       }
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+    });
+    await completer.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 
-  testWidgets(
-    'event channel handles extended sealed classes',
-    (_) async {
-      final completer = Completer<void>();
-      var count = 0;
-      final Stream<PlatformEvent> events = streamEvents();
-      events.listen((PlatformEvent event) {
-        switch (event) {
-          case IntEvent():
-            expect(event.value, 1);
-            expect(count, 0);
-            count++;
-          case StringEvent():
-            expect(event.value, 'string');
-            expect(count, 1);
-            count++;
-          case BoolEvent():
-            expect(event.value, false);
-            expect(count, 2);
-            count++;
-          case DoubleEvent():
-            expect(event.value, 3.14);
-            expect(count, 3);
-            count++;
-          case ObjectsEvent():
-            expect(event.value, true);
-            expect(count, 4);
-            count++;
-          case EnumEvent():
-            expect(event.value, EventEnum.fortyTwo);
-            expect(count, 5);
-            count++;
-          case ClassEvent():
-            expect(event.value.aNullableInt, 0);
-            expect(count, 6);
-            count++;
-            completer.complete();
-        }
-      });
-      await completer.future;
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+  testWidgets('event channels handle multiple instances', (_) async {
+    final completer1 = Completer<void>();
+    final completer2 = Completer<void>();
+    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
 
-  testWidgets(
-    'event channels handle multiple instances',
-    (_) async {
-      final completer1 = Completer<void>();
-      final completer2 = Completer<void>();
-      final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
-      final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+    events1
+        .listen((int event) {
+          expect(event, 1);
+        })
+        .onDone(() => completer1.complete());
 
-      events1
-          .listen((int event) {
-            expect(event, 1);
-          })
-          .onDone(() => completer1.complete());
+    events2
+        .listen((int event) {
+          expect(event, 2);
+        })
+        .onDone(() => completer2.complete());
 
-      events2
-          .listen((int event) {
-            expect(event, 2);
-          })
-          .onDone(() => completer2.complete());
-
-      await completer1.future;
-      await completer2.future;
-    },
-    skip: !eventChannelSupported.contains(targetGenerator),
-  );
+    await completer1.future;
+    await completer2.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

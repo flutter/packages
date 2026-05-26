@@ -287,7 +287,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                               googleIdTokenCredential.getDisplayName(),
                               googleIdTokenCredential.getFamilyName(),
                               googleIdTokenCredential.getGivenName(),
-                              googleIdTokenCredential.getId(),
+                              googleIdTokenCredential.getEmail(),
                               googleIdTokenCredential.getIdToken(),
                               profilePictureUri == null ? null : profilePictureUri.toString())));
                 } else {
@@ -384,7 +384,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
         if (params.getServerClientIdForForcedRefreshToken() != null) {
           authorizationRequestBuilder.requestOfflineAccess(
-              params.getServerClientIdForForcedRefreshToken(), true);
+              params.getServerClientIdForForcedRefreshToken());
+          // This requests a new refresh token
+          authorizationRequestBuilder.setPrompt(AuthorizationRequest.Prompt.CONSENT);
         }
         if (params.getAccountEmail() != null) {
           authorizationRequestBuilder.setAccount(
