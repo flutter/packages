@@ -30,19 +30,19 @@ should add it to your `pubspec.yaml` as usual.
    * If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
      circles or legacy markers on a map), include it like this:
 
-   ```html
-   <script
-     src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
-   </script>
-   ```
+     ```html
+     <script
+       src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing">
+     </script>
+     ```
 
    * To request multiple libraries, separate them with commas:
 
-   ```html
-   <script
-     src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
-   </script>
-   ```
+     ```html
+     <script
+       src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
+     </script>
+     ```
 
 ## Advanced Markers
 
