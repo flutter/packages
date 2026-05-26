@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math';
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
@@ -1715,7 +1713,6 @@ ${_topicsSection()}
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
@@ -1748,7 +1745,6 @@ ${_topicsSection()}
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
@@ -1816,7 +1812,6 @@ ${_topicsSection()}
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
@@ -1848,7 +1843,6 @@ ${_topicsSection()}
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
