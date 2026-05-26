@@ -156,14 +156,12 @@ class ValidateCommand extends PackageLoopingCommand {
     }
     if (_shouldRun(Validator.pubspec)) {
       await _loadAllowedDependencies();
-      final ({Version? flutter, Version? dart}) minSdkVersions =
+      final (flutter: Version? minFlutter, dart: Version? minDart) =
           _loadMinMinSdkVersions();
-      _minMinFlutterVersion = minSdkVersions.flutter;
+      _minMinFlutterVersion = minFlutter;
       _minMinDartVersion =
-          minSdkVersions.dart ??
-          (minSdkVersions.flutter == null
-              ? null
-              : getDartSdkForFlutterSdk(minSdkVersions.flutter!));
+          minDart ??
+          (minFlutter == null ? null : getDartSdkForFlutterSdk(minFlutter));
       if (_minMinDartVersion == null) {
         printError(
           'Dart SDK version for Flutter SDK version $_minMinFlutterVersion is unknown. '
