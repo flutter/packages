@@ -1,3 +1,7 @@
+## 2.18.2
+
+* Adds attribution ID for Google Maps SDK usage.
+
 ## 2.18.1
 
 * Removes conditional header logic that broke add-to-app builds.
