@@ -1,3 +1,8 @@
+## 2.19.10
+
+* Updates README to link to implementation packages for platform-specific
+  setup information.
+
 ## 2.19.9
 
 * Adds attribution ID for Google Maps SDK usage.

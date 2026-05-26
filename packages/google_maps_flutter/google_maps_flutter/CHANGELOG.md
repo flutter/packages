@@ -1,3 +1,7 @@
+## 2.17.1
+
+* Updates README to include setup information.
+
 ## 2.17.0
 
 * Adds missing re-exports of classes related to advanced markers.
