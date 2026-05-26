@@ -21,6 +21,7 @@
 @interface PositionAnimationValidatingMarker : GMSMarker {
 }
 @property(nonatomic) BOOL hasSetPosition;
+@property(nonatomic) BOOL wereActionsDisabledWhenSettingPosition;
 @end
 
 @interface MarkerControllerTests : XCTestCase
@@ -313,6 +314,8 @@
           usingOpacityForVisibility:NO];
 
   XCTAssertTrue(marker.hasSetPosition);
+  XCTAssertTrue(marker.wereActionsDisabledWhenSettingPosition,
+                @"Position animation should be disabled.");
 }
 
 - (void)testAssetProviderIsRetained {
@@ -338,7 +341,7 @@
 @implementation PositionAnimationValidatingMarker
 
 - (void)setPosition:(CLLocationCoordinate2D)position {
-  XCTAssertTrue([CATransaction disableActions], @"Position animation should be disabled.");
+  self.wereActionsDisabledWhenSettingPosition = [CATransaction disableActions];
   self.hasSetPosition = YES;
   super.position = position;
 }
