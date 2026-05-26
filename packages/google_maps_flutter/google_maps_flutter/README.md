@@ -40,9 +40,9 @@ For more details, see [Getting started with Google Maps Platform](https://develo
 
 * **Android**: Please see [the `google_maps_flutter_android` README](https://pub.dev/packages/google_maps_flutter_android#setup).
 * **iOS**: Please select an SDK version, and see the relevant README:
-  * [8.4 (iOS 14+)](https://pub.dev/packages/google_maps_flutter_ios)
-  * [SDK 9.x (iOS 15+)](https://pub.dev/packages/google_maps_flutter_ios_sdk9)
-  * [SDK 10.x (iOS 16+)](https://pub.dev/packages/google_maps_flutter_ios_sdk10)
+  * [8.4 (iOS 14+)](https://pub.dev/packages/google_maps_flutter_ios#setup)
+  * [SDK 9.x (iOS 15+)](https://pub.dev/packages/google_maps_flutter_ios_sdk9#setup)
+  * [SDK 10.x (iOS 16+)](https://pub.dev/packages/google_maps_flutter_ios_sdk10#setup)
 * **Web**: Please see [the `google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web#setup).
 
 ### Advanced Markers
