@@ -1,4 +1,4 @@
-## 0.12.0+2
+## 0.13.0
 
 * Adds `videoOutputPath` support to `startVideoRecording`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.

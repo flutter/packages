@@ -1,4 +1,4 @@
-## 0.10.10+17
+## 0.10.11
 
 * Adds support for custom video output path in video recording.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
