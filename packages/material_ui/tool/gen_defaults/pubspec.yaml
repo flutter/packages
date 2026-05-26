@@ -9,6 +9,7 @@ resolution: workspace
 
 dependencies:
   args: any
+  meta: any
 
 dev_dependencies:
   path: any

@@ -7,7 +7,7 @@
 // Run from the root of flutter/packages:
 //
 // ```
-// dart packages/material_ui/tool/m3e_gen_defaults/bin/gen_defaults.dart [-v]
+// dart packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart [-v]
 // ```
 
 import 'package:args/args.dart';

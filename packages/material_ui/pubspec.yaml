@@ -11,7 +11,7 @@ environment:
 
 workspace:
   - example
-  - tool/m3e_gen_defaults
+  - tool/gen_defaults
 
 dependencies:
   cupertino_ui:
