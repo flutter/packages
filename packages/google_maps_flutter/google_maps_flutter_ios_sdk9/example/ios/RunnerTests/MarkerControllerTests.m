@@ -4,6 +4,7 @@
 
 @import google_maps_flutter_ios_sdk9;
 @import GoogleMaps;
+@import QuartzCore;
 @import XCTest;
 
 #import "TestUtils/PartiallyMockedMapView.h"
@@ -14,6 +15,12 @@
 @interface PropertyOrderValidatingAdvancedMarker : GMSAdvancedMarker {
 }
 @property(nonatomic) BOOL hasSetMap;
+@end
+
+/// A GMSMarker that ensures position changes have implicit animations disabled.
+@interface PositionAnimationValidatingMarker : GMSMarker {
+}
+@property(nonatomic) BOOL hasSetPosition;
 @end
 
 @interface MarkerControllerTests : XCTestCase
@@ -276,6 +283,38 @@
   XCTAssertTrue(marker.hasSetMap);
 }
 
+- (void)testUpdateMarkerDisablesPositionAnimation {
+  PositionAnimationValidatingMarker *marker = [[PositionAnimationValidatingMarker alloc] init];
+  [FGMMarkerController updateMarker:marker
+                 fromPlatformMarker:[FGMPlatformMarker
+                                            makeWithAlpha:1.0
+                                                   anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                                         consumeTapEvents:YES
+                                                draggable:YES
+                                                     flat:YES
+                                                     icon:[self placeholderBitmap]
+                                               infoWindow:[FGMPlatformInfoWindow
+                                                              makeWithTitle:@"info title"
+                                                                    snippet:@"info snippet"
+                                                                     anchor:[FGMPlatformPoint
+                                                                                makeWithX:0
+                                                                                        y:0]]
+                                                 position:[FGMPlatformLatLng makeWithLatitude:0
+                                                                                    longitude:0]
+                                                 rotation:0
+                                                  visible:YES
+                                                   zIndex:0
+                                                 markerId:@"marker"
+                                         clusterManagerId:nil
+                                        collisionBehavior:nil]
+                        withMapView:[MarkerControllerTests mapView]
+                      assetProvider:[[TestAssetProvider alloc] init]
+                        screenScale:1
+          usingOpacityForVisibility:NO];
+
+  XCTAssertTrue(marker.hasSetPosition);
+}
+
 - (void)testAssetProviderIsRetained {
   FGMMarkersController *markerController;
   __weak TestAssetProvider *weakAssetProvider;
@@ -292,6 +331,16 @@
   }
   XCTAssertNotNil(markerController);
   XCTAssertNotNil(weakAssetProvider, @"AssetProvider should be retained by the marker controller");
+}
+
+@end
+
+@implementation PositionAnimationValidatingMarker
+
+- (void)setPosition:(CLLocationCoordinate2D)position {
+  XCTAssertTrue([CATransaction disableActions], @"Position animation should be disabled.");
+  self.hasSetPosition = YES;
+  super.position = position;
 }
 
 @end
