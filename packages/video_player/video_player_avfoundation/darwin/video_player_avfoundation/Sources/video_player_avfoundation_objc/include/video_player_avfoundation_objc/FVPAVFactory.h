@@ -94,10 +94,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Creates and returns an AVPlayer instance with the specified player item.
 - (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem;
 
-/// Creates and returns a wrapped AVPlayerItemVideoOutput instance with the specified pixel buffer
-/// attributes.
-- (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes;
+/// Creates and returns a wrapped AVPlayerItemVideoOutput instance with the specified output
+/// settings. The dictionary may contain both video output keys (e.g. AVVideoColorPropertiesKey)
+/// and CVPixelBuffer attribute keys (e.g. kCVPixelBufferPixelFormatTypeKey), as accepted by
+/// -[AVPlayerItemVideoOutput initWithOutputSettings:].
+- (NSObject<FVPPixelBufferSource> *)videoOutputWithOutputSettings:
+    (NSDictionary<NSString *, id> *)outputSettings NS_SWIFT_NAME(videoOutput(outputSettings:));
 
 #if TARGET_OS_IOS
 /// Returns the AVAudioSession shared instance, wrapped in the protocol.
