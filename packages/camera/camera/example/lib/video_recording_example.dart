@@ -157,6 +157,12 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
   Future<void> _initializeCameraController(
     CameraDescription description,
   ) async {
+    final CameraController? oldController = _controller;
+    if (oldController != null) {
+      _controller = null;
+      await oldController.dispose();
+    }
+
     final controller = CameraController(
       description,
       ResolutionPreset.high,
@@ -183,18 +189,22 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
   /// Calculates the target custom output path where the video will be saved.
   Future<String> _getDestinationPath() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final file = File(_customFileName);
 
-    // 1. Android
+    if (file.isAbsolute) {
+      return _customFileName;
+    }
+
+    final String uniqueName = _customFileName.replaceFirst(
+      '.mp4',
+      '_$timestamp.mp4',
+    );
+
     // Although it is possible to use an absolute path like '/storage/emulated/0/Download/',
     // this is a fragile practice and may fail on many devices or Android versions due to
     // Scoped Storage restrictions. It is recommended to use path_provider to get a valid
     // and writable directory.
     if (Platform.isAndroid) {
-      final String uniqueName = _customFileName.replaceFirst(
-        '.mp4',
-        '_$timestamp.mp4',
-      );
-
       final Directory? externalDir = await getExternalStorageDirectory();
       if (externalDir != null) {
         return '${externalDir.path}/$uniqueName';
@@ -204,9 +214,10 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
       return '${fallbackDir.path}/$uniqueName';
     }
 
-    // 3. iOS (Save to "On My iPhone" visible app folder)
-    // Note: Ensure 'LSSupportsOpeningDocumentsInPlace' and 'UISupportsDocumentBrowser'
+    // (Save to "On My iPhone" visible app folder)
+    //  Ensure 'LSSupportsOpeningDocumentsInPlace' and 'UISupportsDocumentBrowser'
     // are set to true in your ios/Runner/Info.plist to make this folder visible in the Files app.
+
     if (Platform.isIOS) {
       final Directory appDocDir = await getApplicationDocumentsDirectory();
 
@@ -218,13 +229,12 @@ class _VideoRecordingHomeState extends State<VideoRecordingHome>
         destinationDir.createSync(recursive: true);
       }
 
-      final filePath = '${destinationDir.path}/video_$timestamp.mp4';
-      return filePath;
+      return '${destinationDir.path}/$uniqueName';
     }
 
     // Default fallback general path
     final Directory fallbackDir = await getApplicationDocumentsDirectory();
-    return '${fallbackDir.path}/video_$timestamp.mp4';
+    return '${fallbackDir.path}/$uniqueName';
   }
 
   Future<void> _startRecording() async {

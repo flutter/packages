@@ -532,7 +532,6 @@ final class DefaultCamera: NSObject, Camera {
   private func setUpVideoRecording(
     videoOutputPath: String?, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
-    let videoRecordingPath: String
     if let videoOutputPath = videoOutputPath {
       do {
         try validateOutputPath(videoOutputPath)
@@ -607,6 +606,13 @@ final class DefaultCamera: NSObject, Camera {
         code: "IOError",
         message: "Invalid video extension. Supported: \(validExtensions.joined(separator: ", "))",
         details: nil)
+    }
+
+    // AVAssetWriter will fail to initialize if a file already exists at the destination path.
+    // Delete any existing file to ensure consistent behavior with Android (which overwrites
+    // automatically) and prevent recording failures when reusing a custom path.
+    if FileManager.default.fileExists(atPath: path) {
+      try FileManager.default.removeItem(atPath: path)
     }
   }
 
