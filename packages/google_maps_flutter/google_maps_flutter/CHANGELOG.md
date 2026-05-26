@@ -1,6 +1,7 @@
 ## 2.17.1
 
-* Updates README to include setup information.
+* Updates README to link to implementation packages for platform-specific
+  setup information.
 
 ## 2.17.0
 
