@@ -140,4 +140,162 @@ void main() {
       expect(parseCssRgb('rgb()'), isNull);
     });
   });
+
+  group('parseCssHsl - record output validation', () {
+    // --- POSITIVE MATCHES: LEGACY SYNTAX ---
+    test('Legacy HSL', () {
+      expect(parseCssHsl('hsl(270, 100%, 76%)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '1',
+      ));
+    });
+
+    test('Legacy HSLA', () {
+      expect(parseCssHsl('hsla(270, 100%, 76%, 0.5)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '0.5',
+      ));
+    });
+
+    test('Legacy alpha percentage', () {
+      expect(parseCssHsl('hsla(270, 100%, 76%, 50%)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '50%',
+      ));
+    });
+
+    // --- POSITIVE MATCHES: MODERN SYNTAX ---
+    test('Modern Space HSL', () {
+      expect(parseCssHsl('hsl(270 100% 76%)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '1',
+      ));
+    });
+
+    test('Modern Space HSLA (no alpha)', () {
+      expect(parseCssHsl('hsla(270 100% 76%)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '1',
+      ));
+    });
+
+    test('Modern Alpha Slash', () {
+      expect(parseCssHsl('hsla(270 100% 76% / 0.5)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '0.5',
+      ));
+    });
+
+    test('Modern Alpha Percentage', () {
+      expect(parseCssHsl('hsla(270 100% 76% / 50%)'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '50%',
+      ));
+    });
+
+    // --- POSITIVE MATCHES: NEGATIVES, DECIMALS, WHITESPACE ---
+    test('Leading decimal and negative', () {
+      expect(parseCssHsl('hsl(-.5 100% 76%)'), (
+        h: '-.5',
+        s: '100%',
+        l: '76%',
+        a: '1',
+      ));
+    });
+
+    test('Trailing and leading decimals', () {
+      expect(parseCssHsl('hsl(270. 100% 76. / .5)'), (
+        h: '270.',
+        s: '100%',
+        l: '76.',
+        a: '.5',
+      ));
+    });
+
+    test('Negative percentage/alpha', () {
+      expect(parseCssHsl('hsl(270 -10% 120% / -1)'), (
+        h: '270',
+        s: '-10%',
+        l: '120%',
+        a: '-1',
+      ));
+    });
+
+    test('Case/Tight spacing', () {
+      expect(parseCssHsl('HSLA( 270,100%,76% )'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '1',
+      ));
+    });
+
+    test('Extra spacing', () {
+      expect(parseCssHsl('hsl(  270  100%  76%  /  0  )'), (
+        h: '270',
+        s: '100%',
+        l: '76%',
+        a: '0',
+      ));
+    });
+
+    // --- NEGATIVE MATCHES (Should return null) ---
+    test('Mixed comma/space returns null', () {
+      expect(parseCssHsl('hsl(270, 100% 76%)'), isNull);
+    });
+
+    test('Mixed space/comma returns null', () {
+      expect(parseCssHsl('hsl(270 100%, 76%)'), isNull);
+    });
+
+    test('Mixed legacy with slash returns null', () {
+      expect(parseCssHsl('hsla(270, 100%, 76% / 0.5)'), isNull);
+    });
+
+    test('Modern missing slash returns null', () {
+      expect(parseCssHsl('hsl(270 100% 76% 0.5)'), isNull);
+    });
+
+    test('Missing lightness returns null', () {
+      expect(parseCssHsl('hsl(270, 100%)'), isNull);
+    });
+
+    test('Too many args returns null', () {
+      expect(parseCssHsl('hsla(270, 100%, 76%, 1, 1)'), isNull);
+    });
+
+    test('Missing parens returns null', () {
+      expect(parseCssHsl('hsl 270, 100%, 76%'), isNull);
+    });
+
+    test('Named colors returns null', () {
+      expect(parseCssHsl('hsl(red, 100%, 76%)'), isNull);
+    });
+
+    test('Empty returns null', () {
+      expect(parseCssHsl('hsl()'), isNull);
+    });
+
+    test('Empty value returns null', () {
+      expect(parseCssHsl('hsl(270,,76%)'), isNull);
+    });
+
+    test('Trailing comma returns null', () {
+      expect(parseCssHsl('hsl(270, 100%, 76%,)'), isNull);
+    });
+  });
 }

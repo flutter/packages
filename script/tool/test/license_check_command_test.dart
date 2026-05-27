@@ -463,21 +463,35 @@ void main() {
     );
 
     test('succeeds for third-party code in a third_party directory', () async {
-      final File thirdPartyFile = root
-          .childDirectory('a_plugin')
-          .childDirectory('lib')
-          .childDirectory('src')
+      final File thirdPartyLicenseFile = root
           .childDirectory('third_party')
-          .childFile('file.cc');
-      thirdPartyFile.createSync(recursive: true);
+          .childDirectory('packages')
+          .childDirectory('path_parsing')
+          .childFile('LICENSE');
+      thirdPartyLicenseFile.createSync(recursive: true);
       writeLicense(
-        thirdPartyFile,
-        copyright: 'Copyright 2017 Workiva Inc.',
+        thirdPartyLicenseFile,
+        comment: '',
+        copyright: 'Copyright (c) 2018 Dan Field\n',
         license: <String>[
-          'Licensed under the Apache License, Version 2.0 (the "License");',
-          'you may not use this file except in compliance with the License.',
+          'Permission is hereby granted, free of charge, to any person obtaining a copy\n'
+              'of this software and associated documentation files (the "Software"), to deal\n'
+              'in the Software without restriction, including without limitation the rights\n'
+              'to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n'
+              'copies of the Software, and to permit persons to whom the Software is\n'
+              'furnished to do so, subject to the following conditions:',
         ],
       );
+      // Create an empty code file; this package should redirect to the LICENSE
+      // file instead.
+      final File thirdPartyCodeFile = root
+          .childDirectory('third_party')
+          .childDirectory('packages')
+          .childDirectory('path_parsing')
+          .childDirectory('lib')
+          .childFile('path_parsing.dart');
+      thirdPartyCodeFile.createSync(recursive: true);
+      thirdPartyCodeFile.writeAsStringSync('main() {}');
       mockGitFilesListWithAllFiles(root);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -488,7 +502,9 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Checking a_plugin/lib/src/third_party/file.cc'),
+          contains(
+            'Checking third_party/packages/path_parsing/lib/path_parsing.dart',
+          ),
           contains('All files passed validation!'),
         ]),
       );

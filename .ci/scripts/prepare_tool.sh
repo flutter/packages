@@ -13,3 +13,6 @@ git config --global core.longpaths true
 
 cd script/tool
 dart pub get
+
+cd ../flutter_goldens
+flutter pub get

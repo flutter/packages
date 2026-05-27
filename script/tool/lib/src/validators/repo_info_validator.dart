@@ -9,6 +9,7 @@ import 'package:yaml/yaml.dart';
 import '../common/core.dart';
 import '../common/output_utils.dart';
 import '../common/repository_package.dart';
+import '../common/tool_config.dart';
 
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
@@ -20,15 +21,18 @@ class RepoInfoValidator {
     required Map<String, List<String>> readmeTableEntries,
     required Set<String> autoLabeledPackages,
     required GitDir gitDir,
+    required Directory repoRoot,
     required String indentation,
   }) : _readmeTableEntries = readmeTableEntries,
        _autoLabeledPackages = autoLabeledPackages,
        _gitDir = gitDir,
+       _repoRoot = repoRoot,
        _indentation = indentation;
 
   final Map<String, List<String>> _readmeTableEntries;
   final Set<String> _autoLabeledPackages;
   final GitDir _gitDir;
+  final Directory _repoRoot;
   final String _indentation;
 
   /// Returns all the data from the package table in the root README.md file.
@@ -144,6 +148,7 @@ class RepoInfoValidator {
       printError('${_indentation}Missing repo root README.md table entry');
       errors.add('Missing repo root README.md table entry');
     } else {
+      final String repoName = getRepositoryName(_repoRoot);
       // Extract the two parts of a "[label](link)" .md link.
       final mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
       // Possible link targets.
@@ -179,8 +184,8 @@ class RepoInfoValidator {
             r'\?label=\)$',
           );
           final prTagLink = RegExp(
-            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
-            '$encodedPRTag'
+            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/'
+            '$repoName/$encodedPRTag'
             r'\?label=\)$',
           );
           if (!(anchor == packageName ||
@@ -205,7 +210,7 @@ class RepoInfoValidator {
             '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$',
           );
           final gitHubPRLink = RegExp(
-            '^https://github.com/flutter/packages/labels/$encodedPRTag\$',
+            '^https://github.com/$repoName/labels/$encodedPRTag\$',
           );
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||
@@ -226,16 +231,11 @@ class RepoInfoValidator {
   String _prTagForPackage(String packageName) => 'p: $packageName';
 
   String _issueTagForPackage(String packageName) {
-    // TODO(stuartmorgan): Move this to a config file. See
-    // https://github.com/flutter/flutter/issues/185364
-    switch (packageName) {
-      case 'google_maps_flutter':
-        return 'p: maps';
-      case 'webview_flutter':
-        return 'p: webview';
-      default:
-        return 'p: $packageName';
-    }
+    final Map<String, String> customLabels = getNonStandardPackageLabels(
+      _repoRoot,
+    );
+    final String packageLabelName = customLabels[packageName] ?? packageName;
+    return 'p: $packageLabelName';
   }
 
   Future<List<String>> _validateFilesBasedOnReleaseStrategy(
@@ -274,6 +274,14 @@ class RepoInfoValidator {
         workflowDir: workflowDir,
         isBatchRelease: isBatchRelease,
         packageName: packageName,
+      ),
+    );
+
+    errors.addAll(
+      _validateCiYamlEnabledBranches(
+        packageName,
+        repoRoot: repoRoot,
+        isBatchRelease: isBatchRelease,
       ),
     );
 
@@ -409,6 +417,49 @@ class RepoInfoValidator {
       errors.add(
         'Unexpected trigger for release-$packageName-* in .github/workflows/$workflowName\n',
       );
+    }
+    return errors;
+  }
+
+  List<String> _validateCiYamlEnabledBranches(
+    String packageName, {
+    required Directory repoRoot,
+    required bool isBatchRelease,
+  }) {
+    final errors = <String>[];
+    final File ciYamlFile = repoRoot.childFile('.ci.yaml');
+    if (!ciYamlFile.existsSync()) {
+      if (isBatchRelease) {
+        printError(
+          '${_indentation}Batched release is currently only supported for '
+          'repos using .ci.yaml',
+        );
+        errors.add('Missing .ci.yaml');
+      }
+      return errors;
+    }
+
+    final String content = ciYamlFile.readAsStringSync();
+    final yaml = loadYaml(content) as YamlMap;
+
+    final enabledBranches = yaml['enabled_branches'] as YamlList?;
+    final bool hasBranchPattern =
+        enabledBranches != null &&
+        enabledBranches.contains(r'release-' + packageName + r'-\d+\.\d+\.\d+');
+
+    if (isBatchRelease && !hasBranchPattern) {
+      printError(
+        '${_indentation}Missing release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        'in enabled_branches in .ci.yaml\n'
+        '${_indentation}See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+      errors.add('Unexpected branch handling in .ci.yaml');
+    } else if (!isBatchRelease && hasBranchPattern) {
+      printError(
+        '${_indentation}Unexpected release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        'in enabled_branches in .ci.yaml',
+      );
+      errors.add('Unexpected branch handling in .ci.yaml');
     }
     return errors;
   }
