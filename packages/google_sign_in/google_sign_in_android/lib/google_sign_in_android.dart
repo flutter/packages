@@ -237,7 +237,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         // Store a preliminary entry using the 'openid' scope, which in practice
         // always seems to be granted at authentication time, so that an account
         // that is authenticated but never authorized can still be disconnected.
-        _cachedAccounts[authnResult.credential.id] = 'openid';
+        _cachedAccounts[authnResult.credential.email] = 'openid';
         return authnResult.credential;
     }
   }
@@ -320,7 +320,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     // The ID should always be availabe from the token, but if for some reason
     // it can't be extracted, use the email address instead as a reasonable
     // fallback method of identifying the account.
-    final String email = credential.id;
+    final String email = credential.email;
     final String userId = _idFromIdToken(credential.idToken) ?? email;
 
     return AuthenticationResults(

@@ -5,7 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
-import 'package:flutter_plugin_tools/src/repo_package_info_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -23,16 +23,22 @@ void main() {
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
+    // Set a minimal config so that a default repo name is available.
+    setToolConfig(root);
 
     root.childFile('.ci.yaml').writeAsStringSync(r'''
 enabled_branches:
   - main
 ''');
 
-    final command = RepoPackageInfoCheckCommand(packagesDir, gitDir: gitDir);
+    final command = ValidateCommand(
+      packagesDir,
+      gitDir: gitDir,
+      targetedValidators: {Validator.repoInfo},
+    );
     runner = CommandRunner<void>(
-      'dependabot_test',
-      'Test for $RepoPackageInfoCheckCommand',
+      'validate_repo_info_test',
+      'Test for validating repo info',
     );
     runner.addCommand(command);
 
@@ -49,14 +55,17 @@ enabled_branches:
 ''';
   }
 
-  String readmeTableEntry(String packageName) {
+  String readmeTableEntry(
+    String packageName, {
+    String repoName = 'flutter/packages',
+  }) {
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     return '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$encodedTag) | '
-        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/$repoName/$encodedTag?label=)](https://github.com/$repoName/labels/$encodedTag) |';
   }
 
   void writeAutoLabelerYaml(List<RepositoryPackage> packages) {
@@ -91,14 +100,63 @@ ${readmeTableEntry('a_package')}
     writeAutoLabelerYaml(packages);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'repo-package-info-check',
+      'validate',
     ]);
 
     expect(
       output,
-      containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      containsAllInOrder(<Matcher>[contains('Running for a_package')]),
     );
   });
+
+  test('passes for correct coverage with a different repo name', () async {
+    final packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
+
+    const repoName = 'different/repo';
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package', repoName: repoName)}
+''');
+    writeAutoLabelerYaml(packages);
+    setToolConfig(root, repoName: repoName);
+
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'validate',
+    ]);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+    );
+  });
+
+  test(
+    'passes when no .ci.yaml is present if nothing uses batched release',
+    () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(packages);
+
+      root.childFile('.ci.yaml').deleteSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'validate',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+      );
+    },
+  );
 
   test(
     'passes for federated plugins with only app-facing package listed',
@@ -117,7 +175,6 @@ ${readmeTableHeader()}
 ${readmeTableEntry(pluginName)}
 ''');
       writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
-      writeAutoLabelerYaml(<RepositoryPackage>[packages.first]);
 
       // 4 packages * 2 checks (git, gh) = 8 calls.
       // Default mocks in setUp cover 1 call each. We need 3 more each.
@@ -129,12 +186,17 @@ ${readmeTableEntry(pluginName)}
           ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'repo-package-info-check',
+        'validate',
       ]);
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[contains('Ran for 4 package(s)')]),
+        containsAllInOrder(<Matcher>[
+          contains('Running for foo'),
+          contains('Running for foo_android'),
+          contains('Running for foo_ios'),
+          contains('Running for foo_platform_interface'),
+        ]),
       );
     },
   );
@@ -153,7 +215,7 @@ ${readmeTableEntry('another_package')}
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -183,7 +245,7 @@ ${readmeTableEntry('another_package')}
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -226,7 +288,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -270,7 +332,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -316,7 +378,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -362,7 +424,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -408,7 +470,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -454,7 +516,7 @@ $entry
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -488,7 +550,7 @@ ${readmeTableEntry(packageName)}
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['repo-package-info-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -504,6 +566,84 @@ ${readmeTableEntry(packageName)}
           '    Missing auto-labeler entry',
         ),
       ]),
+    );
+  });
+
+  group('custom package labels', () {
+    test('passes for correct custom package label in README', () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      const customLabel = 'custom_label';
+      setToolConfig(
+        root,
+        packageLabels: <String, String>{'a_package': customLabel},
+      );
+
+      final String encodedIssueTag = Uri.encodeComponent('p: $customLabel');
+      final String encodedPRTag = Uri.encodeComponent('p: a_package');
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+| [a_package](./packages/a_package/) | [![pub package](https://img.shields.io/pub/v/a_package.svg)](https://pub.dev/packages/a_package) | [![pub points](https://img.shields.io/pub/points/a_package)](https://pub.dev/packages/a_package/score) | [![popularity](https://img.shields.io/pub/popularity/a_package)](https://pub.dev/packages/a_package/score) | [![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedIssueTag?label=)](https://github.com/flutter/flutter/labels/$encodedIssueTag) | [![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedPRTag?label=)](https://github.com/flutter/packages/labels/$encodedPRTag) |
+''');
+      writeAutoLabelerYaml(packages);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      if (commandError != null) {
+        print(r'Test failed with error: $commandError');
+        print('Output:');
+        output.forEach(print);
+      }
+
+      expect(commandError, isNull);
+      expect(output, containsAll(<Matcher>[contains('No issues found!')]));
+    });
+
+    test(
+      'fails when default package label is used in README but custom is configured',
+      () async {
+        final packages = <RepositoryPackage>[
+          createFakePackage('a_package', packagesDir),
+        ];
+
+        const customLabel = 'custom_label';
+        setToolConfig(
+          root,
+          packageLabels: <String, String>{'a_package': customLabel},
+        );
+
+        // Use default label in README
+        root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+        writeAutoLabelerYaml(packages);
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          contains(contains('Incorrect link in root README.md table')),
+        );
+      },
     );
   });
 
@@ -526,7 +666,7 @@ release:
     ''');
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'repo-package-info-check',
+        'validate',
       ]);
 
       expect(output, containsAll(<Matcher>[contains('No issues found!')]));
@@ -545,7 +685,7 @@ ${readmeTableEntry('a_package')}
       writeAutoLabelerYaml(<RepositoryPackage>[package]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'repo-package-info-check',
+        'validate',
       ]);
 
       expect(
@@ -572,7 +712,7 @@ something: true
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -606,7 +746,7 @@ release:
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -717,7 +857,7 @@ on:
             ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'repo-package-info-check',
+          'validate',
         ]);
 
         expect(
@@ -742,7 +882,7 @@ on:
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -791,7 +931,7 @@ version: 1.0.0-wip
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -816,7 +956,7 @@ version: 1.0.0-wip
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -865,7 +1005,7 @@ jobs:
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -910,7 +1050,7 @@ jobs:
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -946,7 +1086,7 @@ jobs:
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['repo-package-info-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -978,7 +1118,7 @@ enabled_branches:
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['repo-package-info-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1010,7 +1150,7 @@ enabled_branches:
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['repo-package-info-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
