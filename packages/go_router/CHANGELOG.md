@@ -1,3 +1,7 @@
+## 17.2.4
+
+- Adds route `metadata` support, including inheritance/override behavior and exposure on `GoRouterState`.
+
 ## 17.2.3
 
 - Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.
