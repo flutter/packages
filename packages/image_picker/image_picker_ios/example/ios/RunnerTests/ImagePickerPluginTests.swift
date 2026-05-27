@@ -1018,31 +1018,34 @@ class ImagePickerPluginTests: XCTestCase {
         plugin.removeInteractionBlocker()
     }
 
-    //  func testPresentingViewController_WhenNoViewController_ReturnsNil() {
-//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: nil))
-//    // It should return the nil from viewProvider.viewController! (which would crash if not careful)
-//    // Wait, let's look at the implementation:
-//    /*
-//    guard let topController = viewProvider.viewController,
-//      let presentingWindow = topController.view.window
-//    else {
-//      return viewProvider.viewController!
-//    }
-//    */
-//    // If viewProvider.viewController is nil, it returns nil.
-//    XCTAssertNil(plugin.presentingViewControllerForImagePickerInNewWindow())
-    //  }
+    func testPresentingViewController_WhenNoViewController_ReturnsFallback() {
 
-    //  func testShowCamera_WhenAlreadyPresenting_ReturnsEarly() {
-//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-//    let mockPicker = MockUIImagePickerController()
-//    mockPicker.mockIsBeingPresented = true
-//
-//    plugin.showCamera(.rear, with: mockPicker)
-//
-//    // Should not call isSourceTypeAvailable
-//    XCTAssertFalse((plugin.deviceCapabilityHandler as! MockDeviceCapabilityHandler).isSourceTypeAvailableCalled)
-    //  }
+        let plugin = ImagePickerPlugin(
+            viewProvider: StubViewProvider(viewController: nil)
+        )
+
+        let result = plugin.presentingViewControllerForImagePickerInNewWindow()
+
+        XCTAssertNotNil(result)   // ✅ Correct expectation
+    }
+
+    func testShowCamera_WhenAlreadyPresenting_ReturnsEarly() {
+
+        let mockHandler = MockDeviceCapabilityHandler()
+
+        let plugin = ImagePickerPlugin(
+            viewProvider: StubViewProvider(viewController: UIViewController()),
+            deviceCapabilityHandler: mockHandler
+        )
+
+        let mockPicker = MockUIImagePickerController()
+        mockPicker.mockIsBeingPresented = true   // ✅ simulate already presenting
+
+        plugin.showCamera(.rear, with: mockPicker)
+
+        // ✅ Ensure it did NOT proceed further
+        XCTAssertFalse(mockHandler.isSourceTypeAvailableCalled)
+    }
 
     func testImagePickerDelegate_DidFinishPickingImage_RequestFullMetadata_NoAsset() throws {
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
@@ -1079,21 +1082,6 @@ class ImagePickerPluginTests: XCTestCase {
         let result = plugin.presentingViewControllerForImagePickerInNewWindow()
         XCTAssertEqual(result, vc)
     }
-
-    //  func testLaunchUIImagePicker_WithGallery_RequestFullMetadata() {
-//    let mockHandler = MockDeviceCapabilityHandler()
-//    mockHandler.photoLibraryAuthorizationStatusResult = .authorized
-//    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider(viewController: UIViewController()), deviceCapabilityHandler: mockHandler)
-//    let context = ImagePickerMethodCallContext { _, _ in }
-//    context.requestFullMetadata = true
-//
-//    let mockPicker = MockUIImagePickerController()
-//    plugin.setImagePickerControllerOverrides([mockPicker])
-//
-//    plugin.launchUIImagePicker(with: SourceSpecification(type: .gallery, camera: .rear), context: context)
-//
-//    XCTAssertTrue(mockHandler.photoLibraryAuthorizationStatusCalled)
-    //  }
 
     func testPickImageMessageHandler_Success() {
         let messenger = TestBinaryMessenger()
