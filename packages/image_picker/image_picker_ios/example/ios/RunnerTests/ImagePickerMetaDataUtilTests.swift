@@ -2,21 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import UIKit
-import ImageIO
-
 @testable import image_picker_ios
+import ImageIO
+import UIKit
+import XCTest
 
 class ImagePickerMetaDataUtilTests: XCTestCase {
-
     func testGetImageMIMETypeFromImageData() {
-
         let testCases: [(data: Data, expected: ImagePickerMIMEType)] = [
             (ImagePickerTestImages.jpgTestData, .jpeg),
             (ImagePickerTestImages.pngTestData, .png),
             (ImagePickerTestImages.gifTestData, .gif),
-            (Data([0x00, 0x01, 0x02]), .other)
+            (Data([0x00, 0x01, 0x02]), .other),
         ]
 
         // ✅ Main validation
@@ -67,8 +64,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         )
     }
 
-    func testSuffixFromType() {
-
+    func testSuffixFromType() throws {
         // ✅ Direct validation (main logic)
         XCTAssertEqual(
             ImagePickerMetaDataUtil.imageTypeSuffix(from: .jpeg),
@@ -97,21 +93,19 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
 
         // ✅ Additional safety checks (without using enum type explicitly)
         let jpegSuffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: .jpeg)
-        XCTAssertTrue(jpegSuffix!.hasPrefix("."))
+        XCTAssertTrue(try XCTUnwrap(jpegSuffix?.hasPrefix(".")))
 
         let pngSuffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: .png)
-        XCTAssertTrue(pngSuffix!.hasPrefix("."))
+        XCTAssertTrue(try XCTUnwrap(pngSuffix?.hasPrefix(".")))
 
         let gifSuffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: .gif)
-        XCTAssertTrue(gifSuffix!.hasPrefix("."))
+        XCTAssertTrue(try XCTUnwrap(gifSuffix?.hasPrefix(".")))
 
         let otherSuffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: .other)
         XCTAssertNil(otherSuffix)
     }
-    
 
-    func testGetMetaData() {
-
+    func testGetMetaData() throws {
         let data = ImagePickerTestImages.jpgTestData
 
         // ✅ Main success path
@@ -131,7 +125,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNotNil(pixelY)
 
         // ✅ Additional coverage: ensure metadata dictionary is not empty
-        XCTAssertFalse(metaData!.isEmpty)
+        XCTAssertFalse(try XCTUnwrap(metaData?.isEmpty))
 
         // ✅ Additional coverage: re-read metadata (ensures consistent path execution)
         let secondRead = ImagePickerMetaDataUtil.getMetaData(from: data)
@@ -156,7 +150,6 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
     }
 
     func testGetMetaData_InvalidDataReturnsNil() {
-
         // ✅ 1. Invalid plain string data
         let invalidData = Data("not an image".utf8)
         XCTAssertNil(ImagePickerMetaDataUtil.getMetaData(from: invalidData))
@@ -192,15 +185,13 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNotNil(jpgMetaAgain)
     }
 
-
-    func testUpdateMetaData() {
-
+    func testUpdateMetaData() throws {
         let dataJPG = ImagePickerTestImages.jpgTestData
 
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test Comment"
-            ]
+                kCGImagePropertyExifUserComment as String: "Test Comment",
+            ],
         ]
 
         // ✅ Main success case
@@ -225,14 +216,14 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         // ✅ Additional coverage: overwrite existing metadata
         let updatedMetaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Updated Comment"
-            ]
+                kCGImagePropertyExifUserComment as String: "Updated Comment",
+            ],
         ]
 
         let updatedData = ImagePickerMetaDataUtil.image(from: newData, with: updatedMetaData)
         XCTAssertNotNil(updatedData)
 
-        let updatedMeta = ImagePickerMetaDataUtil.getMetaData(from: updatedData!)
+        let updatedMeta = try ImagePickerMetaDataUtil.getMetaData(from: XCTUnwrap(updatedData))
         let updatedExif = updatedMeta?[kCGImagePropertyExifDictionary as String] as? [String: Any]
 
         XCTAssertEqual(
@@ -259,8 +250,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNotNil(originalMeta)
     }
 
-    func testUpdateMetaData_InvalidDataReturnsNil() {
-
+    func testUpdateMetaData_InvalidDataReturnsNil() throws {
         // ✅ Case 1: Invalid string data (existing case)
         let invalidStringData = Data("not an image".utf8)
         let result1 = ImagePickerMetaDataUtil.image(from: invalidStringData, with: [:])
@@ -277,21 +267,20 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNil(result3)
 
         // ✅ Case 4: VALID image without metadata (IMPORTANT for coverage)
-        let image = UIImage(systemName: "circle")!
-        let validData = image.jpegData(compressionQuality: 1.0)!
+        let image = try XCTUnwrap(UIImage(systemName: "circle"))
+        let validData = try XCTUnwrap(image.jpegData(compressionQuality: 1.0))
         let result4 = ImagePickerMetaDataUtil.image(from: validData, with: [:])
         XCTAssertNotNil(result4)
 
         // ✅ Case 5: VALID image with metadata (covers update logic)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1
+            kCGImagePropertyOrientation as String: 1,
         ]
         let result5 = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(result5)
     }
 
-    func testGetMetaData_CorruptedData_ReturnsNil() {
-
+    func testGetMetaData_CorruptedData_ReturnsNil() throws {
         // ✅ Case 1: Corrupted PNG header (existing case)
         let corruptedData = Data([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
         XCTAssertNil(ImagePickerMetaDataUtil.getMetaData(from: corruptedData))
@@ -305,8 +294,8 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNil(ImagePickerMetaDataUtil.getMetaData(from: randomData))
 
         // ✅ Case 4: VALID image (covers metadata extraction lines)
-        let image = UIImage(systemName: "circle")!
-        let validData = image.jpegData(compressionQuality: 1.0)!
+        let image = try XCTUnwrap(UIImage(systemName: "circle"))
+        let validData = try XCTUnwrap(image.jpegData(compressionQuality: 1.0))
 
         let metadata = ImagePickerMetaDataUtil.getMetaData(from: validData)
 
@@ -318,8 +307,8 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNotNil(metadataAgain)
     }
 
-    func testConvertImageToData() {
-        let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    func testConvertImageToData() throws {
+        let imageJPG = try XCTUnwrap(UIImage(data: ImagePickerTestImages.jpgTestData))
 
         // ✅ Case 1: JPEG with quality (existing)
         let convertedDataJPG = ImagePickerMetaDataUtil.convertImage(
@@ -328,7 +317,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: 0.5
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataJPG!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataJPG)),
             .jpeg
         )
 
@@ -339,7 +328,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: 0.0
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataJPGZero!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataJPGZero)),
             .jpeg
         )
 
@@ -350,7 +339,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: nil
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataPNG!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataPNG)),
             .png
         )
 
@@ -361,7 +350,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: 0.7
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataPNGQuality!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataPNGQuality)),
             .png
         )
 
@@ -372,7 +361,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: 0.6
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataGIF!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataGIF)),
             .jpeg
         )
 
@@ -383,7 +372,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: nil
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataOther!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataOther)),
             .jpeg
         )
 
@@ -394,93 +383,90 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             quality: 0.8
         )
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataOtherQuality!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataOtherQuality)),
             .jpeg
         )
     }
 
-    func testConvertImageToData_PngWithQualityWarning() {
-
-        let pngImage = UIImage(data: ImagePickerTestImages.pngTestData)!
-        let jpgImage = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    func testConvertImageToData_PngWithQualityWarning() throws {
+        let pngImage = try XCTUnwrap(UIImage(data: ImagePickerTestImages.pngTestData))
+        let jpgImage = try XCTUnwrap(UIImage(data: ImagePickerTestImages.jpgTestData))
 
         // ✅ Case 1: PNG branch
         let pngData = ImagePickerMetaDataUtil.convertImage(pngImage, using: .png, quality: 0.5)
         XCTAssertNotNil(pngData)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: pngData!), .png)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(pngData)), .png)
 
         // ✅ Case 2: JPEG branch (forces different switch case)
         let jpegData = ImagePickerMetaDataUtil.convertImage(jpgImage, using: .jpeg, quality: 0.7)
         XCTAssertNotNil(jpegData)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: jpegData!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(jpegData)), .jpeg)
 
         // ✅ Case 3: GIF → fallback branch (VERY IMPORTANT for coverage)
         let gifData = ImagePickerMetaDataUtil.convertImage(pngImage, using: .gif, quality: 0.6)
         XCTAssertNotNil(gifData)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: gifData!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(gifData)), .jpeg)
 
         // ✅ Case 4: .other → default fallback branch
         let fallbackData = ImagePickerMetaDataUtil.convertImage(pngImage, using: .other, quality: 0.8)
         XCTAssertNotNil(fallbackData)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: fallbackData!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(fallbackData)), .jpeg)
 
         // ✅ Case 5: Boundary quality (forces extra internal lines)
         let boundaryData = ImagePickerMetaDataUtil.convertImage(jpgImage, using: .jpeg, quality: 0.0)
         XCTAssertNotNil(boundaryData)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: boundaryData!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(boundaryData)), .jpeg)
     }
 
-
-
-    func testConvertImageToData_GifWithQualityWarning() {
-        let image = UIImage(data: ImagePickerTestImages.gifTestData)!
+    func testConvertImageToData_GifWithQualityWarning() throws {
+        let image = try XCTUnwrap(UIImage(data: ImagePickerTestImages.gifTestData))
 
         // Case 1: GIF with medium quality (existing case)
         let data1 = ImagePickerMetaDataUtil.convertImage(image, using: .gif, quality: 0.5)
         XCTAssertNotNil(data1)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data1!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data1)), .jpeg)
 
         // Case 2: GIF with high quality (tests quality branch handling)
         let data2 = ImagePickerMetaDataUtil.convertImage(image, using: .gif, quality: 1.0)
         XCTAssertNotNil(data2)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data2!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data2)), .jpeg)
 
         // Case 3: GIF with low quality (boundary condition)
         let data3 = ImagePickerMetaDataUtil.convertImage(image, using: .gif, quality: 0.0)
         XCTAssertNotNil(data3)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data3!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data3)), .jpeg)
 
         // Case 4: Another execution to ensure consistent fallback behavior
         let data4 = ImagePickerMetaDataUtil.convertImage(image, using: .gif, quality: 0.8)
         XCTAssertNotNil(data4)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data4!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data4)), .jpeg)
     }
 
-    func testConvertImageToData_DefaultFallback() {
-        let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
+    func testConvertImageToData_DefaultFallback() throws {
+        let image = try XCTUnwrap(UIImage(data: ImagePickerTestImages.jpgTestData))
 
         // Case 1: Default fallback (.other → should convert to JPEG)
         let data1 = ImagePickerMetaDataUtil.convertImage(image, using: .other, quality: 0.8)
         XCTAssertNotNil(data1)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data1!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data1)), .jpeg)
 
         // Case 2: Explicit JPEG conversion (covers JPEG branch)
         let data2 = ImagePickerMetaDataUtil.convertImage(image, using: .jpeg, quality: 0.5)
         XCTAssertNotNil(data2)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data2!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data2)), .jpeg)
 
         // Case 3: PNG conversion (covers PNG branch if implemented)
         let data3 = ImagePickerMetaDataUtil.convertImage(image, using: .png, quality: 1.0)
         XCTAssertNotNil(data3)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data3!), .png)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data3)), .png)
 
         // Case 4: Edge quality value (boundary condition)
         let data4 = ImagePickerMetaDataUtil.convertImage(image, using: .jpeg, quality: 0.0)
         XCTAssertNotNil(data4)
-        XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: data4!), .jpeg)
+        XCTAssertEqual(try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(data4)), .jpeg)
     }
 
-    func testImageWithMetadata_InvalidDataReturnsNil() {
+    func testImageWithMetadata_InvalidDataReturnsNil() throws {
         // Case 1: Clearly invalid data (existing case)
         let invalidData = Data([0, 1, 2])
         let result1 = ImagePickerMetaDataUtil.image(from: invalidData, with: [:])
@@ -497,14 +483,14 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNil(result3)
 
         // Case 4: Valid image WITHOUT metadata (success path)
-        let image = UIImage(systemName: "circle")!
-        let validData = image.jpegData(compressionQuality: 1.0)!
+        let image = try XCTUnwrap(UIImage(systemName: "circle"))
+        let validData = try XCTUnwrap(image.jpegData(compressionQuality: 1.0))
         let result4 = ImagePickerMetaDataUtil.image(from: validData, with: [:])
         XCTAssertNotNil(result4)
 
         // Case 5: Valid image WITH metadata (covers metadata branch)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1
+            kCGImagePropertyOrientation as String: 1,
         ]
         let result5 = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(result5)
@@ -531,7 +517,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertEqual(ImagePickerMetaDataUtil.getImageMIMEType(from: unknownData), .other)
     }
 
-    func testImageWithMetadata_CorruptedHeader() {
+    func testImageWithMetadata_CorruptedHeader() throws {
         // Case 1: Incomplete JPEG (corrupted header)
         let corruptedData = Data([0xFF, 0xD8, 0xFF])
         XCTAssertNil(ImagePickerMetaDataUtil.image(from: corruptedData, with: [:]))
@@ -541,14 +527,14 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         XCTAssertNil(ImagePickerMetaDataUtil.image(from: emptyData, with: [:]))
 
         // Case 3: Valid image without metadata
-        let image = UIImage(systemName: "circle")!
-        let validData = image.jpegData(compressionQuality: 1.0)!
+        let image = try XCTUnwrap(UIImage(systemName: "circle"))
+        let validData = try XCTUnwrap(image.jpegData(compressionQuality: 1.0))
         let resultWithoutMetadata = ImagePickerMetaDataUtil.image(from: validData, with: [:])
         XCTAssertNotNil(resultWithoutMetadata)
 
         // Case 4: Valid image with metadata (covers metadata handling branch)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1
+            kCGImagePropertyOrientation as String: 1,
         ]
         let resultWithMetadata = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(resultWithMetadata)

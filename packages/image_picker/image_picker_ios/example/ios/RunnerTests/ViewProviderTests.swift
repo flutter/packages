@@ -2,39 +2,49 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
 import Flutter
-import UIKit
-
 @testable import image_picker_ios
+import UIKit
+import XCTest
 
 class ViewProviderTests: XCTestCase {
+    func testDefaultViewProvider_ReturnsViewControllerFromRegistrar() {
+        let mockRegistrar = MockPluginRegistrar()
+        let expectedVC = UIViewController()
+        mockRegistrar.mockViewController = expectedVC
 
-  func testDefaultViewProvider_ReturnsViewControllerFromRegistrar() {
-    let mockRegistrar = MockPluginRegistrar()
-    let expectedVC = UIViewController()
-    mockRegistrar.mockViewController = expectedVC
-
-    let provider = DefaultViewProvider(registrar: mockRegistrar)
-    XCTAssertEqual(provider.viewController, expectedVC)
-  }
-
-  class MockPluginRegistrar: NSObject, FlutterPluginRegistrar, @unchecked Sendable {
-    var mockViewController: UIViewController?
-
-    var viewController: UIViewController? {
-      return mockViewController
+        let provider = DefaultViewProvider(registrar: mockRegistrar)
+        XCTAssertEqual(provider.viewController, expectedVC)
     }
 
-    func messenger() -> FlutterBinaryMessenger { fatalError() }
-    func textures() -> FlutterTextureRegistry { fatalError() }
-    func register(_ factory: FlutterPlatformViewFactory, withId id: String) {}
-    func register(_ factory: FlutterPlatformViewFactory, withId id: String, gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy) {}
-    func publish(_ value: NSObject) {}
-    func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {}
-    func addApplicationDelegate(_ delegate: FlutterPlugin) {}
-    func lookupKey(forAsset asset: String) -> String { return "" }
-    func lookupKey(forAsset asset: String, fromPackage package: String) -> String { return "" }
-    func addSceneDelegate(_ delegate: FlutterSceneLifeCycleDelegate) {}
-  }
+    class MockPluginRegistrar: NSObject, FlutterPluginRegistrar, @unchecked Sendable {
+        var mockViewController: UIViewController?
+
+        var viewController: UIViewController? {
+            return mockViewController
+        }
+
+        func messenger() -> FlutterBinaryMessenger {
+            fatalError()
+        }
+
+        func textures() -> FlutterTextureRegistry {
+            fatalError()
+        }
+
+        func register(_: FlutterPlatformViewFactory, withId _: String) {}
+        func register(_: FlutterPlatformViewFactory, withId _: String, gestureRecognizersBlockingPolicy _: FlutterPlatformViewGestureRecognizersBlockingPolicy) {}
+        func publish(_: NSObject) {}
+        func addMethodCallDelegate(_: FlutterPlugin, channel _: FlutterMethodChannel) {}
+        func addApplicationDelegate(_: FlutterPlugin) {}
+        func lookupKey(forAsset _: String) -> String {
+            return ""
+        }
+
+        func lookupKey(forAsset _: String, fromPackage _: String) -> String {
+            return ""
+        }
+
+        func addSceneDelegate(_: FlutterSceneLifeCycleDelegate) {}
+    }
 }

@@ -2,64 +2,61 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+@testable import image_picker_ios
 import PhotosUI
 import UniformTypeIdentifiers
-
-@testable import image_picker_ios
+import XCTest
 
 class PickerSaveImageToPathOperationTests: XCTestCase {
-
     @available(iOS 14.0, *)
     class MockItemProvider: NSItemProvider {
-    var mockData: Data?
-    var mockURL: URL?
-    var shouldSucceed = true
-    var registeredIdentifiers: [String] = [UTType.image.identifier]
+        var mockData: Data?
+        var mockURL: URL?
+        var shouldSucceed = true
+        var registeredIdentifiers: [String] = [UTType.image.identifier]
 
-    override func hasItemConformingToTypeIdentifier(_ typeIdentifier: String) -> Bool {
-      return registeredIdentifiers.contains(typeIdentifier)
-    }
+        override func hasItemConformingToTypeIdentifier(_ typeIdentifier: String) -> Bool {
+            return registeredIdentifiers.contains(typeIdentifier)
+        }
 
-    override func loadDataRepresentation(
-      forTypeIdentifier typeIdentifier: String,
-      completionHandler: @escaping (Data?, Error?) -> Void
-    ) -> Progress {
-      if shouldSucceed {
-        completionHandler(mockData, nil)
-      } else {
-        completionHandler(nil, NSError(domain: "test", code: 0, userInfo: [NSLocalizedDescriptionKey: "Loading failed"]))
-      }
-      return Progress()
-    }
+        override func loadDataRepresentation(
+            forTypeIdentifier _: String,
+            completionHandler: @escaping (Data?, Error?) -> Void
+        ) -> Progress {
+            if shouldSucceed {
+                completionHandler(mockData, nil)
+            } else {
+                completionHandler(nil, NSError(domain: "test", code: 0, userInfo: [NSLocalizedDescriptionKey: "Loading failed"]))
+            }
+            return Progress()
+        }
 
-    override func loadFileRepresentation(
-      forTypeIdentifier typeIdentifier: String,
-      completionHandler: @escaping (URL?, Error?) -> Void
-    ) -> Progress {
-      if shouldSucceed {
-        completionHandler(mockURL, nil)
-      } else {
-        completionHandler(nil, NSError(domain: "test", code: 0, userInfo: [NSLocalizedDescriptionKey: "Loading failed"]))
-      }
-      return Progress()
-    }
+        override func loadFileRepresentation(
+            forTypeIdentifier _: String,
+            completionHandler: @escaping (URL?, Error?) -> Void
+        ) -> Progress {
+            if shouldSucceed {
+                completionHandler(mockURL, nil)
+            } else {
+                completionHandler(nil, NSError(domain: "test", code: 0, userInfo: [NSLocalizedDescriptionKey: "Loading failed"]))
+            }
+            return Progress()
+        }
 
-    override var registeredTypeIdentifiers: [String] {
-      return registeredIdentifiers
+        override var registeredTypeIdentifiers: [String] {
+            return registeredIdentifiers
+        }
     }
-  }
 
     @MainActor
     func testSaveJPGImage_Success() async {
         if #available(iOS 14, *) {
-
             let data = ImagePickerTestImages.jpgTestData
 
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier
+                UTType.image.identifier,
             ]
             mockProvider.mockData = data
 
@@ -98,13 +95,12 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     @MainActor
     func testSaveImage_WithScaling_Success() async {
         if #available(iOS 14, *) {
-
             let data = ImagePickerTestImages.jpgTestData
 
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier
+                UTType.image.identifier,
             ]
             mockProvider.mockData = data
 
@@ -125,8 +121,8 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
                 outputPath = savedPath
 
                 if let path = savedPath,
-                   let savedImage = UIImage(contentsOfFile: path) {
-
+                   let savedImage = UIImage(contentsOfFile: path)
+                {
                     // ✅ Ensure scaling branch executed
                     XCTAssertLessThanOrEqual(savedImage.size.width, 5.1)
                     XCTAssertLessThanOrEqual(savedImage.size.height, 5.1)
@@ -151,15 +147,13 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
         }
     }
 
-
     @MainActor
     func testSaveImage_DataLoadingFailure_ReturnsError() async {
         if #available(iOS 14, *) {
-
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier
+                UTType.image.identifier,
             ]
             mockProvider.shouldSucceed = false
 
@@ -190,64 +184,62 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
         }
     }
 
+    @MainActor func testSaveVideo_Success() {
+        if #available(iOS 14, *) {
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [UTType.movie.identifier]
+            let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test_op.mp4")
+            try? "test".data(using: .utf8)?.write(to: tempURL)
+            mockProvider.mockURL = tempURL
 
-  @MainActor func testSaveVideo_Success() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = [UTType.movie.identifier]
-      let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test_op.mp4")
-      try? "test".data(using: .utf8)?.write(to: tempURL)
-      mockProvider.mockURL = tempURL
+            let pathExpectation = expectation(description: "Video path created")
 
-      let pathExpectation = expectation(description: "Video path created")
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, _ in
+                XCTAssertNotNil(savedPath)
+                XCTAssertTrue(FileManager.default.fileExists(atPath: savedPath!))
+                pathExpectation.fulfill()
+            }
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNotNil(savedPath)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: savedPath!))
-        pathExpectation.fulfill()
-      }
-
-      operation.start()
-      waitForExpectations(timeout: 5)
-      try? FileManager.default.removeItem(at: tempURL)
+            operation.start()
+            waitForExpectations(timeout: 5)
+            try? FileManager.default.removeItem(at: tempURL)
+        }
     }
-  }
 
-  @MainActor func testSaveVideo_NoURL_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.registeredIdentifiers = [UTType.movie.identifier]
-      mockProvider.mockURL = nil
+    @MainActor func testSaveVideo_NoURL_ReturnsError() {
+        if #available(iOS 14, *) {
+            let mockProvider = MockItemProvider()
+            mockProvider.registeredIdentifiers = [UTType.movie.identifier]
+            mockProvider.mockURL = nil
 
-      let errorExpectation = expectation(description: "Error received for nil URL")
+            let errorExpectation = expectation(description: "Error received for nil URL")
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "invalid_image")
-        errorExpectation.fulfill()
-      }
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+                XCTAssertEqual((error as? PigeonError)?.code, "invalid_image")
+                errorExpectation.fulfill()
+            }
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            operation.start()
+            waitForExpectations(timeout: 5)
+        }
     }
-  }
 
     @MainActor
     func testUnsupportedType_ReturnsError() async {
         if #available(iOS 14, *) {
-
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = ["public.plain-text"]
 
@@ -276,13 +268,12 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
 
     @MainActor func testOperationCancelled_StopsExecution() async {
         if #available(iOS 14, *) {
-
             let expectation = expectation(description: "Operation finished")
 
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier
+                UTType.image.identifier,
             ]
 
             var completionCalled = false
@@ -316,36 +307,35 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
         }
     }
 
-  @MainActor func testSaveImage_InvalidDataDecoding_ReturnsError() {
-    if #available(iOS 14, *) {
-      let mockProvider = MockItemProvider()
-      mockProvider.mockData = Data("invalid image data".utf8)
+    @MainActor func testSaveImage_InvalidDataDecoding_ReturnsError() {
+        if #available(iOS 14, *) {
+            let mockProvider = MockItemProvider()
+            mockProvider.mockData = Data("invalid image data".utf8)
 
-      let errorExpectation = expectation(description: "Decoding failure")
+            let errorExpectation = expectation(description: "Decoding failure")
 
-      let operation = PHPickerSaveImageToPathOperation(
-        itemProvider: mockProvider,
-        maxHeight: nil,
-        maxWidth: nil,
-        desiredImageQuality: nil,
-        fullMetadata: false
-      ) { savedPath, error in
-        XCTAssertNil(savedPath)
-        XCTAssertEqual((error as? PigeonError)?.code, "invalid_image")
-        errorExpectation.fulfill()
-      }
+            let operation = PHPickerSaveImageToPathOperation(
+                itemProvider: mockProvider,
+                maxHeight: nil,
+                maxWidth: nil,
+                desiredImageQuality: nil,
+                fullMetadata: false
+            ) { savedPath, error in
+                XCTAssertNil(savedPath)
+                XCTAssertEqual((error as? PigeonError)?.code, "invalid_image")
+                errorExpectation.fulfill()
+            }
 
-      operation.start()
-      waitForExpectations(timeout: 5)
+            operation.start()
+            waitForExpectations(timeout: 5)
+        }
     }
-  }
 
     @MainActor
     func testProcessVideo_NoTypeIdentifiers_ReturnsError() async {
         if #available(iOS 14, *) {
-
             let mockProvider = MockItemProvider()
-            mockProvider.registeredIdentifiers = []  // ✅ No types at all
+            mockProvider.registeredIdentifiers = [] // ✅ No types at all
 
             let errorExpectation = expectation(description: "No type identifiers error")
 
@@ -376,7 +366,6 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     @MainActor
     func testSaveVideo_LoadingFailure_ReturnsError() async {
         if #available(iOS 14, *) {
-
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [UTType.movie.identifier]
             mockProvider.shouldSucceed = false
@@ -415,7 +404,6 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
     @MainActor
     func testSaveVideo_SaveFailure_ReturnsError() async {
         if #available(iOS 14, *) {
-
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [UTType.movie.identifier]
 
@@ -449,11 +437,9 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
         }
     }
 
-
     @MainActor
     func testOperationProperties() async {
         if #available(iOS 14, *) {
-
             let expectation = expectation(description: "Operation completes")
 
             let operation = PHPickerSaveImageToPathOperation(

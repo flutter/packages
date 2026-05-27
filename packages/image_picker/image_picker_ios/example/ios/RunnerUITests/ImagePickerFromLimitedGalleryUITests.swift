@@ -6,158 +6,162 @@ import XCTest
 
 @MainActor
 class ImagePickerFromLimitedGalleryUITests: XCTestCase {
+    var app: XCUIApplication!
+    let elementWaitingTime: TimeInterval = 60
 
-  var app: XCUIApplication!
-  let elementWaitingTime: TimeInterval = 60
+    override func setUp() async throws {
+        try await super.setUp()
+        continueAfterFailure = false
+        app = XCUIApplication()
 
-  override func setUp() async throws {
-    try await super.setUp()
-    continueAfterFailure = false
-    app = XCUIApplication()
-
-    if #available(iOS 13.4, *) {
-      app.resetAuthorizationStatus(for: .photos)
-    }
-
-    app.launch()
-
-    // Monitor for system alerts and handle them automatically.
-    addUIInterruptionMonitor(withDescription: "Permission popups") { interruptingElement in
-      let labels = [
-        "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-        "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
-      ]
-      for label in labels {
-        let button = interruptingElement.buttons.matching(
-          NSPredicate(format: "label CONTAINS[c] %@", label)
-        ).firstMatch
-        if button.exists {
-          button.tap()
-          return true
+        if #available(iOS 13.4, *) {
+            app.resetAuthorizationStatus(for: .photos)
         }
-      }
-      return false
-    }
-  }
 
-  override func tearDown() async throws {
-    app.terminate()
-    try await super.tearDown()
-  }
+        app.launch()
 
-  /// Manually triggers the interruption monitor or checks springboard for permission buttons.
-  private func handlePermissionInterruption() {
-    // A small swipe can help trigger the interruption monitor.
-    app.swipeUp(velocity: .slow)
-
-    let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let labels = [
-      "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-      "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
-    ]
-    for label in labels {
-      let button = springboardApp.buttons.matching(
-        NSPredicate(format: "label CONTAINS[c] %@", label)
-      ).firstMatch
-      if button.exists {
-        button.tap()
-        break
-      }
-    }
-  }
-
-  private func findElement(identifier: String) -> XCUIElement {
-    let discoveryOrder = [
-      app.buttons[identifier],
-      app.otherElements[identifier],
-      app.descendants(matching: .any)[identifier],
-    ]
-
-    for element in discoveryOrder {
-      if element.exists {
-        return element
-      }
-    }
-    return app.buttons[identifier].firstMatch
-  }
-
-  private func dismissKeyboardIfPresent() {
-    if app.keyboards.element(boundBy: 0).exists {
-      if UIDevice.current.userInterfaceIdiom == .pad {
-        let hideButton = app.keyboards.buttons["Hide keyboard"]
-        if hideButton.exists { hideButton.tap() }
-      } else {
-        let doneButton = app.toolbars.buttons["Done"]
-        if doneButton.exists {
-          doneButton.tap()
-        } else {
-          app.keyboards.element(boundBy: 0).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -0.05)).tap()
+        // Monitor for system alerts and handle them automatically.
+        addUIInterruptionMonitor(withDescription: "Permission popups") { interruptingElement in
+            let labels = [
+                "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
+                "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
+            ]
+            for label in labels {
+                let button = interruptingElement.buttons.matching(
+                    NSPredicate(format: "label CONTAINS[c] %@", label)
+                ).firstMatch
+                if button.exists {
+                    button.tap()
+                    return true
+                }
+            }
+            return false
         }
-      }
-      _ = XCTWaiter.wait(for: [XCTestExpectation(description: "Wait for keyboard")], timeout: 1.0)
     }
-  }
 
-  func testPickingFromLimitedGallery() {
-    // 1. Tap the gallery button on the home screen.
-    let galleryButton = findElement(identifier: "image_picker_example_from_gallery")
-    XCTAssertTrue(
-      galleryButton.waitForExistence(timeout: elementWaitingTime), "Gallery button not found")
-    galleryButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    override func tearDown() async throws {
+        app.terminate()
+        try await super.tearDown()
+    }
 
-    // 2. Tap the PICK button on the options screen with retry logic.
-    let pickButton = app.buttons["PICK"].firstMatch
-    if !pickButton.waitForExistence(timeout: 10) {
+    /// Manually triggers the interruption monitor or checks springboard for permission buttons.
+    private func handlePermissionInterruption() {
+        // A small swipe can help trigger the interruption monitor.
+        app.swipeUp(velocity: .slow)
+
+        let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let labels = [
+            "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
+            "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
+        ]
+        for label in labels {
+            let button = springboardApp.buttons.matching(
+                NSPredicate(format: "label CONTAINS[c] %@", label)
+            ).firstMatch
+            if button.exists {
+                button.tap()
+                break
+            }
+        }
+    }
+
+    private func findElement(identifier: String) -> XCUIElement {
+        let discoveryOrder = [
+            app.buttons[identifier],
+            app.otherElements[identifier],
+            app.descendants(matching: .any)[identifier],
+        ]
+
+        for element in discoveryOrder {
+            if element.exists {
+                return element
+            }
+        }
+        return app.buttons[identifier].firstMatch
+    }
+
+    private func dismissKeyboardIfPresent() {
+        if app.keyboards.element(boundBy: 0).exists {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                let hideButton = app.keyboards.buttons["Hide keyboard"]
+                if hideButton.exists { hideButton.tap() }
+            } else {
+                let doneButton = app.toolbars.buttons["Done"]
+                if doneButton.exists {
+                    doneButton.tap()
+                } else {
+                    app.keyboards.element(boundBy: 0).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -0.05)).tap()
+                }
+            }
+            _ = XCTWaiter.wait(for: [XCTestExpectation(description: "Wait for keyboard")], timeout: 1.0)
+        }
+    }
+
+    func testPickingFromLimitedGallery() {
+        // 1. Tap the gallery button on the home screen.
+        let galleryButton = findElement(identifier: "image_picker_example_from_gallery")
+        XCTAssertTrue(
+            galleryButton.waitForExistence(timeout: elementWaitingTime), "Gallery button not found"
+        )
         galleryButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        // 2. Tap the PICK button on the options screen with retry logic.
+        let pickButton = app.buttons["PICK"].firstMatch
+        if !pickButton.waitForExistence(timeout: 10) {
+            galleryButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+
+        XCTAssertTrue(pickButton.waitForExistence(timeout: elementWaitingTime), "PICK button not found")
+
+        // The gallery (represented by the Cancel button) should appear after tapping PICK.
+        let cancelButton = app.buttons["Cancel"].firstMatch
+        var retryCount = 0
+        while !cancelButton.exists, retryCount < 3 {
+            pickButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            handlePermissionInterruption()
+            if cancelButton.waitForExistence(timeout: 15) {
+                break
+            }
+            retryCount += 1
+        }
+
+        // 3. Handle the photo picker.
+        let picker = app.navigationBars["Photos"]
+        if !picker.waitForExistence(timeout: 20) {
+            handlePermissionInterruption()
+        }
+
+        // 4. Select an image.
+        let firstImage = app.scrollViews.images.firstMatch
+        XCTAssertTrue(
+            firstImage.waitForExistence(timeout: elementWaitingTime), "No images found in picker."
+        )
+        // Use coordinate tap to avoid "not hittable" errors
+        firstImage.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        // 5. Handle "Done" button if present (common in limited picker).
+        let doneButton = app.buttons["Done"].firstMatch
+        if doneButton.exists {
+            doneButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            _ = doneButton.waitForNonExistence(timeout: 20)
+        }
+
+        // 6. Verify the picker is dismissed.
+        if cancelButton.exists, !cancelButton.waitForNonExistence(timeout: 10) {
+            cancelButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+
+        XCTAssertTrue(
+            cancelButton.waitForNonExistence(timeout: 30), "Picker did not dismiss after selection."
+        )
+
+        // 7. Verify the image was picked.
+        let pickedImage = app.images["image_picker_example_picked_image"].firstMatch
+        XCTAssertTrue(
+            pickedImage.waitForExistence(timeout: elementWaitingTime), "Picked image not displayed."
+        )
     }
 
-    XCTAssertTrue(pickButton.waitForExistence(timeout: elementWaitingTime), "PICK button not found")
-
-    // The gallery (represented by the Cancel button) should appear after tapping PICK.
-    let cancelButton = app.buttons["Cancel"].firstMatch
-    var retryCount = 0
-    while !cancelButton.exists && retryCount < 3 {
-      pickButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-      handlePermissionInterruption()
-      if cancelButton.waitForExistence(timeout: 15) {
-        break
-      }
-      retryCount += 1
-    }
-
-    // 3. Handle the photo picker.
-    let picker = app.navigationBars["Photos"]
-    if !picker.waitForExistence(timeout: 20) {
-      handlePermissionInterruption()
-    }
-
-    // 4. Select an image.
-    let firstImage = app.scrollViews.images.firstMatch
-    XCTAssertTrue(
-      firstImage.waitForExistence(timeout: elementWaitingTime), "No images found in picker.")
-    // Use coordinate tap to avoid "not hittable" errors
-    firstImage.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-
-    // 5. Handle "Done" button if present (common in limited picker).
-    let doneButton = app.buttons["Done"].firstMatch
-    if doneButton.exists {
-      doneButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-      _ = doneButton.waitForNonExistence(timeout: 20)
-    }
-
-    // 6. Verify the picker is dismissed.
-    if cancelButton.exists && !cancelButton.waitForNonExistence(timeout: 10) {
-      cancelButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-    }
-
-    XCTAssertTrue(
-      cancelButton.waitForNonExistence(timeout: 30), "Picker did not dismiss after selection.")
-
-    // 7. Verify the image was picked.
-    let pickedImage = app.images["image_picker_example_picked_image"].firstMatch
-    XCTAssertTrue(
-      pickedImage.waitForExistence(timeout: elementWaitingTime), "Picked image not displayed.")
-  }
     func testPickingFromGallery_CancelFlow() {
         let galleryButton = findElement(identifier: "image_picker_example_from_gallery")
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
@@ -181,13 +185,12 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
         let pickedImage = app.images["image_picker_example_picked_image"].firstMatch
         XCTAssertFalse(pickedImage.exists)
     }
-    func testSelectingImageMultipleTimes() {
 
+    func testSelectingImageMultipleTimes() {
         let galleryButton = findElement(identifier: "image_picker_example_from_gallery")
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
-        for _ in 0..<2 {
-
+        for _ in 0 ..< 2 {
             XCTAssertTrue(galleryButton.exists)
             galleryButton.tap()
 
@@ -244,11 +247,10 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
     }
 
     func testGallery_OpenCloseWithoutSelection() {
-
         let galleryButton = findElement(identifier: "image_picker_example_from_gallery")
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
-        for _ in 0..<2 {   // ✅ repeat to improve coverage
+        for _ in 0 ..< 2 { // ✅ repeat to improve coverage
 
             XCTAssertTrue(galleryButton.exists)
             galleryButton.tap()

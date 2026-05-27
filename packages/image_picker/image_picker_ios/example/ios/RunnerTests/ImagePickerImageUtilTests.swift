@@ -2,77 +2,78 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import UIKit
-
 @testable import image_picker_ios
+import UIKit
+import XCTest
 
 class ImagePickerImageUtilTests: XCTestCase {
+    func testScaledImage_Parameterized() throws {
+        let image = try XCTUnwrap(UIImage(data: ImagePickerTestImages.jpgTestData)) // 12x7
+        let testCases: [(maxWidth: Double?, maxHeight: Double?, expectedWidth: CGFloat, expectedHeight: CGFloat)] = [
+            (5, nil, 5, 3), // Max width limiting
+            (nil, 4, 7, 4), // Max height limiting
+            (6, 6, 6, 4), // Both, width limiting
+            (10, 2, 3, 2), // Both, height limiting
+            (20, 20, 12, 7), // Larger than original (no scaling)
+            (nil, nil, 12, 7), // No limits (no scaling)
+            (0, 5, 12, 7), // Invalid width (no scaling)
+            (5, 0, 12, 7), // Invalid height (no scaling)
+        ]
 
-  func testScaledImage_Parameterized() {
-    let image = UIImage(data: ImagePickerTestImages.jpgTestData)! // 12x7
-    let testCases: [(maxWidth: Double?, maxHeight: Double?, expectedWidth: CGFloat, expectedHeight: CGFloat)] = [
-      (5, nil, 5, 3),      // Max width limiting
-      (nil, 4, 7, 4),      // Max height limiting
-      (6, 6, 6, 4),        // Both, width limiting
-      (10, 2, 3, 2),       // Both, height limiting
-      (20, 20, 12, 7),     // Larger than original (no scaling)
-      (nil, nil, 12, 7),    // No limits (no scaling)
-      (0, 5, 12, 7),       // Invalid width (no scaling)
-      (5, 0, 12, 7)        // Invalid height (no scaling)
-    ]
-
-    for testCase in testCases {
-      let scaled = ImagePickerImageUtil.scaledImage(
-        image, maxWidth: testCase.maxWidth, maxHeight: testCase.maxHeight, isMetadataAvailable: false)
-      XCTAssertEqual(scaled.size.width, testCase.expectedWidth, accuracy: 0.5, "Width failed for \(testCase)")
-      XCTAssertEqual(scaled.size.height, testCase.expectedHeight, accuracy: 0.5, "Height failed for \(testCase)")
+        for testCase in testCases {
+            let scaled = ImagePickerImageUtil.scaledImage(
+                image, maxWidth: testCase.maxWidth, maxHeight: testCase.maxHeight, isMetadataAvailable: false
+            )
+            XCTAssertEqual(scaled.size.width, testCase.expectedWidth, accuracy: 0.5, "Width failed for \(testCase)")
+            XCTAssertEqual(scaled.size.height, testCase.expectedHeight, accuracy: 0.5, "Height failed for \(testCase)")
+        }
     }
-  }
 
-  func testScaledImage_ShouldReturnOriginalIfSizeIsSame() {
-    let data = ImagePickerTestImages.jpgTestData
-    let image = UIImage(data: data)!
+    func testScaledImage_ShouldReturnOriginalIfSizeIsSame() throws {
+        let data = ImagePickerTestImages.jpgTestData
+        let image = try XCTUnwrap(UIImage(data: data))
 
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: Double(image.size.width),
-      maxHeight: Double(image.size.height),
-      isMetadataAvailable: true)
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: Double(image.size.width),
+            maxHeight: Double(image.size.height),
+            isMetadataAvailable: true
+        )
 
-    XCTAssertEqual(image, scaledImage)
-  }
+        XCTAssertEqual(image, scaledImage)
+    }
 
-  func testScaledImage_ShouldReturnOriginalIfSizeIsNil() {
-    let data = ImagePickerTestImages.jpgTestData
-    let image = UIImage(data: data)!
+    func testScaledImage_ShouldReturnOriginalIfSizeIsNil() throws {
+        let data = ImagePickerTestImages.jpgTestData
+        let image = try XCTUnwrap(UIImage(data: data))
 
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: nil,
-      maxHeight: nil,
-      isMetadataAvailable: true)
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: nil,
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
 
-    XCTAssertEqual(image, scaledImage)
-  }
+        XCTAssertEqual(image, scaledImage)
+    }
 
-  func testScaledImage_ShouldDownscaleWidth() {
-    let data = ImagePickerTestImages.jpgTestData
-    let image = UIImage(data: data)!
-    let originalWidth = image.size.width
+    func testScaledImage_ShouldDownscaleWidth() throws {
+        let data = ImagePickerTestImages.jpgTestData
+        let image = try XCTUnwrap(UIImage(data: data))
+        let originalWidth = image.size.width
 
-    let maxWidth = originalWidth / 2.0
-    let scaledImage = ImagePickerImageUtil.scaledImage(
-      image,
-      maxWidth: maxWidth,
-      maxHeight: nil,
-      isMetadataAvailable: true)
+        let maxWidth = originalWidth / 2.0
+        let scaledImage = ImagePickerImageUtil.scaledImage(
+            image,
+            maxWidth: maxWidth,
+            maxHeight: nil,
+            isMetadataAvailable: true
+        )
 
-    XCTAssertEqual(scaledImage.size.width, maxWidth, accuracy: 1.0)
-  }
+        XCTAssertEqual(scaledImage.size.width, maxWidth, accuracy: 1.0)
+    }
 
     func testScaledImage_ShouldDownscaleHeight() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -122,7 +123,6 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledImage_ShouldRespectAspectRatio_WhenWidthIsLimiting() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -176,14 +176,13 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledImage_ShouldRespectAspectRatio_WhenHeightIsLimiting() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
         }
 
-        let maxWidth = image.size.width    // NOT limiting
-        let maxHeight = image.size.height / 2.0  // limiting
+        let maxWidth = image.size.width // NOT limiting
+        let maxHeight = image.size.height / 2.0 // limiting
 
         let scaledImage = ImagePickerImageUtil.scaledImage(
             image,
@@ -236,9 +235,9 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledImage_WithOrientation() {
-
         guard let baseImage = UIImage(data: ImagePickerTestImages.jpgTestData),
-              let cgImage = baseImage.cgImage else {
+              let cgImage = baseImage.cgImage
+        else {
             XCTFail("Failed to create UIImage")
             return
         }
@@ -281,7 +280,6 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledImage_InvalidDimensionsReturnsOriginal() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -351,9 +349,7 @@ class ImagePickerImageUtilTests: XCTestCase {
         XCTAssertTrue(repeated === image)
     }
 
-
     func testScaledGIFImage_ShouldMaintainFrameCount() {
-
         let data = ImagePickerTestImages.gifTestData
 
         // ✅ Case 1: Main scaling scenario (original)
@@ -427,9 +423,7 @@ class ImagePickerImageUtilTests: XCTestCase {
         XCTAssertEqual(repeated?.images.count, 3)
     }
 
-
     func testScaledGIFImage_InvalidDataReturnsNil() {
-
         // ✅ Case 1: Invalid string data (original)
         let stringData = "Not a gif".data(using: .utf8)!
         let result1 = ImagePickerImageUtil.scaledGIFImage(
@@ -484,7 +478,6 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledGIFImage_ShouldHandleNoDelayInfo() {
-
         let data = ImagePickerTestImages.gifTestData
 
         // ✅ Case 1: Original scenario (no constraints)
@@ -557,7 +550,6 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testDrawScaledImage_ZeroSize_ReturnsOriginalImage() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -628,7 +620,6 @@ class ImagePickerImageUtilTests: XCTestCase {
     }
 
     func testScaledGIFImage_EmptyData_ReturnsNil() {
-
         // ✅ Case 1: Empty data (original case)
         let result1 = ImagePickerImageUtil.scaledGIFImage(
             Data(),

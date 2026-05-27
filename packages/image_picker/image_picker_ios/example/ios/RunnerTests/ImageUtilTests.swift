@@ -2,71 +2,69 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import UIKit
-
 @testable import image_picker_ios
+import UIKit
+import XCTest
 
 class ImageUtilTests: XCTestCase {
+    /// Corner colors of test image scaled to 3x2. Format is "R G B A".
+    /// Using a small epsilon for float comparison.
+    private func colorsAreEqual(_ s1: String?, _ s2: String) -> Bool {
+        guard let s1 = s1 else { return false }
+        let components1 = s1.split(separator: " ").compactMap { Double($0) }
+        let components2 = s2.split(separator: " ").compactMap { Double($0) }
 
-  // Corner colors of test image scaled to 3x2. Format is "R G B A".
-  // Using a small epsilon for float comparison.
-  private func colorsAreEqual(_ s1: String?, _ s2: String) -> Bool {
-    guard let s1 = s1 else { return false }
-    let components1 = s1.split(separator: " ").compactMap { Double($0) }
-    let components2 = s2.split(separator: " ").compactMap { Double($0) }
+        guard components1.count == 4 && components2.count == 4 else { return false }
 
-    guard components1.count == 4 && components2.count == 4 else { return false }
-
-    for i in 0..<4 {
-      if abs(components1[i] - components2[i]) > 0.01 {
-        return false
-      }
+        for i in 0 ..< 4 {
+            if abs(components1[i] - components2[i]) > 0.01 {
+                return false
+            }
+        }
+        return true
     }
-    return true
-  }
 
-  private let kColorRepresentation3x2BottomLeftYellow = "1 0.776471 0 1"
+    private let kColorRepresentation3x2BottomLeftYellow = "1 0.776471 0 1"
 
-  private func colorStringAtPixel(_ image: UIImage, x: Int, y: Int) -> String? {
-    guard let cgImage = image.cgImage else { return nil }
+    private func colorStringAtPixel(_ image: UIImage, x: Int, y: Int) -> String? {
+        guard let cgImage = image.cgImage else { return nil }
 
-    let width = 1
-    let height = 1
-    var pixel = [UInt8](repeating: 0, count: 4)
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
-    // Using premultipliedLast.
-    let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
+        let width = 1
+        let height = 1
+        var pixel = [UInt8](repeating: 0, count: 4)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        // Using premultipliedLast.
+        let bitmapInfo = CGImageAlphaInfo.premultipliedLast.rawValue
 
-    guard let context = CGContext(
-      data: &pixel,
-      width: width,
-      height: height,
-      bitsPerComponent: 8,
-      bytesPerRow: 4,
-      space: colorSpace,
-      bitmapInfo: bitmapInfo
-    ) else { return nil }
+        guard let context = CGContext(
+            data: &pixel,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: 4,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo
+        ) else { return nil }
 
-    context.setShouldAntialias(false)
-    context.interpolationQuality = .none
+        context.setShouldAntialias(false)
+        context.interpolationQuality = .none
 
-    context.draw(
-      cgImage,
-      in: CGRect(
-        x: CGFloat(-x), y: CGFloat(-y), width: CGFloat(cgImage.width), height: CGFloat(cgImage.height))
-    )
+        context.draw(
+            cgImage,
+            in: CGRect(
+                x: CGFloat(-x), y: CGFloat(-y), width: CGFloat(cgImage.width), height: CGFloat(cgImage.height)
+            )
+        )
 
-    let red = CGFloat(pixel[0]) / 255.0
-    let green = CGFloat(pixel[1]) / 255.0
-    let blue = CGFloat(pixel[2]) / 255.0
-    let alpha = CGFloat(pixel[3]) / 255.0
+        let red = CGFloat(pixel[0]) / 255.0
+        let green = CGFloat(pixel[1]) / 255.0
+        let blue = CGFloat(pixel[2]) / 255.0
+        let alpha = CGFloat(pixel[3]) / 255.0
 
-    return CIColor(red: red, green: green, blue: blue, alpha: alpha).stringRepresentation
-  }
+        return CIColor(red: red, green: green, blue: blue, alpha: alpha).stringRepresentation
+    }
 
     func testScaledImage_EqualSizeReturnsSameImage() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -137,9 +135,7 @@ class ImageUtilTests: XCTestCase {
         XCTAssertTrue(repeated === image)
     }
 
-
     func testScaledImage_NilSizeReturnsSameImage() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -182,7 +178,6 @@ class ImageUtilTests: XCTestCase {
     }
 
     func testScaledImage_ShouldBeScaled() {
-
         guard let image = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -252,8 +247,7 @@ class ImageUtilTests: XCTestCase {
         XCTAssertLessThanOrEqual(heightOnlyScaled.size.height, 4)
     }
 
-    func testScaledGIFImage_ShouldBeScaled() {
-
+    func testScaledGIFImage_ShouldBeScaled() throws {
         // ✅ Main success case
         guard let info = ImagePickerImageUtil.scaledGIFImage(
             ImagePickerTestImages.gifTestData,
@@ -279,7 +273,7 @@ class ImageUtilTests: XCTestCase {
             maxHeight: nil
         )
         XCTAssertNotNil(widthOnly)
-        for image in widthOnly!.images {
+        for image in try XCTUnwrap(widthOnly?.images) {
             XCTAssertLessThanOrEqual(image.size.width, 4)
         }
 
@@ -290,7 +284,7 @@ class ImageUtilTests: XCTestCase {
             maxHeight: 4
         )
         XCTAssertNotNil(heightOnly)
-        for image in heightOnly!.images {
+        for image in try XCTUnwrap(heightOnly?.images) {
             XCTAssertLessThanOrEqual(image.size.height, 4)
         }
 
@@ -301,7 +295,7 @@ class ImageUtilTests: XCTestCase {
             maxHeight: nil
         )
         XCTAssertNotNil(noScale)
-        XCTAssertGreaterThan(noScale!.images.count, 0)
+        XCTAssertGreaterThan(try XCTUnwrap(noScale?.images.count), 0)
 
         // ✅ Additional coverage: invalid data branch
         let invalidData = Data("invalid gif data".utf8)

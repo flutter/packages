@@ -2,16 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
-import UIKit
-import ImageIO
-
 @testable import image_picker_ios
+import ImageIO
+import UIKit
+import XCTest
 
 class MetaDataUtilTests: XCTestCase {
-
     func testGetImageMIMETypeFromImageData() {
-
         // ✅ Case 1: JPEG
         let jpegResult = ImagePickerMetaDataUtil.getImageMIMEType(
             from: ImagePickerTestImages.jpgTestData
@@ -70,9 +67,7 @@ class MetaDataUtilTests: XCTestCase {
         XCTAssertTrue(gifResult == .gif)
     }
 
-
-    func testSuffixFromType() {
-
+    func testSuffixFromType() throws {
         // ✅ Case 1: JPEG
         let jpegSuffix = ImagePickerMetaDataUtil.imageTypeSuffix(from: .jpeg)
         XCTAssertEqual(jpegSuffix, ".jpg")
@@ -103,13 +98,12 @@ class MetaDataUtilTests: XCTestCase {
         let pngCheck = ImagePickerMetaDataUtil.imageTypeSuffix(from: .png)
         let gifCheck = ImagePickerMetaDataUtil.imageTypeSuffix(from: .gif)
 
-        XCTAssertTrue(jpegCheck!.starts(with: "."))
-        XCTAssertTrue(pngCheck!.starts(with: "."))
-        XCTAssertTrue(gifCheck!.starts(with: "."))
+        XCTAssertTrue(try XCTUnwrap(jpegCheck?.starts(with: ".")))
+        XCTAssertTrue(try XCTUnwrap(pngCheck?.starts(with: ".")))
+        XCTAssertTrue(try XCTUnwrap(gifCheck?.starts(with: ".")))
     }
 
-    func testGetMetaData() {
-
+    func testGetMetaData() throws {
         let data = ImagePickerTestImages.jpgTestData
 
         // ✅ Case 1: Main metadata extraction
@@ -129,7 +123,7 @@ class MetaDataUtilTests: XCTestCase {
         XCTAssertNotNil(pixelY)
 
         // ✅ Case 3: Ensure metadata dictionary is not empty
-        XCTAssertFalse(metaData!.isEmpty)
+        XCTAssertFalse(try XCTUnwrap(metaData?.isEmpty))
 
         // ✅ Case 4: Re-read metadata (forces repeated execution)
         let secondRead = ImagePickerMetaDataUtil.getMetaData(from: data)
@@ -154,7 +148,6 @@ class MetaDataUtilTests: XCTestCase {
     }
 
     func testGetMetaData_InvalidDataReturnsNil() {
-
         // ✅ Case 1: Invalid plain string data (original)
         let invalidData = Data("not an image".utf8)
         let result1 = ImagePickerMetaDataUtil.getMetaData(from: invalidData)
@@ -185,15 +178,13 @@ class MetaDataUtilTests: XCTestCase {
         XCTAssertNil(repeatResult)
     }
 
-
     func testUpdateMetaData() {
-
         let dataJPG = ImagePickerTestImages.jpgTestData
 
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test Comment"
-            ]
+                kCGImagePropertyExifUserComment as String: "Test Comment",
+            ],
         ]
 
         // ✅ Create image with metadata
@@ -226,7 +217,6 @@ class MetaDataUtilTests: XCTestCase {
     }
 
     func testUpdateMetaData_InvalidDataReturnsNil() {
-
         // ✅ Case 1: Invalid string data (original case)
         let invalidData = Data("not an image".utf8)
         let result1 = ImagePickerMetaDataUtil.image(from: invalidData, with: [:])
@@ -245,8 +235,8 @@ class MetaDataUtilTests: XCTestCase {
         // ✅ Case 4: Invalid data with metadata (forces metadata handling path)
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test"
-            ]
+                kCGImagePropertyExifUserComment as String: "Test",
+            ],
         ]
 
         let result4 = ImagePickerMetaDataUtil.image(from: invalidData, with: metaData)
@@ -257,8 +247,7 @@ class MetaDataUtilTests: XCTestCase {
         XCTAssertNil(result5)
     }
 
-    func testConvertImageAndMimeType() {
-
+    func testConvertImageAndMimeType() throws {
         guard let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData) else {
             XCTFail("Failed to create UIImage")
             return
@@ -272,7 +261,7 @@ class MetaDataUtilTests: XCTestCase {
         )
         XCTAssertNotNil(convertedDataJPG)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataJPG!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataJPG)),
             .jpeg
         )
 
@@ -284,7 +273,7 @@ class MetaDataUtilTests: XCTestCase {
         )
         XCTAssertNotNil(convertedDataPNG)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataPNG!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataPNG)),
             .png
         )
 
@@ -296,7 +285,7 @@ class MetaDataUtilTests: XCTestCase {
         )
         XCTAssertNotNil(convertedDataGIF)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataGIF!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataGIF)),
             .jpeg
         )
 
@@ -308,7 +297,7 @@ class MetaDataUtilTests: XCTestCase {
         )
         XCTAssertNotNil(convertedDataOther)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: convertedDataOther!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(convertedDataOther)),
             .jpeg
         )
 
@@ -320,8 +309,7 @@ class MetaDataUtilTests: XCTestCase {
         XCTAssertTrue(mimeType == .jpeg || mimeType == .other)
     }
 
-    func testConvertImageToData_PngWithQualityWarning() {
-
+    func testConvertImageToData_PngWithQualityWarning() throws {
         guard let image = UIImage(data: ImagePickerTestImages.pngTestData) else {
             XCTFail("Failed to create PNG image")
             return
@@ -336,7 +324,7 @@ class MetaDataUtilTests: XCTestCase {
 
         XCTAssertNotNil(dataWithQuality)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: dataWithQuality!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(dataWithQuality)),
             .png
         )
 
@@ -349,14 +337,14 @@ class MetaDataUtilTests: XCTestCase {
 
         XCTAssertNotNil(dataWithoutQuality)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: dataWithoutQuality!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(dataWithoutQuality)),
             .png
         )
 
         // ✅ Case 3: Ensure both outputs are PNG (quality ignored)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: dataWithQuality!),
-            ImagePickerMetaDataUtil.getImageMIMEType(from: dataWithoutQuality!)
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(dataWithQuality)),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(dataWithoutQuality))
         )
 
         // ✅ Case 4: Repeated execution (forces coverage tracking)
@@ -368,7 +356,7 @@ class MetaDataUtilTests: XCTestCase {
 
         XCTAssertNotNil(repeated)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: repeated!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(repeated)),
             .png
         )
 
@@ -381,7 +369,7 @@ class MetaDataUtilTests: XCTestCase {
 
         XCTAssertNotNil(anotherCall)
         XCTAssertEqual(
-            ImagePickerMetaDataUtil.getImageMIMEType(from: anotherCall!),
+            try ImagePickerMetaDataUtil.getImageMIMEType(from: XCTUnwrap(anotherCall)),
             .png
         )
     }

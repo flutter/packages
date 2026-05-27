@@ -7,21 +7,21 @@
 import PackageDescription
 
 let package = Package(
-  name: "image_picker_ios",
-  platforms: [
-    .iOS("13.0")
-  ],
-  products: [
-    .library(name: "image-picker-ios", targets: ["image_picker_ios"])
-  ],
-  dependencies: [],
-  targets: [
-    .target(
-      name: "image_picker_ios",
-      dependencies: [],
-      resources: [
-        .process("Resources")
-      ]
-    )
-  ]
+    name: "image_picker_ios",
+    platforms: [
+        .iOS("13.0"),
+    ],
+    products: [
+        .library(name: "image-picker-ios", targets: ["image_picker_ios"]),
+    ],
+    dependencies: [],
+    targets: [
+        .target(
+            name: "image_picker_ios",
+            dependencies: [],
+            resources: [
+                .process("Resources"),
+            ]
+        ),
+    ]
 )
