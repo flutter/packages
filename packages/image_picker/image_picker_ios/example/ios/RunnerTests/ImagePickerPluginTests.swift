@@ -241,7 +241,7 @@ class ImagePickerPluginTests: XCTestCase {
             (-1.0, 1.0),
             (101.0, 1.0),
             (-100.0, 1.0),
-            (1000.0, 1.0),
+            (1000.0, 1.0)
         ]
 
         for testCase in testCases {
@@ -889,7 +889,7 @@ class ImagePickerPluginTests: XCTestCase {
             picker,
             didFinishPickingMediaWithInfo: [
                 .originalImage: UIImage(),
-                .mediaURL: url,
+                .mediaURL: url
             ]
         )
 
@@ -1109,7 +1109,7 @@ class ImagePickerPluginTests: XCTestCase {
             SourceSpecification(type: .gallery, camera: .rear),
             MaxSize(width: 100, height: 100),
             Int64(80),
-            true,
+            true
         ]
         let message = MessagesPigeonCodec.shared.encode(args)
 
@@ -1316,7 +1316,7 @@ class ImagePickerPluginTests: XCTestCase {
             SourceSpecification(type: .gallery, camera: .rear),
             MaxSize(),
             nil,
-            false,
+            false
         ]
 
         let message = MessagesPigeonCodec.shared.encode(args)

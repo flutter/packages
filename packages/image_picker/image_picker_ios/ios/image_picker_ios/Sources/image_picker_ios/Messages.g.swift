@@ -41,20 +41,20 @@ private func wrapError(_ error: Any) -> [Any?] {
         return [
             pigeonError.code,
             pigeonError.message,
-            pigeonError.details,
+            pigeonError.details
         ]
     }
     if let flutterError = error as? FlutterError {
         return [
             flutterError.code,
             flutterError.message,
-            flutterError.details,
+            flutterError.details
         ]
     }
     return [
         "\(error)",
         "\(Swift.type(of: error))",
-        "Stacktrace: \(Thread.callStackSymbols)",
+        "Stacktrace: \(Thread.callStackSymbols)"
     ]
 }
 
@@ -188,8 +188,8 @@ enum SourceType: Int {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct MaxSize: Hashable {
-    var width: Double? = nil
-    var height: Double? = nil
+    var width: Double?
+    var height: Double?
 
     // swift-format-ignore: AlwaysUseLowerCamelCase
     static func fromList(_ pigeonVar_list: [Any?]) -> MaxSize? {
@@ -205,7 +205,7 @@ struct MaxSize: Hashable {
     func toList() -> [Any?] {
         return [
             width,
-            height,
+            height
         ]
     }
 
@@ -226,10 +226,10 @@ struct MaxSize: Hashable {
 /// Generated class from Pigeon that represents data sent in messages.
 struct MediaSelectionOptions: Hashable {
     var maxSize: MaxSize
-    var imageQuality: Int64? = nil
+    var imageQuality: Int64?
     var requestFullMetadata: Bool
     var allowMultiple: Bool
-    var limit: Int64? = nil
+    var limit: Int64?
 
     // swift-format-ignore: AlwaysUseLowerCamelCase
     static func fromList(_ pigeonVar_list: [Any?]) -> MediaSelectionOptions? {
@@ -254,7 +254,7 @@ struct MediaSelectionOptions: Hashable {
             imageQuality,
             requestFullMetadata,
             allowMultiple,
-            limit,
+            limit
         ]
     }
 
@@ -294,7 +294,7 @@ struct SourceSpecification: Hashable {
     func toList() -> [Any?] {
         return [
             type,
-            camera,
+            camera
         ]
     }
 
@@ -316,8 +316,8 @@ struct SourceSpecification: Hashable {
 ///
 /// Generated class from Pigeon that represents data sent in messages.
 struct CoverageModel: Hashable {
-    var list: [Any?]? = nil
-    var map: [AnyHashable?: Any?]? = nil
+    var list: [Any?]?
+    var map: [AnyHashable?: Any?]?
 
     // swift-format-ignore: AlwaysUseLowerCamelCase
     static func fromList(_ pigeonVar_list: [Any?]) -> CoverageModel? {
@@ -333,7 +333,7 @@ struct CoverageModel: Hashable {
     func toList() -> [Any?] {
         return [
             list,
-            map,
+            map
         ]
     }
 

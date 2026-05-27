@@ -24,7 +24,7 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
         addUIInterruptionMonitor(withDescription: "Permission popups") { interruptingElement in
             let labels = [
                 "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-                "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
+                "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection"
             ]
             for label in labels {
                 let button = interruptingElement.buttons.matching(
@@ -52,7 +52,7 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
         let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let labels = [
             "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-            "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
+            "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection"
         ]
         for label in labels {
             let button = springboardApp.buttons.matching(
@@ -69,7 +69,7 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
         let discoveryOrder = [
             app.buttons[identifier],
             app.otherElements[identifier],
-            app.descendants(matching: .any)[identifier],
+            app.descendants(matching: .any)[identifier]
         ]
 
         for element in discoveryOrder {
