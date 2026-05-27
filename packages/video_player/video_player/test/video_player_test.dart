@@ -1027,13 +1027,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -1900,6 +1898,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams = <int, StreamController<VideoEvent>>{};
+  List<VideoPlayerOptions?> videoPlayerOptions = <VideoPlayerOptions?>[];
   bool forceInitError = false;
   int nextPlayerId = 0;
   final Map<int, Duration> _positions = <int, Duration>{};
@@ -1943,6 +1942,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     dataSources.add(options.dataSource);
     viewTypes.add(options.viewType);
+    videoPlayerOptions.add(options.videoPlayerOptions);
     return nextPlayerId++;
   }
 

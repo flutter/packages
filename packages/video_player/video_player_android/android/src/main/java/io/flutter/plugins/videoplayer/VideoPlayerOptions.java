@@ -6,4 +6,17 @@ package io.flutter.plugins.videoplayer;
 
 public class VideoPlayerOptions {
   public boolean mixWithOthers;
+
+  /**
+   * The duration of the back buffer in milliseconds, used to configure ExoPlayer's load control.
+   */
+  public Long backBufferDurationMs;
+
+  public VideoPlayerOptions() {}
+
+  /** Copy constructor to ensure all options are reliably copied. */
+  public VideoPlayerOptions(VideoPlayerOptions other) {
+    this.mixWithOthers = other.mixWithOthers;
+    this.backBufferDurationMs = other.backBufferDurationMs;
+  }
 }

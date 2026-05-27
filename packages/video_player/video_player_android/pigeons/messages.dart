@@ -72,6 +72,7 @@ class CreationOptions {
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+  int? backBufferDurationMs;
 }
 
 class TexturePlayerIds {

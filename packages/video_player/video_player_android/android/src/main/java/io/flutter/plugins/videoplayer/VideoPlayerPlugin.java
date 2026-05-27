@@ -87,12 +87,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
     long id = nextPlayerIdentifier++;
     final String streamInstance = Long.toString(id);
+    VideoPlayerOptions playerOptions = new VideoPlayerOptions(sharedOptions);
+    playerOptions.backBufferDurationMs = options.getBackBufferDurationMs();
+
     VideoPlayer videoPlayer =
         PlatformViewVideoPlayer.create(
             flutterState.applicationContext,
             VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             videoAsset,
-            sharedOptions);
+            playerOptions);
 
     registerPlayerInstance(videoPlayer, id);
     return id;
@@ -106,13 +109,16 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     long id = nextPlayerIdentifier++;
     final String streamInstance = Long.toString(id);
     TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
+    VideoPlayerOptions playerOptions = new VideoPlayerOptions(sharedOptions);
+    playerOptions.backBufferDurationMs = options.getBackBufferDurationMs();
+
     VideoPlayer videoPlayer =
         TextureVideoPlayer.create(
             flutterState.applicationContext,
             VideoPlayerEventCallbacks.bindTo(flutterState.binaryMessenger, streamInstance),
             handle,
             videoAsset,
-            sharedOptions);
+            playerOptions);
 
     registerPlayerInstance(videoPlayer, id);
     return new TexturePlayerIds(id, handle.id());
