@@ -6,99 +6,98 @@ import Foundation
 import UIKit
 import UniformTypeIdentifiers
 
-internal enum ImagePickerMIMEType: UInt {
-  case png
-  case jpeg
-  case gif
-  case other
+enum ImagePickerMIMEType: UInt {
+    case png
+    case jpeg
+    case gif
+    case other
 }
 
-internal enum ImagePickerMetaDataUtil {
-  static let defaultSuffix = ".jpg"
-  static let defaultMIMEType: ImagePickerMIMEType = .jpeg
+enum ImagePickerMetaDataUtil {
+    static let defaultSuffix = ".jpg"
+    static let defaultMIMEType: ImagePickerMIMEType = .jpeg
 
-  /// Retrieve MIME type by reading the image data. We currently only support some popular types.
-  static func getImageMIMEType(from imageData: Data) -> ImagePickerMIMEType {
-    if imageData.isEmpty {
-      return .other
-    }
-    var firstByte: UInt8 = 0
-    imageData.copyBytes(to: &firstByte, count: 1)
-    switch firstByte {
-    case 0xFF:
-      return .jpeg
-    case 0x89:
-      return .png
-    case 0x47:
-      return .gif
-    default:
-      return .other
-    }
-  }
-
-  /// Get corresponding suffix from type.
-  static func imageTypeSuffix(from type: ImagePickerMIMEType) -> String? {
-    switch type {
-    case .jpeg:
-      return ".jpg"
-    case .png:
-      return ".png"
-    case .gif:
-      return ".gif"
-    case .other:
-      return nil
-    }
-  }
-
-  static func getMetaData(from imageData: Data) -> [String: Any]? {
-    guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else {
-      return nil
-    }
-    let metadata = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any]
-    return metadata
-  }
-
-  /// Creates and returns data for a new image based on imageData, but with the
-  /// given metadata.
-  static func image(from imageData: Data, with metadata: [String: Any]) -> Data? {
-    guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else {
-      return nil
-    }
-    let targetData = NSMutableData()
-    guard let sourceType = CGImageSourceGetType(source),
-      let destination = CGImageDestinationCreateWithData(targetData, sourceType, 1, nil)
-    else {
-      return nil
-    }
-    CGImageDestinationAddImageFromSource(destination, source, 0, metadata as CFDictionary)
-    guard CGImageDestinationFinalize(destination) else {
-      return nil
-    }
-    return targetData as Data
-  }
-
-  /// Converting UIImage to a Data with the type provided.
-  static func convertImage(
-    _ image: UIImage,
-    using type: ImagePickerMIMEType,
-    quality: Double?
-  ) -> Data? {
-    if quality != nil && type != .jpeg {
-      print(
-        "image_picker: compressing is not supported for type \(type). Returning the image with original quality"
-      )
+    /// Retrieve MIME type by reading the image data. We currently only support some popular types.
+    static func getImageMIMEType(from imageData: Data) -> ImagePickerMIMEType {
+        if imageData.isEmpty {
+            return .other
+        }
+        var firstByte: UInt8 = 0
+        imageData.copyBytes(to: &firstByte, count: 1)
+        switch firstByte {
+        case 0xFF:
+            return .jpeg
+        case 0x89:
+            return .png
+        case 0x47:
+            return .gif
+        default:
+            return .other
+        }
     }
 
-    switch type {
-    case .jpeg:
-      let qualityFloat = CGFloat(quality ?? 1.0)
-      return image.jpegData(compressionQuality: qualityFloat)
-    case .png:
-      return image.pngData()
-    default:
-      // converts to JPEG by default.
-      let qualityFloat = CGFloat(quality ?? 1.0)
-      return image.jpegData(compressionQuality: qualityFloat)
+    /// Get corresponding suffix from type.
+    static func imageTypeSuffix(from type: ImagePickerMIMEType) -> String? {
+        switch type {
+        case .jpeg:
+            return ".jpg"
+        case .png:
+            return ".png"
+        case .gif:
+            return ".gif"
+        case .other:
+            return nil
+        }
     }
-  }
+
+    static func getMetaData(from imageData: Data) -> [String: Any]? {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else {
+            return nil
+        }
+        return CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [String: Any]
+    }
+
+    /// Creates and returns data for a new image based on imageData, but with the
+    /// given metadata.
+    static func image(from imageData: Data, with metadata: [String: Any]) -> Data? {
+        guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else {
+            return nil
+        }
+        let targetData = NSMutableData()
+        guard let sourceType = CGImageSourceGetType(source),
+              let destination = CGImageDestinationCreateWithData(targetData, sourceType, 1, nil)
+        else {
+            return nil
+        }
+        CGImageDestinationAddImageFromSource(destination, source, 0, metadata as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else {
+            return nil
+        }
+        return targetData as Data
+    }
+
+    /// Converting UIImage to a Data with the type provided.
+    static func convertImage(
+        _ image: UIImage,
+        using type: ImagePickerMIMEType,
+        quality: Double?
+    ) -> Data? {
+        if quality != nil, type != .jpeg {
+            print(
+                "image_picker: compressing is not supported for type \(type). Returning the image with original quality"
+            )
+        }
+
+        switch type {
+        case .jpeg:
+            let qualityFloat = CGFloat(quality ?? 1.0)
+            return image.jpegData(compressionQuality: qualityFloat)
+        case .png:
+            return image.pngData()
+        default:
+            // converts to JPEG by default.
+            let qualityFloat = CGFloat(quality ?? 1.0)
+            return image.jpegData(compressionQuality: qualityFloat)
+        }
+    }
 }
