@@ -559,6 +559,7 @@ class AVFoundationCamera extends CameraPlatform {
 
   /// Returns an [ImageFormatGroup]'s Pigeon representation.
   PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
+    // ignore: exhaustive_cases
     switch (format) {
       // "unknown" is used to indicate the default.
       case ImageFormatGroup.unknown:
@@ -568,7 +569,6 @@ class AVFoundationCamera extends CameraPlatform {
         return PlatformImageFormatGroup.yuv420;
       case ImageFormatGroup.jpeg:
       case ImageFormatGroup.nv21:
-      case ImageFormatGroup.rgba8888:
       // Fall through.
     }
     // The enum comes from a different package, which could get a new value at

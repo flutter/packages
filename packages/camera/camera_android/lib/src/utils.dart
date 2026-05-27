@@ -117,6 +117,7 @@ PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) =>
 /// [ImageFormatGroup.unknown] and [ImageFormatGroup.bgra8888] default to
 /// [PlatformImageFormatGroup.yuv420], which is the default on Android.
 PlatformImageFormatGroup imageFormatGroupToPlatform(ImageFormatGroup format) {
+  // ignore: exhaustive_cases
   switch (format) {
     case ImageFormatGroup.unknown:
       return PlatformImageFormatGroup.yuv420;
@@ -128,7 +129,6 @@ PlatformImageFormatGroup imageFormatGroupToPlatform(ImageFormatGroup format) {
       return PlatformImageFormatGroup.jpeg;
     case ImageFormatGroup.nv21:
       return PlatformImageFormatGroup.nv21;
-    case ImageFormatGroup.rgba8888:
   }
   // This enum is defined outside of this package. This fall-through case
   // ensures that the code does not break if a new value is ever added.
