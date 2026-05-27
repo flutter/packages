@@ -1,6 +1,10 @@
-## 2.18.3
+## 2.18.4
 
 * Updates README to include setup information.
+
+## 2.18.3
+
+* Remove privacy manifest entries duplicated from Google Maps SDK.
 
 ## 2.18.2
 

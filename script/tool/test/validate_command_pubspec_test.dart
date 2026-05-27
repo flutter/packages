@@ -154,7 +154,7 @@ void main() {
       repoRoot = packagesDir.parent;
       // Set an basic config with just the required elements so that tests
       // that don't need test-specific settings still pass.
-      setToolConfig(repoRoot);
+      setToolConfig(repoRoot, minDartVersion: '1.0.0');
 
       final command = ValidateCommand(
         packagesDir,
@@ -490,7 +490,11 @@ ${_dependenciesSection()}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
-      setToolConfig(repoRoot, repoName: 'flutter/core-packages');
+      setToolConfig(
+        repoRoot,
+        repoName: 'flutter/core-packages',
+        minDartVersion: '3.0.0',
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'validate',
@@ -1668,49 +1672,47 @@ ${_topicsSection()}
       },
     );
 
-    test(
-      'fails when a non-Flutter package has a too-low minimum Dart version',
-      () async {
-        final RepositoryPackage package = createFakePackage(
-          'a_package',
-          packagesDir,
-          examples: <String>[],
-        );
+    test('fails when a non-Flutter package has a too-low minimum Dart version '
+        'for the min Flutter version', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        examples: <String>[],
+      );
 
-        package.pubspecFile.writeAsStringSync('''
+      package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
 ${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
 ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
-        setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
+      setToolConfig(repoRoot, minFlutterVersion: '3.38.0');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(
-          runner,
-          <String>['validate'],
-          errorHandler: (Error e) {
-            commandError = e;
-          },
-        );
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
-          ]),
-        );
-      },
-    );
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
+        ]),
+      );
+    });
 
     test(
-      'passes when a non-Flutter package requires exactly the minimum Dart version',
+      'passes when a non-Flutter package requires exactly the minimum Dart version '
+      'for the min Flutter version',
       () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
@@ -1737,12 +1739,12 @@ ${_topicsSection()}
     );
 
     test(
-      'passes when a non-Flutter package requires a higher minimum Dart version',
+      'passes when a non-Flutter package requires a higher minimum Dart version '
+      'for the min Flutter version',
       () async {
         final RepositoryPackage package = createFakePackage(
           'a_package',
           packagesDir,
-          isFlutter: true,
           examples: <String>[],
         );
 
@@ -1753,6 +1755,104 @@ ${_dependenciesSection()}
 ${_topicsSection()}
 ''');
         setToolConfig(repoRoot, minFlutterVersion: '3.22.0');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'validate',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      },
+    );
+
+    test(
+      'fails when a non-Flutter package has a too-low minimum Dart version',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          examples: <String>[],
+        );
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.1.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+        setToolConfig(repoRoot, minDartVersion: '3.10.0');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Minimum allowed Dart version 3.1.0 is less than 3.10.0'),
+          ]),
+        );
+      },
+    );
+
+    test(
+      'passes when a non-Flutter package requires exactly the minimum Dart version',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          examples: <String>[],
+        );
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+        setToolConfig(repoRoot, minDartVersion: '3.8.0');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'validate',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      },
+    );
+
+    test(
+      'passes when a non-Flutter package requires a higher minimum Dart version',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          examples: <String>[],
+        );
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection(dartConstraint: '^3.8.0', flutterConstraint: null)}
+${_dependenciesSection()}
+${_topicsSection()}
+''');
+        setToolConfig(repoRoot, minDartVersion: '3.6.0');
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'validate',
@@ -1967,6 +2067,7 @@ ${_topicsSection()}
         setToolConfig(
           packagesDir.parent,
           unpinnedDependencies: <String>['allowed'],
+          minDartVersion: '1.0.0',
         );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1999,6 +2100,7 @@ ${_topicsSection()}
           setToolConfig(
             packagesDir.parent,
             pinnedDependencies: <String>['allow_pinned'],
+            minDartVersion: '1.0.0',
           );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -2032,6 +2134,7 @@ ${_topicsSection()}
           setToolConfig(
             packagesDir.parent,
             pinnedDependencies: <String>['allow_pinned'],
+            minDartVersion: '1.0.0',
           );
 
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -2063,6 +2166,7 @@ ${_topicsSection()}
         setToolConfig(
           packagesDir.parent,
           pinnedDependencies: <String>['allow_pinned'],
+          minDartVersion: '1.0.0',
         );
 
         Error? commandError;
