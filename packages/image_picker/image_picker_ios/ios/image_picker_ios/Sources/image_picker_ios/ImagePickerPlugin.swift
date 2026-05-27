@@ -67,7 +67,8 @@ final class DefaultDeviceCapabilityHandler: DeviceCapabilityHandler {
 @objc(ImagePickerPlugin)
 public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     UINavigationControllerDelegate, UIImagePickerControllerDelegate,
-    PHPickerViewControllerDelegate, UIAdaptivePresentationControllerDelegate {
+    PHPickerViewControllerDelegate, UIAdaptivePresentationControllerDelegate
+{
     var imagePickerControllerOverrides: [UIImagePickerController]?
     let viewProvider: ViewProvider
     let deviceCapabilityHandler: DeviceCapabilityHandler
@@ -364,7 +365,8 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
         }
 
         if deviceCapabilityHandler.isSourceTypeAvailable(.camera),
-           deviceCapabilityHandler.isCameraDeviceAvailable(device) {
+           deviceCapabilityHandler.isCameraDeviceAvailable(device)
+        {
             imagePickerController.sourceType = .camera
             imagePickerController.cameraDevice = device
             let presentingController = presentingViewControllerForImagePickerInNewWindow()
@@ -675,10 +677,10 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     }
 
     func presentingViewControllerForImagePickerInNewWindow() -> UIViewController {
-
         // ✅ If blocker exists
         if let blocker = interactionBlockerWindow,
-           let rootVC = blocker.rootViewController {
+           let rootVC = blocker.rootViewController
+        {
             return rootVC
         }
 

@@ -29,7 +29,7 @@ class ImagePickerSpreadsheetUITests: XCTestCase {
         let discoveryOrder = [
             app.buttons[identifier],
             app.otherElements[identifier],
-            app.descendants(matching: .any)[identifier]
+            app.descendants(matching: .any)[identifier],
         ]
         for element in discoveryOrder {
             if element.exists {

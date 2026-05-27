@@ -31,7 +31,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         addUIInterruptionMonitor(withDescription: "Permission popups") { interruptingElement in
             let labels = [
                 "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-                "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection"
+                "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
             ]
             for label in labels {
                 let button = interruptingElement.buttons.matching(
@@ -60,7 +60,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         let springboardApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let labels = [
             "Allow Full Access", "Allow Access to All Photos", "Allow Access", "OK", "Allow",
-            "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection"
+            "Select Photos...", "Select More Photos...", "Continue", "Keep Current Selection",
         ]
         for label in labels {
             let button = springboardApp.buttons.matching(
@@ -100,7 +100,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
             app.buttons[identifier],
             app.otherElements[identifier],
             app.buttons["Pick image from gallery"],
-            app.descendants(matching: .any)[identifier]
+            app.descendants(matching: .any)[identifier],
         ]
 
         for element in discoveryOrder {
@@ -116,7 +116,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
             app.buttons["PICK"],
             app.buttons["pick"],
             app.otherElements["PICK"],
-            app.descendants(matching: .button)["PICK"]
+            app.descendants(matching: .button)["PICK"],
         ]
         for element in discoveryOrder {
             if element.exists {
@@ -192,7 +192,7 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         var attempts = 0
         var pickButton = findPickButton()
 
-        while (!pickButton.exists || attempts == 0) && attempts < 3 {
+        while !pickButton.exists || attempts == 0, attempts < 3 {
             galleryButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
             pickButton = findPickButton()
             _ = pickButton.waitForExistence(timeout: 5)
@@ -291,8 +291,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         // ✅ Repeat call (coverage boost)
         XCTAssertTrue(pickedImage.exists)
     }
-    func testPickButton_RetryFlow() {
 
+    func testPickButton_RetryFlow() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -305,8 +305,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
 
         XCTAssertTrue(findPickButton().waitForExistence(timeout: 10))
     }
-    func testKeyboardDismissalFlow() {
 
+    func testKeyboardDismissalFlow() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
         galleryButton.tap()
@@ -327,9 +327,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         // wait and don't fail if still present
         _ = keyboard.waitForNonExistence(timeout: 2)
     }
-    
-    func testNoPermissionInterruptionFlow() {
 
+    func testNoPermissionInterruptionFlow() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -371,9 +370,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         // ✅ FINAL SAFE ASSERTION
         XCTAssertTrue(galleryButton.exists)
     }
-    
-    func testPickerDismiss_BackButtonFallback() {
 
+    func testPickerDismiss_BackButtonFallback() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
         galleryButton.tap()
@@ -386,14 +384,13 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         if backButton.exists {
             backButton.tap()
         } else {
-            app.tap()   // fallback
+            app.tap() // fallback
         }
 
         XCTAssertTrue(galleryButton.waitForExistence(timeout: 5))
     }
-    
-    func testPermissionInterceptionTrackerFlag() {
 
+    func testPermissionInterceptionTrackerFlag() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
         galleryButton.tap()
@@ -408,8 +405,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         // ✅ Verify tracker changed
         XCTAssertTrue(GalleryInterceptionTracker.shared.intercepted)
     }
-    func testKeyboardDismissal_FallbackTap() {
 
+    func testKeyboardDismissal_FallbackTap() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -437,14 +434,12 @@ class ImagePickerFromGalleryUITests: XCTestCase {
         // Only validate test progressed, NOT UI state
         XCTAssertTrue(true)
     }
-    
-    func testRepeatedCancelFlow() {
 
+    func testRepeatedCancelFlow() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
-        for _ in 0..<2 {
-
+        for _ in 0 ..< 2 {
             galleryButton.tap()
 
             tapPickButtonAndVerifyGallery()
@@ -464,7 +459,6 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     }
 
     func testPickButton_DisappearsAndReappears() {
-
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -487,15 +481,14 @@ class ImagePickerFromGalleryUITests: XCTestCase {
 
         XCTAssertTrue(true) // ✅ flow executed
     }
-    
-    func testRepeatedUserInteractionFlow() {
 
+    func testRepeatedUserInteractionFlow() {
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
         galleryButton.tap()
 
-        for _ in 0..<2 {
+        for _ in 0 ..< 2 {
             let pickButton = findPickButton()
 
             if pickButton.waitForExistence(timeout: 5) {
@@ -514,7 +507,6 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     }
 
     func testPicker_NoButtonsFallbackFlow() {
-
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -542,7 +534,6 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     }
 
     func testScrollOnlyBranchExecution() {
-
         let galleryButton = findGalleryButton()
         XCTAssertTrue(galleryButton.waitForExistence(timeout: elementWaitingTime))
 
@@ -559,7 +550,6 @@ class ImagePickerFromGalleryUITests: XCTestCase {
     }
 
     func testPermissionTracker_NoInterception() {
-
         GalleryInterceptionTracker.shared.intercepted = false
 
         let galleryButton = findGalleryButton()
@@ -578,5 +568,4 @@ class ImagePickerFromGalleryUITests: XCTestCase {
 
         XCTAssertFalse(GalleryInterceptionTracker.shared.intercepted)
     }
-    
 }

@@ -66,7 +66,7 @@ enum ImagePickerImageUtil {
 
         let options: [String: Any] = [
             kCGImageSourceShouldCache as String: true,
-            kCGImageSourceTypeIdentifierHint as String: gifIdentifier
+            kCGImageSourceTypeIdentifierHint as String: gifIdentifier,
         ]
 
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, options as CFDictionary)
@@ -116,7 +116,8 @@ enum ImagePickerImageUtil {
     }
 
     private static func drawScaledImage(_ image: UIImage, width: Double, height: Double)
-        -> UIImage? {
+        -> UIImage?
+    {
         if width <= 0 || height <= 0 {
             return nil
         }

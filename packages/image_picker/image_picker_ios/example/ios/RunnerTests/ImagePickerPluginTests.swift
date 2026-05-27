@@ -241,7 +241,7 @@ class ImagePickerPluginTests: XCTestCase {
             (-1.0, 1.0),
             (101.0, 1.0),
             (-100.0, 1.0),
-            (1000.0, 1.0)
+            (1000.0, 1.0),
         ]
 
         for testCase in testCases {
@@ -889,7 +889,7 @@ class ImagePickerPluginTests: XCTestCase {
             picker,
             didFinishPickingMediaWithInfo: [
                 .originalImage: UIImage(),
-                .mediaURL: url
+                .mediaURL: url,
             ]
         )
 
@@ -1019,18 +1019,16 @@ class ImagePickerPluginTests: XCTestCase {
     }
 
     func testPresentingViewController_WhenNoViewController_ReturnsFallback() {
-
         let plugin = ImagePickerPlugin(
             viewProvider: StubViewProvider(viewController: nil)
         )
 
         let result = plugin.presentingViewControllerForImagePickerInNewWindow()
 
-        XCTAssertNotNil(result)   // ✅ Correct expectation
+        XCTAssertNotNil(result) // ✅ Correct expectation
     }
 
     func testShowCamera_WhenAlreadyPresenting_ReturnsEarly() {
-
         let mockHandler = MockDeviceCapabilityHandler()
 
         let plugin = ImagePickerPlugin(
@@ -1039,7 +1037,7 @@ class ImagePickerPluginTests: XCTestCase {
         )
 
         let mockPicker = MockUIImagePickerController()
-        mockPicker.mockIsBeingPresented = true   // ✅ simulate already presenting
+        mockPicker.mockIsBeingPresented = true // ✅ simulate already presenting
 
         plugin.showCamera(.rear, with: mockPicker)
 
@@ -1097,7 +1095,7 @@ class ImagePickerPluginTests: XCTestCase {
             SourceSpecification(type: .gallery, camera: .rear),
             MaxSize(width: 100, height: 100),
             Int64(80),
-            true
+            true,
         ]
         let message = MessagesPigeonCodec.shared.encode(args)
 
@@ -1304,7 +1302,7 @@ class ImagePickerPluginTests: XCTestCase {
             SourceSpecification(type: .gallery, camera: .rear),
             MaxSize(),
             nil,
-            false
+            false,
         ]
 
         let message = MessagesPigeonCodec.shared.encode(args)
@@ -2057,9 +2055,8 @@ class ImagePickerPluginTests: XCTestCase {
         plugin.sendCallResult(pathList: ["valid_path"])
         waitForExpectations(timeout: 1)
     }
-    
-    func testShowCamera_WhenAvailable_PresentsCamera() {
 
+    func testShowCamera_WhenAvailable_PresentsCamera() {
         let mockHandler = MockDeviceCapabilityHandler()
         mockHandler.isSourceTypeAvailableResult = true
         mockHandler.isCameraDeviceAvailableResult = true
@@ -2077,9 +2074,8 @@ class ImagePickerPluginTests: XCTestCase {
 
         XCTAssertEqual(picker.sourceType, .camera)
     }
-    
-    func testShowCamera_WhenAlreadyPresented_ReturnsEarly() {
 
+    func testShowCamera_WhenAlreadyPresented_ReturnsEarly() {
         let mockHandler = MockDeviceCapabilityHandler()
         let plugin = ImagePickerPlugin(
             viewProvider: StubViewProvider(viewController: UIViewController()),
@@ -2094,13 +2090,12 @@ class ImagePickerPluginTests: XCTestCase {
         // ✅ Ensure capability handler was NOT triggered
         XCTAssertFalse(mockHandler.isSourceTypeAvailableCalled)
     }
-    
-    func testImagePickerDelegate_WithFullMetadata_UsesAssetPath() {
 
+    func testImagePickerDelegate_WithFullMetadata_UsesAssetPath() throws {
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
         let expectation = self.expectation(description: "Metadata path")
 
-        let context = ImagePickerMethodCallContext { paths, error in
+        let context = ImagePickerMethodCallContext { paths, _ in
             // ✅ Just verify execution path
             XCTAssertNotNil(paths)
             expectation.fulfill()
@@ -2109,22 +2104,21 @@ class ImagePickerPluginTests: XCTestCase {
         context.requestFullMetadata = true
         plugin.callContext = context
 
-        let image = UIImage(data: ImagePickerTestImages.jpgTestData)!
+        let image = try XCTUnwrap(UIImage(data: ImagePickerTestImages.jpgTestData))
 
         // ✅ IMPORTANT: DO NOT pass PHAsset()
         plugin.imagePickerController(
             UIImagePickerController(),
             didFinishPickingMediaWithInfo: [
-                .originalImage: image
+                .originalImage: image,
                 // ❌ remove .phAsset
             ]
         )
 
         waitForExpectations(timeout: 1)
     }
-    
-    func testSendCallResult_WithErrorOnly() {
 
+    func testSendCallResult_WithErrorOnly() {
         let expectation = self.expectation(description: "Error only")
 
         let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
@@ -2139,15 +2133,14 @@ class ImagePickerPluginTests: XCTestCase {
 
         waitForExpectations(timeout: 1)
     }
-    
+
     func testHandlePickerResults_WithResults_ExecutesFlow() {
         if #available(iOS 14, *) {
-
             let expectation = self.expectation(description: "Paths returned")
 
             let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
 
-            plugin.callContext = ImagePickerMethodCallContext { paths, error in
+            plugin.callContext = ImagePickerMethodCallContext { paths, _ in
                 // ✅ We only validate flow, not actual data
                 XCTAssertNotNil(paths)
                 expectation.fulfill()
@@ -2160,7 +2153,6 @@ class ImagePickerPluginTests: XCTestCase {
             waitForExpectations(timeout: 1)
         }
     }
-
 
     class MockUIImagePickerController: UIImagePickerController {
         var mockIsBeingPresented = false

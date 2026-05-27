@@ -17,7 +17,7 @@ class ImagePickerImageUtilTests: XCTestCase {
             (20, 20, 12, 7), // Larger than original (no scaling)
             (nil, nil, 12, 7), // No limits (no scaling)
             (0, 5, 12, 7), // Invalid width (no scaling)
-            (5, 0, 12, 7) // Invalid height (no scaling)
+            (5, 0, 12, 7), // Invalid height (no scaling)
         ]
 
         for testCase in testCases {
