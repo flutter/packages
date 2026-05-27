@@ -289,7 +289,6 @@ void main() {
       final RepositoryPackage package = createFakePackage(
         'foo',
         packagesDir,
-        isFlutter: false,
         examples: <String>[],
       );
 
