@@ -1499,8 +1499,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 class WebKitWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
   const WebKitWebViewPermissionRequest._({
     required super.types,
-    required void Function(PermissionDecision decision) onDecision,
-  }) : _onDecision = onDecision;
+    required this._onDecision,
+  });
 
   final void Function(PermissionDecision) _onDecision;
 

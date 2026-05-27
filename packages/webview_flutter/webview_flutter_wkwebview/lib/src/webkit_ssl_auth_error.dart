@@ -14,16 +14,11 @@ class WebKitSslAuthError extends PlatformSslAuthError {
   WebKitSslAuthError({
     required super.certificate,
     required super.description,
-    required SecTrust trust,
+    required this._trust,
     required this.host,
     required this.port,
-    required Future<void> Function(
-      UrlSessionAuthChallengeDisposition disposition,
-      URLCredential? credential,
-    )
-    onResponse,
-  }) : _trust = trust,
-       _onResponse = onResponse;
+    required this._onResponse,
+  });
 
   final SecTrust _trust;
 

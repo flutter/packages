@@ -88,78 +88,80 @@ Future<void> main() async {
     timeout: const Timeout(Duration(seconds: 10)),
   );
 
-  testWidgets('WKWebView is released by garbage collection', (
-    WidgetTester tester,
-  ) async {
-    final webViewGCCompleter = Completer<void>();
+  testWidgets(
+    'WKWebView is released by garbage collection',
+    (WidgetTester tester) async {
+      final webViewGCCompleter = Completer<void>();
 
-    const webViewToken = -1;
-    final finalizer = Finalizer<int>((int token) {
-      if (token == webViewToken) {
-        webViewGCCompleter.complete();
-      }
-    });
+      const webViewToken = -1;
+      final finalizer = Finalizer<int>((int token) {
+        if (token == webViewToken) {
+          webViewGCCompleter.complete();
+        }
+      });
 
-    PigeonOverrides.uIViewWKWebView_new =
-        ({
-          required WKWebViewConfiguration initialConfiguration,
-          void Function(
-            NSObject pigeonInstance,
-            String? keyPath,
-            NSObject? object,
-            Map<KeyValueChangeKey, Object?>? change,
-          )?
-          observeValue,
-        }) {
-          final webView = UIViewWKWebView.pigeon_new(
-            initialConfiguration: initialConfiguration,
-          );
-          finalizer.attach(webView, webViewToken);
-          return webView;
-        };
-    PigeonOverrides.nSViewWKWebView_new =
-        ({
-          required WKWebViewConfiguration initialConfiguration,
-          void Function(
-            NSObject pigeonInstance,
-            String? keyPath,
-            NSObject? object,
-            Map<KeyValueChangeKey, Object?>? change,
-          )?
-          observeValue,
-        }) {
-          final webView = NSViewWKWebView.pigeon_new(
-            initialConfiguration: initialConfiguration,
-          );
-          finalizer.attach(webView, webViewToken);
-          return webView;
-        };
-    // Wait for any WebView to be garbage collected.
-    await tester.pumpWidget(
-      Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            WebKitWebViewWidgetCreationParams(
-              controller: PlatformWebViewController(
-                WebKitWebViewControllerCreationParams(),
+      PigeonOverrides.uIViewWKWebView_new =
+          ({
+            required WKWebViewConfiguration initialConfiguration,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            final webView = UIViewWKWebView.pigeon_new(
+              initialConfiguration: initialConfiguration,
+            );
+            finalizer.attach(webView, webViewToken);
+            return webView;
+          };
+      PigeonOverrides.nSViewWKWebView_new =
+          ({
+            required WKWebViewConfiguration initialConfiguration,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            final webView = NSViewWKWebView.pigeon_new(
+              initialConfiguration: initialConfiguration,
+            );
+            finalizer.attach(webView, webViewToken);
+            return webView;
+          };
+      // Wait for any WebView to be garbage collected.
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              WebKitWebViewWidgetCreationParams(
+                controller: PlatformWebViewController(
+                  WebKitWebViewControllerCreationParams(),
+                ),
               ),
-            ),
-          ).build(context);
+            ).build(context);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(Container());
+
+      // Force garbage collection.
+      await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(
+        () async {
+          await tester.pumpAndSettle();
         },
-      ),
-    );
-    await tester.pumpAndSettle();
-    await tester.pumpWidget(Container());
+      );
 
-    // Force garbage collection.
-    await IntegrationTestWidgetsFlutterBinding.instance.watchPerformance(
-      () async {
-        await tester.pumpAndSettle();
-      },
-    );
-
-    await expectLater(webViewGCCompleter.future, completes);
-  }, timeout: const Timeout(Duration(seconds: 30)));
+      await expectLater(webViewGCCompleter.future, completes);
+    },
+    timeout: const Timeout(Duration(seconds: 30)),
+  );
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final pageFinished = Completer<void>();
