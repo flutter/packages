@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
-import 'package:flutter_plugin_tools/src/version_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
+import 'package:flutter_plugin_tools/src/validators/version_and_changelog_validator.dart';
 import 'package:git/git.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -40,15 +37,11 @@ void testAllowedVersion(
 }
 
 void main() {
-  const indentation = '  ';
   group('VersionCheckCommand', () {
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner gitProcessRunner;
-    // Ignored if mockHttpResponse is set.
-    int mockHttpStatus;
-    Map<String, dynamic>? mockHttpResponse;
 
     setUp(() {
       mockPlatform = MockPlatform();
@@ -57,27 +50,17 @@ void main() {
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
 
-      // Default to simulating the plugin never having been published.
-      mockHttpStatus = 404;
-      mockHttpResponse = null;
-      final mockClient = MockClient((http.Request request) async {
-        return http.Response(
-          json.encode(mockHttpResponse),
-          mockHttpResponse == null ? mockHttpStatus : 200,
-        );
-      });
-
-      final command = VersionCheckCommand(
+      final command = ValidateCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
         gitDir: gitDir,
-        httpClient: mockClient,
+        targetedValidators: <Validator>{Validator.version},
       );
 
       runner = CommandRunner<void>(
-        'version_check_command',
-        'Test for $VersionCheckCommand',
+        'validate_version_test',
+        'Test for version and changelog validation',
       );
       runner.addCommand(command);
     });
@@ -89,7 +72,7 @@ void main() {
             FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
           ];
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
 
@@ -119,7 +102,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -152,7 +135,7 @@ void main() {
             FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
           ];
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
       ]);
 
       expect(
@@ -180,7 +163,7 @@ void main() {
     test('allows valid version for new package.', () async {
       createFakePlugin('plugin', packagesDir, version: '1.0.0');
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
       ]);
 
       expect(
@@ -199,7 +182,7 @@ void main() {
             FakeProcessInfo(MockProcess(stdout: 'version: 0.6.2')),
           ];
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
 
@@ -232,7 +215,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -264,7 +247,7 @@ void main() {
             FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
           ];
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
       expect(
@@ -299,7 +282,7 @@ void main() {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -342,7 +325,7 @@ void main() {
             ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
           '--pr-labels=some label,override: allow breaking change,another-label',
         ]);
@@ -354,7 +337,7 @@ void main() {
               'Allowing breaking change to plugin_platform_interface '
               'due to the "override: allow breaking change" label.',
             ),
-            contains('Ran for 1 package(s) (1 with warnings)'),
+            contains('(1 with warnings)'),
           ]),
         );
         expect(
@@ -381,7 +364,7 @@ void main() {
               FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
             ];
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
           '--ignore-platform-interface-breaks',
         ]);
@@ -390,10 +373,10 @@ void main() {
           output,
           containsAllInOrder(<Matcher>[
             contains(
-              'Allowing breaking change to plugin_platform_interface due '
-              'to --ignore-platform-interface-breaks',
+              'Ignoring breaking change to plugin_platform_interface due '
+              'to command configuration',
             ),
-            contains('Ran for 1 package(s) (1 with warnings)'),
+            contains('(1 with warnings)'),
           ]),
         );
         expect(
@@ -424,7 +407,7 @@ void main() {
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
         ]);
         expect(
@@ -448,7 +431,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main', '--against-pub'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -478,7 +461,7 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
       expect(
@@ -513,7 +496,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -558,7 +541,7 @@ void main() {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -594,7 +577,7 @@ void main() {
         var hasError = false;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main', '--against-pub'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             expect(e, isA<ToolExit>());
             hasError = true;
@@ -635,7 +618,7 @@ void main() {
             ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
         ]);
         expect(
@@ -669,7 +652,7 @@ void main() {
       var hasError = false;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main', '--against-pub'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
           hasError = true;
@@ -716,7 +699,7 @@ void main() {
         var hasError = false;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             expect(e, isA<ToolExit>());
             hasError = true;
@@ -762,7 +745,7 @@ void main() {
       var hasError = false;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           expect(e, isA<ToolExit>());
           hasError = true;
@@ -802,7 +785,7 @@ void main() {
           ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
       expect(
@@ -833,7 +816,7 @@ void main() {
       plugin.changelogFile.writeAsStringSync(changelog);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
+        'validate',
         '--base-sha=main',
       ]);
       expect(
@@ -867,7 +850,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -911,7 +894,7 @@ void main() {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -952,7 +935,7 @@ void main() {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['version-check', '--base-sha=main'],
+        <String>['validate', '--base-sha=main'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -973,7 +956,7 @@ void main() {
         void Function(Error error)? errorHandler,
       }) async {
         return runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
           '--check-for-missing-changes',
           ...extraArgs,
@@ -1652,114 +1635,6 @@ packages/plugin/lib/plugin.dart
       });
     });
 
-    test('allows valid against pub', () async {
-      mockHttpResponse = <String, dynamic>{
-        'name': 'some_package',
-        'versions': <String>['0.0.1', '0.0.2', '1.0.0'],
-      };
-
-      createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'version-check',
-        '--base-sha=main',
-        '--against-pub',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('plugin: Current largest version on pub: 1.0.0'),
-        ]),
-      );
-    });
-
-    test('denies invalid against pub', () async {
-      mockHttpResponse = <String, dynamic>{
-        'name': 'some_package',
-        'versions': <String>['0.0.1', '0.0.2'],
-      };
-
-      createFakePlugin('plugin', packagesDir, version: '2.0.0');
-
-      var hasError = false;
-      final List<String> result = await runCapturingPrint(
-        runner,
-        <String>['version-check', '--base-sha=main', '--against-pub'],
-        errorHandler: (Error e) {
-          expect(e, isA<ToolExit>());
-          hasError = true;
-        },
-      );
-      expect(hasError, isTrue);
-
-      expect(
-        result,
-        containsAllInOrder(<Matcher>[
-          contains(
-            '''
-${indentation}Incorrectly updated version.
-${indentation}HEAD: 2.0.0, pub: 0.0.2.
-${indentation}Allowed versions: {1.0.0: NextVersionType.BREAKING_MAJOR, 0.1.0: NextVersionType.MINOR, 0.0.3: NextVersionType.PATCH}''',
-          ),
-        ]),
-      );
-    });
-
-    test(
-      'throw and print error message if http request failed when checking against pub',
-      () async {
-        mockHttpStatus = 400;
-
-        createFakePlugin('plugin', packagesDir, version: '2.0.0');
-        var hasError = false;
-        final List<String> result = await runCapturingPrint(
-          runner,
-          <String>['version-check', '--base-sha=main', '--against-pub'],
-          errorHandler: (Error e) {
-            expect(e, isA<ToolExit>());
-            hasError = true;
-          },
-        );
-        expect(hasError, isTrue);
-
-        expect(
-          result,
-          containsAllInOrder(<Matcher>[
-            contains('''
-${indentation}Error fetching version on pub for plugin.
-${indentation}HTTP Status 400
-${indentation}HTTP response: null
-'''),
-          ]),
-        );
-      },
-    );
-
-    test(
-      'when checking against pub, allow any version if http status is 404.',
-      () async {
-        mockHttpStatus = 404;
-
-        createFakePlugin('plugin', packagesDir, version: '2.0.0');
-        gitProcessRunner.mockProcessesForExecutable['git-show'] =
-            <FakeProcessInfo>[
-              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-            ];
-        final List<String> result = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-          '--against-pub',
-        ]);
-
-        expect(
-          result,
-          containsAllInOrder(<Matcher>[
-            contains('Unable to find previous version on pub server.'),
-          ]),
-        );
-      },
-    );
-
     group('prelease versions', () {
       test(
         'allow an otherwise-valid transition that also adds a pre-release component',
@@ -1770,7 +1645,7 @@ ${indentation}HTTP response: null
                 FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
               ];
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
           ]);
 
@@ -1799,7 +1674,7 @@ ${indentation}HTTP response: null
               FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
             ];
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
         ]);
 
@@ -1831,7 +1706,7 @@ ${indentation}HTTP response: null
                 FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
               ];
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
           ]);
 
@@ -1860,7 +1735,7 @@ ${indentation}HTTP response: null
               FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev.1')),
             ];
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
         ]);
 
@@ -1892,7 +1767,7 @@ ${indentation}HTTP response: null
           Error? commandError;
           final List<String> output = await runCapturingPrint(
             runner,
-            <String>['version-check', '--base-sha=main'],
+            <String>['validate', '--base-sha=main'],
             errorHandler: (Error e) {
               commandError = e;
             },
@@ -1927,7 +1802,7 @@ ${indentation}HTTP response: null
           Error? commandError;
           final List<String> output = await runCapturingPrint(
             runner,
-            <String>['version-check', '--base-sha=main'],
+            <String>['validate', '--base-sha=main'],
             errorHandler: (Error e) {
               commandError = e;
             },
@@ -1960,7 +1835,7 @@ ${indentation}HTTP response: null
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1999,7 +1874,7 @@ release:
           Error? commandError;
           final List<String> output = await runCapturingPrint(
             runner,
-            <String>['version-check', '--base-sha=main'],
+            <String>['validate', '--base-sha=main'],
             errorHandler: (Error e) {
               commandError = e;
             },
@@ -2034,7 +1909,7 @@ release:
               ];
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
           ]);
 
@@ -2061,7 +1936,7 @@ release:
           Error? commandError;
           final List<String> output = await runCapturingPrint(
             runner,
-            <String>['version-check', '--base-sha=main'],
+            <String>['validate', '--base-sha=main'],
             errorHandler: (Error e) {
               commandError = e;
             },
@@ -2110,7 +1985,7 @@ packages/package/pubspec.yaml
               ];
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
             '--pr-labels=override: post-release-package',
           ]);
@@ -2156,7 +2031,7 @@ packages/package/CHANGELOG.md
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -2204,7 +2079,7 @@ packages/package/pubspec.yaml
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['version-check', '--base-sha=main'],
+          <String>['validate', '--base-sha=main'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -2252,7 +2127,7 @@ packages/package/pubspec.yaml
               ];
 
           final List<String> output = await runCapturingPrint(runner, <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
           ]);
 
@@ -2293,7 +2168,7 @@ release:
         final List<String> output = await runCapturingPrint(
           runner,
           <String>[
-            'version-check',
+            'validate',
             '--base-sha=main',
             '--check-for-missing-changes',
           ],
@@ -2354,7 +2229,7 @@ packages/package/pending_changelogs/some_change.yaml
             ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
+          'validate',
           '--base-sha=main',
           '--check-for-missing-changes',
         ]);

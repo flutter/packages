@@ -7,10 +7,7 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
-<<<<<<< HEAD
   - release-go_router-\d+\.\d+\.\d+
-=======
->>>>>>> image_picker_code_migration
 
 platform_properties:
   linux:
@@ -265,14 +262,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.38.10"
+      channel: "3.41.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.35.7"
+      channel: "3.38.10"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages

@@ -77,9 +77,14 @@ If you need marker clustering support, modify the <head> tag to load the [js-mar
 </head>
 ```
 
-## Heatmaps
+## Heatmaps (Deprecated)
 
-To use heatmaps, add `&libraries=visualization` to the end of the URL. See [the documentation](https://developers.google.com/maps/documentation/javascript/libraries) for more information.
+Heatmap support [has been deprecated](https://developers.google.com/maps/deprecations#heatmap-layer-js-deprecation)
+in the JavaScript Google Maps API, and was removed in version 3.65 of the SDK. To use
+heatmaps, you must pin the SDK to 3.64. This means that you may be missing bug fixes or
+newer features.
+
+To use heatmaps, add `&libraries=visualization&v=3.64` to the end of the URL. See [the documentation](https://developers.google.com/maps/documentation/javascript/libraries) for more information.
 
 ## Limitations of the web version
 

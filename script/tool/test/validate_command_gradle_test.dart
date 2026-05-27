@@ -6,7 +6,8 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
-import 'package:flutter_plugin_tools/src/gradle_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
+import 'package:flutter_plugin_tools/src/validators/gradle_validator.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -24,11 +25,15 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks();
-    final command = GradleCheckCommand(packagesDir, gitDir: gitDir);
+    final command = ValidateCommand(
+      packagesDir,
+      gitDir: gitDir,
+      targetedValidators: {Validator.gradle},
+    );
 
     runner = CommandRunner<void>(
-      'gradle_check_command',
-      'Test for gradle_check_command',
+      'validate_gradle_test',
+      'Test for gradle validations',
     );
     runner.addCommand(command);
   });
@@ -165,7 +170,7 @@ gradle.projectsEvaluated {
     buildGradle.writeAsStringSync('''
 allprojects {
     repositories {
-        ${includeArtifactHub ? GradleCheckCommand.exampleRootGradleArtifactHubString : ''}
+        ${includeArtifactHub ? GradleValidator.exampleRootGradleArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -226,7 +231,7 @@ pluginManagement {
     }
 }
 
-${includeArtifactDocumentation ? '// See ${GradleCheckCommand.artifactHubDocumentationString} for more info.' : ''}
+${includeArtifactDocumentation ? '// See ${GradleValidator.artifactHubDocumentationString} for more info.' : ''}
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.11.1" apply false
@@ -348,16 +353,16 @@ flutter {
 </manifest>''');
   }
 
-  test('skips when package has no Android directory', () async {
+  test('passes when package has no Android directory', () async {
     createFakePackage('a_package', packagesDir, examples: <String>[]);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'gradle-check',
+      'validate',
     ]);
 
     expect(
       output,
-      containsAllInOrder(<Matcher>[contains('Skipped 1 package(s)')]),
+      containsAllInOrder(<Matcher>[contains('Running for a_package')]),
     );
   });
 
@@ -375,7 +380,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -403,7 +408,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -437,7 +442,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -474,7 +479,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -507,7 +512,7 @@ flutter {
     writeFakeManifest(package);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'gradle-check',
+      'validate',
     ]);
 
     expect(
@@ -534,7 +539,7 @@ flutter {
       writeFakeManifest(package);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -556,7 +561,7 @@ flutter {
     writeFakeManifest(package);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'gradle-check',
+      'validate',
     ]);
 
     expect(
@@ -578,14 +583,14 @@ flutter {
     writeFakeManifest(example, isApp: true);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'gradle-check',
+      'validate',
     ]);
 
     expect(
       output,
       containsAllInOrder(<Matcher>[
+        contains('Running for a_plugin/example'),
         contains('Validating android/build.gradle.kts'),
-        contains('Ran for 1 package(s)'),
       ]),
     );
   });
@@ -607,7 +612,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -636,7 +641,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -663,7 +668,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -697,7 +702,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -728,7 +733,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -768,7 +773,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -802,7 +807,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -834,7 +839,7 @@ flutter {
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['gradle-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -877,7 +882,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -914,7 +919,7 @@ flutter {
       writeFakeManifest(example, isApp: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -947,7 +952,7 @@ flutter {
       writeFakeManifest(example, isApp: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -979,7 +984,7 @@ flutter {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['gradle-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -989,8 +994,8 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
-            contains(GradleCheckCommand.exampleSettingsArtifactHubString),
+            contains(GradleValidator.exampleRootGradleArtifactHubString),
+            contains(GradleValidator.exampleSettingsArtifactHubString),
           ]),
         );
       },
@@ -1015,7 +1020,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1025,7 +1030,7 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
+          contains(GradleValidator.exampleRootGradleArtifactHubString),
         ]),
       );
     });
@@ -1049,7 +1054,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1059,12 +1064,12 @@ flutter {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(GradleCheckCommand.exampleSettingsArtifactHubString),
+          contains(GradleValidator.exampleSettingsArtifactHubString),
         ]),
       );
       expect(
         output,
-        isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
+        isNot(contains(GradleValidator.exampleRootGradleArtifactHubString)),
       );
     });
 
@@ -1091,7 +1096,7 @@ flutter {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['gradle-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1101,7 +1106,7 @@ flutter {
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains(GradleCheckCommand.artifactHubDocumentationString),
+            contains(GradleValidator.artifactHubDocumentationString),
           ]),
         );
       },
@@ -1120,7 +1125,7 @@ flutter {
       writeFakeManifest(example, isApp: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1146,7 +1151,7 @@ flutter {
       writeFakeManifest(example, isApp: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1172,7 +1177,7 @@ flutter {
       writeFakeManifest(example, isApp: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1200,7 +1205,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },
@@ -1243,7 +1248,7 @@ flutter {
         writeFakeManifest(example, isApp: true);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'gradle-check',
+          'validate',
         ]);
 
         expect(
@@ -1276,7 +1281,7 @@ flutter {
         writeFakeManifest(example, isApp: true);
 
         final List<String> output = await runCapturingPrint(runner, <String>[
-          'gradle-check',
+          'validate',
         ]);
 
         expect(
@@ -1313,7 +1318,7 @@ flutter {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['gradle-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1355,7 +1360,7 @@ flutter {
         Error? commandError;
         final List<String> output = await runCapturingPrint(
           runner,
-          <String>['gradle-check'],
+          <String>['validate'],
           errorHandler: (Error e) {
             commandError = e;
           },
@@ -1392,7 +1397,7 @@ flutter {
       writeFakeManifest(package);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1417,7 +1422,7 @@ flutter {
       writeFakeManifest(package);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1442,7 +1447,7 @@ flutter {
       writeFakeManifest(package);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'gradle-check',
+        'validate',
       ]);
 
       expect(
@@ -1469,7 +1474,7 @@ flutter {
       Error? commandError;
       final List<String> output = await runCapturingPrint(
         runner,
-        <String>['gradle-check'],
+        <String>['validate'],
         errorHandler: (Error e) {
           commandError = e;
         },

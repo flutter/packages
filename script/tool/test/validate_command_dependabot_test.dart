@@ -5,7 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
-import 'package:flutter_plugin_tools/src/dependabot_check_command.dart';
+import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
 import 'package:test/test.dart';
 
@@ -22,10 +22,14 @@ void main() {
         configureBaseCommandMocks();
     root = packagesDir.parent;
 
-    final command = DependabotCheckCommand(packagesDir, gitDir: gitDir);
+    final command = ValidateCommand(
+      packagesDir,
+      gitDir: gitDir,
+      targetedValidators: {Validator.dependabot},
+    );
     runner = CommandRunner<void>(
-      'dependabot_test',
-      'Test for $DependabotCheckCommand',
+      'validate_dependabot_test',
+      'Test for validating dependabot coverage',
     );
     runner.addCommand(command);
   });
@@ -73,7 +77,7 @@ $gradleEntries
     createFakePackage('a_package', packagesDir);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'dependabot-check',
+      'validate',
     ]);
 
     expect(
@@ -99,7 +103,7 @@ $gradleEntries
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['dependabot-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -129,7 +133,7 @@ $gradleEntries
     Error? commandError;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>['dependabot-check'],
+      <String>['validate'],
       errorHandler: (Error e) {
         commandError = e;
       },
@@ -169,7 +173,7 @@ $gradleEntries
         .createSync(recursive: true);
 
     final List<String> output = await runCapturingPrint(runner, <String>[
-      'dependabot-check',
+      'validate',
     ]);
 
     expect(
@@ -202,7 +206,7 @@ $gradleEntries
           .createSync(recursive: true);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
-        'dependabot-check',
+        'validate',
       ]);
 
       expect(
