@@ -568,6 +568,7 @@ class AVFoundationCamera extends CameraPlatform {
         return PlatformImageFormatGroup.yuv420;
       case ImageFormatGroup.jpeg:
       case ImageFormatGroup.nv21:
+      case ImageFormatGroup.rgba8888:
       // Fall through.
     }
     // The enum comes from a different package, which could get a new value at
