@@ -3,6 +3,8 @@
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
+* Documents the difference between a `null` return and an `UnsupportedError`
+  from `getDownloadsDirectory`.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
 
