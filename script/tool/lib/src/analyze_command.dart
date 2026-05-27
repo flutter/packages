@@ -357,8 +357,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _runPubCommand(RepositoryPackage package, String command) async {
+    final String pubCommand = package.requiresFlutter()
+        ? flutterCommand
+        : 'dart';
     final int exitCode = await processRunner.runAndStream(
-      flutterCommand,
+      pubCommand,
       <String>['pub', command],
       workingDir: package.directory,
     );

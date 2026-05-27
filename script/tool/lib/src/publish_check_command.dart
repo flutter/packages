@@ -163,8 +163,11 @@ class PublishCheckCommand extends PackageLoopingCommand {
     await _fetchExampleDeps(package);
 
     print('Running pub publish --dry-run:');
+    final String pubCommand = package.requiresFlutter()
+        ? flutterCommand
+        : 'dart';
     final io.Process process = await processRunner.start(
-      flutterCommand,
+      pubCommand,
       <String>['pub', 'publish', '--', '--dry-run'],
       workingDirectory: package.directory,
     );

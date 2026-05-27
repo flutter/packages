@@ -285,6 +285,30 @@ void main() {
       );
     });
 
+    test('uses dart rather than flutter for non-Flutter packages', () async {
+      final RepositoryPackage package = createFakePackage(
+        'foo',
+        packagesDir,
+        isFlutter: false,
+        examples: <String>[],
+      );
+
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ]);
+
+      expect(
+        processRunner.recordedCalls,
+        contains(
+          ProcessCall('dart', const <String>[
+            'pub',
+            'publish',
+          ], package.directory.path),
+        ),
+      );
+    });
+
     test('forwards --pub-publish-flags to pub publish', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'foo',

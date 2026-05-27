@@ -477,8 +477,11 @@ Safe to ignore if the package is deleted in this commit.
       _ensureValidPubCredential();
     }
 
+    final String pubCommand = package.requiresFlutter()
+        ? flutterCommand
+        : 'dart';
     final io.Process publish = await processRunner.start(
-      flutterCommand,
+      pubCommand,
       <String>['pub', 'publish', ..._publishFlags],
       workingDirectory: package.directory,
     );
