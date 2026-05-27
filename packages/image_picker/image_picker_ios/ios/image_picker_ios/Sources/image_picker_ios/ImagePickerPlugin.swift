@@ -677,18 +677,27 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
     }
 
     func presentingViewControllerForImagePickerInNewWindow() -> UIViewController {
-        if let blocker = interactionBlockerWindow {
-            return blocker.rootViewController!
+
+        // ✅ If blocker exists
+        if let blocker = interactionBlockerWindow,
+           let rootVC = blocker.rootViewController {
+            return rootVC
         }
 
-        guard let topController = viewProvider.viewController,
-              let presentingWindow = topController.view.window
-        else {
-            return viewProvider.viewController!
+        // ✅ Step 1: safely unwrap VC
+        guard let topController = viewProvider.viewController else {
+            return UIViewController()
+        }
+
+        // ✅ Step 2: safely access window (fix)
+        guard let presentingWindow = topController.viewIfLoaded?.window else {
+            return topController
         }
 
         previousKeyWindow = presentingWindow
+
         let blockerWindow: UIWindow
+
         if #available(iOS 13.0, *) {
             if let windowScene = presentingWindow.windowScene {
                 blockerWindow = UIWindow(windowScene: windowScene)
@@ -706,8 +715,10 @@ public class ImagePickerPlugin: NSObject, FlutterPlugin, ImagePickerApi,
         let vc = UIViewController()
         vc.view.backgroundColor = .clear
         vc.view.isUserInteractionEnabled = true
+
         blockerWindow.rootViewController = vc
         blockerWindow.makeKeyAndVisible()
+
         interactionBlockerWindow = blockerWindow
         return vc
     }
