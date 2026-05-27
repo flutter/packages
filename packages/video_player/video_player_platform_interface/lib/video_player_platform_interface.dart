@@ -467,7 +467,7 @@ class VideoPlayerOptions {
   // in all of the other video player packages, fix this, and then update
   // the other packages to use const.
   // ignore: prefer_const_constructors_in_immutables
-  VideoPlayerOptions({
+  const VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.preventsDisplaySleepDuringVideoPlayback = true,

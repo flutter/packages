@@ -7,11 +7,11 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 
 void main() {
   test('VideoPlayerOptions allowBackgroundPlayback defaults to false', () {
-    final options = VideoPlayerOptions();
+    const options = VideoPlayerOptions();
     expect(options.allowBackgroundPlayback, false);
   });
   test('VideoPlayerOptions mixWithOthers defaults to false', () {
-    final options = VideoPlayerOptions();
+    const options = VideoPlayerOptions();
     expect(options.mixWithOthers, false);
   });
   test('VideoPlayerOptions preventsDisplaySleepDuringVideoPlayback defaults to true', () {

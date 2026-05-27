@@ -296,7 +296,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     _controller = VideoPlayerController.networkUrl(
       Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
-      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      videoPlayerOptions: const VideoPlayerOptions(mixWithOthers: true),
       viewType: widget.viewType,
     );
 
