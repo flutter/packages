@@ -56,7 +56,7 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier,
+                UTType.image.identifier
             ]
             mockProvider.mockData = data
 
@@ -100,7 +100,7 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier,
+                UTType.image.identifier
             ]
             mockProvider.mockData = data
 
@@ -121,8 +121,7 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
                 outputPath = savedPath
 
                 if let path = savedPath,
-                   let savedImage = UIImage(contentsOfFile: path)
-                {
+                   let savedImage = UIImage(contentsOfFile: path) {
                     // ✅ Ensure scaling branch executed
                     XCTAssertLessThanOrEqual(savedImage.size.width, 5.1)
                     XCTAssertLessThanOrEqual(savedImage.size.height, 5.1)
@@ -153,7 +152,7 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier,
+                UTType.image.identifier
             ]
             mockProvider.shouldSucceed = false
 
@@ -273,7 +272,7 @@ class PickerSaveImageToPathOperationTests: XCTestCase {
             let mockProvider = MockItemProvider()
             mockProvider.registeredIdentifiers = [
                 UTType.jpeg.identifier,
-                UTType.image.identifier,
+                UTType.image.identifier
             ]
 
             var completionCalled = false

@@ -183,8 +183,8 @@ class MetaDataUtilTests: XCTestCase {
 
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test Comment",
-            ],
+                kCGImagePropertyExifUserComment as String: "Test Comment"
+            ]
         ]
 
         // ✅ Create image with metadata
@@ -235,8 +235,8 @@ class MetaDataUtilTests: XCTestCase {
         // ✅ Case 4: Invalid data with metadata (forces metadata handling path)
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test",
-            ],
+                kCGImagePropertyExifUserComment as String: "Test"
+            ]
         ]
 
         let result4 = ImagePickerMetaDataUtil.image(from: invalidData, with: metaData)

@@ -13,7 +13,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
             (ImagePickerTestImages.jpgTestData, .jpeg),
             (ImagePickerTestImages.pngTestData, .png),
             (ImagePickerTestImages.gifTestData, .gif),
-            (Data([0x00, 0x01, 0x02]), .other),
+            (Data([0x00, 0x01, 0x02]), .other)
         ]
 
         // ✅ Main validation
@@ -190,8 +190,8 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
 
         let metaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Test Comment",
-            ],
+                kCGImagePropertyExifUserComment as String: "Test Comment"
+            ]
         ]
 
         // ✅ Main success case
@@ -216,8 +216,8 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
         // ✅ Additional coverage: overwrite existing metadata
         let updatedMetaData: [String: Any] = [
             kCGImagePropertyExifDictionary as String: [
-                kCGImagePropertyExifUserComment as String: "Updated Comment",
-            ],
+                kCGImagePropertyExifUserComment as String: "Updated Comment"
+            ]
         ]
 
         let updatedData = ImagePickerMetaDataUtil.image(from: newData, with: updatedMetaData)
@@ -274,7 +274,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
 
         // ✅ Case 5: VALID image with metadata (covers update logic)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1,
+            kCGImagePropertyOrientation as String: 1
         ]
         let result5 = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(result5)
@@ -490,7 +490,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
 
         // Case 5: Valid image WITH metadata (covers metadata branch)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1,
+            kCGImagePropertyOrientation as String: 1
         ]
         let result5 = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(result5)
@@ -534,7 +534,7 @@ class ImagePickerMetaDataUtilTests: XCTestCase {
 
         // Case 4: Valid image with metadata (covers metadata handling branch)
         let metadata: [String: Any] = [
-            kCGImagePropertyOrientation as String: 1,
+            kCGImagePropertyOrientation as String: 1
         ]
         let resultWithMetadata = ImagePickerMetaDataUtil.image(from: validData, with: metadata)
         XCTAssertNotNil(resultWithMetadata)

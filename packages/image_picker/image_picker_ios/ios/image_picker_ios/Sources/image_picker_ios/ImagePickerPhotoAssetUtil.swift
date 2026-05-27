@@ -116,8 +116,7 @@ enum ImagePickerPhotoAssetUtil {
             return nil
         }
         if let metaData = metaData,
-           let updatedData = ImagePickerMetaDataUtil.image(from: data, with: metaData)
-        {
+           let updatedData = ImagePickerMetaDataUtil.image(from: data, with: metaData) {
             data = updatedData
         }
 
@@ -149,8 +148,8 @@ enum ImagePickerPhotoAssetUtil {
 
         let frameProperties = [
             kCGImagePropertyGIFDictionary as String: [
-                kCGImagePropertyGIFDelayTime as String: gifInfo.interval,
-            ],
+                kCGImagePropertyGIFDelayTime as String: gifInfo.interval
+            ]
         ]
 
         var gifMetaProperties = metaData ?? [:]
