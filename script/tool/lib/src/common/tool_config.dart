@@ -63,6 +63,19 @@ String? getMinFlutterVersion(Directory repoRoot) {
   return yaml;
 }
 
+/// Returns the minimum Dart version allowed.
+String? getMinDartVersion(Directory repoRoot) {
+  final Object? yaml = _getToolConfig(repoRoot)['min_dart'];
+  if (yaml == null) {
+    return null;
+  }
+  if (yaml is! String) {
+    printError('min_dart must be a full version string (e.g., "3.10.0").');
+    throw ToolExit(exitInvalidArguments);
+  }
+  return yaml;
+}
+
 /// Returns the allowed dependencies, grouped by 'pinned' and 'unpinned'.
 ({List<String> pinned, List<String> unpinned}) getAllowedDependencies(
   Directory repoRoot,

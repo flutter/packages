@@ -5,6 +5,7 @@
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
@@ -18,6 +19,9 @@ import 'validators/pubspec_validator.dart';
 import 'validators/readme_validator.dart';
 import 'validators/repo_info_validator.dart';
 import 'validators/version_and_changelog_validator.dart';
+
+const int _missingMinSdkVersionExitCode = 3;
+const int _unknownVersionMappingExitCode = 4;
 
 /// The set of possible validators.
 ///
@@ -113,7 +117,10 @@ class ValidateCommand extends PackageLoopingCommand {
   );
 
   /// The minimum version of Flutter that is allowed for any package.
-  late final String _minMinFlutterVersion;
+  Version? _minMinFlutterVersion;
+
+  /// The minimum version of Dart that is allowed for any package.
+  Version? _minMinDartVersion;
 
   @override
   final String name = 'validate';
@@ -149,7 +156,20 @@ class ValidateCommand extends PackageLoopingCommand {
     }
     if (_shouldRun(Validator.pubspec)) {
       await _loadAllowedDependencies();
-      _minMinFlutterVersion = _loadMinMinFlutterVersion();
+      final (flutter: Version? minFlutter, dart: Version? minDart) =
+          _loadMinMinSdkVersions();
+      _minMinFlutterVersion = minFlutter;
+      _minMinDartVersion =
+          minDart ??
+          (minFlutter == null ? null : getDartSdkForFlutterSdk(minFlutter));
+      if (_minMinDartVersion == null) {
+        printError(
+          'Dart SDK version for Flutter SDK version $_minMinFlutterVersion is unknown. '
+          'Please update the map for getDartSdkForFlutterSdk with the '
+          'corresponding Dart version.',
+        );
+        throw ToolExit(_unknownVersionMappingExitCode);
+      }
     }
     if (_shouldRun(Validator.dependabot)) {
       _dependabotCoverage = DependabotValidator.loadConfig(repoRoot: _repoRoot);
@@ -220,6 +240,7 @@ class ValidateCommand extends PackageLoopingCommand {
       allowedPackages: _allowedPackages,
       repoRoot: rootDir,
       minMinFlutterVersion: _minMinFlutterVersion,
+      minMinDartVersion: _minMinDartVersion,
     );
     return validator.validatePubspec(package);
   }
@@ -323,13 +344,20 @@ class ValidateCommand extends PackageLoopingCommand {
     _allowedPackages.pinned.addAll(allowedDeps.pinned);
   }
 
-  String _loadMinMinFlutterVersion() {
-    final String? minVersion = getMinFlutterVersion(_repoRoot);
-    if (minVersion == null) {
-      printError('min_flutter is missing in $configFilename');
-      return '';
+  ({Version? flutter, Version? dart}) _loadMinMinSdkVersions() {
+    final String? minFlutter = getMinFlutterVersion(_repoRoot);
+    final String? minDart = getMinDartVersion(_repoRoot);
+    if (minFlutter == null && minDart == null) {
+      printError(
+        'Either min_flutter or min_dart must be provided '
+        'in the repo tool configuration.',
+      );
+      throw ToolExit(_missingMinSdkVersionExitCode);
     }
-    return minVersion.trim();
+    return (
+      flutter: minFlutter == null ? null : Version.parse(minFlutter),
+      dart: minDart == null ? null : Version.parse(minDart),
+    );
   }
 
   Pubspec? _tryParsePubspec(String pubspecContents) {

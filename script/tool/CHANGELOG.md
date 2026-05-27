@@ -1,3 +1,8 @@
+## 0.14.1
+
+* Adds `min_dart` as an alternative to `min_flutter` in tool configuration.
+* Makes .ci.yaml optional if batched release is not used.
+
 ## 0.14.0
 
 * Re-launches the published version of the tool for use in
