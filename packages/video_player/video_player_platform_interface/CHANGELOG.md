@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 6.7.0
 
 * Adds `VideoPlayerAndroidOptions` and forwards Android-specific creation options through `VideoCreationOptions`.

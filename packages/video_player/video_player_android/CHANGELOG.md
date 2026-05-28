@@ -1,6 +1,7 @@
 ## 2.10.0
 
 * Adds per-player Android renderer options for decoder fallback and MediaCodec asynchronous queueing.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.9.5
 

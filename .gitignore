@@ -1,3 +1,6 @@
+# Directory for files cached by the repo tooling
+/.repo_tool_cache/
+
 .DS_Store
 .atom/
 .idea
