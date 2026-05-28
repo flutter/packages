@@ -196,18 +196,9 @@ void main() {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall('dart', const <String>[
-            'pub',
-            'get',
-          ], mainPackage.path),
-          ProcessCall('dart', const <String>[
-            'pub',
-            'get',
-          ], subpackage1.path),
-          ProcessCall('dart', const <String>[
-            'pub',
-            'get',
-          ], subpackage2.path),
+          ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage1.path),
+          ProcessCall('dart', const <String>['pub', 'get'], subpackage2.path),
           ProcessCall('dart', const <String>[
             'analyze',
             '--fatal-infos',
@@ -274,10 +265,7 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall('dart', const <String>[
-              'pub',
-              'get',
-            ], mainPackage.path),
+            ProcessCall('dart', const <String>['pub', 'get'], mainPackage.path),
             ProcessCall('dart', const <String>[
               'analyze',
               '--fatal-infos',

@@ -13,6 +13,7 @@ import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
 
@@ -357,15 +358,13 @@ class AnalyzeCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _runPubCommand(RepositoryPackage package, String command) async {
-    final String pubCommand = package.requiresFlutter()
-        ? flutterCommand
-        : _dartBinaryPath;
-    final int exitCode = await processRunner.runAndStream(
-      pubCommand,
-      <String>['pub', command],
-      workingDir: package.directory,
+    return runPubCommand(
+      <String>[command],
+      package,
+      processRunner,
+      platform,
+      dartSdkPathOverride: _dartBinaryPath,
     );
-    return exitCode == 0;
   }
 
   /// Runs Gradle lint analysis for the given package, and returns the result

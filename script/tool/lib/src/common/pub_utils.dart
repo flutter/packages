@@ -20,14 +20,34 @@ Future<bool> runPubGet(
   Platform platform, {
   bool streamOutput = true,
 }) async {
-  // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
-  // is first in the path, so use `flutter pub get` for any Flutter package.
-  final bool useFlutter = package.requiresFlutter();
-  final command = useFlutter
-      ? (platform.isWindows ? 'flutter.bat' : 'flutter')
-      : 'dart';
-  final args = <String>['pub', 'get'];
+  return runPubCommand(
+    <String>['get'],
+    package,
+    processRunner,
+    platform,
+    streamOutput: streamOutput,
+  );
+}
 
+/// Runs a pub command with the given arguments in [package],
+/// using either 'dart' or 'flutter' depending on the package type.
+///
+/// If [streamOutput] is false, output will only be printed if the command
+/// fails.
+Future<bool> runPubCommand(
+  List<String> commandArgs,
+  RepositoryPackage package,
+  ProcessRunner processRunner,
+  Platform platform, {
+  bool streamOutput = true,
+  String? dartSdkPathOverride,
+}) async {
+  final String command = _pubCommand(
+    package,
+    platform,
+    dartSdkPathOverride: dartSdkPathOverride,
+  );
+  final args = <String>['pub', ...commandArgs];
   final int exitCode;
   if (streamOutput) {
     exitCode = await processRunner.runAndStream(
@@ -47,4 +67,33 @@ Future<bool> runPubGet(
     }
   }
   return exitCode == 0;
+}
+
+/// Starts a pub command with the given arguments in [package],
+/// using either 'dart' or 'flutter' depending on the package type, and returns
+/// a process that can be used to wait for completion and stream output.
+///
+/// If no output capturing is necessary, prefer [runPubCommand].
+Future<io.Process> startPubCommand(
+  List<String> commandArgs,
+  RepositoryPackage package,
+  ProcessRunner processRunner,
+  Platform platform,
+) async {
+  return processRunner.start(_pubCommand(package, platform), <String>[
+    'pub',
+    ...commandArgs,
+  ], workingDirectory: package.directory);
+}
+
+String _pubCommand(
+  RepositoryPackage package,
+  Platform platform, {
+  String? dartSdkPathOverride,
+}) {
+  // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
+  // is first in the path, so use `flutter pub get` for any Flutter package.
+  return package.requiresFlutter()
+      ? (platform.isWindows ? 'flutter.bat' : 'flutter')
+      : (dartSdkPathOverride ?? 'dart');
 }
