@@ -1386,6 +1386,16 @@ public class CameraTest {
   }
 
   @Test
+  public void setJpegImageQuality_shouldSetQualityOnFeature() {
+    JpegQualityFeature mockJpegQualityFeature =
+        mockCameraFeatureFactory.createJpegQualityFeature(mockCameraProperties);
+
+    camera.setJpegImageQuality(75L);
+
+    verify(mockJpegQualityFeature, times(1)).setValue(75);
+  }
+
+  @Test
   public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));

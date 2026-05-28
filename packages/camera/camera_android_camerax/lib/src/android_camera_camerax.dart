@@ -207,10 +207,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The target rotation set by [lockCaptureOrientation], if any.
   ///
-  /// Used to preserve the locked rotation when recreating use cases (e.g.,
-  /// in [setJpegImageQuality]).
-  @visibleForTesting
-  int? lockedCaptureOrientation;
+  int? _lockedCaptureOrientation;
 
   /// Whether or not the default rotation for [UseCase]s needs to be set
   /// manually because the capture orientation was previously locked.
@@ -595,7 +592,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int targetLockedRotation = _getRotationConstantFromDeviceOrientation(
       orientation,
     );
-    lockedCaptureOrientation = targetLockedRotation;
+    _lockedCaptureOrientation = targetLockedRotation;
 
     // Update UseCases to use target device orientation.
     await imageCapture!.setTargetRotation(targetLockedRotation);
@@ -608,7 +605,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> unlockCaptureOrientation(int cameraId) async {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
-    lockedCaptureOrientation = null;
+    _lockedCaptureOrientation = null;
   }
 
   /// Sets the exposure point for automatically determining the exposure values for
@@ -1151,7 +1148,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Recreate ImageCapture with the requested JPEG quality.
     // Preserve locked orientation if set, otherwise use default display rotation.
     final int targetRotation =
-        lockedCaptureOrientation ??
+        _lockedCaptureOrientation ??
         await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = ImageCapture(
       resolutionSelector: _presetResolutionSelector,
