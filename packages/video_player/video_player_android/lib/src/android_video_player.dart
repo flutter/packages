@@ -81,6 +81,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
+    final VideoPlayerAndroidOptions androidOptions =
+        options.androidOptions ?? const VideoPlayerAndroidOptions();
 
     String? uri;
     PlatformVideoFormat? formatHint;
@@ -114,6 +116,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
+      enableDecoderFallback: androidOptions.enableDecoderFallback,
+      disableMediaCodecAsyncQueueing:
+          androidOptions.disableMediaCodecAsyncQueueing,
     );
 
     final int playerId;

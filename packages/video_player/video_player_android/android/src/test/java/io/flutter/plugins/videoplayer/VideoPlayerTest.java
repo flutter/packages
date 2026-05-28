@@ -24,6 +24,7 @@ import androidx.media3.common.Player;
 import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import com.google.common.collect.ImmutableList;
@@ -61,6 +62,7 @@ public final class VideoPlayerTest {
 
   @Mock private VideoPlayerCallbacks mockEvents;
   @Mock private ExoPlayer mockExoPlayer;
+  @Mock private DefaultRenderersFactory mockRenderersFactory;
   @Captor private ArgumentCaptor<AudioAttributes> attributesCaptor;
   @Captor private ArgumentCaptor<Player.Listener> listenerCaptor;
 
@@ -124,6 +126,26 @@ public final class VideoPlayerTest {
     assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
+  }
+
+  @Test
+  public void configureRenderersFactoryAppliesDefaults() {
+    VideoPlayer.configureRenderersFactory(mockRenderersFactory, new VideoPlayerOptions());
+
+    verify(mockRenderersFactory).setEnableDecoderFallback(false);
+    verify(mockRenderersFactory, never()).forceDisableMediaCodecAsynchronousQueueing();
+  }
+
+  @Test
+  public void configureRenderersFactoryAppliesAndroidOptions() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.enableDecoderFallback = true;
+    options.disableMediaCodecAsyncQueueing = true;
+
+    VideoPlayer.configureRenderersFactory(mockRenderersFactory, options);
+
+    verify(mockRenderersFactory).setEnableDecoderFallback(true);
+    verify(mockRenderersFactory).forceDisableMediaCodecAsynchronousQueueing();
   }
 
   @Test

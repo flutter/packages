@@ -459,6 +459,47 @@ class DurationRange {
   int get hashCode => Object.hash(start, end);
 }
 
+/// [VideoPlayerAndroidOptions] can be optionally used to set Android-only
+/// player settings.
+@immutable
+class VideoPlayerAndroidOptions {
+  /// Set additional Android-only player settings.
+  const VideoPlayerAndroidOptions({
+    this.enableDecoderFallback = false,
+    this.disableMediaCodecAsyncQueueing = false,
+  });
+
+  /// Enables decoder fallback on Android.
+  ///
+  /// Ignored on non-Android platforms.
+  final bool enableDecoderFallback;
+
+  /// Disables MediaCodec asynchronous queueing on Android.
+  ///
+  /// Ignored on non-Android platforms.
+  final bool disableMediaCodecAsyncQueueing;
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'VideoPlayerAndroidOptions')}('
+        'enableDecoderFallback: $enableDecoderFallback, '
+        'disableMediaCodecAsyncQueueing: $disableMediaCodecAsyncQueueing)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoPlayerAndroidOptions &&
+          runtimeType == other.runtimeType &&
+          enableDecoderFallback == other.enableDecoderFallback &&
+          disableMediaCodecAsyncQueueing ==
+              other.disableMediaCodecAsyncQueueing;
+
+  @override
+  int get hashCode =>
+      Object.hash(enableDecoderFallback, disableMediaCodecAsyncQueueing);
+}
+
 /// [VideoPlayerOptions] can be optionally used to set additional player settings
 @immutable
 class VideoPlayerOptions {
@@ -471,6 +512,7 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.androidOptions,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -486,6 +528,11 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// Additional Android-only settings.
+  ///
+  /// These settings are silently ignored on non-Android platforms.
+  final VideoPlayerAndroidOptions? androidOptions;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
@@ -588,6 +635,7 @@ class VideoCreationOptions {
   const VideoCreationOptions({
     required this.dataSource,
     required this.viewType,
+    this.androidOptions,
   });
 
   /// The data source used to create the player.
@@ -595,6 +643,11 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Additional Android-only creation options.
+  ///
+  /// These settings are silently ignored on non-Android platforms.
+  final VideoPlayerAndroidOptions? androidOptions;
 }
 
 /// Represents an audio track in a video with its metadata.

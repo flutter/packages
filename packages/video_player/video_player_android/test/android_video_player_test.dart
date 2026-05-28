@@ -156,6 +156,8 @@ void main() {
       expect(creationOptions.uri, uri);
       expect(creationOptions.formatHint, PlatformVideoFormat.dash);
       expect(creationOptions.httpHeaders, <String, String>{});
+      expect(creationOptions.enableDecoderFallback, isFalse);
+      expect(creationOptions.disableMediaCodecAsyncQueueing, isFalse);
       expect(playerId, newPlayerId);
       expect(
         player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
@@ -372,6 +374,35 @@ void main() {
       final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
       expect(playerId, newPlayerId);
+    });
+
+    test('createWithOptions forwards android options', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 100);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com',
+          ),
+          viewType: VideoViewType.textureView,
+          androidOptions: const VideoPlayerAndroidOptions(
+            enableDecoderFallback: true,
+            disableMediaCodecAsyncQueueing: true,
+          ),
+        ),
+      );
+
+      final VerificationResult verification = verify(
+        api.createForTextureView(captureAny),
+      );
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.enableDecoderFallback, isTrue);
+      expect(creationOptions.disableMediaCodecAsyncQueueing, isTrue);
     });
 
     test('createWithOptions with file', () async {

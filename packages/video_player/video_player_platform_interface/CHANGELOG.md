@@ -4,6 +4,7 @@
 
 ## 6.7.0
 
+* Adds `VideoPlayerAndroidOptions` and forwards Android-specific creation options through `VideoCreationOptions`.
 * Adds `VideoTrack` class and `getVideoTracks()`, `selectVideoTrack()`, `isVideoTrackSupportAvailable()` methods for video track (quality) selection.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 

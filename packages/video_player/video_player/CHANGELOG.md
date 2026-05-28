@@ -1,5 +1,6 @@
-## NEXT
+## 2.12.0
 
+* Adds `VideoPlayerAndroidOptions` to configure Android renderer settings during player creation.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1

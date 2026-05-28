@@ -81,7 +81,9 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
-              null);
+              null,
+              false,
+              false);
 
       final long playerId = plugin.createForPlatformView(options);
 
@@ -103,12 +105,50 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
-              null);
+              null,
+              false,
+              false);
 
       final TexturePlayerIds ids = plugin.createForTextureView(options);
 
       final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
       assertTrue(videoPlayers.get(ids.getPlayerId()) instanceof TextureVideoPlayer);
+    }
+  }
+
+  @Test
+  public void createsTextureVideoPlayerWithCreationScopedAndroidOptions() {
+    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
+        mockStatic(TextureVideoPlayer.class)) {
+      mockedTextureVideoPlayerStatic
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenReturn(mock(TextureVideoPlayer.class));
+
+      plugin.setMixWithOthers(true);
+
+      final CreationOptions options =
+          new CreationOptions(
+              "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+              null,
+              new HashMap<>(),
+              null,
+              true,
+              true);
+
+      plugin.createForTextureView(options);
+
+      mockedTextureVideoPlayerStatic.verify(
+          () ->
+              TextureVideoPlayer.create(
+                  any(),
+                  any(),
+                  any(),
+                  any(),
+                  argThat(
+                      (VideoPlayerOptions playerOptions) ->
+                          playerOptions.mixWithOthers
+                              && playerOptions.enableDecoderFallback
+                              && playerOptions.disableMediaCodecAsyncQueueing)));
     }
   }
 }

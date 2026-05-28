@@ -60,6 +60,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
               new androidx.media3.exoplayer.trackselection.DefaultTrackSelector(context);
           ExoPlayer.Builder builder =
               new ExoPlayer.Builder(context)
+                  .setRenderersFactory(createRenderersFactory(context, options))
                   .setTrackSelector(trackSelector)
                   .setMediaSourceFactory(asset.getMediaSourceFactory(context));
           return builder.build();

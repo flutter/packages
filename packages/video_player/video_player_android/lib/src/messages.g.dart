@@ -261,6 +261,8 @@ class CreationOptions {
     this.formatHint,
     required this.httpHeaders,
     this.userAgent,
+    required this.enableDecoderFallback,
+    required this.disableMediaCodecAsyncQueueing,
   });
 
   String uri;
@@ -271,8 +273,19 @@ class CreationOptions {
 
   String? userAgent;
 
+  bool enableDecoderFallback;
+
+  bool disableMediaCodecAsyncQueueing;
+
   List<Object?> _toList() {
-    return <Object?>[uri, formatHint, httpHeaders, userAgent];
+    return <Object?>[
+      uri,
+      formatHint,
+      httpHeaders,
+      userAgent,
+      enableDecoderFallback,
+      disableMediaCodecAsyncQueueing,
+    ];
   }
 
   Object encode() {
@@ -287,6 +300,8 @@ class CreationOptions {
       httpHeaders: (result[2] as Map<Object?, Object?>?)!
           .cast<String, String>(),
       userAgent: result[3] as String?,
+      enableDecoderFallback: result[4]! as bool,
+      disableMediaCodecAsyncQueueing: result[5]! as bool,
     );
   }
 
