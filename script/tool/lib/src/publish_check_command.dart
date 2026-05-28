@@ -164,7 +164,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
     print('Running pub publish --dry-run:');
     final io.Process process = await startPubCommand(
-      <String>['publish', '--', '--dry-run'],
+      <String>['publish', '--dry-run'],
       package,
       processRunner,
       platform,

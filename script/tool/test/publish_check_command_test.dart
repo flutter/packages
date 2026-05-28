@@ -71,13 +71,11 @@ void main() {
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin1.path),
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin2.path),
         ]),
@@ -117,14 +115,12 @@ void main() {
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin1.path),
           // plugin2 has no examples, so there's no extra 'dart pub get' calls.
           ProcessCall('flutter', const <String>[
             'pub',
             'publish',
-            '--',
             '--dry-run',
           ], plugin2.path),
         ]),
@@ -359,7 +355,6 @@ void main() {
             ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.path),
           ),
@@ -430,7 +425,6 @@ void main() {
             ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.path),
           ),
@@ -500,7 +494,6 @@ void main() {
             ProcessCall('dart', const <String>[
               'pub',
               'publish',
-              '--',
               '--dry-run',
             ], package.directory.path),
           ]),
