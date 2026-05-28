@@ -29,9 +29,9 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
   @Override
   public PreviewView pigeon_defaultConstructor() {
     PreviewView previewView = new PreviewView(getPigeonRegistrar().getContext());
-    previewView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
-    previewView.setScaleType(PreviewView.ScaleType.FIT_CENTER);
-
+    // previewView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
+    previewView.setScaleType(PreviewView.ScaleType.FILL_CENTER); // FIT_CENTER leaves preview centered but small in portrait, FILL_CENTER makes preview fill space horizontally in portrait but still short
+    // with aspect ratio put back, FIT_CENTER works but it is janky. same with FILL.
     return previewView;
   }
 
