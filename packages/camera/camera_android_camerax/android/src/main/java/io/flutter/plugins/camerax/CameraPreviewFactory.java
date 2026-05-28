@@ -5,28 +5,28 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.camera.view.PreviewView;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 import java.util.Map;
-import androidx.camera.view.PreviewView;
 
 class CameraPreviewFactory extends PlatformViewFactory {
-    PreviewView previewView;
+  PreviewView previewView;
 
-    CameraPreviewFactory(PreviewView previewView) {
-        super(StandardMessageCodec.INSTANCE);
-        this.previewView = previewView;
-    }
+  CameraPreviewFactory(PreviewView previewView) {
+    super(StandardMessageCodec.INSTANCE);
+    this.previewView = previewView;
+  }
 
-    @NonNull
-    @Override
-    @SuppressWarnings("unchecked")
-    public PlatformView create(@NonNull Context context, int viewId, @Nullable Object args) {
-        // return previewView;
-        final Map<String, Object> creationParams = (Map<String, Object>) args;
-        return new CameraPreviewView(context, viewId, creationParams, previewView);
-    }
+  @NonNull
+  @Override
+  @SuppressWarnings("unchecked")
+  public PlatformView create(@NonNull Context context, int viewId, @Nullable Object args) {
+    // return previewView;
+    final Map<String, Object> creationParams = (Map<String, Object>) args;
+    return new CameraPreviewView(context, viewId, creationParams, previewView);
+  }
 }

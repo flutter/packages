@@ -26,7 +26,6 @@ class CameraPreview extends StatelessWidget {
             valueListenable: controller,
             builder: (BuildContext context, Object? value, Widget? child) {
               return AspectRatio(
-                // aspectRatio: controller.value.aspectRatio,
                 aspectRatio: _isLandscape()
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),

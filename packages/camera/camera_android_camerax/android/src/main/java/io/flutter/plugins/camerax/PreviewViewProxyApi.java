@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.camera.core.Preview;
 import androidx.camera.view.PreviewView;
 import androidx.camera.core.Preview;
 import java.util.Objects;
@@ -24,13 +25,18 @@ class PreviewViewProxyApi extends PigeonApiPreviewView {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
-
   @NonNull
   @Override
   public PreviewView pigeon_defaultConstructor() {
     PreviewView previewView = new PreviewView(getPigeonRegistrar().getContext());
+    previewView.setLayoutParams(
+        new android.view.ViewGroup.LayoutParams(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT));
     // previewView.setImplementationMode(PreviewView.ImplementationMode.COMPATIBLE);
-    previewView.setScaleType(PreviewView.ScaleType.FILL_CENTER); // FIT_CENTER leaves preview centered but small in portrait, FILL_CENTER makes preview fill space horizontally in portrait but still short
+    previewView.setScaleType(
+        PreviewView.ScaleType
+            .FILL_CENTER); // FIT_CENTER leaves preview centered but small in portrait, FILL_CENTER makes preview fill space horizontally in portrait but still short
     // with aspect ratio put back, FIT_CENTER works but it is janky. same with FILL.
     return previewView;
   }

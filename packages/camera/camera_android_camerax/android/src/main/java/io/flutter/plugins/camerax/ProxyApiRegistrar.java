@@ -15,12 +15,11 @@ import android.view.WindowManager;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.view.PreviewView;
 import androidx.lifecycle.LifecycleOwner;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.view.TextureRegistry;
-import androidx.camera.view.PreviewView;
-
 
 public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
@@ -113,10 +112,9 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   }
 
   public void registerPlatformView(@NonNull PreviewView previewPlatformView) {
-    platformViewRegistry
-    .registerViewFactory(
-                "plugins.flutter.dev/camera_android_camerax",
-                new CameraPreviewFactory(previewPlatformView));
+    platformViewRegistry.registerViewFactory(
+        "plugins.flutter.dev/camera_android_camerax",
+        new CameraPreviewFactory(previewPlatformView));
   }
 
   @Nullable

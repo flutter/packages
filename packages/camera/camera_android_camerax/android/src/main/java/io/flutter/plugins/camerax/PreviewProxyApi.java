@@ -81,7 +81,8 @@ class PreviewProxyApi extends PigeonApiPreview {
   // }
 
   @Override
-  public void setSurfaceProvider(@NonNull Preview pigeonInstance, @NonNull Preview.SurfaceProvider surfaceProvider) {
+  public void setSurfaceProvider(
+      @NonNull Preview pigeonInstance, @NonNull Preview.SurfaceProvider surfaceProvider) {
     pigeonInstance.setSurfaceProvider(surfaceProvider);
   }
 
