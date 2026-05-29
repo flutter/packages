@@ -164,10 +164,13 @@ class GradleValidator {
     if (!_validateCompatibilityVersions(lines)) {
       succeeded = false;
     }
+    if (!_validateKotlinPluginUsage(lines)) {
+      succeeded = false;
+    }
     if (!_validateKotlinJvmCompatibility(lines)) {
       succeeded = false;
     }
-    if (!_validateJavaKotlinCompileOptionsAlignment(lines)) {
+    if (!_validateJavaKotlinCompilerOptionsAlignment(lines)) {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(lines)) {
@@ -493,17 +496,40 @@ for more details.''';
     bool isKotlinOptions(String line) =>
         line.contains('kotlinOptions') && !_isCommented(line);
     final bool hasKotlinOptions = gradleLines.any(isKotlinOptions);
-    final bool kotlinOptionsUsesJavaVersion = gradleLines.any(
+    if (hasKotlinOptions) {
+      const kotlinOptionsErrorMessage =
+          '''
+build.gradle.kts must not use the deprecated "kotlinOptions" DSL. Use "kotlin.compilerOptions" instead:
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$_minimumJavaVersion
+    }
+}
+''';
+      printError(
+        '$_indentation${kotlinOptionsErrorMessage.split('\n').join('\n$_indentation')}',
+      );
+      return false;
+    }
+
+    bool isCompilerOptions(String line) =>
+        line.contains('compilerOptions') && !_isCommented(line);
+    final bool hasCompilerOptions = gradleLines.any(isCompilerOptions);
+
+    final bool compilerOptionsUsesJvmTargetEnum = gradleLines.any(
       (String line) =>
-          line.contains('jvmTarget = JavaVersion.VERSION_') &&
+          RegExp(
+            r'jvmTarget\s*=\s*(?:[a-zA-Z0-9.]+)?JvmTarget\.JVM_\d+',
+          ).hasMatch(line) &&
           !_isCommented(line),
     );
-    // Either does not set kotlinOptions or does and uses non-string based syntax.
-    if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
-      // Bad lines contains the first 4 lines including the kotlinOptions section.
+
+    // Either does not set compilerOptions or does and uses non-string based syntax.
+    if (hasCompilerOptions && !compilerOptionsUsesJvmTargetEnum) {
       var badLines = '';
       final int startIndex = gradleLines.indexOf(
-        gradleLines.firstWhere(isKotlinOptions),
+        gradleLines.firstWhere(isCompilerOptions),
       );
       for (
         var i = startIndex;
@@ -512,17 +538,18 @@ for more details.''';
       ) {
         badLines += '${gradleLines[i]}\n';
       }
+
       final kotlinErrorMessage =
           '''
-If build.gradle.kts sets jvmTarget then it must use JavaVersion syntax.
+If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use JvmTarget syntax.
   Good:
-    android {
-      kotlinOptions {
-          jvmTarget = JavaVersion.VERSION_$_minimumJavaVersion.toString()
-      }
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$_minimumJavaVersion
+        }
     }
   BAD:
-    $badLines
+    ${badLines.trim()}
 ''';
       printError(
         '$_indentation${kotlinErrorMessage.split('\n').join('\n$_indentation')}',
@@ -533,17 +560,64 @@ If build.gradle.kts sets jvmTarget then it must use JavaVersion syntax.
     return true;
   }
 
-  bool _validateJavaKotlinCompileOptionsAlignment(List<String> gradleLines) {
+  bool _validateKotlinPluginUsage(List<String> gradleLines) {
+    final kotlinPluginRegex = RegExp(
+      r'''id\s*\(?\s*["'](?:kotlin-android|org\.jetbrains\.kotlin\.android)["']\s*\)?''',
+    );
+    final bool hasKotlinPlugin = gradleLines.any(
+      (String line) => kotlinPluginRegex.hasMatch(line) && !_isCommented(line),
+    );
+
+    if (hasKotlinPlugin) {
+      const kotlinPluginErrorMessage = '''
+The kotlin-android plugin should not be applied in the plugin module's build.gradle.kts.
+  BAD:
+    plugins {
+        id("com.android.library")
+        id("kotlin-android")
+    }
+  Good:
+    plugins {
+        id("com.android.library")
+    }
+''';
+      printError(
+        '$_indentation${kotlinPluginErrorMessage.split('\n').join('\n$_indentation')}',
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _validateJavaKotlinCompilerOptionsAlignment(List<String> gradleLines) {
     final javaVersions = <String>[];
     // Some java versions have the format VERSION_1_8 but we dont need to handle those
     // because they are below the minimum.
     final javaVersionMatcher = RegExp(
       r'JavaVersion.VERSION_(?<javaVersion>\d+)',
     );
+    final kotlinJvmTargetMatcher = RegExp(
+      r'JvmTarget.JVM_(?<kotlinJvmVersion>\d+)',
+    );
     for (final line in gradleLines) {
-      final RegExpMatch? match = javaVersionMatcher.firstMatch(line);
-      if (!_isCommented(line) && match != null) {
-        final String? foundVersion = match.namedGroup('javaVersion');
+      if (_isCommented(line)) {
+        continue;
+      }
+      final RegExpMatch? javaMatch = javaVersionMatcher.firstMatch(line);
+      if (javaMatch != null) {
+        final String? foundVersion = javaMatch.namedGroup('javaVersion');
+        if (foundVersion != null) {
+          javaVersions.add(foundVersion);
+        }
+      }
+      final RegExpMatch? kotlinJvmMatch = kotlinJvmTargetMatcher.firstMatch(
+        line,
+      );
+      if (kotlinJvmMatch != null) {
+        final String? foundVersion = kotlinJvmMatch.namedGroup(
+          'kotlinJvmVersion',
+        );
         if (foundVersion != null) {
           javaVersions.add(foundVersion);
         }
@@ -553,7 +627,7 @@ If build.gradle.kts sets jvmTarget then it must use JavaVersion syntax.
       final int version = int.parse(javaVersions.first);
       if (!javaVersions.every((String element) => element == '$version')) {
         const javaVersionAlignmentError = '''
-If build.gradle.kts uses JavaVersion.* versions must be the same.
+If build.gradle.kts uses JavaVersion.* and JvmTarget.*, the versions must be the same.
 ''';
         printError(
           '$_indentation${javaVersionAlignmentError.split('\n').join('\n$_indentation')}',
