@@ -485,7 +485,24 @@ class ImperativeRouteMatch extends RouteMatch {
 
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
+  ///
+  /// This is idempotent: a second call after the future has already
+  /// completed is silently ignored. `GoRouteData`'s default
+  /// `onExit => true` forces every pop through the
+  /// `scheduleMicrotask` path in
+  /// `GoRouterDelegate._handlePopPageWithRouteMatch`, which makes it
+  /// possible for two microtasks to be scheduled for the same match
+  /// before either runs (e.g., the iOS interactive back-edge gesture
+  /// firing `Navigator.onPopPage` twice, or chained
+  /// `context.pop(result)` calls for nested modals). Without this
+  /// guard the second microtask throws
+  /// `Bad state: Future already completed`. The page is already gone
+  /// from `currentConfiguration` and the `.push()` future has already
+  /// resolved by then, so a second complete has no useful meaning.
   void complete([dynamic value]) {
+    if (completer.isCompleted) {
+      return;
+    }
     completer.complete(value);
   }
 

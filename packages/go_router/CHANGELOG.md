@@ -1,3 +1,13 @@
+## 17.2.4
+
+- Fixes `Bad state: Future already completed` thrown by
+  `ImperativeRouteMatch.complete` when `_handlePopPageWithRouteMatch` is
+  invoked twice for the same imperative match before either scheduled
+  microtask runs (e.g. iOS interactive back-edge pop gesture, chained
+  `context.pop(result)` calls for nested modals). The completer is now
+  idempotent — a second `complete` call after the future has resolved is
+  silently ignored.
+
 ## 17.2.3
 
 - Fixes an assertion failure when navigating to URLs with hash fragments missing a leading slash.
