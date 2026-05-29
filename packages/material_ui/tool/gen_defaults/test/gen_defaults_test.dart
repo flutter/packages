@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import '../templates/color_scheme_template.dart';
 import 'test_fixtures/test_templates.dart';
 
 void main() {
@@ -64,6 +65,27 @@ void main() {
 
       final file = File('${testPath()}/unformatted_defaults.g.dart');
       expect(file.readAsStringSync(), contains(formattedClass));
+    });
+
+    test('ColorSchemeTemplate generates existing M3 color scheme constants', () {
+      final String contents = const ColorSchemeTemplate().generateContents();
+
+      expect(contents, contains('const ColorScheme _colorSchemeLightM3 = ColorScheme('));
+      expect(contents, contains('const ColorScheme _colorSchemeDarkM3 = ColorScheme('));
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightMediumContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightHighContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeDarkMediumContrastM3 = ColorScheme('),
+      );
+      expect(contents, contains('const ColorScheme _colorSchemeDarkHighContrastM3 = ColorScheme('));
+      expect(contents, isNot(contains('_colorSchemeLightM3E')));
     });
 
     test('materialLib path resolves correctly based on MaterialVersion', () {

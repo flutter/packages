@@ -78,6 +78,8 @@ import 'typography.dart';
 
 export 'package:flutter/services.dart' show Brightness;
 
+part 'generated/theme_data_defaults.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -182,6 +184,41 @@ enum MaterialTapTargetSize {
   shrinkWrap,
 }
 
+/// A Material 3 color scheme contrast level.
+///
+/// The named constants [standard], [medium], and [high] select the token-backed
+/// default Material 3 color schemes. Use [ContrastLevel.new] to provide a
+/// custom value between -1.0 and 1.0 when generating a color scheme from
+/// [ThemeData.colorSchemeSeed].
+@immutable
+class ContrastLevel {
+  /// Creates a custom contrast level.
+  const ContrastLevel(this.value) : assert(value >= -1.0 && value <= 1.0);
+
+  /// Standard contrast, corresponding to a contrast level of 0.0.
+  static const ContrastLevel standard = ContrastLevel(0.0);
+
+  /// Medium contrast, corresponding to a contrast level of 0.5.
+  static const ContrastLevel medium = ContrastLevel(0.5);
+
+  /// High contrast, corresponding to a contrast level of 1.0.
+  static const ContrastLevel high = ContrastLevel(1.0);
+
+  /// The numeric contrast level passed to color scheme generation.
+  final double value;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ContrastLevel && other.value == value;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() => 'ContrastLevel($value)';
+}
+
 /// Defines the configuration of the overall visual [Theme] for a [MaterialApp]
 /// or a widget subtree within the app.
 ///
@@ -244,6 +281,12 @@ class ThemeData with Diagnosticable {
   /// If [colorSchemeSeed] is non-null then [colorScheme], [primaryColor] and
   /// [primarySwatch] must all be null.
   ///
+  /// [contrastLevel] sets the contrast level for generated Material 3 color
+  /// schemes. Values must be between -1.0 and 1.0 inclusive. Use
+  /// [ContrastLevel.standard], [ContrastLevel.medium], or [ContrastLevel.high]
+  /// for the token-backed default Material 3 contrast levels. Other values are
+  /// applied when generating a color scheme from [colorSchemeSeed].
+  ///
   /// The [textTheme] [TextStyle] colors are black if the color scheme's
   /// brightness is [Brightness.light], and white for [Brightness.dark].
   ///
@@ -287,6 +330,7 @@ class ThemeData with Diagnosticable {
     ColorScheme? colorScheme,
     Brightness? brightness,
     Color? colorSchemeSeed,
+    ContrastLevel? contrastLevel,
     // [colorScheme] is the preferred way to configure colors. The [Color] properties
     // listed below (as well as primarySwatch) will gradually be phased out, see
     // https://github.com/flutter/flutter/issues/91772.
@@ -412,6 +456,7 @@ class ThemeData with Diagnosticable {
     visualDensity ??= VisualDensity.defaultDensityForPlatform(platform);
     useMaterial3 ??= true;
     useSystemColors ??= false;
+    contrastLevel ??= ContrastLevel.standard;
     final bool useInkSparkle = platform == TargetPlatform.android && !kIsWeb;
     splashFactory ??= useMaterial3
         ? useInkSparkle
@@ -439,9 +484,10 @@ class ThemeData with Diagnosticable {
         colorScheme = ColorScheme.fromSeed(
           seedColor: colorSchemeSeed,
           brightness: effectiveBrightness,
+          contrastLevel: contrastLevel.value,
         );
       }
-      colorScheme ??= isDark ? _colorSchemeDarkM3 : _colorSchemeLightM3;
+      colorScheme ??= _defaultM3ColorScheme(effectiveBrightness, contrastLevel);
 
       // For surfaces that use primary color in light themes and surface color in dark
       final Color primarySurfaceColor = isDark ? colorScheme.surface : colorScheme.primary;
@@ -2935,6 +2981,17 @@ class ThemeData with Diagnosticable {
   }
 }
 
+ColorScheme _defaultM3ColorScheme(Brightness brightness, ContrastLevel contrastLevel) {
+  final isDark = brightness == Brightness.dark;
+  if (contrastLevel == ContrastLevel.medium) {
+    return isDark ? _colorSchemeDarkMediumContrastM3 : _colorSchemeLightMediumContrastM3;
+  }
+  if (contrastLevel == ContrastLevel.high) {
+    return isDark ? _colorSchemeDarkHighContrastM3 : _colorSchemeLightHighContrastM3;
+  }
+  return isDark ? _colorSchemeDarkM3 : _colorSchemeLightM3;
+}
+
 /// A [CupertinoThemeData] that defers unspecified theme attributes to an
 /// upstream Material [ThemeData].
 ///
@@ -3368,122 +3425,3 @@ class VisualDensity with Diagnosticable {
     return '${super.toStringShort()}(h: ${debugFormatDouble(horizontal)}, v: ${debugFormatDouble(vertical)})';
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - ColorScheme
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-const ColorScheme _colorSchemeLightM3 = ColorScheme(
-  brightness: Brightness.light,
-  primary: Color(0xFF6750A4),
-  onPrimary: Color(0xFFFFFFFF),
-  primaryContainer: Color(0xFFEADDFF),
-  onPrimaryContainer: Color(0xFF4F378B),
-  primaryFixed: Color(0xFFEADDFF),
-  primaryFixedDim: Color(0xFFD0BCFF),
-  onPrimaryFixed: Color(0xFF21005D),
-  onPrimaryFixedVariant: Color(0xFF4F378B),
-  secondary: Color(0xFF625B71),
-  onSecondary: Color(0xFFFFFFFF),
-  secondaryContainer: Color(0xFFE8DEF8),
-  onSecondaryContainer: Color(0xFF4A4458),
-  secondaryFixed: Color(0xFFE8DEF8),
-  secondaryFixedDim: Color(0xFFCCC2DC),
-  onSecondaryFixed: Color(0xFF1D192B),
-  onSecondaryFixedVariant: Color(0xFF4A4458),
-  tertiary: Color(0xFF7D5260),
-  onTertiary: Color(0xFFFFFFFF),
-  tertiaryContainer: Color(0xFFFFD8E4),
-  onTertiaryContainer: Color(0xFF633B48),
-  tertiaryFixed: Color(0xFFFFD8E4),
-  tertiaryFixedDim: Color(0xFFEFB8C8),
-  onTertiaryFixed: Color(0xFF31111D),
-  onTertiaryFixedVariant: Color(0xFF633B48),
-  error: Color(0xFFB3261E),
-  onError: Color(0xFFFFFFFF),
-  errorContainer: Color(0xFFF9DEDC),
-  onErrorContainer: Color(0xFF8C1D18),
-  background: Color(0xFFFEF7FF),
-  onBackground: Color(0xFF1D1B20),
-  surface: Color(0xFFFEF7FF),
-  surfaceBright: Color(0xFFFEF7FF),
-  surfaceContainerLowest: Color(0xFFFFFFFF),
-  surfaceContainerLow: Color(0xFFF7F2FA),
-  surfaceContainer: Color(0xFFF3EDF7),
-  surfaceContainerHigh: Color(0xFFECE6F0),
-  surfaceContainerHighest: Color(0xFFE6E0E9),
-  surfaceDim: Color(0xFFDED8E1),
-  onSurface: Color(0xFF1D1B20),
-  surfaceVariant: Color(0xFFE7E0EC),
-  onSurfaceVariant: Color(0xFF49454F),
-  outline: Color(0xFF79747E),
-  outlineVariant: Color(0xFFCAC4D0),
-  shadow: Color(0xFF000000),
-  scrim: Color(0xFF000000),
-  inverseSurface: Color(0xFF322F35),
-  onInverseSurface: Color(0xFFF5EFF7),
-  inversePrimary: Color(0xFFD0BCFF),
-  // The surfaceTint color is set to the same color as the primary.
-  surfaceTint: Color(0xFF6750A4),
-);
-
-const ColorScheme _colorSchemeDarkM3 = ColorScheme(
-  brightness: Brightness.dark,
-  primary: Color(0xFFD0BCFF),
-  onPrimary: Color(0xFF381E72),
-  primaryContainer: Color(0xFF4F378B),
-  onPrimaryContainer: Color(0xFFEADDFF),
-  primaryFixed: Color(0xFFEADDFF),
-  primaryFixedDim: Color(0xFFD0BCFF),
-  onPrimaryFixed: Color(0xFF21005D),
-  onPrimaryFixedVariant: Color(0xFF4F378B),
-  secondary: Color(0xFFCCC2DC),
-  onSecondary: Color(0xFF332D41),
-  secondaryContainer: Color(0xFF4A4458),
-  onSecondaryContainer: Color(0xFFE8DEF8),
-  secondaryFixed: Color(0xFFE8DEF8),
-  secondaryFixedDim: Color(0xFFCCC2DC),
-  onSecondaryFixed: Color(0xFF1D192B),
-  onSecondaryFixedVariant: Color(0xFF4A4458),
-  tertiary: Color(0xFFEFB8C8),
-  onTertiary: Color(0xFF492532),
-  tertiaryContainer: Color(0xFF633B48),
-  onTertiaryContainer: Color(0xFFFFD8E4),
-  tertiaryFixed: Color(0xFFFFD8E4),
-  tertiaryFixedDim: Color(0xFFEFB8C8),
-  onTertiaryFixed: Color(0xFF31111D),
-  onTertiaryFixedVariant: Color(0xFF633B48),
-  error: Color(0xFFF2B8B5),
-  onError: Color(0xFF601410),
-  errorContainer: Color(0xFF8C1D18),
-  onErrorContainer: Color(0xFFF9DEDC),
-  background: Color(0xFF141218),
-  onBackground: Color(0xFFE6E0E9),
-  surface: Color(0xFF141218),
-  surfaceBright: Color(0xFF3B383E),
-  surfaceContainerLowest: Color(0xFF0F0D13),
-  surfaceContainerLow: Color(0xFF1D1B20),
-  surfaceContainer: Color(0xFF211F26),
-  surfaceContainerHigh: Color(0xFF2B2930),
-  surfaceContainerHighest: Color(0xFF36343B),
-  surfaceDim: Color(0xFF141218),
-  onSurface: Color(0xFFE6E0E9),
-  surfaceVariant: Color(0xFF49454F),
-  onSurfaceVariant: Color(0xFFCAC4D0),
-  outline: Color(0xFF938F99),
-  outlineVariant: Color(0xFF49454F),
-  shadow: Color(0xFF000000),
-  scrim: Color(0xFF000000),
-  inverseSurface: Color(0xFFE6E0E9),
-  onInverseSurface: Color(0xFF322F35),
-  inversePrimary: Color(0xFF6750A4),
-  // The surfaceTint color is set to the same color as the primary.
-  surfaceTint: Color(0xFFD0BCFF),
-);
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - ColorScheme
