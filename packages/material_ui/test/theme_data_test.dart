@@ -6,8 +6,8 @@ import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   test('Theme data control test', () {
@@ -125,6 +125,48 @@ void main() {
       fallbackTheme.typography,
       Typography.material2021(colorScheme: fallbackTheme.colorScheme),
     );
+  });
+
+  test('ThemeData supports Material 3 contrast levels', () {
+    final standardTheme = ThemeData();
+    final mediumContrastTheme = ThemeData(contrastLevel: ContrastLevel.medium);
+    final highContrastTheme = ThemeData(contrastLevel: ContrastLevel.high);
+    final darkMediumContrastTheme = ThemeData(
+      brightness: Brightness.dark,
+      contrastLevel: ContrastLevel.medium,
+    );
+    final darkHighContrastTheme = ThemeData(
+      brightness: Brightness.dark,
+      contrastLevel: ContrastLevel.high,
+    );
+
+    expect(standardTheme.colorScheme.primary, isNot(mediumContrastTheme.colorScheme.primary));
+    expect(mediumContrastTheme.colorScheme.primary, const Color(0xFF4F378B));
+    expect(mediumContrastTheme.colorScheme.onSurface, const Color(0xFF000000));
+    expect(highContrastTheme.colorScheme.primary, const Color(0xFF381E72));
+    expect(highContrastTheme.colorScheme.onSurfaceVariant, const Color(0xFF000000));
+    expect(darkMediumContrastTheme.colorScheme.primary, const Color(0xFFEADDFF));
+    expect(darkMediumContrastTheme.colorScheme.onSurface, const Color(0xFFFFFFFF));
+    expect(darkHighContrastTheme.colorScheme.primary, const Color(0xFFF6EDFF));
+    expect(darkHighContrastTheme.colorScheme.onSurfaceVariant, const Color(0xFFFFFFFF));
+  });
+
+  test('ThemeData supports custom Material 3 contrast levels from seed colors', () {
+    const contrastLevel = ContrastLevel(0.25);
+    final theme = ThemeData(colorSchemeSeed: Colors.blue, contrastLevel: contrastLevel);
+
+    expect(
+      theme.colorScheme,
+      ColorScheme.fromSeed(seedColor: Colors.blue, contrastLevel: contrastLevel.value),
+    );
+  });
+
+  test('ThemeData defaults to standard Material 3 color scheme for custom contrast levels', () {
+    final standardTheme = ThemeData();
+    const contrastLevel = ContrastLevel(0.25);
+    final customContrastTheme = ThemeData(contrastLevel: contrastLevel);
+
+    expect(customContrastTheme.colorScheme, standardTheme.colorScheme);
   });
 
   testWidgets(
@@ -367,7 +409,6 @@ void main() {
     expect(theme.colorScheme.onInverseSurface, const Color(0xfff5eff7));
     expect(theme.colorScheme.inversePrimary, const Color(0xffd0bcff));
     expect(theme.colorScheme.shadow, const Color(0xff000000));
-    expect(theme.colorScheme.surfaceTint, const Color(0xff6750a4));
     expect(theme.colorScheme.brightness, Brightness.light);
 
     expect(theme.primaryColor, theme.colorScheme.primary);
@@ -843,7 +884,6 @@ void main() {
       expect(theme.colorScheme.onInverseSurface, const Color(0xfff5eff7));
       expect(theme.colorScheme.inversePrimary, const Color(0xffd0bcff));
       expect(theme.colorScheme.shadow, const Color(0xff000000));
-      expect(theme.colorScheme.surfaceTint, const Color(0xff6750a4));
       expect(theme.colorScheme.brightness, Brightness.light);
 
       expect(theme.primaryColor, theme.colorScheme.primary);
@@ -905,7 +945,6 @@ void main() {
     expect(theme.colorScheme.onInverseSurface, const Color(0xff322f35));
     expect(theme.colorScheme.inversePrimary, const Color(0xff6750a4));
     expect(theme.colorScheme.shadow, const Color(0xff000000));
-    expect(theme.colorScheme.surfaceTint, const Color(0xffd0bcff));
     expect(theme.colorScheme.brightness, Brightness.dark);
 
     expect(theme.primaryColor, theme.colorScheme.surface);

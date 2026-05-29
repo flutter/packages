@@ -12,8 +12,7 @@
 
 import 'package:args/args.dart';
 
-// TODO(elliette): Import template files.
-// import '../templates/x_template.dart';
+import '../templates/color_scheme_template.dart';
 
 Future<void> main(List<String> args) async {
   // Parse arguments
@@ -21,8 +20,7 @@ Future<void> main(List<String> args) async {
   parser.addFlag('verbose', abbr: 'v', help: 'Enable verbose output', negatable: false);
   final ArgResults argResults = parser.parse(args);
   // TODO(elliette): Add token logger when verbose flag is used.
-  // ignore: unused_local_variable
   final verbose = argResults['verbose'] as bool;
-  // TODO(elliette): Invoke template generators.
-  // const XTemplate().generateFile(verbose: verbose);
+
+  const ColorSchemeTemplate().generateFile(verbose: verbose);
 }
