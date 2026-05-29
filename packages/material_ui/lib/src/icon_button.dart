@@ -31,6 +31,8 @@ import 'theme.dart';
 import 'theme_data.dart';
 import 'tooltip.dart';
 
+part 'generated/icon_button_defaults_m3e.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -626,6 +628,11 @@ class IconButton extends StatelessWidget {
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
   ///
+  /// The [size], [iconButtonWidth], and [iconButtonShape] parameters configure
+  /// the Material 3 Expressive token size, width, and shape through
+  /// [ButtonStyle.size], [ButtonStyle.iconButtonWidth], and
+  /// [ButtonStyle.iconButtonShape].
+  ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
@@ -670,6 +677,9 @@ class IconButton extends StatelessWidget {
     bool? enableFeedback,
     AlignmentGeometry? alignment,
     InteractiveInkFeatureFactory? splashFactory,
+    ButtonSize? size,
+    IconButtonWidth? iconButtonWidth,
+    IconButtonShape? iconButtonShape,
   }) {
     final Color? overlayFallback = overlayColor ?? foregroundColor;
     WidgetStateProperty<Color?>? overlayColorProp;
@@ -710,6 +720,9 @@ class IconButton extends StatelessWidget {
       enableFeedback: enableFeedback,
       alignment: alignment,
       splashFactory: splashFactory,
+      size: size,
+      iconButtonWidth: iconButtonWidth,
+      iconButtonShape: iconButtonShape,
     );
   }
 
@@ -718,6 +731,9 @@ class IconButton extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     if (theme.useMaterial3) {
+      final StyleVariant effectiveVariant =
+          IconButtonTheme.of(context).variant ?? StyleVariant.material3;
+
       final Size? minSize = constraints == null
           ? null
           : Size(constraints!.minWidth, constraints!.minHeight);
@@ -761,6 +777,7 @@ class IconButton extends StatelessWidget {
         focusNode: focusNode,
         isSelected: isSelected,
         variant: _variant,
+        styleVariant: effectiveVariant,
         tooltip: tooltip,
         statesController: statesController,
         child: effectiveIcon,
@@ -867,6 +884,7 @@ class _SelectableIconButton extends StatefulWidget {
     this.onHover,
     this.statesController,
     required this.variant,
+    required this.styleVariant,
     required this.autofocus,
     required this.onPressed,
     this.tooltip,
@@ -877,6 +895,7 @@ class _SelectableIconButton extends StatefulWidget {
   final ButtonStyle? style;
   final FocusNode? focusNode;
   final _IconButtonVariant variant;
+  final StyleVariant styleVariant;
   final bool autofocus;
   final VoidCallback? onPressed;
   final String? tooltip;
@@ -945,7 +964,8 @@ class _SelectableIconButtonState extends State<_SelectableIconButton> {
       onPressed: widget.onPressed,
       onHover: widget.onHover,
       onLongPress: widget.onPressed != null ? widget.onLongPress : null,
-      variant: widget.variant,
+      iconButtonVariant: widget.variant,
+      styleVariant: widget.styleVariant,
       toggleable: toggleable,
       tooltip: widget.tooltip,
       child: Semantics(selected: widget.isSelected, child: widget.child),
@@ -968,14 +988,28 @@ class _IconButtonM3 extends ButtonStyleButton {
     super.onLongPress,
     super.autofocus = false,
     super.statesController,
-    required this.variant,
+    required this.iconButtonVariant,
+    required this.styleVariant,
     required this.toggleable,
     super.tooltip,
     required Widget super.child,
   }) : super(onFocusChange: null, clipBehavior: Clip.none);
 
-  final _IconButtonVariant variant;
+  final _IconButtonVariant iconButtonVariant;
+  final StyleVariant styleVariant;
   final bool toggleable;
+
+  ButtonSize? _effectiveSize(BuildContext context) {
+    return style?.size ?? IconButtonTheme.of(context).style?.size;
+  }
+
+  IconButtonWidth? _effectiveWidth(BuildContext context) {
+    return style?.iconButtonWidth ?? IconButtonTheme.of(context).style?.iconButtonWidth;
+  }
+
+  IconButtonShape? _effectiveShape(BuildContext context) {
+    return style?.iconButtonShape ?? IconButtonTheme.of(context).style?.iconButtonShape;
+  }
 
   /// ## Material 3 defaults
   ///
@@ -1014,11 +1048,47 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `splashFactory` - Theme.splashFactory
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
-    return switch (variant) {
-      _IconButtonVariant.filled => _FilledIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
+    final ButtonSize? effectiveSize = _effectiveSize(context);
+    final IconButtonWidth? effectiveWidth = _effectiveWidth(context);
+    final IconButtonShape? effectiveShape = _effectiveShape(context);
+
+    return switch (styleVariant) {
+      StyleVariant.material3 => switch (iconButtonVariant) {
+        _IconButtonVariant.filled => _FilledIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
+      },
+      StyleVariant.material3Expressive => switch (iconButtonVariant) {
+        _IconButtonVariant.filled => _M3EFilledIconButtonDefaults(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.filledTonal => _M3EFilledTonalIconButtonDefaults(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.outlined => _M3EOutlinedIconButtonDefaults(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.standard => _IconButtonDefaultsM3E(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+      },
     };
   }
 
