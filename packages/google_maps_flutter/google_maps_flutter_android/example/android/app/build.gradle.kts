@@ -56,3 +56,7 @@ dependencies {
     testImplementation("com.google.android.gms:play-services-maps:17.0.0")
     testImplementation("com.google.maps.android:android-maps-utils:4.0.0")
 }
+
+tasks.matching { it.name == "packageDebugUnitTestForUnitTest" }.configureEach {
+    dependsOn("copyFlutterAssetsDebug")
+}
