@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
+import '../data/typescale_struct.dart';
 
 enum _MaterialVersion { material3, material3Expressive }
 
@@ -75,12 +76,16 @@ abstract class TokenTemplate {
 
   /// The name of the class that will be generated (e.g. `_IconButtonDefaultsM3`
   /// or `_IconButtonDefaultsM3E`).
-  String get _className {
+  ///
+  /// Templates that generate top-level declarations instead of a class should
+  /// override and return an empty string.
+  @visibleForTesting
+  String get className {
     assert(
       _nameRegExp.hasMatch(name),
       'The template name "$name" must use spaces and capitalized words (e.g., "Typography" or "Icon Button").',
     );
-    final String camelName = name.replaceAll(' ', '');
+    final String camelName = _joinAsCamelCase(name.split(' '), lowerCamelCase: false);
     return switch (_version) {
       _MaterialVersion.material3 => '_${camelName}DefaultsM3',
       _MaterialVersion.material3Expressive => '_${camelName}DefaultsM3E',
@@ -89,11 +94,21 @@ abstract class TokenTemplate {
 
   /// The regular expression used to verify that the generated contents declare
   /// the class.
-  RegExp get _classRegExp => RegExp('class\\s+$_className\\b');
+  RegExp get _classRegExp => RegExp('class\\s+$className\\b');
+
+  /// The output file name generated under [materialLib].
+  String get outputFileName {
+    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
+    return switch (_version) {
+      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
+      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
+    };
+  }
 
   /// Returns the body of the generated file as a string.
   ///
-  /// The [className] parameter must be used to declare the class.
+  /// The [className] parameter must be used to declare the class, unless it is
+  /// empty.
   String generateContents(String className);
 
   /// Generates a Dart number literal for token values.
@@ -108,6 +123,12 @@ abstract class TokenTemplate {
       return color(role, prefix);
     }
     return '${color(role, prefix)}.withOpacity(${number(opacity)})';
+  }
+
+  /// Generate a [BorderSide] for the given component.
+  String border(String color, {double? width}) {
+    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
+    return 'BorderSide(color: $color$widthString)';
   }
 
   /// Generates an [OutlinedBorder] expression for a shape token.
@@ -150,13 +171,34 @@ abstract class TokenTemplate {
     throw UnsupportedError('Unsupported shape family type: ${shape.family}');
   }
 
+  /// Generate a [TextTheme] text style name for the given component token.
+  String textStyle(TypescaleStruct token, String prefix) {
+    final List<String> nameAttributes = token.name.split('.');
+    final String baseName = _joinAsCamelCase(nameAttributes.last.split('-'));
+    final bool isEmphasized = nameAttributes.contains('emphasized');
+    return '$prefix.$baseName${isEmphasized ? 'Emphasized' : ''}';
+  }
+
+  /// Converts a list of sub-strings into a single camelcased string.
+  String _joinAsCamelCase(List<String> subStrings, {bool lowerCamelCase = true}) {
+    if (subStrings.isEmpty) {
+      return '';
+    }
+    var camelCased = '';
+    for (var i = 0; i < subStrings.length; i++) {
+      final String subString = subStrings[i];
+      if (subString.isEmpty) {
+        continue;
+      }
+      camelCased += (lowerCamelCase && i == 0)
+          ? subString.toLowerCase()
+          : subString[0].toUpperCase() + subString.substring(1).toLowerCase();
+    }
+    return camelCased;
+  }
+
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {
-    final String snakeName = name.toLowerCase().replaceAll(' ', '_');
-    final String outputFileName = switch (_version) {
-      _MaterialVersion.material3 => '${snakeName}_defaults_m3.g.dart',
-      _MaterialVersion.material3Expressive => '${snakeName}_defaults_m3e.g.dart',
-    };
     final fileName = '$materialLib/$outputFileName';
     if (verbose) {
       stdout.writeln('Generating file: $fileName');
@@ -177,11 +219,13 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Generating contents...');
     }
-    final String contents = generateContents(_className);
+    final String generatedClassName = className;
+    final String contents = generateContents(generatedClassName);
     assert(
-      contents.contains(_classRegExp),
-      'The generated contents for "$name" must define the class "$_className". '
-      'Make sure you are utilizing the passed `className` parameter.',
+      generatedClassName.isEmpty || contents.contains(_classRegExp),
+      'The generated contents for "$name" must define the class "$generatedClassName". '
+      'Make sure you are utilizing the passed `className` parameter, or override '
+      '`className` to be empty.',
     );
 
     final buffer = StringBuffer();
@@ -197,7 +241,7 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Formatting $fileName...');
     }
-    final ProcessResult result = Process.runSync(Platform.isWindows ? 'dart.bat' : 'dart', <String>[
+    final ProcessResult result = Process.runSync(Platform.resolvedExecutable, <String>[
       'format',
       fileName,
     ]);
