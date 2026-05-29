@@ -231,9 +231,15 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
-  /// Metadata associated with the current route.
+  /// Application-defined metadata associated with this route.
   ///
-  /// Metadata is inherited from parent routes and overridden by child routes.
+  /// This can be used to attach static information that is useful while
+  /// building the matched page, such as analytics labels, page titles,
+  /// permissions, or feature flags. The merged metadata for the current match
+  /// is available from [GoRouterState.metadata].
+  ///
+  /// Metadata is inherited from parent routes and child route values override
+  /// parent values with the same key.
   final Map<String, dynamic>? metadata;
 
   /// Builds a lists containing the provided routes along with all their

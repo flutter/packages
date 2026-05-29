@@ -1,4 +1,4 @@
-## 17.2.4
+## 17.3.0
 
 - Adds route `metadata` support, including inheritance/override behavior and exposure on `GoRouterState`.
 

@@ -422,5 +422,50 @@ void main() {
       expect(emptyState!.metadata, isEmpty);
       expect(emptyState!.metadata, isNotNull);
     });
+
+    testWidgets('metadata is available after imperative push', (
+      WidgetTester tester,
+    ) async {
+      GoRouterState? pushedState;
+
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          metadata: const <String, dynamic>{
+            'fromParent': true,
+            'presentation': 'base',
+          },
+          builder: (BuildContext context, GoRouterState state) {
+            return const Text('home');
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'push',
+              metadata: const <String, dynamic>{
+                'presentation': 'pushed',
+                'fromChild': true,
+              },
+              builder: (BuildContext context, GoRouterState state) {
+                pushedState = state;
+                return const Text('push');
+              },
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.text('home'), findsOneWidget);
+
+      router.push('/push');
+      await tester.pumpAndSettle();
+
+      expect(pushedState, isNotNull);
+      expect(pushedState!.metadata, const <String, dynamic>{
+        'fromParent': true,
+        'presentation': 'pushed',
+        'fromChild': true,
+      });
+    });
   });
 }

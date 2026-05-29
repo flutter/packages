@@ -85,10 +85,13 @@ class GoRouterState {
   /// associated GoRouterState to be uniquely identified using [GoRoute.name]
   final GoRoute? topRoute;
 
-  /// Metadata associated with the current route.
+  /// Merged application-defined metadata for the current route match.
   ///
-  /// Metadata is inherited from parent routes and overridden by child routes.
-  /// This map is never null.
+  /// Metadata is inherited from parent routes, and child routes override
+  /// parent values with the same key. For example, if a parent route has
+  /// `{'section': 'library', 'requiresAuth': true}` and the matched child route
+  /// has `{'requiresAuth': false, 'title': 'Preview'}`, this value is
+  /// `{'section': 'library', 'requiresAuth': false, 'title': 'Preview'}`.
   final Map<String, dynamic> metadata;
 
   /// Gets the [GoRouterState] from context.
