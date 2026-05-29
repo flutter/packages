@@ -1,3 +1,7 @@
+## 1.2.5
+
+* Updates allowed version range of `xml` to include up to 7.0.1.
+
 ## 1.2.4
 
 * Fix Stack Overflow crashes caused by circular references (masks, patterns, deferred nodes, and clip paths).
