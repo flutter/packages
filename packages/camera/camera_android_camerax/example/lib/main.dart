@@ -120,7 +120,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    if (state == AppLifecycleState.paused) {
+    if (state == AppLifecycleState.inactive) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
       _initializeCameraController(cameraController.description);

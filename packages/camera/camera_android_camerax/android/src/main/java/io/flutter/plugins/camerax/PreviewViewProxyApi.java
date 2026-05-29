@@ -7,9 +7,6 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.camera.core.Preview;
 import androidx.camera.view.PreviewView;
-import androidx.camera.core.Preview;
-import java.util.Objects;
-
 
 class PreviewViewProxyApi extends PigeonApiPreviewView {
   // Cached previewView.

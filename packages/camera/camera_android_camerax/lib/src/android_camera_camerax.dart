@@ -1064,8 +1064,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _bindUseCaseToLifecycle(preview!, cameraId);
   }
 
-  PlatformViewLink? platformView;
-
   /// Returns a widget showing a live camera preview for the camera with ID [cameraId].
   ///
   /// [createCamera] must be called before attempting to build this preview, and
@@ -1088,7 +1086,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Pass parameters to the platform side.
     const creationParams = <String, dynamic>{};
 
-    platformView ??= PlatformViewLink(
+    return PlatformViewLink(
       viewType: viewType,
       surfaceFactory: (context, controller) {
         return AndroidViewSurface(
@@ -1112,8 +1110,6 @@ class AndroidCameraCameraX extends CameraPlatform {
           ..create();
       },
     );
-
-    return platformView!;
     // final Stream<DeviceOrientation> deviceOrientationStream =
     //     onDeviceOrientationChanged().map(
     //       (DeviceOrientationChangedEvent e) => e.orientation,

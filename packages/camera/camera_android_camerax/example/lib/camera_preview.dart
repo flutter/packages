@@ -30,7 +30,7 @@ class CameraPreview extends StatelessWidget {
                     ? controller.value.aspectRatio
                     : (1 / controller.value.aspectRatio),
                 child: Stack(
-                  fit: StackFit.expand,
+                  // fit: StackFit.expand,
                   children: <Widget>[
                     // _wrapInRotatedBox(child: controller.buildPreview()),
                     controller.buildPreview(),
@@ -42,6 +42,7 @@ class CameraPreview extends StatelessWidget {
             child: child,
           )
         : Container();
+  
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
