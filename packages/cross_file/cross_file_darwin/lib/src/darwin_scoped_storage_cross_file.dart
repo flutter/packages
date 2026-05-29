@@ -28,8 +28,8 @@ sealed class DarwinScopedStorageXFileCreationParams
   }) =>
       SecurityScopedDarwinScopedStorageXFileCreationParams(uri: uri, api: api);
 
-  /// Constructs a [DarwinScopedStorageXFileCreationParams] with a security
-  /// scoped uri.
+  /// Constructs a [DarwinScopedStorageXFileCreationParams] with an asset
+  /// identifier from the Photos Library.
   factory DarwinScopedStorageXFileCreationParams.photoKit({
     required String localIdentifier,
     @visibleForTesting CrossFileDarwinApi? api,
@@ -39,8 +39,7 @@ sealed class DarwinScopedStorageXFileCreationParams
   );
 }
 
-/// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
-/// macOS.
+/// Creation parameters for [SecurityScopedDarwinScopedStorageXFile].
 @immutable
 base class SecurityScopedDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
@@ -55,8 +54,7 @@ base class SecurityScopedDarwinScopedStorageXFileCreationParams
   final CrossFileDarwinApi api;
 }
 
-/// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
-/// macOS.
+/// Creation parameters for [PhotoKitDarwinScopedStorageXFile].
 @immutable
 base class PhotoKitDarwinScopedStorageXFileCreationParams
     extends DarwinScopedStorageXFileCreationParams {
@@ -91,7 +89,8 @@ sealed class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
   DarwinScopedStorageXFile._(super.params) : super.implementation();
 }
 
-/// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
+/// Implementation of [DarwinScopedStorageXFile] for interacting with a
+/// security-scoped URL.
 base class SecurityScopedDarwinScopedStorageXFile
     extends DarwinScopedStorageXFile
     with SecurityScopedDarwinScopedStorageXFileExtension {
@@ -169,7 +168,8 @@ base class SecurityScopedDarwinScopedStorageXFile
   }
 }
 
-/// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
+/// Implementation of [DarwinScopedStorageXFile] as a representation of a
+/// image, video, or Live Photo in the Photos library.
 base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
     with PhotoKitDarwinScopedStorageXFileExtension {
   /// Constructs a [SecurityScopedDarwinScopedStorageXFile].
@@ -229,6 +229,6 @@ mixin SecurityScopedDarwinScopedStorageXFileExtension
     implements PlatformScopedStorageXFileExtension, SecurityScopedResource {}
 
 /// Provides platform specific features for
-/// [SecurityScopedDarwinScopedStorageXFile].
+/// [PhotoKitDarwinScopedStorageXFile].
 mixin PhotoKitDarwinScopedStorageXFileExtension
     implements PlatformScopedStorageXFileExtension {}

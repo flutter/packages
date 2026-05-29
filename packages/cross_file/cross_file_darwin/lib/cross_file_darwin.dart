@@ -17,5 +17,6 @@ export 'src/darwin_scoped_storage_cross_directory.dart'
 export 'src/darwin_scoped_storage_cross_file.dart'
     show
         DarwinScopedStorageXFileCreationParams,
-        DarwinScopedStorageXFileExtension;
+        PhotoKitDarwinScopedStorageXFileExtension,
+        SecurityScopedDarwinScopedStorageXFileExtension;
 export 'src/security_scoped_resource.dart';
