@@ -117,7 +117,7 @@ PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) =>
 /// [ImageFormatGroup.unknown] and [ImageFormatGroup.bgra8888] default to
 /// [PlatformImageFormatGroup.yuv420], which is the default on Android.
 PlatformImageFormatGroup imageFormatGroupToPlatform(ImageFormatGroup format) {
-  // ignore: exhaustive_cases
+  // ignore: non_exhaustive_switch_statement
   switch (format) {
     case ImageFormatGroup.unknown:
       return PlatformImageFormatGroup.yuv420;
