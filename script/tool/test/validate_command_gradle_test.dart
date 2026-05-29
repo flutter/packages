@@ -1198,7 +1198,7 @@ flutter {
       writeFakeExampleBuildGradles(
         example,
         pluginName: packageName,
-        kotlinVersion: '1.6.21',
+        kotlinVersion: '1.9.20',
       );
       writeFakeManifest(example, isApp: true);
 
