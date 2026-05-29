@@ -13,7 +13,7 @@ export 'src/cross_file_darwin.dart';
 export 'src/darwin_scoped_storage_cross_directory.dart'
     show
         DarwinScopedStorageXDirectoryCreationParams,
-        DarwinScopedStorageXDirectoryExtension;
+        SecurityScopedDarwinScopedStorageXDirectoryExtension;
 export 'src/darwin_scoped_storage_cross_file.dart'
     show
         DarwinScopedStorageXFileCreationParams,

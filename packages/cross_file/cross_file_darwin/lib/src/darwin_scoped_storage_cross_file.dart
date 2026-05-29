@@ -112,7 +112,9 @@ base class SecurityScopedDarwinScopedStorageXFile
   late final SecurityScopedDarwinScopedStorageXFileCreationParams params =
       super.params is SecurityScopedDarwinScopedStorageXFileCreationParams
       ? super.params as SecurityScopedDarwinScopedStorageXFileCreationParams
-      : SecurityScopedDarwinScopedStorageXFileCreationParams(uri: params.uri);
+      : SecurityScopedDarwinScopedStorageXFileCreationParams(
+          uri: super.params.uri,
+        );
 
   @override
   SecurityScopedDarwinScopedStorageXFileExtension? get extension => this;
@@ -180,7 +182,7 @@ base class PhotoKitDarwinScopedStorageXFile extends DarwinScopedStorageXFile
       super.params is PhotoKitDarwinScopedStorageXFileCreationParams
       ? super.params as PhotoKitDarwinScopedStorageXFileCreationParams
       : PhotoKitDarwinScopedStorageXFileCreationParams(
-          localIdentifier: params.uri,
+          localIdentifier: super.params.uri,
         );
 
   @override
