@@ -559,7 +559,7 @@ class AVFoundationCamera extends CameraPlatform {
 
   /// Returns an [ImageFormatGroup]'s Pigeon representation.
   PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
-    // ignore: exhaustive_cases
+    // ignore: non_exhaustive_switch_statement
     switch (format) {
       // "unknown" is used to indicate the default.
       case ImageFormatGroup.unknown:
