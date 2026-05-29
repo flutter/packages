@@ -97,7 +97,6 @@ void main() {
       () => ThemeData(
         floatingActionButtonTheme: FloatingActionButtonThemeData(variant: .material3Expressive),
       ),
-      () => ThemeData(iconButtonTheme: IconButtonThemeData(variant: .material3Expressive)),
       () => ThemeData(menuButtonTheme: MenuButtonThemeData(variant: .material3Expressive)),
       () => ThemeData(menuTheme: MenuThemeData(variant: .material3Expressive)),
       () => ThemeData(navigationBarTheme: NavigationBarThemeData(variant: .material3Expressive)),

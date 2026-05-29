@@ -12,6 +12,8 @@
 
 import 'package:args/args.dart';
 
+import '../templates/icon_button_template.dart';
+
 // TODO(elliette): Import template files.
 // import '../templates/x_template.dart';
 
@@ -23,6 +25,5 @@ Future<void> main(List<String> args) async {
   // TODO(elliette): Add token logger when verbose flag is used.
   // ignore: unused_local_variable
   final verbose = argResults['verbose'] as bool;
-  // TODO(elliette): Invoke template generators.
-  // const XTemplate().generateFile(verbose: verbose);
+  const IconButtonTemplate().generateFile(verbose: verbose);
 }

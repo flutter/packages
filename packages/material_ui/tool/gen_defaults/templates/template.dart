@@ -6,6 +6,9 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 
+import '../data/color_role.dart';
+import '../data/shape_struct.dart';
+
 enum _MaterialVersion { material3, material3Expressive }
 
 /// A template for generating Material 3 component defaults.
@@ -92,6 +95,51 @@ abstract class TokenTemplate {
   ///
   /// The [className] parameter must be used to declare the class.
   String generateContents(String className);
+
+  String color(TokenColorRole role) {
+    return '_colors.${_colorSchemeName(role)}';
+  }
+
+  String componentColor(TokenColorRole role, [double? opacity]) {
+    String value = color(role);
+    if (opacity != null && opacity != 1.0) {
+      value += '.withOpacity($opacity)';
+    }
+    return value;
+  }
+
+  String _colorSchemeName(TokenColorRole role) {
+    return switch (role) {
+      TokenColorRole.inverseOnSurface => 'onInverseSurface',
+      _ => role.name,
+    };
+  }
+
+  String shape(ShapeStruct token) {
+    final isCircular = token.family == 'SHAPE_FAMILY_CIRCULAR';
+    final bool hasUniformCorners =
+        token.topLeft == token.topRight &&
+        token.topLeft == token.bottomLeft &&
+        token.topLeft == token.bottomRight;
+
+    if (isCircular) {
+      return 'const StadiumBorder()';
+    }
+
+    if (hasUniformCorners) {
+      return 'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(${token.topLeft})))';
+    }
+
+    return '''
+const RoundedRectangleBorder(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(${token.topLeft}),
+    topRight: Radius.circular(${token.topRight}),
+    bottomLeft: Radius.circular(${token.bottomLeft}),
+    bottomRight: Radius.circular(${token.bottomRight}),
+  ),
+)''';
+  }
 
   /// Generates the file under the target path [materialLib] and formats it.
   void generateFile({bool verbose = false}) {

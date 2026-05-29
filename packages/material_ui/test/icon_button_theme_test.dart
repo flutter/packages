@@ -7,13 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-class _IconButtonThemeDataWithExpressiveVariant extends IconButtonThemeData {
-  const _IconButtonThemeDataWithExpressiveVariant();
-
-  @override
-  StyleVariant? get variant => .material3Expressive;
-}
-
 void main() {
   RenderObject getOverlayColor(WidgetTester tester) {
     return tester.allRenderObjects.firstWhere(
@@ -27,26 +20,28 @@ void main() {
     expect(identical(IconButtonThemeData.lerp(data, data, 0.5), data), true);
   });
 
-  testWidgets('IconButton asserts on unsupported style variants', (WidgetTester tester) async {
+  test('IconButtonThemeData supports Material 3 Expressive variant', () {
+    const data = IconButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(data.variant, StyleVariant.material3Expressive);
+  });
+
+  testWidgets('IconButton supports Material 3 Expressive style variants', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: true),
+        home: const Scaffold(
           body: IconButtonTheme(
-            data: _IconButtonThemeDataWithExpressiveVariant(),
+            data: IconButtonThemeData(variant: StyleVariant.material3Expressive),
             child: IconButton(onPressed: null, icon: Icon(Icons.ac_unit)),
           ),
         ),
       ),
     );
 
-    expect(
-      tester.takeException(),
-      isA<AssertionError>().having(
-        (AssertionError error) => error.message,
-        'message',
-        kUnsupportedStyleVariantAssertionMessage,
-      ),
-    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Passing no IconButtonTheme returns defaults', (WidgetTester tester) async {

@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
-import 'debug.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -40,8 +39,7 @@ class IconButtonThemeData with Diagnosticable {
   /// Creates a [IconButtonThemeData].
   ///
   /// The [style] may be null.
-  const IconButtonThemeData({this.style, this.variant})
-    : assert(variant != .material3Expressive, kUnsupportedStyleVariantAssertionMessage);
+  const IconButtonThemeData({this.style, this.variant});
 
   /// Overrides for [IconButton]'s default style if [ThemeData.useMaterial3]
   /// is set to true.
