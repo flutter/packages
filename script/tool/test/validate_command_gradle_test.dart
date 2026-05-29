@@ -1217,7 +1217,7 @@ flutter {
         containsAllInOrder(<Matcher>[
           contains(
             'settings.gradle.kts sets the "org.jetbrains.kotlin.android" plugin '
-            'version to "1.6.21". The minimum Kotlin version that can be '
+            'version to "1.9.20". The minimum Kotlin version that can be '
             'specified is $minKotlinVersion, for compatibility with modern '
             'dependencies.',
           ),
