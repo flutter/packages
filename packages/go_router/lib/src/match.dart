@@ -322,7 +322,7 @@ class RouteMatch extends RouteMatchBase {
       path: route.path,
       extra: matches.extra,
       topRoute: matches.lastOrNull?.route,
-      metadata: matches.routeMetadataFor(this),
+      metadata: matches._routeMetadataFor(this),
     );
   }
 }
@@ -366,7 +366,7 @@ class ShellRouteMatch extends RouteMatchBase {
 
   @override
   GoRouterState buildState(RouteConfiguration configuration, RouteMatchList matches) {
-    final Map<String, dynamic> metadata = matches.routeMetadataFor(this);
+    final Map<String, dynamic> metadata = matches._routeMetadataFor(this);
     // The route related data is stored in the leaf route match.
     final RouteMatch leafMatch = _lastLeaf;
     if (leafMatch is ImperativeRouteMatch) {
@@ -759,12 +759,7 @@ class RouteMatchList with Diagnosticable {
     return result;
   }
 
-  /// Returns merged metadata for the provided [target] route match.
-  ///
-  /// Metadata is inherited from parent routes and overridden by child routes.
-  /// Returns an empty map when no metadata can be found.
-  @meta.internal
-  Map<String, dynamic> routeMetadataFor(RouteMatchBase target) {
+  Map<String, dynamic> _routeMetadataFor(RouteMatchBase target) {
     return _metadataForRouteMatch(
           matches: matches,
           target: target,
@@ -786,7 +781,7 @@ class RouteMatchList with Diagnosticable {
     if (target is ImperativeRouteMatch) {
       return target.matches.topRouteMetadata;
     }
-    return routeMetadataFor(target);
+    return _routeMetadataFor(target);
   }
 
   static RouteMatchBase? _lastRouteMatchOrNull(List<RouteMatchBase> matches) {
