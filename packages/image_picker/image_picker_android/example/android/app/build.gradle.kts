@@ -56,3 +56,7 @@ dependencies {
     implementation(project(":espresso"))
     api("androidx.test:core:1.4.0")
 }
+
+tasks.matching { it.name == "packageDebugUnitTestForUnitTest" }.configureEach {
+    dependsOn("copyFlutterAssetsDebug")
+}
