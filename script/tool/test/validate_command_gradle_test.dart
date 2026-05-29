@@ -1596,5 +1596,51 @@ flutter {
         ]),
       );
     });
+
+    test(
+      'fails when there is a kotlin compiler options DSL block in the android block',
+      () async {
+        final RepositoryPackage package = createFakePlugin(
+          'a_plugin',
+          packagesDir,
+          examples: <String>[],
+        );
+        writeFakePluginBuildGradle(
+          package,
+          includeLanguageVersion: true,
+          includeKotlinCompilerOptions: false,
+        );
+
+        final File buildGradle = package
+            .platformDirectory(FlutterPlatform.android)
+            .childFile('build.gradle.kts');
+        final String contents = buildGradle.readAsStringSync();
+        final String updatedContents = contents.replaceFirst(
+          'android {',
+          'android {\n    kotlin {\n        compilerOptions {\n            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17\n        }\n    }',
+        );
+        buildGradle.writeAsStringSync(updatedContents);
+        writeFakeManifest(package);
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'build.gradle.kts must not nest "kotlin" or "compilerOptions" inside the "android" block. It must be at the top-level',
+            ),
+          ]),
+        );
+      },
+    );
   });
 }

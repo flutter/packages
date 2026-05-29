@@ -517,6 +517,35 @@ kotlin {
         line.contains('compilerOptions') && !_isCommented(line);
     final bool hasCompilerOptions = gradleLines.any(isCompilerOptions);
 
+    if (hasCompilerOptions && _isCompilerOptionsInsideAndroid(gradleLines)) {
+      const nestedCompilerOptionsErrorMessage =
+          '''
+build.gradle.kts must not nest "kotlin" or "compilerOptions" inside the "android" block. It must be at the top-level:
+  Good:
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$_minimumJavaVersion
+        }
+    }
+
+    android {
+        ...
+    }
+  BAD:
+    android {
+        kotlin {
+            compilerOptions {
+                jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$_minimumJavaVersion
+            }
+        }
+    }
+''';
+      printError(
+        '$_indentation${nestedCompilerOptionsErrorMessage.split('\n').join('\n$_indentation')}',
+      );
+      return false;
+    }
+
     final bool compilerOptionsUsesJvmTargetEnum = gradleLines.any(
       (String line) =>
           RegExp(
@@ -560,6 +589,42 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
     return true;
   }
 
+  bool _isCompilerOptionsInsideAndroid(List<String> gradleLines) {
+    final int androidIndex = gradleLines.indexWhere(
+      (String line) => line.contains('android {') && !_isCommented(line),
+    );
+    if (androidIndex == -1) {
+      return false;
+    }
+
+    // Find closing brace of android block.
+    var braceCount = 1;
+    var androidEndIndex = -1;
+    for (int i = androidIndex + 1; i < gradleLines.length; i++) {
+      final String line = gradleLines[i];
+      if (_isCommented(line)) {
+        continue;
+      }
+      braceCount += line.split('{').length - 1;
+      braceCount -= line.split('}').length - 1;
+      if (braceCount == 0) {
+        androidEndIndex = i;
+        break;
+      }
+    }
+
+    if (androidEndIndex == -1) {
+      return false;
+    }
+
+    final int compilerOptionsIndex = gradleLines.indexWhere(
+      (String line) => line.contains('compilerOptions') && !_isCommented(line),
+    );
+
+    return compilerOptionsIndex > androidIndex &&
+        compilerOptionsIndex < androidEndIndex;
+  }
+
   bool _validateKotlinPluginUsage(List<String> gradleLines) {
     final kotlinPluginRegex = RegExp(
       r'''id\s*\(?\s*["'](?:kotlin-android|org\.jetbrains\.kotlin\.android)["']\s*\)?''',
@@ -571,14 +636,14 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
     if (hasKotlinPlugin) {
       const kotlinPluginErrorMessage = '''
 The kotlin-android plugin should not be applied in the plugin module's build.gradle.kts.
+  Good:
+    plugins {
+        id("com.android.library")
+    }
   BAD:
     plugins {
         id("com.android.library")
         id("kotlin-android")
-    }
-  Good:
-    plugins {
-        id("com.android.library")
     }
 ''';
       printError(
