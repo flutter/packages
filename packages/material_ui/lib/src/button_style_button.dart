@@ -87,6 +87,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
     required this.clipBehavior,
     this.statesController,
     this.isSemanticButton = true,
+    this.isSelected,
     @Deprecated(
       'Remove this parameter as it is now ignored. '
       'Use ButtonStyle.iconAlignment instead. '
@@ -162,6 +163,9 @@ abstract class ButtonStyleButton extends StatefulWidget {
   ///
   /// Defaults to true.
   final bool? isSemanticButton;
+
+  /// Whether the button is selected.
+  final bool? isSelected;
 
   /// {@macro flutter.material.ButtonStyle.iconAlignment}
   @Deprecated(
@@ -334,6 +338,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       internalStatesController = MaterialStatesController();
     }
     statesController.update(WidgetState.disabled, !widget.enabled);
+    if (widget.isSelected != null) {
+      statesController.update(WidgetState.selected, widget.isSelected!);
+    }
     statesController.addListener(handleStatesControllerChange);
   }
 
@@ -360,6 +367,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
         // The button may have been disabled while a press gesture is currently underway.
         statesController.update(WidgetState.pressed, false);
       }
+    }
+    if (widget.isSelected != oldWidget.isSelected) {
+      statesController.update(WidgetState.selected, widget.isSelected ?? false);
     }
   }
 
@@ -592,6 +602,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       container: true,
       button: widget.isSemanticButton,
       enabled: widget.enabled,
+      selected: widget.isSelected,
       child: _InputPadding(
         minSize: minSize,
         child: ConstrainedBox(

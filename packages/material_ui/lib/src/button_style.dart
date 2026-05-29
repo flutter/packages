@@ -31,6 +31,38 @@ import 'theme_data.dart';
 // late BuildContext context;
 // typedef MyAppHome = Placeholder;
 
+/// Defines size variants for Material 3 Expressive button components.
+///
+/// Components interpret each size variant according to their own token set.
+enum ButtonSize {
+  /// Extra small button size.
+  xSmall,
+
+  /// Small button size. This is the default for icon buttons.
+  small,
+
+  /// Medium button size.
+  medium,
+
+  /// Large button size.
+  large,
+
+  /// Extra large button size.
+  xLarge,
+}
+
+/// Defines the width variants for Material 3 Expressive [IconButton].
+enum IconButtonWidth {
+  /// Uses the narrow leading and trailing space tokens.
+  narrow,
+
+  /// Uses the default leading and trailing space tokens.
+  standard,
+
+  /// Uses the wide leading and trailing space tokens.
+  wide,
+}
+
 /// The type for [ButtonStyle.backgroundBuilder] and [ButtonStyle.foregroundBuilder].
 ///
 /// The [states] parameter is the button's current pressed/hovered/etc state. The [child] is
@@ -187,6 +219,8 @@ class ButtonStyle with Diagnosticable {
     this.splashFactory,
     this.backgroundBuilder,
     this.foregroundBuilder,
+    this.size,
+    this.iconButtonWidth,
   });
 
   /// The style for a button's [Text] widget descendants.
@@ -423,6 +457,12 @@ class ButtonStyle with Diagnosticable {
   ///    configuring clipping.
   final ButtonLayerBuilder? foregroundBuilder;
 
+  /// The size variant for this button.
+  final ButtonSize? size;
+
+  /// The width variant for this icon button.
+  final IconButtonWidth? iconButtonWidth;
+
   /// Returns a copy of this ButtonStyle with the given fields replaced with
   /// the new values.
   ButtonStyle copyWith({
@@ -451,6 +491,8 @@ class ButtonStyle with Diagnosticable {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSize? size,
+    IconButtonWidth? iconButtonWidth,
   }) {
     return ButtonStyle(
       textStyle: textStyle ?? this.textStyle,
@@ -478,6 +520,8 @@ class ButtonStyle with Diagnosticable {
       splashFactory: splashFactory ?? this.splashFactory,
       backgroundBuilder: backgroundBuilder ?? this.backgroundBuilder,
       foregroundBuilder: foregroundBuilder ?? this.foregroundBuilder,
+      size: size ?? this.size,
+      iconButtonWidth: iconButtonWidth ?? this.iconButtonWidth,
     );
   }
 
@@ -516,6 +560,8 @@ class ButtonStyle with Diagnosticable {
       splashFactory: splashFactory ?? style.splashFactory,
       backgroundBuilder: backgroundBuilder ?? style.backgroundBuilder,
       foregroundBuilder: foregroundBuilder ?? style.foregroundBuilder,
+      size: size ?? style.size,
+      iconButtonWidth: iconButtonWidth ?? style.iconButtonWidth,
     );
   }
 
@@ -547,6 +593,8 @@ class ButtonStyle with Diagnosticable {
       splashFactory,
       backgroundBuilder,
       foregroundBuilder,
+      size,
+      iconButtonWidth,
     ];
     return Object.hashAll(values);
   }
@@ -584,7 +632,9 @@ class ButtonStyle with Diagnosticable {
         other.alignment == alignment &&
         other.splashFactory == splashFactory &&
         other.backgroundBuilder == backgroundBuilder &&
-        other.foregroundBuilder == foregroundBuilder;
+        other.foregroundBuilder == foregroundBuilder &&
+        other.size == size &&
+        other.iconButtonWidth == iconButtonWidth;
   }
 
   @override
@@ -706,6 +756,10 @@ class ButtonStyle with Diagnosticable {
         defaultValue: null,
       ),
     );
+    properties.add(EnumProperty<ButtonSize>('size', size, defaultValue: null));
+    properties.add(
+      EnumProperty<IconButtonWidth>('iconButtonWidth', iconButtonWidth, defaultValue: null),
+    );
   }
 
   /// Linearly interpolate between two [ButtonStyle]s.
@@ -769,6 +823,8 @@ class ButtonStyle with Diagnosticable {
       splashFactory: t < 0.5 ? a?.splashFactory : b?.splashFactory,
       backgroundBuilder: t < 0.5 ? a?.backgroundBuilder : b?.backgroundBuilder,
       foregroundBuilder: t < 0.5 ? a?.foregroundBuilder : b?.foregroundBuilder,
+      size: t < 0.5 ? a?.size : b?.size,
+      iconButtonWidth: t < 0.5 ? a?.iconButtonWidth : b?.iconButtonWidth,
     );
   }
 }
