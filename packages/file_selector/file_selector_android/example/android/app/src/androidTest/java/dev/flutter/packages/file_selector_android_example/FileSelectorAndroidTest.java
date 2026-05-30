@@ -16,12 +16,12 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static org.junit.Assert.assertEquals;
 
-import android.os.Build;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.flutter.api.WidgetAssertion;
