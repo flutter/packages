@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.os.Build;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
@@ -154,6 +155,13 @@ public class QuickActionsTest {
   // Broadcast a request to clear any system dialog that blocks the application from obtaining
   // focus. See https://github.com/flutter/flutter/issues/140987
   private void clearAnySystemDialog(Context context) {
-    context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      return;
+    }
+    try {
+      context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+    } catch (SecurityException e) {
+      // Suppress exception on Android 12+ where this broadcast is restricted.
+    }
   }
 }

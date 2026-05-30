@@ -16,6 +16,7 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static org.junit.Assert.assertEquals;
 
+import android.os.Build;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ClipData;
@@ -39,14 +40,21 @@ public class FileSelectorAndroidTest {
   @Rule public IntentsRule intentsRule = new IntentsRule();
 
   public void clearAnySystemDialog() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      return;
+    }
     myActivityTestRule
         .getScenario()
         .onActivity(
             new ActivityScenario.ActivityAction<DriverExtensionActivity>() {
               @Override
               public void perform(DriverExtensionActivity activity) {
-                Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-                activity.sendBroadcast(closeDialog);
+                try {
+                  Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                  activity.sendBroadcast(closeDialog);
+                } catch (SecurityException e) {
+                  // Suppress exception on S+ emulator devices.
+                }
               }
             });
   }
