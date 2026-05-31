@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
     swiftOut:
-        'ios/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
+        'darwin/camera_avfoundation/Sources/camera_avfoundation/Messages.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
