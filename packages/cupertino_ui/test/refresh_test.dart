@@ -387,7 +387,7 @@ void main() {
         final TargetPlatform? platform =
             debugDefaultTargetPlatformOverride; // Will not be correct within the zone.
 
-        runZonedGuarded(
+        await runZonedGuarded(
           () async {
             mockHelper.refreshCompleter = Completer<void>.sync();
             await tester.pumpWidget(

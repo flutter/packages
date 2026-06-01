@@ -4,8 +4,8 @@
 
 /// @docImport 'dart:ui';
 ///
-/// @docImport 'package:material_ui/material_ui.dart';
 /// @docImport 'package:flutter/services.dart';
+/// @docImport 'package:material_ui/material_ui.dart';
 ///
 /// @docImport 'app.dart';
 /// @docImport 'button.dart';

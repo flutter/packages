@@ -13,14 +13,20 @@ workspace:
   - example
 
 dependencies:
+  collection: ^1.19.1
   flutter:
     sdk: flutter
 
 dev_dependencies:
+  clock: any
   flutter_goldens:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   flutter_test:
     sdk: flutter
+  # To track memory leaks.
+  leak_tracker_flutter_testing: any
   material_ui:
     # TODO(justinmc): Use the pub.dev package when published.
     path: ../material_ui
