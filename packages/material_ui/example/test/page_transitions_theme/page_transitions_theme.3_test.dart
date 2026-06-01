@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/page_transitions_theme/page_transitions_theme.3.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Page transition', (WidgetTester tester) async {

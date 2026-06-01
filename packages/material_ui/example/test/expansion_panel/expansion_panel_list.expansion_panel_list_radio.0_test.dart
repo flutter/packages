@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/expansion_panel/expansion_panel_list.expansion_panel_list_radio.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('ExpansionPanelList.radio can expand one item at the time', (

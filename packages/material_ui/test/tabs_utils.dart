@@ -5,9 +5,9 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 // This returns render paragraph of the Tab label text.
 RenderParagraph getTabText(WidgetTester tester, String text) {

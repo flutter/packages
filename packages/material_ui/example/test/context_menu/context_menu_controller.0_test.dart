@@ -4,11 +4,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/context_menu/context_menu_controller.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('showing and hiding the custom context menu in the whole app', (

@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/tabs/tab_bar.onHover.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Tabs change in response to hover', (WidgetTester tester) async {

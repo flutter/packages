@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/reorderable_list/reorderable_list_view.1.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Dragged item color is updated', (WidgetTester tester) async {

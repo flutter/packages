@@ -5,8 +5,8 @@
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 const String tooltipText = 'TIP';
 

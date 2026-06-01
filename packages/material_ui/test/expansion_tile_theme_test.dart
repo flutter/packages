@@ -7,9 +7,9 @@
 @Tags(<String>['reduced-test-set'])
 library;
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TestIcon extends StatefulWidget {
   const TestIcon({super.key});

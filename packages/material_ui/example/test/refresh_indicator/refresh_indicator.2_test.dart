@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:ui';
+
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/refresh_indicator/refresh_indicator.2.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(

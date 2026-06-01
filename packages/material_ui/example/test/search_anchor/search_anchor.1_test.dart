@@ -4,10 +4,10 @@
 
 import 'dart:ui' as ui;
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/search_anchor/search_anchor.1.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('The SearchAnchor should be floating', (

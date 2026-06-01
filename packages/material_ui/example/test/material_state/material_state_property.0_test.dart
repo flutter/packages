@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/material_state/material_state_property.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Color getButtonForegroundColor(WidgetTester tester) {

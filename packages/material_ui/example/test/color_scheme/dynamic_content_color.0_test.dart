@@ -5,10 +5,10 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/color_scheme/dynamic_content_color.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   final List<(ImageProvider<Object>, Brightness)> loadColorSchemeCalls =

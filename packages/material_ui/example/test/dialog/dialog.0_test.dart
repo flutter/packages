@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:material_ui_examples/dialog/dialog.0.dart' as example;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui_examples/dialog/dialog.0.dart' as example;
 
 void main() {
   testWidgets('Show Dialog', (WidgetTester tester) async {

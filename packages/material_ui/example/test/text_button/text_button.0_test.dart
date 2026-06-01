@@ -4,10 +4,10 @@
 
 import 'dart:io';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/text_button/text_button.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   // The app being tested loads images via HTTP which the test

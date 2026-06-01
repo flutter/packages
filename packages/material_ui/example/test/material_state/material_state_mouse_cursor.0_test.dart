@@ -4,11 +4,11 @@
 
 import 'dart:ui';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/material_state/material_state_mouse_cursor.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('MaterialStateMouseCursorExampleApp displays ListTile', (

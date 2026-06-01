@@ -4,11 +4,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/selection_area/selection_area.2.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 // This was taken directly from selectable_region_test.dart
 // in the frameworks' Widget library tests.

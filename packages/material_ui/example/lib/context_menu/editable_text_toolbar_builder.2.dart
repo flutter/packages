@@ -6,8 +6,8 @@
 // look of the default buttons for the current platform.
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const EditableTextToolbarBuilderExampleApp());
 

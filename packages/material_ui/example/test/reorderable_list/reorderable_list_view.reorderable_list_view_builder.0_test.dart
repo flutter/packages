@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui_examples/reorderable_list/reorderable_list_view.reorderable_list_view_builder.0.dart'
     as example;
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Future<void> longPressDrag(
