@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
   google_maps_flutter_platform_interface: ^2.14.0
   google_maps_flutter_web:
-    path: ../
+    path: ../..
   web: ^1.0.0
 
 dev_dependencies:
@@ -33,4 +33,4 @@ dependency_overrides:
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
   google_maps_flutter_web:
-    path: ../
+    path: ../..

@@ -23,6 +23,8 @@ void main() {
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
+    // Set a minimal config so that a default repo name is available.
+    setToolConfig(root);
 
     root.childFile('.ci.yaml').writeAsStringSync(r'''
 enabled_branches:
@@ -53,14 +55,17 @@ enabled_branches:
 ''';
   }
 
-  String readmeTableEntry(String packageName) {
+  String readmeTableEntry(
+    String packageName, {
+    String repoName = 'flutter/packages',
+  }) {
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     return '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedTag?label=)](https://github.com/flutter/flutter/labels/$encodedTag) | '
-        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedTag?label=)](https://github.com/flutter/packages/labels/$encodedTag) |';
+        '[![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/$repoName/$encodedTag?label=)](https://github.com/$repoName/labels/$encodedTag) |';
   }
 
   void writeAutoLabelerYaml(List<RepositoryPackage> packages) {
@@ -103,6 +108,55 @@ ${readmeTableEntry('a_package')}
       containsAllInOrder(<Matcher>[contains('Running for a_package')]),
     );
   });
+
+  test('passes for correct coverage with a different repo name', () async {
+    final packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+    ];
+
+    const repoName = 'different/repo';
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package', repoName: repoName)}
+''');
+    writeAutoLabelerYaml(packages);
+    setToolConfig(root, repoName: repoName);
+
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'validate',
+    ]);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+    );
+  });
+
+  test(
+    'passes when no .ci.yaml is present if nothing uses batched release',
+    () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(packages);
+
+      root.childFile('.ci.yaml').deleteSync();
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'validate',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for a_package')]),
+      );
+    },
+  );
 
   test(
     'passes for federated plugins with only app-facing package listed',
@@ -512,6 +566,84 @@ ${readmeTableEntry(packageName)}
           '    Missing auto-labeler entry',
         ),
       ]),
+    );
+  });
+
+  group('custom package labels', () {
+    test('passes for correct custom package label in README', () async {
+      final packages = <RepositoryPackage>[
+        createFakePackage('a_package', packagesDir),
+      ];
+
+      const customLabel = 'custom_label';
+      setToolConfig(
+        root,
+        packageLabels: <String, String>{'a_package': customLabel},
+      );
+
+      final String encodedIssueTag = Uri.encodeComponent('p: $customLabel');
+      final String encodedPRTag = Uri.encodeComponent('p: a_package');
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+| [a_package](./packages/a_package/) | [![pub package](https://img.shields.io/pub/v/a_package.svg)](https://pub.dev/packages/a_package) | [![pub points](https://img.shields.io/pub/points/a_package)](https://pub.dev/packages/a_package/score) | [![popularity](https://img.shields.io/pub/popularity/a_package)](https://pub.dev/packages/a_package/score) | [![GitHub issues by-label](https://img.shields.io/github/issues/flutter/flutter/$encodedIssueTag?label=)](https://github.com/flutter/flutter/labels/$encodedIssueTag) | [![GitHub pull requests by-label](https://img.shields.io/github/issues-pr/flutter/packages/$encodedPRTag?label=)](https://github.com/flutter/packages/labels/$encodedPRTag) |
+''');
+      writeAutoLabelerYaml(packages);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      if (commandError != null) {
+        print(r'Test failed with error: $commandError');
+        print('Output:');
+        output.forEach(print);
+      }
+
+      expect(commandError, isNull);
+      expect(output, containsAll(<Matcher>[contains('No issues found!')]));
+    });
+
+    test(
+      'fails when default package label is used in README but custom is configured',
+      () async {
+        final packages = <RepositoryPackage>[
+          createFakePackage('a_package', packagesDir),
+        ];
+
+        const customLabel = 'custom_label';
+        setToolConfig(
+          root,
+          packageLabels: <String, String>{'a_package': customLabel},
+        );
+
+        // Use default label in README
+        root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+        writeAutoLabelerYaml(packages);
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          contains(contains('Incorrect link in root README.md table')),
+        );
+      },
     );
   });
 
