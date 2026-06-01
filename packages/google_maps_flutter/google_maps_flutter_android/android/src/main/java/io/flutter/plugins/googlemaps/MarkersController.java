@@ -170,8 +170,13 @@ class MarkersController {
       clusterManagersController.addItems(entry.getKey(), entry.getValue());
     }
 
+    // Re-add por mudança de POSIÇÃO (caminho quente de marcadores animados): o
+    // marcador visível já foi movido acima via MarkerController, então aqui só
+    // sincronizamos o índice espacial sem clusterizar e agendamos um único
+    // cluster() com debounce. Evita re-clustering da frota a cada frame de lerp.
     for (Map.Entry<String, List<MarkerBuilder>> entry : markersToReaddByCluster.entrySet()) {
-      clusterManagersController.addItems(entry.getKey(), entry.getValue());
+      clusterManagersController.addItemsSilently(entry.getKey(), entry.getValue());
+      clusterManagersController.scheduleClusterThrottled(entry.getKey());
     }
   }
 
