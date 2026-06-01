@@ -591,7 +591,7 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
 
   bool _isCompilerOptionsInsideAndroid(List<String> gradleLines) {
     final int androidIndex = gradleLines.indexWhere(
-      (String line) => line.contains('android {') && !_isCommented(line),
+          (String line) => line.contains('android {') && !_isCommented(line),
     );
     if (androidIndex == -1) {
       return false;
@@ -617,12 +617,14 @@ If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use Jv
       return false;
     }
 
-    final int compilerOptionsIndex = gradleLines.indexWhere(
-      (String line) => line.contains('compilerOptions') && !_isCommented(line),
-    );
+    for (int i = androidIndex + 1; i < androidEndIndex; i++) {
+      final String line = gradleLines[i];
+      if (line.contains('compilerOptions') && !_isCommented(line)) {
+        return true;
+      }
+    }
 
-    return compilerOptionsIndex > androidIndex &&
-        compilerOptionsIndex < androidEndIndex;
+    return false;
   }
 
   bool _validateKotlinPluginUsage(List<String> gradleLines) {
