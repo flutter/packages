@@ -2,15 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.flutter.plugins.imagepicker">
 
-    <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-        <intent>
-            <action android:name="android.media.action.VIDEO_CAPTURE" />
-        </intent>
-    </queries>
-
     <application>
         <provider
             android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
