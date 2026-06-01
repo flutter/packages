@@ -43,7 +43,7 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
-    thirdPartyPackagesDir = packagesDir.parent
+    thirdPartyPackagesDir = rootDir
         .childDirectory('third_party')
         .childDirectory('packages');
 
@@ -186,6 +186,9 @@ abstract class PackageCommand extends Command<void> {
 
   /// The directory containing packages wrapping third-party code.
   late Directory thirdPartyPackagesDir;
+
+  /// The root directory of the repository containing the packages.
+  late final Directory rootDir = packagesDir.parent;
 
   /// The process runner.
   ///
@@ -390,8 +393,8 @@ abstract class PackageCommand extends Command<void> {
   ///    platform interface package which declares the API for implementations,
   ///    and one or more platform-specific implementation packages.
   /// 3./4. Either of the above, but in a third_party/packages/ directory that
-  ///    is a sibling of the packages directory. This is used for a small number
-  ///    of packages in the flutter/packages repository.
+  ///    is a sibling of the packages directory. This is used for packages that
+  ///    originate outside of the Flutter team.
   Stream<PackageEnumerationEntry> _getAllPackages() async* {
     final packageSelectionFlags = <String>{
       _packagesArg,

@@ -25,6 +25,7 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
     responseCode: billingResponseFromPlatform(result.responseCode),
+    subResponseCode: result.subResponseCode,
     debugMessage: result.debugMessage,
   );
 }
@@ -37,6 +38,9 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     productDetailsList: response.productDetails
         .map(productDetailsWrapperFromPlatform)
+        .toList(),
+    unfetchedProductList: response.unfetchedProductList
+        .map(unfetchedProductWrapperFromPlatform)
         .toList(),
   );
 }
@@ -54,10 +58,21 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
       product.oneTimePurchaseOfferDetails,
     ),
+    oneTimePurchaseOfferDetailsList: product.oneTimePurchaseOfferDetailsList
+        ?.map(oneTimePurchaseOfferDetailsWrapperFromPlatform)
+        .whereType<OneTimePurchaseOfferDetailsWrapper>()
+        .toList(),
     subscriptionOfferDetails: product.subscriptionOfferDetails
         ?.map(subscriptionOfferDetailsWrapperFromPlatform)
         .toList(),
   );
+}
+
+/// Creates a [UnfetchedProductWrapper] from the Pigeon equivalent.
+UnfetchedProductWrapper unfetchedProductWrapperFromPlatform(
+  PlatformUnfetchedProduct product,
+) {
+  return UnfetchedProductWrapper(productId: product.productId);
 }
 
 /// Creates a [OneTimePurchaseOfferDetailsWrapper] from the Pigeon equivalent.
