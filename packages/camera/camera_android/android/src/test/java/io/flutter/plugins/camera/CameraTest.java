@@ -45,6 +45,7 @@ import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.jpegquality.JpegQualityFeature;
 import io.flutter.plugins.camera.features.noisereduction.NoiseReductionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
@@ -1385,6 +1386,16 @@ public class CameraTest {
   }
 
   @Test
+  public void setJpegImageQuality_shouldSetQualityOnFeature() {
+    JpegQualityFeature mockJpegQualityFeature =
+        mockCameraFeatureFactory.createJpegQualityFeature(mockCameraProperties);
+
+    camera.setJpegImageQuality(75L);
+
+    verify(mockJpegQualityFeature, times(1)).setValue(75);
+  }
+
+  @Test
   public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
@@ -1527,6 +1538,11 @@ public class CameraTest {
     public NoiseReductionFeature createNoiseReductionFeature(
         @NonNull CameraProperties cameraProperties) {
       return mockNoiseReductionFeature;
+    }
+
+    @Override
+    public JpegQualityFeature createJpegQualityFeature(@NonNull CameraProperties cameraProperties) {
+      return mock(JpegQualityFeature.class);
     }
   }
 }

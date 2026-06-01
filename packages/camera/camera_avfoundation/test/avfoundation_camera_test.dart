@@ -992,5 +992,11 @@ void main() {
 
       verify(mockApi.setImageFileFormat(PlatformImageFileFormat.jpeg));
     });
+
+    test('Should set the image quality', () async {
+      await camera.setJpegImageQuality(cameraId, 50);
+
+      verify(mockApi.setJpegImageQuality(50));
+    });
   });
 }
