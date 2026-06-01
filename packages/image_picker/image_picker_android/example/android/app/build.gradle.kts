@@ -57,6 +57,9 @@ dependencies {
     api("androidx.test:core:1.4.0")
 }
 
+// Declares copyFlutterAssetsDebug as an explicit dependency for packageDebugUnitTestForUnitTest.
+// Starting in Gradle 9, there are stricter checks on implicit dependencies:
+// https://docs.gradle.org/9.1.0/userguide/validation_problems.html#implicit_dependency
 tasks.matching { it.name == "packageDebugUnitTestForUnitTest" }.configureEach {
     dependsOn("copyFlutterAssetsDebug")
 }
