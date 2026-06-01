@@ -7,10 +7,10 @@ import 'dart:ui';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 const String tooltipText = 'TIP';
 
@@ -1981,7 +1981,7 @@ void main() {
         home: const Scaffold(body: Placeholder()),
       ),
     );
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: navigatorKey.currentContext!,
       builder: (_) {
         return const Center(
@@ -1990,7 +1990,7 @@ void main() {
       },
     );
     await tester.pumpAndSettle();
-    showMenu<void>(
+    await showMenu<void>(
       context: navigatorKey.currentContext!,
       items: <PopupMenuEntry<int>>[const PopupMenuItem<int>(value: 0, child: Text('item 1'))],
       position: RelativeRect.fill,

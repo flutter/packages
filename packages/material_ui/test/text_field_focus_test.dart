@@ -4,9 +4,9 @@
 
 import 'dart:ui';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Regression test for https://github.com/flutter/flutter/issues/87099
@@ -48,7 +48,7 @@ void main() {
 
     final BuildContext context = tester.element(find.byType(TextField));
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) => const SimpleDialog(title: Text('Dialog')),
     );

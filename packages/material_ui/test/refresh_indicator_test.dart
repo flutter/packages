@@ -6,8 +6,8 @@ import 'dart:async';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 bool refreshCalled = false;
 
@@ -312,7 +312,7 @@ void main() {
     );
 
     var completed = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed = true;
@@ -326,7 +326,7 @@ void main() {
     expect(completed, false);
     completed = false;
     refreshCalled = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed = true;
@@ -354,7 +354,7 @@ void main() {
     );
 
     var completed = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed = true;
@@ -368,7 +368,7 @@ void main() {
     expect(completed, true);
     completed = false;
     refreshCalled = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed = true;
@@ -397,13 +397,13 @@ void main() {
     );
 
     var completed1 = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed1 = true;
     });
     var completed2 = false;
-    tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
+    await tester.state<RefreshIndicatorState>(find.byType(RefreshIndicator)).show().then<void>((
       void value,
     ) {
       completed2 = true;
