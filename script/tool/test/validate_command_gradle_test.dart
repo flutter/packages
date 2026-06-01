@@ -53,9 +53,12 @@ void main() {
     bool includeKotlinCompilerOptions = true,
     bool commentKotlinCompilerOptions = false,
     bool useDeprecatedJvmTargetStyle = false,
+    bool useJavaVersionStringForJvmTarget = false,
     int jvmTargetValue = 17,
     int kotlinJvmValue = 17,
     bool includeKotlinGradlePlugin = false,
+    bool includeDeprecatedKotlinOptionsInsideAndroid = false,
+    bool includeDeprecatedKotlinOptionsInsideKotlin = false,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -85,9 +88,15 @@ java {
         '${commentSourceLanguage ? '// ' : ''}targetCompatibility = JavaVersion.VERSION_$jvmTargetValue';
     final namespace =
         '    ${commentNamespace ? '// ' : ''}namespace = "$_defaultFakeNamespace"';
-    final kotlinJvmTarget = useDeprecatedJvmTargetStyle
-        ? '"$jvmTargetValue"'
-        : 'org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$kotlinJvmValue';
+    final String kotlinJvmTarget;
+    if (useJavaVersionStringForJvmTarget) {
+      kotlinJvmTarget = 'JavaVersion.VERSION_$kotlinJvmValue.toString()';
+    } else if (useDeprecatedJvmTargetStyle) {
+      kotlinJvmTarget = '"$jvmTargetValue"';
+    } else {
+      kotlinJvmTarget =
+          'org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_$kotlinJvmValue';
+    }
     final kotlinConfig =
         '''
 ${commentKotlinCompilerOptions ? '// ' : ''}kotlin {
@@ -95,6 +104,18 @@ ${commentKotlinCompilerOptions ? '// ' : ''}    compilerOptions {
 ${commentKotlinCompilerOptions ? '// ' : ''}        jvmTarget = $kotlinJvmTarget
 ${commentKotlinCompilerOptions ? '// ' : ''}    }
 ${commentKotlinCompilerOptions ? '// ' : ''}}''';
+
+    final kotlinDeprecatedInAndroidConfig =
+        '''
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_$kotlinJvmValue.toString()
+    }''';
+
+    final kotlinDeprecatedInKotlinConfig =
+        '''
+    kotlin {
+        $kotlinDeprecatedInAndroidConfig
+    }''';
 
     buildGradle.writeAsStringSync('''
 group = "dev.flutter.plugins.fake"
@@ -121,6 +142,7 @@ plugins {
 
 ${includeLanguageVersion ? javaSection : ''}
 ${includeKotlinCompilerOptions ? kotlinConfig : ''}
+${includeDeprecatedKotlinOptionsInsideKotlin ? kotlinDeprecatedInKotlinConfig : ''}
 
 android {
 ${includeNamespace ? namespace : ''}
@@ -134,6 +156,7 @@ ${warningsConfigured ? warningConfig : ''}
         ${includeSourceCompat ? sourceCompat : ''}
         ${includeTargetCompat ? targetCompat : ''}
     }
+    ${includeDeprecatedKotlinOptionsInsideAndroid ? kotlinDeprecatedInAndroidConfig : ''}
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
@@ -1554,7 +1577,7 @@ flutter {
       );
     });
 
-    test('fails when there is a kotlin options DSL block', () async {
+    test('fails when kotlin compiler options uses JavaVersion string', () async {
       final RepositoryPackage package = createFakePlugin(
         'a_plugin',
         packagesDir,
@@ -1563,18 +1586,8 @@ flutter {
       writeFakePluginBuildGradle(
         package,
         includeLanguageVersion: true,
-        includeKotlinCompilerOptions: false,
+        useJavaVersionStringForJvmTarget: true,
       );
-
-      final File buildGradle = package
-          .platformDirectory(FlutterPlatform.android)
-          .childFile('build.gradle.kts');
-      final String contents = buildGradle.readAsStringSync();
-      final String updatedContents = contents.replaceFirst(
-        'android {',
-        'android {\n    kotlinOptions {\n        jvmTarget = JavaVersion.VERSION_17.toString()\n    }',
-      );
-      buildGradle.writeAsStringSync(updatedContents);
       writeFakeManifest(package);
 
       Error? commandError;
@@ -1591,7 +1604,7 @@ flutter {
         output,
         containsAllInOrder(<Matcher>[
           contains(
-            'build.gradle.kts must not use the deprecated "kotlinOptions" DSL. Use "kotlin.compilerOptions" instead',
+            'If build.gradle.kts sets jvmTarget inside kotlin.compilerOptions, it must use JvmTarget syntax.',
           ),
         ]),
       );
@@ -1637,6 +1650,109 @@ flutter {
           containsAllInOrder(<Matcher>[
             contains(
               'build.gradle.kts must not nest "kotlin" or "compilerOptions" inside the "android" block. It must be at the top-level',
+            ),
+          ]),
+        );
+      },
+    );
+
+    test('fails when kotlinOptions is used in the android block', () async {
+      final RepositoryPackage package = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        includeDeprecatedKotlinOptionsInsideAndroid: true,
+      );
+      writeFakeManifest(package);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'build.gradle.kts must not use the deprecated "kotlinOptions" DSL. Use "kotlin.compilerOptions" instead',
+          ),
+        ]),
+      );
+    });
+
+    test('fails when kotlinOptions is used in the kotlin block', () async {
+      final RepositoryPackage package = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>[],
+      );
+      writeFakePluginBuildGradle(
+        package,
+        includeLanguageVersion: true,
+        includeDeprecatedKotlinOptionsInsideKotlin: true,
+      );
+      writeFakeManifest(package);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['validate'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+            'build.gradle.kts must not use the deprecated "kotlinOptions" DSL. Use "kotlin.compilerOptions" instead',
+          ),
+        ]),
+      );
+    });
+
+    test(
+      'fails when kotlinOptions is used in both the android and kotlin blocks',
+      () async {
+        final RepositoryPackage package = createFakePlugin(
+          'a_plugin',
+          packagesDir,
+          examples: <String>[],
+        );
+        writeFakePluginBuildGradle(
+          package,
+          includeLanguageVersion: true,
+          includeDeprecatedKotlinOptionsInsideAndroid: true,
+          includeDeprecatedKotlinOptionsInsideKotlin: true,
+        );
+        writeFakeManifest(package);
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['validate'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'build.gradle.kts must not use the deprecated "kotlinOptions" DSL. Use "kotlin.compilerOptions" instead',
             ),
           ]),
         );
