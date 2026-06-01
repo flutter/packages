@@ -22,7 +22,7 @@ dependencies:
   # This is not unpinned currently.
   # See https://github.com/flutter/flutter/issues/185017
   material_color_utilities: 0.13.0
-  vector_math: ^2.3.0
+  vector_math: ^2.2.0
 
 dev_dependencies:
   file: any
