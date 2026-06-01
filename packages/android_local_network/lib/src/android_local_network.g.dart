@@ -436,7 +436,8 @@ final class $AndroidLocalNetworkPlugin$Type$
 /// Interface for permission result callbacks.
 extension type AndroidLocalNetworkPlugin$PermissionCallback._(
   jni$_.JObject _$this
-) implements jni$_.JObject {
+)
+    implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'com/example/android_local_network/AndroidLocalNetworkPlugin$PermissionCallback',
   );

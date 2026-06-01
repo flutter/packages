@@ -6,7 +6,9 @@ import 'package:example/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Android Local Network example smoke test', (WidgetTester tester) async {
+  testWidgets('Android Local Network example smoke test', (
+    WidgetTester tester,
+  ) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 

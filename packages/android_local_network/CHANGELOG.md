@@ -1,3 +1,7 @@
+## 0.1.1+1
+
+* Added AndroidLocalNetwork.initialize() to automatically handle ACCESS_LOCAL_NETWORK permission for sockets.
+
 ## 0.1.1
 
 * `AndroidLocalAreaSocket.connect` now automatically requests permission on first use.

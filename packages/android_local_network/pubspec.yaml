@@ -1,7 +1,7 @@
 name: android_local_network
 description: A Flutter package to handle Android 17 Local Area Permission (ACCESS_LOCAL_NETWORK) for Dart sockets.
 repository: https://github.com/flutter/packages/tree/main/packages/android_local_network
-version: 0.1.1
+version: 0.1.1+1
 
 environment:
   sdk: ^3.9.0

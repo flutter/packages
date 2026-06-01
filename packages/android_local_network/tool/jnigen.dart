@@ -20,9 +20,7 @@ void main() {
         addGradleDeps: true,
         androidExample: 'example/',
       ),
-      sourcePath: <Uri>[
-        packageRoot.resolve('android/src/main/java/'),
-      ],
+      sourcePath: <Uri>[packageRoot.resolve('android/src/main/java/')],
       classes: <String>[
         'com.example.android_local_network.AndroidLocalNetworkPlugin',
       ],

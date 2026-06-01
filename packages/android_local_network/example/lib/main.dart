@@ -168,8 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   _status,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: _status == 'Granted' ? Colors.green : Colors.red,
-                      ),
+                    color: _status == 'Granted' ? Colors.green : Colors.red,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Card(
@@ -177,8 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        const Text('Detected Interfaces:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Detected Interfaces:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         ..._interfacesInfo.map((info) => Text(info)),
                       ],
                     ),
@@ -219,8 +221,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (_foundDevices.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   const Divider(),
-                  const Text('Found Devices:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Found Devices:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 10),
                   ListView.builder(
                     shrinkWrap: true,
